@@ -1,26 +1,110 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: #04100e;
+  --color-surface: #1a2220;
+  --color-surface-elevated: #222b29;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-muted: #8a9996;
+  --color-accent-mint: #3de0b5;
+  --color-accent-teal: #17b9a0;
+  --color-bubble-user: #ffffff;
+  --color-bubble-user-fg: #0a1210;
+  --color-bubble-assistant: #1a2220;
+  --font-sans: var(--font-ibm-plex-arabic), ui-sans-serif, system-ui, sans-serif;
+  --radius-bubble: 1.5rem;
+  --radius-card: 1.25rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: #f2f7f5;
+  font-family: var(--font-sans);
+  margin: 0;
+}
+
+/* Green radial glow anchored at the top — reference design */
+.app-shell {
+  position: relative;
+  min-height: 100dvh;
+  background: var(--color-bg);
+  overflow: hidden;
+}
+
+.app-shell::before {
+  content: "";
+  position: fixed;
+  inset-inline: 0;
+  top: -20%;
+  height: 55%;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 80% 70% at 50% 0%,
+    rgba(23, 185, 160, 0.45) 0%,
+    rgba(61, 224, 181, 0.18) 35%,
+    transparent 70%
+  );
+  z-index: 0;
+}
+
+.app-shell > * {
+  position: relative;
+  z-index: 1;
+}
+
+.accent-gradient {
+  background: linear-gradient(135deg, var(--color-accent-mint), var(--color-accent-teal));
+}
+
+.avatar-gradient {
+  background: linear-gradient(145deg, #3de0b5 0%, #17b9a0 55%, #0e8f7c 100%);
+}
+
+/* Speaking orb pulse */
+@keyframes orb-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 24px rgba(61, 224, 181, 0.35), 0 0 60px rgba(23, 185, 160, 0.2);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 0 36px rgba(61, 224, 181, 0.55), 0 0 80px rgba(23, 185, 160, 0.35);
+  }
+}
+
+.orb-pulse {
+  animation: orb-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes wave-drift {
+  0% {
+    transform: translateX(-8%) translateY(2%);
+  }
+  50% {
+    transform: translateX(8%) translateY(-2%);
+  }
+  100% {
+    transform: translateX(-8%) translateY(2%);
+  }
+}
+
+.orb-wave {
+  animation: wave-drift 3.5s ease-in-out infinite;
+}
+
+@keyframes ring-pulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.25);
+    opacity: 0;
+  }
 }
