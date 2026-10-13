@@ -1,4 +1,7 @@
 import { NextResponse } from 'next/server';
+import { readCachedAudio } from '@/lib/audioCache';
+import { refreshMongoCatalogue } from '@/lib/lessons/catalogue';
+import { findRemoteAudioUrl } from '@/lib/remoteAudio';
 import { speakSegment, TTSNotConfiguredError } from '@/lib/tts';
 
 export const runtime = 'nodejs';
@@ -22,10 +25,31 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'lang must be pt or ar' }, { status: 400 });
     }
 
-    const { buffer, contentType } = await speakSegment({
-      lang,
-      text: text.trim(),
-    });
+    const trimmed = text.trim();
+    await refreshMongoCatalogue().catch(() => 0);
+    const remoteUrl = findRemoteAudioUrl(lang, trimmed);
+    if (remoteUrl) {
+      const remote = await fetch(remoteUrl);
+      if (remote.ok) {
+        const buffer = Buffer.from(await remote.arrayBuffer());
+        const contentType = remote.headers.get('content-type') || 'audio/mpeg';
+        return new Response(new Uint8Array(buffer), {
+          status: 200,
+          headers: {
+            'Content-Type': contentType,
+            'Cache-Control': 'no-store',
+          },
+        });
+      }
+    }
+
+    const cached = readCachedAudio(lang, trimmed);
+    const { buffer, contentType } = cached
+      ? cached
+      : await speakSegment({
+          lang,
+          text: trimmed,
+        });
 
     return new Response(new Uint8Array(buffer), {
       status: 200,

@@ -17,6 +17,8 @@ type Props = {
   activeIndex?: number | null;
   transcript?: string;
   error?: string | null;
+  caption?: Segment[];
+  idleLabel?: string | null;
 };
 
 export function SpeakingOrb({
@@ -25,8 +27,11 @@ export function SpeakingOrb({
   activeIndex = null,
   transcript,
   error,
+  caption = [],
+  idleLabel = null,
 }: Props) {
   const pulse = mode === 'listening' || mode === 'speaking';
+  const status = mode === 'idle' && idleLabel ? idleLabel : STATUS[mode];
 
   return (
     <div className="flex flex-col items-center gap-5 px-4 py-6">
@@ -64,7 +69,7 @@ export function SpeakingOrb({
         </div>
       </div>
 
-      <p className="text-sm text-muted">{STATUS[mode]}</p>
+      <p className="text-sm text-muted">{status}</p>
 
       {error && (
         <p className="max-w-sm text-center text-sm text-red-300">{error}</p>
@@ -78,6 +83,7 @@ export function SpeakingOrb({
         >
           {segments.map((seg, i) => {
             const active = activeIndex === i;
+            const gap = i > 0 && segments[i - 1].lang !== seg.lang ? ' ' : '';
             const cls = active
               ? 'font-semibold text-white'
               : 'font-light text-muted';
@@ -87,19 +93,46 @@ export function SpeakingOrb({
                   key={i}
                   className={
                     active
-                      ? 'ml-1 font-semibold text-accent-mint'
-                      : 'ml-1 font-light text-accent-mint/70'
+                      ? 'font-semibold text-accent-mint'
+                      : 'font-light text-accent-mint/70'
                   }
                   style={{ unicodeBidi: 'isolate', direction: 'ltr' }}
                   lang="pt"
                 >
-                  {seg.text}{' '}
+                  {gap}
+                  {seg.text}
                 </span>
               );
             }
             return (
               <span key={i} className={cls}>
-                {seg.text}{' '}
+                {gap}
+                {seg.text}
+              </span>
+            );
+          })}
+        </p>
+      ) : caption.length > 0 ? (
+        <p dir="rtl" lang="ar" className="max-w-sm text-center text-base leading-relaxed">
+          {caption.map((seg, i) => {
+            const gap = i > 0 && caption[i - 1].lang !== seg.lang ? ' ' : '';
+            if (seg.lang === 'pt') {
+              return (
+                <span
+                  key={i}
+                  className="text-accent-mint"
+                  style={{ unicodeBidi: 'isolate', direction: 'ltr' }}
+                  lang="pt"
+                >
+                  {gap}
+                  {seg.text}
+                </span>
+              );
+            }
+            return (
+              <span key={i}>
+                {gap}
+                {seg.text}
               </span>
             );
           })}

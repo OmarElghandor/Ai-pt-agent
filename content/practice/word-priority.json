@@ -1,0 +1,1148 @@
+{
+  "_meta": {
+    "source": "Derived from lesson-missions-v1 connected_words",
+    "note": "priority 1=core early, 2=common, 3=extra; parenthetical notes split to note field"
+  },
+  "topics": [
+    {
+      "topic": "cumprimentos",
+      "words": [
+        {
+          "text": "Olá!",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Bom dia!",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Boa tarde!",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Boa noite!",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Como se chama?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Chamo-me Ahmed.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "O meu nome é Ahmed.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Muito prazer! / Igualmente.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Adeus!",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Até logo!",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Até amanhã!",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Tchau!",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "De onde é?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Sou egípcio/a.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Sou de Lisboa.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Sou português/portuguesa.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Quantos anos tem?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Tenho vinte e cinco anos.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Ele tem trinta anos.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Tenho um carro.",
+          "priority": 1,
+          "note": null
+        }
+      ]
+    },
+    {
+      "topic": "telefone_e_contactos",
+      "words": [
+        {
+          "text": "Qual é o teu correio eletrónico?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Qual é o teu número de telefone?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Onde moras?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Qual é a tua morada?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Está? / Está lá? / Estou sim?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Desculpe, quem fala?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Sou eu, a Ana. / É a Ana.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Daqui fala a Ana.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Podia falar com a Sara?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "A Sara está? / Podia chamar a Sara?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Desculpe, mas é engano.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Não mora aqui ninguém com esse nome.",
+          "priority": 2,
+          "note": null
+        }
+      ]
+    },
+    {
+      "topic": "trabalho_e_rotina",
+      "words": [
+        {
+          "text": "Tenho de estudar.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Tens de trabalhar hoje?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Ela tem de ir ao médico.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Como se chama?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Onde mora?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Qual é o teu email?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Quando é a aula?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Quanto custa?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Ao sábado costumo...",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Durante a semana, normalmente...",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Aos fins de semana, gosto de...",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Ontem fui às compras.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Na semana passada trabalhei muito.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "No ano passado visitei Portugal.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Peço desculpa pelo atraso.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Cheguei tarde porque...",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Por causa do trânsito / da chuva...",
+          "priority": 2,
+          "note": null
+        }
+      ]
+    },
+    {
+      "topic": "cafe_e_comida",
+      "words": [
+        {
+          "text": "Queria um café, se faz favor.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Para mim, uma bica e um croissant.",
+          "priority": 2,
+          "note": "a bica is priority 2; excluded from tier-1 cafe lessons"
+        },
+        {
+          "text": "Pode trazer a conta?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Prefiro chá.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Não quero açúcar.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Pode ser sem leite?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "O que é isto?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Isso é picante?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Queria aquilo que está na montra.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Não como carne.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Desculpe, este copo está sujo!",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "A sopa está fria.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Este prato não é o que eu pedi.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Não estou satisfeito/a com o serviço.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Podia trazer outro/a?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Gostaria de falar com o gerente.",
+          "priority": 2,
+          "note": null
+        }
+      ]
+    },
+    {
+      "topic": "numeros_e_horas",
+      "words": [
+        {
+          "text": "Que horas são?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "São duas e meia.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "É uma e um quarto.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "São cinco para as três.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "A aula começa às oito.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "O banco fecha às cinco e meia.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Almoço ao meio-dia.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Vejo o elétrico todos os dias.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Vês o relógio?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Ela vê os colegas de manhã.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Posso ir às oito.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Podes almoçar ao meio-dia?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Ela pode chegar às cinco e meia.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Faço o pequeno-almoço às oito.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "O que fazes à tarde?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Ela faz o jantar às oito.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Vou visitar o Porto.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "No próximo mês vamos...",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Este fim de semana vou...",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Que horas eram quando chegaste?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Eram três da manhã.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Era bastante tarde.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Antigamente, nós fazíamos noitadas.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Dantes convidavas-me sempre.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Quando era criança, costumava...",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Quando tínhamos dezassete anos, fazíamos...",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Tinha seis anos quando entrei para a escola.",
+          "priority": 2,
+          "note": null
+        }
+      ]
+    },
+    {
+      "topic": "casa_e_bairro",
+      "words": [
+        {
+          "text": "Moro num apartamento no centro.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "A minha casa fica perto de...",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "É um bairro tranquilo / movimentado.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Posso entrar? / Dá-me licença?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Com licença. / Dá-me licença para passar?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Faça favor. / Com certeza. / Pode, pode.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Tudo bem. / Podes.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Não, não pode.",
+          "priority": 2,
+          "note": "formal"
+        },
+        {
+          "text": "Nem pensar.",
+          "priority": 2,
+          "note": "informal"
+        },
+        {
+          "text": "O que é que podemos fazer?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Podia fazer um desconto?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Vou tratar disso ainda hoje.",
+          "priority": 2,
+          "note": null
+        }
+      ]
+    },
+    {
+      "topic": "direcoes_e_transporte",
+      "words": [
+        {
+          "text": "Para onde vai este autocarro?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Este elétrico vai até ao centro?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Onde é a paragem?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Quanto custa o bilhete?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Sabe a que horas passa o elétrico?",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Não sei onde é a paragem.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Ele sabe o preço do bilhete.",
+          "priority": 1,
+          "note": null
+        },
+        {
+          "text": "Com licença, o senhor sabe...?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Desculpe, a senhora pode ajudar-me?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Por favor, pode dizer-me onde fica...?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "A que horas parte o comboio?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Queria um bilhete para o Porto, ida e volta.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "De que linha parte?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Quanto tempo demora a viagem?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Primeiro fui..., depois apanhei..., quando cheguei...",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Ficámos lá durante...",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Partiu uma semana depois.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Desculpe, onde fica...?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Sabe dizer-me onde está...?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Os correios ficam longe daqui?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Fica entre o banco e o cinema.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "É perto / É longe daqui.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Fica a dois minutos a pé.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Desculpe, como vou para...?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Sabe onde fica...?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "É longe daqui?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Vá/Vai sempre em frente.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Vire/Vira à esquerda / à direita.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Passe/Passa pela praça.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "No GPS diz para virar à esquerda.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Segundo o mapa, fica a 500 metros.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Já estamos perto!",
+          "priority": 2,
+          "note": null
+        }
+      ]
+    },
+    {
+      "topic": "lazer_e_cultura",
+      "words": [
+        {
+          "text": "Queres ir ao cinema?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Podemos ir ao concerto amanhã?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Gostava(s) de ir jantar fora hoje?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Prefiro ir...",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Prefiro jantar fora.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "É melhor ficar em casa!",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Concordo. / Estou de acordo.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Não concordo. / Não acho.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Claro que sim! / Claro que não!",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Podes comprar os bilhetes?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Pode passar pelo banco?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Não tens de te preocupar com isso!",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Eu trato disso!",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Meu caro colega",
+          "priority": 2,
+          "note": "+formal"
+        },
+        {
+          "text": "Olá, João",
+          "priority": 2,
+          "note": "-formal"
+        },
+        {
+          "text": "Querida amiga",
+          "priority": 2,
+          "note": "+íntimo"
+        },
+        {
+          "text": "Meus queridos",
+          "priority": 2,
+          "note": "+íntimo"
+        },
+        {
+          "text": "Um beijo / Muitos beijinhos",
+          "priority": 2,
+          "note": "-formal"
+        },
+        {
+          "text": "Com os meus cumprimentos",
+          "priority": 2,
+          "note": "+formal"
+        },
+        {
+          "text": "Um abraço",
+          "priority": 2,
+          "note": "-formal"
+        },
+        {
+          "text": "Dou-te o convite amanhã.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Dás um abraço ao Luís?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Ela dá os parabéns ao aniversariante.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Podíamos ver aquela exposição. Que tal?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "O que é que acham?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Estou a pensar ir ao basquetebol. Que tal?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Que boa ideia! / Agrada-me a ideia.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Acho muito bem. / Acho excelente.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Eu não gosto de cinema. Prefiro ir ao teatro.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Estou farto(a) de comida japonesa. Preferia comida italiana.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Queria reservar um quarto.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Desejava informações sobre...",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Gostava de um quarto com vista para o mar.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Tem quartos disponíveis para...?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Para quantas noites?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Prefere um quarto com vista para o parque ou para a avenida?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Quando tenho tempos livres, gosto de...",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "No fim de semana costumo...",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Adoro viajar! / Detesto ficar em casa.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Quando era criança, costumava...",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Lembro-me de que...",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Naquele tempo, as coisas eram diferentes.",
+          "priority": 2,
+          "note": null
+        }
+      ]
+    },
+    {
+      "topic": "compras_e_dinheiro",
+      "words": [
+        {
+          "text": "Pode ajudar-me?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Posso ajudar?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Posso experimentar?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Claro! / Com certeza!",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Fica bem! / Está ótimo!",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "É lindo! / Que maravilha!",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Queria...",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Podia mostrar-me...?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Com certeza. / Claro.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "De momento não temos.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Este artigo está com defeito.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Podia trocar?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Tenho o talão de compra.",
+          "priority": 2,
+          "note": null
+        }
+      ]
+    },
+    {
+      "topic": "saude_e_farmacia",
+      "words": [
+        {
+          "text": "Estou doente.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Dói-me a cabeça. / Tenho dor de cabeça.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Tenho tosse. / Tenho uma dor no peito.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Estou com febre alta desde anteontem.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Como se sente? / Sente-se melhor?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "O que tem? / Onde lhe dói?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Há quanto tempo está assim?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Deve tomar o antibiótico.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Tem de tomar o antibiótico.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Tome este antibiótico e estes comprimidos para a febre.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Tem de tomar este medicamento de doze em doze horas.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Três vezes ao dia / de manhã, à tarde e à noite.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Durante dez dias.",
+          "priority": 2,
+          "note": null
+        }
+      ]
+    },
+    {
+      "topic": "lusofonia",
+      "words": [
+        {
+          "text": "O Brasil fica na América do Sul.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Angola é um país africano.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "A capital de Cabo Verde é Praia.",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Qual é o prato típico de...?",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "Em Angola, come-se muito...",
+          "priority": 2,
+          "note": null
+        },
+        {
+          "text": "A cultura de Cabo Verde é conhecida por...",
+          "priority": 2,
+          "note": null
+        }
+      ]
+    },
+    {
+      "topic": "emocoes_e_descricoes",
+      "words": [
+        { "text": "estou bem", "priority": 1, "note": null },
+        { "text": "estou cansado", "priority": 1, "note": null },
+        { "text": "estou ocupado", "priority": 1, "note": null },
+        { "text": "estou feliz", "priority": 1, "note": null },
+        { "text": "tudo bem", "priority": 1, "note": null },
+        { "text": "como estás?", "priority": 1, "note": null }
+      ]
+    },
+    {
+      "topic": "familia_e_pessoas",
+      "words": [
+        { "text": "a família", "priority": 1, "note": null },
+        { "text": "o filho", "priority": 1, "note": null },
+        { "text": "a filha", "priority": 1, "note": null },
+        { "text": "o irmão", "priority": 1, "note": null },
+        { "text": "a irmã", "priority": 1, "note": null },
+        { "text": "a mulher", "priority": 1, "note": null },
+        { "text": "o marido", "priority": 1, "note": null },
+        { "text": "tenho", "priority": 1, "note": null }
+      ]
+    },
+    {
+      "topic": "tempo_e_clima",
+      "words": [
+        { "text": "está frio", "priority": 1, "note": null },
+        { "text": "está calor", "priority": 1, "note": null },
+        { "text": "faz sol", "priority": 1, "note": null },
+        { "text": "chove", "priority": 1, "note": null },
+        { "text": "o tempo", "priority": 1, "note": null },
+        { "text": "hoje", "priority": 1, "note": null }
+      ]
+    }
+  ]
+}

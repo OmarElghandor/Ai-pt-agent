@@ -1,0 +1,152 @@
+{
+  "id": "test-greetings",
+  "titleAr": "اختبار: تحية",
+  "level": "A0",
+  "learningTarget": "يقول تحية بسيطة ويقدّم نفسه.",
+  "chipLabel": "اختبار التحيات",
+  "assessmentAvailable": true,
+  "testOnly": true,
+  "introAr": "النهارده هتقابل جارتك ريتا وتسلم عليها.",
+  "introArz": "النَّهَارْدَه هِتْقابِل جارْتَك ريتا وِتْسَلِّم عَلِيها.",
+  "character": { "name": "Rita", "roleAr": "جارة" },
+  "scenes": [
+    { "id": "s1", "titleAr": "الوصول" },
+    { "id": "s2", "titleAr": "التعرف" },
+    { "id": "s3", "titleAr": "الوداع" }
+  ],
+  "beats": [
+    {
+      "id": "b01",
+      "sceneId": "s1",
+      "narrationAr": "ريتا بتفتح الباب وتبص لك.",
+      "speaker": "Rita",
+      "line": { "pt": "Olá!", "ar": "أهلاً!", "arz": "أَهْلاً!" },
+      "altLine": { "pt": "Olá!", "ar": "أهلاً!", "arz": "أَهْلاً!" },
+      "difficulty": "guided",
+      "coachTip": {
+        "ar": "سلّم عليها بـ [Olá].",
+        "arz": "سَلِّم عَلِيها بـ [Olá]."
+      },
+      "reactionCue": "Rita is glad he greeted her and smiles.",
+      "frame": "Olá",
+      "kind": "known",
+      "acceptedAnswers": ["Olá", "Olá!"],
+      "anticipatedWrong": [
+        {
+          "answer": "Oi",
+          "verdict": "near_miss",
+          "feedback": [
+            { "lang": "ar", "text": "دي برازيلية.", "pronunciation": "دي بَرازِيلِيّة." }
+          ]
+        }
+      ],
+      "hintNote": "تحية قصيرة",
+      "whyNote": "ريتا قالت Olá والإجابة Olá لأنها بترد التحية."
+    },
+    {
+      "id": "b02",
+      "sceneId": "s2",
+      "narrationAr": "ريتا بتسأل عن اسمك.",
+      "speaker": "Rita",
+      "line": { "pt": "Como te chamas?", "ar": "اسمك إيه؟", "arz": "اِسْمَك إيه؟" },
+      "altLine": { "pt": "Como te chamas?", "ar": "اسمك إيه؟", "arz": "اِسْمَك إيه؟" },
+      "difficulty": "supported",
+      "coachTip": {
+        "ar": "قدّم نفسك بـ [Chamo-me].",
+        "arz": "قَدِّم نَفْسَك بـ [Chamo-me]."
+      },
+      "reactionCue": "Rita repeats his name and is happy to meet him.",
+      "kind": "known",
+      "acceptedAnswers": ["Chamo-me [NAME].", "Chamo-me [NAME]"],
+      "anticipatedWrong": [],
+      "hintNote": "ابدأ بـ Chamo-me",
+      "whyNote": "السؤال Como te chamas والإجابة Chamo-me مع اسمه.",
+      "wordBank": [
+        { "pt": "chamo-me", "meaning": "اسمي" },
+        { "pt": "eu", "meaning": "أنا" },
+        { "pt": "tu", "meaning": "أنت" },
+        { "pt": "olá", "meaning": "أهلاً" }
+      ]
+    },
+    {
+      "id": "b03",
+      "sceneId": "s3",
+      "narrationAr": "ريتا بتسأل عنك قبل ما تمشي.",
+      "speaker": "Rita",
+      "line": { "pt": "Tudo bem?", "ar": "عامل إيه؟", "arz": "عامِل إيه؟" },
+      "altLine": { "pt": "Tudo bem?", "ar": "عامل إيه؟", "arz": "عامِل إيه؟" },
+      "difficulty": "supported",
+      "coachTip": {
+        "ar": "رد بـ [Tudo bem].",
+        "arz": "رُدّ بـ [Tudo bem]."
+      },
+      "reactionCue": "Rita is glad he is well.",
+      "kind": "known",
+      "acceptedAnswers": ["Tudo bem", "Tudo bem?"],
+      "anticipatedWrong": [],
+      "hintNote": "رد قصير",
+      "whyNote": "السؤال Tudo bem والإجابة Tudo bem.",
+      "wordBank": [
+        { "pt": "tudo", "meaning": "كل" },
+        { "pt": "bem", "meaning": "كويس" },
+        { "pt": "sim", "meaning": "أيوة" },
+        { "pt": "obrigado", "meaning": "شكراً" }
+      ]
+    }
+  ],
+  "closingHook": {
+    "pt": "E tu, de onde és?",
+    "ar": "وإنت منين؟",
+    "arz": "وإِنْت مِنِين؟"
+  },
+  "assessmentTasks": [
+    {
+      "id": "a1",
+      "target": "تحية",
+      "kind": "known",
+      "line": { "pt": "Olá!", "ar": "أهلاً!", "arz": "أَهْلاً!" },
+      "acceptedAnswers": ["Olá", "Olá!"],
+      "anticipatedWrong": [],
+      "nudgeNote": "في حاجة محتاجة تتظبط",
+      "whyNote": "التحية Olá",
+      "passSummary": [
+        { "lang": "ar", "text": "التحية تمام.", "pronunciation": "التَّحِيّة تَمام." }
+      ],
+      "reviewSummary": [
+        { "lang": "ar", "text": "راجع التحية.", "pronunciation": "راجِع التَّحِيّة." }
+      ]
+    },
+    {
+      "id": "a2",
+      "target": "تقديم النفس",
+      "kind": "known",
+      "line": { "pt": "Como te chamas?", "ar": "اسمك إيه؟", "arz": "اِسْمَك إيه؟" },
+      "acceptedAnswers": ["Chamo-me Omar.", "Chamo-me Omar"],
+      "anticipatedWrong": [],
+      "nudgeNote": "في حاجة محتاجة تتظبط",
+      "whyNote": "التقديم Chamo-me",
+      "passSummary": [
+        { "lang": "ar", "text": "التقديم تمام.", "pronunciation": "التَّقْديم تَمام." }
+      ],
+      "reviewSummary": [
+        { "lang": "ar", "text": "راجع التقديم.", "pronunciation": "راجِع التَّقْديم." }
+      ]
+    },
+    {
+      "id": "a3",
+      "target": "السؤال عن الحال",
+      "kind": "known",
+      "line": { "pt": "Tudo bem?", "ar": "عامل إيه؟", "arz": "عامِل إيه؟" },
+      "acceptedAnswers": ["Tudo bem", "Tudo bem?"],
+      "anticipatedWrong": [],
+      "nudgeNote": "في حاجة محتاجة تتظبط",
+      "whyNote": "الرد Tudo bem",
+      "passSummary": [
+        { "lang": "ar", "text": "الحال تمام.", "pronunciation": "الحال تَمام." }
+      ],
+      "reviewSummary": [
+        { "lang": "ar", "text": "راجع الحال.", "pronunciation": "راجِع الحال." }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,821 @@
+{
+  "_meta": {
+    "purpose": "Target introduction grid for the first 100 days — 5 high-utility verbs x 3 tenses x 6 persons. This governs WHICH cell a mission should introduce next (distribution), separate from the recall-scheduling cell-state machine (which governs re-practice of already-introduced cells).",
+    "target_example": "By day ~100: hoje faço / amanhã vou fazer / ontem fiz — and the equivalent for tu/ele-ela/nós/vocês/eles-elas.",
+    "verbs_chosen": "ir, fazer, ter, estar, trabalhar — highest-utility for daily speech per the architecture doc's survival-topic priority. Swap trabalhar for another verb (e.g. estudar) if that fits your learner base better.",
+    "total_cells": 90,
+    "distribution_rule": "One mission targets exactly ONE cell for its Produce step (per the one-pattern-per-mission rule). Selection should prioritize an uncovered cell, and should NOT cluster all persons of one verb into consecutive missions — spread across different topics so the same verb resurfaces in different situations rather than being drilled as a conjugation table."
+  },
+  "cells": [
+    {
+      "cell_id": "ir.presente.eu",
+      "verb": "ir",
+      "tense": "presente",
+      "person": "eu",
+      "form": "vou",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ir.presente.tu",
+      "verb": "ir",
+      "tense": "presente",
+      "person": "tu",
+      "form": "vais",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ir.presente.ele/ela",
+      "verb": "ir",
+      "tense": "presente",
+      "person": "ele/ela",
+      "form": "vai",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ir.presente.nós",
+      "verb": "ir",
+      "tense": "presente",
+      "person": "nós",
+      "form": "vamos",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ir.presente.vocês",
+      "verb": "ir",
+      "tense": "presente",
+      "person": "vocês",
+      "form": "vão",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ir.presente.eles/elas",
+      "verb": "ir",
+      "tense": "presente",
+      "person": "eles/elas",
+      "form": "vão",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ir.futuro_proximo.eu",
+      "verb": "ir",
+      "tense": "futuro_proximo",
+      "person": "eu",
+      "form": "vou fazer",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ir.futuro_proximo.tu",
+      "verb": "ir",
+      "tense": "futuro_proximo",
+      "person": "tu",
+      "form": "vais fazer",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ir.futuro_proximo.ele/ela",
+      "verb": "ir",
+      "tense": "futuro_proximo",
+      "person": "ele/ela",
+      "form": "vai fazer",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ir.futuro_proximo.nós",
+      "verb": "ir",
+      "tense": "futuro_proximo",
+      "person": "nós",
+      "form": "vamos fazer",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ir.futuro_proximo.vocês",
+      "verb": "ir",
+      "tense": "futuro_proximo",
+      "person": "vocês",
+      "form": "vão fazer",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ir.futuro_proximo.eles/elas",
+      "verb": "ir",
+      "tense": "futuro_proximo",
+      "person": "eles/elas",
+      "form": "vão fazer",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ir.preterito_perfeito.eu",
+      "verb": "ir",
+      "tense": "preterito_perfeito",
+      "person": "eu",
+      "form": "fui",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ir.preterito_perfeito.tu",
+      "verb": "ir",
+      "tense": "preterito_perfeito",
+      "person": "tu",
+      "form": "foste",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ir.preterito_perfeito.ele/ela",
+      "verb": "ir",
+      "tense": "preterito_perfeito",
+      "person": "ele/ela",
+      "form": "foi",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ir.preterito_perfeito.nós",
+      "verb": "ir",
+      "tense": "preterito_perfeito",
+      "person": "nós",
+      "form": "fomos",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ir.preterito_perfeito.vocês",
+      "verb": "ir",
+      "tense": "preterito_perfeito",
+      "person": "vocês",
+      "form": "foram",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ir.preterito_perfeito.eles/elas",
+      "verb": "ir",
+      "tense": "preterito_perfeito",
+      "person": "eles/elas",
+      "form": "foram",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "fazer.presente.eu",
+      "verb": "fazer",
+      "tense": "presente",
+      "person": "eu",
+      "form": "faço",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "fazer.presente.tu",
+      "verb": "fazer",
+      "tense": "presente",
+      "person": "tu",
+      "form": "fazes",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "fazer.presente.ele/ela",
+      "verb": "fazer",
+      "tense": "presente",
+      "person": "ele/ela",
+      "form": "faz",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "fazer.presente.nós",
+      "verb": "fazer",
+      "tense": "presente",
+      "person": "nós",
+      "form": "fazemos",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "fazer.presente.vocês",
+      "verb": "fazer",
+      "tense": "presente",
+      "person": "vocês",
+      "form": "fazem",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "fazer.presente.eles/elas",
+      "verb": "fazer",
+      "tense": "presente",
+      "person": "eles/elas",
+      "form": "fazem",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "fazer.futuro_proximo.eu",
+      "verb": "fazer",
+      "tense": "futuro_proximo",
+      "person": "eu",
+      "form": "vou fazer",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "fazer.futuro_proximo.tu",
+      "verb": "fazer",
+      "tense": "futuro_proximo",
+      "person": "tu",
+      "form": "vais fazer",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "fazer.futuro_proximo.ele/ela",
+      "verb": "fazer",
+      "tense": "futuro_proximo",
+      "person": "ele/ela",
+      "form": "vai fazer",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "fazer.futuro_proximo.nós",
+      "verb": "fazer",
+      "tense": "futuro_proximo",
+      "person": "nós",
+      "form": "vamos fazer",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "fazer.futuro_proximo.vocês",
+      "verb": "fazer",
+      "tense": "futuro_proximo",
+      "person": "vocês",
+      "form": "vão fazer",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "fazer.futuro_proximo.eles/elas",
+      "verb": "fazer",
+      "tense": "futuro_proximo",
+      "person": "eles/elas",
+      "form": "vão fazer",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "fazer.preterito_perfeito.eu",
+      "verb": "fazer",
+      "tense": "preterito_perfeito",
+      "person": "eu",
+      "form": "fiz",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "fazer.preterito_perfeito.tu",
+      "verb": "fazer",
+      "tense": "preterito_perfeito",
+      "person": "tu",
+      "form": "fizeste",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "fazer.preterito_perfeito.ele/ela",
+      "verb": "fazer",
+      "tense": "preterito_perfeito",
+      "person": "ele/ela",
+      "form": "fez",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "fazer.preterito_perfeito.nós",
+      "verb": "fazer",
+      "tense": "preterito_perfeito",
+      "person": "nós",
+      "form": "fizemos",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "fazer.preterito_perfeito.vocês",
+      "verb": "fazer",
+      "tense": "preterito_perfeito",
+      "person": "vocês",
+      "form": "fizeram",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "fazer.preterito_perfeito.eles/elas",
+      "verb": "fazer",
+      "tense": "preterito_perfeito",
+      "person": "eles/elas",
+      "form": "fizeram",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ter.presente.eu",
+      "verb": "ter",
+      "tense": "presente",
+      "person": "eu",
+      "form": "tenho",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ter.presente.tu",
+      "verb": "ter",
+      "tense": "presente",
+      "person": "tu",
+      "form": "tens",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ter.presente.ele/ela",
+      "verb": "ter",
+      "tense": "presente",
+      "person": "ele/ela",
+      "form": "tem",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ter.presente.nós",
+      "verb": "ter",
+      "tense": "presente",
+      "person": "nós",
+      "form": "temos",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ter.presente.vocês",
+      "verb": "ter",
+      "tense": "presente",
+      "person": "vocês",
+      "form": "têm",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ter.presente.eles/elas",
+      "verb": "ter",
+      "tense": "presente",
+      "person": "eles/elas",
+      "form": "têm",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ter.futuro_proximo.eu",
+      "verb": "ter",
+      "tense": "futuro_proximo",
+      "person": "eu",
+      "form": "vou ter",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ter.futuro_proximo.tu",
+      "verb": "ter",
+      "tense": "futuro_proximo",
+      "person": "tu",
+      "form": "vais ter",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ter.futuro_proximo.ele/ela",
+      "verb": "ter",
+      "tense": "futuro_proximo",
+      "person": "ele/ela",
+      "form": "vai ter",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ter.futuro_proximo.nós",
+      "verb": "ter",
+      "tense": "futuro_proximo",
+      "person": "nós",
+      "form": "vamos ter",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ter.futuro_proximo.vocês",
+      "verb": "ter",
+      "tense": "futuro_proximo",
+      "person": "vocês",
+      "form": "vão ter",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ter.futuro_proximo.eles/elas",
+      "verb": "ter",
+      "tense": "futuro_proximo",
+      "person": "eles/elas",
+      "form": "vão ter",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ter.preterito_perfeito.eu",
+      "verb": "ter",
+      "tense": "preterito_perfeito",
+      "person": "eu",
+      "form": "tive",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ter.preterito_perfeito.tu",
+      "verb": "ter",
+      "tense": "preterito_perfeito",
+      "person": "tu",
+      "form": "tiveste",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ter.preterito_perfeito.ele/ela",
+      "verb": "ter",
+      "tense": "preterito_perfeito",
+      "person": "ele/ela",
+      "form": "teve",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ter.preterito_perfeito.nós",
+      "verb": "ter",
+      "tense": "preterito_perfeito",
+      "person": "nós",
+      "form": "tivemos",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ter.preterito_perfeito.vocês",
+      "verb": "ter",
+      "tense": "preterito_perfeito",
+      "person": "vocês",
+      "form": "tiveram",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "ter.preterito_perfeito.eles/elas",
+      "verb": "ter",
+      "tense": "preterito_perfeito",
+      "person": "eles/elas",
+      "form": "tiveram",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "estar.presente.eu",
+      "verb": "estar",
+      "tense": "presente",
+      "person": "eu",
+      "form": "estou",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "estar.presente.tu",
+      "verb": "estar",
+      "tense": "presente",
+      "person": "tu",
+      "form": "estás",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "estar.presente.ele/ela",
+      "verb": "estar",
+      "tense": "presente",
+      "person": "ele/ela",
+      "form": "está",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "estar.presente.nós",
+      "verb": "estar",
+      "tense": "presente",
+      "person": "nós",
+      "form": "estamos",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "estar.presente.vocês",
+      "verb": "estar",
+      "tense": "presente",
+      "person": "vocês",
+      "form": "estão",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "estar.presente.eles/elas",
+      "verb": "estar",
+      "tense": "presente",
+      "person": "eles/elas",
+      "form": "estão",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "estar.futuro_proximo.eu",
+      "verb": "estar",
+      "tense": "futuro_proximo",
+      "person": "eu",
+      "form": "vou estar",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "estar.futuro_proximo.tu",
+      "verb": "estar",
+      "tense": "futuro_proximo",
+      "person": "tu",
+      "form": "vais estar",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "estar.futuro_proximo.ele/ela",
+      "verb": "estar",
+      "tense": "futuro_proximo",
+      "person": "ele/ela",
+      "form": "vai estar",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "estar.futuro_proximo.nós",
+      "verb": "estar",
+      "tense": "futuro_proximo",
+      "person": "nós",
+      "form": "vamos estar",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "estar.futuro_proximo.vocês",
+      "verb": "estar",
+      "tense": "futuro_proximo",
+      "person": "vocês",
+      "form": "vão estar",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "estar.futuro_proximo.eles/elas",
+      "verb": "estar",
+      "tense": "futuro_proximo",
+      "person": "eles/elas",
+      "form": "vão estar",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "estar.preterito_perfeito.eu",
+      "verb": "estar",
+      "tense": "preterito_perfeito",
+      "person": "eu",
+      "form": "estive",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "estar.preterito_perfeito.tu",
+      "verb": "estar",
+      "tense": "preterito_perfeito",
+      "person": "tu",
+      "form": "estiveste",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "estar.preterito_perfeito.ele/ela",
+      "verb": "estar",
+      "tense": "preterito_perfeito",
+      "person": "ele/ela",
+      "form": "esteve",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "estar.preterito_perfeito.nós",
+      "verb": "estar",
+      "tense": "preterito_perfeito",
+      "person": "nós",
+      "form": "estivemos",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "estar.preterito_perfeito.vocês",
+      "verb": "estar",
+      "tense": "preterito_perfeito",
+      "person": "vocês",
+      "form": "estiveram",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "estar.preterito_perfeito.eles/elas",
+      "verb": "estar",
+      "tense": "preterito_perfeito",
+      "person": "eles/elas",
+      "form": "estiveram",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "trabalhar.presente.eu",
+      "verb": "trabalhar",
+      "tense": "presente",
+      "person": "eu",
+      "form": "trabalho",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "trabalhar.presente.tu",
+      "verb": "trabalhar",
+      "tense": "presente",
+      "person": "tu",
+      "form": "trabalhas",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "trabalhar.presente.ele/ela",
+      "verb": "trabalhar",
+      "tense": "presente",
+      "person": "ele/ela",
+      "form": "trabalha",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "trabalhar.presente.nós",
+      "verb": "trabalhar",
+      "tense": "presente",
+      "person": "nós",
+      "form": "trabalhamos",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "trabalhar.presente.vocês",
+      "verb": "trabalhar",
+      "tense": "presente",
+      "person": "vocês",
+      "form": "trabalham",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "trabalhar.presente.eles/elas",
+      "verb": "trabalhar",
+      "tense": "presente",
+      "person": "eles/elas",
+      "form": "trabalham",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "trabalhar.futuro_proximo.eu",
+      "verb": "trabalhar",
+      "tense": "futuro_proximo",
+      "person": "eu",
+      "form": "vou trabalhar",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "trabalhar.futuro_proximo.tu",
+      "verb": "trabalhar",
+      "tense": "futuro_proximo",
+      "person": "tu",
+      "form": "vais trabalhar",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "trabalhar.futuro_proximo.ele/ela",
+      "verb": "trabalhar",
+      "tense": "futuro_proximo",
+      "person": "ele/ela",
+      "form": "vai trabalhar",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "trabalhar.futuro_proximo.nós",
+      "verb": "trabalhar",
+      "tense": "futuro_proximo",
+      "person": "nós",
+      "form": "vamos trabalhar",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "trabalhar.futuro_proximo.vocês",
+      "verb": "trabalhar",
+      "tense": "futuro_proximo",
+      "person": "vocês",
+      "form": "vão trabalhar",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "trabalhar.futuro_proximo.eles/elas",
+      "verb": "trabalhar",
+      "tense": "futuro_proximo",
+      "person": "eles/elas",
+      "form": "vão trabalhar",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "trabalhar.preterito_perfeito.eu",
+      "verb": "trabalhar",
+      "tense": "preterito_perfeito",
+      "person": "eu",
+      "form": "trabalhei",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "trabalhar.preterito_perfeito.tu",
+      "verb": "trabalhar",
+      "tense": "preterito_perfeito",
+      "person": "tu",
+      "form": "trabalhaste",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "trabalhar.preterito_perfeito.ele/ela",
+      "verb": "trabalhar",
+      "tense": "preterito_perfeito",
+      "person": "ele/ela",
+      "form": "trabalhou",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "trabalhar.preterito_perfeito.nós",
+      "verb": "trabalhar",
+      "tense": "preterito_perfeito",
+      "person": "nós",
+      "form": "trabalhámos",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "trabalhar.preterito_perfeito.vocês",
+      "verb": "trabalhar",
+      "tense": "preterito_perfeito",
+      "person": "vocês",
+      "form": "trabalharam",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    },
+    {
+      "cell_id": "trabalhar.preterito_perfeito.eles/elas",
+      "verb": "trabalhar",
+      "tense": "preterito_perfeito",
+      "person": "eles/elas",
+      "form": "trabalharam",
+      "status": "not_introduced",
+      "introduced_by_mission": null
+    }
+  ]
+}

@@ -25,6 +25,14 @@ const deepinfra = createOpenAICompatible({
   },
 });
 
+export function getClassifierModel(): LanguageModel {
+  // Qwen2.5-32B-Instruct is no longer served. Qwen3-32B is the mid-size
+  // replacement; the provider fetch keeps thinking off.
+  const modelId =
+    process.env.DEEPINFRA_CLASSIFIER_MODEL ?? 'Qwen/Qwen3-32B';
+  return deepinfra(modelId);
+}
+
 export function getChatModel(): LanguageModel {
   const provider = process.env.MODEL_PROVIDER ?? 'deepinfra';
   const modelId =

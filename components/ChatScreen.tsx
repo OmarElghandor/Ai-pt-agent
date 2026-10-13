@@ -1,28 +1,37 @@
 'use client';
 
-import type { UIMessage } from 'ai';
 import { useEffect, useRef } from 'react';
-import { TaggedBubble } from '@/components/TaggedBubble';
-
-function messageText(m: UIMessage): string {
-  return m.parts
-    .filter((p): p is { type: 'text'; text: string } => p.type === 'text')
-    .map((p) => p.text)
-    .join('');
-}
+import {
+  AssessmentHeaderBar,
+  ChipRow,
+  PracticeHeader,
+  WordBank,
+} from '@/components/LessonChrome';
+import { TypedBubble, UserBubble, ttsSegmentsFor } from '@/components/TypedBubble';
+import type { AssessmentHeader, StageHeader } from '@/lib/learnerView';
+import type { AuthoredSegment } from '@/lib/lessons/types';
+import type { Chip, TypedMessage } from '@/lib/progressTypes';
 
 type Props = {
-  messages: UIMessage[];
+  messages: TypedMessage[];
   status: string;
   error?: Error | undefined;
   input: string;
   setInput: (v: string) => void;
   onSubmit: (e?: React.FormEvent) => void;
   onStop: () => void;
-  onPlayMessage: (m: UIMessage) => void;
-  onCopyMessage: (m: UIMessage) => void;
+  onPlaySegments: (segments: AuthoredSegment[]) => void;
   onOpenVoice: () => void;
   isBusy: boolean;
+  booted: boolean;
+  chips: Chip[];
+  onChip: (chip: Chip) => void;
+  practiceHeader: StageHeader | null;
+  assessmentHeader: AssessmentHeader | null;
+  wordBank: { pt: string; meaning: string }[] | null;
+  sentenceFrame: string | null;
+  onEndPractice?: () => void;
+  canEndPractice?: boolean;
 };
 
 export function ChatScreen({
@@ -33,10 +42,18 @@ export function ChatScreen({
   setInput,
   onSubmit,
   onStop,
-  onPlayMessage,
-  onCopyMessage,
+  onPlaySegments,
   onOpenVoice,
   isBusy,
+  booted,
+  chips,
+  onChip,
+  practiceHeader,
+  assessmentHeader,
+  wordBank,
+  sentenceFrame,
+  onEndPractice,
+  canEndPractice,
 }: Props) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -46,96 +63,84 @@ export function ChatScreen({
 
   return (
     <>
-      <div className="flex-1 overflow-y-auto px-4 py-3">
-        {messages.length === 0 && !isBusy && (
-          <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full avatar-gradient text-2xl">
-              🇵🇹
+      {(practiceHeader || assessmentHeader || canEndPractice) && (
+        <div className="flex flex-col gap-2 border-b border-border px-3 py-2">
+          {practiceHeader ? <PracticeHeader header={practiceHeader} /> : null}
+          {assessmentHeader ? <AssessmentHeaderBar header={assessmentHeader} /> : null}
+          {canEndPractice && onEndPractice ? (
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={onEndPractice}
+                className="text-xs text-zinc-400 underline hover:text-white"
+              >
+                إنهاء التمرين
+              </button>
             </div>
+          ) : null}
+        </div>
+      )}
+
+      <div className="flex-1 overflow-y-auto px-4 py-3">
+        {messages.length === 0 && !isBusy && booted && (
+          <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
             <p className="text-lg font-medium">أهلاً! جاهز نتكلم؟</p>
-            <p className="text-sm text-muted">
-              اكتب بأي موضوع — بالبرتغالي أو بالمصري. أنا هتابعك.
-            </p>
           </div>
         )}
 
-        <ul className="flex flex-col gap-5">
+        <ul className="flex flex-col gap-4">
           {messages.map((m) => {
-            const text = messageText(m);
             if (m.role === 'user') {
               return (
                 <li key={m.id} className="flex justify-end">
-                  <div className="max-w-[85%] rounded-[24px] rounded-ee-md bg-bubble-user px-4 py-3 text-bubble-user-fg shadow-sm">
-                    <p
-                      dir="auto"
-                      className="m-0 text-[15px] leading-relaxed whitespace-pre-wrap"
-                    >
-                      {text}
-                    </p>
-                  </div>
+                  <UserBubble message={m} />
                 </li>
               );
             }
-
             return (
-              <li key={m.id} className="flex flex-col gap-2">
-                <div className="flex items-end gap-2.5">
-                  <div
-                    className="mb-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full avatar-gradient text-xs font-bold text-[#04100e]"
-                    aria-hidden
+              <li key={m.id} className="flex flex-col gap-1.5 items-start">
+                <TypedBubble
+                  message={m}
+                  onPlay={(segs) => onPlaySegments(segs)}
+                />
+                {status !== 'streaming' && m.type !== 'praise' && m.type !== 'narration' ? (
+                  <button
+                    type="button"
+                    onClick={() => onPlaySegments(ttsSegmentsFor(m))}
+                    className="text-[11px] text-zinc-500 hover:text-white"
                   >
-                    PT
-                  </div>
-                  <div className="max-w-[85%] rounded-[24px] rounded-es-md border border-border bg-bubble-assistant px-4 py-3 text-white/95">
-                    <TaggedBubble raw={text} />
-                  </div>
-                </div>
-                {status !== 'streaming' && (
-                  <div className="flex items-center gap-2 ps-11">
-                    <button
-                      type="button"
-                      onClick={() => onPlayMessage(m)}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface/60 px-3 py-1 text-xs text-muted hover:text-white"
-                    >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                      تشغيل
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => void onCopyMessage(m)}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface/60 px-3 py-1 text-xs text-muted hover:text-white"
-                    >
-                      نسخ
-                    </button>
-                  </div>
-                )}
+                    ▶ تشغيل
+                  </button>
+                ) : null}
               </li>
             );
           })}
         </ul>
 
-        {isBusy && messages[messages.length - 1]?.role !== 'assistant' && (
-          <div className="mt-5 flex items-end gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full avatar-gradient text-xs font-bold text-[#04100e]">
-              PT
-            </div>
-            <div className="rounded-[24px] border border-border bg-bubble-assistant px-4 py-3 text-sm text-muted">
-              بيكتب…
-            </div>
-          </div>
+        {isBusy && (
+          <div className="mt-4 text-sm text-muted">بيكتب…</div>
         )}
 
         {error && (
-          <p className="mt-4 text-center text-sm text-red-300">
-            حصل خطأ: {error.message}
-          </p>
+          <p className="mt-4 text-center text-sm text-red-300">حصل خطأ: {error.message}</p>
         )}
 
         <div ref={bottomRef} />
       </div>
 
+      {(wordBank && wordBank.length > 0) || sentenceFrame ? (
+        <div className="px-3 pb-2">
+          <WordBank
+            words={wordBank ?? []}
+            frame={sentenceFrame}
+            onInsert={(pt) => setInput(input ? `${input} ${pt}` : pt)}
+          />
+        </div>
+      ) : null}
+
+      <div className="px-3">
+        <ChipRow chips={chips} disabled={isBusy} onChip={onChip} />
+      </div>
       <form
         onSubmit={onSubmit}
         className="safe-bottom flex items-center gap-2.5 px-4 pb-5 pt-2"
@@ -155,23 +160,9 @@ export function ChatScreen({
             onClick={onOpenVoice}
             className="text-muted hover:text-accent-mint"
           >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-            >
-              <path
-                d="M3 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0"
-                strokeLinecap="round"
-              />
-              <path
-                d="M3 17c2-4 4-4 6 0s4 4 6 0 4-4 6 0"
-                strokeLinecap="round"
-                opacity="0.5"
-              />
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <path d="M3 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0" strokeLinecap="round" />
+              <path d="M3 17c2-4 4-4 6 0s4 4 6 0 4-4 6 0" strokeLinecap="round" opacity="0.5" />
             </svg>
           </button>
         </div>
@@ -194,13 +185,7 @@ export function ChatScreen({
             disabled={!input.trim()}
             className="accent-gradient flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-[#04100e] shadow-lg shadow-teal-900/40 disabled:opacity-40"
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="scale-x-[-1] translate-x-px"
-            >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="scale-x-[-1] translate-x-px">
               <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
             </svg>
           </button>

@@ -6,12 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "tsx --test tests/lesson-packs.test.ts tests/practice.test.ts tests/friend-assessment.test.ts tests/mongo-adapter.test.ts tests/seed-plan.test.ts tests/generation-assembler.test.ts",
+    "validate:lessons": "tsx scripts/validate-lessons.ts",
+    "warm:lesson-audio": "tsx scripts/warm-lesson-audio.ts",
+    "prebuild": "npm run validate:lessons"
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^3.0.48",
     "@ai-sdk/react": "^4.0.103",
+    "@anthropic-ai/sdk": "^0.131.0",
     "ai": "^7.0.100",
+    "mongoose": "^9.10.4",
     "next": "16.3.5",
     "react": "19.2.8",
     "react-dom": "19.2.8",
@@ -19,12 +25,14 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/mongoose": "^5.11.96",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

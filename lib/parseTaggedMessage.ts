@@ -36,7 +36,9 @@ export function parseTaggedMessage(raw: string): Segment[] {
   const { segments } = parseRange(raw, 0, null, false);
   const folded = foldArz(segments.filter((s) => s.text.length > 0));
   // Merge first, then dedupe PT — so dropping a duplicate <pt> does not glue the Arabic on both sides.
-  return dedupeAdjacentPt(mergeAdjacent(extractLatinFromArabic(folded)));
+  return dedupeAdjacentPt(
+    mergeAdjacent(tidyBoundaries(extractArabicFromPortuguese(extractLatinFromArabic(folded)))),
+  );
 }
 
 /** Text sent to the TTS API for a segment. */
@@ -97,22 +99,17 @@ export function extractLatinFromArabic(segments: Segment[]): Segment[] {
     }
 
     const displayParts = splitByScript(seg.text);
-    const hasLatin = displayParts.some((p) => p.lang === 'pt' && /[A-Za-zÀ-ÖØ-öø-ÿ]/.test(p.text));
+    const hasLatin = displayParts.some((p) => p.lang === 'pt' && LATIN_LETTER_RE.test(p.text));
     if (!hasLatin) {
       out.push(seg);
       continue;
     }
 
-    const ttsParts = seg.ttsText ? splitByScript(seg.ttsText) : null;
-    const ttsArRuns = ttsParts
-      ? ttsParts.filter((p) => p.lang === 'ar').map((p) => p.text)
-      : [];
-    let arIdx = 0;
-
+    // The pronunciation twin may be Portuguese spelled in Arabic letters.
+    // Drop it and speak the plain Arabic pieces.
     for (const part of displayParts) {
       if (part.lang === 'pt') {
         if (!LATIN_LETTER_RE.test(part.text)) {
-          // punctuation-only crumb — keep with surrounding Arabic
           if (out.length && out[out.length - 1].lang === 'ar') {
             out[out.length - 1].text += part.text;
           } else {
@@ -128,16 +125,44 @@ export function extractLatinFromArabic(segments: Segment[]): Segment[] {
         continue;
       }
 
-      const ttsPiece = ttsArRuns[arIdx++];
       out.push({
         lang: 'ar',
         text: part.text,
-        ttsText: ttsPiece,
         pending: seg.pending,
       });
     }
   }
 
+  return out;
+}
+
+/**
+ * Pull Arabic runs out of Portuguese segments so a gloss inside <pt>
+ * renders as Arabic instead of green Portuguese.
+ */
+export function extractArabicFromPortuguese(segments: Segment[]): Segment[] {
+  const out: Segment[] = [];
+  for (const seg of segments) {
+    if (seg.lang !== 'pt') {
+      out.push(seg);
+      continue;
+    }
+    const parts = splitByScript(seg.text);
+    const hasArabic = parts.some((part) => part.lang === 'ar' && ARABIC_LETTER_RE.test(part.text));
+    if (!hasArabic) {
+      out.push(seg);
+      continue;
+    }
+    for (const part of parts) {
+      if (part.lang === 'ar' && ARABIC_LETTER_RE.test(part.text)) {
+        const text = part.text.replace(/^[\s\u2010-\u2015\u2212\-–—:]+/, '').trim();
+        if (text) out.push({ lang: 'ar', text, pending: seg.pending });
+        continue;
+      }
+      const text = part.text.replace(/[\s\u2010-\u2015\u2212\-–—:]+$/g, '').trim();
+      if (text) out.push({ lang: 'pt', text, pending: seg.pending });
+    }
+  }
   return out;
 }
 
@@ -150,6 +175,40 @@ function normalizePtKey(text: string): string {
     .replace(/\s+/g, ' ')
     .trim()
     .toLowerCase();
+}
+
+/**
+ * Colon stays with the Arabic that introduces an example.
+ * A full stop stays with the Portuguese sentence.
+ * A stranded ":." on the Arabic side is just a colon.
+ */
+export function tidyBoundaries(segments: Segment[]): Segment[] {
+  const out = segments.map((seg) => ({ ...seg }));
+  for (let i = 0; i < out.length; i++) {
+    const seg = out[i];
+    const next = out[i + 1];
+    if (seg.lang === 'pt') {
+      seg.text = cleanExtractedPt(seg.text);
+    }
+    if (seg.lang === 'ar' && next?.lang === 'pt') {
+      seg.text = seg.text.replace(/[\s\u201C\u201D\u2018\u2019"«»]+$/g, '');
+      seg.text = seg.text.replace(/:\s*\.$/, ':');
+      if (seg.ttsText) {
+        seg.ttsText = seg.ttsText.replace(/[\s\u201C\u201D\u2018\u2019"«»]+$/g, '').replace(/:\s*\.$/, ':');
+      }
+    }
+    if (seg.lang === 'pt' && next?.lang === 'ar') {
+      // A question mark stays on the Arabic question. Only a stranded full stop or bang
+      // belongs to the Portuguese sentence before it.
+      const moved = next.text.match(/^[.!]+/);
+      if (moved && !/[.!?؟]$/.test(seg.text)) {
+        seg.text += moved[0];
+        next.text = next.text.slice(moved[0].length).replace(/^\s+/, '');
+        if (next.ttsText) next.ttsText = next.ttsText.replace(/^[.!]+\s*/, '');
+      }
+    }
+  }
+  return out.filter((seg) => seg.text.length > 0 || seg.ttsText);
 }
 
 function cleanExtractedPt(text: string): string {
@@ -309,15 +368,25 @@ export function splitByScript(text: string): { lang: 'pt' | 'ar'; text: string }
   return parts.filter((p) => p.text.length > 0);
 }
 
+/** Space between merged same-lang chunks unless one side already has boundary space/punct. */
+function mergeGap(prevText: string, nextText: string): string {
+  if (!prevText || !nextText) return '';
+  if (/\s$/.test(prevText) || /^\s/.test(nextText)) return '';
+  if (/^[,.;:!?…)]/.test(nextText)) return '';
+  return ' ';
+}
+
 function mergeAdjacent(segments: Segment[]): Segment[] {
   const out: Segment[] = [];
   for (const seg of segments) {
     if (!seg.text && !seg.ttsText) continue;
     const prev = out[out.length - 1];
     if (prev && prev.lang === seg.lang && !prev.pending && !seg.pending) {
-      prev.text += seg.text;
+      const gap = mergeGap(prev.text, seg.text);
+      prev.text += gap + seg.text;
       if (prev.ttsText || seg.ttsText) {
-        prev.ttsText = `${prev.ttsText ?? ''}${seg.ttsText ?? seg.text}`;
+        const ttsGap = mergeGap(prev.ttsText ?? prev.text, seg.ttsText ?? seg.text);
+        prev.ttsText = `${prev.ttsText ?? ''}${ttsGap}${seg.ttsText ?? seg.text}`;
       }
     } else {
       out.push({ ...seg });

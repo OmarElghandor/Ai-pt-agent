@@ -26,6 +26,11 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full font-sans" suppressHydrationWarning>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{localStorage.clear();sessionStorage.clear();}catch(_){}`,
+          }}
+        />
         {children}
       </body>
     </html>

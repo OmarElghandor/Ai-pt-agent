@@ -1,0 +1,270 @@
+[
+  {
+    "slot_id": "ps-01-neighbour-greetings",
+    "order": 1,
+    "title_ar": "أهلاً يا جار",
+    "topic": "cumprimentos",
+    "tier": 1,
+    "cefr_level": "A0",
+    "pattern": "greeting, thanks and goodbye phrases",
+    "cells": [],
+    "situation_ar": "بتقابل جارك على السلم"
+  },
+  {
+    "slot_id": "ps-02-first-day-work",
+    "order": 2,
+    "title_ar": "أول يوم في الشغل",
+    "topic": "cumprimentos",
+    "tier": 1,
+    "cefr_level": "A0",
+    "pattern": "introducing yourself with eu",
+    "cells": ["ter.presente.eu", "trabalhar.presente.eu"],
+    "situation_ar": "زميلة جديدة بتسألك عن نفسك"
+  },
+  {
+    "slot_id": "ps-03-what-time",
+    "order": 3,
+    "title_ar": "كام الساعة؟",
+    "topic": "numeros_e_horas",
+    "tier": 1,
+    "cefr_level": "A0",
+    "pattern": "telling the time with é / são",
+    "cells": [],
+    "situation_ar": "بتسأل حد في محطة الأتوبيس"
+  },
+  {
+    "slot_id": "ps-04-coffee-please",
+    "order": 4,
+    "title_ar": "قهوة لو سمحت",
+    "topic": "cafe_e_comida",
+    "tier": 1,
+    "cefr_level": "A0",
+    "pattern": "queria + noun",
+    "cells": [],
+    "situation_ar": "على كاونتر كافيه في لشبونة"
+  },
+  {
+    "slot_id": "ps-05-where-station",
+    "order": 5,
+    "title_ar": "المحطة فين؟",
+    "topic": "direcoes_e_transporte",
+    "tier": 1,
+    "cefr_level": "A0",
+    "pattern": "onde fica + place, and understanding directions",
+    "cells": [],
+    "situation_ar": "بتسأل حد في الشارع"
+  },
+  {
+    "slot_id": "ps-06-where-going",
+    "order": 6,
+    "title_ar": "رايح فين؟",
+    "topic": "direcoes_e_transporte",
+    "tier": 1,
+    "cefr_level": "A0",
+    "pattern": "vou ao / à + place",
+    "cells": ["ir.presente.eu"],
+    "situation_ar": "جارك شافك خارج من البيت"
+  },
+  {
+    "slot_id": "ps-07-how-are-you",
+    "order": 7,
+    "title_ar": "عامل إيه النهارده؟",
+    "topic": "emocoes_e_descricoes",
+    "tier": 1,
+    "cefr_level": "A0",
+    "pattern": "estou + state",
+    "cells": ["estar.presente.eu"],
+    "situation_ar": "زميلك بيسأل عليك الصبح"
+  },
+  {
+    "slot_id": "ps-08-my-day",
+    "order": 8,
+    "title_ar": "يومي العادي",
+    "topic": "trabalho_e_rotina",
+    "tier": 1,
+    "cefr_level": "A0",
+    "pattern": "daily verbs with eu",
+    "cells": ["fazer.presente.eu", "trabalhar.presente.eu"],
+    "situation_ar": "بتحكي لزميلك عن روتينك"
+  },
+  {
+    "slot_id": "ps-09-supermarket",
+    "order": 9,
+    "title_ar": "في السوبر ماركت",
+    "topic": "compras_e_dinheiro",
+    "tier": 1,
+    "cefr_level": "A0",
+    "pattern": "quanto custa + item",
+    "cells": [],
+    "situation_ar": "عند الكاشير"
+  },
+  {
+    "slot_id": "ps-10-family",
+    "order": 10,
+    "title_ar": "عندي ولاد وأخوات",
+    "topic": "familia_e_pessoas",
+    "tier": 1,
+    "cefr_level": "A0",
+    "pattern": "tenho + noun",
+    "cells": ["ter.presente.eu"],
+    "situation_ar": "جارك بيسأل عن عيلتك"
+  },
+  {
+    "slot_id": "ps-11-pharmacy",
+    "order": 11,
+    "title_ar": "في الصيدلية",
+    "topic": "saude_e_farmacia",
+    "tier": 1,
+    "cefr_level": "A0",
+    "pattern": "dói-me + body part",
+    "cells": [],
+    "situation_ar": "بتشرح للصيدلي اللي بيوجعك"
+  },
+  {
+    "slot_id": "ps-12-and-you",
+    "order": 12,
+    "title_ar": "وإنت؟",
+    "topic": "cumprimentos",
+    "tier": 1,
+    "cefr_level": "A0",
+    "pattern": "questions with tu",
+    "cells": ["ter.presente.tu", "estar.presente.tu"],
+    "situation_ar": "بتتعرف على زميل في الغدا"
+  },
+  {
+    "slot_id": "ps-13-yesterday",
+    "order": 13,
+    "title_ar": "امبارح رحت وعملت",
+    "topic": "trabalho_e_rotina",
+    "tier": 1,
+    "cefr_level": "A0",
+    "pattern": "ontem + fui and fiz",
+    "cells": ["ir.preterito_perfeito.eu", "fazer.preterito_perfeito.eu"],
+    "situation_ar": "جارك بيسألك عن الويك إند يوم الاتنين"
+  },
+  {
+    "slot_id": "ps-14-was-sick",
+    "order": 14,
+    "title_ar": "كنت تعبان",
+    "topic": "saude_e_farmacia",
+    "tier": 1,
+    "cefr_level": "A0",
+    "pattern": "past with estive and tive",
+    "cells": ["estar.preterito_perfeito.eu", "ter.preterito_perfeito.eu"],
+    "situation_ar": "بتشرح لمديرك ليه اتغيبت"
+  },
+  {
+    "slot_id": "ps-15-tomorrow",
+    "order": 15,
+    "title_ar": "بكرة هعمل إيه",
+    "topic": "trabalho_e_rotina",
+    "tier": 1,
+    "cefr_level": "A0",
+    "pattern": "vou + verb",
+    "cells": ["fazer.futuro_proximo.eu", "trabalhar.futuro_proximo.eu"],
+    "situation_ar": "بتخطط الويك إند مع صاحبك"
+  },
+  {
+    "slot_id": "ps-16-health-appointment",
+    "order": 16,
+    "title_ar": "ميعاد في المركز الصحي",
+    "topic": "telefone_e_contactos",
+    "tier": 2,
+    "cefr_level": "A1",
+    "pattern": "marcar + day and time",
+    "cells": ["ter.presente.eu"],
+    "situation_ar": "مكالمة مع الـ centro de saúde"
+  },
+  {
+    "slot_id": "ps-17-transport",
+    "order": 17,
+    "title_ar": "في المواصلات",
+    "topic": "direcoes_e_transporte",
+    "tier": 2,
+    "cefr_level": "A1",
+    "pattern": "apanhar + transport, buying a ticket",
+    "cells": ["ir.presente.eu"],
+    "situation_ar": "بتسأل أنهي أتوبيس وبتشتري تذكرة"
+  },
+  {
+    "slot_id": "ps-18-my-flat",
+    "order": 18,
+    "title_ar": "بيتي",
+    "topic": "casa_e_bairro",
+    "tier": 2,
+    "cefr_level": "A1",
+    "pattern": "tem + rooms and things",
+    "cells": ["ter.presente.ele/ela"],
+    "situation_ar": "بتوصف شقتك لصاحبك"
+  },
+  {
+    "slot_id": "ps-19-flat-problem",
+    "order": 19,
+    "title_ar": "مشكلة في الشقة",
+    "topic": "casa_e_bairro",
+    "tier": 2,
+    "cefr_level": "A1",
+    "pattern": "thing + está / não funciona",
+    "cells": ["estar.presente.ele/ela"],
+    "situation_ar": "بتبلّغ صاحب البيت بمشكلة"
+  },
+  {
+    "slot_id": "ps-20-my-family-does",
+    "order": 20,
+    "title_ar": "عيلتي بتعمل إيه",
+    "topic": "familia_e_pessoas",
+    "tier": 2,
+    "cefr_level": "A1",
+    "pattern": "ele/ela + present verb",
+    "cells": [
+      "trabalhar.presente.ele/ela",
+      "fazer.presente.ele/ela",
+      "ter.presente.ele/ela"
+    ],
+    "situation_ar": "بتحكي لزميلك عن مراتك وأخوك"
+  },
+  {
+    "slot_id": "ps-21-lets-go-out",
+    "order": 21,
+    "title_ar": "يلا نخرج",
+    "topic": "lazer_e_cultura",
+    "tier": 2,
+    "cefr_level": "A1",
+    "pattern": "vamos + place, and temos",
+    "cells": ["ir.presente.nós", "ter.presente.nós"],
+    "situation_ar": "بتتفق مع صحابك على خروجة"
+  },
+  {
+    "slot_id": "ps-22-weather",
+    "order": 22,
+    "title_ar": "الجو النهارده",
+    "topic": "tempo_e_clima",
+    "tier": 2,
+    "cefr_level": "A1",
+    "pattern": "está frio / calor, faz sol",
+    "cells": ["estar.presente.ele/ela"],
+    "situation_ar": "دردشة قصيرة في محطة الأتوبيس"
+  },
+  {
+    "slot_id": "ps-23-what-did-you-do",
+    "order": 23,
+    "title_ar": "إنت عملت إيه؟",
+    "topic": "lazer_e_cultura",
+    "tier": 2,
+    "cefr_level": "A1",
+    "pattern": "past questions with tu",
+    "cells": ["ir.preterito_perfeito.tu", "fazer.preterito_perfeito.tu"],
+    "situation_ar": "بتسأل صاحبك عن رحلته"
+  },
+  {
+    "slot_id": "ps-24-next-week-plans",
+    "order": 24,
+    "title_ar": "خطط الأسبوع الجاي",
+    "topic": "trabalho_e_rotina",
+    "tier": 2,
+    "cefr_level": "A1",
+    "pattern": "vais + verb, answer with vou",
+    "cells": ["fazer.futuro_proximo.tu", "trabalhar.futuro_proximo.tu"],
+    "situation_ar": "زميلك بيسأل عن خططك وانت بتسأله"
+  }
+]
