@@ -1,270 +1,1483 @@
 [
   {
-    "slot_id": "ps-01-neighbour-greetings",
+    "slot_id": "pl-001",
     "order": 1,
-    "title_ar": "أهلاً يا جار",
-    "topic": "cumprimentos",
-    "tier": 1,
+    "title_ar": "على السلم مع الجارة",
+    "topic": "pl-001",
+    "tier": 3,
     "cefr_level": "A0",
-    "pattern": "greeting, thanks and goodbye phrases",
+    "pattern": "ser و morar مع eu: sou / moro",
     "cells": [],
-    "situation_ar": "بتقابل جارك على السلم"
+    "situation_ar": "بتقابل جارتك ريتا لأول مرة على سلم العمارة"
   },
   {
-    "slot_id": "ps-02-first-day-work",
+    "slot_id": "pl-002",
     "order": 2,
-    "title_ar": "أول يوم في الشغل",
-    "topic": "cumprimentos",
-    "tier": 1,
+    "title_ar": "القهوة اللي تحت البيت",
+    "topic": "pl-002",
+    "tier": 3,
     "cefr_level": "A0",
-    "pattern": "introducing yourself with eu",
-    "cells": ["ter.presente.eu", "trabalhar.presente.eu"],
-    "situation_ar": "زميلة جديدة بتسألك عن نفسك"
+    "pattern": "queria + اسم",
+    "cells": [],
+    "situation_ar": "أول قهوة في الكافيه اللي تحت البيت"
   },
   {
-    "slot_id": "ps-03-what-time",
+    "slot_id": "pl-003",
     "order": 3,
-    "title_ar": "كام الساعة؟",
-    "topic": "numeros_e_horas",
-    "tier": 1,
+    "title_ar": "بكام ده؟",
+    "topic": "pl-003",
+    "tier": 3,
     "cefr_level": "A0",
-    "pattern": "telling the time with é / são",
+    "pattern": "الأرقام + quanto custa?",
     "cells": [],
-    "situation_ar": "بتسأل حد في محطة الأتوبيس"
+    "situation_ar": "في محل صغير جنب البيت بتسأل عن الأسعار"
   },
   {
-    "slot_id": "ps-04-coffee-please",
+    "slot_id": "pl-004",
     "order": 4,
-    "title_ar": "قهوة لو سمحت",
-    "topic": "cafe_e_comida",
-    "tier": 1,
+    "title_ar": "عملت إيه امبارح؟",
+    "topic": "pl-004",
+    "tier": 3,
     "cefr_level": "A0",
-    "pattern": "queria + noun",
-    "cells": [],
-    "situation_ar": "على كاونتر كافيه في لشبونة"
-  },
-  {
-    "slot_id": "ps-05-where-station",
-    "order": 5,
-    "title_ar": "المحطة فين؟",
-    "topic": "direcoes_e_transporte",
-    "tier": 1,
-    "cefr_level": "A0",
-    "pattern": "onde fica + place, and understanding directions",
-    "cells": [],
-    "situation_ar": "بتسأل حد في الشارع"
-  },
-  {
-    "slot_id": "ps-06-where-going",
-    "order": 6,
-    "title_ar": "رايح فين؟",
-    "topic": "direcoes_e_transporte",
-    "tier": 1,
-    "cefr_level": "A0",
-    "pattern": "vou ao / à + place",
-    "cells": ["ir.presente.eu"],
-    "situation_ar": "جارك شافك خارج من البيت"
-  },
-  {
-    "slot_id": "ps-07-how-are-you",
-    "order": 7,
-    "title_ar": "عامل إيه النهارده؟",
-    "topic": "emocoes_e_descricoes",
-    "tier": 1,
-    "cefr_level": "A0",
-    "pattern": "estou + state",
-    "cells": ["estar.presente.eu"],
-    "situation_ar": "زميلك بيسأل عليك الصبح"
-  },
-  {
-    "slot_id": "ps-08-my-day",
-    "order": 8,
-    "title_ar": "يومي العادي",
-    "topic": "trabalho_e_rotina",
-    "tier": 1,
-    "cefr_level": "A0",
-    "pattern": "daily verbs with eu",
-    "cells": ["fazer.presente.eu", "trabalhar.presente.eu"],
-    "situation_ar": "بتحكي لزميلك عن روتينك"
-  },
-  {
-    "slot_id": "ps-09-supermarket",
-    "order": 9,
-    "title_ar": "في السوبر ماركت",
-    "topic": "compras_e_dinheiro",
-    "tier": 1,
-    "cefr_level": "A0",
-    "pattern": "quanto custa + item",
-    "cells": [],
-    "situation_ar": "عند الكاشير"
-  },
-  {
-    "slot_id": "ps-10-family",
-    "order": 10,
-    "title_ar": "عندي ولاد وأخوات",
-    "topic": "familia_e_pessoas",
-    "tier": 1,
-    "cefr_level": "A0",
-    "pattern": "tenho + noun",
-    "cells": ["ter.presente.eu"],
-    "situation_ar": "جارك بيسأل عن عيلتك"
-  },
-  {
-    "slot_id": "ps-11-pharmacy",
-    "order": 11,
-    "title_ar": "في الصيدلية",
-    "topic": "saude_e_farmacia",
-    "tier": 1,
-    "cefr_level": "A0",
-    "pattern": "dói-me + body part",
-    "cells": [],
-    "situation_ar": "بتشرح للصيدلي اللي بيوجعك"
-  },
-  {
-    "slot_id": "ps-12-and-you",
-    "order": 12,
-    "title_ar": "وإنت؟",
-    "topic": "cumprimentos",
-    "tier": 1,
-    "cefr_level": "A0",
-    "pattern": "questions with tu",
-    "cells": ["ter.presente.tu", "estar.presente.tu"],
-    "situation_ar": "بتتعرف على زميل في الغدا"
-  },
-  {
-    "slot_id": "ps-13-yesterday",
-    "order": 13,
-    "title_ar": "امبارح رحت وعملت",
-    "topic": "trabalho_e_rotina",
-    "tier": 1,
-    "cefr_level": "A0",
-    "pattern": "ontem + fui and fiz",
-    "cells": ["ir.preterito_perfeito.eu", "fazer.preterito_perfeito.eu"],
-    "situation_ar": "جارك بيسألك عن الويك إند يوم الاتنين"
-  },
-  {
-    "slot_id": "ps-14-was-sick",
-    "order": 14,
-    "title_ar": "كنت تعبان",
-    "topic": "saude_e_farmacia",
-    "tier": 1,
-    "cefr_level": "A0",
-    "pattern": "past with estive and tive",
-    "cells": ["estar.preterito_perfeito.eu", "ter.preterito_perfeito.eu"],
-    "situation_ar": "بتشرح لمديرك ليه اتغيبت"
-  },
-  {
-    "slot_id": "ps-15-tomorrow",
-    "order": 15,
-    "title_ar": "بكرة هعمل إيه",
-    "topic": "trabalho_e_rotina",
-    "tier": 1,
-    "cefr_level": "A0",
-    "pattern": "vou + verb",
-    "cells": ["fazer.futuro_proximo.eu", "trabalhar.futuro_proximo.eu"],
-    "situation_ar": "بتخطط الويك إند مع صاحبك"
-  },
-  {
-    "slot_id": "ps-16-health-appointment",
-    "order": 16,
-    "title_ar": "ميعاد في المركز الصحي",
-    "topic": "telefone_e_contactos",
-    "tier": 2,
-    "cefr_level": "A1",
-    "pattern": "marcar + day and time",
-    "cells": ["ter.presente.eu"],
-    "situation_ar": "مكالمة مع الـ centro de saúde"
-  },
-  {
-    "slot_id": "ps-17-transport",
-    "order": 17,
-    "title_ar": "في المواصلات",
-    "topic": "direcoes_e_transporte",
-    "tier": 2,
-    "cefr_level": "A1",
-    "pattern": "apanhar + transport, buying a ticket",
-    "cells": ["ir.presente.eu"],
-    "situation_ar": "بتسأل أنهي أتوبيس وبتشتري تذكرة"
-  },
-  {
-    "slot_id": "ps-18-my-flat",
-    "order": 18,
-    "title_ar": "بيتي",
-    "topic": "casa_e_bairro",
-    "tier": 2,
-    "cefr_level": "A1",
-    "pattern": "tem + rooms and things",
-    "cells": ["ter.presente.ele/ela"],
-    "situation_ar": "بتوصف شقتك لصاحبك"
-  },
-  {
-    "slot_id": "ps-19-flat-problem",
-    "order": 19,
-    "title_ar": "مشكلة في الشقة",
-    "topic": "casa_e_bairro",
-    "tier": 2,
-    "cefr_level": "A1",
-    "pattern": "thing + está / não funciona",
-    "cells": ["estar.presente.ele/ela"],
-    "situation_ar": "بتبلّغ صاحب البيت بمشكلة"
-  },
-  {
-    "slot_id": "ps-20-my-family-does",
-    "order": 20,
-    "title_ar": "عيلتي بتعمل إيه",
-    "topic": "familia_e_pessoas",
-    "tier": 2,
-    "cefr_level": "A1",
-    "pattern": "ele/ela + present verb",
+    "pattern": "الماضي مع eu: fui / fiz / comi / vi / estive",
     "cells": [
-      "trabalhar.presente.ele/ela",
-      "fazer.presente.ele/ela",
+      "ir.preterito_perfeito.eu",
+      "fazer.preterito_perfeito.eu",
+      "estar.preterito_perfeito.eu"
+    ],
+    "situation_ar": "ريتا بتسألك قضيت امبارح إزاي"
+  },
+  {
+    "slot_id": "pl-005",
+    "order": 5,
+    "title_ar": "هتعمل إيه بكرة؟",
+    "topic": "pl-005",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "المستقبل: vou + فعل",
+    "cells": [],
+    "situation_ar": "جارك بيسألك عن خطتك بكرة"
+  },
+  {
+    "slot_id": "pl-006",
+    "order": 6,
+    "title_ar": "امبارح والنهارده وبكرة",
+    "topic": "pl-006",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-007",
+    "order": 7,
+    "title_ar": "رقم تليفونك كام؟",
+    "topic": "pl-007",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "الأرقام لحد 30",
+    "cells": [],
+    "situation_ar": "جارك بياخد رقمك ويسألك الإيجار بكام"
+  },
+  {
+    "slot_id": "pl-008",
+    "order": 8,
+    "title_ar": "فين الصيدلية؟",
+    "topic": "pl-008",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "onde fica + مكان",
+    "cells": [],
+    "situation_ar": "محتاج صيدلية وبتسأل حد في الشارع، وبيتكلم بسرعة"
+  },
+  {
+    "slot_id": "pl-009",
+    "order": 9,
+    "title_ar": "السوبر ماركت",
+    "topic": "pl-009",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "tem…? + كمية (um quilo / um pacote)",
+    "cells": [
       "ter.presente.ele/ela"
     ],
-    "situation_ar": "بتحكي لزميلك عن مراتك وأخوك"
+    "situation_ar": "بتشتري حاجات الأسبوع لأول مرة"
   },
   {
-    "slot_id": "ps-21-lets-go-out",
-    "order": 21,
-    "title_ar": "يلا نخرج",
-    "topic": "lazer_e_cultura",
-    "tier": 2,
-    "cefr_level": "A1",
-    "pattern": "vamos + place, and temos",
-    "cells": ["ir.presente.nós", "ter.presente.nós"],
-    "situation_ar": "بتتفق مع صحابك على خروجة"
+    "slot_id": "pl-010",
+    "order": 10,
+    "title_ar": "شقتي الجديدة",
+    "topic": "pl-010",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "há / tem + اسم",
+    "cells": [
+      "ter.presente.ele/ela"
+    ],
+    "situation_ar": "ريتا بتسألك شقتك عاملة إزاي"
   },
   {
-    "slot_id": "ps-22-weather",
-    "order": 22,
+    "slot_id": "pl-011",
+    "order": 11,
+    "title_ar": "مفتوح ولا مقفول؟",
+    "topic": "pl-011",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "já / ainda não / agora",
+    "cells": [],
+    "situation_ar": "رايح المخبز والمحل اللي جنبه لسه مافتحش"
+  },
+  {
+    "slot_id": "pl-012",
+    "order": 12,
+    "title_ar": "مراجعة: الحي – أول أسبوع في لشبونة",
+    "topic": "pl-012",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-013",
+    "order": 13,
+    "title_ar": "بتدفع إزاي؟",
+    "topic": "pl-013",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "posso + فعل? / com cartão",
+    "cells": [],
+    "situation_ar": "عند الكاشير بيسألك هتدفع كاش ولا كارت"
+  },
+  {
+    "slot_id": "pl-014",
+    "order": 14,
+    "title_ar": "فين المفاتيح؟",
+    "topic": "pl-014",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "حروف المكان: em cima de / ao lado de",
+    "cells": [],
+    "situation_ar": "نازل متأخر ومش لاقي حاجاتك في البيت"
+  },
+  {
+    "slot_id": "pl-015",
+    "order": 15,
+    "title_ar": "عيلتي في مصر",
+    "topic": "pl-015",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "o meu / a minha + ter",
+    "cells": [],
+    "situation_ar": "ريتا بتسألك عن عيلتك وعايش مع مين"
+  },
+  {
+    "slot_id": "pl-016",
+    "order": 16,
     "title_ar": "الجو النهارده",
-    "topic": "tempo_e_clima",
-    "tier": 2,
-    "cefr_level": "A1",
-    "pattern": "está frio / calor, faz sol",
-    "cells": ["estar.presente.ele/ela"],
-    "situation_ar": "دردشة قصيرة في محطة الأتوبيس"
+    "topic": "pl-016",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "está + صفة (está frio / está bom)",
+    "cells": [
+      "estar.presente.ele/ela"
+    ],
+    "situation_ar": "بتتكلم مع الجارة عن الجو وإنت نازل"
   },
   {
-    "slot_id": "ps-23-what-did-you-do",
+    "slot_id": "pl-017",
+    "order": 17,
+    "title_ar": "الساعة كام؟",
+    "topic": "pl-017",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "que horas são? / às + ساعة",
+    "cells": [],
+    "situation_ar": "بتسأل عن مواعيد المحل والأتوبيس"
+  },
+  {
+    "slot_id": "pl-018",
+    "order": 18,
+    "title_ar": "مراجعة: الحي – أول أسبوع في لشبونة",
+    "topic": "pl-018",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-019",
+    "order": 19,
+    "title_ar": "أول يوم في الشغل",
+    "topic": "pl-019",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "trabalhar في المضارع مع eu و tu",
+    "cells": [],
+    "situation_ar": "زميلتك صوفيا بتعرّفك على المكتب"
+  },
+  {
+    "slot_id": "pl-020",
+    "order": 20,
+    "title_ar": "إيه رأيك في الشغل؟",
+    "topic": "pl-020",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "acho que + é fácil / difícil",
+    "cells": [],
+    "situation_ar": "صوفيا بتسألك الشغل الجديد عامل إيه"
+  },
+  {
+    "slot_id": "pl-021",
+    "order": 21,
+    "title_ar": "ممكن تساعدني؟",
+    "topic": "pl-021",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "quero / posso / preciso + فعل",
+    "cells": [],
+    "situation_ar": "محتاج حاجة من زميلك ومش عارف تقولها"
+  },
+  {
+    "slot_id": "pl-022",
+    "order": 22,
+    "title_ar": "يومي العادي",
+    "topic": "pl-022",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "أفعال الروتين + depois",
+    "cells": [],
+    "situation_ar": "زميلك بيسألك يومك بيمشي إزاي"
+  },
+  {
+    "slot_id": "pl-023",
     "order": 23,
-    "title_ar": "إنت عملت إيه؟",
-    "topic": "lazer_e_cultura",
-    "tier": 2,
-    "cefr_level": "A1",
-    "pattern": "past questions with tu",
-    "cells": ["ir.preterito_perfeito.tu", "fazer.preterito_perfeito.tu"],
-    "situation_ar": "بتسأل صاحبك عن رحلته"
+    "title_ar": "الغدا مع الزملاء",
+    "topic": "pl-023",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "gosto de / prefiro",
+    "cells": [],
+    "situation_ar": "بتختار أكل مع زمايلك في الكانتين"
   },
   {
-    "slot_id": "ps-24-next-week-plans",
+    "slot_id": "pl-024",
     "order": 24,
-    "title_ar": "خطط الأسبوع الجاي",
-    "topic": "trabalho_e_rotina",
-    "tier": 2,
+    "title_ar": "مراجعة: الشغل",
+    "topic": "pl-024",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-025",
+    "order": 25,
+    "title_ar": "امبارح في الشغل",
+    "topic": "pl-025",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "الماضي المنتظم: trabalhei / cheguei / saí",
+    "cells": [
+      "trabalhar.preterito_perfeito.eu"
+    ],
+    "situation_ar": "المدير بيسألك عملت إيه امبارح"
+  },
+  {
+    "slot_id": "pl-026",
+    "order": 26,
+    "title_ar": "الطابعة بايظة",
+    "topic": "pl-026",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "preciso de… porque…",
+    "cells": [],
+    "situation_ar": "حاجة في المكتب مش شغالة ومحتاج مساعدة"
+  },
+  {
+    "slot_id": "pl-027",
+    "order": 27,
+    "title_ar": "اتأخرت",
+    "topic": "pl-027",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "tive de / não pude + por isso",
+    "cells": [
+      "ter.preterito_perfeito.eu"
+    ],
+    "situation_ar": "بتعتذر لمديرك عن التأخير"
+  },
+  {
+    "slot_id": "pl-028",
+    "order": 28,
+    "title_ar": "إيميل للمدير",
+    "topic": "pl-028",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "posso + فعل? (طلب بأدب)",
+    "cells": [],
+    "situation_ar": "بتبعت رسالة لمديرك تطلب إجازة يوم"
+  },
+  {
+    "slot_id": "pl-029",
+    "order": 29,
+    "title_ar": "خطة الأسبوع",
+    "topic": "pl-029",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "nós: vamos / temos / fazemos",
+    "cells": [
+      "ir.presente.nós",
+      "fazer.presente.nós",
+      "ter.presente.nós"
+    ],
+    "situation_ar": "الفريق بيتفق هيعمل إيه الأسبوع ده"
+  },
+  {
+    "slot_id": "pl-030",
+    "order": 30,
+    "title_ar": "مراجعة: الشغل",
+    "topic": "pl-030",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-031",
+    "order": 31,
+    "title_ar": "زميلك الجديد",
+    "topic": "pl-031",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "ele / ela / eles / elas في المضارع",
+    "cells": [],
+    "situation_ar": "بتحكي لصوفيا عن زميل جديد"
+  },
+  {
+    "slot_id": "pl-032",
+    "order": 32,
+    "title_ar": "اللابتوب الجديد",
+    "topic": "pl-032",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "usar / ligar + جهاز",
+    "cells": [],
+    "situation_ar": "زميلك بيساعدك تجهز الكمبيوتر"
+  },
+  {
+    "slot_id": "pl-033",
+    "order": 33,
+    "title_ar": "مكالمة شغل",
+    "topic": "pl-033",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "estou a + فعل",
+    "cells": [
+      "estar.presente.eu"
+    ],
+    "situation_ar": "بتتصل تأكد معاد مع عميل"
+  },
+  {
+    "slot_id": "pl-034",
+    "order": 34,
+    "title_ar": "تليفون من رقم غريب",
+    "topic": "pl-034",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "quem fala? / pode repetir? (التليفون)",
+    "cells": [],
+    "situation_ar": "حد بيتصل بيك من شركة ومش فاهم عايز إيه"
+  },
+  {
+    "slot_id": "pl-035",
+    "order": 35,
+    "title_ar": "تعبان",
+    "topic": "pl-035",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "estou + صفة",
+    "cells": [
+      "estar.presente.eu"
+    ],
+    "situation_ar": "زميلك لاحظ إنك تعبان النهارده"
+  },
+  {
+    "slot_id": "pl-036",
+    "order": 36,
+    "title_ar": "مراجعة: الصحة",
+    "topic": "pl-036",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-037",
+    "order": 37,
+    "title_ar": "في الصيدلية",
+    "topic": "pl-037",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "dói-me + جزء من الجسم",
+    "cells": [],
+    "situation_ar": "بتشرح للصيدلي عندك إيه"
+  },
+  {
+    "slot_id": "pl-038",
+    "order": 38,
+    "title_ar": "في الجيم",
+    "topic": "pl-038",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "جمع الأسماء: braços / pernas",
+    "cells": [],
+    "situation_ar": "المدرب بيوريك التمارين"
+  },
+  {
+    "slot_id": "pl-039",
+    "order": 39,
+    "title_ar": "حجز عند الدكتور",
+    "topic": "pl-039",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "queria marcar + يوم وساعة",
+    "cells": [],
+    "situation_ar": "بتتصل بالمركز الصحي تحجز"
+  },
+  {
+    "slot_id": "pl-040",
+    "order": 40,
+    "title_ar": "الدكتور بيسأل",
+    "topic": "pl-040",
+    "tier": 3,
+    "cefr_level": "A0",
+    "pattern": "começou há… / está melhor / pior",
+    "cells": [
+      "estar.presente.ele/ela"
+    ],
+    "situation_ar": "الدكتور بيسألك التعب بدأ إمتى واتغير إزاي"
+  },
+  {
+    "slot_id": "pl-041",
+    "order": 41,
+    "title_ar": "الدوا",
+    "topic": "pl-041",
+    "tier": 3,
     "cefr_level": "A1",
-    "pattern": "vais + verb, answer with vou",
-    "cells": ["fazer.futuro_proximo.tu", "trabalhar.futuro_proximo.tu"],
-    "situation_ar": "زميلك بيسأل عن خططك وانت بتسأله"
+    "pattern": "tomar + مرات في اليوم",
+    "cells": [],
+    "situation_ar": "الصيدلي بيشرحلك تاخد الدوا إزاي"
+  },
+  {
+    "slot_id": "pl-042",
+    "order": 42,
+    "title_ar": "مراجعة: الصحة",
+    "topic": "pl-042",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-043",
+    "order": 43,
+    "title_ar": "تغيير معاد الدكتور",
+    "topic": "pl-043",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "queria alterar / antecipar",
+    "cells": [],
+    "situation_ar": "محتاج تغيّر معاد الدكتور لأن عندك شغل"
+  },
+  {
+    "slot_id": "pl-044",
+    "order": 44,
+    "title_ar": "الغسالة بايظة",
+    "topic": "pl-044",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "está avariado / desde ontem",
+    "cells": [
+      "estar.presente.ele/ela"
+    ],
+    "situation_ar": "بتكلم صاحب البيت عن الغسالة"
+  },
+  {
+    "slot_id": "pl-045",
+    "order": 45,
+    "title_ar": "صاحب البيت عرض حل",
+    "topic": "pl-045",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "há outra opção? / pode ser",
+    "cells": [],
+    "situation_ar": "بتتفاوض على حل يناسبك"
+  },
+  {
+    "slot_id": "pl-046",
+    "order": 46,
+    "title_ar": "يوم التنضيف",
+    "topic": "pl-046",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "tenho de + فعل",
+    "cells": [
+      "ter.presente.eu"
+    ],
+    "situation_ar": "يوم تنضيف مع شريك السكن"
+  },
+  {
+    "slot_id": "pl-047",
+    "order": 47,
+    "title_ar": "أول طبخة في الشقة",
+    "topic": "pl-047",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "primeiro… depois… (خطوات)",
+    "cells": [],
+    "situation_ar": "بتطبخ لأول مرة في مطبخ الشقة"
+  },
+  {
+    "slot_id": "pl-048",
+    "order": 48,
+    "title_ar": "مراجعة: البيت",
+    "topic": "pl-048",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-049",
+    "order": 49,
+    "title_ar": "بدوّر على أوضة",
+    "topic": "pl-049",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "quanto é a renda? / está incluído?",
+    "cells": [
+      "estar.presente.ele/ela"
+    ],
+    "situation_ar": "بتكلم صاحبة شقة عن أوضة للإيجار"
+  },
+  {
+    "slot_id": "pl-050",
+    "order": 50,
+    "title_ar": "الفني جاي إمتى؟",
+    "topic": "pl-050",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "quando + vir في المستقبل",
+    "cells": [],
+    "situation_ar": "بتتابع تصليح السخان مع صاحب البيت"
+  },
+  {
+    "slot_id": "pl-051",
+    "order": 51,
+    "title_ar": "الجيران صوتهم عالي",
+    "topic": "pl-051",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "não consigo + فعل",
+    "cells": [],
+    "situation_ar": "مش عارف تنام من دوشة الجيران"
+  },
+  {
+    "slot_id": "pl-052",
+    "order": 52,
+    "title_ar": "رسالة لصاحب البيت",
+    "topic": "pl-052",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "precisava de… / seria possível…?",
+    "cells": [],
+    "situation_ar": "بتكتب لصاحب البيت عن تصليح متأخر"
+  },
+  {
+    "slot_id": "pl-053",
+    "order": 53,
+    "title_ar": "عفش للشقة",
+    "topic": "pl-053",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "este / esse / aquele",
+    "cells": [],
+    "situation_ar": "بتشتري حاجات للشقة من محل مستعمل"
+  },
+  {
+    "slot_id": "pl-054",
+    "order": 54,
+    "title_ar": "مراجعة: البيت",
+    "topic": "pl-054",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-055",
+    "order": 55,
+    "title_ar": "تذكرة المترو",
+    "topic": "pl-055",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "quero ir para… / ida e volta",
+    "cells": [],
+    "situation_ar": "أول مرة تركب مترو لشبونة"
+  },
+  {
+    "slot_id": "pl-056",
+    "order": 56,
+    "title_ar": "الأتوبيس اتأخر",
+    "topic": "pl-056",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "está atrasado? / há outro?",
+    "cells": [
+      "estar.presente.ele/ela"
+    ],
+    "situation_ar": "الأتوبيس مجاش وإنت مستعجل"
+  },
+  {
+    "slot_id": "pl-057",
+    "order": 57,
+    "title_ar": "اوصفلي الطريق",
+    "topic": "pl-057",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "الأمر: vira / segue / atravessa",
+    "cells": [],
+    "situation_ar": "سايح بيسألك على طريق الميدان"
+  },
+  {
+    "slot_id": "pl-058",
+    "order": 58,
+    "title_ar": "المطار",
+    "topic": "pl-058",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "levar / trazer",
+    "cells": [],
+    "situation_ar": "رايح المطار تستقبل قريبك"
+  },
+  {
+    "slot_id": "pl-059",
+    "order": 59,
+    "title_ar": "جولة في لشبونة",
+    "topic": "pl-059",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "الماضي مع tu: foste / viste?",
+    "cells": [
+      "ir.preterito_perfeito.tu"
+    ],
+    "situation_ar": "صاحبك وريك البلد في الويك إند"
+  },
+  {
+    "slot_id": "pl-060",
+    "order": 60,
+    "title_ar": "مراجعة: المدينة والمواصلات",
+    "topic": "pl-060",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-061",
+    "order": 61,
+    "title_ar": "الأماكن اللي حواليك",
+    "topic": "pl-061",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "há um… perto daqui?",
+    "cells": [],
+    "situation_ar": "بتسأل فين البنك والبوستة"
+  },
+  {
+    "slot_id": "pl-062",
+    "order": 62,
+    "title_ar": "عربية مستعملة",
+    "topic": "pl-062",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "comprar / vender + quanto quer?",
+    "cells": [],
+    "situation_ar": "بتشوف عربية مستعملة للبيع"
+  },
+  {
+    "slot_id": "pl-063",
+    "order": 63,
+    "title_ar": "تهت!",
+    "topic": "pl-063",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "procurar / olhar / mostrar",
+    "cells": [],
+    "situation_ar": "التاكسي نزلك في مكان غلط وبتدوّر على العنوان"
+  },
+  {
+    "slot_id": "pl-064",
+    "order": 64,
+    "title_ar": "مشوار مستعجل",
+    "topic": "pl-064",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "aconteceu um problema com… / é urgente",
+    "cells": [],
+    "situation_ar": "حصلت حاجة مش متوقعة ولازم تتصرف"
+  },
+  {
+    "slot_id": "pl-065",
+    "order": 65,
+    "title_ar": "في البنك",
+    "topic": "pl-065",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "preciso de + مستند",
+    "cells": [],
+    "situation_ar": "بتفتح حساب في البنك"
+  },
+  {
+    "slot_id": "pl-066",
+    "order": 66,
+    "title_ar": "مراجعة: الأوراق والخدمات",
+    "topic": "pl-066",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-067",
+    "order": 67,
+    "title_ar": "الطرد ماوصلش",
+    "topic": "pl-067",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "estou à espera de / quando chega?",
+    "cells": [
+      "estar.presente.eu"
+    ],
+    "situation_ar": "بتسأل عن طرد متأخر"
+  },
+  {
+    "slot_id": "pl-068",
+    "order": 68,
+    "title_ar": "الفاتورة غلط",
+    "topic": "pl-068",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "há um erro / pode verificar?",
+    "cells": [],
+    "situation_ar": "بتراجع فاتورة الكهربا مع الشركة"
+  },
+  {
+    "slot_id": "pl-069",
+    "order": 69,
+    "title_ar": "في البلدية",
+    "topic": "pl-069",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "é preciso / é obrigatório",
+    "cells": [],
+    "situation_ar": "بتخلص ورق في البلدية"
+  },
+  {
+    "slot_id": "pl-070",
+    "order": 70,
+    "title_ar": "شكوى بأدب",
+    "topic": "pl-070",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "gostaria de… / foi cobrado",
+    "cells": [
+      "ir.preterito_perfeito.ele/ela"
+    ],
+    "situation_ar": "بتشتكي من خدمة سيئة"
+  },
+  {
+    "slot_id": "pl-071",
+    "order": 71,
+    "title_ar": "في البوستة",
+    "topic": "pl-071",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "queria enviar… / quanto custa enviar…?",
+    "cells": [],
+    "situation_ar": "بتبعت جواب لمصر من البوستة"
+  },
+  {
+    "slot_id": "pl-072",
+    "order": 72,
+    "title_ar": "مراجعة: الأوراق والخدمات",
+    "topic": "pl-072",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-073",
+    "order": 73,
+    "title_ar": "السفارة",
+    "topic": "pl-073",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "nasci em… / sou de…",
+    "cells": [],
+    "situation_ar": "محتاج ورقة من السفارة المصرية"
+  },
+  {
+    "slot_id": "pl-074",
+    "order": 74,
+    "title_ar": "في المطعم",
+    "topic": "pl-074",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "para mim… / a conta, por favor",
+    "cells": [],
+    "situation_ar": "عشا مع أصحابك في مطعم"
+  },
+  {
+    "slot_id": "pl-075",
+    "order": 75,
+    "title_ar": "بطبخ أكل مصري",
+    "topic": "pl-075",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "primeiro… depois… no fim",
+    "cells": [],
+    "situation_ar": "بتشرح طبخة مصرية لصاحبك البرتغالي"
+  },
+  {
+    "slot_id": "pl-076",
+    "order": 76,
+    "title_ar": "عزومة على العشا",
+    "topic": "pl-076",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "queres vir…? / podemos…",
+    "cells": [],
+    "situation_ar": "بتعزم أصحابك عندك"
+  },
+  {
+    "slot_id": "pl-077",
+    "order": 77,
+    "title_ar": "العزومة اتأجلت",
+    "topic": "pl-077",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "podemos combinar para…? / infelizmente",
+    "cells": [],
+    "situation_ar": "صاحبك اعتذر وبتتفقوا على يوم تاني"
+  },
+  {
+    "slot_id": "pl-078",
+    "order": 78,
+    "title_ar": "مراجعة: الأكل والعزومات",
+    "topic": "pl-078",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-079",
+    "order": 79,
+    "title_ar": "السوق",
+    "topic": "pl-079",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "quanto é o quilo? / mais barato",
+    "cells": [],
+    "situation_ar": "بتشتري خضار وفاكهة من السوق"
+  },
+  {
+    "slot_id": "pl-080",
+    "order": 80,
+    "title_ar": "الفطار",
+    "topic": "pl-080",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "normalmente / às vezes / nunca",
+    "cells": [],
+    "situation_ar": "بتحكي بتفطر إيه عادة في مصر وهنا"
+  },
+  {
+    "slot_id": "pl-081",
+    "order": 81,
+    "title_ar": "الحلويات البرتغالي",
+    "topic": "pl-081",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "adoro / prefiro… a…",
+    "cells": [],
+    "situation_ar": "بتجرب حلويات في الباستيلاريا"
+  },
+  {
+    "slot_id": "pl-082",
+    "order": 82,
+    "title_ar": "عيلتي",
+    "topic": "pl-082",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "o meu / a minha",
+    "cells": [],
+    "situation_ar": "بتوري زميلك صور عيلتك"
+  },
+  {
+    "slot_id": "pl-083",
+    "order": 83,
+    "title_ar": "مكالمة مع مصر",
+    "topic": "pl-083",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "الماضي مع ele / ela: foi / fez",
+    "cells": [
+      "ir.preterito_perfeito.ele/ela",
+      "fazer.preterito_perfeito.ele/ela"
+    ],
+    "situation_ar": "بتكلم مامتك فيديو وتحكيلها عن الأسبوع"
+  },
+  {
+    "slot_id": "pl-084",
+    "order": 84,
+    "title_ar": "مراجعة: الناس والمشاعر",
+    "topic": "pl-084",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-085",
+    "order": 85,
+    "title_ar": "صاحبي",
+    "topic": "pl-085",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "ser + صفات الشخصية",
+    "cells": [],
+    "situation_ar": "بتوصف صاحبك لزميلك"
+  },
+  {
+    "slot_id": "pl-086",
+    "order": 86,
+    "title_ar": "حاسس بإيه؟",
+    "topic": "pl-086",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "sinto-me / fiquei… quando…",
+    "cells": [],
+    "situation_ar": "يوم صعب وصاحبك بيسأل مالك"
+  },
+  {
+    "slot_id": "pl-087",
+    "order": 87,
+    "title_ar": "فرح صاحبك",
+    "topic": "pl-087",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "casar + vou / fui",
+    "cells": [
+      "ir.presente.eu",
+      "ir.preterito_perfeito.eu"
+    ],
+    "situation_ar": "معزوم على فرح زميلك"
+  },
+  {
+    "slot_id": "pl-088",
+    "order": 88,
+    "title_ar": "هدية لصاحبك",
+    "topic": "pl-088",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "dar / oferecer + a alguém",
+    "cells": [],
+    "situation_ar": "بتشتري هدية عيد ميلاد لصاحبك"
+  },
+  {
+    "slot_id": "pl-089",
+    "order": 89,
+    "title_ar": "العيلة الكبيرة",
+    "topic": "pl-089",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "eles / elas",
+    "cells": [],
+    "situation_ar": "بتحكي لريتا عن جدك وولاد عمك"
+  },
+  {
+    "slot_id": "pl-090",
+    "order": 90,
+    "title_ar": "مراجعة: الناس والمشاعر",
+    "topic": "pl-090",
+    "tier": 3,
+    "cefr_level": "A1",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-091",
+    "order": 91,
+    "title_ar": "الويك إند",
+    "topic": "pl-091",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "سؤال الماضي: o que fizeste? / onde foste?",
+    "cells": [
+      "ir.preterito_perfeito.tu",
+      "fazer.preterito_perfeito.tu"
+    ],
+    "situation_ar": "ريتا بتسألك عملت إيه في الويك إند"
+  },
+  {
+    "slot_id": "pl-092",
+    "order": 92,
+    "title_ar": "الجو",
+    "topic": "pl-092",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "está a chover / faz sol",
+    "cells": [
+      "fazer.presente.ele/ela",
+      "estar.presente.ele/ela"
+    ],
+    "situation_ar": "بتخطط تخرج والجو متقلب"
+  },
+  {
+    "slot_id": "pl-093",
+    "order": 93,
+    "title_ar": "الفصول والشهور",
+    "topic": "pl-093",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "em + شهر / no verão",
+    "cells": [],
+    "situation_ar": "بتقارن الصيف في مصر والبرتغال"
+  },
+  {
+    "slot_id": "pl-094",
+    "order": 94,
+    "title_ar": "يوم على البحر",
+    "topic": "pl-094",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "vamos à praia + levar",
+    "cells": [
+      "ir.presente.nós"
+    ],
+    "situation_ar": "رايح البحر مع أصحابك"
+  },
+  {
+    "slot_id": "pl-095",
+    "order": 95,
+    "title_ar": "رحلة لبورتو",
+    "topic": "pl-095",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "quanto tempo demora? / de comboio",
+    "cells": [],
+    "situation_ar": "بتخطط رحلة قصيرة"
+  },
+  {
+    "slot_id": "pl-096",
+    "order": 96,
+    "title_ar": "مراجعة: وقت الفراغ والطقس والسفر",
+    "topic": "pl-096",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-097",
+    "order": 97,
+    "title_ar": "الأعياد",
+    "topic": "pl-097",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "no Natal / na Páscoa + presente",
+    "cells": [],
+    "situation_ar": "ريتا بتسألك عن الأعياد في مصر"
+  },
+  {
+    "slot_id": "pl-098",
+    "order": 98,
+    "title_ar": "رحلة للجبل",
+    "topic": "pl-098",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "era / estava للوصف في الماضي",
+    "cells": [],
+    "situation_ar": "كنت في رحلة للجبل وبتحكي كانت عاملة إزاي"
+  },
+  {
+    "slot_id": "pl-099",
+    "order": 99,
+    "title_ar": "كلب الجارة",
+    "topic": "pl-099",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "tens + حيوان?",
+    "cells": [
+      "ter.presente.tu"
+    ],
+    "situation_ar": "جارتك عندها كلب وبتسألك عن الحيوانات"
+  },
+  {
+    "slot_id": "pl-100",
+    "order": 100,
+    "title_ar": "الرياضة",
+    "topic": "pl-100",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "costumo + فعل",
+    "cells": [],
+    "situation_ar": "زميلك بيعزمك تجري معاه"
+  },
+  {
+    "slot_id": "pl-101",
+    "order": 101,
+    "title_ar": "ماتش كورة",
+    "topic": "pl-101",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "ganhar / perder + o jogo",
+    "cells": [],
+    "situation_ar": "بتتفرج على ماتش مع أصحابك"
+  },
+  {
+    "slot_id": "pl-102",
+    "order": 102,
+    "title_ar": "مراجعة: وقت الفراغ والطقس والسفر",
+    "topic": "pl-102",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-103",
+    "order": 103,
+    "title_ar": "هدوم الشتا",
+    "topic": "pl-103",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "fica-me bem? / o tamanho",
+    "cells": [],
+    "situation_ar": "بتشتري جاكيت قبل الشتا"
+  },
+  {
+    "slot_id": "pl-104",
+    "order": 104,
+    "title_ar": "الألوان",
+    "topic": "pl-104",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "الصفة بعد الاسم + المؤنث",
+    "cells": [],
+    "situation_ar": "بتختار لون تيشيرت"
+  },
+  {
+    "slot_id": "pl-105",
+    "order": 105,
+    "title_ar": "المقاس غلط",
+    "topic": "pl-105",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "comprei… mas… / queria trocar",
+    "cells": [],
+    "situation_ar": "بترجع حاجة اشتريتها"
+  },
+  {
+    "slot_id": "pl-106",
+    "order": 106,
+    "title_ar": "حاجات الحمام",
+    "topic": "pl-106",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "preciso de + اسم جمع",
+    "cells": [],
+    "situation_ar": "بتشتري حاجات الحمام"
+  },
+  {
+    "slot_id": "pl-107",
+    "order": 107,
+    "title_ar": "رأيك إيه؟",
+    "topic": "pl-107",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "acho que… porque…",
+    "cells": [],
+    "situation_ar": "نقاش مع زميل عن الشغل من البيت"
+  },
+  {
+    "slot_id": "pl-108",
+    "order": 108,
+    "title_ar": "مراجعة: آراء وحكايات",
+    "topic": "pl-108",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-109",
+    "order": 109,
+    "title_ar": "إيه الأحسن؟",
+    "topic": "pl-109",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "mais… do que / melhor / pior",
+    "cells": [],
+    "situation_ar": "بتختار بين شقتين"
+  },
+  {
+    "slot_id": "pl-110",
+    "order": 110,
+    "title_ar": "كان زمان",
+    "topic": "pl-110",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "antes + trabalhava / morava (الماضي المستمر)",
+    "cells": [],
+    "situation_ar": "بتقارن حياتك في مصر ودلوقتي"
+  },
+  {
+    "slot_id": "pl-111",
+    "order": 111,
+    "title_ar": "حكاية غريبة",
+    "topic": "pl-111",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "primeiro… depois… no fim",
+    "cells": [],
+    "situation_ar": "بتحكي موقف غريب حصل لك في المترو"
+  },
+  {
+    "slot_id": "pl-112",
+    "order": 112,
+    "title_ar": "غلطة واتعلمت منها",
+    "topic": "pl-112",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "enganei-me / da próxima vez vou…",
+    "cells": [
+      "ir.presente.eu"
+    ],
+    "situation_ar": "بتحكي غلطة عملتها في الشغل"
+  },
+  {
+    "slot_id": "pl-113",
+    "order": 113,
+    "title_ar": "ليه جيت البرتغال؟",
+    "topic": "pl-113",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "decidi… porque…",
+    "cells": [],
+    "situation_ar": "صاحبك بيسألك ليه قررت تنقل"
+  },
+  {
+    "slot_id": "pl-114",
+    "order": 114,
+    "title_ar": "مراجعة: آراء وحكايات",
+    "topic": "pl-114",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-115",
+    "order": 115,
+    "title_ar": "فيلم أو مسلسل",
+    "topic": "pl-115",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "é sobre… / recomendo",
+    "cells": [],
+    "situation_ar": "بتنصح صاحبك بمسلسل"
+  },
+  {
+    "slot_id": "pl-116",
+    "order": 116,
+    "title_ar": "رأيك بمثال",
+    "topic": "pl-116",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "por exemplo / depende de…",
+    "cells": [],
+    "situation_ar": "نقاش عن السكن في لشبونة"
+  },
+  {
+    "slot_id": "pl-117",
+    "order": 117,
+    "title_ar": "دردشة خفيفة",
+    "topic": "pl-117",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "costumas…? / tens feito…?",
+    "cells": [
+      "ter.presente.tu"
+    ],
+    "situation_ar": "بتفتح كلام مع حد في الأتوبيس"
+  },
+  {
+    "slot_id": "pl-118",
+    "order": 118,
+    "title_ar": "إحساس جديد",
+    "topic": "pl-118",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "fiquei surpreendido / no início… mas depois…",
+    "cells": [],
+    "situation_ar": "بتحكي عن أول مرة اتكلمت برتغالي في مكالمة"
+  },
+  {
+    "slot_id": "pl-119",
+    "order": 119,
+    "title_ar": "مقابلة شغل",
+    "topic": "pl-119",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "tenho experiência em… / era responsável por…",
+    "cells": [
+      "ter.presente.eu"
+    ],
+    "situation_ar": "أول interview في شركة برتغالية"
+  },
+  {
+    "slot_id": "pl-120",
+    "order": 120,
+    "title_ar": "مراجعة: حياة أطول في البرتغال",
+    "topic": "pl-120",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-121",
+    "order": 121,
+    "title_ar": "بتشتغل إيه؟",
+    "topic": "pl-121",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "sou + مهنة (من غير أداة)",
+    "cells": [],
+    "situation_ar": "في حفلة بتسأل الناس بيشتغلوا إيه"
+  },
+  {
+    "slot_id": "pl-122",
+    "order": 122,
+    "title_ar": "بتعلم برتغالي",
+    "topic": "pl-122",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "estou a tentar / consigo",
+    "cells": [
+      "estar.presente.eu"
+    ],
+    "situation_ar": "زميلك بيسألك بتتعلم إزاي"
+  },
+  {
+    "slot_id": "pl-123",
+    "order": 123,
+    "title_ar": "طلب بأدب",
+    "topic": "pl-123",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "será que podia…? / agradecia se…",
+    "cells": [],
+    "situation_ar": "محتاج استثناء من موظفة"
+  },
+  {
+    "slot_id": "pl-124",
+    "order": 124,
+    "title_ar": "تبعتلي الورق؟",
+    "topic": "pl-124",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "ضمائر المفعول: manda-me / dou-lhe / para ti",
+    "cells": [],
+    "situation_ar": "زميلتك هتبعتلك ورق وبتتفقوا مين يبعت لمين"
+  },
+  {
+    "slot_id": "pl-125",
+    "order": 125,
+    "title_ar": "ملخص الاجتماع",
+    "topic": "pl-125",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "então, decidimos que… / fico responsável por…",
+    "cells": [],
+    "situation_ar": "آخر الاجتماع وبتلخص اتفقتوا على إيه"
+  },
+  {
+    "slot_id": "pl-126",
+    "order": 126,
+    "title_ar": "مراجعة: حياة أطول في البرتغال",
+    "topic": "pl-126",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "بدون قواعد جديدة",
+    "cells": [],
+    "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل"
+  },
+  {
+    "slot_id": "pl-127",
+    "order": 127,
+    "title_ar": "لما تنسى الكلمة",
+    "topic": "pl-127",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "é uma coisa que… / serve para…",
+    "cells": [],
+    "situation_ar": "مش فاكر كلمة وبتوصفها"
+  },
+  {
+    "slot_id": "pl-128",
+    "order": 128,
+    "title_ar": "خطة الشهور الجاية",
+    "topic": "pl-128",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "quero conseguir… até…",
+    "cells": [],
+    "situation_ar": "بتحكي خطتك للسنة دي"
+  },
+  {
+    "slot_id": "pl-129",
+    "order": 129,
+    "title_ar": "المهمة الأخيرة",
+    "topic": "pl-129",
+    "tier": 3,
+    "cefr_level": "A1+",
+    "pattern": "الماضي + المضارع + المستقبل مع بعض",
+    "cells": [],
+    "situation_ar": "يوم فيه مشكلة في الخدمة وخطة جديدة وكلام مع جار"
   }
 ]

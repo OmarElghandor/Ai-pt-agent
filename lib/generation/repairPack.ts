@@ -42,7 +42,8 @@ function fillWordBank(row: Record<string, unknown>, pool: BankEntry[]): boolean 
   const current = (Array.isArray(row.word_bank) ? row.word_bank : [])
     .map(asEntry)
     .filter((entry): entry is BankEntry => Boolean(entry));
-  if (current.length >= 4 && current.length <= 8) return false;
+  // Guided: 3–5; supported/open: 3–6. Keep 3–6 as a shared repair band.
+  if (current.length >= 3 && current.length <= 6) return false;
   const blob = JSON.stringify(row).toLowerCase();
   const seen = new Set(current.map((entry) => entry.pt.toLowerCase()));
   const extras = [...pool].sort((a, b) => {
@@ -50,20 +51,20 @@ function fillWordBank(row: Record<string, unknown>, pool: BankEntry[]): boolean 
     const bHit = blob.includes(b.pt.toLowerCase()) ? 0 : 1;
     return aHit - bHit;
   });
-  let changed = current.length > 8;
+  let changed = current.length > 6;
   for (const entry of extras) {
-    if (current.length >= 6) break;
+    if (current.length >= 5) break;
     const key = entry.pt.toLowerCase();
     if (seen.has(key)) continue;
     seen.add(key);
     current.push(entry);
     changed = true;
   }
-  if (current.length >= 4) {
-    row.word_bank = current.slice(0, 8);
+  if (current.length >= 3) {
+    row.word_bank = current.slice(0, 6);
     return true;
   }
-  return changed && current.length >= 4;
+  return changed && current.length >= 3;
 }
 
 function fillVerdicts(list: unknown): boolean {
@@ -98,7 +99,8 @@ export function repairStoryAids(pack: unknown, allowedWords: unknown[] = []): bo
   }
   const hook = root.closing_hook;
   if (hook && typeof hook === 'object') {
-    changed = copyArz(hook as Record<string, unknown>, 'ar', 'arz') || changed;
+    const hookRow = hook as Record<string, unknown>;
+    changed = copyArz(hookRow, 'ar', 'arz') || changed;
   }
 
   const pool = allowedWords.map(asEntry).filter((entry): entry is BankEntry => Boolean(entry));
@@ -117,12 +119,19 @@ export function repairStoryAids(pack: unknown, allowedWords: unknown[] = []): bo
     }
 
     const difficulty = String(row.difficulty || '');
-    const kind = difficulty === 'open' ? 'open' : difficulty === 'guided' || difficulty === 'supported' ? 'known' : row.kind;
-    if (kind === 'open' || kind === 'known') {
-      if (row.kind !== kind) {
-        row.kind = kind;
-        changed = true;
-      }
+    const authoredKind = String(row.kind || '');
+    // Prefer authored kind. Only infer from difficulty when kind is missing.
+    const kind =
+      authoredKind === 'open' || authoredKind === 'known'
+        ? authoredKind
+        : difficulty === 'open'
+          ? 'open'
+          : difficulty === 'guided' || difficulty === 'supported'
+            ? 'known'
+            : authoredKind;
+    if ((kind === 'open' || kind === 'known') && row.kind !== kind) {
+      row.kind = kind;
+      changed = true;
     }
 
     const line = row.line;
@@ -144,10 +153,11 @@ export function repairStoryAids(pack: unknown, allowedWords: unknown[] = []): bo
       changed = true;
     }
     if ((difficulty === 'guided' || open) && !textOf(row.frame)) {
-      row.frame = '…';
+      const pt = linePt(row);
+      row.frame = open && pt ? `${firstWord(pt)} …` : '…';
       changed = true;
     }
-    if (difficulty === 'supported' || open) {
+    if (difficulty === 'guided' || difficulty === 'supported' || open) {
       if (fillWordBank(row, pool)) changed = true;
     }
     if (open) {
@@ -156,8 +166,17 @@ export function repairStoryAids(pack: unknown, allowedWords: unknown[] = []): bo
         row.criterion = pt ? `He answers in his own words to: ${pt}` : 'He answers in his own words.';
         changed = true;
       }
-      if (row.guard == null || String(row.guard).trim() === '') {
-        row.guard = firstWord(pt);
+      const guardEmpty =
+        row.guard == null ||
+        (typeof row.guard === 'string' && !String(row.guard).trim()) ||
+        (Array.isArray(row.guard) && row.guard.length === 0);
+      if (guardEmpty) {
+        const frameSrc = textOf(row.frame) || pt;
+        row.guard = [firstWord(frameSrc).toLowerCase()];
+        changed = true;
+      }
+      if (!textOf(row.hint_note) && !textOf(row.hintNote)) {
+        row.hint_note = 'فكّر في الجملة اللي تناسب السؤال.';
         changed = true;
       }
     }

@@ -100,7 +100,7 @@ async function existingLessonsForTopic(topic: string, exceptKey: string) {
   const docs = await PracticeLessonModel()
     .find({
       topic,
-      status: { $in: ['spec', 'live', 'reviewed', 'generating', 'updating'] },
+      status: { $in: ['spec', 'live', 'reviewed', 'generating', 'updating', 'needs_review'] },
       is_current: true,
     })
     .lean();
@@ -116,51 +116,50 @@ async function existingLessonsForTopic(topic: string, exceptKey: string) {
     });
 }
 
-async function runReviewer(lessonKey: string, slot: PlanSlotLike) {
-  const doc = await PracticeLessonModel().findOne({
-    lesson_key: lessonKey,
-    is_current: true,
-  });
-  if (!doc?.pack || !['live', 'reviewed'].includes(doc.status)) return;
+type ReviewerIssue = {
+  severity?: string;
+  beat_id?: string;
+  field?: string;
+  problem?: string;
+  suggestion?: string;
+};
 
-  const inputs = assembleInputs(slot, [], { planSlots: getPlanSlots() });
+/** Persist only actionable severities; ignore minor / unknown. */
+function filterReviewerIssues(issues: ReviewerIssue[]): ReviewerIssue[] {
+  return issues.filter((i) => i.severity === 'must_fix' || i.severity === 'should_fix');
+}
+
+async function reviewPackOnce(input: {
+  cefrLevel: string;
+  spec: unknown;
+  pack: unknown;
+  allowedWords: unknown;
+  nucleus: unknown;
+}): Promise<{ issues: ReviewerIssue[]; durationMs: number }> {
   const review = await callClaudeJson(
     buildReviewerSystemPrompt(),
     buildReviewerUserPrompt({
-      cefrLevel: doc.cefr_level,
-      spec: doc.spec,
-      pack: doc.pack,
-      allowedWords: inputs.allowedWords,
-      nucleus: inputs.nucleus,
+      cefrLevel: input.cefrLevel,
+      spec: input.spec,
+      pack: input.pack,
+      allowedWords: input.allowedWords,
+      nucleus: input.nucleus,
     }),
     { maxTokens: 8_000 },
   );
-
-  const data = review.data as { issues?: Array<{ severity?: string }> };
-  const issues = Array.isArray(data.issues) ? data.issues : [];
-  doc.reviewer_issues = issues;
-  const log = (doc.generation_log as Record<string, unknown>) || {};
-  doc.generation_log = {
-    ...log,
-    prompt_versions: promptVersionsSnapshot(),
-    durations_ms: {
-      ...((log.durations_ms as object) || {}),
-      reviewer: review.durationMs,
-    },
+  const data = review.data as { issues?: ReviewerIssue[] };
+  return {
+    issues: Array.isArray(data.issues) ? data.issues : [],
+    durationMs: review.durationMs,
   };
-  const mustFix = issues.filter((i) => i.severity === 'must_fix');
-  if (mustFix.length) {
-    doc.needs_omar_review = true;
-    doc.omar_flag_reason = `reviewer must_fix: ${mustFix.length}`;
-  }
-  await doc.save();
 }
 
 const inFlight = new Map<string, Promise<{ ok: boolean; error?: string }>>();
 
 /**
  * Generate a lesson pack by calling Anthropic over HTTP (no job queue / worker).
- * Awaits Prompt 1 → Prompt 2 → validate → live. Audio is generated later on play, not here. Reviewer runs in the background.
+ * Spec → pack → hard validate (+ one full pack regen) → live → reviewer diagnostics.
+ * Audio is generated later on play, not here.
  */
 export async function generateLessonDirect(
   lessonKey: string,
@@ -186,12 +185,17 @@ export async function generateLessonDirect(
       }
 
       // Stale/misaligned pack or forced regen — clear pack so Prompt 2 rewrites it.
+      // On force, also clear spec so Prompt 1 regenerates (avoids reusing a bad origin story).
       if (
         forceRegen ||
-        (doc.pack && ['live', 'reviewed', 'failed'].includes(String(doc.status)))
+        (doc.pack &&
+          ['live', 'reviewed', 'failed', 'needs_review'].includes(String(doc.status)))
       ) {
         if (!packIsAlignedLive(doc) || forceRegen) {
           doc.pack = null;
+          if (forceRegen) {
+            doc.spec = null;
+          }
           doc.status = 'spec';
           doc.generation_error = null;
           doc.validator_warnings = [];
@@ -241,10 +245,9 @@ export async function generateLessonDirect(
       const inputs = assembleInputs(slot, existingLessons, { planSlots: getPlanSlots() });
       const packInputs = { ...inputs, spec: doc.spec };
 
-      const packResult = await callClaudeJson(
+      let packResult = await callClaudeJson(
         buildPackSystemPrompt(),
         buildPackUserPrompt(packInputs),
-        { maxTokens: 32_000 },
       );
 
       let pack = packResult.data;
@@ -264,17 +267,18 @@ export async function generateLessonDirect(
       repairStoryAids(pack, inputs.allowedWords as unknown[]);
       let validation = validate(pack, validateCtx);
 
+      // Hard fail → regenerate the whole pack once (same prompt, no FIX MODE).
       if (!validation.ok) {
-        const fixResult = await callClaudeJson(
+        packResult = await callClaudeJson(
           buildPackSystemPrompt(),
-          buildPackUserPrompt(packInputs, { pack, issues: validation.errors }),
-          { maxTokens: 32_000 },
+          buildPackUserPrompt(packInputs),
         );
-        pack = fixResult.data;
+        pack = packResult.data;
         repairStoryAids(pack, inputs.allowedWords as unknown[]);
         validation = validate(pack, validateCtx);
         if (!validation.ok) {
           doc.status = 'failed';
+          doc.pack = pack;
           doc.generation_error = validation.errors.map((e) => e.message).join('; ');
           doc.validator_warnings = validation.warnings;
           doc.generation_stage = null;
@@ -292,20 +296,41 @@ export async function generateLessonDirect(
       doc.status = 'live';
       doc.needs_omar_review = false;
       doc.omar_flag_reason = null;
+      doc.generation_error = null;
       doc.generation_stage = 'done';
+      await doc.save();
+
+      // Reviewer after live: store issues for humans; never rewrite or block.
+      let reviewerMs = 0;
+      try {
+        const review = await reviewPackOnce({
+          cefrLevel: doc.cefr_level,
+          spec: doc.spec,
+          pack,
+          allowedWords: inputs.allowedWords,
+          nucleus: inputs.nucleus,
+        });
+        reviewerMs = review.durationMs;
+        doc = (await PracticeLessonModel().findById(doc._id))!;
+        doc.reviewer_issues = filterReviewerIssues(review.issues);
+      } catch {
+        doc = (await PracticeLessonModel().findById(doc._id))!;
+        doc.reviewer_issues = [];
+      }
+
       const log = (doc.generation_log as Record<string, unknown>) || {};
       doc.generation_log = {
         ...log,
         prompt_versions: promptVersionsSnapshot(),
         claude_model: packResult.model,
-        durations_ms: { ...((log.durations_ms as object) || {}), pack: packResult.durationMs },
+        durations_ms: {
+          ...((log.durations_ms as object) || {}),
+          pack: packResult.durationMs,
+          reviewer: reviewerMs,
+        },
         validator_warnings: validation.warnings,
       };
       await doc.save();
-
-      void runReviewer(lessonKey, slot).catch((err) => {
-        console.error('[generation] reviewer failed:', err);
-      });
 
       return { ok: true, stage: 'done' };
     } catch (err) {

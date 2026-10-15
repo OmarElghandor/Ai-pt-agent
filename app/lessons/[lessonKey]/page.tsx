@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChatScreen } from '@/components/ChatScreen';
+import { warmSceneWordAudio } from '@/components/SceneWordCard';
 import { VoiceScreen } from '@/components/VoiceScreen';
 import type { OrbMode } from '@/components/SpeakingOrb';
 import { ttsSegmentsFor } from '@/components/TypedBubble';
@@ -39,7 +40,7 @@ function toSegments(authored: AuthoredSegment[]): Segment[] {
 
 async function fetchLearner(id: string) {
   const res = await fetch(
-    `/api/learner?id=${encodeURIComponent(id)}&localHour=${new Date().getHours()}`,
+    `/api/learner?id=${encodeURIComponent(id)}&localHour=${new Date().getHours()}&skipOpener=1`,
   );
   return (await res.json()) as LearnerView;
 }
@@ -72,9 +73,12 @@ function PracticeLessonInner() {
   const [audioUnlocked, setAudioUnlocked] = useState(false);
   const [preparing, setPreparing] = useState<string | null>('بنجهّز الموقف…');
   const [prepareError, setPrepareError] = useState<string | null>(null);
+  /** Scroll target for «كلمات المشهد» reopen (no popup). */
+  const [scrollToSceneId, setScrollToSceneId] = useState<string | null>(null);
   const actionRef = useRef<TurnAction>({ type: 'message' });
   const awaiting = useRef(false);
   const lastPlayedKey = useRef<string | null>(null);
+  const warmedWordsRef = useRef<string | null>(null);
   const levelRef = useRef(level);
   const sessionRef = useRef(learnerId);
 
@@ -170,11 +174,21 @@ function PracticeLessonInner() {
         });
       }
       const outbound =
-        action.type === 'start-practice' ? ' ' : trimmed || action.type;
+        action.type === 'start-practice' ||
+        action.type === 'show-grammar-card' ||
+        action.type === 'show-coach-tip' ||
+        action.type === 'dismiss-scene-word-card'
+          ? ' '
+          : trimmed || action.type;
       void sendMessage({ text: outbound });
     },
     [isBusy, learnerId, sendMessage, unlockAudio],
   );
+
+  const insertWord = useCallback((pt: string) => {
+    setViewMode('text');
+    setInput((prev) => (prev.trim() ? `${prev.trim()} ${pt}` : pt));
+  }, []);
 
   useEffect(() => {
     if (!view || isBusy || learnerId === 'pending' || !lessonKey || booted.current) return;
@@ -189,6 +203,7 @@ function PracticeLessonInner() {
           hasPack?: boolean;
           jsonLesson?: boolean;
           error?: string;
+          sceneWordWarmPt?: string[];
         };
         if (!status.jsonLesson && !status.hasPack) {
           const gen = await fetch(`/api/lessons/${encodeURIComponent(lessonKey)}/generate`, {
@@ -200,6 +215,18 @@ function PracticeLessonInner() {
             setPreparing(null);
             return;
           }
+          // After inline generation, refresh metadata (incl. scene-word warm list).
+          const refreshed = await fetch(
+            `/api/lessons/${encodeURIComponent(lessonKey)}/generation`,
+          );
+          const meta = (await refreshed.json()) as { sceneWordWarmPt?: string[] };
+          if (meta.sceneWordWarmPt?.length) {
+            warmSceneWordAudio(meta.sceneWordWarmPt);
+            warmedWordsRef.current = lessonKey;
+          }
+        } else if (status.sceneWordWarmPt?.length) {
+          warmSceneWordAudio(status.sceneWordWarmPt);
+          warmedWordsRef.current = lessonKey;
         }
         setPreparing(null);
         sendText('', { type: 'start-practice', lessonId: lessonKey });
@@ -209,6 +236,25 @@ function PracticeLessonInner() {
       }
     })();
   }, [view, isBusy, learnerId, lessonKey, sendText]);
+
+  // Also warm from learner view if generation metadata was empty (e.g. after resume).
+  useEffect(() => {
+    if (!view?.sceneWordWarmPt?.length) return;
+    if (warmedWordsRef.current === lessonKey) return;
+    warmSceneWordAudio(view.sceneWordWarmPt);
+    warmedWordsRef.current = lessonKey;
+  }, [view?.sceneWordWarmPt, lessonKey]);
+
+  // Scene word gate lives in the chat thread — switch to text so the card is visible.
+  useEffect(() => {
+    if (view?.sceneWordCard?.mode === 'blocking') setViewMode('text');
+  }, [view?.sceneWordCard?.mode, view?.sceneWordCard?.sceneId]);
+
+  useEffect(() => {
+    if (!scrollToSceneId) return;
+    const t = window.setTimeout(() => setScrollToSceneId(null), 800);
+    return () => window.clearTimeout(t);
+  }, [scrollToSceneId]);
 
   const handleSubmit = useCallback(
     (e?: React.FormEvent) => {
@@ -228,7 +274,12 @@ function PracticeLessonInner() {
     window.location.href = '/lessons';
   };
 
+  const sceneWordBlocking = view?.sceneWordCard?.mode === 'blocking';
+  const gateSceneId =
+    sceneWordBlocking && view?.sceneWordCard?.sceneId ? view.sceneWordCard.sceneId : null;
+
   const handleMic = async () => {
+    if (sceneWordBlocking) return;
     unlockAudio();
     if (playing) stopAudio();
     const text = await mic.toggle();
@@ -236,6 +287,17 @@ function PracticeLessonInner() {
       setVoiceTranscript(text);
       sendText(text);
     }
+  };
+
+  const dismissSceneWords = () => {
+    if (sceneWordBlocking) sendText('', { type: 'dismiss-scene-word-card' });
+  };
+
+  const openSceneWordsInChat = () => {
+    const sceneId = view?.sceneWordCard?.sceneId;
+    if (!sceneId) return;
+    setViewMode('text');
+    setScrollToSceneId(sceneId);
   };
 
   const displayTranscript = pendingUserText || voiceTranscript;
@@ -272,7 +334,7 @@ function PracticeLessonInner() {
 
   return (
     <div className="app-shell flex justify-center">
-      <div className="flex h-dvh w-full max-w-[430px] flex-col">
+      <div className="relative flex h-dvh w-full max-w-[430px] flex-col">
         <header className="flex items-center justify-between gap-3 px-4 pb-2 pt-4">
           <Link
             href="/lessons"
@@ -323,6 +385,7 @@ function PracticeLessonInner() {
             onStopSpeaking={stopAudio}
             chips={chips}
             onChip={onChip}
+            onInsertWord={insertWord}
             hearLabel={showHear ? 'اضغط لتسمع' : null}
             onHear={() =>
               lastAssistant && void playSegments(toSegments(ttsSegmentsFor(lastAssistant)))
@@ -330,6 +393,9 @@ function PracticeLessonInner() {
             caption={
               showHear && lastAssistant ? toSegments(ttsSegmentsFor(lastAssistant)) : []
             }
+            controlsDisabled={Boolean(sceneWordBlocking) || isBusy}
+            showSceneWordChip={Boolean(view?.showSceneWordChip)}
+            onOpenSceneWords={openSceneWordsInChat}
           />
         ) : (
           <ChatScreen
@@ -353,6 +419,12 @@ function PracticeLessonInner() {
             wordBank={view?.wordBank ?? null}
             sentenceFrame={view?.sentenceFrame ?? null}
             canEndPractice={false}
+            controlsDisabled={Boolean(sceneWordBlocking)}
+            showSceneWordChip={Boolean(view?.showSceneWordChip)}
+            onOpenSceneWords={openSceneWordsInChat}
+            sceneWordGateSceneId={gateSceneId}
+            onDismissSceneWords={dismissSceneWords}
+            scrollToSceneId={scrollToSceneId}
           />
         )}
       </div>

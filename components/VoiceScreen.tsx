@@ -24,6 +24,12 @@ type Props = {
   hearLabel: string | null;
   onHear: () => void;
   caption: Segment[];
+  /** Tap a word-bank piece — typically opens text mode with the piece inserted. */
+  onInsertWord?: (pt: string) => void;
+  /** Disable mic / chips while scene word card is blocking. */
+  controlsDisabled?: boolean;
+  showSceneWordChip?: boolean;
+  onOpenSceneWords?: () => void;
 };
 
 export function VoiceScreen({
@@ -45,6 +51,10 @@ export function VoiceScreen({
   hearLabel,
   onHear,
   caption,
+  onInsertWord,
+  controlsDisabled = false,
+  showSceneWordChip = false,
+  onOpenSceneWords,
 }: Props) {
   return (
     <div className="flex flex-1 flex-col">
@@ -80,11 +90,28 @@ export function VoiceScreen({
 
       {(wordBank && wordBank.length > 0) || sentenceFrame ? (
         <div className="px-6 pb-2">
-          <WordBank words={wordBank ?? []} frame={sentenceFrame} onInsert={() => {}} />
+          <WordBank
+            words={wordBank ?? []}
+            frame={sentenceFrame}
+            onInsert={(pt) => onInsertWord?.(pt)}
+          />
         </div>
       ) : null}
 
-      <ChipRow chips={chips} onChip={onChip} />
+      {showSceneWordChip && onOpenSceneWords ? (
+        <div className="flex justify-center px-6 pb-2">
+          <button
+            type="button"
+            onClick={onOpenSceneWords}
+            disabled={controlsDisabled}
+            className="rounded-full border border-accent-mint/35 bg-accent-mint/10 px-3 py-1.5 text-xs text-accent-mint disabled:opacity-40"
+          >
+            كلمات المشهد
+          </button>
+        </div>
+      ) : null}
+
+      <ChipRow chips={chips} disabled={controlsDisabled} onChip={onChip} />
 
       <div className="safe-bottom flex items-center justify-between px-8 pb-8 pt-2">
         <button
@@ -113,9 +140,10 @@ export function VoiceScreen({
           type="button"
           aria-label={recording ? 'إيقاف التسجيل' : 'تسجيل'}
           onClick={onMic}
+          disabled={controlsDisabled}
           className={`flex h-16 w-16 items-center justify-center rounded-full ${
             recording ? 'bg-red-500' : 'bg-accent-mint'
-          } text-[#04100e] shadow-lg`}
+          } text-[#04100e] shadow-lg disabled:opacity-40`}
         >
           <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z" />

@@ -1,0 +1,337 @@
+{
+  "curriculum_id": "langify_pt_pt_90_day_communication_v2",
+  "lessons": 90,
+  "cells_by_lesson": {
+    "pt30-d01": [],
+    "pt30-d02": [],
+    "pt30-d03": [],
+    "pt30-d04": [],
+    "pt30-d05": [],
+    "pt30-d06": [],
+    "pt30-d07": [],
+    "pt30-d08": [],
+    "pt30-d09": [],
+    "pt30-d10": [],
+    "pt30-d11": [
+      "ter.presente.ele/ela"
+    ],
+    "pt30-d12": [],
+    "pt30-d13": [],
+    "pt30-d14": [],
+    "pt30-d15": [
+      "ir.preterito_perfeito.eu",
+      "fazer.preterito_perfeito.eu",
+      "fazer.preterito_perfeito.tu"
+    ],
+    "pt30-d16": [],
+    "pt30-d17": [
+      "ter.presente.eu",
+      "estar.presente.eu"
+    ],
+    "pt30-d18": [
+      "ter.presente.eu"
+    ],
+    "pt30-d19": [
+      "ter.preterito_perfeito.eu",
+      "estar.preterito_perfeito.eu"
+    ],
+    "pt30-d20": [
+      "ir.preterito_perfeito.tu",
+      "ir.preterito_perfeito.ele/ela",
+      "fazer.preterito_perfeito.tu"
+    ],
+    "pt30-d21": [
+      "ter.preterito_perfeito.eu",
+      "estar.presente.eu",
+      "estar.preterito_perfeito.eu"
+    ],
+    "pt30-d22": [],
+    "pt30-d23": [],
+    "pt30-d24": [
+      "ter.presente.ele/ela"
+    ],
+    "pt30-d25": [
+      "estar.presente.eu"
+    ],
+    "pt30-d26": [
+      "estar.presente.ele/ela"
+    ],
+    "pt30-d27": [],
+    "pt30-d28": [
+      "ter.presente.eu"
+    ],
+    "pt30-d29": [],
+    "pt30-d30": [],
+    "pt90-d31-conhecer-melhor-alguem": [
+      "fazer.presente.tu"
+    ],
+    "pt90-d32-": [
+      "trabalhar.presente.eu"
+    ],
+    "pt90-d33-": [],
+    "pt90-d34-": [
+      "ir.preterito_perfeito.eu",
+      "ir.preterito_perfeito.ele/ela"
+    ],
+    "pt90-d35-": [],
+    "pt90-d36-": [
+      "ir.preterito_perfeito.ele/ela"
+    ],
+    "pt90-d37-": [
+      "estar.presente.ele/ela"
+    ],
+    "pt90-d38-": [],
+    "pt90-d39-": [],
+    "pt90-d40-": [
+      "trabalhar.presente.eu"
+    ],
+    "pt90-d41-": [],
+    "pt90-d42-": [],
+    "pt90-d43-": [],
+    "pt90-d44-": [
+      "estar.presente.eu"
+    ],
+    "pt90-d45-": [],
+    "pt90-d46-": [
+      "estar.presente.vocês",
+      "estar.presente.eles/elas"
+    ],
+    "pt90-d47-": [],
+    "pt90-d48-": [
+      "estar.presente.ele/ela"
+    ],
+    "pt90-d49-": [
+      "ter.presente.eu"
+    ],
+    "pt90-d50-": [],
+    "pt90-d51-": [
+      "fazer.presente.eu"
+    ],
+    "pt90-d52-": [],
+    "pt90-d53-": [],
+    "pt90-d54-": [
+      "estar.presente.ele/ela"
+    ],
+    "pt90-d55-": [
+      "estar.presente.ele/ela"
+    ],
+    "pt90-d56-": [
+      "estar.presente.eu"
+    ],
+    "pt90-d57-": [],
+    "pt90-d58-": [],
+    "pt90-d59-": [],
+    "pt90-d60-": [],
+    "pt90-d61-narrative_past": [
+      "ir.preterito_perfeito.eu"
+    ],
+    "pt90-d62-unexpected_problem": [],
+    "pt90-d63-directions": [],
+    "pt90-d64-compare_options": [],
+    "pt90-d65-opinion_example": [],
+    "pt90-d66-misunderstanding": [],
+    "pt90-d67-change_appointment": [],
+    "pt90-d68-doctor_followup": [
+      "estar.presente.ele/ela"
+    ],
+    "pt90-d69-landlord": [],
+    "pt90-d70-review_checkpoint": [],
+    "pt90-d71-work_experience": [
+      "ter.presente.eu"
+    ],
+    "pt90-d72-memorable_experience": [
+      "ir.preterito_perfeito.ele/ela"
+    ],
+    "pt90-d73-future_plans": [
+      "estar.presente.eu"
+    ],
+    "pt90-d74-polite_requests": [],
+    "pt90-d75-phone_call": [
+      "estar.presente.eu"
+    ],
+    "pt90-d76-multi_step_instructions": [
+      "ter.presente.eu"
+    ],
+    "pt90-d77-complaint": [
+      "ir.preterito_perfeito.ele/ela"
+    ],
+    "pt90-d78-small_talk": [
+      "ter.presente.tu"
+    ],
+    "pt90-d79-film_or_series": [],
+    "pt90-d80-speaking_checkpoint": [],
+    "pt90-d81-change_over_time": [],
+    "pt90-d82-nuanced_preferences": [],
+    "pt90-d83-social_invitation": [],
+    "pt90-d84-summarize_decision": [],
+    "pt90-d85-learn_from_mistake": [],
+    "pt90-d86-rules_and_procedures": [],
+    "pt90-d87-travel_problem": [
+      "ir.preterito_perfeito.ele/ela",
+      "ter.presente.eu"
+    ],
+    "pt90-d88-paraphrase_missing_word": [],
+    "pt90-d89-final_mission_rehearsal": [],
+    "pt90-d90-final_assessment": []
+  },
+  "needs_review": {
+    "ids_with_empty_slug": [
+      "pt90-d32-",
+      "pt90-d33-",
+      "pt90-d34-",
+      "pt90-d35-",
+      "pt90-d36-",
+      "pt90-d37-",
+      "pt90-d38-",
+      "pt90-d39-",
+      "pt90-d40-",
+      "pt90-d41-",
+      "pt90-d42-",
+      "pt90-d43-",
+      "pt90-d44-",
+      "pt90-d45-",
+      "pt90-d46-",
+      "pt90-d47-",
+      "pt90-d48-",
+      "pt90-d49-",
+      "pt90-d50-",
+      "pt90-d51-",
+      "pt90-d52-",
+      "pt90-d53-",
+      "pt90-d54-",
+      "pt90-d55-",
+      "pt90-d56-",
+      "pt90-d57-",
+      "pt90-d58-",
+      "pt90-d59-",
+      "pt90-d60-"
+    ],
+    "title_not_arabic": [
+      "pt90-d31-conhecer-melhor-alguem: Conhecer melhor alguém",
+      "pt90-d61-narrative_past: Contar uma história com começo, meio e fim",
+      "pt90-d62-unexpected_problem: Lidar com um imprevisto",
+      "pt90-d63-directions: Explicar um percurso",
+      "pt90-d64-compare_options: Comparar duas opções",
+      "pt90-d65-opinion_example: Defender uma opinião",
+      "pt90-d66-misunderstanding: Corrigir um mal-entendido",
+      "pt90-d67-change_appointment: Alterar uma marcação",
+      "pt90-d68-doctor_followup: Explicar evolução de sintomas",
+      "pt90-d69-landlord: Falar com o senhorio",
+      "pt90-d70-review_checkpoint: Revisão integrada: resolver uma situação",
+      "pt90-d71-work_experience: Descrever experiência profissional",
+      "pt90-d72-memorable_experience: Relatar uma experiência marcante",
+      "pt90-d73-future_plans: Planear os próximos meses",
+      "pt90-d74-polite_requests: Fazer pedidos com delicadeza",
+      "pt90-d75-phone_call: Resolver algo por telefone",
+      "pt90-d76-multi_step_instructions: Seguir instruções com vários passos",
+      "pt90-d77-complaint: Fazer uma reclamação educada",
+      "pt90-d78-small_talk: Manter conversa informal",
+      "pt90-d79-film_or_series: Falar sobre um filme ou série",
+      "pt90-d80-speaking_checkpoint: Revisão: opinião, pedido e solução",
+      "pt90-d81-change_over_time: Explicar mudanças ao longo do tempo",
+      "pt90-d82-nuanced_preferences: Explicar preferências com nuance",
+      "pt90-d83-social_invitation: Convidar e responder naturalmente",
+      "pt90-d84-summarize_decision: Resumir o que ficou decidido",
+      "pt90-d85-learn_from_mistake: Explicar um erro e o que aprendeu",
+      "pt90-d86-rules_and_procedures: Perguntar sobre regras e procedimentos",
+      "pt90-d87-travel_problem: Resolver um problema numa viagem",
+      "pt90-d88-paraphrase_missing_word: Manter a conversa quando falta uma palavra",
+      "pt90-d89-final_mission_rehearsal: Missão final: resolver uma situação real",
+      "pt90-d90-final_assessment: Avaliação final: português para a vida real"
+    ],
+    "setting_not_arabic": [
+      "pt90-d31-conhecer-melhor-alguem: What do you do? Where do you live? What do you like?",
+      "pt90-d32-: What do you do for work? What did you do before?",
+      "pt90-d33-: What do you usually do? What changes on weekends?",
+      "pt90-d34-: Have you ever been? What happened?",
+      "pt90-d35-: What happened first? What happened next?",
+      "pt90-d36-: What went wrong? Why? What do you need?",
+      "pt90-d37-: What was it like before? What is different now?",
+      "pt90-d38-: What do you think? Why? Do you agree?",
+      "pt90-d39-: Which is better for you? Why?",
+      "pt90-d40-: Tell me about yourself, your work, and a recent experience.",
+      "pt90-d41-: Who is this person? What are they like?",
+      "pt90-d42-: How do you feel? Why?",
+      "pt90-d43-: What documents do I need? Where do I go?",
+      "pt90-d44-: Where is my parcel? When will it arrive?",
+      "pt90-d45-: Why is this amount different? Can you check?",
+      "pt90-d46-: How much is the rent? Is it close?",
+      "pt90-d47-: When can someone come? Has it been fixed?",
+      "pt90-d48-: When did it start? Is it getting better?",
+      "pt90-d49-: Do I need to do this first? Can you explain again?",
+      "pt90-d50-: Explain a service problem and agree what happens next.",
+      "pt90-d51-: What do you do in your free time? How often?",
+      "pt90-d52-: How do we get there? How long does it take?",
+      "pt90-d53-: What was the place like? Would you recommend it?",
+      "pt90-d54-: What is the weather like? Should we change plans?",
+      "pt90-d55-: Is it delayed? Is there another route?",
+      "pt90-d56-: What are you trying to improve? What is difficult?",
+      "pt90-d57-: Why do you think that? Can you give an example?",
+      "pt90-d58-: Can you make it? What about another day?",
+      "pt90-d59-: What did you choose? Why?",
+      "pt90-d60-: Talk about a recent experience, a problem, an opinion, and a plan."
+    ],
+    "vocabulary_without_gloss": [],
+    "grammar_descriptors_in_vocabulary": [
+      "pt30-d22: vou + infinitivo",
+      "pt30-d30: vou + infinitivo"
+    ],
+    "lessons_without_cells": [
+      "pt30-d01",
+      "pt30-d02",
+      "pt30-d03",
+      "pt30-d04",
+      "pt30-d05",
+      "pt30-d06",
+      "pt30-d07",
+      "pt30-d08",
+      "pt30-d09",
+      "pt30-d10",
+      "pt30-d12",
+      "pt30-d13",
+      "pt30-d14",
+      "pt30-d16",
+      "pt30-d22",
+      "pt30-d23",
+      "pt30-d27",
+      "pt30-d29",
+      "pt30-d30",
+      "pt90-d33-",
+      "pt90-d35-",
+      "pt90-d38-",
+      "pt90-d39-",
+      "pt90-d41-",
+      "pt90-d42-",
+      "pt90-d43-",
+      "pt90-d45-",
+      "pt90-d47-",
+      "pt90-d50-",
+      "pt90-d52-",
+      "pt90-d53-",
+      "pt90-d57-",
+      "pt90-d58-",
+      "pt90-d59-",
+      "pt90-d60-",
+      "pt90-d62-unexpected_problem",
+      "pt90-d63-directions",
+      "pt90-d64-compare_options",
+      "pt90-d65-opinion_example",
+      "pt90-d66-misunderstanding",
+      "pt90-d67-change_appointment",
+      "pt90-d69-landlord",
+      "pt90-d70-review_checkpoint",
+      "pt90-d74-polite_requests",
+      "pt90-d79-film_or_series",
+      "pt90-d80-speaking_checkpoint",
+      "pt90-d81-change_over_time",
+      "pt90-d82-nuanced_preferences",
+      "pt90-d83-social_invitation",
+      "pt90-d84-summarize_decision",
+      "pt90-d85-learn_from_mistake",
+      "pt90-d86-rules_and_procedures",
+      "pt90-d88-paraphrase_missing_word",
+      "pt90-d89-final_mission_rehearsal",
+      "pt90-d90-final_assessment"
+    ]
+  }
+}

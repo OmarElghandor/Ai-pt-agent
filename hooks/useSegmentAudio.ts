@@ -72,6 +72,14 @@ function prefetchAll(segments: Segment[]): Promise<Blob | null>[] {
   });
 }
 
+/**
+ * Cache-only warm: fetch blobs into the shared audio cache without playing.
+ * Used for scene-word cards on lesson open so play is instant.
+ */
+export function prefetchSegmentTexts(segments: Segment[]): Promise<Blob | null>[] {
+  return prefetchAll(segments.filter((s) => s.text.trim().length > 0));
+}
+
 function playBlob(
   blob: Blob,
   audioElRef: { current: HTMLAudioElement | null },

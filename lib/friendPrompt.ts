@@ -72,192 +72,157 @@ export function buildFriendInstruction(input: {
   ].join('\n');
 }
 
-/** Notes for Prompt 4 — gated by verdict/attempt so unused teaching text cannot derail the reaction. */
-export function notesForReaction(r: LessonReactionContext): string {
-  const lines: (string | null)[] = [];
-  const attempt = r.attempt ?? 1;
-
-  if (r.mode === 'side') {
-    lines.push(r.criterion ? `criterion: ${r.criterion}` : null);
-    return lines.filter(Boolean).join('\n') || '(none)';
-  }
-
-  if (r.mode === 'assessment') {
-    if (r.verdict === 'wrong' && attempt === 1) {
-      lines.push(r.nudgeNote ? `nudge_note: ${r.nudgeNote}` : null);
+/** Short list of say/hear phrases for R1 WORDS. */
+export function wordsForReaction(pack: LessonPack | undefined | null): string {
+  if (!pack) return '(none)';
+  const phrases = new Set<string>();
+  for (const beat of pack.beats) {
+    if (beat.line.pt) phrases.add(beat.line.pt);
+    if (beat.kind === 'known') {
+      for (const answer of beat.acceptedAnswers.slice(0, 3)) phrases.add(answer);
     }
-    return lines.filter(Boolean).join('\n') || '(none)';
   }
-
-  // practice
-  if (r.verdict === 'correct') {
-    return '(none)';
+  for (const word of pack.requirements?.words ?? []) {
+    if (word) phrases.add(word);
   }
-  if (r.verdict === 'near_miss') {
-    lines.push(r.mistakeNote ? `mistake_note: ${r.mistakeNote}` : null);
-    return lines.filter(Boolean).join('\n') || '(none)';
-  }
-  // wrong
-  if (attempt <= 1) {
-    lines.push(r.accepted ? `accepted: ${r.accepted}` : null);
-    lines.push(r.mistakeNote ? `mistake_note: ${r.mistakeNote}` : null);
-    lines.push(r.hintNote ? `hint_note: ${r.hintNote}` : null);
-    lines.push(r.coachTip ? `coach_tip: ${r.coachTip}` : null);
-    lines.push(r.criterion ? `criterion: ${r.criterion}` : null);
-    lines.push(r.guard ? `guard: ${r.guard}` : null);
-  } else {
-    lines.push(r.accepted ? `accepted: ${r.accepted}` : null);
-    lines.push(r.whyNote ? `why_note: ${r.whyNote}` : null);
-    lines.push(r.mistakeNote ? `mistake_note: ${r.mistakeNote}` : null);
-  }
-  return lines.filter(Boolean).join('\n') || '(none)';
+  return [...phrases].slice(0, 40).join(' · ') || '(none)';
 }
 
-/** Short grade. A correct reply is one line. A slip adds one coach block for this beat. */
-function buildVerdictInstruction(input: {
+/** R1 — character reaction after a code-graded correct / near-miss. */
+export function buildR1CharacterReaction(input: {
   reaction: LessonReactionContext;
   userText: string;
 }): string {
   const r = input.reaction;
-  const lines = [
-    `Previous line: ${r.currentPromptPlain}`,
-    `Learner: ${input.userText}`,
-  ];
-  if (r.accepted) lines.push(`Target: ${r.accepted}`);
-  if (r.coachTip) lines.push(`Coach tip: ${r.coachTip}`);
-  if (r.wordBank) lines.push(`Word bank: ${r.wordBank}`);
-  lines.push(
+  const name = r.characterName || 'Colleague';
+  const role = r.characterRole || 'in Portugal';
+  const slotNote = r.slotNote?.trim() || '';
+  const nextLine = r.nextLine?.trim() || '';
+  const nextSpeaker = r.nextSpeaker?.trim() || '';
+  return [
+    `You are ${name}, ${role}, in a short everyday scene in Portugal.`,
+    `You just said: "${r.beatLine || r.currentPromptPlain}"`,
+    `The learner, an Egyptian beginner in European Portuguese, answered: "${input.userText}"`,
+    'His answer is right.',
     '',
-    'A reply that answers the previous line is correct. Another wording, capitalization, a leading "sim" or "não", a missing accent, or "por favor" still counts.',
-    '"Sou egípcio" answers "De onde és?". "Sim, sou de Lisboa" answers "És de Lisboa agora?".',
-    'near_miss is only one small letter slip inside an otherwise right answer, such as "muto" for "Muito".',
-    'wrong means it does not answer the line.',
-  );
-  if (r.slotPattern) {
-    lines.push(
-      `Pattern: ${r.slotPattern}`,
-      'A real name, city, number, or place in that slot is correct. No brackets, no extra words.',
-    );
-  }
-  lines.push(
-    'If correct, one line only: VERDICT: correct',
-    'If near_miss or wrong, the verdict line, then one coach block. <pt> is one target sentence for this beat, taken from the target or the coach tip, written once.',
-    'If wrong: Arabic says it was wrong and to repeat that target, and ends with جرّب تاني.',
-    '<coach><ar></ar><arz></arz><pt></pt></coach>',
-    'VERDICT: near_miss',
-    'VERDICT: wrong',
-  );
-  return lines.join('\n');
+    `Write the ONE short sentence ${name} says back.`,
+    `Feeling and intent: ${r.reactionCue || 'warm and natural'}`,
+    slotNote,
+    nextLine
+      ? `Right after your sentence, ${nextSpeaker || 'someone'} will say: "${nextLine}". Your sentence must lead into it naturally and must not say, ask or answer the same thing.`
+      : '',
+    '',
+    'Rules:',
+    '- European Portuguese, informal tu, very simple (A0–A1), at most 8 words.',
+    '- A statement. No question mark. No invitation, no offer, no new topic.',
+    '- React only to what he said. Do not add facts about yourself (your age, where you are from, comparisons).',
+    `- Never say your own name (${name}); you are talking TO him.`,
+    '- Prefer his own words back to him ("Egípcio! Que bom.") over new words.',
+    `- Use simple words a beginner knows: ${r.words || '(none)'}`,
+    `- Do not reuse these recent sentences: ${(r.recentCharacterReactions ?? r.recentPraise).slice(-3).join(' | ') || '(none)'}`,
+    '- Then the same sentence in Egyptian Arabic (عايز، إزاي، فين، دلوقتي، مش), never formal Arabic, never English.',
+    '',
+    'Output exactly this and nothing else:',
+    `<character name="${name}"><pt>Portuguese sentence</pt><ar>Egyptian translation</ar></character>`,
+  ]
+    .filter((line) => line !== '')
+    .join('\n');
 }
 
-/**
- * Prompt 4 — short reaction inside a prepared lesson.
- * When SOURCE is you, this is the short verdict. The long reaction stays for a verdict the app already decided.
- */
+/** R2 — judge (and react if right). Assessment omits the character part. */
+export function buildR2Judge(input: {
+  reaction: LessonReactionContext;
+  userText: string;
+}): string {
+  const r = input.reaction;
+  const name = r.characterName || 'Colleague';
+  const role = r.characterRole || 'in Portugal';
+  const assessment = r.mode === 'assessment';
+  const slotRule = r.slotPattern
+    ? `The answer is the pattern "${r.slotPattern}" with his own real name, number, city or place in place of the brackets. Any real value is correct. Never ask him to say the brackets.`
+    : '';
+
+  const reactPart = assessment
+    ? ''
+    : [
+        `If correct or near_miss, line 2: the sentence ${name} (${role}) says back, reacting to what he actually said. Feeling: ${r.reactionCue || 'warm'}. European Portuguese, informal tu, at most 8 words, a statement, no question.`,
+        `<character name="${name}"><pt>…</pt><ar>Egyptian translation</ar></character>`,
+        'If near_miss, line 3: his sentence corrected, keeping his own words and value, with one short Egyptian sentence that states the rule as how WE say it ("بنكتب muito بالـ i"، "بعد الرقم بنقول anos"), not "قول كذا":',
+        '<fix><ar>Egyptian: the rule</ar><pt>corrected sentence</pt></fix>',
+        'If wrong, write nothing after line 1.',
+      ].join('\n');
+
+  return [
+    'A learner of European Portuguese is answering one line in a lesson.',
+    '',
+    `Line: "${r.beatLine || r.currentPromptPlain}" (${r.lineAr || ''})`,
+    `Learner: "${input.userText}"`,
+    `A correct answer must: ${r.criterion || 'answer the line naturally'}`,
+    `It must contain: ${r.guard || '(no specific words)'}`,
+    slotRule,
+    '',
+    'Decide:',
+    '- correct: it answers the line and meets the requirement. Other wording, capital or small letters, a missing accent, "sim" in front or "por favor" are fine.',
+    '- near_miss: it meets the requirement with one small slip (one wrong letter, a missing article, the wrong ending on one word).',
+    '- wrong: it does not answer the line, or it misses the required words.',
+    '',
+    'Line 1, exactly: VERDICT: correct  |  VERDICT: near_miss  |  VERDICT: wrong',
+    reactPart,
+    'Nothing else.',
+  ]
+    .filter((line) => line !== '')
+    .join('\n');
+}
+
+/** R3 — coach answer to an Arabic-only side message (WHY / HOW / OTHER). */
+export function buildR3CoachArabic(input: {
+  reaction: LessonReactionContext;
+  userText: string;
+}): string {
+  const r = input.reaction;
+  const name = r.characterName || 'Colleague';
+  const grammarPoint = r.grammarPoint?.trim() || r.criterion?.trim() || '(this lesson tool)';
+  return [
+    'You are the coach: a warm Egyptian friend helping an Egyptian adult practise European Portuguese.',
+    `He is in a short scene. ${name} just said: "${r.beatLine || r.currentPromptPlain}" (${r.lineAr || ''}).`,
+    `This lesson's tool: ${grammarPoint}`,
+    `He wrote: "${input.userText}"`,
+    '',
+    'Decide which one it is, then answer:',
+    '- WHY: he asks why we say something, or the difference between two forms ("ليه queria مش quero؟").',
+    '  Give the reason in 1–2 short Egyptian sentences, then ONE short example in Portuguese with its Egyptian meaning, then "يلا نستخدمها".',
+    '- HOW: he asks how to say something from this scene.',
+    '  Give the tool as how WE say it ("عشان نقول … بنقول …"), then "جرّب تقولها".',
+    '- OTHER: anything else. One short line of answer, then say you\'ll come back to it after the scene.',
+    `Never give the whole answer to ${name}'s line. Egyptian Arabic only (عايز، إزاي، فين، دلوقتي، مش), Portuguese words inline. No English. Do not speak as ${name}.`,
+    '',
+    'Output exactly:',
+    '<coach><ar>Egyptian text</ar><arz>the same with Egyptian harakat</arz></coach>',
+    'and, for WHY only, after it:',
+    '<example><pt>Portuguese example</pt><ar>Egyptian meaning</ar></example>',
+  ].join('\n');
+}
+
+/** Pick R1 / R2 / R3 from reaction context. */
 export function buildLessonReactionInstruction(input: {
   level: CefrLevel;
   reaction: LessonReactionContext;
   userText: string;
 }): string {
-  const r = input.reaction;
-  if (r.source === 'you') return buildVerdictInstruction(input);
-  const notes = notesForReaction(r);
-  const hasNext = Boolean(r.nextPrompt);
-
-  const character = r.characterName
-    ? `${r.characterName}${r.characterRole ? `, ${r.characterRole}` : ''}`
-    : '';
-  return [
-    'You play two voices in a short story-lesson for an Egyptian adult practising European Portuguese in Portugal.',
-    '',
-    '- CHARACTER: the person in the story. Speaks only Portuguese, informal tu, short and warm, like a real person in Lisbon.',
-    '- COACH: a warm Egyptian friend outside the story. Speaks mixed Egyptian Arabic with the Portuguese words inline. Appears only to help or correct.',
-    '',
-    "The story's next line comes from the lesson and is sent by the app after you. Your only job this turn is a short, natural reaction to what the learner just said.",
-    '',
-    'LANGUAGE',
-    '- European Portuguese, informal tu. No English.',
-    '- Egyptian Arabic only: امبارح، دي، عايز، إزاي، فين، دلوقتي، مش، بشتغل. Never formal Arabic.',
-    "- Use only the lesson's words. Add no grammar beyond the notes you are given.",
-    '',
-    'THIS TURN',
-    `MODE: ${r.mode}`,
-    `LEVEL: ${input.level}`,
-    `SITUATION: ${r.situation ?? ''}`,
-    `LESSON_TARGET: ${r.lessonTarget ?? ''}`,
-    character ? `CHARACTER: ${character}` : '',
-    r.sceneTitle ? `SCENE: ${r.sceneTitle}` : '',
-    `CURRENT_PROMPT: ${r.currentPromptPlain}`,
-    `BEAT_LINE: ${r.beatLine || r.currentPromptPlain}`,
-    `ANSWER: ${input.userText}`,
-    r.source === 'you' || r.slotPattern ? '' : `VERDICT: ${r.verdict}`,
-    `SOURCE: ${r.source}`,
-    `ATTEMPT: ${r.attempt}`,
-    'NOTES:',
-    notes,
-    r.reactionCue ? `REACTION_CUE: ${r.reactionCue}` : '',
-    r.nextLine ? `NEXT_LINE: ${r.nextLine}` : '',
-    `HAS_NEXT_PROMPT: ${hasNext ? 'yes' : 'no'}`,
-    `RECENT: ${(r.recentCharacterReactions ?? r.recentPraise).slice(-3).join(' | ') || '(none)'}`,
-    ...(r.slotPattern
-      ? [
-          '',
-          'PERSONAL SLOT',
-          `PATTERN: ${r.slotPattern}`,
-          '- The brackets are not words he should say. [NAME] is his own name, [CITY] his city, [NUMBER] a number, [PLACE] a place.',
-          '- The pattern is the only correct sentence. Do not add a word that is not in it. Do not require "eu" when the pattern has no "eu": "Chamo-me Omar" is correct for "Chamo-me [NAME]".',
-          '- A real value in the slot is correct. Keep his own value in any correction. Never replace it with a different name, city, number, or place.',
-          '- If his sentence is the pattern with his own value filled in, VERDICT is correct. Praise only. Do not correct it.',
-          '- Never tell him to say the brackets, or the words NAME, CITY, NUMBER, or PLACE.',
-        ]
-      : []),
-    '',
-    'IF SOURCE IS "you"',
-    r.slotPattern
-      ? 'Start with one hidden line, exactly: VERDICT: correct, near_miss or wrong, then a short reason. Judge the personal slot pattern above, not a fixed spelling.'
-      : [
-          'Start with one hidden line, exactly: VERDICT: correct, near_miss or wrong, then a short reason. Then write your reaction to match that verdict.',
-          '- Judge ANSWER only against the previous line, CURRENT_PROMPT.',
-          '- Correct when the reply is a natural response to that line, including another wording, a missing accent, or "por favor".',
-          '- Do not require a stored sentence or a specific verb.',
-          '- near_miss only for one small slip. wrong only when it does not answer that line.',
-        ].join('\n'),
-    '',
-    'PRACTICE',
-    '- correct: the CHARACTER reacts, in one short Portuguese sentence, to what he actually said: his name, his city, his job. Follow REACTION_CUE. Use different words from RECENT. Then its Egyptian translation.',
-    '- near_miss: the same CHARACTER reaction, then one short COACH sentence that shows the small fix, with the correct form once.',
-    '- wrong, attempt 1: the CHARACTER waits; only the COACH speaks. One short mixed sentence: say the answer was wrong, show the target phrase from accepted or BEAT_LINE once, tell him to repeat it, end with "جرّب تاني". Do not invent another form.',
-    '- wrong, attempt 2: only the COACH speaks: the correct answer once and why, from why_note. The story continues after you, so do not ask anything.',
-    '',
-    'ASSESSMENT (no story)',
-    '- No CHARACTER, no teaching, no hints, never the answer.',
-    '- correct: one short Portuguese praise from the COACH with its translation.',
-    '- wrong, attempt 1: one mixed COACH sentence from nudge_note saying something needs fixing, then "جرّب تاني".',
-    '- wrong, attempt 2: a short neutral COACH line that moves on, with no answer.',
-    '',
-    'SIDE (he wrote only Arabic: a question or a remark)',
-    'The COACH answers briefly in mixed Egyptian, using only the lesson content. If he asked something outside it, say kindly you will keep it simple for now. The app will repeat the character\'s line after you.',
-    '',
-    'ALWAYS',
-    '- One or two sentences per voice.',
-    r.slotPattern
-      ? '- You decide the verdict from the pattern. Do not treat a missing line as wrong.'
-      : r.source === 'you'
-        ? '- You decide the verdict. A reply that answers the previous line is correct.'
-        : '- Never contradict VERDICT.',
-    '- The CHARACTER never asks a question; the next question comes from the story. The COACH asks nothing except "جرّب تاني".',
-    '- Never repeat or answer NEXT_LINE. Never speak about the lesson, items, steps or counts.',
-    '- The CHARACTER never speaks Arabic. The COACH never pretends to be the character.',
-    '',
-    'OUTPUT FORMAT',
-    '- CHARACTER: <character name="NAME"><pt>Portuguese sentence</pt><ar>its Egyptian translation</ar></character>',
-    '- COACH: <coach>, then sequential segments: <ar>Egyptian</ar><arz>the same words with Egyptian harakat</arz><pt>Portuguese</pt>, ending with </coach>',
-    '- Assessment praise: <praise><pt>Portuguese</pt><ar>translation</ar></praise>',
-    '- A near_miss is a character block followed by a coach block. Nothing outside the blocks except the hidden VERDICT line when SOURCE is you.',
-  ].filter((line) => line !== undefined).join('\n');
+  void input.level;
+  const kind = input.reaction.reactionKind ?? inferReactionKind(input.reaction);
+  if (kind === 'r1') return buildR1CharacterReaction(input);
+  if (kind === 'r3') return buildR3CoachArabic(input);
+  return buildR2Judge(input);
 }
 
-/** @deprecated Use buildLessonReactionInstruction — kept for tests that import the old name. */
+function inferReactionKind(r: LessonReactionContext): 'r1' | 'r2' | 'r3' {
+  if (r.mode === 'side') return 'r3';
+  if (r.source === 'you') return 'r2';
+  return 'r1';
+}
+
+/** @deprecated Use buildR3CoachArabic / buildLessonReactionInstruction */
 export function buildSideReplyInstruction(input: {
   level: CefrLevel;
   lesson: LessonPack;
@@ -271,15 +236,14 @@ export function buildSideReplyInstruction(input: {
       verdict: 'correct',
       source: 'code',
       attempt: 1,
+      reactionKind: 'r3',
       currentPromptPlain: input.currentPromptPlain,
-      situation: input.lesson.situationAr || input.lesson.learningTarget,
-      lessonTarget: input.lesson.learningTarget,
       recentPraise: [],
     },
   });
 }
 
-/** @deprecated Use buildLessonReactionInstruction */
+/** @deprecated Use buildR2Judge / buildLessonReactionInstruction */
 export function buildOpenGradeInstruction(input: {
   level: CefrLevel;
   successCriterion: string;
@@ -293,6 +257,7 @@ export function buildOpenGradeInstruction(input: {
       verdict: 'wrong',
       source: 'you',
       attempt: 1,
+      reactionKind: 'r2',
       criterion: input.successCriterion,
       currentPromptPlain: '',
       recentPraise: [],

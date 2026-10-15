@@ -11,13 +11,15 @@ import {
 import {
   dropJunkCoach,
   extractPraisePhrases,
+  filterReactionMessages,
   parseFriendOutput,
   parseOpenVerdict,
 } from '@/lib/friendParse';
+import { normalizeAnswer, passesCodeGuard } from '@/lib/grade';
 import { lastExchanges } from '@/lib/history';
 import { warmKnownCache, getKnownCache } from '@/lib/knownCache';
 import { refreshMongoCatalogue } from '@/lib/lessons/catalogue';
-import { typedToPlain } from '@/lib/messages';
+import { makeCoachNote, typedToPlain } from '@/lib/messages';
 import {
   formatKnownForPrompt,
   markLessonPracticed,
@@ -41,8 +43,18 @@ export const maxDuration = 60;
 
 const VALID_LEVELS: CefrLevel[] = ['A0', 'A1', 'A2', 'B1'];
 
-/** Keep the voices Prompt 4 assigns to this verdict. A correct practice turn is the character only. */
-function voicesForPracticeVerdict(messages: TypedMessage[], verdict: string): TypedMessage[] {
+/** Keep the voices this reaction case allows. Empty filter → show nothing. */
+function voicesForPracticeVerdict(
+  messages: TypedMessage[],
+  verdict: string,
+  reactionKind?: string,
+): TypedMessage[] {
+  if (reactionKind === 'r3') {
+    return messages.filter((m) => m.type === 'coach');
+  }
+  if (reactionKind === 'r1') {
+    return messages.filter((m) => m.type === 'character');
+  }
   const want =
     verdict === 'correct'
       ? new Set(['character', 'praise'])
@@ -52,8 +64,7 @@ function voicesForPracticeVerdict(messages: TypedMessage[], verdict: string): Ty
           ? new Set(['coach', 'help', 'correction'])
           : null;
   if (!want) return messages;
-  const kept = messages.filter((m) => want.has(m.type));
-  return kept.length ? kept : messages;
+  return messages.filter((m) => want.has(m.type));
 }
 
 function textFromUIMessage(message: UIMessage): string {
@@ -96,6 +107,7 @@ function formatLogLine(log: TurnLogDetail): string {
     `verdict=${log.verdict ?? '-'}`,
     `matched=${log.matchedAnswer ?? '-'}`,
     log.modelVerdictRaw ? `rawVerdict=${log.modelVerdictRaw}` : null,
+    log.openFailReason ? `openFail=${log.openFailReason}` : null,
     `types=${log.messageTypes.join(',') || '-'}`,
     `latency=${log.modelLatencyMs ?? 0}ms`,
     `finish=${log.finishReason ?? '-'}`,
@@ -138,6 +150,20 @@ function rememberPraise(progress: Progress, messages: TypedMessage[]): void {
       ...characterLines,
     ].slice(-3);
   }
+}
+
+function reactionTemperature(kind: string | undefined, judging: boolean): number {
+  if (kind === 'r1') return 0.6;
+  if (kind === 'r3') return 0.3;
+  if (kind === 'r2' || judging) return 0;
+  return 0.5;
+}
+
+function reactionMaxTokens(kind: string | undefined, judging: boolean): number {
+  if (kind === 'r1') return 80;
+  if (kind === 'r3') return 180;
+  if (kind === 'r2' || judging) return 120;
+  return 300;
 }
 
 export async function POST(req: Request) {
@@ -281,6 +307,7 @@ export async function POST(req: Request) {
               writeLearner(learner);
             }
             const judging = reaction.source === 'you';
+            const reactionKind = reaction.reactionKind ?? (reaction.mode === 'side' ? 'r3' : judging ? 'r2' : 'r1');
             const system = buildLessonReactionInstruction({
               level,
               reaction,
@@ -290,8 +317,8 @@ export async function POST(req: Request) {
               model: getChatModel(),
               system,
               prompt: userText || '(side remark)',
-              temperature: judging ? 0 : 0.5,
-              maxOutputTokens: judging ? 120 : 300,
+              temperature: reactionTemperature(reactionKind, judging),
+              maxOutputTokens: reactionMaxTokens(reactionKind, judging),
             });
             const modelText = await result.text;
             finishReason = (await result.finishReason) ?? 'stop';
@@ -307,26 +334,94 @@ export async function POST(req: Request) {
               body = parsedVerdict.body;
               modelVerdict = parsedVerdict.verdict;
               if (modelVerdict) log.verdict = modelVerdict;
+
+              // Open beat: code guard can demote correct → wrong.
+              if (
+                modelVerdict &&
+                modelVerdict !== 'wrong' &&
+                reaction.codeGuard &&
+                item &&
+                'kind' in item &&
+                item.kind === 'open' &&
+                !passesCodeGuard(userText, reaction.codeGuard)
+              ) {
+                modelVerdict = 'wrong';
+                log.verdict = 'wrong';
+                log.openFailReason = 'guard';
+              } else if (
+                modelVerdict === 'wrong' &&
+                item &&
+                'kind' in item &&
+                item.kind === 'open'
+              ) {
+                log.openFailReason = 'model';
+              }
+
+              // Fix identical to his answer (ignoring case) counts as correct.
+              if (modelVerdict === 'near-miss') {
+                const fixMatch = body.match(/<\s*fix\b[^>]*>[\s\S]*?<\s*pt\s*>([\s\S]*?)<\s*\/\s*pt\s*>/i);
+                const fixPt = fixMatch?.[1]?.trim() ?? '';
+                if (fixPt && normalizeAnswer(fixPt) === normalizeAnswer(userText)) {
+                  modelVerdict = 'correct';
+                  log.verdict = 'correct';
+                  log.openFailReason = null;
+                }
+              }
             }
 
-            const parsedBody = parseFriendOutput(body);
-            const verdictForVoices = modelVerdict ?? reaction.verdict;
+            const parsedBody = parseFriendOutput(body, { strict: true });
+            let verdictForVoices = modelVerdict ?? reaction.verdict;
             const voiced =
-              reaction.mode === 'practice'
-                ? voicesForPracticeVerdict(parsedBody, verdictForVoices)
+              reaction.mode === 'practice' || reaction.mode === 'assessment' || reaction.mode === 'side'
+                ? voicesForPracticeVerdict(parsedBody, verdictForVoices, reactionKind)
                 : parsedBody;
-            const bodyMessages = dropJunkCoach(voiced, userText);
+            const filtered = filterReactionMessages(voiced, reaction, modelText);
+            const bodyMessages = filtered
+              ? dropJunkCoach(filtered, userText)
+              : [];
 
-            if (shouldEmitPracticePraise(reaction, verdictForVoices)) {
+            const isNearMiss =
+              verdictForVoices === 'near-miss' || verdictForVoices === 'near_miss';
+            const passed =
+              verdictForVoices === 'correct' || isNearMiss;
+
+            // App praise only for model-graded passes. Code-graded already praised in storyReaction.
+            // Dropped R1 on a code pass → next story line only (no second praise).
+            if (
+              !filtered &&
+              passed &&
+              reaction.mode === 'practice' &&
+              !isNearMiss &&
+              reaction.source === 'you'
+            ) {
+              const praise = takePracticePraise(progress);
+              writeDataMessages(writer, [praise]);
+              outbound.push(praise);
+              rememberPraise(progress, [praise]);
+            } else if (shouldEmitPracticePraise(reaction, verdictForVoices) && filtered) {
               const praise = takePracticePraise(progress);
               writeDataMessages(writer, [praise]);
               outbound.push(praise);
               rememberPraise(progress, [praise]);
             }
 
-            rememberPraise(progress, bodyMessages);
-            writeDataMessages(writer, bodyMessages);
-            outbound.push(...bodyMessages);
+            if (bodyMessages.length) {
+              rememberPraise(progress, bodyMessages);
+              writeDataMessages(writer, bodyMessages);
+              outbound.push(...bodyMessages);
+            }
+
+            // Assessment wrong attempt 1: show nudge_note from the pack (no model coach).
+            if (
+              reaction.mode === 'assessment' &&
+              modelVerdict === 'wrong' &&
+              (reaction.attempt ?? 1) < 2 &&
+              reaction.nudgeNote
+            ) {
+              const nudge = makeCoachNote(reaction.nudgeNote);
+              writeDataMessages(writer, [nudge]);
+              outbound.push(nudge);
+            }
 
             let nextPrompts =
               reaction.nextPrompts ??
@@ -346,11 +441,70 @@ export async function POST(req: Request) {
               } else {
                 nextPrompts = commitPersonalSlotAdvance(progress, pack, outcome);
               }
+            } else if (!filtered && passed && reaction.mode === 'practice') {
+              // Keep advancing when the character reaction was dropped.
+              nextPrompts =
+                reaction.nextPrompts ??
+                (reaction.nextPrompt ? [reaction.nextPrompt] : nextPrompts);
             }
 
             if (nextPrompts.length) {
               writeDataMessages(writer, nextPrompts);
               outbound.push(...nextPrompts);
+            }
+
+            // Never a silent turn: every learner message gets a visible reply.
+            const added = outbound.slice(applied.messages.length);
+            if (userText.trim() && added.length === 0) {
+              if (reaction.mode === 'side' && reaction.nextPrompt) {
+                writeDataMessages(writer, [reaction.nextPrompt]);
+                outbound.push(reaction.nextPrompt);
+              } else if (
+                passed &&
+                reaction.mode === 'practice' &&
+                !isNearMiss &&
+                reaction.source === 'you'
+              ) {
+                const praise = takePracticePraise(progress);
+                writeDataMessages(writer, [praise]);
+                outbound.push(praise);
+                if (pack) {
+                  const fallback = unresolvedPracticePrompt(progress, pack);
+                  if (fallback) {
+                    writeDataMessages(writer, [fallback]);
+                    outbound.push(fallback);
+                  }
+                }
+              } else if (passed && reaction.mode === 'practice' && !isNearMiss && pack) {
+                // Code-graded: praise already in the turn; keep the story moving.
+                const fallback = unresolvedPracticePrompt(progress, pack);
+                if (fallback) {
+                  writeDataMessages(writer, [fallback]);
+                  outbound.push(fallback);
+                }
+              } else if (passed && reaction.mode === 'practice' && isNearMiss && pack) {
+                const fallback = unresolvedPracticePrompt(progress, pack);
+                if (fallback) {
+                  writeDataMessages(writer, [fallback]);
+                  outbound.push(fallback);
+                }
+              } else if (reaction.hintNote || reaction.nudgeNote || reaction.whyNote) {
+                // Prefer why on attempt 2+; otherwise hint / nudge. commitOpenVerdict usually already pushed coach.
+                const attempt = progress.practice?.attemptsOnCurrent ?? 0;
+                const noteText =
+                  attempt >= 2
+                    ? reaction.whyNote || reaction.hintNote || reaction.nudgeNote
+                    : reaction.hintNote || reaction.nudgeNote || reaction.whyNote;
+                const note = makeCoachNote(noteText || 'جرّب تاني');
+                writeDataMessages(writer, [note]);
+                outbound.push(note);
+              } else if (pack && progress.practice?.phase === 'story') {
+                const fallback = unresolvedPracticePrompt(progress, pack);
+                if (fallback) {
+                  writeDataMessages(writer, [fallback]);
+                  outbound.push(fallback);
+                }
+              }
             }
 
             writeTextMessage(writer, outbound.map(typedToPlain).filter(Boolean).join('\n'));

@@ -2,20 +2,42 @@ import { lessonById, liveLessons, testLessons } from './lessons/catalogue';
 import { allBeatsResolved, nextUnresolvedBeat, practiceChecklistSummary } from './lessons/alignment';
 import type { AssessmentTask, LessonPack, StoryBeat } from './lessons/types';
 import type { GradeVerdict } from './grade';
-import { classifyScript, gradeKnownAnswer, hasPersonalSlot } from './grade';
+import {
+  classifyScript,
+  extractPersonalSlotValue,
+  gradeFilledPersonalSlot,
+  gradeKnownAnswer,
+  hasPersonalSlot,
+  isArabicWhyQuestion,
+  isStuckMessage,
+  matchesFilledPersonalSlot,
+  mentionsLessonTool,
+  slotNoteForPattern,
+} from './grade';
+import { wordsForReaction } from './friendPrompt';
 import {
   beatShowsPreHint,
   currentAssessmentTask,
   currentBeat,
   makeAssessmentPrompt,
   makeChecklistDone,
+  makeCoachNote,
   makeCoachTip,
+  makeGrammarCardMessage,
+  makeHintCardMessage,
+  makeLineExplainCoach,
   makeMixed,
+  makeNearMissFixCoach,
   makePraise,
-  makeRetryCoach,
+  makeYallaNesta3melha,
   presentBeat,
+  presentBeatHead,
+  presentBeatTail,
   presentClosing,
+  presentFarewell,
   makeIntro,
+  makeSceneWordCardMessage,
+  sceneNeedsWordCard,
 } from './messages';
 import type {
   Chip,
@@ -74,7 +96,7 @@ export function chipsFor(progress: Progress): Chip[] {
   const chips: Chip[] = [];
   if (progress.mode === 'practice' && progress.practice) {
     const focus = progress.practice;
-    if (focus.phase === 'story' && !focus.coachTipShown) {
+    if (focus.phase === 'story' && !focus.sceneWordGate && !focus.coachTipShown) {
       const pack = lessonById(focus.lessonId);
       const beat = pack ? currentBeat(pack, focus.beatIndex) : null;
       if (beat?.difficulty === 'supported' && beat.coachTip) {
@@ -127,12 +149,71 @@ function startPracticeFocus(lessonId: string): PracticeFocus {
     lessonId,
     beatIndex: 0,
     attemptsOnCurrent: 0,
+    stuckCountOnCurrent: 0,
     itemOutcomes: {},
     phase: 'story',
     friendBridgeTurnsLeft: 0,
     useAltLine: false,
     coachTipShown: false,
+    sceneWordGate: null,
+    sceneWordCardsSeen: [],
   };
+}
+
+/**
+ * Emit narration (if any) and either gate on a word card or continue with the
+ * beat tip/character. Returns the focus after presentation.
+ */
+function presentBeatWithWordGate(
+  progress: Progress,
+  pack: LessonPack,
+  focus: PracticeFocus,
+  beatIndex: number,
+  outbound: TypedMessage[],
+  opts?: { alt?: boolean },
+): PracticeFocus {
+  if (opts?.alt) {
+    outbound.push(...presentBeat(pack, beatIndex, { alt: true }));
+    progress.practice = { ...focus, beatIndex, useAltLine: true, coachTipShown: false, sceneWordGate: null };
+    return progress.practice;
+  }
+
+  const beat = currentBeat(pack, beatIndex);
+  if (!beat) {
+    progress.practice = focus;
+    return focus;
+  }
+
+  outbound.push(...presentBeatHead(pack, beatIndex));
+
+  if (sceneNeedsWordCard(pack, beatIndex, focus)) {
+    const card = makeSceneWordCardMessage(pack, beat.sceneId);
+    if (card) outbound.push(card);
+    const next: PracticeFocus = {
+      ...focus,
+      beatIndex,
+      useAltLine: false,
+      coachTipShown: false,
+      sceneWordGate: { sceneId: beat.sceneId, beatIndex },
+    };
+    progress.practice = next;
+    return next;
+  }
+
+  outbound.push(...presentBeatTail(pack, beatIndex));
+  const next = withPreHintFlag(
+    {
+      ...focus,
+      beatIndex,
+      useAltLine: false,
+      sceneWordGate: null,
+    },
+    pack,
+    beatIndex,
+    false,
+  );
+  progress.practice = next;
+  return next;
 }
 
 function sceneTitle(pack: LessonPack, beat: StoryBeat | null): string {
@@ -176,19 +257,20 @@ export function takePracticePraise(progress: Progress): TypedMessage {
   return praised.message;
 }
 
-/** Model-graded practice pass: emit praise in the chat route (code path already did). */
+/** Model-graded practice pass: praise only on correct (never near-miss). */
 export function shouldEmitPracticePraise(
   reaction: Pick<LessonReactionContext, 'mode' | 'source'>,
   verdict: string | null | undefined,
 ): boolean {
   if (reaction.mode !== 'practice' || reaction.source !== 'you') return false;
-  return verdict === 'correct' || verdict === 'near-miss' || verdict === 'near_miss';
+  return verdict === 'correct';
 }
 
 /** Raw coach tip already on screen (pre-hint for guided/supported). */
 function shownCoachTip(progress: Progress, unit: GradedUnit): string | undefined {
+  if (!('coachTip' in unit) || !('difficulty' in unit)) return undefined;
   const text = unit.coachTip?.ar?.trim();
-  if (!text || !('difficulty' in unit)) return undefined;
+  if (!text) return undefined;
   if (unit.difficulty === 'guided') return text;
   if (unit.difficulty === 'supported' && progress.practice?.coachTipShown) return text;
   return undefined;
@@ -210,7 +292,7 @@ function buildReactionBase(
   unit: GradedUnit,
   beat: StoryBeat | null,
 ): Omit<LessonReactionContext, 'verdict' | 'source' | 'attempt' | 'nextPrompt' | 'nextPrompts'> {
-  const line = 'speaker' in unit ? unit.line : unit.line;
+  const line = unit.line;
   return {
     mode: 'practice',
     accepted: unit.kind === 'known' ? unit.acceptedAnswers.slice(0, 5).join(' | ') : undefined,
@@ -224,25 +306,158 @@ function buildReactionBase(
             ', ',
           )
         : undefined,
+    codeGuard: unit.kind === 'open' ? unit.codeGuard : undefined,
     frame: unit.frame,
     coachTip: shownCoachTip(progress, unit),
     wordBank: unit.wordBank?.length
       ? unit.wordBank.map((word) => (word.meaning ? `${word.pt} (${word.meaning})` : word.pt)).join(' | ')
       : undefined,
     currentPromptPlain: line.pt,
-    situation: pack.situationAr || pack.learningTarget,
-    lessonTarget: pack.learningTarget,
+    lineAr: line.ar,
     recentPraise: progress.recentPraise ?? [],
     characterName: beat?.speaker || pack.character.name,
     characterRole: pack.character.roleAr,
     sceneTitle: sceneTitle(pack, beat),
     beatLine: line.pt,
     reactionCue: beat?.reactionCue,
+    words: wordsForReaction(pack),
     recentCharacterReactions: progress.recentCharacterReactions ?? [],
+    grammarPoint: pack.learningTarget,
   };
 }
 
+function nearMissFixMessage(grade: GradeVerdict, beat: StoryBeat): TypedMessage {
+  const authored = mistakeNote(grade);
+  if (authored) return makeCoachNote(authored);
+  if (grade.verdict === 'near-miss' && grade.correctedWord?.trim()) {
+    return makeNearMissFixCoach(grade.correctedWord.trim());
+  }
+  const accepted =
+    grade.verdict === 'near-miss' || grade.verdict === 'anticipated-wrong' || grade.verdict === 'correct'
+      ? grade.matched
+      : beat.kind === 'known'
+        ? beat.acceptedAnswers[0]
+        : beat.line.pt;
+  const word = (accepted || beat.line.pt).trim().split(/\s+/).pop() || accepted || beat.line.pt;
+  return makeNearMissFixCoach(word);
+}
+
+function wrongAttemptCoach(grade: GradeVerdict | null, beat: StoryBeat, attempt: number): TypedMessage {
+  if (attempt >= 2) {
+    const why = beat.whyNote?.trim();
+    if (why) return makeCoachNote(why);
+    const accepted = beat.kind === 'known' ? beat.acceptedAnswers[0] : beat.line.pt;
+    return makeCoachNote(`الإجابة: ${accepted || '…'}`);
+  }
+  const anticipated = grade ? mistakeNote(grade) : undefined;
+  if (anticipated) return makeCoachNote(anticipated);
+  if (beat.hintNote?.trim()) return makeCoachNote(beat.hintNote.trim());
+  const tip = beat.coachTip?.ar?.trim();
+  if (tip) {
+    const base = tip.replace(/[.。…]+$/u, '').trim();
+    return makeCoachNote(`${base}. جرّب تاني.`);
+  }
+  return makeCoachNote('جرّب تاني.', 'جَرِّب تاني.');
+}
+
+/** Grammar card + يلا نستخدمها + alt character line. Does not advance the beat. */
+function emitGrammarCardSequence(
+  pack: LessonPack,
+  focus: PracticeFocus,
+  beat: StoryBeat,
+  outbound: TypedMessage[],
+): void {
+  if (pack.grammarCard) {
+    outbound.push(makeGrammarCardMessage(pack.grammarCard));
+  }
+  outbound.push(makeYallaNesta3melha());
+  const alt = presentBeat(pack, focus.beatIndex, { alt: true });
+  const character = alt.find((message) => message.type === 'character');
+  if (character) outbound.push(character);
+  else outbound.push(...alt);
+}
+
+/**
+ * Stuck ladder (??? / مش فاهم): never increments wrong attempts.
+ * 1 → line_explain + hint card; 2 → hint_note; 3 → why_note + learned-with-help.
+ */
+function handleStuckTurn(
+  progress: Progress,
+  pack: LessonPack,
+  focus: PracticeFocus,
+  beat: StoryBeat,
+  log: TurnLogDetail,
+): TurnResult {
+  const outbound: TypedMessage[] = [];
+  const stuckCount = (focus.stuckCountOnCurrent ?? 0) + 1;
+  log.gradingSource = 'none';
+  log.verdict = `stuck-${stuckCount}`;
+
+  if (stuckCount === 1) {
+    if (beat.lineExplain?.ar?.trim()) {
+      outbound.push(makeLineExplainCoach(beat.lineExplain));
+    } else if (beat.coachTip?.ar?.trim()) {
+      outbound.push(makeCoachNote(beat.coachTip.ar, beat.coachTip.arz));
+    } else {
+      outbound.push(makeCoachNote('هي بتسألك حاجة بسيطة. فكّر في الجملة اللي تناسب السؤال.'));
+    }
+    const words = (beat.wordBank ?? []).slice(0, 5);
+    if (beat.frame || words.length) {
+      outbound.push(
+        makeHintCardMessage({
+          frame: beat.frame,
+          words,
+        }),
+      );
+    }
+    progress.practice = { ...focus, stuckCountOnCurrent: stuckCount };
+    log.messageTypes = outbound.map((m) => m.type);
+    log.finishReason = 'deterministic';
+    return { progress, messages: outbound, streamKind: 'none', log };
+  }
+
+  if (stuckCount === 2) {
+    if (beat.hintNote?.trim()) outbound.push(makeCoachNote(beat.hintNote.trim()));
+    else outbound.push(wrongAttemptCoach(null, beat, 1));
+    progress.practice = { ...focus, stuckCountOnCurrent: stuckCount };
+    log.messageTypes = outbound.map((m) => m.type);
+    log.finishReason = 'deterministic';
+    return { progress, messages: outbound, streamKind: 'none', log };
+  }
+
+  if (beat.whyNote?.trim()) outbound.push(makeCoachNote(beat.whyNote.trim()));
+  else outbound.push(wrongAttemptCoach(null, beat, 2));
+  advancePracticeAfterOutcome(
+    progress,
+    pack,
+    { ...focus, stuckCountOnCurrent: stuckCount },
+    beat.id,
+    'learned-with-help',
+    outbound,
+  );
+  log.messageTypes = outbound.map((m) => m.type);
+  log.finishReason = 'deterministic';
+  return { progress, messages: outbound, streamKind: 'none', log };
+}
+
+function handleGrammarCardTurn(
+  progress: Progress,
+  pack: LessonPack,
+  focus: PracticeFocus,
+  beat: StoryBeat,
+  log: TurnLogDetail,
+): TurnResult {
+  const outbound: TypedMessage[] = [];
+  emitGrammarCardSequence(pack, focus, beat, outbound);
+  log.gradingSource = 'none';
+  log.verdict = 'grammar-card';
+  log.messageTypes = outbound.map((m) => m.type);
+  log.finishReason = 'deterministic';
+  return { progress, messages: outbound, streamKind: 'none', log };
+}
+
 function followUpMessages(pack: LessonPack, fromIndex: number, alt: boolean): TypedMessage[] {
+  // Kept for callers that only need the full beat (alt re-ask / fallbacks).
   return presentBeat(pack, fromIndex, { alt });
 }
 
@@ -261,8 +476,10 @@ function enterFriendBridge(
     friendBridgeTurnsLeft: FRIEND_BRIDGE_TURNS,
     beatIndex: pack.beats.length,
     attemptsOnCurrent: 0,
+    stuckCountOnCurrent: 0,
     useAltLine: false,
     coachTipShown: false,
+    sceneWordGate: null,
   };
   progress.mode = 'friend';
   progress.practice = next;
@@ -283,8 +500,10 @@ export function advancePracticeAfterOutcome(
     ...focus,
     itemOutcomes: { ...focus.itemOutcomes, [beatId]: outcome },
     attemptsOnCurrent: 0,
+    stuckCountOnCurrent: 0,
     useAltLine: false,
     coachTipShown: false,
+    sceneWordGate: null,
   };
   const idx = nextUnresolvedBeat(pack.beats, next.itemOutcomes, from < 0 ? 0 : from + 1);
   if (idx < 0) {
@@ -295,10 +514,7 @@ export function advancePracticeAfterOutcome(
     return next;
   }
   next.phase = 'story';
-  next.beatIndex = idx;
-  outbound.push(...followUpMessages(pack, idx, false));
-  progress.practice = withPreHintFlag(next, pack, idx, false);
-  return next;
+  return presentBeatWithWordGate(progress, pack, next, idx, outbound);
 }
 
 export function unresolvedPracticePrompt(
@@ -307,6 +523,7 @@ export function unresolvedPracticePrompt(
 ): TypedMessage | undefined {
   const focus = progress.practice;
   if (!focus || focus.phase !== 'story') return undefined;
+  if (focus.sceneWordGate) return undefined;
   const idx = nextUnresolvedBeat(pack.beats, focus.itemOutcomes, focus.beatIndex);
   if (idx < 0) return undefined;
   const shown = presentBeat(pack, idx, { alt: focus.useAltLine });
@@ -355,6 +572,7 @@ export function commitOpenVerdict(
   }
   const attempts = (focus.attemptsOnCurrent ?? 0) + 1;
   if (attempts >= 2) {
+    outbound.push(wrongAttemptCoach(null, beat, 2));
     advancePracticeAfterOutcome(
       progress,
       pack,
@@ -365,12 +583,13 @@ export function commitOpenVerdict(
     );
     return outbound;
   }
+  outbound.push(wrongAttemptCoach(null, beat, 1));
   progress.practice = {
     ...focus,
     attemptsOnCurrent: attempts,
     useAltLine: true,
   };
-  // Coach says try again — do not re-present the character line.
+  // Coach hint / tip fallback — do not re-present the character line; frame stays.
   return outbound;
 }
 
@@ -412,32 +631,28 @@ function storyReaction(
   grade: GradeVerdict | null,
   source: 'code' | 'you',
   log: TurnLogDetail,
+  opts?: { slotNote?: string },
 ): TurnResult {
   const attempt = focus.attemptsOnCurrent + 1;
   const verdict = grade ? reactionVerdict(grade) : 'wrong';
   const passed = verdict === 'correct' || verdict === 'near_miss';
   const outbound: TypedMessage[] = [];
   let nextFocus: PracticeFocus = { ...focus, attemptsOnCurrent: attempt };
-  let nextPrompts: TypedMessage[] = [];
+  const nextPrompts: TypedMessage[] = [];
 
-  if (source === 'code') {
-    if (passed || attempt >= 2) {
-      if (passed) outbound.push(takePracticePraise(progress));
-      nextPrompts = [];
-      const outcome = passed
-        ? verdict === 'near_miss'
-          ? 'near-miss'
-          : 'correct'
-        : 'learned-with-help';
-      advancePracticeAfterOutcome(progress, pack, nextFocus, beat.id, outcome, nextPrompts);
-    } else {
-      // Stay on the beat; clear coach template — do not call the model or re-present the line.
-      nextFocus = { ...nextFocus, useAltLine: true };
-      progress.practice = nextFocus;
-      nextPrompts = [];
-      const target =
-        beat.kind === 'known' ? beat.acceptedAnswers[0] || beat.line.pt : beat.line.pt;
-      outbound.push(makeRetryCoach(target));
+  // Known wrong attempts: pack notes only, no model.
+  if (source === 'code' && !passed) {
+    outbound.push(wrongAttemptCoach(grade, beat, attempt));
+    if (attempt >= 2) {
+      advancePracticeAfterOutcome(
+        progress,
+        pack,
+        nextFocus,
+        beat.id,
+        'learned-with-help',
+        nextPrompts,
+      );
+      outbound.push(...nextPrompts);
       log.gradingSource = 'code';
       log.verdict = grade?.verdict ?? 'wrong';
       log.matchedAnswer = grade && 'matched' in grade ? grade.matched : null;
@@ -448,11 +663,44 @@ function storyReaction(
       return {
         progress,
         messages: outbound,
-        learnerVerdict: grade ? learnerVerdictFor(grade) : undefined,
+        learnerVerdict: undefined,
         streamKind: 'none',
         log,
       };
     }
+    nextFocus = { ...nextFocus, useAltLine: true };
+    progress.practice = nextFocus;
+    log.gradingSource = 'code';
+    log.verdict = grade?.verdict ?? 'wrong';
+    log.matchedAnswer = grade && 'matched' in grade ? grade.matched : null;
+    log.finishReason = 'deterministic';
+    log.itemId = beat.id;
+    log.stage = beat.difficulty;
+    log.messageTypes = outbound.map((m) => m.type);
+    return {
+      progress,
+      messages: outbound,
+      learnerVerdict: undefined,
+      streamKind: 'none',
+      log,
+    };
+  }
+
+  if (source === 'code' && passed) {
+    // Near-miss: no praise; show pack/template fix, then R1.
+    if (verdict === 'near_miss') {
+      outbound.push(nearMissFixMessage(grade!, beat));
+    } else {
+      outbound.push(takePracticePraise(progress));
+    }
+    advancePracticeAfterOutcome(
+      progress,
+      pack,
+      nextFocus,
+      beat.id,
+      verdict === 'near_miss' ? 'near-miss' : 'correct',
+      nextPrompts,
+    );
   }
 
   const nextBeat = progress.practice ? currentBeat(pack, progress.practice.beatIndex) : null;
@@ -461,7 +709,18 @@ function storyReaction(
       ? pack.closingHook.pt
       : nextBeat && nextBeat.id !== beat.id
         ? nextBeat.line.pt
-        : beat.altLine.pt;
+        : undefined;
+  const nextSpeaker =
+    progress.practice?.phase === 'friend-bridge'
+      ? pack.closingHook.speaker?.trim() || pack.character.name
+      : nextBeat && nextBeat.id !== beat.id
+        ? nextBeat.speaker
+        : undefined;
+
+  const slotPattern =
+    beat.kind === 'known'
+      ? beat.acceptedAnswers.find((answer) => hasPersonalSlot(answer))
+      : undefined;
 
   log.gradingSource = source === 'code' ? 'code' : 'model';
   log.verdict = grade?.verdict ?? null;
@@ -486,14 +745,14 @@ function storyReaction(
         verdict: source === 'you' ? 'wrong' : verdict,
         source,
         attempt,
+        reactionKind: source === 'you' ? 'r2' : 'r1',
         mistakeNote: grade ? mistakeNote(grade) : undefined,
-        nextLine: source === 'code' ? nextLine : undefined,
+        nextLine,
+        nextSpeaker,
         nextPrompt: nextPrompts[0],
         nextPrompts,
-        slotPattern:
-          source === 'you' && beat.kind === 'known'
-            ? beat.acceptedAnswers.find((answer) => hasPersonalSlot(answer))
-            : undefined,
+        slotPattern: source === 'you' ? slotPattern : undefined,
+        slotNote: opts?.slotNote,
       },
     },
   };
@@ -527,8 +786,7 @@ export function applyLearnerTurn(input: {
     delete rec.paused;
     saveLesson(progress, rec);
     outbound.push(makeIntro(pack.introAr, pack.introArz));
-    outbound.push(...presentBeat(pack, 0));
-    progress.practice = withPreHintFlag(focus, pack, 0, false);
+    presentBeatWithWordGate(progress, pack, focus, 0, outbound);
     log.mode = 'practice';
     log.lessonId = pack.id;
     log.stage = pack.beats[0].difficulty;
@@ -545,16 +803,32 @@ export function applyLearnerTurn(input: {
     const pack = lessonById(paused.lessonId);
     if (!pack) return { progress, messages: outbound, streamKind: 'none', log };
     progress.mode = 'practice';
-    progress.practice = { ...paused };
+    progress.practice = {
+      ...paused,
+      sceneWordCardsSeen: paused.sceneWordCardsSeen ?? [],
+      sceneWordGate: paused.sceneWordGate ?? null,
+    };
     const rec = lessonRecord(progress, paused.lessonId);
     delete rec.paused;
     saveLesson(progress, rec);
     if (paused.phase === 'story') {
-      outbound.push(...presentBeat(pack, paused.beatIndex, { alt: paused.useAltLine }));
-      // Alt re-ask does not re-emit the tip; keep the paused flag.
-      progress.practice = paused.useAltLine
-        ? { ...progress.practice, coachTipShown: paused.coachTipShown }
-        : withPreHintFlag(progress.practice, pack, paused.beatIndex, false);
+      if (paused.sceneWordGate) {
+        // Mid-card: re-show narration + scene-words; gate stays until dismiss.
+        outbound.push(...presentBeatHead(pack, paused.beatIndex, { alt: paused.useAltLine }));
+        const card = makeSceneWordCardMessage(pack, paused.sceneWordGate.sceneId);
+        if (card) outbound.push(card);
+        progress.practice = {
+          ...progress.practice,
+          coachTipShown: false,
+          sceneWordGate: paused.sceneWordGate,
+        };
+      } else if (paused.useAltLine) {
+        outbound.push(...presentBeat(pack, paused.beatIndex, { alt: true }));
+        progress.practice = { ...progress.practice, coachTipShown: paused.coachTipShown };
+      } else {
+        outbound.push(...presentBeat(pack, paused.beatIndex));
+        progress.practice = withPreHintFlag(progress.practice, pack, paused.beatIndex, false);
+      }
     }
     log.mode = 'practice';
     log.lessonId = pack.id;
@@ -581,12 +855,73 @@ export function applyLearnerTurn(input: {
     const focus = progress.practice;
     const pack = focus ? lessonById(focus.lessonId) : null;
     const beat = pack && focus ? currentBeat(pack, focus.beatIndex) : null;
+    if (focus?.sceneWordGate) {
+      log.verdict = 'awaiting-scene-words';
+      log.finishReason = 'deterministic';
+      return { progress, messages: outbound, streamKind: 'none', log };
+    }
     if (focus && beat?.coachTip && beat.difficulty === 'supported') {
-      outbound.push(makeCoachTip(beat.coachTip.ar, beat.coachTip.arz));
+      outbound.push(
+        makeCoachTip(beat.coachTip.ar, beat.coachTip.arz, {
+          showWhyChip: Boolean(pack?.grammarCard),
+        }),
+      );
       progress.practice = { ...focus, coachTipShown: true };
     }
     log.finishReason = 'deterministic';
     log.messageTypes = outbound.map((m) => m.type);
+    return { progress, messages: outbound, streamKind: 'none', log };
+  }
+
+  if (action.type === 'show-grammar-card') {
+    const focus = progress.practice;
+    const pack = focus ? lessonById(focus.lessonId) : null;
+    const beat = pack && focus ? currentBeat(pack, focus.beatIndex) : null;
+    if (focus?.sceneWordGate) {
+      log.verdict = 'awaiting-scene-words';
+      log.finishReason = 'deterministic';
+      return { progress, messages: outbound, streamKind: 'none', log };
+    }
+    if (focus && pack && beat && pack.grammarCard && focus.phase === 'story') {
+      return handleGrammarCardTurn(progress, pack, focus, beat, log);
+    }
+    log.finishReason = 'deterministic';
+    return { progress, messages: outbound, streamKind: 'none', log };
+  }
+
+  if (action.type === 'dismiss-scene-word-card') {
+    const focus = progress.practice;
+    const pack = focus ? lessonById(focus.lessonId) : null;
+    const gate = focus?.sceneWordGate;
+    if (!focus || !pack || !gate || focus.phase !== 'story') {
+      log.finishReason = 'deterministic';
+      return { progress, messages: outbound, streamKind: 'none', log };
+    }
+    const beatIndex = gate.beatIndex;
+    const beat = currentBeat(pack, beatIndex);
+    const seen = new Set(focus.sceneWordCardsSeen ?? []);
+    if (gate.sceneId) seen.add(gate.sceneId);
+    outbound.push(...presentBeatTail(pack, beatIndex));
+    const next = withPreHintFlag(
+      {
+        ...focus,
+        beatIndex,
+        sceneWordGate: null,
+        sceneWordCardsSeen: [...seen],
+        useAltLine: false,
+      },
+      pack,
+      beatIndex,
+      false,
+    );
+    progress.practice = next;
+    log.mode = 'practice';
+    log.lessonId = pack.id;
+    log.itemId = beat?.id ?? null;
+    log.stage = beat?.difficulty ?? null;
+    log.verdict = 'scene-words-dismissed';
+    log.messageTypes = outbound.map((m) => m.type);
+    log.finishReason = 'deterministic';
     return { progress, messages: outbound, streamKind: 'none', log };
   }
 
@@ -640,9 +975,31 @@ export function applyLearnerTurn(input: {
       return { progress, messages: outbound, streamKind: 'none', log };
     }
 
+    if (focus.sceneWordGate) {
+      log.gradingSource = 'none';
+      log.verdict = 'awaiting-scene-words';
+      log.finishReason = 'deterministic';
+      return { progress, messages: outbound, streamKind: 'none', log };
+    }
+
+    if (isStuckMessage(input.userText)) {
+      return handleStuckTurn(progress, pack, focus, beat, log);
+    }
+
+    // Tool-why may mix Arabic with Portuguese words (ليه بنقول queria مش quero؟),
+    // so do not require arabic-only script.
+    if (
+      isArabicWhyQuestion(input.userText) &&
+      pack.grammarCard &&
+      mentionsLessonTool(input.userText, pack, beat)
+    ) {
+      return handleGrammarCardTurn(progress, pack, focus, beat, log);
+    }
+
     if (script === 'arabic-only') {
       log.gradingSource = 'none';
       log.verdict = 'side-remark';
+      const alt = presentBeat(pack, focus.beatIndex, { alt: true });
       return {
         progress,
         messages: outbound,
@@ -658,9 +1015,10 @@ export function applyLearnerTurn(input: {
             verdict: 'correct',
             source: 'code',
             attempt: 1,
+            reactionKind: 'r3',
             nextLine: beat.altLine.pt,
-            nextPrompts: presentBeat(pack, focus.beatIndex, { alt: true }),
-            nextPrompt: presentBeat(pack, focus.beatIndex, { alt: true })[0],
+            nextPrompts: alt,
+            nextPrompt: alt[0],
           },
         },
       };
@@ -671,10 +1029,47 @@ export function applyLearnerTurn(input: {
       return { progress, messages: outbound, streamKind: 'none', log };
     }
 
-    const knownNoSlot =
-      beat.kind === 'known' &&
-      !hasPersonalSlot(beat.frame, ...(beat.acceptedAnswers ?? []));
-    if (knownNoSlot) {
+    if (beat.kind === 'known') {
+      const slotPatterns = beat.acceptedAnswers.filter((answer) => hasPersonalSlot(answer));
+      if (slotPatterns.length) {
+        const slotGrade = gradeFilledPersonalSlot(input.userText, slotPatterns);
+        if (slotGrade?.verdict === 'correct') {
+          const pattern = slotGrade.matched;
+          const value = extractPersonalSlotValue(input.userText, pattern);
+          return storyReaction(
+            progress,
+            pack,
+            focus,
+            beat,
+            input.userText,
+            slotGrade,
+            'code',
+            log,
+            value ? { slotNote: slotNoteForPattern(pattern, value) } : undefined,
+          );
+        }
+        // Anticipated Brazilian / wrong frames (e.g. Me chamo [NAME]) before R2.
+        for (const entry of beat.anticipatedWrong) {
+          if (!hasPersonalSlot(entry.answer)) continue;
+          if (!matchesFilledPersonalSlot(input.userText, entry.answer)) continue;
+          return storyReaction(
+            progress,
+            pack,
+            focus,
+            beat,
+            input.userText,
+            {
+              verdict: 'anticipated-wrong',
+              matched: entry.answer,
+              feedback: entry.feedback,
+              authoredVerdict: entry.verdict === 'near_miss' ? 'near_miss' : 'wrong',
+            },
+            'code',
+            log,
+          );
+        }
+        return storyReaction(progress, pack, focus, beat, input.userText, null, 'you', log);
+      }
       const grade = gradeKnownAnswer(
         input.userText,
         beat.acceptedAnswers,
@@ -683,6 +1078,7 @@ export function applyLearnerTurn(input: {
       return storyReaction(progress, pack, focus, beat, input.userText, grade, 'code', log);
     }
 
+    // Open beat → R2, then code guard in the chat route.
     return storyReaction(progress, pack, focus, beat, input.userText, null, 'you', log);
   }
 
@@ -718,9 +1114,15 @@ function friendTurn(
   if (!bridgeLesson && progress.practice?.phase === 'friend-bridge') {
     bridgeLesson = lessonById(progress.practice.lessonId) ?? undefined;
   }
+  const farewellMessages: TypedMessage[] = [];
   if (progress.practice?.phase === 'friend-bridge') {
     const left = progress.practice.friendBridgeTurnsLeft - 1;
     if (left <= 0) {
+      const packForFarewell = bridgeLesson ?? lessonById(progress.practice.lessonId) ?? undefined;
+      if (packForFarewell) {
+        const farewell = presentFarewell(packForFarewell);
+        if (farewell) farewellMessages.push(farewell);
+      }
       const rec = lessonRecord(progress, progress.practice.lessonId);
       rec.practisedAt = now ?? Date.now();
       saveLesson(progress, rec);
@@ -734,7 +1136,7 @@ function friendTurn(
   log.mode = 'friend';
   return {
     progress,
-    messages: [],
+    messages: farewellMessages,
     streamKind: 'friend',
     log,
     modelContext: {
@@ -785,6 +1187,7 @@ function handleAssessmentTurn(
           verdict: 'correct',
           source: 'code',
           attempt: 1,
+          reactionKind: 'r3',
           currentPromptPlain: promptPlain,
           nextPrompt: makeAssessmentPrompt(task),
         },
@@ -812,6 +1215,7 @@ function handleAssessmentTurn(
         verdict: 'wrong',
         source: 'you',
         attempt: focus.attemptsOnCurrent + 1,
+        reactionKind: 'r2',
         currentPromptPlain: promptPlain,
       },
     },

@@ -24,7 +24,8 @@ export type MessageType =
   | 'intro'
   | 'narration'
   | 'character'
-  | 'coach';
+  | 'coach'
+  | 'scene-words';
 
 export type LearnerVerdictLabel = 'صح' | 'قربت' | string;
 
@@ -58,7 +59,27 @@ export type TypedMessage = {
   legacyContent?: string;
   /** Story character name on a character line. */
   speaker?: string;
+  /**
+   * Coach tip vs note/explain. Tips may show an inline ليه؟ chip when the pack
+   * has a grammar card.
+   */
+  coachKind?: 'tip' | 'note' | 'explain';
+  /** Inline ليه؟ under a guided/supported coach tip. */
+  showWhyChip?: boolean;
+  /** In-thread stuck hint card: frame + tappable word pieces (insert, don't send). */
+  hintCard?: { frame?: string; words: { pt: string; meaning: string }[] };
+  /** In-thread scene vocabulary carousel (كلمات هنحتاجها). */
+  sceneWordCard?: {
+    sceneId: string;
+    titleAr?: string;
+    words: { pt: string; ar: string; arz: string; emoji?: string }[];
+  };
+  /** Optional contrast line under a grammar explanation card. */
+  contrastAr?: string;
 };
+
+/** Which Prompt-4 builder to send (R1 / R2 / R3). */
+export type ReactionKind = 'r1' | 'r2' | 'r3';
 
 /** Context for Prompt 4 (lesson reaction) streamed by the chat route. */
 export type LessonReactionContext = {
@@ -66,6 +87,8 @@ export type LessonReactionContext = {
   verdict: 'correct' | 'near_miss' | 'wrong';
   source: 'code' | 'you';
   attempt: number;
+  /** Which short reaction prompt to send. */
+  reactionKind?: ReactionKind;
   accepted?: string;
   mistakeNote?: string;
   hintNote?: string;
@@ -80,22 +103,32 @@ export type LessonReactionContext = {
   /** Word-bank entries for this beat, "pt (meaning)" joined. */
   wordBank?: string;
   currentPromptPlain: string;
+  /** Egyptian translation of the beat line (for R2 / R3). */
+  lineAr?: string;
   /** Pattern such as "Sou de [CITY]." when the answer is personal and the model must grade it. */
   slotPattern?: string;
+  /** Filled SLOT_NOTE line for R1 personal answers. */
+  slotNote?: string;
+  /** Short say/hear + nucleus list for R1 WORDS. */
+  words?: string;
   nextPrompt?: TypedMessage;
   /** Prefer when more than one follow-up message (e.g. teach card + repeat). */
   nextPrompts?: TypedMessage[];
-  situation?: string;
-  lessonTarget?: string;
   recentPraise: string[];
   characterName?: string;
   characterRole?: string;
   sceneTitle?: string;
   beatLine?: string;
   reactionCue?: string;
-  /** Next story line, context only. The app sends it after this reaction. */
+  /** Next story line — sent to R1 and used to drop reactions that echo it. */
   nextLine?: string;
+  /** Speaker of the next story line (for R1 NEXT_SPEAKER). */
+  nextSpeaker?: string;
   recentCharacterReactions?: string[];
+  /** Open-beat code guard words for post-R2 check. */
+  codeGuard?: { requiredWords?: string[]; requiredEndings?: string[] };
+  /** Lesson grammar point / learning target for R3 GRAMMAR_POINT. */
+  grammarPoint?: string;
 };
 
 export type ItemOutcome = 'correct' | 'near-miss' | 'learned-with-help' | 'skipped' | 'fail' | 'pass';
@@ -104,6 +137,11 @@ export type PracticeFocus = {
   lessonId: string;
   beatIndex: number;
   attemptsOnCurrent: number;
+  /**
+   * Separate from wrong-answer attempts. Stuck (??? / مش فاهم) never counts as
+   * a mistake; third stuck advances as learned-with-help.
+   */
+  stuckCountOnCurrent: number;
   itemOutcomes: Record<string, ItemOutcome>;
   phase: 'story' | 'friend-bridge';
   /** Turns left in the post-practice Friend bridge (default 5). */
@@ -112,6 +150,13 @@ export type PracticeFocus = {
   useAltLine: boolean;
   /** Supported coach tip already revealed this beat. */
   coachTipShown: boolean;
+  /**
+   * When set, narration (if any) was shown but the beat tip/character wait
+   * until the learner dismisses the scene word card.
+   */
+  sceneWordGate?: { sceneId: string; beatIndex: number } | null;
+  /** Scene ids whose word card was dismissed at least once (enables reopen chip). */
+  sceneWordCardsSeen?: string[];
 };
 
 export type AssessmentFocus = {
@@ -143,6 +188,8 @@ export type TurnLogDetail = {
   verdict: string | null;
   matchedAnswer: string | null;
   modelVerdictRaw: string | null;
+  /** Open beat wrong: model rejected it, or code guard demoted a pass. */
+  openFailReason?: 'model' | 'guard' | null;
   messageTypes: MessageType[];
   modelLatencyMs: number | null;
   finishReason: string | null;
@@ -185,7 +232,9 @@ export type TurnAction =
   | { type: 'resume-practice' }
   | { type: 'end-practice' }
   | { type: 'start-assessment'; lessonId: string }
-  | { type: 'show-coach-tip' };
+  | { type: 'show-coach-tip' }
+  | { type: 'show-grammar-card' }
+  | { type: 'dismiss-scene-word-card' };
 
 export type Chip = {
   id: string;
@@ -211,6 +260,7 @@ export function emptyTurnLog(): TurnLogDetail {
     verdict: null,
     matchedAnswer: null,
     modelVerdictRaw: null,
+    openFailReason: null,
     messageTypes: [],
     modelLatencyMs: null,
     finishReason: null,
@@ -288,10 +338,22 @@ function migratePracticeFocus(raw: unknown): PracticeFocus | null {
         : typeof o.teachStepIndex === 'number'
           ? o.teachStepIndex
           : 0;
+  const gateRaw =
+    o.sceneWordGate && typeof o.sceneWordGate === 'object'
+      ? (o.sceneWordGate as Record<string, unknown>)
+      : null;
+  const sceneWordGate =
+    gateRaw &&
+    typeof gateRaw.sceneId === 'string' &&
+    typeof gateRaw.beatIndex === 'number'
+      ? { sceneId: gateRaw.sceneId, beatIndex: gateRaw.beatIndex }
+      : null;
+
   return {
     lessonId: o.lessonId,
     beatIndex,
     attemptsOnCurrent: typeof o.attemptsOnCurrent === 'number' ? o.attemptsOnCurrent : 0,
+    stuckCountOnCurrent: typeof o.stuckCountOnCurrent === 'number' ? o.stuckCountOnCurrent : 0,
     itemOutcomes:
       o.itemOutcomes && typeof o.itemOutcomes === 'object'
         ? (o.itemOutcomes as PracticeFocus['itemOutcomes'])
@@ -301,6 +363,10 @@ function migratePracticeFocus(raw: unknown): PracticeFocus | null {
       typeof o.friendBridgeTurnsLeft === 'number' ? o.friendBridgeTurnsLeft : 0,
     useAltLine: o.useAltLine === true,
     coachTipShown: o.coachTipShown === true,
+    sceneWordGate,
+    sceneWordCardsSeen: Array.isArray(o.sceneWordCardsSeen)
+      ? o.sceneWordCardsSeen.filter((id): id is string => typeof id === 'string')
+      : [],
   };
 }
 

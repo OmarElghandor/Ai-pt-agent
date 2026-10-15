@@ -1,9 +1,16 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { dropJunkCoach, parseFriendOutput, parseOpenVerdict } from '../lib/friendParse';
+import {
+  dropJunkCoach,
+  filterReactionMessages,
+  parseFriendOutput,
+  parseOpenVerdict,
+} from '../lib/friendParse';
 import {
   buildLessonReactionInstruction,
-  notesForReaction,
+  buildR1CharacterReaction,
+  buildR2Judge,
+  buildR3CoachArabic,
 } from '../lib/friendPrompt';
 import { emptyProgress, type LessonReactionContext } from '../lib/progressTypes';
 import { lessonById } from '../lib/lessons/catalogue';
@@ -48,16 +55,31 @@ describe('open verdict parse', () => {
   });
 });
 
+function dismissSceneWords(progress: Progress): Progress {
+  if (!progress.practice?.sceneWordGate) return progress;
+  return applyLearnerTurn({
+    progress,
+    userText: '',
+    action: { type: 'dismiss-scene-word-card' },
+  }).progress;
+}
+
 function acceptAnswer(progress: Progress, userText: string, verdict: 'correct' | 'wrong' = 'correct') {
-  const turn = applyLearnerTurn({ progress, userText });
+  let ready = dismissSceneWords(progress);
+  const turn = applyLearnerTurn({ progress: ready, userText });
+  let nextProgress = turn.progress;
+  let follow: typeof turn.messages = [];
   if (turn.modelContext?.reaction?.source === 'code') {
-    const follow = turn.modelContext.reaction.nextPrompts ?? [];
-    return { turn, follow, progress: turn.progress };
+    follow = [...(turn.modelContext.reaction.nextPrompts ?? [])];
+  } else {
+    const pack = lessonById('test-greetings');
+    assert.ok(pack);
+    follow = commitOpenVerdict(turn.progress, pack, turn.log.itemId ?? '', verdict);
   }
-  const pack = lessonById('test-greetings');
-  assert.ok(pack);
-  const follow = commitOpenVerdict(turn.progress, pack, turn.log.itemId ?? '', verdict);
-  return { turn, follow, progress: turn.progress };
+  if (nextProgress.practice?.sceneWordGate) {
+    nextProgress = dismissSceneWords(nextProgress);
+  }
+  return { turn, follow, progress: nextProgress };
 }
 
 describe('assessment', () => {
@@ -68,11 +90,12 @@ describe('assessment', () => {
       userText: '',
       action: { type: 'start-practice', lessonId: 'test-greetings' },
     }).progress;
+    progress = dismissSceneWords(progress);
     for (const answer of ['Olá!', 'Chamo-me Omar.', 'Tudo bem?']) {
       const step = acceptAnswer(progress, answer);
       assert.equal(step.turn.streamKind, 'lesson-reaction');
-      const expectedSource = answer.startsWith('Chamo-me') ? 'you' : 'code';
-      assert.equal(step.turn.modelContext?.reaction?.source, expectedSource);
+      assert.equal(step.turn.modelContext?.reaction?.source, 'code');
+      assert.equal(step.turn.modelContext?.reaction?.reactionKind, 'r1');
       progress = step.progress;
     }
     assert.equal(progress.practice?.phase, 'friend-bridge');
@@ -139,71 +162,143 @@ describe('praise and help parse', () => {
   });
 });
 
-describe('Prompt 4 reaction context', () => {
+describe('Prompt 4 reaction builders', () => {
   const base = (over: Partial<LessonReactionContext>): LessonReactionContext => ({
     mode: 'practice',
     verdict: 'correct',
     source: 'code',
     attempt: 1,
+    reactionKind: 'r1',
     currentPromptPlain: 'Como dizes adeus?',
-    accepted: 'Adeus! | Até logo! | Tchau!',
-    hintNote: 'فكر في تحية الصباح',
-    whyNote: 'في الصبح بنقول Bom dia',
-    mistakeNote: 'قربت من Adeus',
+    beatLine: 'Como dizes adeus?',
+    characterName: 'Rita',
+    characterRole: 'جارة',
+    reactionCue: 'glad; says goodbye warmly',
     recentPraise: [],
     ...over,
   });
 
-  it('keeps CURRENT_PROMPT and never embeds next-item Portuguese text', () => {
-    const instruction = buildLessonReactionInstruction({
-      level: 'A0',
+  it('R1 leads into the next story line and omits LESSON_TARGET / SITUATION', () => {
+    const instruction = buildR1CharacterReaction({
       userText: 'Adeus',
       reaction: base({
-        verdict: 'correct',
+        nextLine: 'Bom dia!',
+        nextSpeaker: 'Rita',
         nextPrompt: {
           id: 'next',
           role: 'assistant',
           type: 'task',
           at: Date.now(),
           segments: [{ lang: 'pt', text: 'Bom dia!' }],
-          prompt: { shape: 'question', pt: 'Como saudas o teu vizinho de manhã?', arHidden: '' },
         },
       }),
     });
-    assert.match(instruction, /CURRENT_PROMPT: Como dizes adeus\?/);
-    assert.match(instruction, /HAS_NEXT_PROMPT: yes/);
-    assert.doesNotMatch(instruction, /NEXT_PROMPT \(context/);
-    assert.doesNotMatch(instruction, /Como saudas o teu vizinho de manhã/);
-    assert.doesNotMatch(instruction, /Bom dia!/);
+    assert.match(instruction, /You just said: "Como dizes adeus\?"/);
+    assert.match(instruction, /Rita will say: "Bom dia!"/);
+    assert.match(instruction, /Never say your own name/);
+    assert.doesNotMatch(instruction, /LESSON_TARGET|SITUATION:/);
   });
 
-  it('omits why_note on correct; attempt-1 wrong includes accepted to repeat', () => {
-    assert.equal(notesForReaction(base({ verdict: 'correct' })), '(none)');
+  it('parses fix tags as coach bubbles with Arabic', () => {
+    const messages = parseFriendOutput(
+      '<fix><pt>Muito prazer</pt><ar>قربت، بس بنكتبها Muito</ar></fix>',
+      { strict: true },
+    );
+    assert.equal(messages[0].type, 'coach');
+    assert.equal(messages[0].label, 'قربت');
+    assert.ok(messages[0].segments.some((s) => s.lang === 'ar'));
+  });
 
-    const wrong1 = notesForReaction(base({ verdict: 'wrong', attempt: 1 }));
-    assert.match(wrong1, /hint_note/);
-    assert.match(wrong1, /accepted:/);
-    assert.doesNotMatch(wrong1, /why_note/);
-
-    const wrong2 = notesForReaction(base({ verdict: 'wrong', attempt: 2 }));
-    assert.match(wrong2, /why_note/);
-    assert.match(wrong2, /accepted:/);
-
-    const instruction = buildLessonReactionInstruction({
-      level: 'A0',
-      userText: 'xyz',
-      reaction: base({ verdict: 'wrong', attempt: 1, source: 'code' }),
+  it('R2 judges open answers; assessment omits character react part', () => {
+    const practice = buildR2Judge({
+      userText: 'Adeus',
+      reaction: base({
+        reactionKind: 'r2',
+        source: 'you',
+        criterion: 'uses a farewell',
+        guard: 'adeus',
+      }),
     });
-    assert.match(instruction, /show the target phrase/);
-    assert.match(instruction, /جرّب تاني/);
-    assert.doesNotMatch(instruction, /Never give the answer/);
+    assert.match(practice, /VERDICT: correct/);
+    assert.match(practice, /<character/);
+    assert.match(practice, /<fix>/);
+
+    const assessment = buildR2Judge({
+      userText: 'Adeus',
+      reaction: base({
+        mode: 'assessment',
+        reactionKind: 'r2',
+        source: 'you',
+        criterion: 'uses a farewell',
+        guard: 'adeus',
+      }),
+    });
+    assert.match(assessment, /VERDICT: correct/);
+    assert.doesNotMatch(assessment, /<character/);
   });
 
-  it('near_miss only exposes mistake_note', () => {
-    const notes = notesForReaction(base({ verdict: 'near_miss' }));
-    assert.match(notes, /mistake_note/);
-    assert.doesNotMatch(notes, /why_note/);
-    assert.doesNotMatch(notes, /hint_note/);
+  it('R3 answers Arabic side remarks as WHY/HOW/OTHER coach', () => {
+    const instruction = buildR3CoachArabic({
+      userText: 'إزاي أقول؟',
+      reaction: base({
+        mode: 'side',
+        reactionKind: 'r3',
+        frame: 'Adeus …',
+        grammarPoint: 'farewells with Adeus',
+      }),
+    });
+    assert.match(instruction, /<coach>/);
+    assert.match(instruction, /WHY:/);
+    assert.match(instruction, /HOW:/);
+    assert.match(instruction, /OTHER:/);
+    assert.match(instruction, /This lesson's tool: farewells with Adeus/);
+    assert.match(instruction, /<example>/);
+    assert.doesNotMatch(instruction, /NEXT_LINE|LESSON_TARGET/);
+  });
+
+  it('parses R3 coach plus playable example', () => {
+    const raw = `<coach><ar>عشان نقول وداعاً بنقول Adeus.</ar><arz>عَشان نِقول وَداعاً بِنْقول Adeus.</arz></coach>
+<example><pt>Adeus!</pt><ar>مع السلامة!</ar></example>`;
+    const messages = parseFriendOutput(raw, { strict: true });
+    assert.equal(messages.length, 1);
+    assert.equal(messages[0].type, 'coach');
+    assert.equal(messages[0].examples?.[0]?.pt, 'Adeus!');
+    const filtered = filterReactionMessages(messages, base({ mode: 'side', reactionKind: 'r3' }), raw);
+    assert.ok(filtered);
+    assert.equal(filtered![0].examples?.[0]?.pt, 'Adeus!');
+  });
+
+  it('drops untagged practice reactions and never falls back to plain text', () => {
+    assert.equal(parseFriendOutput('Just say Bom dia', { strict: true }).length, 0);
+    const bad = filterReactionMessages(
+      parseFriendOutput('<character name="Rita"><pt>How are you?</pt><ar>إزاي؟</ar></character>', {
+        strict: true,
+      }),
+      base({ reactionKind: 'r1' }),
+      '<character name="Rita"><pt>How are you?</pt><ar>إزاي؟</ar></character>',
+    );
+    assert.equal(bad, null);
+  });
+
+  it('drops a character reaction that contains the speaker’s own name', () => {
+    const raw =
+      '<character name="Rita"><pt>Bom dia, Rita!</pt><ar>صباح الخير يا ريتا!</ar></character>';
+    const dropped = filterReactionMessages(
+      parseFriendOutput(raw, { strict: true }),
+      base({ reactionKind: 'r1', characterName: 'Rita' }),
+      raw,
+    );
+    assert.equal(dropped, null);
+
+    const okRaw =
+      '<character name="Rita"><pt>Bom dia!</pt><ar>صباح الخير!</ar></character>';
+    const kept = filterReactionMessages(
+      parseFriendOutput(okRaw, { strict: true }),
+      base({ reactionKind: 'r1', characterName: 'Rita' }),
+      okRaw,
+    );
+    assert.ok(kept);
+    assert.equal(kept!.length, 1);
   });
 });
 

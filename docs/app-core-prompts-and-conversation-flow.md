@@ -8,7 +8,7 @@ This document is the source of truth for the conversation engine and practice pi
 |---------|--------|
 | Prompt 1–3 generation, `practice_*` collections | **This Next.js project** |
 | Langify `users` / `userprogress` (cells, introduced words, finished missions) | **Read-only** via `lib/langifyRead` |
-| Friend Prompt 5 / Practice Prompt 4 | This project (`lib/friendPrompt.ts`) |
+| Friend Prompt 5 / Practice Prompt 4 (R1/R2/R3) | This project (`lib/friendPrompt.ts`) |
 
 Same `MONGODB_URI`. Never write into Langify collections.
 
@@ -17,18 +17,23 @@ Same `MONGODB_URI`. Never write into Langify collections.
 | Mode | Entry | Model use |
 |------|-------|-----------|
 | **Friend** | `/chat?agent=friend` | Prompt 5 every turn |
-| **Practice** | `/lessons` → `/lessons/[lessonKey]` | Code grades known beats; Prompt 4 reacts every turn, and grades open beats |
-| **Assessment** | List badge / `/chat?agent=assessment` | Prompt 4 (no answer leaks) |
+| **Practice** | `/lessons` → `/lessons/[lessonKey]` | Code grades known beats; R1 reacts; R2 grades open / unmatched slots; R3 for Arabic side remarks |
+| **Assessment** | List badge / `/chat?agent=assessment` | R2 judge only (no character); pack nudge on wrong attempt 1 |
 
 ## Practice lesson flow
 
 1. **Intro** — one or two Egyptian sentences before the first scene.
-2. **Beats** — 8 to 14 exchanges in 3 or 4 scenes. Each beat shows narration only when the moment changes, then the character's Portuguese line. Guided and supported beats also show a coach pre-hint with that line (guided adds a frame; supported adds a word bank). Help is only a fallback if the tip was not shown. Open beats ask about his real life, with a frame and word bank and no tip.
-3. **Answer** — known beats are graded in code (including `[NAME]` / `[CITY]` / `[NUMBER]` / `[PLACE]`). Open beats are graded by Prompt 4. Arabic-only text is a side remark and does not change progress.
-4. **Reaction** — Prompt 4 speaks as the character when the answer is right, and as the coach when it is wrong. The app then sends the next story line itself. A first miss stays on the beat and re-prompts with the target phrase.
-5. **Closing hook** — the character's last open question, then a 5-turn friend bridge (Prompt 5) inside the situation.
+2. **Scene word cards** — when s01/s02 have authored `scenes[].words`, the runtime shows narration then a blocking overlay («كلمات هنحتاجها») until the learner taps «يلا نبدأ». Tip + character line are delayed until dismiss. A local «كلمات المشهد» chip reopens the same card (no turn, not help/mistake). s03 and legacy packs without words keep today’s direct flow.
+3. **Beats** — pack writes a `plan` first, then beats from SPEC say phrases (`N + 2` or `N + 3`; never padded). Three scenes: guided then supported for first uses, then a new person in s03 re-asks 2–3 things (open). Hard validator only blocks crash cases (no beats / empty accepted / bad scene id); other checks are warnings (incl. soft scene-word counts). Guided: coach tip **before** the character line (tool first). Supported: character line then tip. Open: frame, word bank, guard + hint_note.
+3. **Answer** — known beats are graded in code (exact → anticipated_wrong → accent → word-level spelling near-miss). Spelling near-miss: same word count; each word within edit distance 2 (5+ letters) or 1 (shorter); adjacent swap = 1. Personal slots run the slot matcher first; only a miss calls R2. Open beats are graded by R2, then `passesCodeGuard`. **Stuck** (`???` / مش فاهم …) is detected before grading and never counts as a wrong attempt. Arabic why about this lesson’s tool (ليه / الفرق / … + a Portuguese tool word) shows the authored `grammar_card` with no model. Other Arabic-only text is a side remark (R3) and does not change progress.
+4. **Two help ladders (independent counters)** —
+   - **Wrong answers** (`attemptsOnCurrent`): attempt 1 = anticipated note → `hint_note` → `"${coach_tip}. جرّب تاني."`; attempt 2 = `why_note` then advance as learned-with-help. Frame stays; character line is not re-shown.
+   - **Stuck** (`stuckCountOnCurrent`): 1st → `line_explain` + in-thread hint card (frame + tappable `word_bank`); 2nd → `hint_note`; 3rd → `why_note` + advance as learned-with-help. Never increments wrong attempts.
+   - **ليه؟ / tool-why**: guided/supported coach tips expose an inline ليه؟ chip when the pack has `grammar_card`. Tap (or a matching Arabic why) shows the card + «يلا نستخدمها» + the beat’s alt line; beat index unchanged.
+   - R1 after a code pass (near-miss: no praise; coach `بنكتبها <word>.` then character). Every learner message gets a visible reply.
+5. **Closing hook** — the character's last question, then a 5-turn friend bridge (Prompt 5), then optional `farewell` if present. Generation requires `closing_hook.pt` not to same-ask any beat `line.pt` / `alt_pt` (same question word + main verb).
 
-Pack JSON shape: `{ intro_ar, character, scenes, beats, closing_hook, assessment }`. Runtime: `LessonPack.beats`.
+Pack JSON shape: `{ plan, intro_ar, character, grammar_card?, scenes (with optional words: { pt, ar, arz, emoji? }[]), beats (with line_explain? + word_bank on every beat), closing_hook (pt, ar, arz), assessment }` (`plan` stored for humans; adapter ignores it). Optional legacy `farewell` / `extra_characters` still adapt; older packs without `grammar_card` / `line_explain` / `scenes[].words` stay playable. Runtime: `LessonPack.beats`. Scene-word TTS is prefetched on lesson open via `/api/tts` (same cache as lines); generation never calls TTS.
 
 ### Legacy packs
 
@@ -38,7 +43,7 @@ Regenerate with `PRACTICE_LESSON_REGENERATE=true` or by calling `POST /api/lesso
 
 ## Lesson packs
 
-- Stored in **`practice_lessons`** (`live` / `reviewed`, `is_current`).
+- Stored in **`practice_lessons`** (`live` / `reviewed`, `is_current`). `needs_review` packs are not playable.
 - Generation: POST `/api/lessons/:key/generate` calls Anthropic over HTTP and awaits the pack (no queue/worker).
 - Fallback JSON under `content/lessons/` when Mongo unset; `testOnly` when `ALLOW_TEST_LESSONS=1`.
 - Adapter: `lib/lessons/adaptMongoPack.ts`.
@@ -49,13 +54,13 @@ Available when every `requirements.cells` / `requirements.words` appears in Lang
 
 ## Generation
 
-`POST /api/lessons/:key/generate` runs Prompt 1 → 2 → structure validator → `live` → TTS via direct Anthropic HTTP (`ANTHROPIC_API_KEY`). Prompt 3 reviewer runs after in the same process. No job queue. `PRACTICE_LESSON_REGENERATE=true` gates regenerate.
+`POST /api/lessons/:key/generate` runs Prompt 1 → 2 → hard validate → if hard fail, regenerate the whole pack once → hard validate again → `live` or `failed`. No FIX MODE. Soft checks are stored as `validator_warnings`. After live, Prompt 3 reviewer runs once and stores issues for humans; it never rewrites the pack or blocks live. `?force=1` / `PRACTICE_LESSON_REGENERATE=true` clears pack **and** spec so both regenerate. No job queue.
 
 Content: `content/practice/` (word-priority, nucleo, grammar-grid), `content/lessons/lesson-plan-seed-v1.json`, `content/prompts/practice/`.
 
 ## Unified endpoint — `POST /api/chat`
 
-Grades known beats in code. Prompt 4 writes the reaction on every practice and assessment turn, and grades open beats. The route appends the next story line after that reaction. Prompt 5 is the friend bridge. After friend-bridge, writes **`practice_progress`** (not Langify UserProgress).
+Grades known beats in code. Streams R1 / R2 / R3 for practice and assessment. Drops bad tagged output (`reaction_dropped`) instead of showing untagged bubbles. Prompt 5 is the friend bridge. After friend-bridge, writes **`practice_progress`** (not Langify UserProgress). Lesson pages load the learner with `skipOpener=1` so the Friend opener is not shown.
 
 ## Lesson list (`/lessons`)
 

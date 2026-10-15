@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { describe, it } from 'node:test';
 import {
   assembleInputs,
@@ -8,6 +10,18 @@ import {
 import { validatePack } from '../lib/generation/validator';
 import { loadSeedPlan } from '../lib/lessons/seedPlan';
 import { loadNucleo, loadWordPriority, loadGrammarGrid } from '../lib/generation/wordData';
+
+describe('generation token budgets', () => {
+  it('lets pack generation use CLAUDE_MAX_TOKENS instead of a 32k override', () => {
+    const source = readFileSync(
+      path.join(process.cwd(), 'lib/generation/runPipeline.ts'),
+      'utf8',
+    );
+    assert.doesNotMatch(source, /maxTokens:\s*32_000/);
+    assert.match(source, /maxTokens:\s*12_000/);
+    assert.match(source, /maxTokens:\s*8_000/);
+  });
+});
 
 describe('practice content files', () => {
   it('loads word-priority, nucleo, grammar grid', () => {
@@ -19,13 +33,14 @@ describe('practice content files', () => {
 });
 
 describe('ALLOWED_WORDS tier rule', () => {
-  it('tier-1 slot only includes priority ≤1 cumulative words', () => {
+  it('pl-001 topic words in allowed list have priority 1 or 2', () => {
     const seed = loadSeedPlan();
     const slots = seed.map(seedToPlanSlot);
-    const slot = slots.find((s) => s.depth_tier === 1) || slots[0];
-    const allowed = buildCumulativeAllowedWords(slot, slots);
-    for (const w of allowed.filter((x) => x.topic === slot.topic)) {
-      assert.ok(w.priority <= 1, `${w.text} priority ${w.priority}`);
+    const slot = slots.find((s) => s.lesson_key === 'pl-001');
+    assert.ok(slot, 'pl-001 slot missing');
+    const allowed = buildCumulativeAllowedWords(slot!, slots);
+    for (const w of allowed.filter((x) => x.topic === slot!.topic)) {
+      assert.ok(w.priority === 1 || w.priority === 2, `${w.text} priority ${w.priority}`);
     }
   });
 });
@@ -43,201 +58,193 @@ describe('assembleInputs SLOT', () => {
 });
 
 describe('structure-only validator', () => {
-  it('rejects pack missing items', () => {
+  const lines = [
+    'Olá!',
+    'Como te chamas?',
+    'De onde és?',
+    'Trabalhas aqui?',
+    'Tudo bem?',
+    'Onde ficas?',
+    'O que fazes?',
+    'Até logo!',
+  ];
+
+  function storyPack(over: Record<string, unknown> = {}) {
+    const beats = Array.from({ length: 8 }, (_, i) => ({
+      id: `b0${i + 1}`,
+      scene: i < 3 ? 's1' : i < 6 ? 's2' : 's3',
+      speaker: 'Rita',
+      line: {
+        pt: lines[i],
+        ar: 'أهلاً',
+        arz: 'أَهْلاً',
+        alt_pt: lines[i],
+        alt_ar: 'أهلاً',
+        alt_arz: 'أَهْلاً',
+      },
+      difficulty: i < 3 ? 'guided' : i < 6 ? 'supported' : 'open',
+      coach_tip:
+        i < 3
+          ? { ar: 'قول Olá', arz: 'قول Olá' }
+          : i < 6
+            ? { ar: 'ابدأ بـ O', arz: 'اِبْدَأ بـ O' }
+            : undefined,
+      reaction_cue: 'glad; greets him warmly',
+      kind: i >= 6 ? 'open' : 'known',
+      accepted: i < 6 ? ['Olá'] : undefined,
+      anticipated_wrong: [],
+      frame: 'Olá …',
+      word_bank:
+        i >= 3
+          ? [
+              { pt: 'olá', meaning: '' },
+              { pt: 'bom', meaning: '' },
+              { pt: 'dia', meaning: '' },
+              { pt: 'eu', meaning: '' },
+            ]
+          : undefined,
+      criterion: i >= 6 ? 'He greets her.' : undefined,
+      guard: i >= 6 ? ['olá'] : undefined,
+      hint_note: i >= 6 ? 'فكّر في التحية' : undefined,
+      why_note: 'Olá',
+    }));
+    return {
+      intro_ar: 'مقدمة',
+      intro_arz: 'مُقَدِّمَة',
+      character: { name: 'Rita', role_ar: 'زميلة' },
+      scenes: [
+        { id: 's1', title_ar: 'أ' },
+        { id: 's2', title_ar: 'ب' },
+        { id: 's3', title_ar: 'ج' },
+      ],
+      beats,
+      closing_hook: { pt: 'E tu, de onde és?', ar: 'وأنت؟', arz: 'وإِنْت؟' },
+      farewell: { pt: 'Adeus!', ar: 'مع السلامة', arz: 'مَع السَلامة' },
+      assessment: [],
+      ...over,
+    };
+  }
+
+  it('hard-fails when there are no beats', () => {
     const result = validatePack(
       { teach_steps: [], assessment: [] },
       { allowedWords: [], nucleus: [] },
     );
     assert.equal(result.ok, false);
-    assert.ok(result.errors.some((e: { code: string }) => e.code === 'missing_field'));
+    assert.ok(result.errors.some((e: { code: string }) => e.code === 'no_beats'));
   });
 
-  it('rejects teach/item misalignment', () => {
-    const result = validatePack(
-      {
-        teach_steps: [
-          {
-            id: 't01',
-            phrase_pt: 'Olá!',
-            meaning_ar: 'أهلاً!',
-            meaning_arz: 'أهْلاً!',
-            explanation_ar: 'تحية بسيطة.',
-            explanation_arz: 'تَحِيَّة بَسيطة.',
-            example_pt: 'Olá!',
-            example_meaning_ar: 'أهلاً!',
-            example_meaning_arz: 'أهْلاً!',
-            accepted: ['Olá'],
-          },
-          {
-            id: 't02',
-            phrase_pt: 'Bom dia!',
-            meaning_ar: 'صباح الخير',
-            meaning_arz: 'صَباح الخِير',
-            explanation_ar: 'الصبح.',
-            explanation_arz: 'الصُّبْح.',
-            example_pt: 'Bom dia!',
-            example_meaning_ar: 'صباح الخير!',
-            example_meaning_arz: 'صَباح الخِير!',
-            accepted: ['Bom dia'],
-          },
-        ],
-        items: [
-          {
-            id: 'p01',
-            stage: 'sentences',
-            kind: 'known',
-            teach_step_ids: ['t01'],
-            prompts: [{ pt: 'Como saudas o teu vizinho de manhã?', ar: 'إزاي بتسلم الصبح؟', arz: 'إِزاي' }],
-            accepted: ['Bom dia'],
-            anticipated_wrong: [],
-            hint_note: 'صباح',
-            why_note: 'Bom dia',
-          },
-          {
-            id: 'p02',
-            stage: 'sentences',
-            kind: 'known',
-            teach_step_ids: ['t01'],
-            prompts: [{ label_pt: 'Diz em português', ar: 'أهلاً!', arz: 'أهْلاً!' }],
-            accepted: ['Olá'],
-            anticipated_wrong: [],
-            hint_note: 'تحية',
-            why_note: 'Olá',
-          },
-          {
-            id: 'p03',
-            stage: 'use',
-            kind: 'known',
-            teach_step_ids: ['t02'],
-            prompts: [{ label_pt: 'Diz em português', ar: 'صباح الخير', arz: 'صَباح' }],
-            accepted: ['Bom dia'],
-            anticipated_wrong: [],
-            hint_note: 'صباح',
-            why_note: 'Bom dia',
-          },
-          {
-            id: 'p04',
-            stage: 'use',
-            kind: 'known',
-            teach_step_ids: ['t01'],
-            prompts: [{ label_pt: 'Diz em português', ar: 'أهلاً!', arz: 'أهْلاً!' }],
-            accepted: ['Olá'],
-            anticipated_wrong: [],
-            hint_note: 'تحية',
-            why_note: 'Olá',
-          },
-        ],
-        assessment: [],
-      },
-      { allowedWords: [], nucleus: [] },
-    );
+  it('hard-fails on empty accepted and unknown scene id', () => {
+    const pack = storyPack();
+    (pack.beats[0] as { accepted: string[] }).accepted = [];
+    (pack.beats[1] as { scene: string }).scene = 's99';
+    const result = validatePack(pack, {
+      allowedWords: ['olá', 'bom', 'dia', 'eu'].map((text) => ({ text })),
+      nucleus: [],
+    });
     assert.equal(result.ok, false);
-    assert.ok(
-      result.errors.some((e: { code: string }) => e.code === 'teach_item_alignment'),
-      JSON.stringify(result.errors),
-    );
+    const codes = new Set(result.errors.map((e: { code: string }) => e.code));
+    assert.ok(codes.has('empty_accepted'), JSON.stringify(result.errors));
+    assert.ok(codes.has('missing_scene'), JSON.stringify(result.errors));
   });
 
-  it('rejects a generic or unrelated why_note', () => {
-    const step = {
-      id: 't01',
-      phrase_pt: 'Igualmente.',
-      meaning_ar: 'وأنا كمان',
-      meaning_arz: 'وأنا كَمان',
-      explanation_ar: 'ترد بيها على Muito prazer.',
-      explanation_arz: 'تِرُدّ بِيها',
-      example_pt: 'Muito prazer! — Igualmente.',
-      example_meaning_ar: 'تشرفنا — وأنا كمان',
-      example_meaning_arz: 'تَشَرَّفْنا',
-      accepted: ['Igualmente'],
+  it('accepts a short pack (no beat-count hard limit)', () => {
+    const pack = storyPack();
+    pack.beats = pack.beats.slice(0, 4);
+    const result = validatePack(pack, {
+      allowedWords: ['olá', 'bom', 'dia', 'eu'].map((text) => ({ text })),
+      nucleus: [],
+    });
+    assert.equal(result.ok, true, JSON.stringify(result.errors));
+  });
+
+  it('warns on tip leaks, bad guards, duplicates without blocking', () => {
+    const pack = storyPack();
+    (pack.beats[7] as { guard?: string[] }).guard = [];
+    delete (pack.beats[6] as { hint_note?: string }).hint_note;
+    (pack.beats[6] as { accepted: string[] }).accepted = ['Chamo-me [NAME]'];
+    (pack.beats[0] as { reaction_cue: string }).reaction_cue = 'asks him where he works then invites him';
+    (pack.beats[3] as { coach_tip: { ar: string }; accepted: string[] }).coach_tip = {
+      ar: 'قول Olá كاملة',
     };
-    const result = validatePack(
-      {
-        teach_steps: [step, { ...step, id: 't02', phrase_pt: 'Muito prazer!', accepted: ['Muito prazer'] }],
-        items: [
-          {
-            id: 'p01',
-            stage: 'sentences',
-            kind: 'known',
-            teach_step_ids: ['t01'],
-            prompts: [{ pt: 'Qual é a resposta para "Muito prazer"?', ar: 'ترد إيه؟', arz: 'تِرُدّ إيه؟' }],
-            accepted: ['Igualmente'],
-            anticipated_wrong: [],
-            hint_note: 'رد قصير',
-            why_note: 'تحية',
-          },
-        ],
-        assessment: [],
-      },
-      { allowedWords: [], nucleus: [] },
-    );
-    assert.equal(result.ok, false);
-    assert.ok(result.errors.some((e: { code: string }) => e.code === 'generic_why_note'));
-    assert.ok(result.errors.some((e: { code: string }) => e.code === 'missing_echo_wrong'));
+    (pack.beats[3] as { accepted: string[] }).accepted = ['Olá'];
+    (pack.beats[4] as { line: { pt: string } }).line.pt = 'Como te chamas?';
+    (pack.beats[4] as { line: { alt_pt: string } }).line.alt_pt = 'Como te chamas?';
+    (pack.closing_hook as { pt: string }).pt = 'De onde és?';
 
-    const missingPt = validatePack(
-      {
-        teach_steps: [step, { ...step, id: 't02', phrase_pt: 'Muito prazer!', accepted: ['Muito prazer'] }],
-        items: [
-          {
-            id: 'p01',
-            stage: 'sentences',
-            kind: 'known',
-            teach_step_ids: ['t01', 't02'],
-            prompts: [{ ar: 'جارك قال لك Muito prazer. قول إيه؟', arz: 'جَارَك قَال' }],
-            accepted: ['Igualmente', 'Muito prazer'],
-            anticipated_wrong: [{ answer: 'Muito prazer Igualmente', verdict: 'near_miss', note: 'قول Igualmente بس' }],
-            hint_note: 'رد قصير على التحية',
-            why_note: 'جارك قال Muito prazer. الإجابة Igualmente لأن ده الرد على الجملة دي.',
-          },
-        ],
-        assessment: [],
-      },
-      { allowedWords: [], nucleus: [] },
-    );
-    assert.ok(missingPt.errors.some((e: { code: string }) => e.code === 'prompt_missing_pt'));
-    assert.ok(missingPt.errors.some((e: { code: string }) => e.code === 'accepted_is_prompt'));
+    const result = validatePack(pack, {
+      allowedWords: ['olá', 'bom', 'dia', 'eu'].map((text) => ({ text })),
+      nucleus: [],
+    });
+    assert.equal(result.ok, true, JSON.stringify(result.errors));
+    const codes = new Set(result.warnings.map((e: { code: string }) => e.code));
+    assert.ok(codes.has('empty_guard'), JSON.stringify(result.warnings));
+    assert.ok(codes.has('missing_hint_note'), JSON.stringify(result.warnings));
+    assert.ok(codes.has('open_with_slot'), JSON.stringify(result.warnings));
+    assert.ok(codes.has('reaction_cue_shape'), JSON.stringify(result.warnings));
+    assert.ok(codes.has('supported_tip_leak'), JSON.stringify(result.warnings));
+    assert.ok(codes.has('duplicate_question'), JSON.stringify(result.warnings));
+    assert.ok(codes.has('closing_matches_beat'), JSON.stringify(result.warnings));
   });
 
-  it('rejects an open item that asks for an untaught verb', () => {
-    const step = {
-      id: 't01',
-      phrase_pt: 'Sou de [CITY].',
-      meaning_ar: 'أنا من مدينة',
-      meaning_arz: 'أنا مِن مَدينة',
-      explanation_ar: 'تقول مدينتك.',
-      explanation_arz: 'تِقول مَدينْتَك.',
-      example_pt: 'Sou de Lisboa.',
-      example_meaning_ar: 'أنا من لشبونة',
-      example_meaning_arz: 'أنا مِن لِشْبونة',
-      accepted: ['Sou de [CITY].'],
-    };
-    const result = validatePack(
-      {
-        teach_steps: [step, { ...step, id: 't02', phrase_pt: 'Olá!', accepted: ['Olá'] }],
-        items: [
-          {
-            id: 'p01',
-            stage: 'use',
-            kind: 'open',
-            teach_step_ids: ['t01'],
-            prompts: [{ pt: 'O que fazes?', ar: 'بتعمل إيه؟', arz: 'بِتِعْمِل إيه؟' }],
-            frame: 'Eu trabalho',
-            criterion: 'يقول trabalho',
-            guard: 'trabalho',
-          },
-        ],
-        assessment: [],
-      },
-      { allowedWords: [], nucleus: [] },
-    );
-    assert.equal(result.ok, false);
+  it('warns on open guard that is not exactly one word in the frame', () => {
+    const pack = storyPack();
+    (pack.beats[6] as { guard: string[] }).guard = ['olá', 'bom'];
+    (pack.beats[7] as { guard: string[] }).guard = ['trabalho'];
+    const result = validatePack(pack, {
+      allowedWords: ['olá', 'bom', 'dia', 'eu'].map((text) => ({ text })),
+      nucleus: [],
+    });
+    assert.equal(result.ok, true, JSON.stringify(result.errors));
+    const badGuards = result.warnings.filter((e: { code: string }) => e.code === 'bad_guard');
+    assert.ok(badGuards.length >= 2, JSON.stringify(result.warnings));
+  });
+
+  it('warns on out-of-scope words, not whole phrases', () => {
+    const pack = storyPack();
+    (pack.beats[0] as { accepted: string[] }).accepted = ['Olá amigo'];
+    const result = validatePack(pack, {
+      allowedWords: [{ text: 'Olá!' }, { text: 'Bom dia' }],
+      nucleus: ['eu'],
+    });
     assert.ok(
-      result.errors.some(
-        (e: { code: string; message?: string }) =>
-          e.code === 'teach_item_alignment' && /trabalho/i.test(e.message || ''),
+      result.warnings.some(
+        (w: { code: string; message?: string }) =>
+          w.code === 'word_scope' && /amigo/i.test(w.message || ''),
       ),
-      JSON.stringify(result.errors),
+      JSON.stringify(result.warnings),
     );
+    assert.equal(
+      result.warnings.some(
+        (w: { message?: string }) => /Olá amigo/i.test(w.message || ''),
+      ),
+      false,
+    );
+  });
+
+  it('soft-warns on scene word counts, s03 words, duplicates, and missing arz', () => {
+    const pack = storyPack();
+    (pack.scenes[0] as { words?: unknown[] }).words = [
+      { pt: 'Olá', ar: 'أهلاً' },
+      { pt: 'café', ar: 'قهوة', arz: 'قَهْوة' },
+    ];
+    (pack.scenes[1] as { words?: unknown[] }).words = [
+      { pt: 'Olá', ar: 'أهلاً', arz: 'أَهْلاً' },
+      { pt: 'eu', ar: 'أنا', arz: 'أَنا' },
+      { pt: 'tu', ar: 'أنت', arz: 'إِنْت' },
+    ];
+    (pack.scenes[2] as { words?: unknown[] }).words = [
+      { pt: 'adeus', ar: 'وداعاً', arz: 'وَداعاً' },
+    ];
+    const result = validatePack(pack, {
+      allowedWords: ['olá', 'bom', 'dia', 'eu', 'tu', 'café'].map((text) => ({ text })),
+      nucleus: [],
+    });
+    assert.equal(result.ok, true, JSON.stringify(result.errors));
+    const codes = new Set(result.warnings.map((e: { code: string }) => e.code));
+    assert.ok(codes.has('missing_scene_words'), JSON.stringify(result.warnings));
+    assert.ok(codes.has('scene_words_on_s03'), JSON.stringify(result.warnings));
+    assert.ok(codes.has('scene_word_duplicate'), JSON.stringify(result.warnings));
+    assert.ok(codes.has('missing_scene_word_arz'), JSON.stringify(result.warnings));
   });
 });

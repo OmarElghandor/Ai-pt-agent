@@ -3,10 +3,14 @@ import {
   type AssessmentTask,
   type AuthoredSegment,
   type BeatDifficulty,
+  type GrammarCard,
   type KnownAnswerFields,
+  type LineExplain,
   type OpenAnswerFields,
+  type SceneWord,
   type StoryBeat,
   type StoryLine,
+  type StoryScene,
   type ValidateResult,
   type ValidationIssue,
   type WordBankEntry,
@@ -144,7 +148,11 @@ function validateLine(value: unknown, path: string, issues: ValidationIssue[]): 
   checkArabicField(ar, `${path}.ar`, issues);
   checkArabicField(arz, `${path}.arz`, issues);
   checkNoVisibleSlot(`${pt} ${ar}`, path, issues);
-  return { pt, ar, arz };
+  const speaker =
+    typeof value.speaker === 'string' && value.speaker.trim()
+      ? value.speaker.trim()
+      : undefined;
+  return speaker ? { pt, ar, arz, speaker } : { pt, ar, arz };
 }
 
 function validateWordBank(value: unknown, path: string, issues: ValidationIssue[]): WordBankEntry[] | undefined {
@@ -167,6 +175,119 @@ function validateWordBank(value: unknown, path: string, issues: ValidationIssue[
     out.push({ pt, meaning });
   }
   return out;
+}
+
+function validateLineExplain(
+  value: unknown,
+  path: string,
+  issues: ValidationIssue[],
+): LineExplain | undefined {
+  if (value == null) return undefined;
+  if (!isObject(value)) {
+    issues.push(issue(path, 'required object'));
+    return undefined;
+  }
+  const ar = requireString(value.ar, `${path}.ar`, issues);
+  const arz = requireString(value.arz, `${path}.arz`, issues);
+  if (!ar || !arz) return undefined;
+  checkArabicField(ar, `${path}.ar`, issues);
+  checkArabicField(arz, `${path}.arz`, issues);
+  checkNoVisibleSlot(ar, `${path}.ar`, issues);
+  return { ar, arz };
+}
+
+function validateSceneWords(
+  value: unknown,
+  path: string,
+  issues: ValidationIssue[],
+): SceneWord[] | undefined {
+  if (value == null) return undefined;
+  const arr = requireArray(value, path, issues);
+  if (!arr) return undefined;
+  const out: SceneWord[] = [];
+  for (let i = 0; i < arr.length; i++) {
+    const entry = arr[i];
+    if (!isObject(entry)) {
+      issues.push(issue(`${path}[${i}]`, 'required object'));
+      continue;
+    }
+    const pt = requireString(entry.pt, `${path}[${i}].pt`, issues);
+    const ar =
+      typeof entry.ar === 'string' && entry.ar.trim()
+        ? entry.ar.trim()
+        : typeof entry.meaningAr === 'string' && entry.meaningAr.trim()
+          ? entry.meaningAr.trim()
+          : null;
+    if (!ar) {
+      issues.push(issue(`${path}[${i}].ar`, 'required non-empty string'));
+    }
+    const arz =
+      typeof entry.arz === 'string' && entry.arz.trim()
+        ? entry.arz.trim()
+        : ar;
+    if (!pt || !ar || !arz) continue;
+    checkPortugueseField(pt, `${path}[${i}].pt`, issues);
+    checkArabicField(ar, `${path}[${i}].ar`, issues);
+    checkArabicField(arz, `${path}[${i}].arz`, issues);
+    checkNoVisibleSlot(`${pt} ${ar}`, `${path}[${i}]`, issues);
+    const emoji =
+      typeof entry.emoji === 'string' && entry.emoji.trim()
+        ? entry.emoji.trim()
+        : undefined;
+    out.push(emoji ? { pt, ar, arz, emoji } : { pt, ar, arz });
+  }
+  return out;
+}
+
+function validateGrammarCard(
+  value: unknown,
+  path: string,
+  issues: ValidationIssue[],
+): GrammarCard | undefined {
+  if (value == null) return undefined;
+  if (!isObject(value)) {
+    issues.push(issue(path, 'required object'));
+    return undefined;
+  }
+  const ruleAr = requireString(value.ruleAr, `${path}.ruleAr`, issues);
+  const ruleArz = requireString(value.ruleArz, `${path}.ruleArz`, issues);
+  if (ruleAr) {
+    checkArabicField(ruleAr, `${path}.ruleAr`, issues);
+    checkNoVisibleSlot(ruleAr, `${path}.ruleAr`, issues);
+  }
+  if (ruleArz) checkArabicField(ruleArz, `${path}.ruleArz`, issues);
+  const examplesRaw = requireArray(value.examples, `${path}.examples`, issues);
+  const examples: GrammarCard['examples'] = [];
+  if (examplesRaw) {
+    if (examplesRaw.length < 1 || examplesRaw.length > 2) {
+      issues.push(issue(`${path}.examples`, 'grammar card needs 1 or 2 examples'));
+    }
+    for (let i = 0; i < examplesRaw.length; i++) {
+      const entry = examplesRaw[i];
+      if (!isObject(entry)) {
+        issues.push(issue(`${path}.examples[${i}]`, 'required object'));
+        continue;
+      }
+      const pt = requireString(entry.pt, `${path}.examples[${i}].pt`, issues);
+      const meaningAr =
+        typeof entry.meaningAr === 'string'
+          ? entry.meaningAr
+          : typeof entry.ar === 'string'
+            ? entry.ar
+            : '';
+      if (!pt) continue;
+      checkPortugueseField(pt, `${path}.examples[${i}].pt`, issues);
+      if (meaningAr) checkArabicField(meaningAr, `${path}.examples[${i}].meaningAr`, issues);
+      examples.push({ pt, meaningAr });
+    }
+  }
+  let contrastAr: string | undefined;
+  if (typeof value.contrastAr === 'string' && value.contrastAr.trim()) {
+    contrastAr = value.contrastAr.trim();
+    checkArabicField(contrastAr, `${path}.contrastAr`, issues);
+  }
+  if (!ruleAr || !ruleArz || examples.length === 0) return undefined;
+  return { ruleAr, ruleArz, examples, contrastAr };
 }
 
 function validateAnticipated(
@@ -309,11 +430,17 @@ function validateBeat(
       coachTip = { ar, arz };
     }
   }
-  const kind = value.kind === 'open' || difficulty === 'open' ? 'open' : 'known';
+  const lineExplain = validateLineExplain(value.lineExplain, `${path}.lineExplain`, issues);
+  const authoredKind = value.kind === 'open' || value.kind === 'known' ? value.kind : null;
+  const kind = authoredKind ?? (difficulty === 'open' ? 'open' : 'known');
   if (difficulty === 'guided') {
     if (!coachTip) issues.push(issue(`${path}.coachTip`, 'guided beat shows a coach tip'));
     if (typeof value.frame !== 'string' || !value.frame.trim()) {
       issues.push(issue(`${path}.frame`, 'guided beat includes a frame'));
+    }
+    const bank = Array.isArray(value.wordBank) ? value.wordBank.length : 0;
+    if (bank > 0 && (bank < 3 || bank > 8)) {
+      issues.push(issue(`${path}.wordBank`, 'guided beat word bank needs 3 to 8 words when present'));
     }
   }
   if (difficulty === 'supported') {
@@ -345,6 +472,7 @@ function validateBeat(
     difficulty,
     coachTip,
     reactionCue,
+    lineExplain,
     ...answer,
   };
 }
@@ -412,7 +540,7 @@ export function validateLessonPack(raw: unknown): ValidateResult {
   }
 
   const scenesRaw = requireArray(raw.scenes, 'scenes', issues);
-  const scenes: { id: string; titleAr: string }[] = [];
+  const scenes: StoryScene[] = [];
   if (scenesRaw) {
     const minScenes = testOnly ? 1 : 3;
     if (scenesRaw.length < minScenes || scenesRaw.length > 4) {
@@ -427,7 +555,12 @@ export function validateLessonPack(raw: unknown): ValidateResult {
       const sceneId = requireString(scene.id, `scenes[${i}].id`, issues);
       const sceneTitle = requireString(scene.titleAr, `scenes[${i}].titleAr`, issues);
       if (sceneTitle) checkArabicField(sceneTitle, `scenes[${i}].titleAr`, issues);
-      if (sceneId && sceneTitle) scenes.push({ id: sceneId, titleAr: sceneTitle });
+      const words = validateSceneWords(scene.words, `scenes[${i}].words`, issues);
+      if (sceneId && sceneTitle) {
+        const row: StoryScene = { id: sceneId, titleAr: sceneTitle };
+        if (words && words.length) row.words = words;
+        scenes.push(row);
+      }
     }
   }
 
@@ -460,6 +593,7 @@ export function validateLessonPack(raw: unknown): ValidateResult {
   }
 
   const closingHook = validateLine(raw.closingHook, 'closingHook', issues);
+  const grammarCard = validateGrammarCard(raw.grammarCard, 'grammarCard', issues);
 
   const assessmentRaw = requireArray(raw.assessmentTasks, 'assessmentTasks', issues);
   const assessmentTasks: AssessmentTask[] = [];
@@ -500,6 +634,7 @@ export function validateLessonPack(raw: unknown): ValidateResult {
       introAr,
       introArz,
       character: { name: characterName, roleAr: characterRole },
+      grammarCard,
       scenes,
       beats,
       closingHook,

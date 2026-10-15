@@ -1,10 +1,32 @@
 import { NextResponse } from 'next/server';
-import { ensureMongoLesson, isJsonLesson, refreshMongoCatalogue } from '@/lib/lessons/catalogue';
+import {
+  ensureMongoLesson,
+  isJsonLesson,
+  lessonById,
+  refreshMongoCatalogue,
+} from '@/lib/lessons/catalogue';
+import type { LessonPack } from '@/lib/lessons/types';
 import { generationStageLabel } from '@/lib/generationLabels';
 import { getGenerationStatusFromMongo } from '@/lib/mongo/practiceLesson';
 import { mongoConfigured } from '@/lib/mongo';
 
 export const runtime = 'nodejs';
+
+/** Unique Portuguese strings from scenes[].words for client TTS prefetch. */
+export function sceneWordWarmPt(pack: LessonPack | null | undefined): string[] {
+  if (!pack) return [];
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const scene of pack.scenes) {
+    for (const word of scene.words ?? []) {
+      const pt = word.pt.trim();
+      if (!pt || seen.has(pt)) continue;
+      seen.add(pt);
+      out.push(pt);
+    }
+  }
+  return out;
+}
 
 /** Status from practice_lessons only (optional; generate now awaits Claude inline). */
 export async function GET(
@@ -17,18 +39,21 @@ export async function GET(
   }
 
   if (!mongoConfigured()) {
+    const pack = lessonById(lessonKey);
     return NextResponse.json({
       ok: true,
-      hasPack: true,
+      hasPack: Boolean(pack) || isJsonLesson(lessonKey),
       jsonLesson: isJsonLesson(lessonKey),
       status: 'live',
       stage: 'done',
       stageLabel: 'جاهز',
+      sceneWordWarmPt: sceneWordWarmPt(pack),
     });
   }
 
   try {
     if (isJsonLesson(lessonKey)) {
+      const pack = lessonById(lessonKey);
       return NextResponse.json({
         ok: true,
         hasPack: true,
@@ -36,6 +61,7 @@ export async function GET(
         status: 'live',
         stage: 'done',
         stageLabel: 'جاهز',
+        sceneWordWarmPt: sceneWordWarmPt(pack),
       });
     }
 
@@ -51,6 +77,7 @@ export async function GET(
       stage: mongoStatus?.stage ?? null,
       stageLabel: generationStageLabel(mongoStatus?.stage),
       error: mongoStatus?.error ?? null,
+      sceneWordWarmPt: sceneWordWarmPt(pack),
     });
   } catch (err) {
     console.error('[api/lessons/generation]', err);

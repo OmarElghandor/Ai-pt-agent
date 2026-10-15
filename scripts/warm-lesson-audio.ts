@@ -26,6 +26,12 @@ function collectSegments(): AuthoredSegment[] {
       }
     }
     out.push({ lang: 'pt', text: pack.closingHook.pt });
+    for (const scene of pack.scenes) {
+      for (const word of scene.words ?? []) {
+        const pt = word.pt.trim();
+        if (pt) out.push({ lang: 'pt', text: pt });
+      }
+    }
     for (const task of pack.assessmentTasks) {
       out.push({ lang: 'pt', text: task.line.pt });
       if (task.line.ar) {

@@ -27,7 +27,7 @@ export function extractJson(text: string): unknown {
 }
 
 function getClaudeModel(): string {
-  return process.env.CLAUDE_MODEL?.trim() || 'claude-sonnet-4-5';
+  return process.env.CLAUDE_MODEL?.trim() || 'claude-sonnet-5-5';
 }
 
 function defaultMaxTokens(): number {

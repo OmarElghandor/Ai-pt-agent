@@ -109,19 +109,21 @@ function insertOpener(file: LearnerFile, localHour: number): void {
 export function openLearner(
   id: string,
   localHour: number,
-  opts?: { forceNew?: boolean; now?: number },
+  opts?: { forceNew?: boolean; now?: number; skipOpener?: boolean },
 ): LearnerFile {
   const file = readLearner(id);
   const now = opts?.now ?? Date.now();
-  const lastAt = file.visible.at(-1)?.at ?? null;
   const needsOpener =
-    opts?.forceNew || file.visible.length === 0 || isThreadStale(lastAt, now);
+    opts?.forceNew || file.visible.length === 0 || isThreadStale(file.visible.at(-1)?.at ?? null, now);
   if (!needsOpener) return file;
   if (file.visible.length > 0) {
     file.archive.push(...file.visible);
     file.visible = [];
   }
-  insertOpener(file, localHour);
+  // Lesson pages start practice themselves — do not inject the Friend-mode opener.
+  if (!opts?.skipOpener) {
+    insertOpener(file, localHour);
+  }
   writeLearner(file);
   return readLearner(id);
 }

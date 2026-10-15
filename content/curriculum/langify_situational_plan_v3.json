@@ -1,0 +1,4070 @@
+{
+  "plan_id": "langify_situational_plan_v3",
+  "lessons": [
+    {
+      "id": "pl-001",
+      "n": 1,
+      "unit": 1,
+      "unit_ar": "الحي – أول أسبوع في لشبونة",
+      "review": false,
+      "title_ar": "على السلم مع الجارة",
+      "situation_ar": "بتقابل جارتك ريتا لأول مرة على سلم العمارة",
+      "grammar_ar": "ser و morar مع eu: sou / moro",
+      "tense": "present",
+      "learn_and_use": [
+        "olá / oi",
+        "bom dia",
+        "sim",
+        "não",
+        "obrigado",
+        "eu",
+        "tu",
+        "tudo bem?"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "sou",
+        "moro",
+        "Chamo-me…",
+        "Sou de…",
+        "Moro em…"
+      ],
+      "curriculum_days": [
+        1
+      ]
+    },
+    {
+      "id": "pl-002",
+      "n": 2,
+      "unit": 1,
+      "unit_ar": "الحي – أول أسبوع في لشبونة",
+      "review": false,
+      "title_ar": "القهوة اللي تحت البيت",
+      "situation_ar": "أول قهوة في الكافيه اللي تحت البيت",
+      "grammar_ar": "queria + اسم",
+      "tense": "present",
+      "learn_and_use": [
+        "o café",
+        "a água",
+        "o chá",
+        "de nada",
+        "um",
+        "uma",
+        "beber",
+        "obrigada"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "Queria…, sem…",
+        "É para aqui ou para levar?"
+      ],
+      "curriculum_days": [
+        12
+      ]
+    },
+    {
+      "id": "pl-003",
+      "n": 3,
+      "unit": 1,
+      "unit_ar": "الحي – أول أسبوع في لشبونة",
+      "review": false,
+      "title_ar": "بكام ده؟",
+      "situation_ar": "في محل صغير جنب البيت بتسأل عن الأسعار",
+      "grammar_ar": "الأرقام + quanto custa?",
+      "tense": "present",
+      "learn_and_use": [
+        "dois",
+        "três",
+        "quatro",
+        "cinco",
+        "seis",
+        "o preço",
+        "caro",
+        "barato"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "Quanto custa?",
+        "A que horas…?",
+        "Queria um pacote de…",
+        "Tem mais barato?"
+      ],
+      "curriculum_days": [
+        3,
+        11
+      ]
+    },
+    {
+      "id": "pl-004",
+      "n": 4,
+      "unit": 1,
+      "unit_ar": "الحي – أول أسبوع في لشبونة",
+      "review": false,
+      "title_ar": "عملت إيه امبارح؟",
+      "situation_ar": "ريتا بتسألك قضيت امبارح إزاي",
+      "grammar_ar": "الماضي مع eu: fui / fiz / comi / vi / estive",
+      "tense": "past",
+      "learn_and_use": [
+        "ontem",
+        "ir",
+        "fazer",
+        "comer",
+        "ver",
+        "estar",
+        "a casa",
+        "o quê?"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "fui",
+        "fiz",
+        "comi",
+        "vi",
+        "estive",
+        "Ontem fui a…",
+        "Fiz… e depois…",
+        "O que fizeste ontem?"
+      ],
+      "curriculum_days": [
+        15
+      ]
+    },
+    {
+      "id": "pl-005",
+      "n": 5,
+      "unit": 1,
+      "unit_ar": "الحي – أول أسبوع في لشبونة",
+      "review": false,
+      "title_ar": "هتعمل إيه بكرة؟",
+      "situation_ar": "جارك بيسألك عن خطتك بكرة",
+      "grammar_ar": "المستقبل: vou + فعل",
+      "tense": "future",
+      "learn_and_use": [
+        "amanhã",
+        "a manhã",
+        "a tarde",
+        "a noite",
+        "trabalhar",
+        "ficar",
+        "talvez",
+        "descansar"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "Amanhã vou…",
+        "Vou… porque…",
+        "O que vais fazer?"
+      ],
+      "curriculum_days": [
+        22
+      ]
+    },
+    {
+      "id": "pl-006",
+      "n": 6,
+      "unit": 1,
+      "unit_ar": "الحي – أول أسبوع في لشبونة",
+      "review": true,
+      "title_ar": "امبارح والنهارده وبكرة",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-007",
+      "n": 7,
+      "unit": 1,
+      "unit_ar": "الحي – أول أسبوع في لشبونة",
+      "review": false,
+      "title_ar": "رقم تليفونك كام؟",
+      "situation_ar": "جارك بياخد رقمك ويسألك الإيجار بكام",
+      "grammar_ar": "الأرقام لحد 30",
+      "tense": "present",
+      "learn_and_use": [
+        "o número",
+        "zero",
+        "sete",
+        "oito",
+        "nove",
+        "dez",
+        "vinte",
+        "trinta"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "Quanto custa?",
+        "A que horas…?"
+      ],
+      "curriculum_days": [
+        3
+      ]
+    },
+    {
+      "id": "pl-008",
+      "n": 8,
+      "unit": 1,
+      "unit_ar": "الحي – أول أسبوع في لشبونة",
+      "review": false,
+      "title_ar": "فين الصيدلية؟",
+      "situation_ar": "محتاج صيدلية وبتسأل حد في الشارع، وبيتكلم بسرعة",
+      "grammar_ar": "onde fica + مكان",
+      "tense": "present",
+      "learn_and_use": [
+        "a rua",
+        "perto",
+        "longe",
+        "à direita (de)",
+        "à esquerda (de)",
+        "não percebi",
+        "desculpa",
+        "com licença",
+        "onde?"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "Onde fica…?",
+        "É perto ou longe?",
+        "Vira à direita…",
+        "Desculpa, não percebi.",
+        "Podes repetir mais devagar?"
+      ],
+      "curriculum_days": [
+        10,
+        6
+      ]
+    },
+    {
+      "id": "pl-009",
+      "n": 9,
+      "unit": 1,
+      "unit_ar": "الحي – أول أسبوع في لشبونة",
+      "review": false,
+      "title_ar": "السوبر ماركت",
+      "situation_ar": "بتشتري حاجات الأسبوع لأول مرة",
+      "grammar_ar": "tem…? + كمية (um quilo / um pacote)",
+      "tense": "present",
+      "learn_and_use": [
+        "o pão",
+        "o leite",
+        "a fruta",
+        "o arroz",
+        "isto",
+        "isso",
+        "este",
+        "esta"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "um quilo",
+        "um pacote",
+        "Queria um pacote de…",
+        "Tem mais barato?"
+      ],
+      "curriculum_days": [
+        11
+      ]
+    },
+    {
+      "id": "pl-010",
+      "n": 10,
+      "unit": 1,
+      "unit_ar": "الحي – أول أسبوع في لشبونة",
+      "review": false,
+      "title_ar": "شقتي الجديدة",
+      "situation_ar": "ريتا بتسألك شقتك عاملة إزاي",
+      "grammar_ar": "há / tem + اسم",
+      "tense": "present",
+      "learn_and_use": [
+        "o apartamento",
+        "o quarto",
+        "a cozinha",
+        "a casa de banho",
+        "grande",
+        "pequeno",
+        "novo",
+        "velho"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "há",
+        "Chamo-me…",
+        "Sou de…",
+        "Moro em…"
+      ],
+      "curriculum_days": [
+        1
+      ]
+    },
+    {
+      "id": "pl-011",
+      "n": 11,
+      "unit": 1,
+      "unit_ar": "الحي – أول أسبوع في لشبونة",
+      "review": false,
+      "title_ar": "مفتوح ولا مقفول؟",
+      "situation_ar": "رايح المخبز والمحل اللي جنبه لسه مافتحش",
+      "grammar_ar": "já / ainda não / agora",
+      "tense": "present",
+      "learn_and_use": [
+        "aberto",
+        "fechado",
+        "abrir",
+        "fechar",
+        "já",
+        "agora",
+        "logo",
+        "então"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "já",
+        "ainda não",
+        "agora"
+      ],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-012",
+      "n": 12,
+      "unit": 1,
+      "unit_ar": "الحي – أول أسبوع في لشبونة",
+      "review": true,
+      "title_ar": "مراجعة: الحي – أول أسبوع في لشبونة",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-013",
+      "n": 13,
+      "unit": 1,
+      "unit_ar": "الحي – أول أسبوع في لشبونة",
+      "review": false,
+      "title_ar": "بتدفع إزاي؟",
+      "situation_ar": "عند الكاشير بيسألك هتدفع كاش ولا كارت",
+      "grammar_ar": "posso + فعل? / com cartão",
+      "tense": "present",
+      "learn_and_use": [
+        "pagar",
+        "o dinheiro",
+        "o cartão",
+        "o poder",
+        "levar",
+        "o saco",
+        "a moeda",
+        "a nota"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "com cartão"
+      ],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-014",
+      "n": 14,
+      "unit": 1,
+      "unit_ar": "الحي – أول أسبوع في لشبونة",
+      "review": false,
+      "title_ar": "فين المفاتيح؟",
+      "situation_ar": "نازل متأخر ومش لاقي حاجاتك في البيت",
+      "grammar_ar": "حروف المكان: em cima de / ao lado de",
+      "tense": "present",
+      "learn_and_use": [
+        "as chaves",
+        "a carteira",
+        "o telemóvel",
+        "em cima de",
+        "ao lado de",
+        "aqui / cá",
+        "ali / lá",
+        "a mesa"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "em cima de",
+        "ao lado de",
+        "Quem é?",
+        "O que é isto?",
+        "Onde fica…?"
+      ],
+      "curriculum_days": [
+        2
+      ]
+    },
+    {
+      "id": "pl-015",
+      "n": 15,
+      "unit": 1,
+      "unit_ar": "الحي – أول أسبوع في لشبونة",
+      "review": false,
+      "title_ar": "عيلتي في مصر",
+      "situation_ar": "ريتا بتسألك عن عيلتك وعايش مع مين",
+      "grammar_ar": "o meu / a minha + ter",
+      "tense": "present",
+      "learn_and_use": [
+        "a família",
+        "meu",
+        "minha",
+        "teu",
+        "tua",
+        "ter",
+        "viver",
+        "quem?"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "o meu",
+        "a minha + ter",
+        "Chamo-me…",
+        "Sou de…",
+        "Moro em…"
+      ],
+      "curriculum_days": [
+        1
+      ]
+    },
+    {
+      "id": "pl-016",
+      "n": 16,
+      "unit": 1,
+      "unit_ar": "الحي – أول أسبوع في لشبونة",
+      "review": false,
+      "title_ar": "الجو النهارده",
+      "situation_ar": "بتتكلم مع الجارة عن الجو وإنت نازل",
+      "grammar_ar": "está + صفة (está frio / está bom)",
+      "tense": "present",
+      "learn_and_use": [
+        "quente",
+        "frio",
+        "bom",
+        "mau",
+        "também",
+        "hoje",
+        "muito",
+        "pouco"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "está frio",
+        "está bom"
+      ],
+      "curriculum_days": [
+        54
+      ]
+    },
+    {
+      "id": "pl-017",
+      "n": 17,
+      "unit": 1,
+      "unit_ar": "الحي – أول أسبوع في لشبونة",
+      "review": false,
+      "title_ar": "الساعة كام؟",
+      "situation_ar": "بتسأل عن مواعيد المحل والأتوبيس",
+      "grammar_ar": "que horas são? / às + ساعة",
+      "tense": "present",
+      "learn_and_use": [
+        "a hora",
+        "o minuto",
+        "o meio-dia",
+        "boa tarde",
+        "boa noite",
+        "quando?",
+        "onze",
+        "doze",
+        "quinze"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "que horas são?",
+        "Quanto custa?",
+        "A que horas…?"
+      ],
+      "curriculum_days": [
+        3
+      ]
+    },
+    {
+      "id": "pl-018",
+      "n": 18,
+      "unit": 1,
+      "unit_ar": "الحي – أول أسبوع في لشبونة",
+      "review": true,
+      "title_ar": "مراجعة: الحي – أول أسبوع في لشبونة",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-019",
+      "n": 19,
+      "unit": 2,
+      "unit_ar": "الشغل",
+      "review": false,
+      "title_ar": "أول يوم في الشغل",
+      "situation_ar": "زميلتك صوفيا بتعرّفك على المكتب",
+      "grammar_ar": "trabalhar في المضارع مع eu و tu",
+      "tense": "present",
+      "learn_and_use": [
+        "a empresa",
+        "o escritório",
+        "começar",
+        "o trabalho",
+        "colega",
+        "nosso",
+        "nossa",
+        "o emprego"
+      ],
+      "meet_only": [
+        "a firma",
+        "o candidato",
+        "o empregador",
+        "o agricultor"
+      ],
+      "tool_phrases": [
+        "Sou de…, mas moro em…",
+        "Gosto de… porque…"
+      ],
+      "curriculum_days": [
+        7,
+        32
+      ]
+    },
+    {
+      "id": "pl-020",
+      "n": 20,
+      "unit": 2,
+      "unit_ar": "الشغل",
+      "review": false,
+      "title_ar": "إيه رأيك في الشغل؟",
+      "situation_ar": "صوفيا بتسألك الشغل الجديد عامل إيه",
+      "grammar_ar": "acho que + é fácil / difícil",
+      "tense": "present",
+      "learn_and_use": [
+        "achar",
+        "pensar",
+        "fácil",
+        "difícil",
+        "certo",
+        "errado",
+        "mais",
+        "menos"
+      ],
+      "meet_only": [
+        "péssimo",
+        "largo",
+        "estreito",
+        "esperto"
+      ],
+      "tool_phrases": [
+        "acho que + é fácil",
+        "difícil"
+      ],
+      "curriculum_days": [
+        38
+      ]
+    },
+    {
+      "id": "pl-021",
+      "n": 21,
+      "unit": 2,
+      "unit_ar": "الشغل",
+      "review": false,
+      "title_ar": "ممكن تساعدني؟",
+      "situation_ar": "محتاج حاجة من زميلك ومش عارف تقولها",
+      "grammar_ar": "quero / posso / preciso + فعل",
+      "tense": "present",
+      "learn_and_use": [
+        "querer",
+        "ser",
+        "perceber",
+        "saber",
+        "só / apenas",
+        "sem",
+        "você",
+        "vocês"
+      ],
+      "meet_only": [
+        "continuar",
+        "subir",
+        "descer",
+        "aceitar"
+      ],
+      "tool_phrases": [
+        "quero",
+        "posso",
+        "Preciso de… porque…",
+        "…, por isso…"
+      ],
+      "curriculum_days": [
+        5
+      ]
+    },
+    {
+      "id": "pl-022",
+      "n": 22,
+      "unit": 2,
+      "unit_ar": "الشغل",
+      "review": false,
+      "title_ar": "يومي العادي",
+      "situation_ar": "زميلك بيسألك يومك بيمشي إزاي",
+      "grammar_ar": "أفعال الروتين + depois",
+      "tense": "present",
+      "learn_and_use": [
+        "levantar-se",
+        "sair",
+        "chegar",
+        "nunca",
+        "às vezes",
+        "depois",
+        "antes",
+        "sempre"
+      ],
+      "meet_only": [
+        "o século",
+        "a década",
+        "o calendário",
+        "a ceia"
+      ],
+      "tool_phrases": [
+        "Acordo de manhã e…",
+        "Depois, …"
+      ],
+      "curriculum_days": [
+        8
+      ]
+    },
+    {
+      "id": "pl-023",
+      "n": 23,
+      "unit": 2,
+      "unit_ar": "الشغل",
+      "review": false,
+      "title_ar": "الغدا مع الزملاء",
+      "situation_ar": "بتختار أكل مع زمايلك في الكانتين",
+      "grammar_ar": "gosto de / prefiro",
+      "tense": "present",
+      "learn_and_use": [
+        "gostar",
+        "preferir",
+        "a carne",
+        "o peixe",
+        "o almoço",
+        "mas",
+        "ou",
+        "e"
+      ],
+      "meet_only": [
+        "a salada",
+        "a sandes",
+        "a tosta",
+        "o ovo"
+      ],
+      "tool_phrases": [
+        "gosto de",
+        "prefiro",
+        "Gosto de…",
+        "Prefiro X a Y.",
+        "E tu, de que gostas?",
+        "Gosto de X e Y.",
+        "Quero ir, mas…",
+        "X ou Y?"
+      ],
+      "curriculum_days": [
+        9,
+        4
+      ]
+    },
+    {
+      "id": "pl-024",
+      "n": 24,
+      "unit": 2,
+      "unit_ar": "الشغل",
+      "review": true,
+      "title_ar": "مراجعة: الشغل",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-025",
+      "n": 25,
+      "unit": 2,
+      "unit_ar": "الشغل",
+      "review": false,
+      "title_ar": "امبارح في الشغل",
+      "situation_ar": "المدير بيسألك عملت إيه امبارح",
+      "grammar_ar": "الماضي المنتظم: trabalhei / cheguei / saí",
+      "tense": "past",
+      "learn_and_use": [
+        "acabar",
+        "voltar",
+        "falar",
+        "a semana",
+        "finalmente",
+        "cheguei",
+        "comprei",
+        "voltei"
+      ],
+      "meet_only": [
+        "resultar",
+        "reconhecer",
+        "apanhar",
+        "soltar"
+      ],
+      "tool_phrases": [
+        "trabalhei",
+        "cheguei",
+        "saí",
+        "Primeiro… Depois… Finalmente…"
+      ],
+      "curriculum_days": [
+        16
+      ]
+    },
+    {
+      "id": "pl-026",
+      "n": 26,
+      "unit": 2,
+      "unit_ar": "الشغل",
+      "review": false,
+      "title_ar": "الطابعة بايظة",
+      "situation_ar": "حاجة في المكتب مش شغالة ومحتاج مساعدة",
+      "grammar_ar": "preciso de… porque…",
+      "tense": "present",
+      "learn_and_use": [
+        "precisar",
+        "o problema",
+        "ajudar",
+        "funcionar",
+        "porque?",
+        "portanto / por isso",
+        "pedir",
+        "que"
+      ],
+      "meet_only": [
+        "o rato",
+        "o teclado",
+        "o cabo"
+      ],
+      "tool_phrases": [
+        "preciso de… porque…",
+        "…, por isso…",
+        "Isto não funciona.",
+        "Preciso de outro porque…"
+      ],
+      "curriculum_days": [
+        5,
+        13
+      ]
+    },
+    {
+      "id": "pl-027",
+      "n": 27,
+      "unit": 2,
+      "unit_ar": "الشغل",
+      "review": false,
+      "title_ar": "اتأخرت",
+      "situation_ar": "بتعتذر لمديرك عن التأخير",
+      "grammar_ar": "tive de / não pude + por isso",
+      "tense": "past",
+      "learn_and_use": [
+        "atrasado",
+        "desculpe",
+        "dever / ter de",
+        "o autocarro",
+        "o comboio",
+        "cedo",
+        "avisar",
+        "a"
+      ],
+      "meet_only": [
+        "o camião",
+        "o barco"
+      ],
+      "tool_phrases": [
+        "tive de",
+        "não pude + por isso",
+        "Não pude vir porque…",
+        "Tive de…, por isso…",
+        "Vou avisar."
+      ],
+      "curriculum_days": [
+        19
+      ]
+    },
+    {
+      "id": "pl-028",
+      "n": 28,
+      "unit": 2,
+      "unit_ar": "الشغل",
+      "review": false,
+      "title_ar": "إيميل للمدير",
+      "situation_ar": "بتبعت رسالة لمديرك تطلب إجازة يوم",
+      "grammar_ar": "posso + فعل? (طلب بأدب)",
+      "tense": "present",
+      "learn_and_use": [
+        "escrever",
+        "responder",
+        "enviar",
+        "a mensagem",
+        "o dia livre",
+        "dar",
+        "de",
+        "em"
+      ],
+      "meet_only": [
+        "o meio",
+        "o grupo",
+        "a voz",
+        "o texto"
+      ],
+      "tool_phrases": [],
+      "curriculum_days": [
+        74
+      ]
+    },
+    {
+      "id": "pl-029",
+      "n": 29,
+      "unit": 2,
+      "unit_ar": "الشغل",
+      "review": false,
+      "title_ar": "خطة الأسبوع",
+      "situation_ar": "الفريق بيتفق هيعمل إيه الأسبوع ده",
+      "grammar_ar": "nós: vamos / temos / fazemos",
+      "tense": "future",
+      "learn_and_use": [
+        "nós",
+        "segunda-feira",
+        "terça-feira",
+        "quarta-feira",
+        "quinta-feira",
+        "sexta-feira",
+        "o mês",
+        "o fim de semana"
+      ],
+      "meet_only": [
+        "junho",
+        "setembro",
+        "outubro",
+        "novembro"
+      ],
+      "tool_phrases": [
+        "nós",
+        "vamos",
+        "temos",
+        "fazemos",
+        "Vou fazer… porque…",
+        "Se puder, vou…",
+        "Ainda não sei, mas aviso-te."
+      ],
+      "curriculum_days": [
+        28
+      ]
+    },
+    {
+      "id": "pl-030",
+      "n": 30,
+      "unit": 2,
+      "unit_ar": "الشغل",
+      "review": true,
+      "title_ar": "مراجعة: الشغل",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-031",
+      "n": 31,
+      "unit": 2,
+      "unit_ar": "الشغل",
+      "review": false,
+      "title_ar": "زميلك الجديد",
+      "situation_ar": "بتحكي لصوفيا عن زميل جديد",
+      "grammar_ar": "ele / ela / eles / elas في المضارع",
+      "tense": "present",
+      "learn_and_use": [
+        "ele",
+        "ela",
+        "eles",
+        "elas",
+        "a pessoa",
+        "conhecer",
+        "simpático",
+        "o ano"
+      ],
+      "meet_only": [
+        "o adulto",
+        "os gémeos",
+        "o neto",
+        "a neta"
+      ],
+      "tool_phrases": [
+        "ele",
+        "ela",
+        "eles",
+        "O que fizeste…?",
+        "E depois, o que aconteceu?",
+        "Ele é…",
+        "Ela gosta de…",
+        "Conhecemo-nos…"
+      ],
+      "curriculum_days": [
+        20,
+        41
+      ]
+    },
+    {
+      "id": "pl-032",
+      "n": 32,
+      "unit": 2,
+      "unit_ar": "الشغل",
+      "review": false,
+      "title_ar": "اللابتوب الجديد",
+      "situation_ar": "زميلك بيساعدك تجهز الكمبيوتر",
+      "grammar_ar": "usar / ligar + جهاز",
+      "tense": "present",
+      "learn_and_use": [
+        "o computador",
+        "o telefone",
+        "o carregador",
+        "usar",
+        "a palavra",
+        "o tablet",
+        "para",
+        "com"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "usar"
+      ],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-033",
+      "n": 33,
+      "unit": 2,
+      "unit_ar": "الشغل",
+      "review": false,
+      "title_ar": "مكالمة شغل",
+      "situation_ar": "بتتصل تأكد معاد مع عميل",
+      "grammar_ar": "estou a + فعل",
+      "tense": "present",
+      "learn_and_use": [
+        "dizer",
+        "ouvir",
+        "repetir",
+        "perguntar",
+        "o nome",
+        "adeus",
+        "o livro",
+        "o caderno"
+      ],
+      "meet_only": [
+        "o bloco de notas",
+        "o lápis",
+        "a tesoura",
+        "o estojo"
+      ],
+      "tool_phrases": [
+        "Estou a ligar para…",
+        "Só para confirmar: ficou para…?"
+      ],
+      "curriculum_days": [
+        25
+      ]
+    },
+    {
+      "id": "pl-034",
+      "n": 34,
+      "unit": 2,
+      "unit_ar": "الشغل",
+      "review": false,
+      "title_ar": "تليفون من رقم غريب",
+      "situation_ar": "حد بيتصل بيك من شركة ومش فاهم عايز إيه",
+      "grammar_ar": "quem fala? / pode repetir? (التليفون)",
+      "tense": "present",
+      "learn_and_use": [
+        "atender",
+        "informação",
+        "a chamada",
+        "ligar",
+        "o telefone fixo",
+        "porquê?",
+        "como?"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "quem fala?",
+        "pode repetir?",
+        "Estou a ligar para saber…",
+        "Pode repetir a informação, por favor?",
+        "Então, ficou combinado que…"
+      ],
+      "curriculum_days": [
+        75
+      ]
+    },
+    {
+      "id": "pl-035",
+      "n": 35,
+      "unit": 3,
+      "unit_ar": "الصحة",
+      "review": false,
+      "title_ar": "تعبان",
+      "situation_ar": "زميلك لاحظ إنك تعبان النهارده",
+      "grammar_ar": "estou + صفة",
+      "tense": "present",
+      "learn_and_use": [
+        "cansado",
+        "doente",
+        "a cabeça",
+        "a dor",
+        "febre",
+        "ainda",
+        "bem",
+        "mal"
+      ],
+      "meet_only": [
+        "o corpo",
+        "o cabelo",
+        "a cara",
+        "o nariz"
+      ],
+      "tool_phrases": [
+        "Hoje estou…",
+        "Tenho dor de…",
+        "Ainda não estou bem, mas…"
+      ],
+      "curriculum_days": [
+        17
+      ]
+    },
+    {
+      "id": "pl-036",
+      "n": 36,
+      "unit": 3,
+      "unit_ar": "الصحة",
+      "review": true,
+      "title_ar": "مراجعة: الصحة",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-037",
+      "n": 37,
+      "unit": 3,
+      "unit_ar": "الصحة",
+      "review": false,
+      "title_ar": "في الصيدلية",
+      "situation_ar": "بتشرح للصيدلي عندك إيه",
+      "grammar_ar": "dói-me + جزء من الجسم",
+      "tense": "present",
+      "learn_and_use": [
+        "garganta",
+        "a barriga",
+        "as costas",
+        "desde",
+        "o comprimido",
+        "tomar",
+        "estômago",
+        "começou"
+      ],
+      "meet_only": [
+        "a boca",
+        "a orelha",
+        "o pescoço",
+        "o peito"
+      ],
+      "tool_phrases": [
+        "Tenho dor no…",
+        "Começou ontem e ainda continua."
+      ],
+      "curriculum_days": [
+        18
+      ]
+    },
+    {
+      "id": "pl-038",
+      "n": 38,
+      "unit": 3,
+      "unit_ar": "الصحة",
+      "review": false,
+      "title_ar": "في الجيم",
+      "situation_ar": "المدرب بيوريك التمارين",
+      "grammar_ar": "جمع الأسماء: braços / pernas",
+      "tense": "present",
+      "learn_and_use": [
+        "o braço",
+        "a perna",
+        "a mão",
+        "o pé",
+        "o joelho",
+        "o ombro",
+        "forte",
+        "fraco"
+      ],
+      "meet_only": [
+        "o dedo",
+        "o pelo",
+        "o queixo",
+        "o cotovelo"
+      ],
+      "tool_phrases": [
+        "braços",
+        "pernas"
+      ],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-039",
+      "n": 39,
+      "unit": 3,
+      "unit_ar": "الصحة",
+      "review": false,
+      "title_ar": "حجز عند الدكتور",
+      "situation_ar": "بتتصل بالمركز الصحي تحجز",
+      "grammar_ar": "queria marcar + يوم وساعة",
+      "tense": "future",
+      "learn_and_use": [
+        "o médico",
+        "o hospital",
+        "marcar",
+        "a consulta",
+        "disponível",
+        "ocupado",
+        "o minimercado",
+        "o supermercado"
+      ],
+      "meet_only": [
+        "o talho",
+        "o castelo",
+        "o palácio",
+        "o tribunal"
+      ],
+      "tool_phrases": [
+        "Queria marcar uma consulta.",
+        "Tem vaga amanhã?"
+      ],
+      "curriculum_days": [
+        24
+      ]
+    },
+    {
+      "id": "pl-040",
+      "n": 40,
+      "unit": 3,
+      "unit_ar": "الصحة",
+      "review": false,
+      "title_ar": "الدكتور بيسأل",
+      "situation_ar": "الدكتور بيسألك التعب بدأ إمتى واتغير إزاي",
+      "grammar_ar": "começou há… / está melhor / pior",
+      "tense": "past",
+      "learn_and_use": [
+        "melhor",
+        "pior",
+        "a saúde",
+        "a doença",
+        "o olho",
+        "sintoma",
+        "tosse",
+        "piorar"
+      ],
+      "meet_only": [
+        "durante",
+        "o pulso",
+        "o rabo",
+        "o tornozelo"
+      ],
+      "tool_phrases": [
+        "começou há…",
+        "está melhor",
+        "pior",
+        "Está a melhorar/piorar.",
+        "Não consegui trabalhar porque…",
+        "Começou há… dias.",
+        "Desde ontem, está melhor/pior.",
+        "Dói mais quando…"
+      ],
+      "curriculum_days": [
+        48,
+        68
+      ]
+    },
+    {
+      "id": "pl-041",
+      "n": 41,
+      "unit": 3,
+      "unit_ar": "الصحة",
+      "review": false,
+      "title_ar": "الدوا",
+      "situation_ar": "الصيدلي بيشرحلك تاخد الدوا إزاي",
+      "grammar_ar": "tomar + مرات في اليوم",
+      "tense": "present",
+      "learn_and_use": [
+        "medicamento",
+        "durar",
+        "cuidado",
+        "duas",
+        "três vezes",
+        "instrução",
+        "a comida",
+        "a bebida"
+      ],
+      "meet_only": [
+        "a taça",
+        "a tampa",
+        "o fogo",
+        "a terra"
+      ],
+      "tool_phrases": [
+        "Começou há…",
+        "Está a melhorar/piorar.",
+        "Não consegui trabalhar porque…",
+        "Então, primeiro tenho de…?",
+        "Quer dizer que…?"
+      ],
+      "curriculum_days": [
+        48,
+        49
+      ]
+    },
+    {
+      "id": "pl-042",
+      "n": 42,
+      "unit": 3,
+      "unit_ar": "الصحة",
+      "review": true,
+      "title_ar": "مراجعة: الصحة",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-043",
+      "n": 43,
+      "unit": 3,
+      "unit_ar": "الصحة",
+      "review": false,
+      "title_ar": "تغيير معاد الدكتور",
+      "situation_ar": "محتاج تغيّر معاد الدكتور لأن عندك شغل",
+      "grammar_ar": "queria alterar / antecipar",
+      "tense": "future",
+      "learn_and_use": [
+        "marcação",
+        "alterar",
+        "antecipar",
+        "horário",
+        "para mim",
+        "o tempo",
+        "a vez",
+        "o dia"
+      ],
+      "meet_only": [
+        "o lago",
+        "até à próxima",
+        "boa sorte!",
+        "prever"
+      ],
+      "tool_phrases": [
+        "queria alterar",
+        "antecipar",
+        "Queria alterar a minha marcação.",
+        "Há algum horário disponível na…?",
+        "Pode confirmar a nova data?"
+      ],
+      "curriculum_days": [
+        67
+      ]
+    },
+    {
+      "id": "pl-044",
+      "n": 44,
+      "unit": 4,
+      "unit_ar": "البيت",
+      "review": false,
+      "title_ar": "الغسالة بايظة",
+      "situation_ar": "بتكلم صاحب البيت عن الغسالة",
+      "grammar_ar": "está avariado / desde ontem",
+      "tense": "present",
+      "learn_and_use": [
+        "a máquina de lavar a roupa",
+        "o dono",
+        "a porta",
+        "a janela",
+        "luz",
+        "avariado",
+        "reparar",
+        "as escadas"
+      ],
+      "meet_only": [
+        "a televisão",
+        "a máquina de lavar a loiça",
+        "o telhado",
+        "o teto"
+      ],
+      "tool_phrases": [
+        "está avariado",
+        "desde ontem",
+        "A máquina não funciona.",
+        "Está assim desde ontem.",
+        "Pode mandar alguém?"
+      ],
+      "curriculum_days": [
+        26
+      ]
+    },
+    {
+      "id": "pl-045",
+      "n": 45,
+      "unit": 4,
+      "unit_ar": "البيت",
+      "review": false,
+      "title_ar": "صاحب البيت عرض حل",
+      "situation_ar": "بتتفاوض على حل يناسبك",
+      "grammar_ar": "há outra opção? / pode ser",
+      "tense": "present",
+      "learn_and_use": [
+        "esperar",
+        "outro",
+        "solução",
+        "se",
+        "o elevador",
+        "o hall de entrada",
+        "o corredor",
+        "a sala de estar"
+      ],
+      "meet_only": [
+        "a parede",
+        "o chão",
+        "o colchão",
+        "a mesa de cabeceira"
+      ],
+      "tool_phrases": [
+        "há outra opção?",
+        "pode ser",
+        "Essa opção não funciona para mim. Há outra?",
+        "O que sugere?"
+      ],
+      "curriculum_days": [
+        27
+      ]
+    },
+    {
+      "id": "pl-046",
+      "n": 46,
+      "unit": 4,
+      "unit_ar": "البيت",
+      "review": false,
+      "title_ar": "يوم التنضيف",
+      "situation_ar": "يوم تنضيف مع شريك السكن",
+      "grammar_ar": "tenho de + فعل",
+      "tense": "present",
+      "learn_and_use": [
+        "limpo",
+        "sujo",
+        "a vassoura",
+        "o aspirador",
+        "o caixote do lixo",
+        "pôr",
+        "tirar",
+        "o micro-ondas"
+      ],
+      "meet_only": [
+        "o eletrodoméstico",
+        "o congelador",
+        "a máquina de secar",
+        "o estendal"
+      ],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-047",
+      "n": 47,
+      "unit": 4,
+      "unit_ar": "البيت",
+      "review": false,
+      "title_ar": "أول طبخة في الشقة",
+      "situation_ar": "بتطبخ لأول مرة في مطبخ الشقة",
+      "grammar_ar": "primeiro… depois… (خطوات)",
+      "tense": "present",
+      "learn_and_use": [
+        "o fogão",
+        "o forno",
+        "o frigorífico",
+        "a panela",
+        "a frigideira",
+        "preparar",
+        "o jantar",
+        "o lanche"
+      ],
+      "meet_only": [
+        "a tábua de engomar",
+        "o ferro de engomar",
+        "o lava-loiças",
+        "o lavatório"
+      ],
+      "tool_phrases": [
+        "primeiro… depois…"
+      ],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-048",
+      "n": 48,
+      "unit": 4,
+      "unit_ar": "البيت",
+      "review": true,
+      "title_ar": "مراجعة: البيت",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-049",
+      "n": 49,
+      "unit": 4,
+      "unit_ar": "البيت",
+      "review": false,
+      "title_ar": "بدوّر على أوضة",
+      "situation_ar": "بتكلم صاحبة شقة عن أوضة للإيجار",
+      "grammar_ar": "quanto é a renda? / está incluído?",
+      "tense": "present",
+      "learn_and_use": [
+        "renda",
+        "contrato",
+        "a cama",
+        "despesas",
+        "cinquenta",
+        "cem",
+        "mil",
+        "mobiliado"
+      ],
+      "meet_only": [
+        "a estante",
+        "a gaveta",
+        "ocupar",
+        "tocar"
+      ],
+      "tool_phrases": [
+        "quanto é a renda?",
+        "está incluído?",
+        "Procuro um apartamento…",
+        "As despesas estão incluídas?"
+      ],
+      "curriculum_days": [
+        46
+      ]
+    },
+    {
+      "id": "pl-050",
+      "n": 50,
+      "unit": 4,
+      "unit_ar": "البيت",
+      "review": false,
+      "title_ar": "الفني جاي إمتى؟",
+      "situation_ar": "بتتابع تصليح السخان مع صاحب البيت",
+      "grammar_ar": "quando + vir في المستقبل",
+      "tense": "future",
+      "learn_and_use": [
+        "vir",
+        "técnico",
+        "a torneira",
+        "o duche / o chuveiro",
+        "a sanita",
+        "confirmar",
+        "avaria",
+        "visita"
+      ],
+      "meet_only": [
+        "o balde",
+        "a esfregona",
+        "envolver",
+        "fugir"
+      ],
+      "tool_phrases": [
+        "A avaria continua.",
+        "Quando pode vir o técnico?",
+        "Só para confirmar…",
+        "Precisava de falar sobre…",
+        "Quando seria possível reparar…?",
+        "Podemos combinar…?"
+      ],
+      "curriculum_days": [
+        47,
+        69
+      ]
+    },
+    {
+      "id": "pl-051",
+      "n": 51,
+      "unit": 4,
+      "unit_ar": "البيت",
+      "review": false,
+      "title_ar": "الجيران صوتهم عالي",
+      "situation_ar": "مش عارف تنام من دوشة الجيران",
+      "grammar_ar": "não consigo + فعل",
+      "tense": "present",
+      "learn_and_use": [
+        "dormir",
+        "acordar",
+        "o barulho",
+        "o silêncio",
+        "o vizinho",
+        "conseguir",
+        "a cor",
+        "a quantidade"
+      ],
+      "meet_only": [
+        "a figura",
+        "a posição",
+        "o conjunto",
+        "a guarda"
+      ],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-052",
+      "n": 52,
+      "unit": 4,
+      "unit_ar": "البيت",
+      "review": false,
+      "title_ar": "رسالة لصاحب البيت",
+      "situation_ar": "بتكتب لصاحب البيت عن تصليح متأخر",
+      "grammar_ar": "precisava de… / seria possível…?",
+      "tense": "present",
+      "learn_and_use": [
+        "senhorio",
+        "reparação",
+        "aviso",
+        "acordo",
+        "possível",
+        "as persianas / os estores",
+        "a varanda",
+        "a almofada"
+      ],
+      "meet_only": [
+        "indicar",
+        "valer",
+        "terminar",
+        "construir"
+      ],
+      "tool_phrases": [
+        "precisava de…",
+        "seria possível…?",
+        "Precisava de falar sobre…",
+        "Quando seria possível reparar…?",
+        "Podemos combinar…?"
+      ],
+      "curriculum_days": [
+        69
+      ]
+    },
+    {
+      "id": "pl-053",
+      "n": 53,
+      "unit": 4,
+      "unit_ar": "البيت",
+      "review": false,
+      "title_ar": "عفش للشقة",
+      "situation_ar": "بتشتري حاجات للشقة من محل مستعمل",
+      "grammar_ar": "este / esse / aquele",
+      "tense": "present",
+      "learn_and_use": [
+        "a cadeira",
+        "o sofá",
+        "o candeeiro",
+        "o espelho",
+        "esse",
+        "essa",
+        "a secretária",
+        "o armário"
+      ],
+      "meet_only": [
+        "destruir",
+        "definir",
+        "passar",
+        "gastar"
+      ],
+      "tool_phrases": [
+        "este",
+        "esse",
+        "aquele"
+      ],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-054",
+      "n": 54,
+      "unit": 4,
+      "unit_ar": "البيت",
+      "review": true,
+      "title_ar": "مراجعة: البيت",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-055",
+      "n": 55,
+      "unit": 5,
+      "unit_ar": "المدينة والمواصلات",
+      "review": false,
+      "title_ar": "تذكرة المترو",
+      "situation_ar": "أول مرة تركب مترو لشبونة",
+      "grammar_ar": "quero ir para… / ida e volta",
+      "tense": "present",
+      "learn_and_use": [
+        "o metro",
+        "o bilhete",
+        "a estação de comboios",
+        "a paragem de autocarros",
+        "entrar",
+        "partida",
+        "duração",
+        "a estrada"
+      ],
+      "meet_only": [
+        "a autoestrada",
+        "o beco",
+        "o arranha-céus",
+        "a bomba de gasolina"
+      ],
+      "tool_phrases": [
+        "quero ir para…",
+        "ida e volta",
+        "Como chegamos a…?",
+        "Quanto tempo demora?",
+        "Prefiro ir de…"
+      ],
+      "curriculum_days": [
+        52
+      ]
+    },
+    {
+      "id": "pl-056",
+      "n": 56,
+      "unit": 5,
+      "unit_ar": "المدينة والمواصلات",
+      "review": false,
+      "title_ar": "الأتوبيس اتأخر",
+      "situation_ar": "الأتوبيس مجاش وإنت مستعجل",
+      "grammar_ar": "está atrasado? / há outro?",
+      "tense": "present",
+      "learn_and_use": [
+        "o elétrico",
+        "a linha",
+        "próximo",
+        "o táxi",
+        "atraso",
+        "cancelado",
+        "ligação",
+        "plataforma"
+      ],
+      "meet_only": [
+        "deixar",
+        "parecer",
+        "chamar",
+        "contar"
+      ],
+      "tool_phrases": [
+        "está atrasado?",
+        "há outro?",
+        "O comboio está atrasado?",
+        "Há outra ligação?",
+        "Como posso chegar a…?"
+      ],
+      "curriculum_days": [
+        55
+      ]
+    },
+    {
+      "id": "pl-057",
+      "n": 57,
+      "unit": 5,
+      "unit_ar": "المدينة والمواصلات",
+      "review": false,
+      "title_ar": "اوصفلي الطريق",
+      "situation_ar": "سايح بيسألك على طريق الميدان",
+      "grammar_ar": "الأمر: vira / segue / atravessa",
+      "tense": "present",
+      "learn_and_use": [
+        "a esquina",
+        "a praça",
+        "a avenida",
+        "virar",
+        "em frente",
+        "até",
+        "cruzamento",
+        "semáforo"
+      ],
+      "meet_only": [
+        "entre",
+        "terceiro",
+        "amar",
+        "aparecer"
+      ],
+      "tool_phrases": [
+        "vira",
+        "segue",
+        "atravessa",
+        "Segue em frente até…",
+        "Vira à direita depois de…",
+        "É mais fácil ir por…"
+      ],
+      "curriculum_days": [
+        63
+      ]
+    },
+    {
+      "id": "pl-058",
+      "n": 58,
+      "unit": 5,
+      "unit_ar": "المدينة والمواصلات",
+      "review": false,
+      "title_ar": "المطار",
+      "situation_ar": "رايح المطار تستقبل قريبك",
+      "grammar_ar": "levar / trazer",
+      "tense": "future",
+      "learn_and_use": [
+        "o aeroporto",
+        "o avião",
+        "a mala",
+        "trazer",
+        "o papel",
+        "a caneta",
+        "a mochila",
+        "treze"
+      ],
+      "meet_only": [
+        "sentar-se",
+        "aproveitar",
+        "evitar",
+        "faltar"
+      ],
+      "tool_phrases": [
+        "levar",
+        "trazer"
+      ],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-059",
+      "n": 59,
+      "unit": 5,
+      "unit_ar": "المدينة والمواصلات",
+      "review": false,
+      "title_ar": "جولة في لشبونة",
+      "situation_ar": "صاحبك وريك البلد في الويك إند",
+      "grammar_ar": "الماضي مع tu: foste / viste?",
+      "tense": "past",
+      "learn_and_use": [
+        "a cidade",
+        "o museu",
+        "a igreja",
+        "o rio",
+        "bonito",
+        "visitar",
+        "aquele",
+        "aquela",
+        "aquilo"
+      ],
+      "meet_only": [
+        "o monte",
+        "a colina",
+        "o vale",
+        "a planície"
+      ],
+      "tool_phrases": [
+        "foste",
+        "viste?",
+        "Gostei de… porque…",
+        "Vale a pena visitar…",
+        "Estava muito cheio."
+      ],
+      "curriculum_days": [
+        53
+      ]
+    },
+    {
+      "id": "pl-060",
+      "n": 60,
+      "unit": 5,
+      "unit_ar": "المدينة والمواصلات",
+      "review": true,
+      "title_ar": "مراجعة: المدينة والمواصلات",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-061",
+      "n": 61,
+      "unit": 5,
+      "unit_ar": "المدينة والمواصلات",
+      "review": false,
+      "title_ar": "الأماكن اللي حواليك",
+      "situation_ar": "بتسأل فين البنك والبوستة",
+      "grammar_ar": "há um… perto daqui?",
+      "tense": "present",
+      "learn_and_use": [
+        "o banco",
+        "o multibanco",
+        "os correios",
+        "a loja",
+        "o centro comercial",
+        "o bar",
+        "o cabeleireiro",
+        "o barbeiro"
+      ],
+      "meet_only": [
+        "discutir",
+        "o",
+        "os",
+        "as"
+      ],
+      "tool_phrases": [
+        "há um… perto daqui?"
+      ],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-062",
+      "n": 62,
+      "unit": 5,
+      "unit_ar": "المدينة والمواصلات",
+      "review": false,
+      "title_ar": "عربية مستعملة",
+      "situation_ar": "بتشوف عربية مستعملة للبيع",
+      "grammar_ar": "comprar / vender + quanto quer?",
+      "tense": "present",
+      "learn_and_use": [
+        "comprar",
+        "vender",
+        "o carro / o automóvel",
+        "a mota",
+        "a bicicleta",
+        "o mecânico",
+        "o empregado",
+        "o trabalhador"
+      ],
+      "meet_only": [
+        "duzentos",
+        "trezentos",
+        "quatrocentos",
+        "quinhentos"
+      ],
+      "tool_phrases": [
+        "comprar",
+        "vender + quanto quer?"
+      ],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-063",
+      "n": 63,
+      "unit": 5,
+      "unit_ar": "المدينة والمواصلات",
+      "review": false,
+      "title_ar": "تهت!",
+      "situation_ar": "التاكسي نزلك في مكان غلط وبتدوّر على العنوان",
+      "grammar_ar": "procurar / olhar / mostrar",
+      "tense": "past",
+      "learn_and_use": [
+        "procurar",
+        "olhar",
+        "mostrar",
+        "o mapa",
+        "perder-se",
+        "o passeio",
+        "a passadeira",
+        "o edifício / o prédio"
+      ],
+      "meet_only": [
+        "euro",
+        "seguir",
+        "sem açúcar",
+        "para levar"
+      ],
+      "tool_phrases": [
+        "procurar",
+        "olhar",
+        "mostrar",
+        "Aconteceu um problema com…",
+        "Pode ajudar-me a…?",
+        "O que posso fazer agora?"
+      ],
+      "curriculum_days": [
+        62
+      ]
+    },
+    {
+      "id": "pl-064",
+      "n": 64,
+      "unit": 5,
+      "unit_ar": "المدينة والمواصلات",
+      "review": false,
+      "title_ar": "مشوار مستعجل",
+      "situation_ar": "حصلت حاجة مش متوقعة ولازم تتصرف",
+      "grammar_ar": "aconteceu um problema com… / é urgente",
+      "tense": "past",
+      "learn_and_use": [
+        "imprevisto",
+        "urgente",
+        "resolver",
+        "a necessidade",
+        "rapidamente",
+        "o resultado",
+        "a verdade",
+        "a mentira"
+      ],
+      "meet_only": [
+        "a realidade",
+        "a imaginação",
+        "a justiça",
+        "o direito"
+      ],
+      "tool_phrases": [
+        "aconteceu um problema com…",
+        "é urgente",
+        "Pode ajudar-me a…?",
+        "O que posso fazer agora?"
+      ],
+      "curriculum_days": [
+        62
+      ]
+    },
+    {
+      "id": "pl-065",
+      "n": 65,
+      "unit": 6,
+      "unit_ar": "الأوراق والخدمات",
+      "review": false,
+      "title_ar": "في البنك",
+      "situation_ar": "بتفتح حساب في البنك",
+      "grammar_ar": "preciso de + مستند",
+      "tense": "present",
+      "learn_and_use": [
+        "a identificação",
+        "assinar",
+        "formulário",
+        "preencher",
+        "balcão",
+        "catorze",
+        "dezasseis"
+      ],
+      "meet_only": [
+        "a conta",
+        "uma vez",
+        "atrasar-se",
+        "discordar",
+        "parceiro"
+      ],
+      "tool_phrases": [
+        "Que documentos preciso?",
+        "Onde devo entregar isto?"
+      ],
+      "curriculum_days": [
+        43
+      ]
+    },
+    {
+      "id": "pl-066",
+      "n": 66,
+      "unit": 6,
+      "unit_ar": "الأوراق والخدمات",
+      "review": true,
+      "title_ar": "مراجعة: الأوراق والخدمات",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-067",
+      "n": 67,
+      "unit": 6,
+      "unit_ar": "الأوراق والخدمات",
+      "review": false,
+      "title_ar": "الطرد ماوصلش",
+      "situation_ar": "بتسأل عن طرد متأخر",
+      "grammar_ar": "estou à espera de / quando chega?",
+      "tense": "present",
+      "learn_and_use": [
+        "encomenda",
+        "receber",
+        "entregar",
+        "morada",
+        "a carta",
+        "entrega",
+        "código",
+        "dezassete"
+      ],
+      "meet_only": [
+        "sentir-se",
+        "paisagem",
+        "cheio",
+        "vale a pena",
+        "calor"
+      ],
+      "tool_phrases": [
+        "estou à espera de",
+        "quando chega?",
+        "Estou à espera de uma encomenda.",
+        "A morada é…"
+      ],
+      "curriculum_days": [
+        44
+      ]
+    },
+    {
+      "id": "pl-068",
+      "n": 68,
+      "unit": 6,
+      "unit_ar": "الأوراق والخدمات",
+      "review": false,
+      "title_ar": "الفاتورة غلط",
+      "situation_ar": "بتراجع فاتورة الكهربا مع الشركة",
+      "grammar_ar": "há um erro / pode verificar?",
+      "tense": "present",
+      "learn_and_use": [
+        "fatura",
+        "o valor",
+        "verificar",
+        "pagamento",
+        "cobrar",
+        "recibo",
+        "dezoito",
+        "dezanove"
+      ],
+      "meet_only": [
+        "o dever",
+        "a causa",
+        "o efeito",
+        "o processo",
+        "nublado"
+      ],
+      "tool_phrases": [
+        "há um erro",
+        "pode verificar?",
+        "Há um erro na fatura.",
+        "Pode verificar o valor?"
+      ],
+      "curriculum_days": [
+        45
+      ]
+    },
+    {
+      "id": "pl-069",
+      "n": 69,
+      "unit": 6,
+      "unit_ar": "الأوراق والخدمات",
+      "review": false,
+      "title_ar": "في البلدية",
+      "situation_ar": "بتخلص ورق في البلدية",
+      "grammar_ar": "é preciso / é obrigatório",
+      "tense": "present",
+      "learn_and_use": [
+        "a câmara municipal",
+        "o funcionário público",
+        "documento",
+        "a lei",
+        "necessário",
+        "passo",
+        "a livraria",
+        "a biblioteca"
+      ],
+      "meet_only": [
+        "episódio",
+        "por",
+        "contra",
+        "sobre",
+        "em baixo de"
+      ],
+      "tool_phrases": [
+        "é preciso",
+        "é obrigatório",
+        "É permitido…?",
+        "É obrigatório trazer…?",
+        "Há alguma exceção?",
+        "Primeiro tenho de…",
+        "Depois é preciso…",
+        "Só para confirmar: devo…?"
+      ],
+      "curriculum_days": [
+        86,
+        76
+      ]
+    },
+    {
+      "id": "pl-070",
+      "n": 70,
+      "unit": 6,
+      "unit_ar": "الأوراق والخدمات",
+      "review": false,
+      "title_ar": "شكوى بأدب",
+      "situation_ar": "بتشتكي من خدمة سيئة",
+      "grammar_ar": "gostaria de… / foi cobrado",
+      "tense": "past",
+      "learn_and_use": [
+        "reclamação",
+        "educado",
+        "mal-educado / malcriado",
+        "a qualidade",
+        "devolver",
+        "cobrança",
+        "corrigir",
+        "quarenta"
+      ],
+      "meet_only": [
+        "o progresso",
+        "a evolução",
+        "o desenvolvimento",
+        "o produto",
+        "à frente de"
+      ],
+      "tool_phrases": [
+        "gostaria de…",
+        "foi cobrado",
+        "Gostaria de apresentar uma reclamação.",
+        "Foi cobrado um valor que…",
+        "Como podemos resolver isto?"
+      ],
+      "curriculum_days": [
+        77
+      ]
+    },
+    {
+      "id": "pl-071",
+      "n": 71,
+      "unit": 6,
+      "unit_ar": "الأوراق والخدمات",
+      "review": false,
+      "title_ar": "في البوستة",
+      "situation_ar": "بتبعت جواب لمصر من البوستة",
+      "grammar_ar": "queria enviar… / quanto custa enviar…?",
+      "tense": "present",
+      "learn_and_use": [
+        "senha",
+        "o selo",
+        "o envelope",
+        "pesar",
+        "a fila",
+        "sessenta",
+        "setenta"
+      ],
+      "meet_only": [
+        "atrás de",
+        "o planeta",
+        "o nascer do sol",
+        "o pôr do sol",
+        "o arco-íris"
+      ],
+      "tool_phrases": [
+        "queria enviar…",
+        "quanto custa enviar…?",
+        "Que documentos preciso?",
+        "Onde devo entregar isto?"
+      ],
+      "curriculum_days": [
+        43
+      ]
+    },
+    {
+      "id": "pl-072",
+      "n": 72,
+      "unit": 6,
+      "unit_ar": "الأوراق والخدمات",
+      "review": true,
+      "title_ar": "مراجعة: الأوراق والخدمات",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-073",
+      "n": 73,
+      "unit": 6,
+      "unit_ar": "الأوراق والخدمات",
+      "review": false,
+      "title_ar": "السفارة",
+      "situation_ar": "محتاج ورقة من السفارة المصرية",
+      "grammar_ar": "nasci em… / sou de…",
+      "tense": "past",
+      "learn_and_use": [
+        "a embaixada",
+        "o consulado",
+        "o país",
+        "a capital",
+        "a escola",
+        "a universidade",
+        "o teatro",
+        "a volta"
+      ],
+      "meet_only": [
+        "nascer",
+        "o ponto",
+        "a vírgula",
+        "a expressão",
+        "a humidade"
+      ],
+      "tool_phrases": [
+        "nasci em…",
+        "sou de…",
+        "Que documentos preciso?",
+        "Onde devo entregar isto?"
+      ],
+      "curriculum_days": [
+        43
+      ]
+    },
+    {
+      "id": "pl-074",
+      "n": 74,
+      "unit": 7,
+      "unit_ar": "الأكل والعزومات",
+      "review": false,
+      "title_ar": "في المطعم",
+      "situation_ar": "عشا مع أصحابك في مطعم",
+      "grammar_ar": "para mim… / a conta, por favor",
+      "tense": "present",
+      "learn_and_use": [
+        "o prato principal",
+        "a sobremesa",
+        "o empregado de mesa",
+        "o vinho",
+        "o restaurante",
+        "a entrada",
+        "a garrafa",
+        "os talheres"
+      ],
+      "meet_only": [
+        "o nevoeiro",
+        "a neve",
+        "o gelo",
+        "a gruta",
+        "o inseto"
+      ],
+      "tool_phrases": [
+        "para mim…",
+        "a conta",
+        "por favor",
+        "Queria…, sem…",
+        "É para aqui ou para levar?"
+      ],
+      "curriculum_days": [
+        12
+      ]
+    },
+    {
+      "id": "pl-075",
+      "n": 75,
+      "unit": 7,
+      "unit_ar": "الأكل والعزومات",
+      "review": false,
+      "title_ar": "بطبخ أكل مصري",
+      "situation_ar": "بتشرح طبخة مصرية لصاحبك البرتغالي",
+      "grammar_ar": "primeiro… depois… no fim",
+      "tense": "present",
+      "learn_and_use": [
+        "o alho",
+        "a cebola",
+        "o azeite",
+        "o sal",
+        "a batata",
+        "a massa",
+        "a cerveja",
+        "os cereais"
+      ],
+      "meet_only": [
+        "o fiambre",
+        "a pimenta",
+        "o exterior",
+        "o instrumento",
+        "a ferramenta"
+      ],
+      "tool_phrases": [
+        "primeiro… depois… no fim",
+        "Primeiro… Depois… Finalmente…"
+      ],
+      "curriculum_days": [
+        16
+      ]
+    },
+    {
+      "id": "pl-076",
+      "n": 76,
+      "unit": 7,
+      "unit_ar": "الأكل والعزومات",
+      "review": false,
+      "title_ar": "عزومة على العشا",
+      "situation_ar": "بتعزم أصحابك عندك",
+      "grammar_ar": "queres vir…? / podemos…",
+      "tense": "future",
+      "learn_and_use": [
+        "convidar",
+        "a festa",
+        "o copo",
+        "o prato",
+        "a refeição",
+        "combinado",
+        "oitenta",
+        "noventa"
+      ],
+      "meet_only": [
+        "o sentido",
+        "de quem?",
+        "por quem?",
+        "algo",
+        "cada"
+      ],
+      "tool_phrases": [
+        "queres vir…?",
+        "podemos…",
+        "Hoje não posso, mas amanhã posso.",
+        "Às seis, pode ser?",
+        "Queres ir… comigo?",
+        "Gostava, mas não posso…",
+        "Podemos combinar para…?"
+      ],
+      "curriculum_days": [
+        23,
+        83
+      ]
+    },
+    {
+      "id": "pl-077",
+      "n": 77,
+      "unit": 7,
+      "unit_ar": "الأكل والعزومات",
+      "review": false,
+      "title_ar": "العزومة اتأجلت",
+      "situation_ar": "صاحبك اعتذر وبتتفقوا على يوم تاني",
+      "grammar_ar": "podemos combinar para…? / infelizmente",
+      "tense": "future",
+      "learn_and_use": [
+        "convite",
+        "combinar",
+        "adiar",
+        "infelizmente",
+        "disponibilidade",
+        "janeiro",
+        "fevereiro",
+        "março"
+      ],
+      "meet_only": [
+        "a estação do ano",
+        "duro",
+        "mole",
+        "seco",
+        "molhado"
+      ],
+      "tool_phrases": [
+        "podemos combinar para…?",
+        "infelizmente",
+        "Infelizmente não posso…",
+        "Aviso-te se…",
+        "Queres ir… comigo?",
+        "Gostava, mas não posso…"
+      ],
+      "curriculum_days": [
+        58,
+        83
+      ]
+    },
+    {
+      "id": "pl-078",
+      "n": 78,
+      "unit": 7,
+      "unit_ar": "الأكل والعزومات",
+      "review": true,
+      "title_ar": "مراجعة: الأكل والعزومات",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-079",
+      "n": 79,
+      "unit": 7,
+      "unit_ar": "الأكل والعزومات",
+      "review": false,
+      "title_ar": "السوق",
+      "situation_ar": "بتشتري خضار وفاكهة من السوق",
+      "grammar_ar": "quanto é o quilo? / mais barato",
+      "tense": "present",
+      "learn_and_use": [
+        "o vegetal",
+        "o queijo",
+        "mais barato",
+        "o mercado",
+        "fresco",
+        "o batido",
+        "o refrigerante",
+        "a sopa"
+      ],
+      "meet_only": [
+        "suave",
+        "áspero",
+        "assustador",
+        "maravilhoso",
+        "rico"
+      ],
+      "tool_phrases": [
+        "quanto é o quilo?",
+        "mais barato",
+        "Queria…, mas…",
+        "Onde fica…?",
+        "Preciso de… porque…"
+      ],
+      "curriculum_days": [
+        14
+      ]
+    },
+    {
+      "id": "pl-080",
+      "n": 80,
+      "unit": 7,
+      "unit_ar": "الأكل والعزومات",
+      "review": false,
+      "title_ar": "الفطار",
+      "situation_ar": "بتحكي بتفطر إيه عادة في مصر وهنا",
+      "grammar_ar": "normalmente / às vezes / nunca",
+      "tense": "present",
+      "learn_and_use": [
+        "o pequeno-almoço",
+        "a manteiga",
+        "o sumo",
+        "a torrada",
+        "normalmente",
+        "geralmente",
+        "durante a semana",
+        "ao fim de semana"
+      ],
+      "meet_only": [
+        "pobre",
+        "famoso",
+        "conhecido",
+        "desconhecido",
+        "fantástico"
+      ],
+      "tool_phrases": [
+        "normalmente",
+        "às vezes",
+        "nunca",
+        "Normalmente…",
+        "Durante a semana…, mas ao fim de semana…"
+      ],
+      "curriculum_days": [
+        33
+      ]
+    },
+    {
+      "id": "pl-081",
+      "n": 81,
+      "unit": 7,
+      "unit_ar": "الأكل والعزومات",
+      "review": false,
+      "title_ar": "الحلويات البرتغالي",
+      "situation_ar": "بتجرب حلويات في الباستيلاريا",
+      "grammar_ar": "adoro / prefiro… a…",
+      "tense": "present",
+      "learn_and_use": [
+        "adorar",
+        "o bolo",
+        "doce",
+        "a chávena",
+        "a colher",
+        "o garfo",
+        "a faca",
+        "alguém"
+      ],
+      "meet_only": [
+        "horrível",
+        "terrível",
+        "desonesto",
+        "certamente / decerto",
+        "nem"
+      ],
+      "tool_phrases": [
+        "adoro",
+        "prefiro… a…"
+      ],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-082",
+      "n": 82,
+      "unit": 8,
+      "unit_ar": "الناس والمشاعر",
+      "review": false,
+      "title_ar": "عيلتي",
+      "situation_ar": "بتوري زميلك صور عيلتك",
+      "grammar_ar": "o meu / a minha",
+      "tense": "present",
+      "learn_and_use": [
+        "o pai",
+        "a mãe",
+        "o irmão",
+        "a irmã",
+        "os pais",
+        "a relação",
+        "o homem",
+        "a mulher"
+      ],
+      "meet_only": [
+        "o noivo",
+        "a noiva",
+        "senão",
+        "realmente",
+        "sobretudo"
+      ],
+      "tool_phrases": [
+        "o meu",
+        "a minha",
+        "Ele é…",
+        "Ela gosta de…",
+        "Conhecemo-nos…"
+      ],
+      "curriculum_days": [
+        41
+      ]
+    },
+    {
+      "id": "pl-083",
+      "n": 83,
+      "unit": 8,
+      "unit_ar": "الناس والمشاعر",
+      "review": false,
+      "title_ar": "مكالمة مع مصر",
+      "situation_ar": "بتكلم مامتك فيديو وتحكيلها عن الأسبوع",
+      "grammar_ar": "الماضي مع ele / ela: foi / fez",
+      "tense": "past",
+      "learn_and_use": [
+        "o filho",
+        "a filha",
+        "o marido",
+        "a criança",
+        "seu",
+        "sua",
+        "o senhor",
+        "a senhora"
+      ],
+      "meet_only": [
+        "principalmente",
+        "facilmente",
+        "calmamente",
+        "acima",
+        "abaixo"
+      ],
+      "tool_phrases": [
+        "ela",
+        "foi",
+        "fez",
+        "O que fizeste…?",
+        "E depois, o que aconteceu?"
+      ],
+      "curriculum_days": [
+        20
+      ]
+    },
+    {
+      "id": "pl-084",
+      "n": 84,
+      "unit": 8,
+      "unit_ar": "الناس والمشاعر",
+      "review": true,
+      "title_ar": "مراجعة: الناس والمشاعر",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-085",
+      "n": 85,
+      "unit": 8,
+      "unit_ar": "الناس والمشاعر",
+      "review": false,
+      "title_ar": "صاحبي",
+      "situation_ar": "بتوصف صاحبك لزميلك",
+      "grammar_ar": "ser + صفات الشخصية",
+      "tense": "present",
+      "learn_and_use": [
+        "engraçado",
+        "calmo",
+        "inteligente",
+        "chato",
+        "divertido",
+        "alto",
+        "baixo",
+        "ótimo"
+      ],
+      "meet_only": [
+        "burro",
+        "estúpido",
+        "próprio",
+        "seguro",
+        "tanto"
+      ],
+      "tool_phrases": [
+        "Ele é…",
+        "Ela gosta de…",
+        "Conhecemo-nos…"
+      ],
+      "curriculum_days": [
+        41
+      ]
+    },
+    {
+      "id": "pl-086",
+      "n": 86,
+      "unit": 8,
+      "unit_ar": "الناس والمشاعر",
+      "review": false,
+      "title_ar": "حاسس بإيه؟",
+      "situation_ar": "يوم صعب وصاحبك بيسأل مالك",
+      "grammar_ar": "sinto-me / fiquei… quando…",
+      "tense": "past",
+      "learn_and_use": [
+        "feliz",
+        "triste",
+        "nervoso",
+        "preocupado",
+        "sentir",
+        "a alegria",
+        "frustrado",
+        "tranquilo"
+      ],
+      "meet_only": [
+        "a ideia",
+        "o ódio",
+        "a paixão",
+        "o princípio",
+        "suficiente"
+      ],
+      "tool_phrases": [
+        "sinto-me",
+        "fiquei… quando…",
+        "Sinto-me… porque…"
+      ],
+      "curriculum_days": [
+        42
+      ]
+    },
+    {
+      "id": "pl-087",
+      "n": 87,
+      "unit": 8,
+      "unit_ar": "الناس والمشاعر",
+      "review": false,
+      "title_ar": "فرح صاحبك",
+      "situation_ar": "معزوم على فرح زميلك",
+      "grammar_ar": "casar + vou / fui",
+      "tense": "future",
+      "learn_and_use": [
+        "o casamento",
+        "o namorado",
+        "a namorada",
+        "casar",
+        "o casal",
+        "o rapaz",
+        "a rapariga",
+        "os irmãos"
+      ],
+      "meet_only": [
+        "demasiado / demais",
+        "no entanto",
+        "embora",
+        "apesar de",
+        "entretanto"
+      ],
+      "tool_phrases": [
+        "casar + vou",
+        "fui"
+      ],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-088",
+      "n": 88,
+      "unit": 8,
+      "unit_ar": "الناس والمشاعر",
+      "review": false,
+      "title_ar": "هدية لصاحبك",
+      "situation_ar": "بتشتري هدية عيد ميلاد لصاحبك",
+      "grammar_ar": "dar / oferecer + a alguém",
+      "tense": "past",
+      "learn_and_use": [
+        "oferecer",
+        "o presente",
+        "o aniversário",
+        "a amizade",
+        "os avós",
+        "a prima",
+        "ninguém",
+        "tudo"
+      ],
+      "meet_only": [
+        "assim que",
+        "bem como",
+        "pois",
+        "dado que",
+        "já que"
+      ],
+      "tool_phrases": [
+        "dar",
+        "oferecer + a alguém"
+      ],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-089",
+      "n": 89,
+      "unit": 8,
+      "unit_ar": "الناس والمشاعر",
+      "review": false,
+      "title_ar": "العيلة الكبيرة",
+      "situation_ar": "بتحكي لريتا عن جدك وولاد عمك",
+      "grammar_ar": "eles / elas",
+      "tense": "present",
+      "learn_and_use": [
+        "o avô",
+        "a avó",
+        "o tio",
+        "a tia",
+        "o primo",
+        "dele",
+        "dela",
+        "deles"
+      ],
+      "meet_only": [
+        "já agora",
+        "não só... mas também...",
+        "tanto... como...",
+        "ou... ou...",
+        "não... nem..."
+      ],
+      "tool_phrases": [
+        "eles",
+        "elas"
+      ],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-090",
+      "n": 90,
+      "unit": 8,
+      "unit_ar": "الناس والمشاعر",
+      "review": true,
+      "title_ar": "مراجعة: الناس والمشاعر",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-091",
+      "n": 91,
+      "unit": 9,
+      "unit_ar": "وقت الفراغ والطقس والسفر",
+      "review": false,
+      "title_ar": "الويك إند",
+      "situation_ar": "ريتا بتسألك عملت إيه في الويك إند",
+      "grammar_ar": "سؤال الماضي: o que fizeste? / onde foste?",
+      "tense": "past",
+      "learn_and_use": [
+        "sábado",
+        "domingo",
+        "passear",
+        "o cinema",
+        "ler",
+        "com quem?",
+        "cozinhar",
+        "abril"
+      ],
+      "meet_only": [
+        "desenvolver",
+        "produzir",
+        "aumentar",
+        "diminuir",
+        "manter"
+      ],
+      "tool_phrases": [
+        "o que fizeste?",
+        "onde foste?",
+        "Costumo…",
+        "Faço isso às vezes.",
+        "Queres vir comigo?",
+        "O que fizeste…?",
+        "E depois, o que aconteceu?"
+      ],
+      "curriculum_days": [
+        51,
+        20
+      ]
+    },
+    {
+      "id": "pl-092",
+      "n": 92,
+      "unit": 9,
+      "unit_ar": "وقت الفراغ والطقس والسفر",
+      "review": false,
+      "title_ar": "الجو",
+      "situation_ar": "بتخطط تخرج والجو متقلب",
+      "grammar_ar": "está a chover / faz sol",
+      "tense": "present",
+      "learn_and_use": [
+        "o sol",
+        "a chuva",
+        "o vento",
+        "a nuvem",
+        "previsão",
+        "chover",
+        "fazer sol",
+        "a Natureza"
+      ],
+      "meet_only": [
+        "o clima",
+        "a lua",
+        "a estrela",
+        "o ar",
+        "defender"
+      ],
+      "tool_phrases": [
+        "está a chover",
+        "faz sol",
+        "Está a chover, por isso…",
+        "Se o tempo melhorar, vamos…"
+      ],
+      "curriculum_days": [
+        54
+      ]
+    },
+    {
+      "id": "pl-093",
+      "n": 93,
+      "unit": 9,
+      "unit_ar": "وقت الفراغ والطقس والسفر",
+      "review": false,
+      "title_ar": "الفصول والشهور",
+      "situation_ar": "بتقارن الصيف في مصر والبرتغال",
+      "grammar_ar": "em + شهر / no verão",
+      "tense": "present",
+      "learn_and_use": [
+        "o verão",
+        "o inverno",
+        "a primavera",
+        "o outono",
+        "julho",
+        "agosto",
+        "dezembro",
+        "maio"
+      ],
+      "meet_only": [
+        "atacar",
+        "tornar-se",
+        "existir",
+        "considerar",
+        "criar"
+      ],
+      "tool_phrases": [
+        "no verão"
+      ],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-094",
+      "n": 94,
+      "unit": 9,
+      "unit_ar": "وقت الفراغ والطقس والسفر",
+      "review": false,
+      "title_ar": "يوم على البحر",
+      "situation_ar": "رايح البحر مع أصحابك",
+      "grammar_ar": "vamos à praia + levar",
+      "tense": "future",
+      "learn_and_use": [
+        "a praia",
+        "o mar",
+        "nadar",
+        "o protetor solar",
+        "a toalha",
+        "os óculos",
+        "o creme",
+        "nada"
+      ],
+      "meet_only": [
+        "o deserto",
+        "a costa",
+        "a ilha",
+        "o continente",
+        "morrer",
+        "matar"
+      ],
+      "tool_phrases": [
+        "vamos à praia + levar"
+      ],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-095",
+      "n": 95,
+      "unit": 9,
+      "unit_ar": "وقت الفراغ والطقس والسفر",
+      "review": false,
+      "title_ar": "رحلة لبورتو",
+      "situation_ar": "بتخطط رحلة قصيرة",
+      "grammar_ar": "quanto tempo demora? / de comboio",
+      "tense": "future",
+      "learn_and_use": [
+        "viajar",
+        "viagem",
+        "partir",
+        "as férias",
+        "chegada",
+        "último",
+        "leve"
+      ],
+      "meet_only": [
+        "voar",
+        "afirmar",
+        "tratar",
+        "odiar",
+        "realizar",
+        "permitir"
+      ],
+      "tool_phrases": [
+        "quanto tempo demora?",
+        "de comboio",
+        "Como chegamos a…?",
+        "Prefiro ir de…",
+        "A minha reserva foi…",
+        "Que alternativas tenho?",
+        "Posso receber um reembolso?"
+      ],
+      "curriculum_days": [
+        52,
+        87
+      ]
+    },
+    {
+      "id": "pl-096",
+      "n": 96,
+      "unit": 9,
+      "unit_ar": "وقت الفراغ والطقس والسفر",
+      "review": true,
+      "title_ar": "مراجعة: وقت الفراغ والطقس والسفر",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-097",
+      "n": 97,
+      "unit": 9,
+      "unit_ar": "وقت الفراغ والطقس والسفر",
+      "review": false,
+      "title_ar": "الأعياد",
+      "situation_ar": "ريتا بتسألك عن الأعياد في مصر",
+      "grammar_ar": "no Natal / na Páscoa + presente",
+      "tense": "present",
+      "learn_and_use": [
+        "o feriado",
+        "o Natal",
+        "o Ano Novo",
+        "a Páscoa",
+        "pesado",
+        "aborrecido"
+      ],
+      "meet_only": [
+        "o ano letivo",
+        "o Carnaval",
+        "o Dia do Trabalhador",
+        "o Dia de Todos os Santos",
+        "proibir",
+        "ocorrer"
+      ],
+      "tool_phrases": [
+        "no Natal",
+        "na Páscoa + presente"
+      ],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-098",
+      "n": 98,
+      "unit": 9,
+      "unit_ar": "وقت الفراغ والطقس والسفر",
+      "review": false,
+      "title_ar": "رحلة للجبل",
+      "situation_ar": "كنت في رحلة للجبل وبتحكي كانت عاملة إزاي",
+      "grammar_ar": "era / estava للوصف في الماضي",
+      "tense": "past",
+      "learn_and_use": [
+        "a montanha",
+        "a floresta",
+        "o campo",
+        "a árvore",
+        "a flor",
+        "o céu",
+        "a planta",
+        "saudável"
+      ],
+      "meet_only": [
+        "o oceano",
+        "a raiz",
+        "o tronco",
+        "o ramo",
+        "esconder",
+        "formar"
+      ],
+      "tool_phrases": [
+        "era",
+        "Gostei de… porque…",
+        "Vale a pena visitar…",
+        "Estava muito cheio."
+      ],
+      "curriculum_days": [
+        53
+      ]
+    },
+    {
+      "id": "pl-099",
+      "n": 99,
+      "unit": 9,
+      "unit_ar": "وقت الفراغ والطقس والسفر",
+      "review": false,
+      "title_ar": "كلب الجارة",
+      "situation_ar": "جارتك عندها كلب وبتسألك عن الحيوانات",
+      "grammar_ar": "tens + حيوان?",
+      "tense": "present",
+      "learn_and_use": [
+        "o animal",
+        "o cão",
+        "o gato",
+        "o pássaro",
+        "o cavalo",
+        "honesto",
+        "claro"
+      ],
+      "meet_only": [
+        "a folha",
+        "o macaco",
+        "o porco",
+        "a vaca",
+        "incluir",
+        "desaparecer"
+      ],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-100",
+      "n": 100,
+      "unit": 9,
+      "unit_ar": "وقت الفراغ والطقس والسفر",
+      "review": false,
+      "title_ar": "الرياضة",
+      "situation_ar": "زميلك بيعزمك تجري معاه",
+      "grammar_ar": "costumo + فعل",
+      "tense": "present",
+      "learn_and_use": [
+        "correr",
+        "andar",
+        "treinar",
+        "rápido",
+        "lento",
+        "tempo livre",
+        "feio",
+        "jovem"
+      ],
+      "meet_only": [
+        "crescer",
+        "publicar",
+        "aperceber-se",
+        "revelar",
+        "bater",
+        "acreditar"
+      ],
+      "tool_phrases": [
+        "Costumo…",
+        "Faço isso às vezes.",
+        "Queres vir comigo?"
+      ],
+      "curriculum_days": [
+        51
+      ]
+    },
+    {
+      "id": "pl-101",
+      "n": 101,
+      "unit": 9,
+      "unit_ar": "وقت الفراغ والطقس والسفر",
+      "review": false,
+      "title_ar": "ماتش كورة",
+      "situation_ar": "بتتفرج على ماتش مع أصحابك",
+      "grammar_ar": "ganhar / perder + o jogo",
+      "tense": "past",
+      "learn_and_use": [
+        "jogar",
+        "ganhar",
+        "perder",
+        "o jogo",
+        "equipa",
+        "a direção",
+        "Norte",
+        "Sul"
+      ],
+      "meet_only": [
+        "a técnica",
+        "a maioria",
+        "a minoria",
+        "o recurso",
+        "duvidar",
+        "sorrir"
+      ],
+      "tool_phrases": [
+        "ganhar",
+        "perder + o jogo"
+      ],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-102",
+      "n": 102,
+      "unit": 9,
+      "unit_ar": "وقت الفراغ والطقس والسفر",
+      "review": true,
+      "title_ar": "مراجعة: وقت الفراغ والطقس والسفر",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-103",
+      "n": 103,
+      "unit": 10,
+      "unit_ar": "الهدوم والتسوق",
+      "review": false,
+      "title_ar": "هدوم الشتا",
+      "situation_ar": "بتشتري جاكيت قبل الشتا",
+      "grammar_ar": "fica-me bem? / o tamanho",
+      "tense": "present",
+      "learn_and_use": [
+        "a roupa",
+        "o casaco",
+        "a camisola",
+        "as calças",
+        "o cachecol",
+        "as luvas",
+        "uns",
+        "umas"
+      ],
+      "meet_only": [
+        "os calções",
+        "as meias",
+        "o ténis / a sapatilha",
+        "a bota",
+        "rir-se",
+        "chorar"
+      ],
+      "tool_phrases": [
+        "fica-me bem?",
+        "o tamanho",
+        "Queria um pacote de…",
+        "Tem mais barato?"
+      ],
+      "curriculum_days": [
+        11
+      ]
+    },
+    {
+      "id": "pl-104",
+      "n": 104,
+      "unit": 10,
+      "unit_ar": "الهدوم والتسوق",
+      "review": false,
+      "title_ar": "الألوان",
+      "situation_ar": "بتختار لون تيشيرت",
+      "grammar_ar": "الصفة بعد الاسم + المؤنث",
+      "tense": "present",
+      "learn_and_use": [
+        "branco",
+        "preto",
+        "azul",
+        "vermelho",
+        "verde",
+        "amarelo",
+        "cinzento",
+        "cor-de-laranja"
+      ],
+      "meet_only": [
+        "castanho",
+        "cor-de-rosa",
+        "roxo",
+        "causar",
+        "determinar",
+        "anunciar"
+      ],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-105",
+      "n": 105,
+      "unit": 10,
+      "unit_ar": "الهدوم والتسوق",
+      "review": false,
+      "title_ar": "المقاس غلط",
+      "situation_ar": "بترجع حاجة اشتريتها",
+      "grammar_ar": "comprei… mas… / queria trocar",
+      "tense": "past",
+      "learn_and_use": [
+        "o sapato",
+        "a camisa",
+        "a t-shirt",
+        "o vestido",
+        "comprido",
+        "curto",
+        "trocar",
+        "a blusa"
+      ],
+      "meet_only": [
+        "o chapéu",
+        "a roupa interior",
+        "o cinto",
+        "o gorro",
+        "exigir",
+        "transformar"
+      ],
+      "tool_phrases": [
+        "comprei… mas…",
+        "queria trocar",
+        "Gostaria de apresentar uma reclamação.",
+        "Foi cobrado um valor que…",
+        "Como podemos resolver isto?"
+      ],
+      "curriculum_days": [
+        77
+      ]
+    },
+    {
+      "id": "pl-106",
+      "n": 106,
+      "unit": 10,
+      "unit_ar": "الهدوم والتسوق",
+      "review": false,
+      "title_ar": "حاجات الحمام",
+      "situation_ar": "بتشتري حاجات الحمام",
+      "grammar_ar": "preciso de + اسم جمع",
+      "tense": "present",
+      "learn_and_use": [
+        "a escova de dentes",
+        "a pasta de dentes",
+        "o sabão",
+        "o champô",
+        "o desodorizante",
+        "escuro",
+        "frequentemente"
+      ],
+      "meet_only": [
+        "vencer",
+        "pegar",
+        "apontar",
+        "concluir",
+        "abandonar",
+        "obrigar"
+      ],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-107",
+      "n": 107,
+      "unit": 11,
+      "unit_ar": "آراء وحكايات",
+      "review": false,
+      "title_ar": "رأيك إيه؟",
+      "situation_ar": "نقاش مع زميل عن الشغل من البيت",
+      "grammar_ar": "acho que… porque…",
+      "tense": "present",
+      "learn_and_use": [
+        "a opinião",
+        "concordar",
+        "importante",
+        "interessante",
+        "mesmo",
+        "assim"
+      ],
+      "meet_only": [
+        "o sistema",
+        "a satisfação",
+        "a sensação",
+        "o sentimento",
+        "aplicar",
+        "pertencer"
+      ],
+      "tool_phrases": [
+        "acho que… porque…",
+        "Na minha opinião…",
+        "Concordo, mas…",
+        "Na minha opinião,…",
+        "Concordo em parte, porque…",
+        "Por exemplo,…"
+      ],
+      "curriculum_days": [
+        38,
+        65
+      ]
+    },
+    {
+      "id": "pl-108",
+      "n": 108,
+      "unit": 11,
+      "unit_ar": "آراء وحكايات",
+      "review": true,
+      "title_ar": "مراجعة: آراء وحكايات",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-109",
+      "n": 109,
+      "unit": 11,
+      "unit_ar": "آراء وحكايات",
+      "review": false,
+      "title_ar": "إيه الأحسن؟",
+      "situation_ar": "بتختار بين شقتين",
+      "grammar_ar": "mais… do que / melhor / pior",
+      "tense": "present",
+      "learn_and_use": [
+        "igual",
+        "diferente",
+        "a diferença",
+        "maior",
+        "menor",
+        "demorado",
+        "alegre",
+        "primeiro"
+      ],
+      "meet_only": [
+        "tão",
+        "inseguro",
+        "orgulhoso",
+        "envergonhado",
+        "retirar",
+        "acrescentar"
+      ],
+      "tool_phrases": [
+        "mais… do que",
+        "melhor",
+        "pior",
+        "É mais barato do que…",
+        "Prefiro… porque…",
+        "Esta opção é mais… do que…",
+        "A melhor opção para mim é…"
+      ],
+      "curriculum_days": [
+        39,
+        64
+      ]
+    },
+    {
+      "id": "pl-110",
+      "n": 110,
+      "unit": 11,
+      "unit_ar": "آراء وحكايات",
+      "review": false,
+      "title_ar": "كان زمان",
+      "situation_ar": "بتقارن حياتك في مصر ودلوقتي",
+      "grammar_ar": "antes + trabalhava / morava (الماضي المستمر)",
+      "tense": "past",
+      "learn_and_use": [
+        "mudar",
+        "o passado",
+        "habituar-se",
+        "o momento",
+        "o segundo",
+        "o relógio",
+        "a meia-noite",
+        "depressa"
+      ],
+      "meet_only": [
+        "desejar",
+        "imaginar",
+        "cento"
+      ],
+      "tool_phrases": [
+        "antes + trabalhava",
+        "morava",
+        "Antes…, agora…",
+        "Está melhor do que…",
+        "Já me habituei a…",
+        "No início era difícil, mas…"
+      ],
+      "curriculum_days": [
+        37,
+        81
+      ]
+    },
+    {
+      "id": "pl-111",
+      "n": 111,
+      "unit": 11,
+      "unit_ar": "آراء وحكايات",
+      "review": false,
+      "title_ar": "حكاية غريبة",
+      "situation_ar": "بتحكي موقف غريب حصل لك في المترو",
+      "grammar_ar": "primeiro… depois… no fim",
+      "tense": "past",
+      "learn_and_use": [
+        "acontecer",
+        "a história",
+        "cair",
+        "encontrar",
+        "o fim",
+        "devagar",
+        "felizmente"
+      ],
+      "meet_only": [
+        "o conhecimento"
+      ],
+      "tool_phrases": [
+        "primeiro… depois… no fim",
+        "Primeiro, fui a…",
+        "Depois aconteceu…",
+        "No fim, decidi…",
+        "Primeiro…",
+        "Depois…",
+        "No fim…"
+      ],
+      "curriculum_days": [
+        61,
+        35
+      ]
+    },
+    {
+      "id": "pl-112",
+      "n": 112,
+      "unit": 11,
+      "unit_ar": "آراء وحكايات",
+      "review": false,
+      "title_ar": "غلطة واتعلمت منها",
+      "situation_ar": "بتحكي غلطة عملتها في الشغل",
+      "grammar_ar": "enganei-me / da próxima vez vou…",
+      "tense": "past",
+      "learn_and_use": [
+        "erro",
+        "esquecer-se",
+        "lembrar-se",
+        "aprender",
+        "a vergonha",
+        "o amor",
+        "a felicidade",
+        "a morte"
+      ],
+      "meet_only": [
+        "a força",
+        "a fraqueza",
+        "o caos",
+        "a vitória"
+      ],
+      "tool_phrases": [
+        "enganei-me",
+        "da próxima vez vou…",
+        "Enganei-me quando…",
+        "Devia ter…",
+        "Da próxima vez, vou…"
+      ],
+      "curriculum_days": [
+        85
+      ]
+    },
+    {
+      "id": "pl-113",
+      "n": 113,
+      "unit": 11,
+      "unit_ar": "آراء وحكايات",
+      "review": false,
+      "title_ar": "ليه جيت البرتغال؟",
+      "situation_ar": "صاحبك بيسألك ليه قررت تنقل",
+      "grammar_ar": "decidi… porque…",
+      "tense": "past",
+      "learn_and_use": [
+        "a decisão",
+        "decidir",
+        "escolher",
+        "a vida",
+        "a liberdade",
+        "opção",
+        "razão",
+        "mudar de ideias"
+      ],
+      "meet_only": [
+        "a derrota",
+        "a coragem",
+        "o ego",
+        "a fé"
+      ],
+      "tool_phrases": [
+        "decidi… porque…",
+        "Pensei em…, mas…",
+        "Acabei por…"
+      ],
+      "curriculum_days": [
+        59
+      ]
+    },
+    {
+      "id": "pl-114",
+      "n": 114,
+      "unit": 11,
+      "unit_ar": "آراء وحكايات",
+      "review": true,
+      "title_ar": "مراجعة: آراء وحكايات",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-115",
+      "n": 115,
+      "unit": 11,
+      "unit_ar": "آراء وحكايات",
+      "review": false,
+      "title_ar": "فيلم أو مسلسل",
+      "situation_ar": "بتنصح صاحبك بمسلسل",
+      "grammar_ar": "é sobre… / recomendo",
+      "tense": "present",
+      "learn_and_use": [
+        "filme",
+        "a música",
+        "a imagem",
+        "o som",
+        "recomendar",
+        "série",
+        "personagem",
+        "enredo"
+      ],
+      "meet_only": [
+        "o parágrafo",
+        "o facto",
+        "a guerra",
+        "a paz"
+      ],
+      "tool_phrases": [
+        "é sobre…",
+        "recomendo",
+        "Gostei especialmente de…",
+        "Recomendo porque…"
+      ],
+      "curriculum_days": [
+        79
+      ]
+    },
+    {
+      "id": "pl-116",
+      "n": 116,
+      "unit": 11,
+      "unit_ar": "آراء وحكايات",
+      "review": false,
+      "title_ar": "رأيك بمثال",
+      "situation_ar": "نقاش عن السكن في لشبونة",
+      "grammar_ar": "por exemplo / depende de…",
+      "tense": "present",
+      "learn_and_use": [
+        "exemplo",
+        "por exemplo",
+        "depender",
+        "desvantagem",
+        "vantagem",
+        "depende",
+        "dentro",
+        "fora"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "por exemplo",
+        "depende de…",
+        "Acho que… porque…",
+        "Por exemplo…"
+      ],
+      "curriculum_days": [
+        57
+      ]
+    },
+    {
+      "id": "pl-117",
+      "n": 117,
+      "unit": 11,
+      "unit_ar": "آراء وحكايات",
+      "review": false,
+      "title_ar": "دردشة خفيفة",
+      "situation_ar": "بتفتح كلام مع حد في الأتوبيس",
+      "grammar_ar": "costumas…? / tens feito…?",
+      "tense": "present",
+      "learn_and_use": [
+        "assunto",
+        "costumar",
+        "ultimamente",
+        "Este",
+        "Oeste",
+        "à frente",
+        "atrás"
+      ],
+      "meet_only": [
+        "a cultura",
+        "o título",
+        "o elemento",
+        "o interior"
+      ],
+      "tool_phrases": [
+        "costumas…?",
+        "tens feito…?",
+        "Tens feito alguma coisa interessante ultimamente?",
+        "Costumo… ao fim de semana.",
+        "E tu, o que achas?"
+      ],
+      "curriculum_days": [
+        78
+      ]
+    },
+    {
+      "id": "pl-118",
+      "n": 118,
+      "unit": 11,
+      "unit_ar": "آراء وحكايات",
+      "review": false,
+      "title_ar": "إحساس جديد",
+      "situation_ar": "بتحكي عن أول مرة اتكلمت برتغالي في مكالمة",
+      "grammar_ar": "fiquei surpreendido / no início… mas depois…",
+      "tense": "past",
+      "learn_and_use": [
+        "surpreendido",
+        "a confiança",
+        "o orgulho",
+        "o sucesso",
+        "a sorte",
+        "aprendizagem",
+        "o início",
+        "a calma"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "fiquei surpreendido",
+        "no início… mas depois…",
+        "Foi uma experiência que…",
+        "No início…, mas depois…",
+        "Aprendi que…"
+      ],
+      "curriculum_days": [
+        72
+      ]
+    },
+    {
+      "id": "pl-119",
+      "n": 119,
+      "unit": 12,
+      "unit_ar": "حياة أطول في البرتغال",
+      "review": false,
+      "title_ar": "مقابلة شغل",
+      "situation_ar": "أول interview في شركة برتغالية",
+      "grammar_ar": "tenho experiência em… / era responsável por…",
+      "tense": "past",
+      "learn_and_use": [
+        "a entrevista",
+        "experiência",
+        "a carreira",
+        "a profissão",
+        "o salário",
+        "responsabilidade",
+        "projeto",
+        "o funcionário"
+      ],
+      "meet_only": [
+        "o político",
+        "o presidente",
+        "o músico",
+        "o ator"
+      ],
+      "tool_phrases": [
+        "tenho experiência em…",
+        "era responsável por…",
+        "O projeto ajudou-me a…",
+        "Trabalho como…",
+        "Antes trabalhava…",
+        "Agora trabalho em…"
+      ],
+      "curriculum_days": [
+        71,
+        32
+      ]
+    },
+    {
+      "id": "pl-120",
+      "n": 120,
+      "unit": 12,
+      "unit_ar": "حياة أطول في البرتغال",
+      "review": true,
+      "title_ar": "مراجعة: حياة أطول في البرتغال",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-121",
+      "n": 121,
+      "unit": 12,
+      "unit_ar": "حياة أطول في البرتغال",
+      "review": false,
+      "title_ar": "بتشتغل إيه؟",
+      "situation_ar": "في حفلة بتسأل الناس بيشتغلوا إيه",
+      "grammar_ar": "sou + مهنة (من غير أداة)",
+      "tense": "present",
+      "learn_and_use": [
+        "o professor",
+        "o enfermeiro",
+        "o engenheiro",
+        "o cozinheiro",
+        "o vendedor",
+        "o polícia",
+        "o advogado",
+        "o condutor / o motorista"
+      ],
+      "meet_only": [
+        "o escritor"
+      ],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-122",
+      "n": 122,
+      "unit": 12,
+      "unit_ar": "حياة أطول في البرتغال",
+      "review": false,
+      "title_ar": "بتعلم برتغالي",
+      "situation_ar": "زميلك بيسألك بتتعلم إزاي",
+      "grammar_ar": "estou a tentar / consigo",
+      "tense": "present",
+      "learn_and_use": [
+        "estudar",
+        "a língua",
+        "a frase",
+        "tentar",
+        "esquecer",
+        "praticar",
+        "dificuldade",
+        "todos os dias"
+      ],
+      "meet_only": [
+        "o indivíduo"
+      ],
+      "tool_phrases": [
+        "estou a tentar",
+        "consigo",
+        "Quero melhorar…",
+        "Estou a tentar…",
+        "É difícil porque…",
+        "Não me lembro da palavra, mas é…",
+        "É uma coisa que se usa para…",
+        "Como se diz… em português?"
+      ],
+      "curriculum_days": [
+        56,
+        88
+      ]
+    },
+    {
+      "id": "pl-123",
+      "n": 123,
+      "unit": 12,
+      "unit_ar": "حياة أطول في البرتغال",
+      "review": false,
+      "title_ar": "طلب بأدب",
+      "situation_ar": "محتاج استثناء من موظفة",
+      "grammar_ar": "será que podia…? / agradecia se…",
+      "tense": "present",
+      "learn_and_use": [
+        "favor",
+        "possibilidade",
+        "agradecer",
+        "incomodar",
+        "gentileza",
+        "pedido",
+        "motivo",
+        "em cima"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "será que podia…?",
+        "agradecia se…",
+        "Importava-se de…?",
+        "Agradecia se pudesse…",
+        "Na minha opinião,…",
+        "Por exemplo,…"
+      ],
+      "curriculum_days": [
+        74,
+        80
+      ]
+    },
+    {
+      "id": "pl-124",
+      "n": 124,
+      "unit": 12,
+      "unit_ar": "حياة أطول في البرتغال",
+      "review": false,
+      "title_ar": "تبعتلي الورق؟",
+      "situation_ar": "زميلتك هتبعتلك ورق وبتتفقوا مين يبعت لمين",
+      "grammar_ar": "ضمائر المفعول: manda-me / dou-lhe / para ti",
+      "tense": "present",
+      "learn_and_use": [
+        "me",
+        "te",
+        "lhe",
+        "nos",
+        "mim",
+        "em baixo",
+        "quanto"
+      ],
+      "meet_only": [
+        "lhes",
+        "vos",
+        "ti",
+        "si"
+      ],
+      "tool_phrases": [
+        "manda-me",
+        "dou-lhe",
+        "para ti"
+      ],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-125",
+      "n": 125,
+      "unit": 12,
+      "unit_ar": "حياة أطول في البرتغال",
+      "review": false,
+      "title_ar": "ملخص الاجتماع",
+      "situation_ar": "آخر الاجتماع وبتلخص اتفقتوا على إيه",
+      "grammar_ar": "então, decidimos que… / fico responsável por…",
+      "tense": "past",
+      "learn_and_use": [
+        "o resumo",
+        "responsável",
+        "prazo",
+        "o próximo passo",
+        "a reunião",
+        "revisão",
+        "quase",
+        "bastante"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "então",
+        "decidimos que…",
+        "fico responsável por…",
+        "Então, decidimos que…",
+        "O próximo passo é…",
+        "Aconteceu… e preciso de…",
+        "O problema é que…",
+        "Só para confirmar,…"
+      ],
+      "curriculum_days": [
+        84,
+        70
+      ]
+    },
+    {
+      "id": "pl-126",
+      "n": 126,
+      "unit": 12,
+      "unit_ar": "حياة أطول في البرتغال",
+      "review": true,
+      "title_ar": "مراجعة: حياة أطول في البرتغال",
+      "situation_ar": "موقف جديد يجمع اللي فات، بالماضي والمضارع والمستقبل",
+      "grammar_ar": "بدون قواعد جديدة",
+      "tense": "mixed",
+      "learn_and_use": [],
+      "meet_only": [],
+      "tool_phrases": [],
+      "curriculum_days": []
+    },
+    {
+      "id": "pl-127",
+      "n": 127,
+      "unit": 12,
+      "unit_ar": "حياة أطول في البرتغال",
+      "review": false,
+      "title_ar": "لما تنسى الكلمة",
+      "situation_ar": "مش فاكر كلمة وبتوصفها",
+      "grammar_ar": "é uma coisa que… / serve para…",
+      "tense": "present",
+      "learn_and_use": [
+        "a coisa",
+        "significar",
+        "explicar",
+        "parecido",
+        "mal-entendido",
+        "engano",
+        "o lado",
+        "o centro"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "é uma coisa que…",
+        "serve para…",
+        "Não me lembro da palavra, mas é…",
+        "É uma coisa que se usa para…",
+        "Como se diz… em português?",
+        "Não era isso que eu queria dizer.",
+        "O que quero dizer é…",
+        "Acho que houve um engano."
+      ],
+      "curriculum_days": [
+        88,
+        66
+      ]
+    },
+    {
+      "id": "pl-128",
+      "n": 128,
+      "unit": 12,
+      "unit_ar": "حياة أطول في البرتغال",
+      "review": false,
+      "title_ar": "خطة الشهور الجاية",
+      "situation_ar": "بتحكي خطتك للسنة دي",
+      "grammar_ar": "quero conseguir… até…",
+      "tense": "future",
+      "learn_and_use": [
+        "o futuro",
+        "o objetivo",
+        "plano",
+        "melhorar",
+        "quanto mais... mais/menos...",
+        "ensinar"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "quero conseguir… até…",
+        "Estou a pensar em…",
+        "Primeiro vou…, depois…"
+      ],
+      "curriculum_days": [
+        73
+      ]
+    },
+    {
+      "id": "pl-129",
+      "n": 129,
+      "unit": 12,
+      "unit_ar": "حياة أطول في البرتغال",
+      "review": false,
+      "title_ar": "المهمة الأخيرة",
+      "situation_ar": "يوم فيه مشكلة في الخدمة وخطة جديدة وكلام مع جار",
+      "grammar_ar": "الماضي + المضارع + المستقبل مع بعض",
+      "tense": "mixed",
+      "learn_and_use": [
+        "descobrir",
+        "parar"
+      ],
+      "meet_only": [],
+      "tool_phrases": [
+        "Preciso de ajuda com…",
+        "A situação é esta:…",
+        "Só para confirmar,…",
+        "Consigo explicar…",
+        "Ainda preciso de praticar…",
+        "O meu próximo objetivo é…"
+      ],
+      "curriculum_days": [
+        89,
+        90
+      ]
+    }
+  ]
+}

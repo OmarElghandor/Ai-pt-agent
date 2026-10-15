@@ -4,9 +4,13 @@ import type {
   AssessmentTask,
   AuthoredSegment,
   CodeGuard,
+  GrammarCard,
   LessonPack,
+  LineExplain,
+  SceneWord,
   StoryBeat,
   StoryLine,
+  StoryScene,
   WordBankEntry,
 } from './types';
 
@@ -28,9 +32,14 @@ function displayAr(value: unknown): string {
 }
 
 function noteToSegments(note: unknown): AuthoredSegment[] {
-  const text = asString(note).trim();
+  const text = displayAr(note) || asString(note).trim();
   if (!text) return [];
-  return [{ lang: 'ar', text, pronunciation: text }];
+  let pronunciation = text;
+  if (note && typeof note === 'object') {
+    const o = note as Record<string, unknown>;
+    pronunciation = asString(o.arz || o.pronunciation || text).trim() || text;
+  }
+  return [{ lang: 'ar', text, pronunciation }];
 }
 
 function adaptGuard(raw: unknown): CodeGuard {
@@ -117,7 +126,8 @@ function adaptLine(raw: unknown, fallbackPt = ''): StoryLine | null {
   if (!pt) return null;
   const ar = displayAr(o.ar || o.meaning_ar || o.translation) || asString(o.ar);
   const arz = asString(o.arz || o.pronunciation || ar);
-  return { pt, ar, arz };
+  const frame = asString(o.frame || o.sentenceFrame || o.sentence_frame) || undefined;
+  return frame ? { pt, ar, arz, frame } : { pt, ar, arz };
 }
 
 function adaptAlt(raw: unknown, main: StoryLine): StoryLine {
@@ -142,6 +152,70 @@ function adaptCoachTip(raw: unknown, arzRaw: unknown): { ar: string; arz: string
   return { ar, arz: asString(arzRaw).trim() || ar };
 }
 
+function adaptLineExplain(raw: unknown): LineExplain | undefined {
+  if (!raw) return undefined;
+  if (typeof raw === 'string') {
+    const ar = raw.trim();
+    if (!ar) return undefined;
+    return { ar, arz: ar };
+  }
+  if (typeof raw !== 'object') return undefined;
+  const o = raw as Record<string, unknown>;
+  const ar = displayAr(o.ar || o.display) || asString(o.text).trim();
+  if (!ar) return undefined;
+  return { ar, arz: asString(o.arz || o.pronunciation || ar).trim() || ar };
+}
+
+function adaptSceneWords(raw: unknown): SceneWord[] | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  const out: SceneWord[] = [];
+  for (const entry of raw) {
+    if (!entry || typeof entry !== 'object') continue;
+    const o = entry as Record<string, unknown>;
+    const pt = asString(o.pt || o.word || o.phrase).trim();
+    if (!pt) continue;
+    const ar =
+      displayAr(o.ar || o.meaning || o.meaning_ar || o.meaningAr) ||
+      asString(o.ar || o.meaning).trim();
+    if (!ar) continue;
+    const arz = asString(o.arz || o.pronunciation || ar).trim() || ar;
+    const emoji = asString(o.emoji).trim() || undefined;
+    out.push(emoji ? { pt, ar, arz, emoji } : { pt, ar, arz });
+  }
+  return out.length ? out : undefined;
+}
+
+function adaptGrammarCard(raw: unknown): GrammarCard | undefined {
+  if (!raw || typeof raw !== 'object') return undefined;
+  const o = raw as Record<string, unknown>;
+  const ruleAr = displayAr(o.rule_ar || o.ruleAr) || asString(o.rule_ar || o.ruleAr).trim();
+  if (!ruleAr) return undefined;
+  const ruleArz = asString(o.rule_arz || o.ruleArz || ruleAr).trim() || ruleAr;
+  const examplesRaw = Array.isArray(o.examples) ? o.examples : [];
+  const examples: GrammarCard['examples'] = [];
+  for (const entry of examplesRaw) {
+    if (!entry || typeof entry !== 'object') continue;
+    const ex = entry as Record<string, unknown>;
+    const pt = asString(ex.pt).trim();
+    if (!pt) continue;
+    const meaningAr =
+      displayAr(ex.ar || ex.meaning || ex.meaning_ar || ex.meaningAr) ||
+      asString(ex.ar || ex.meaning).trim();
+    examples.push({ pt, meaningAr });
+  }
+  if (examples.length === 0) return undefined;
+  const contrastAr =
+    displayAr(o.contrast_ar || o.contrastAr) ||
+    asString(o.contrast_ar || o.contrastAr).trim() ||
+    undefined;
+  return {
+    ruleAr,
+    ruleArz,
+    examples: examples.slice(0, 2),
+    contrastAr: contrastAr || undefined,
+  };
+}
+
 function adaptDifficulty(raw: unknown): StoryBeat['difficulty'] {
   const value = asString(raw);
   if (value === 'guided' || value === 'supported' || value === 'open') return value;
@@ -152,9 +226,12 @@ function adaptAnswer(
   o: Record<string, unknown>,
   kind: 'known' | 'open',
 ): StoryBeat['kind'] extends never ? never : KnownOrOpen {
-  const hintNote = asString(o.hint_note || o.hintNote);
-  const whyNote = asString(o.why_note || o.whyNote);
-  const nudgeNote = asString(o.nudge_note || o.nudgeNote);
+  const hintNote =
+    displayAr(o.hint_note || o.hintNote) || asString(o.hint_note || o.hintNote) || undefined;
+  const whyNote =
+    displayAr(o.why_note || o.whyNote) || asString(o.why_note || o.whyNote) || undefined;
+  const nudgeNote =
+    displayAr(o.nudge_note || o.nudgeNote) || asString(o.nudge_note || o.nudgeNote) || undefined;
   const frame = asString(o.frame || o.sentenceFrame || o.sentence_frame) || undefined;
   const wordBank = adaptWordBank(o.word_bank || o.wordBank);
   if (kind === 'open') {
@@ -216,7 +293,14 @@ function adaptBeat(raw: unknown, index: number, sceneIds: string[]): StoryBeat |
   const sceneId = asString(o.scene || o.scene_id || o.sceneId) || sceneIds[0] || '';
   if (!sceneId) return null;
   const difficulty = adaptDifficulty(o.difficulty);
-  const kind = asString(o.kind) === 'open' || difficulty === 'open' ? 'open' : 'known';
+  const authoredKind = asString(o.kind);
+  // Prefer authored kind. Difficulty open only means "no coach tip".
+  const kind =
+    authoredKind === 'open' || authoredKind === 'known'
+      ? authoredKind
+      : difficulty === 'open'
+        ? 'open'
+        : 'known';
   const answer = adaptAnswer(o, kind);
   if (answer.kind === 'known' && answer.acceptedAnswers.length === 0) return null;
   return {
@@ -229,6 +313,7 @@ function adaptBeat(raw: unknown, index: number, sceneIds: string[]): StoryBeat |
     difficulty,
     coachTip: adaptCoachTip(o.coach_tip || o.coachTip, o.coach_tip_arz),
     reactionCue: asString(o.reaction_cue || o.reactionCue),
+    lineExplain: adaptLineExplain(o.line_explain || o.lineExplain),
     ...answer,
   };
 }
@@ -238,11 +323,21 @@ function adaptAssessmentTask(raw: unknown, index: number): AssessmentTask | null
   const o = raw as Record<string, unknown>;
   const line = adaptLine(o.line || o.prompts || o.prompt);
   if (!line) return null;
-  const kind = asString(o.kind) === 'open' || o.criterion ? 'open' : 'known';
-  const answer = adaptAnswer(o, kind === 'open' && o.criterion ? 'open' : kind);
+  const authoredKind = asString(o.kind);
+  const kind =
+    authoredKind === 'open' || authoredKind === 'known'
+      ? authoredKind
+      : o.criterion
+        ? 'open'
+        : 'known';
+  const answer = adaptAnswer(o, kind);
   if (answer.kind === 'known' && answer.acceptedAnswers.length === 0) return null;
   const target = asString(o.target) || `هدف ${index + 1}`;
-  const why = asString(o.why_note || o.whyNote || answer.whyNote);
+  const why =
+    displayAr(o.why_note || o.whyNote) ||
+    asString(o.why_note || o.whyNote) ||
+    answer.whyNote ||
+    '';
   return {
     id: asString(o.id) || `a${index + 1}`,
     target,
@@ -252,8 +347,11 @@ function adaptAssessmentTask(raw: unknown, index: number): AssessmentTask | null
       ? noteToSegments(why)
       : [{ lang: 'ar', text: `راجع: ${target}`, pronunciation: target }],
     ...answer,
-    nudgeNote: asString(o.nudge_note || o.nudgeNote || answer.nudgeNote),
-    whyNote: why,
+    nudgeNote:
+      displayAr(o.nudge_note || o.nudgeNote) ||
+      asString(o.nudge_note || o.nudgeNote) ||
+      answer.nudgeNote,
+    whyNote: why || undefined,
   };
 }
 
@@ -291,9 +389,12 @@ export function adaptMongoPack(doc: MongoLessonSource): LessonPack | null {
       const id = asString(o.id) || `s${i + 1}`;
       const titleAr = asString(o.title_ar || o.titleAr);
       if (!titleAr) return null;
-      return { id, titleAr };
+      const words = adaptSceneWords(o.words);
+      const row: StoryScene = { id, titleAr };
+      if (words) row.words = words;
+      return row;
     })
-    .filter((scene): scene is { id: string; titleAr: string } => Boolean(scene));
+    .filter((scene): scene is StoryScene => Boolean(scene));
   if (scenes.length === 0) return null;
 
   const beatsRaw = Array.isArray(pack.beats) ? pack.beats : [];
@@ -308,8 +409,28 @@ export function adaptMongoPack(doc: MongoLessonSource): LessonPack | null {
     roleAr: asString(characterRaw.role_ar || characterRaw.roleAr),
   };
 
-  const closing = adaptLine(pack.closing_hook || pack.closingHook);
+  const closingRaw = pack.closing_hook || pack.closingHook;
+  const closing = adaptLine(closingRaw);
   if (!closing) return null;
+  if (closingRaw && typeof closingRaw === 'object') {
+    const speaker = asString((closingRaw as Record<string, unknown>).speaker).trim();
+    if (speaker) closing.speaker = speaker;
+  }
+
+  const farewell = adaptLine(pack.farewell) || undefined;
+
+  const extraRaw = pack.extra_characters || pack.extraCharacters;
+  const extraCharacters = Array.isArray(extraRaw)
+    ? extraRaw
+        .map((entry) => {
+          if (!entry || typeof entry !== 'object') return null;
+          const o = entry as Record<string, unknown>;
+          const name = asString(o.name).trim();
+          if (!name) return null;
+          return { name, roleAr: asString(o.role_ar || o.roleAr) };
+        })
+        .filter((c): c is { name: string; roleAr: string } => Boolean(c))
+    : undefined;
 
   const introAr = asString(pack.intro_ar || pack.introAr).trim();
   if (!introAr) return null;
@@ -320,6 +441,7 @@ export function adaptMongoPack(doc: MongoLessonSource): LessonPack | null {
     .filter((task): task is AssessmentTask => Boolean(task));
 
   const titleAr = asString(spec.title_ar) || asString(doc.topic) || doc.lesson_key;
+  const grammarCard = adaptGrammarCard(pack.grammar_card || pack.grammarCard);
 
   return {
     id: doc.lesson_key,
@@ -331,9 +453,12 @@ export function adaptMongoPack(doc: MongoLessonSource): LessonPack | null {
     introAr,
     introArz: asString(pack.intro_arz || pack.introArz).trim() || introAr,
     character,
+    extraCharacters: extraCharacters?.length ? extraCharacters : undefined,
+    grammarCard,
     scenes,
     beats,
     closingHook: closing,
+    farewell,
     assessmentTasks,
     requirements: {
       cells: doc.requirements?.cells ?? doc.cell_ids ?? [],

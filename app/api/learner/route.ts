@@ -26,9 +26,11 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const id = url.searchParams.get('id') ?? '';
   const localHour = hourFrom(url.searchParams.get('localHour'));
+  const skipOpener =
+    url.searchParams.get('skipOpener') === '1' || url.searchParams.get('skipOpener') === 'true';
   try {
     await warmCatalogues(id);
-    const file = openLearner(id, localHour);
+    const file = openLearner(id, localHour, { skipOpener });
     return NextResponse.json(learnerView(file));
   } catch {
     return NextResponse.json({ error: 'invalid id' }, { status: 400 });

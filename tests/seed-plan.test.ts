@@ -4,13 +4,13 @@ import { loadSeedPlan } from '../lib/lessons/seedPlan';
 import { getLearnerLessonPlan, mergeSeedWithMongo } from '../lib/lessons/plan';
 
 describe('loadSeedPlan', () => {
-  it('returns 24 ordered slots starting with ps-01', () => {
+  it('returns 129 ordered slots starting with pl-001', () => {
     const slots = loadSeedPlan();
-    assert.equal(slots.length, 24);
-    assert.equal(slots[0].lessonKey, 'ps-01-neighbour-greetings');
-    assert.equal(slots[3].lessonKey, 'ps-04-coffee-please');
-    assert.deepEqual(slots[3].cellIds, []);
-    assert.equal(slots[3].requirements.words.length, 0);
+    assert.equal(slots.length, 129);
+    assert.equal(slots[0].lessonKey, 'pl-001');
+    assert.equal(slots[1].lessonKey, 'pl-002');
+    assert.deepEqual(slots[1].cellIds, []);
+    assert.equal(slots[1].requirements.words.length, 0);
     for (let i = 1; i < slots.length; i++) {
       assert.ok(slots[i].order >= slots[i - 1].order);
     }
@@ -18,13 +18,13 @@ describe('loadSeedPlan', () => {
 });
 
 describe('mergeSeedWithMongo', () => {
-  it('returns 24 lessons when Mongo list is empty', () => {
+  it('returns 129 lessons when Mongo list is empty', () => {
     const seed = loadSeedPlan();
     const lessons = mergeSeedWithMongo(seed, [], null);
-    assert.equal(lessons.length, 24);
-    assert.equal(lessons[0].lessonKey, 'ps-01-neighbour-greetings');
+    assert.equal(lessons.length, 129);
+    assert.equal(lessons[0].lessonKey, 'pl-001');
     assert.equal(lessons[0].hasPack, false);
-    const coffee = lessons.find((l) => l.lessonKey === 'ps-04-coffee-please');
+    const coffee = lessons.find((l) => l.lessonKey === 'pl-002');
     assert.ok(coffee);
     assert.equal(coffee!.uiStatus, 'available');
   });
@@ -35,18 +35,18 @@ describe('mergeSeedWithMongo', () => {
       seed,
       [
         {
-          lessonKey: 'ps-04-coffee-please',
-          topic: 'cafe_e_comida',
-          depthTier: 1,
+          lessonKey: 'pl-002',
+          topic: 'pl-002',
+          depthTier: 3,
           cefrLevel: 'A0',
-          curriculumPoint: 4,
+          curriculumPoint: 2,
           cellIds: [],
-          titleAr: 'قهوة من Mongo',
+          titleAr: 'من Mongo',
           situationAr: 'من المواصفات',
           situationEn: null,
           status: 'live',
           version: 1,
-          requirements: { cells: [], words: ['queria um café'] },
+          requirements: { cells: [], words: ['e'] },
           hasSpec: true,
           hasPack: true,
           generationStage: null,
@@ -56,16 +56,16 @@ describe('mergeSeedWithMongo', () => {
       ],
       {
         cells: [],
-        words: ['queria um café'],
+        words: ['e'],
         finishedMissions: [],
       },
     );
-    const coffee = lessons.find((l) => l.lessonKey === 'ps-04-coffee-please');
+    const coffee = lessons.find((l) => l.lessonKey === 'pl-002');
     assert.ok(coffee);
     assert.equal(coffee!.hasPack, true);
-    assert.equal(coffee!.titleAr, 'قهوة من Mongo');
+    assert.equal(coffee!.titleAr, 'من Mongo');
     assert.equal(coffee!.status, 'live');
-    assert.equal(lessons.length, 24);
+    assert.equal(lessons.length, 129);
   });
 });
 
@@ -75,7 +75,7 @@ describe('getLearnerLessonPlan', () => {
     delete process.env.MONGODB_URI;
     try {
       const plan = await getLearnerLessonPlan('test-learner');
-      assert.equal(plan.lessons.length, 24);
+      assert.equal(plan.lessons.length, 129);
       assert.equal(plan.source, 'seed');
     } finally {
       if (prev !== undefined) process.env.MONGODB_URI = prev;

@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { InsertionCarousel } from '@/components/InsertionCarousel';
+import { useSegmentAudio } from '@/hooks/useSegmentAudio';
 import type { AuthoredSegment } from '@/lib/lessons/types';
 import type { TypedMessage } from '@/lib/progressTypes';
 import { parseTaggedMessage } from '@/lib/parseTaggedMessage';
@@ -26,12 +28,98 @@ function MixedText({ segments }: { segments: AuthoredSegment[] }) {
   );
 }
 
+function SceneWordsBubble({
+  message,
+  gateActive,
+  onDismiss,
+}: {
+  message: TypedMessage;
+  gateActive: boolean;
+  onDismiss?: () => void;
+}) {
+  const card = message.sceneWordCard!;
+  const { playSegments, playing, stop } = useSegmentAudio();
+  const [activePt, setActivePt] = useState<string | null>(null);
+
+  const playWord = useCallback(
+    async (pt: string) => {
+      stop();
+      setActivePt(pt);
+      await playSegments([{ lang: 'pt', text: pt }]);
+      setActivePt(null);
+    },
+    [playSegments, stop],
+  );
+
+  const playAll = useCallback(async () => {
+    stop();
+    setActivePt('__all__');
+    await playSegments(card.words.map((w) => ({ lang: 'pt' as const, text: w.pt })));
+    setActivePt(null);
+  }, [card.words, playSegments, stop]);
+
+  return (
+    <div
+      id={`scene-words-${card.sceneId}`}
+      className="w-full max-w-full rounded-2xl border border-border bg-surface/90 px-3 py-3 text-sm"
+    >
+      <div className="mb-1 text-[11px] font-medium uppercase tracking-wide text-accent-mint">
+        {message.label ?? 'كلمات هنحتاجها'}
+      </div>
+      {card.titleAr ? <p className="mb-3 text-xs text-muted">{card.titleAr}</p> : null}
+      <InsertionCarousel
+        words={card.words.map((w) => ({
+          pt: w.pt,
+          meaning: w.arz?.trim() || w.ar,
+          emoji: w.emoji,
+        }))}
+        onPlay={(pt) => void playWord(pt)}
+        activePt={activePt}
+        playing={playing}
+      />
+      <div className="mt-3 flex flex-col gap-2">
+        <button
+          type="button"
+          onClick={() => void playAll()}
+          disabled={playing && activePt === '__all__'}
+          className="rounded-full border border-accent-mint/40 px-4 py-2 text-sm text-accent-mint disabled:opacity-50"
+        >
+          اسمع الكل
+        </button>
+        {gateActive && onDismiss ? (
+          <button
+            type="button"
+            onClick={() => {
+              stop();
+              onDismiss();
+            }}
+            className="accent-gradient rounded-full px-4 py-2.5 text-sm font-semibold text-[#04100e]"
+          >
+            يلا نبدأ
+          </button>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 export function TypedBubble({
   message,
   onPlay,
+  onInsertWord,
+  onWhy,
+  sceneWordGateActive = false,
+  onDismissSceneWords,
 }: {
   message: TypedMessage;
   onPlay?: (segments: AuthoredSegment[]) => void;
+  /** Tap a hint-card / word-bank piece — inserts into the input, does not send. */
+  onInsertWord?: (pt: string) => void;
+  /** Inline ليه؟ under a coach tip. */
+  onWhy?: () => void;
+  /** Show «يلا نبدأ» when this scene-words card matches the open gate. */
+  sceneWordGateActive?: boolean;
+  onDismissSceneWords?: () => void;
 }) {
   const [showTranslation, setShowTranslation] = useState(false);
 
@@ -94,7 +182,7 @@ export function TypedBubble({
     return (
       <div className="rounded-2xl border border-zinc-700 bg-zinc-900/80 p-3 text-sm">
         <div className="mb-1 text-[11px] font-medium uppercase tracking-wide text-zinc-400">
-          تذكير
+          ليه كده؟
         </div>
         <div className="leading-relaxed">
           <MixedText segments={message.segments} />
@@ -121,6 +209,11 @@ export function TypedBubble({
               </li>
             ))}
           </ul>
+        ) : null}
+        {message.contrastAr ? (
+          <div className="mt-3 rounded-xl border border-amber-700/40 bg-amber-950/20 px-2 py-1.5 text-xs text-amber-100/90">
+            {message.contrastAr}
+          </div>
         ) : null}
         {onPlay ? (
           <button
@@ -183,6 +276,43 @@ export function TypedBubble({
       <div className="rounded-2xl border border-amber-600/40 bg-amber-950/20 px-3 py-2 text-sm leading-relaxed">
         <div className="mb-1 text-[11px] font-medium text-amber-300/90">المدرّب</div>
         <MixedText segments={message.segments} />
+        {message.examples && message.examples.length > 0 ? (
+          <ul className="mt-3 space-y-2">
+            {message.examples.map((ex, i) => (
+              <li
+                key={i}
+                className="flex items-start justify-between gap-2 rounded-xl bg-zinc-800/70 px-2 py-1.5"
+              >
+                <div>
+                  <div className="text-emerald-300" dir="ltr">
+                    {ex.pt}
+                  </div>
+                  {ex.meaningAr ? (
+                    <div className="text-zinc-400 text-xs">{ex.meaningAr}</div>
+                  ) : null}
+                </div>
+                {onPlay ? (
+                  <button
+                    type="button"
+                    className="text-xs text-zinc-400 hover:text-white"
+                    onClick={() => onPlay([{ lang: 'pt', text: ex.pt }])}
+                  >
+                    ▶
+                  </button>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        {message.showWhyChip && onWhy ? (
+          <button
+            type="button"
+            onClick={onWhy}
+            className="mt-2 rounded-full border border-amber-500/50 bg-amber-900/30 px-2.5 py-0.5 text-xs text-amber-200"
+          >
+            ليه؟
+          </button>
+        ) : null}
       </div>
     );
   }
@@ -301,6 +431,35 @@ export function TypedBubble({
     );
   }
 
+  if (message.type === 'scene-words' && message.sceneWordCard) {
+    return (
+      <SceneWordsBubble
+        message={message}
+        gateActive={sceneWordGateActive}
+        onDismiss={onDismissSceneWords}
+      />
+    );
+  }
+
+  if (message.type === 'hint' && message.hintCard) {
+    const card = message.hintCard;
+    return (
+      <div className="rounded-2xl border border-amber-600/50 bg-amber-950/30 px-3 py-3 text-sm">
+        {message.label ? (
+          <div className="mb-2 text-[11px] font-medium uppercase tracking-wide text-amber-400">
+            {message.label}
+          </div>
+        ) : null}
+        {card.frame ? (
+          <div className="mb-3 text-center text-xs text-zinc-300" dir="ltr">
+            {card.frame}
+          </div>
+        ) : null}
+        <InsertionCarousel words={card.words} onInsert={onInsertWord} />
+      </div>
+    );
+  }
+
   if (
     message.type === 'hint' ||
     message.type === 'correction' ||
@@ -389,7 +548,24 @@ export function ttsSegmentsFor(message: TypedMessage): AuthoredSegment[] {
   if (message.type === 'narration') return [];
   if (message.type === 'coach' || message.type === 'intro') {
     const arabic = message.segments.filter((s) => s.lang === 'ar');
-    return arabic.length ? arabic : message.segments;
+    const out: AuthoredSegment[] = arabic.length ? [...arabic] : [...message.segments];
+    for (const ex of message.examples ?? []) {
+      if (ex.pt) out.push({ lang: 'pt', text: ex.pt });
+    }
+    return out;
+  }
+  if (message.type === 'hint' && message.hintCard) {
+    return [];
+  }
+  if (message.type === 'scene-words') {
+    return [];
+  }
+  if (message.type === 'explanation') {
+    const out: AuthoredSegment[] = [...message.segments];
+    for (const ex of message.examples ?? []) {
+      if (ex.pt) out.push({ lang: 'pt', text: ex.pt });
+    }
+    return out;
   }
   if (message.type === 'character' || message.type === 'chat' || message.type === 'praise') {
     // Portuguese only — never speak translations

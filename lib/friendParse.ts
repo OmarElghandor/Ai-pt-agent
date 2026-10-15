@@ -1,5 +1,5 @@
 import type { AuthoredSegment } from './lessons/types';
-import type { TypedMessage } from './progressTypes';
+import type { LessonReactionContext, TypedMessage } from './progressTypes';
 import { scrubTagDebris, stripThinkBlocks } from './parseTaggedMessage';
 
 function wordTokens(text: string): string[] {
@@ -39,17 +39,28 @@ export function dropJunkCoach(messages: TypedMessage[], learnerText: string): Ty
   });
 }
 
+const ENGLISH_WORD_RE = /\b(the|you|is|are|how|correct|answer|question|of course)\b/i;
+const ARABIC_LETTER_RE = /[\u0600-\u06FF]/;
+
+export type ParseFriendOptions = {
+  /** Practice / assessment: never turn untagged text into a bubble. */
+  strict?: boolean;
+};
+
 /**
  * Parse Friend / Prompt 4/5 model output into typed messages.
- * Blocks: optional character / coach / help / correction / praise, then optional chat.
+ * Blocks: optional character / coach / fix / help / correction / praise, then optional chat.
  */
-export function parseFriendOutput(raw: string): TypedMessage[] {
+export function parseFriendOutput(raw: string, opts?: ParseFriendOptions): TypedMessage[] {
   const cleaned = scrubTagDebris(stripThinkBlocks(raw)).trim();
   const text = stripThinkBlocks(raw).trim();
   const messages: TypedMessage[] = [];
+  const strict = opts?.strict === true;
 
   const character = extractTagged(text, 'character');
   const coach = extractTagged(text, 'coach');
+  const fix = extractTagged(text, 'fix');
+  const example = extractTagged(text, 'example');
   const help = extractBlock(text, 'help');
   const praise = extractBlock(text, 'praise');
   const correction = extractBlock(text, 'correction');
@@ -73,6 +84,9 @@ export function parseFriendOutput(raw: string): TypedMessage[] {
 
   if (coach) {
     const segments = parseInlineSegments(coach.body);
+    const exampleSegs = example ? parseInlineSegments(example.body) : [];
+    const examplePt = exampleSegs.find((s) => s.lang === 'pt')?.text?.trim();
+    const exampleAr = exampleSegs.find((s) => s.lang === 'ar');
     messages.push({
       id: `friend-coach-${Date.now()}`,
       role: 'assistant',
@@ -80,6 +94,25 @@ export function parseFriendOutput(raw: string): TypedMessage[] {
       at: Date.now(),
       segments,
       playablePt: [...segments].reverse().find((s) => s.lang === 'pt')?.text,
+      examples:
+        examplePt
+          ? [{ pt: examplePt, meaningAr: exampleAr?.text?.trim() || '' }]
+          : undefined,
+    });
+  }
+
+  if (fix) {
+    const segments = parseInlineSegments(fix.body);
+    const playablePt = segments.find((s) => s.lang === 'pt')?.text;
+    // Coach bubble with Arabic note when present (not a bare Portuguese line).
+    messages.push({
+      id: `friend-fix-${Date.now()}`,
+      role: 'assistant',
+      type: 'coach',
+      at: Date.now(),
+      segments: segments.length ? segments : playablePt ? [{ lang: 'pt', text: playablePt }] : [],
+      playablePt,
+      label: 'قربت',
     });
   }
 
@@ -137,8 +170,8 @@ export function parseFriendOutput(raw: string): TypedMessage[] {
     }
   }
 
-  // Fallback: if no blocks, try raw pt/ar tags as a single chat
-  if (messages.length === 0) {
+  // Friend mode only: fall back to untagged / plain text.
+  if (!strict && messages.length === 0) {
     const segments = parseInlineSegments(text);
     if (segments.length) {
       const { pt, translation } = splitChatPairs(segments);
@@ -162,6 +195,171 @@ export function parseFriendOutput(raw: string): TypedMessage[] {
   }
 
   return messages;
+}
+
+function normalizeEcho(text: string): string {
+  return text
+    .normalize('NFC')
+    .toLowerCase()
+    .replace(/[.,!?;:…¿¡'"«»""''()[\]{}]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * Drop bad practice/assessment reactions per reaction.md output checks.
+ * Returns null when the whole reply should be discarded.
+ */
+export function filterReactionMessages(
+  messages: TypedMessage[],
+  reaction: Pick<
+    LessonReactionContext,
+    'reactionKind' | 'mode' | 'beatLine' | 'currentPromptPlain' | 'nextLine' | 'characterName'
+  >,
+  rawText: string,
+): TypedMessage[] | null {
+  const kind = reaction.reactionKind ?? (reaction.mode === 'side' ? 'r3' : 'r2');
+  const allowed =
+    kind === 'r3'
+      ? new Set(['coach'])
+      : new Set(['character', 'coach']); // fix is mapped to coach
+
+  if (messages.length === 0) {
+    console.warn('[reaction_dropped]', rawText);
+    return null;
+  }
+
+  // Text outside tags: any non-whitespace remaining after stripping known blocks.
+  const stripped = stripThinkBlocks(rawText)
+    .replace(/<\s*character\b[^>]*>[\s\S]*?<\s*\/\s*character\s*>/gi, '')
+    .replace(/<\s*coach\b[^>]*>[\s\S]*?<\s*\/\s*coach\s*>/gi, '')
+    .replace(/<\s*fix\b[^>]*>[\s\S]*?<\s*\/\s*fix\s*>/gi, '')
+    .replace(/<\s*example\b[^>]*>[\s\S]*?<\s*\/\s*example\s*>/gi, '')
+    .replace(/^\s*VERDICT:\s*.+$/im, '')
+    .trim();
+  if (stripped) {
+    console.warn('[reaction_dropped]', rawText);
+    return null;
+  }
+
+  const beatLine = normalizeEcho(reaction.beatLine || reaction.currentPromptPlain || '');
+  const nextLine = normalizeEcho(reaction.nextLine || '');
+
+  for (const message of messages) {
+    if (!allowed.has(message.type)) {
+      console.warn('[reaction_dropped]', rawText);
+      return null;
+    }
+    const pt = message.segments
+      .filter((s) => s.lang === 'pt')
+      .map((s) => s.text)
+      .join(' ')
+      .trim();
+    const ar = message.segments
+      .filter((s) => s.lang === 'ar')
+      .map((s) => s.text)
+      .join(' ')
+      .trim();
+    const translation = (message.translation ?? [])
+      .map((s) => s.text)
+      .join(' ')
+      .trim();
+    const exampleText = (message.examples ?? [])
+      .map((ex) => `${ex.pt} ${ex.meaningAr}`)
+      .join(' ')
+      .trim();
+
+    if (message.type === 'character') {
+      if (pt.includes('?') || ARABIC_LETTER_RE.test(pt) || wordTokens(pt).length > 12) {
+        console.warn('[reaction_dropped]', rawText);
+        return null;
+      }
+      const speakerName = (message.speaker || reaction.characterName || '').trim();
+      if (speakerName) {
+        const nameRe = new RegExp(
+          `\\b${speakerName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`,
+          'i',
+        );
+        if (nameRe.test(pt)) {
+          console.warn('[reaction_dropped]', rawText);
+          return null;
+        }
+      }
+      const echo = normalizeEcho(pt);
+      if (echo && (echo === beatLine || (nextLine && echo === nextLine))) {
+        console.warn('[reaction_dropped]', rawText);
+        return null;
+      }
+      if (sharesKeyWords(pt, reaction.beatLine || reaction.currentPromptPlain || '')) {
+        console.warn('[reaction_dropped]', rawText);
+        return null;
+      }
+      if (nextLine && sharesKeyWords(pt, reaction.nextLine || '')) {
+        console.warn('[reaction_dropped]', rawText);
+        return null;
+      }
+    }
+
+    for (const field of [pt, ar, translation, exampleText]) {
+      if (field && ENGLISH_WORD_RE.test(field)) {
+        console.warn('[reaction_dropped]', rawText);
+        return null;
+      }
+    }
+  }
+
+  return messages;
+}
+
+/** Same question word or main verb form between a reaction and a story line. */
+function sharesKeyWords(a: string, b: string): boolean {
+  const left = keyContentWords(a);
+  const right = keyContentWords(b);
+  if (!left.length || !right.length) return false;
+  return left.some((word) => right.includes(word));
+}
+
+const QUESTION_WORDS = new Set([
+  'como',
+  'onde',
+  'quando',
+  'quanto',
+  'quanta',
+  'quantos',
+  'quantas',
+  'qual',
+  'quais',
+  'quem',
+  'que',
+  'porque',
+]);
+
+function keyContentWords(text: string): string[] {
+  const tokens = wordTokens(normalizeEcho(text));
+  const skip = new Set([
+    ...QUESTION_WORDS,
+    'o',
+    'a',
+    'os',
+    'as',
+    'um',
+    'uma',
+    'de',
+    'do',
+    'da',
+    'dos',
+    'das',
+    'te',
+    'se',
+    'me',
+    'tu',
+    'e',
+    'é',
+    'por',
+  ]);
+  const q = tokens.filter((t) => QUESTION_WORDS.has(t));
+  const verbs = tokens.filter((t) => !skip.has(t) && t.length >= 3);
+  return [...q, ...verbs.slice(0, 2)];
 }
 
 export function parseOpenVerdict(raw: string): {

@@ -1,1147 +1,7469 @@
 {
   "_meta": {
-    "source": "Derived from lesson-missions-v1 connected_words",
-    "note": "priority 1=core early, 2=common, 3=extra; parenthetical notes split to note field"
+    "source": "langify situational plan v3",
+    "note": "One topic per lesson. priority 1 = new words he learns and uses; 2 = tool phrases (patterns); 3 = meet only (heard in the story, never a target). Text in parentheses is a short gloss."
   },
   "topics": [
     {
-      "topic": "cumprimentos",
+      "topic": "pl-001",
+      "lesson": 1,
+      "title": "على السلم مع الجارة",
       "words": [
         {
-          "text": "Olá!",
-          "priority": 1,
-          "note": null
+          "text": "olá / oi (hello / hi)",
+          "priority": 1
         },
         {
-          "text": "Bom dia!",
-          "priority": 1,
-          "note": null
+          "text": "bom dia (صباح الخير)",
+          "priority": 1
         },
         {
-          "text": "Boa tarde!",
-          "priority": 1,
-          "note": null
+          "text": "sim (yes)",
+          "priority": 1
         },
         {
-          "text": "Boa noite!",
-          "priority": 1,
-          "note": null
+          "text": "não (no)",
+          "priority": 1
         },
         {
-          "text": "Como se chama?",
-          "priority": 1,
-          "note": null
+          "text": "obrigado (شكرًا)",
+          "priority": 1
         },
         {
-          "text": "Chamo-me Ahmed.",
-          "priority": 1,
-          "note": null
+          "text": "eu (I)",
+          "priority": 1
         },
         {
-          "text": "O meu nome é Ahmed.",
-          "priority": 1,
-          "note": null
+          "text": "tu (you)",
+          "priority": 1
         },
         {
-          "text": "Muito prazer! / Igualmente.",
-          "priority": 1,
-          "note": null
+          "text": "tudo bem? (عامل إيه؟)",
+          "priority": 1
         },
         {
-          "text": "Adeus!",
-          "priority": 1,
-          "note": null
+          "text": "sou",
+          "priority": 2
         },
         {
-          "text": "Até logo!",
-          "priority": 1,
-          "note": null
+          "text": "moro",
+          "priority": 2
         },
         {
-          "text": "Até amanhã!",
-          "priority": 1,
-          "note": null
+          "text": "Chamo-me… (اسمي…)",
+          "priority": 2
         },
         {
-          "text": "Tchau!",
-          "priority": 1,
-          "note": null
+          "text": "Sou de… (أنا من…)",
+          "priority": 2
         },
         {
-          "text": "De onde é?",
-          "priority": 1,
-          "note": null
-        },
-        {
-          "text": "Sou egípcio/a.",
-          "priority": 1,
-          "note": null
-        },
-        {
-          "text": "Sou de Lisboa.",
-          "priority": 1,
-          "note": null
-        },
-        {
-          "text": "Sou português/portuguesa.",
-          "priority": 1,
-          "note": null
-        },
-        {
-          "text": "Quantos anos tem?",
-          "priority": 1,
-          "note": null
-        },
-        {
-          "text": "Tenho vinte e cinco anos.",
-          "priority": 1,
-          "note": null
-        },
-        {
-          "text": "Ele tem trinta anos.",
-          "priority": 1,
-          "note": null
-        },
-        {
-          "text": "Tenho um carro.",
-          "priority": 1,
-          "note": null
+          "text": "Moro em… (أنا ساكن في…)",
+          "priority": 2
         }
       ]
     },
     {
-      "topic": "telefone_e_contactos",
+      "topic": "pl-002",
+      "lesson": 2,
+      "title": "القهوة اللي تحت البيت",
       "words": [
         {
-          "text": "Qual é o teu correio eletrónico?",
-          "priority": 1,
-          "note": null
+          "text": "o café (قهوة)",
+          "priority": 1
         },
         {
-          "text": "Qual é o teu número de telefone?",
-          "priority": 1,
-          "note": null
+          "text": "a água (مياه)",
+          "priority": 1
         },
         {
-          "text": "Onde moras?",
-          "priority": 1,
-          "note": null
+          "text": "o chá (شاي)",
+          "priority": 1
         },
         {
-          "text": "Qual é a tua morada?",
-          "priority": 1,
-          "note": null
+          "text": "de nada (you’re welcome)",
+          "priority": 1
         },
         {
-          "text": "Está? / Está lá? / Estou sim?",
-          "priority": 2,
-          "note": null
+          "text": "um (a)",
+          "priority": 1
         },
         {
-          "text": "Desculpe, quem fala?",
-          "priority": 2,
-          "note": null
+          "text": "uma (a)",
+          "priority": 1
         },
         {
-          "text": "Sou eu, a Ana. / É a Ana.",
-          "priority": 2,
-          "note": null
+          "text": "beber (يشرب)",
+          "priority": 1
         },
         {
-          "text": "Daqui fala a Ana.",
-          "priority": 2,
-          "note": null
+          "text": "obrigada (thank you if you’re a woman)",
+          "priority": 1
         },
         {
-          "text": "Podia falar com a Sara?",
-          "priority": 2,
-          "note": null
+          "text": "Queria…, sem… (كنت عايز… من غير…)",
+          "priority": 2
         },
         {
-          "text": "A Sara está? / Podia chamar a Sara?",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Desculpe, mas é engano.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Não mora aqui ninguém com esse nome.",
-          "priority": 2,
-          "note": null
+          "text": "É para aqui ou para levar? (هنا ولا تيك أواي؟)",
+          "priority": 2
         }
       ]
     },
     {
-      "topic": "trabalho_e_rotina",
+      "topic": "pl-003",
+      "lesson": 3,
+      "title": "بكام ده؟",
       "words": [
         {
-          "text": "Tenho de estudar.",
-          "priority": 1,
-          "note": null
+          "text": "dois",
+          "priority": 1
         },
         {
-          "text": "Tens de trabalhar hoje?",
-          "priority": 1,
-          "note": null
+          "text": "três",
+          "priority": 1
         },
         {
-          "text": "Ela tem de ir ao médico.",
-          "priority": 1,
-          "note": null
+          "text": "quatro",
+          "priority": 1
         },
         {
-          "text": "Como se chama?",
-          "priority": 1,
-          "note": null
+          "text": "cinco",
+          "priority": 1
         },
         {
-          "text": "Onde mora?",
-          "priority": 1,
-          "note": null
+          "text": "seis",
+          "priority": 1
         },
         {
-          "text": "Qual é o teu email?",
-          "priority": 1,
-          "note": null
+          "text": "o preço (the price)",
+          "priority": 1
         },
         {
-          "text": "Quando é a aula?",
-          "priority": 1,
-          "note": null
+          "text": "caro (غالي/رخيص)",
+          "priority": 1
         },
         {
-          "text": "Quanto custa?",
-          "priority": 1,
-          "note": null
+          "text": "barato (غالي/رخيص)",
+          "priority": 1
         },
         {
-          "text": "Ao sábado costumo...",
-          "priority": 1,
-          "note": null
+          "text": "Quanto custa? (بكام؟)",
+          "priority": 2
         },
         {
-          "text": "Durante a semana, normalmente...",
-          "priority": 1,
-          "note": null
+          "text": "A que horas…? (الساعة كام…؟)",
+          "priority": 2
         },
         {
-          "text": "Aos fins de semana, gosto de...",
-          "priority": 1,
-          "note": null
+          "text": "Queria um pacote de… (عايز/كنت عايز عبوة من…)",
+          "priority": 2
         },
         {
-          "text": "Ontem fui às compras.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Na semana passada trabalhei muito.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "No ano passado visitei Portugal.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Peço desculpa pelo atraso.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Cheguei tarde porque...",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Por causa do trânsito / da chuva...",
-          "priority": 2,
-          "note": null
+          "text": "Tem mais barato? (فيه أرخص؟)",
+          "priority": 2
         }
       ]
     },
     {
-      "topic": "cafe_e_comida",
+      "topic": "pl-004",
+      "lesson": 4,
+      "title": "عملت إيه امبارح؟",
       "words": [
         {
-          "text": "Queria um café, se faz favor.",
-          "priority": 1,
-          "note": null
+          "text": "ontem (أمس)",
+          "priority": 1
         },
         {
-          "text": "Para mim, uma bica e um croissant.",
-          "priority": 2,
-          "note": "a bica is priority 2; excluded from tier-1 cafe lessons"
+          "text": "ir (to go)",
+          "priority": 1
         },
         {
-          "text": "Pode trazer a conta?",
-          "priority": 1,
-          "note": null
+          "text": "fazer (to do / to make)",
+          "priority": 1
         },
         {
-          "text": "Prefiro chá.",
-          "priority": 1,
-          "note": null
+          "text": "comer (يأكل)",
+          "priority": 1
         },
         {
-          "text": "Não quero açúcar.",
-          "priority": 1,
-          "note": null
+          "text": "ver (to see / to watch)",
+          "priority": 1
         },
         {
-          "text": "Pode ser sem leite?",
-          "priority": 1,
-          "note": null
+          "text": "estar (to be temporary)",
+          "priority": 1
         },
         {
-          "text": "O que é isto?",
-          "priority": 1,
-          "note": null
+          "text": "a casa (بيت)",
+          "priority": 1
         },
         {
-          "text": "Isso é picante?",
-          "priority": 1,
-          "note": null
+          "text": "o quê? (what?)",
+          "priority": 1
         },
         {
-          "text": "Queria aquilo que está na montra.",
-          "priority": 1,
-          "note": null
+          "text": "fui",
+          "priority": 2
         },
         {
-          "text": "Não como carne.",
-          "priority": 1,
-          "note": null
+          "text": "fiz",
+          "priority": 2
         },
         {
-          "text": "Desculpe, este copo está sujo!",
-          "priority": 2,
-          "note": null
+          "text": "comi",
+          "priority": 2
         },
         {
-          "text": "A sopa está fria.",
-          "priority": 2,
-          "note": null
+          "text": "vi",
+          "priority": 2
         },
         {
-          "text": "Este prato não é o que eu pedi.",
-          "priority": 2,
-          "note": null
+          "text": "estive",
+          "priority": 2
         },
         {
-          "text": "Não estou satisfeito/a com o serviço.",
-          "priority": 2,
-          "note": null
+          "text": "Ontem fui a… (امبارح رحت…)",
+          "priority": 2
         },
         {
-          "text": "Podia trazer outro/a?",
-          "priority": 2,
-          "note": null
+          "text": "Fiz… e depois… (عملت… وبعد كده…)",
+          "priority": 2
         },
         {
-          "text": "Gostaria de falar com o gerente.",
-          "priority": 2,
-          "note": null
+          "text": "O que fizeste ontem? (عملت إيه امبارح؟)",
+          "priority": 2
         }
       ]
     },
     {
-      "topic": "numeros_e_horas",
+      "topic": "pl-005",
+      "lesson": 5,
+      "title": "هتعمل إيه بكرة؟",
       "words": [
         {
-          "text": "Que horas são?",
-          "priority": 1,
-          "note": null
+          "text": "amanhã (بكرة)",
+          "priority": 1
         },
         {
-          "text": "São duas e meia.",
-          "priority": 1,
-          "note": null
+          "text": "a manhã (the morning)",
+          "priority": 1
         },
         {
-          "text": "É uma e um quarto.",
-          "priority": 1,
-          "note": null
+          "text": "a tarde (متأخرًا / بعد الظهر)",
+          "priority": 1
         },
         {
-          "text": "São cinco para as três.",
-          "priority": 1,
-          "note": null
+          "text": "a noite (the night)",
+          "priority": 1
         },
         {
-          "text": "A aula começa às oito.",
-          "priority": 1,
-          "note": null
+          "text": "trabalhar (يعمل)",
+          "priority": 1
         },
         {
-          "text": "O banco fecha às cinco e meia.",
-          "priority": 1,
-          "note": null
+          "text": "ficar (يصبح / يبقى)",
+          "priority": 1
         },
         {
-          "text": "Almoço ao meio-dia.",
-          "priority": 1,
-          "note": null
+          "text": "talvez (ربما)",
+          "priority": 1
         },
         {
-          "text": "Vejo o elétrico todos os dias.",
-          "priority": 1,
-          "note": null
+          "text": "descansar (يرتاح)",
+          "priority": 1
         },
         {
-          "text": "Vês o relógio?",
-          "priority": 1,
-          "note": null
+          "text": "Amanhã vou… (بكرة ه…)",
+          "priority": 2
         },
         {
-          "text": "Ela vê os colegas de manhã.",
-          "priority": 1,
-          "note": null
+          "text": "Vou… porque… (ه… عشان…)",
+          "priority": 2
         },
         {
-          "text": "Posso ir às oito.",
-          "priority": 1,
-          "note": null
-        },
-        {
-          "text": "Podes almoçar ao meio-dia?",
-          "priority": 1,
-          "note": null
-        },
-        {
-          "text": "Ela pode chegar às cinco e meia.",
-          "priority": 1,
-          "note": null
-        },
-        {
-          "text": "Faço o pequeno-almoço às oito.",
-          "priority": 1,
-          "note": null
-        },
-        {
-          "text": "O que fazes à tarde?",
-          "priority": 1,
-          "note": null
-        },
-        {
-          "text": "Ela faz o jantar às oito.",
-          "priority": 1,
-          "note": null
-        },
-        {
-          "text": "Vou visitar o Porto.",
-          "priority": 1,
-          "note": null
-        },
-        {
-          "text": "No próximo mês vamos...",
-          "priority": 1,
-          "note": null
-        },
-        {
-          "text": "Este fim de semana vou...",
-          "priority": 1,
-          "note": null
-        },
-        {
-          "text": "Que horas eram quando chegaste?",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Eram três da manhã.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Era bastante tarde.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Antigamente, nós fazíamos noitadas.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Dantes convidavas-me sempre.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Quando era criança, costumava...",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Quando tínhamos dezassete anos, fazíamos...",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Tinha seis anos quando entrei para a escola.",
-          "priority": 2,
-          "note": null
+          "text": "O que vais fazer? (هتعمل إيه؟)",
+          "priority": 2
         }
       ]
     },
     {
-      "topic": "casa_e_bairro",
+      "topic": "pl-006",
+      "lesson": 6,
+      "title": "امبارح والنهارده وبكرة",
+      "words": []
+    },
+    {
+      "topic": "pl-007",
+      "lesson": 7,
+      "title": "رقم تليفونك كام؟",
       "words": [
         {
-          "text": "Moro num apartamento no centro.",
-          "priority": 1,
-          "note": null
+          "text": "o número (the number)",
+          "priority": 1
         },
         {
-          "text": "A minha casa fica perto de...",
-          "priority": 1,
-          "note": null
+          "text": "zero",
+          "priority": 1
         },
         {
-          "text": "É um bairro tranquilo / movimentado.",
-          "priority": 1,
-          "note": null
+          "text": "sete",
+          "priority": 1
         },
         {
-          "text": "Posso entrar? / Dá-me licença?",
-          "priority": 2,
-          "note": null
+          "text": "oito",
+          "priority": 1
         },
         {
-          "text": "Com licença. / Dá-me licença para passar?",
-          "priority": 2,
-          "note": null
+          "text": "nove",
+          "priority": 1
         },
         {
-          "text": "Faça favor. / Com certeza. / Pode, pode.",
-          "priority": 2,
-          "note": null
+          "text": "dez",
+          "priority": 1
         },
         {
-          "text": "Tudo bem. / Podes.",
-          "priority": 2,
-          "note": null
+          "text": "vinte",
+          "priority": 1
         },
         {
-          "text": "Não, não pode.",
-          "priority": 2,
-          "note": "formal"
+          "text": "trinta",
+          "priority": 1
         },
         {
-          "text": "Nem pensar.",
-          "priority": 2,
-          "note": "informal"
+          "text": "Quanto custa? (بكام؟)",
+          "priority": 2
         },
         {
-          "text": "O que é que podemos fazer?",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Podia fazer um desconto?",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Vou tratar disso ainda hoje.",
-          "priority": 2,
-          "note": null
+          "text": "A que horas…? (الساعة كام…؟)",
+          "priority": 2
         }
       ]
     },
     {
-      "topic": "direcoes_e_transporte",
+      "topic": "pl-008",
+      "lesson": 8,
+      "title": "فين الصيدلية؟",
       "words": [
         {
-          "text": "Para onde vai este autocarro?",
-          "priority": 1,
-          "note": null
+          "text": "a rua (شارع)",
+          "priority": 1
         },
         {
-          "text": "Este elétrico vai até ao centro?",
-          "priority": 1,
-          "note": null
+          "text": "perto (قريب)",
+          "priority": 1
         },
         {
-          "text": "Onde é a paragem?",
-          "priority": 1,
-          "note": null
+          "text": "longe (بعيد)",
+          "priority": 1
         },
         {
-          "text": "Quanto custa o bilhete?",
-          "priority": 1,
-          "note": null
+          "text": "à direita de (يمين)",
+          "priority": 1
         },
         {
-          "text": "Sabe a que horas passa o elétrico?",
-          "priority": 1,
-          "note": null
+          "text": "à esquerda de (شمال)",
+          "priority": 1
         },
         {
-          "text": "Não sei onde é a paragem.",
-          "priority": 1,
-          "note": null
+          "text": "não percebi (مفهمتش)",
+          "priority": 1
         },
         {
-          "text": "Ele sabe o preço do bilhete.",
-          "priority": 1,
-          "note": null
+          "text": "desculpa (آسف)",
+          "priority": 1
         },
         {
-          "text": "Com licença, o senhor sabe...?",
-          "priority": 2,
-          "note": null
+          "text": "com licença (excuse me)",
+          "priority": 1
         },
         {
-          "text": "Desculpe, a senhora pode ajudar-me?",
-          "priority": 2,
-          "note": null
+          "text": "onde? (أين)",
+          "priority": 1
         },
         {
-          "text": "Por favor, pode dizer-me onde fica...?",
-          "priority": 2,
-          "note": null
+          "text": "Onde fica…? (… فين؟)",
+          "priority": 2
         },
         {
-          "text": "A que horas parte o comboio?",
-          "priority": 2,
-          "note": null
+          "text": "É perto ou longe? (هو قريب ولا بعيد؟)",
+          "priority": 2
         },
         {
-          "text": "Queria um bilhete para o Porto, ida e volta.",
-          "priority": 2,
-          "note": null
+          "text": "Vira à direita… (لف يمين…)",
+          "priority": 2
         },
         {
-          "text": "De que linha parte?",
-          "priority": 2,
-          "note": null
+          "text": "Desculpa, não percebi. (معلش، مفهمتش.)",
+          "priority": 2
         },
         {
-          "text": "Quanto tempo demora a viagem?",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Primeiro fui..., depois apanhei..., quando cheguei...",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Ficámos lá durante...",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Partiu uma semana depois.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Desculpe, onde fica...?",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Sabe dizer-me onde está...?",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Os correios ficam longe daqui?",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Fica entre o banco e o cinema.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "É perto / É longe daqui.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Fica a dois minutos a pé.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Desculpe, como vou para...?",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Sabe onde fica...?",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "É longe daqui?",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Vá/Vai sempre em frente.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Vire/Vira à esquerda / à direita.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Passe/Passa pela praça.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "No GPS diz para virar à esquerda.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Segundo o mapa, fica a 500 metros.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Já estamos perto!",
-          "priority": 2,
-          "note": null
+          "text": "Podes repetir mais devagar? (ممكن تعيد الكلام أبطأ؟)",
+          "priority": 2
         }
       ]
     },
     {
-      "topic": "lazer_e_cultura",
+      "topic": "pl-009",
+      "lesson": 9,
+      "title": "السوبر ماركت",
       "words": [
         {
-          "text": "Queres ir ao cinema?",
-          "priority": 2,
-          "note": null
+          "text": "o pão (the bread)",
+          "priority": 1
         },
         {
-          "text": "Podemos ir ao concerto amanhã?",
-          "priority": 2,
-          "note": null
+          "text": "o leite (لبن)",
+          "priority": 1
         },
         {
-          "text": "Gostava(s) de ir jantar fora hoje?",
-          "priority": 2,
-          "note": null
+          "text": "a fruta (the fruit)",
+          "priority": 1
         },
         {
-          "text": "Prefiro ir...",
-          "priority": 2,
-          "note": null
+          "text": "o arroz (the rice)",
+          "priority": 1
         },
         {
-          "text": "Prefiro jantar fora.",
-          "priority": 2,
-          "note": null
+          "text": "isto (this)",
+          "priority": 1
         },
         {
-          "text": "É melhor ficar em casa!",
-          "priority": 2,
-          "note": null
+          "text": "isso (that)",
+          "priority": 1
         },
         {
-          "text": "Concordo. / Estou de acordo.",
-          "priority": 2,
-          "note": null
+          "text": "este (هذا/هذه)",
+          "priority": 1
         },
         {
-          "text": "Não concordo. / Não acho.",
-          "priority": 2,
-          "note": null
+          "text": "esta (هذا/هذه)",
+          "priority": 1
         },
         {
-          "text": "Claro que sim! / Claro que não!",
-          "priority": 2,
-          "note": null
+          "text": "um quilo",
+          "priority": 2
         },
         {
-          "text": "Podes comprar os bilhetes?",
-          "priority": 2,
-          "note": null
+          "text": "um pacote",
+          "priority": 2
         },
         {
-          "text": "Pode passar pelo banco?",
-          "priority": 2,
-          "note": null
+          "text": "Queria um pacote de… (عايز/كنت عايز عبوة من…)",
+          "priority": 2
         },
         {
-          "text": "Não tens de te preocupar com isso!",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Eu trato disso!",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Meu caro colega",
-          "priority": 2,
-          "note": "+formal"
-        },
-        {
-          "text": "Olá, João",
-          "priority": 2,
-          "note": "-formal"
-        },
-        {
-          "text": "Querida amiga",
-          "priority": 2,
-          "note": "+íntimo"
-        },
-        {
-          "text": "Meus queridos",
-          "priority": 2,
-          "note": "+íntimo"
-        },
-        {
-          "text": "Um beijo / Muitos beijinhos",
-          "priority": 2,
-          "note": "-formal"
-        },
-        {
-          "text": "Com os meus cumprimentos",
-          "priority": 2,
-          "note": "+formal"
-        },
-        {
-          "text": "Um abraço",
-          "priority": 2,
-          "note": "-formal"
-        },
-        {
-          "text": "Dou-te o convite amanhã.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Dás um abraço ao Luís?",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Ela dá os parabéns ao aniversariante.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Podíamos ver aquela exposição. Que tal?",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "O que é que acham?",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Estou a pensar ir ao basquetebol. Que tal?",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Que boa ideia! / Agrada-me a ideia.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Acho muito bem. / Acho excelente.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Eu não gosto de cinema. Prefiro ir ao teatro.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Estou farto(a) de comida japonesa. Preferia comida italiana.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Queria reservar um quarto.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Desejava informações sobre...",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Gostava de um quarto com vista para o mar.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Tem quartos disponíveis para...?",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Para quantas noites?",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Prefere um quarto com vista para o parque ou para a avenida?",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Quando tenho tempos livres, gosto de...",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "No fim de semana costumo...",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Adoro viajar! / Detesto ficar em casa.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Quando era criança, costumava...",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Lembro-me de que...",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Naquele tempo, as coisas eram diferentes.",
-          "priority": 2,
-          "note": null
+          "text": "Tem mais barato? (فيه أرخص؟)",
+          "priority": 2
         }
       ]
     },
     {
-      "topic": "compras_e_dinheiro",
+      "topic": "pl-010",
+      "lesson": 10,
+      "title": "شقتي الجديدة",
       "words": [
         {
-          "text": "Pode ajudar-me?",
-          "priority": 2,
-          "note": null
+          "text": "o apartamento (شقة)",
+          "priority": 1
         },
         {
-          "text": "Posso ajudar?",
-          "priority": 2,
-          "note": null
+          "text": "o quarto (غرفة)",
+          "priority": 1
         },
         {
-          "text": "Posso experimentar?",
-          "priority": 2,
-          "note": null
+          "text": "a cozinha (the kitchen)",
+          "priority": 1
         },
         {
-          "text": "Claro! / Com certeza!",
-          "priority": 2,
-          "note": null
+          "text": "a casa de banho (the bathroom)",
+          "priority": 1
         },
         {
-          "text": "Fica bem! / Está ótimo!",
-          "priority": 2,
-          "note": null
+          "text": "grande (big)",
+          "priority": 1
         },
         {
-          "text": "É lindo! / Que maravilha!",
-          "priority": 2,
-          "note": null
+          "text": "pequeno (small)",
+          "priority": 1
         },
         {
-          "text": "Queria...",
-          "priority": 2,
-          "note": null
+          "text": "novo (new)",
+          "priority": 1
         },
         {
-          "text": "Podia mostrar-me...?",
-          "priority": 2,
-          "note": null
+          "text": "velho (old)",
+          "priority": 1
         },
         {
-          "text": "Com certeza. / Claro.",
-          "priority": 2,
-          "note": null
+          "text": "há",
+          "priority": 2
         },
         {
-          "text": "De momento não temos.",
-          "priority": 2,
-          "note": null
+          "text": "Chamo-me… (اسمي…)",
+          "priority": 2
         },
         {
-          "text": "Este artigo está com defeito.",
-          "priority": 2,
-          "note": null
+          "text": "Sou de… (أنا من…)",
+          "priority": 2
         },
         {
-          "text": "Podia trocar?",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Tenho o talão de compra.",
-          "priority": 2,
-          "note": null
+          "text": "Moro em… (أنا ساكن في…)",
+          "priority": 2
         }
       ]
     },
     {
-      "topic": "saude_e_farmacia",
+      "topic": "pl-011",
+      "lesson": 11,
+      "title": "مفتوح ولا مقفول؟",
       "words": [
         {
-          "text": "Estou doente.",
-          "priority": 2,
-          "note": null
+          "text": "aberto (open)",
+          "priority": 1
         },
         {
-          "text": "Dói-me a cabeça. / Tenho dor de cabeça.",
-          "priority": 2,
-          "note": null
+          "text": "fechado (closed)",
+          "priority": 1
         },
         {
-          "text": "Tenho tosse. / Tenho uma dor no peito.",
-          "priority": 2,
-          "note": null
+          "text": "abrir (to open)",
+          "priority": 1
         },
         {
-          "text": "Estou com febre alta desde anteontem.",
-          "priority": 2,
-          "note": null
+          "text": "fechar (to close)",
+          "priority": 1
         },
         {
-          "text": "Como se sente? / Sente-se melhor?",
-          "priority": 2,
-          "note": null
+          "text": "já (سبق / بالفعل)",
+          "priority": 1
         },
         {
-          "text": "O que tem? / Onde lhe dói?",
-          "priority": 2,
-          "note": null
+          "text": "agora (دلوقتي)",
+          "priority": 1
         },
         {
-          "text": "Há quanto tempo está assim?",
-          "priority": 2,
-          "note": null
+          "text": "logo (later / right away / therefore)",
+          "priority": 1
         },
         {
-          "text": "Deve tomar o antibiótico.",
-          "priority": 2,
-          "note": null
+          "text": "então (إذًا)",
+          "priority": 1
         },
         {
-          "text": "Tem de tomar o antibiótico.",
-          "priority": 2,
-          "note": null
+          "text": "já",
+          "priority": 2
         },
         {
-          "text": "Tome este antibiótico e estes comprimidos para a febre.",
-          "priority": 2,
-          "note": null
+          "text": "ainda não",
+          "priority": 2
         },
         {
-          "text": "Tem de tomar este medicamento de doze em doze horas.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Três vezes ao dia / de manhã, à tarde e à noite.",
-          "priority": 2,
-          "note": null
-        },
-        {
-          "text": "Durante dez dias.",
-          "priority": 2,
-          "note": null
+          "text": "agora",
+          "priority": 2
         }
       ]
     },
     {
-      "topic": "lusofonia",
+      "topic": "pl-012",
+      "lesson": 12,
+      "title": "مراجعة: الحي – أول أسبوع في لشبونة",
+      "words": []
+    },
+    {
+      "topic": "pl-013",
+      "lesson": 13,
+      "title": "بتدفع إزاي؟",
       "words": [
         {
-          "text": "O Brasil fica na América do Sul.",
-          "priority": 2,
-          "note": null
+          "text": "pagar (to pay)",
+          "priority": 1
         },
         {
-          "text": "Angola é um país africano.",
-          "priority": 2,
-          "note": null
+          "text": "o dinheiro (the money)",
+          "priority": 1
         },
         {
-          "text": "A capital de Cabo Verde é Praia.",
-          "priority": 2,
-          "note": null
+          "text": "o cartão (the card)",
+          "priority": 1
         },
         {
-          "text": "Qual é o prato típico de...?",
-          "priority": 2,
-          "note": null
+          "text": "o poder (the power)",
+          "priority": 1
         },
         {
-          "text": "Em Angola, come-se muito...",
-          "priority": 2,
-          "note": null
+          "text": "levar (to take / to carry)",
+          "priority": 1
         },
         {
-          "text": "A cultura de Cabo Verde é conhecida por...",
-          "priority": 2,
-          "note": null
+          "text": "o saco (the bag)",
+          "priority": 1
+        },
+        {
+          "text": "a moeda (the coin)",
+          "priority": 1
+        },
+        {
+          "text": "a nota (the bill / the banknote)",
+          "priority": 1
+        },
+        {
+          "text": "com cartão",
+          "priority": 2
         }
       ]
     },
     {
-      "topic": "emocoes_e_descricoes",
+      "topic": "pl-014",
+      "lesson": 14,
+      "title": "فين المفاتيح؟",
       "words": [
-        { "text": "estou bem", "priority": 1, "note": null },
-        { "text": "estou cansado", "priority": 1, "note": null },
-        { "text": "estou ocupado", "priority": 1, "note": null },
-        { "text": "estou feliz", "priority": 1, "note": null },
-        { "text": "tudo bem", "priority": 1, "note": null },
-        { "text": "como estás?", "priority": 1, "note": null }
+        {
+          "text": "as chaves (the keys)",
+          "priority": 1
+        },
+        {
+          "text": "a carteira (the wallet / the purse)",
+          "priority": 1
+        },
+        {
+          "text": "o telemóvel (the cell / mobile phone)",
+          "priority": 1
+        },
+        {
+          "text": "em cima de (on / on top of)",
+          "priority": 1
+        },
+        {
+          "text": "ao lado de (next to)",
+          "priority": 1
+        },
+        {
+          "text": "aqui / cá (here)",
+          "priority": 1
+        },
+        {
+          "text": "ali / lá (there)",
+          "priority": 1
+        },
+        {
+          "text": "a mesa (the table)",
+          "priority": 1
+        },
+        {
+          "text": "em cima de",
+          "priority": 2
+        },
+        {
+          "text": "ao lado de",
+          "priority": 2
+        },
+        {
+          "text": "Quem é? (مين ده؟)",
+          "priority": 2
+        },
+        {
+          "text": "O que é isto? (إيه ده؟)",
+          "priority": 2
+        },
+        {
+          "text": "Onde fica…? (… فين؟)",
+          "priority": 2
+        }
       ]
     },
     {
-      "topic": "familia_e_pessoas",
+      "topic": "pl-015",
+      "lesson": 15,
+      "title": "عيلتي في مصر",
       "words": [
-        { "text": "a família", "priority": 1, "note": null },
-        { "text": "o filho", "priority": 1, "note": null },
-        { "text": "a filha", "priority": 1, "note": null },
-        { "text": "o irmão", "priority": 1, "note": null },
-        { "text": "a irmã", "priority": 1, "note": null },
-        { "text": "a mulher", "priority": 1, "note": null },
-        { "text": "o marido", "priority": 1, "note": null },
-        { "text": "tenho", "priority": 1, "note": null }
+        {
+          "text": "a família (عائلة)",
+          "priority": 1
+        },
+        {
+          "text": "meu (my)",
+          "priority": 1
+        },
+        {
+          "text": "minha (my)",
+          "priority": 1
+        },
+        {
+          "text": "teu (your)",
+          "priority": 1
+        },
+        {
+          "text": "tua (your)",
+          "priority": 1
+        },
+        {
+          "text": "ter (to have)",
+          "priority": 1
+        },
+        {
+          "text": "viver (يعيش)",
+          "priority": 1
+        },
+        {
+          "text": "quem? (مَن؟)",
+          "priority": 1
+        },
+        {
+          "text": "o meu",
+          "priority": 2
+        },
+        {
+          "text": "a minha + ter",
+          "priority": 2
+        },
+        {
+          "text": "Chamo-me… (اسمي…)",
+          "priority": 2
+        },
+        {
+          "text": "Sou de… (أنا من…)",
+          "priority": 2
+        },
+        {
+          "text": "Moro em… (أنا ساكن في…)",
+          "priority": 2
+        }
       ]
     },
     {
-      "topic": "tempo_e_clima",
+      "topic": "pl-016",
+      "lesson": 16,
+      "title": "الجو النهارده",
       "words": [
-        { "text": "está frio", "priority": 1, "note": null },
-        { "text": "está calor", "priority": 1, "note": null },
-        { "text": "faz sol", "priority": 1, "note": null },
-        { "text": "chove", "priority": 1, "note": null },
-        { "text": "o tempo", "priority": 1, "note": null },
-        { "text": "hoje", "priority": 1, "note": null }
+        {
+          "text": "quente (hot / warm)",
+          "priority": 1
+        },
+        {
+          "text": "frio (برد)",
+          "priority": 1
+        },
+        {
+          "text": "bom (good)",
+          "priority": 1
+        },
+        {
+          "text": "mau (bad)",
+          "priority": 1
+        },
+        {
+          "text": "também (أيضًا)",
+          "priority": 1
+        },
+        {
+          "text": "hoje (النهارده)",
+          "priority": 1
+        },
+        {
+          "text": "muito (very / much / many)",
+          "priority": 1
+        },
+        {
+          "text": "pouco (little / few)",
+          "priority": 1
+        },
+        {
+          "text": "está frio",
+          "priority": 2
+        },
+        {
+          "text": "está bom",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-017",
+      "lesson": 17,
+      "title": "الساعة كام؟",
+      "words": [
+        {
+          "text": "a hora (the hour)",
+          "priority": 1
+        },
+        {
+          "text": "o minuto (the minute)",
+          "priority": 1
+        },
+        {
+          "text": "o meio-dia (noon / midday)",
+          "priority": 1
+        },
+        {
+          "text": "boa tarde (good afternoon)",
+          "priority": 1
+        },
+        {
+          "text": "boa noite (good evening / good night)",
+          "priority": 1
+        },
+        {
+          "text": "quando? (متى)",
+          "priority": 1
+        },
+        {
+          "text": "onze",
+          "priority": 1
+        },
+        {
+          "text": "doze",
+          "priority": 1
+        },
+        {
+          "text": "quinze",
+          "priority": 1
+        },
+        {
+          "text": "que horas são?",
+          "priority": 2
+        },
+        {
+          "text": "Quanto custa? (بكام؟)",
+          "priority": 2
+        },
+        {
+          "text": "A que horas…? (الساعة كام…؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-018",
+      "lesson": 18,
+      "title": "مراجعة: الحي – أول أسبوع في لشبونة",
+      "words": []
+    },
+    {
+      "topic": "pl-019",
+      "lesson": 19,
+      "title": "أول يوم في الشغل",
+      "words": [
+        {
+          "text": "a empresa (شركة)",
+          "priority": 1
+        },
+        {
+          "text": "o escritório (the office)",
+          "priority": 1
+        },
+        {
+          "text": "começar (يبدأ)",
+          "priority": 1
+        },
+        {
+          "text": "o trabalho",
+          "priority": 1
+        },
+        {
+          "text": "colega (زميل)",
+          "priority": 1
+        },
+        {
+          "text": "nosso (our)",
+          "priority": 1
+        },
+        {
+          "text": "nossa (our)",
+          "priority": 1
+        },
+        {
+          "text": "o emprego (وظيفة)",
+          "priority": 1
+        },
+        {
+          "text": "a firma (the firm)",
+          "priority": 3
+        },
+        {
+          "text": "o candidato (the candidate / the applicant)",
+          "priority": 3
+        },
+        {
+          "text": "o empregador (the employer)",
+          "priority": 3
+        },
+        {
+          "text": "o agricultor (the farmer)",
+          "priority": 3
+        },
+        {
+          "text": "Sou de…, mas moro em… (أنا من…، بس ساكن في…)",
+          "priority": 2
+        },
+        {
+          "text": "Gosto de… porque… (بحب… عشان…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-020",
+      "lesson": 20,
+      "title": "إيه رأيك في الشغل؟",
+      "words": [
+        {
+          "text": "achar (to find / to think that)",
+          "priority": 1
+        },
+        {
+          "text": "pensar (يفكر)",
+          "priority": 1
+        },
+        {
+          "text": "fácil (easy)",
+          "priority": 1
+        },
+        {
+          "text": "difícil (difficult)",
+          "priority": 1
+        },
+        {
+          "text": "certo (right / correct)",
+          "priority": 1
+        },
+        {
+          "text": "errado (خطأ)",
+          "priority": 1
+        },
+        {
+          "text": "mais (أكثر)",
+          "priority": 1
+        },
+        {
+          "text": "menos (أقل)",
+          "priority": 1
+        },
+        {
+          "text": "péssimo (awful)",
+          "priority": 3
+        },
+        {
+          "text": "largo (wide)",
+          "priority": 3
+        },
+        {
+          "text": "estreito (narrow)",
+          "priority": 3
+        },
+        {
+          "text": "esperto (smart / clever)",
+          "priority": 3
+        },
+        {
+          "text": "acho que + é fácil",
+          "priority": 2
+        },
+        {
+          "text": "difícil",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-021",
+      "lesson": 21,
+      "title": "ممكن تساعدني؟",
+      "words": [
+        {
+          "text": "querer (to want)",
+          "priority": 1
+        },
+        {
+          "text": "ser (to be permanent)",
+          "priority": 1
+        },
+        {
+          "text": "perceber (يلاحظ/يفهم)",
+          "priority": 1
+        },
+        {
+          "text": "saber (to know something)",
+          "priority": 1
+        },
+        {
+          "text": "só / apenas (only / just)",
+          "priority": 1
+        },
+        {
+          "text": "sem (without)",
+          "priority": 1
+        },
+        {
+          "text": "você (you formal)",
+          "priority": 1
+        },
+        {
+          "text": "vocês (you pl)",
+          "priority": 1
+        },
+        {
+          "text": "continuar (يستمر)",
+          "priority": 3
+        },
+        {
+          "text": "subir (to go up / to climb)",
+          "priority": 3
+        },
+        {
+          "text": "descer (to go down)",
+          "priority": 3
+        },
+        {
+          "text": "aceitar (يقبل)",
+          "priority": 3
+        },
+        {
+          "text": "quero",
+          "priority": 2
+        },
+        {
+          "text": "posso",
+          "priority": 2
+        },
+        {
+          "text": "Preciso de… porque… (أنا محتاج… عشان…)",
+          "priority": 2
+        },
+        {
+          "text": "…, por isso… (…، وعشان كده…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-022",
+      "lesson": 22,
+      "title": "يومي العادي",
+      "words": [
+        {
+          "text": "levantar-se (ينهض)",
+          "priority": 1
+        },
+        {
+          "text": "sair (يخرج / يغادر)",
+          "priority": 1
+        },
+        {
+          "text": "chegar (يصل)",
+          "priority": 1
+        },
+        {
+          "text": "nunca (أبدًا)",
+          "priority": 1
+        },
+        {
+          "text": "às vezes (أحيانًا)",
+          "priority": 1
+        },
+        {
+          "text": "depois (بعد كده)",
+          "priority": 1
+        },
+        {
+          "text": "antes (قبل)",
+          "priority": 1
+        },
+        {
+          "text": "sempre (always)",
+          "priority": 1
+        },
+        {
+          "text": "o século (the century)",
+          "priority": 3
+        },
+        {
+          "text": "a década (the decade)",
+          "priority": 3
+        },
+        {
+          "text": "o calendário (the calendar)",
+          "priority": 3
+        },
+        {
+          "text": "a ceia (supper)",
+          "priority": 3
+        },
+        {
+          "text": "Acordo de manhã e… (بصحى الصبح وبعدين…)",
+          "priority": 2
+        },
+        {
+          "text": "Depois, … (بعد كده…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-023",
+      "lesson": 23,
+      "title": "الغدا مع الزملاء",
+      "words": [
+        {
+          "text": "gostar (to like)",
+          "priority": 1
+        },
+        {
+          "text": "preferir (يفضّل)",
+          "priority": 1
+        },
+        {
+          "text": "a carne (the meat)",
+          "priority": 1
+        },
+        {
+          "text": "o peixe (the fish)",
+          "priority": 1
+        },
+        {
+          "text": "o almoço (lunch)",
+          "priority": 1
+        },
+        {
+          "text": "mas (لكن)",
+          "priority": 1
+        },
+        {
+          "text": "ou (أو)",
+          "priority": 1
+        },
+        {
+          "text": "e (و)",
+          "priority": 1
+        },
+        {
+          "text": "a salada (the salad)",
+          "priority": 3
+        },
+        {
+          "text": "a sandes (the sandwich)",
+          "priority": 3
+        },
+        {
+          "text": "a tosta (the toast)",
+          "priority": 3
+        },
+        {
+          "text": "o ovo (the egg)",
+          "priority": 3
+        },
+        {
+          "text": "gosto de",
+          "priority": 2
+        },
+        {
+          "text": "prefiro",
+          "priority": 2
+        },
+        {
+          "text": "Gosto de… (بحب…)",
+          "priority": 2
+        },
+        {
+          "text": "Prefiro X a Y. (بفضّل X عن Y.)",
+          "priority": 2
+        },
+        {
+          "text": "E tu, de que gostas? (وإنت بتحب إيه؟)",
+          "priority": 2
+        },
+        {
+          "text": "Gosto de X e Y. (أنا بحب X وY.)",
+          "priority": 2
+        },
+        {
+          "text": "Quero ir, mas… (عايز أروح، بس…)",
+          "priority": 2
+        },
+        {
+          "text": "X ou Y? (X ولا Y؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-024",
+      "lesson": 24,
+      "title": "مراجعة: الشغل",
+      "words": []
+    },
+    {
+      "topic": "pl-025",
+      "lesson": 25,
+      "title": "امبارح في الشغل",
+      "words": [
+        {
+          "text": "acabar (ينتهي)",
+          "priority": 1
+        },
+        {
+          "text": "voltar (to return / to go back)",
+          "priority": 1
+        },
+        {
+          "text": "falar (to speak)",
+          "priority": 1
+        },
+        {
+          "text": "a semana (the week)",
+          "priority": 1
+        },
+        {
+          "text": "finalmente (أخيرًا)",
+          "priority": 1
+        },
+        {
+          "text": "cheguei (وصلت)",
+          "priority": 1
+        },
+        {
+          "text": "comprei (اشتريت)",
+          "priority": 1
+        },
+        {
+          "text": "voltei (رجعت)",
+          "priority": 1
+        },
+        {
+          "text": "resultar (to result / to work)",
+          "priority": 3
+        },
+        {
+          "text": "reconhecer (to recognize / to acknowledge)",
+          "priority": 3
+        },
+        {
+          "text": "apanhar (to catch)",
+          "priority": 3
+        },
+        {
+          "text": "soltar (to release)",
+          "priority": 3
+        },
+        {
+          "text": "trabalhei",
+          "priority": 2
+        },
+        {
+          "text": "cheguei",
+          "priority": 2
+        },
+        {
+          "text": "saí",
+          "priority": 2
+        },
+        {
+          "text": "Primeiro… Depois… Finalmente… (الأول… بعد كده… وفي الآخر…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-026",
+      "lesson": 26,
+      "title": "الطابعة بايظة",
+      "words": [
+        {
+          "text": "precisar (يحتاج)",
+          "priority": 1
+        },
+        {
+          "text": "o problema (مشكلة)",
+          "priority": 1
+        },
+        {
+          "text": "ajudar (يساعد)",
+          "priority": 1
+        },
+        {
+          "text": "funcionar (يعمل)",
+          "priority": 1
+        },
+        {
+          "text": "porque? (لأن)",
+          "priority": 1
+        },
+        {
+          "text": "portanto / por isso (therefore)",
+          "priority": 1
+        },
+        {
+          "text": "pedir (to ask for something)",
+          "priority": 1
+        },
+        {
+          "text": "que (ماذا)",
+          "priority": 1
+        },
+        {
+          "text": "o rato (the mouse)",
+          "priority": 3
+        },
+        {
+          "text": "o teclado (the keyboard)",
+          "priority": 3
+        },
+        {
+          "text": "o cabo (the cable)",
+          "priority": 3
+        },
+        {
+          "text": "preciso de… porque…",
+          "priority": 2
+        },
+        {
+          "text": "…, por isso… (…، وعشان كده…)",
+          "priority": 2
+        },
+        {
+          "text": "Isto não funciona. (ده مش شغال.)",
+          "priority": 2
+        },
+        {
+          "text": "Preciso de outro porque… (محتاج واحد تاني عشان…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-027",
+      "lesson": 27,
+      "title": "اتأخرت",
+      "words": [
+        {
+          "text": "atrasado (متأخر)",
+          "priority": 1
+        },
+        {
+          "text": "desculpe (I’m sorry formal)",
+          "priority": 1
+        },
+        {
+          "text": "dever / ter de (to have to / must)",
+          "priority": 1
+        },
+        {
+          "text": "o autocarro (حافلة)",
+          "priority": 1
+        },
+        {
+          "text": "o comboio (قطار)",
+          "priority": 1
+        },
+        {
+          "text": "cedo (مبكرًا)",
+          "priority": 1
+        },
+        {
+          "text": "avisar (يخبر)",
+          "priority": 1
+        },
+        {
+          "text": "a (أنا تعبان)",
+          "priority": 1
+        },
+        {
+          "text": "o camião (the truck)",
+          "priority": 3
+        },
+        {
+          "text": "o barco (the boat)",
+          "priority": 3
+        },
+        {
+          "text": "tive de",
+          "priority": 2
+        },
+        {
+          "text": "não pude + por isso",
+          "priority": 2
+        },
+        {
+          "text": "Não pude vir porque… (ماقدرتش أجي عشان…)",
+          "priority": 2
+        },
+        {
+          "text": "Tive de…, por isso… (اضطريت إني…، وعشان كده…)",
+          "priority": 2
+        },
+        {
+          "text": "Vou avisar. (هبلّغك/هبلغهم.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-028",
+      "lesson": 28,
+      "title": "إيميل للمدير",
+      "words": [
+        {
+          "text": "escrever (to write)",
+          "priority": 1
+        },
+        {
+          "text": "responder (to answer / to reply / to respond)",
+          "priority": 1
+        },
+        {
+          "text": "enviar (يرسل)",
+          "priority": 1
+        },
+        {
+          "text": "a mensagem",
+          "priority": 1
+        },
+        {
+          "text": "o dia livre",
+          "priority": 1
+        },
+        {
+          "text": "dar (to give)",
+          "priority": 1
+        },
+        {
+          "text": "de (of / from)",
+          "priority": 1
+        },
+        {
+          "text": "em (in / on / at)",
+          "priority": 1
+        },
+        {
+          "text": "o meio (the middle)",
+          "priority": 3
+        },
+        {
+          "text": "o grupo (the group)",
+          "priority": 3
+        },
+        {
+          "text": "a voz (the voice)",
+          "priority": 3
+        },
+        {
+          "text": "o texto (the text)",
+          "priority": 3
+        }
+      ]
+    },
+    {
+      "topic": "pl-029",
+      "lesson": 29,
+      "title": "خطة الأسبوع",
+      "words": [
+        {
+          "text": "nós (we)",
+          "priority": 1
+        },
+        {
+          "text": "segunda-feira (Monday)",
+          "priority": 1
+        },
+        {
+          "text": "terça-feira (Tuesday)",
+          "priority": 1
+        },
+        {
+          "text": "quarta-feira (Wednesday)",
+          "priority": 1
+        },
+        {
+          "text": "quinta-feira (Thursday)",
+          "priority": 1
+        },
+        {
+          "text": "sexta-feira (Friday)",
+          "priority": 1
+        },
+        {
+          "text": "o mês (the month)",
+          "priority": 1
+        },
+        {
+          "text": "o fim de semana (نهاية الأسبوع)",
+          "priority": 1
+        },
+        {
+          "text": "junho (June)",
+          "priority": 3
+        },
+        {
+          "text": "setembro (September)",
+          "priority": 3
+        },
+        {
+          "text": "outubro (October)",
+          "priority": 3
+        },
+        {
+          "text": "novembro (November)",
+          "priority": 3
+        },
+        {
+          "text": "nós",
+          "priority": 2
+        },
+        {
+          "text": "vamos",
+          "priority": 2
+        },
+        {
+          "text": "temos",
+          "priority": 2
+        },
+        {
+          "text": "fazemos",
+          "priority": 2
+        },
+        {
+          "text": "Vou fazer… porque… (هعمل… عشان…)",
+          "priority": 2
+        },
+        {
+          "text": "Se puder, vou… (لو أقدر، ه…)",
+          "priority": 2
+        },
+        {
+          "text": "Ainda não sei, mas aviso-te. (لسه مش عارف، بس هبلغك.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-030",
+      "lesson": 30,
+      "title": "مراجعة: الشغل",
+      "words": []
+    },
+    {
+      "topic": "pl-031",
+      "lesson": 31,
+      "title": "زميلك الجديد",
+      "words": [
+        {
+          "text": "ele (he)",
+          "priority": 1
+        },
+        {
+          "text": "ela (she)",
+          "priority": 1
+        },
+        {
+          "text": "eles (they)",
+          "priority": 1
+        },
+        {
+          "text": "elas (they f)",
+          "priority": 1
+        },
+        {
+          "text": "a pessoa (the person)",
+          "priority": 1
+        },
+        {
+          "text": "conhecer (يتعرف على)",
+          "priority": 1
+        },
+        {
+          "text": "simpático (لطيف)",
+          "priority": 1
+        },
+        {
+          "text": "o ano (the year)",
+          "priority": 1
+        },
+        {
+          "text": "o adulto (the adult)",
+          "priority": 3
+        },
+        {
+          "text": "os gémeos (the twins)",
+          "priority": 3
+        },
+        {
+          "text": "o neto (the grandson)",
+          "priority": 3
+        },
+        {
+          "text": "a neta (the granddaughter)",
+          "priority": 3
+        },
+        {
+          "text": "ele",
+          "priority": 2
+        },
+        {
+          "text": "ela",
+          "priority": 2
+        },
+        {
+          "text": "eles",
+          "priority": 2
+        },
+        {
+          "text": "O que fizeste…? (عملت إيه…؟)",
+          "priority": 2
+        },
+        {
+          "text": "E depois, o que aconteceu? (وبعد كده إيه اللي حصل؟)",
+          "priority": 2
+        },
+        {
+          "text": "Ele é… (استخدم التعبير البرتغالي «Ele é…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Ela gosta de… (استخدم التعبير البرتغالي «Ela gosta de…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Conhecemo-nos… (استخدم التعبير البرتغالي «Conhecemo-nos…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-032",
+      "lesson": 32,
+      "title": "اللابتوب الجديد",
+      "words": [
+        {
+          "text": "o computador (the computer)",
+          "priority": 1
+        },
+        {
+          "text": "o telefone (the phone)",
+          "priority": 1
+        },
+        {
+          "text": "o carregador (the charger)",
+          "priority": 1
+        },
+        {
+          "text": "usar (to use)",
+          "priority": 1
+        },
+        {
+          "text": "a palavra (كلمة)",
+          "priority": 1
+        },
+        {
+          "text": "o tablet (the tablet)",
+          "priority": 1
+        },
+        {
+          "text": "para (to / towards / for)",
+          "priority": 1
+        },
+        {
+          "text": "com (with)",
+          "priority": 1
+        },
+        {
+          "text": "usar",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-033",
+      "lesson": 33,
+      "title": "مكالمة شغل",
+      "words": [
+        {
+          "text": "dizer (to say)",
+          "priority": 1
+        },
+        {
+          "text": "ouvir (to hear / to listen)",
+          "priority": 1
+        },
+        {
+          "text": "repetir (يكرر)",
+          "priority": 1
+        },
+        {
+          "text": "perguntar (يسأل)",
+          "priority": 1
+        },
+        {
+          "text": "o nome",
+          "priority": 1
+        },
+        {
+          "text": "adeus (goodbye)",
+          "priority": 1
+        },
+        {
+          "text": "o livro (the book)",
+          "priority": 1
+        },
+        {
+          "text": "o caderno (the notebook)",
+          "priority": 1
+        },
+        {
+          "text": "o bloco de notas (the notepad)",
+          "priority": 3
+        },
+        {
+          "text": "o lápis (the pencil)",
+          "priority": 3
+        },
+        {
+          "text": "a tesoura (the scissors)",
+          "priority": 3
+        },
+        {
+          "text": "o estojo (the case)",
+          "priority": 3
+        },
+        {
+          "text": "Estou a ligar para… (أنا بتصل عشان…)",
+          "priority": 2
+        },
+        {
+          "text": "Só para confirmar: ficou para…? (بس للتأكيد: اتفقنا على…؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-034",
+      "lesson": 34,
+      "title": "تليفون من رقم غريب",
+      "words": [
+        {
+          "text": "atender (يرد)",
+          "priority": 1
+        },
+        {
+          "text": "informação (معلومة)",
+          "priority": 1
+        },
+        {
+          "text": "a chamada",
+          "priority": 1
+        },
+        {
+          "text": "ligar",
+          "priority": 1
+        },
+        {
+          "text": "o telefone fixo",
+          "priority": 1
+        },
+        {
+          "text": "porquê? (why?)",
+          "priority": 1
+        },
+        {
+          "text": "como? (كيف؟)",
+          "priority": 1
+        },
+        {
+          "text": "quem fala?",
+          "priority": 2
+        },
+        {
+          "text": "pode repetir?",
+          "priority": 2
+        },
+        {
+          "text": "Estou a ligar para saber… (بتصل عشان أعرف…)",
+          "priority": 2
+        },
+        {
+          "text": "Pode repetir a informação, por favor? (ممكن تعيد المعلومة لو سمحت؟)",
+          "priority": 2
+        },
+        {
+          "text": "Então, ficou combinado que… (يبقى اتفقنا إن…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-035",
+      "lesson": 35,
+      "title": "تعبان",
+      "words": [
+        {
+          "text": "cansado (متعب)",
+          "priority": 1
+        },
+        {
+          "text": "doente (sick)",
+          "priority": 1
+        },
+        {
+          "text": "a cabeça (رأس)",
+          "priority": 1
+        },
+        {
+          "text": "a dor (ألم)",
+          "priority": 1
+        },
+        {
+          "text": "febre (حمّى)",
+          "priority": 1
+        },
+        {
+          "text": "ainda (لسه)",
+          "priority": 1
+        },
+        {
+          "text": "bem (well)",
+          "priority": 1
+        },
+        {
+          "text": "mal (badly)",
+          "priority": 1
+        },
+        {
+          "text": "o corpo (the body)",
+          "priority": 3
+        },
+        {
+          "text": "o cabelo (the hair on the head)",
+          "priority": 3
+        },
+        {
+          "text": "a cara (the face)",
+          "priority": 3
+        },
+        {
+          "text": "o nariz (the nose)",
+          "priority": 3
+        },
+        {
+          "text": "Hoje estou… (أنا النهارده…)",
+          "priority": 2
+        },
+        {
+          "text": "Tenho dor de… (عندي ألم في…)",
+          "priority": 2
+        },
+        {
+          "text": "Ainda não estou bem, mas… (لسه مش كويس، بس…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-036",
+      "lesson": 36,
+      "title": "مراجعة: الصحة",
+      "words": []
+    },
+    {
+      "topic": "pl-037",
+      "lesson": 37,
+      "title": "في الصيدلية",
+      "words": [
+        {
+          "text": "garganta (حلق)",
+          "priority": 1
+        },
+        {
+          "text": "a barriga (the stomach / the belly)",
+          "priority": 1
+        },
+        {
+          "text": "as costas (ظهر)",
+          "priority": 1
+        },
+        {
+          "text": "desde (منذ)",
+          "priority": 1
+        },
+        {
+          "text": "o comprimido",
+          "priority": 1
+        },
+        {
+          "text": "tomar (to take)",
+          "priority": 1
+        },
+        {
+          "text": "estômago (معدة)",
+          "priority": 1
+        },
+        {
+          "text": "começou (بدأ)",
+          "priority": 1
+        },
+        {
+          "text": "a boca (the mouth)",
+          "priority": 3
+        },
+        {
+          "text": "a orelha (the ear)",
+          "priority": 3
+        },
+        {
+          "text": "o pescoço (the neck)",
+          "priority": 3
+        },
+        {
+          "text": "o peito (the chest)",
+          "priority": 3
+        },
+        {
+          "text": "Tenho dor no… (عندي وجع في…)",
+          "priority": 2
+        },
+        {
+          "text": "Começou ontem e ainda continua. (بدأ امبارح ولسه مستمر.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-038",
+      "lesson": 38,
+      "title": "في الجيم",
+      "words": [
+        {
+          "text": "o braço (the arm)",
+          "priority": 1
+        },
+        {
+          "text": "a perna (the leg)",
+          "priority": 1
+        },
+        {
+          "text": "a mão (the hand)",
+          "priority": 1
+        },
+        {
+          "text": "o pé (the foot)",
+          "priority": 1
+        },
+        {
+          "text": "o joelho (ركبة)",
+          "priority": 1
+        },
+        {
+          "text": "o ombro (the shoulder)",
+          "priority": 1
+        },
+        {
+          "text": "forte (strong)",
+          "priority": 1
+        },
+        {
+          "text": "fraco (weak)",
+          "priority": 1
+        },
+        {
+          "text": "o dedo (the finger / the toe)",
+          "priority": 3
+        },
+        {
+          "text": "o pelo (the hair on the body)",
+          "priority": 3
+        },
+        {
+          "text": "o queixo (the chin)",
+          "priority": 3
+        },
+        {
+          "text": "o cotovelo (the elbow)",
+          "priority": 3
+        },
+        {
+          "text": "braços",
+          "priority": 2
+        },
+        {
+          "text": "pernas",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-039",
+      "lesson": 39,
+      "title": "حجز عند الدكتور",
+      "words": [
+        {
+          "text": "o médico (the doctor / the physician)",
+          "priority": 1
+        },
+        {
+          "text": "o hospital (the hospital)",
+          "priority": 1
+        },
+        {
+          "text": "marcar (يحجز / يحدد موعدًا)",
+          "priority": 1
+        },
+        {
+          "text": "a consulta",
+          "priority": 1
+        },
+        {
+          "text": "disponível (متاح)",
+          "priority": 1
+        },
+        {
+          "text": "ocupado (busy)",
+          "priority": 1
+        },
+        {
+          "text": "o minimercado (the grocery store)",
+          "priority": 1
+        },
+        {
+          "text": "o supermercado (the supermarket)",
+          "priority": 1
+        },
+        {
+          "text": "o talho (the butcher shop)",
+          "priority": 3
+        },
+        {
+          "text": "o castelo (the castle)",
+          "priority": 3
+        },
+        {
+          "text": "o palácio (the palace)",
+          "priority": 3
+        },
+        {
+          "text": "o tribunal (the courthouse)",
+          "priority": 3
+        },
+        {
+          "text": "Queria marcar uma consulta. (كنت عايز أحجز كشف/ميعاد.)",
+          "priority": 2
+        },
+        {
+          "text": "Tem vaga amanhã? (فيه مكان فاضي بكرة؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-040",
+      "lesson": 40,
+      "title": "الدكتور بيسأل",
+      "words": [
+        {
+          "text": "melhor (أفضل)",
+          "priority": 1
+        },
+        {
+          "text": "pior (أسوأ)",
+          "priority": 1
+        },
+        {
+          "text": "a saúde (health)",
+          "priority": 1
+        },
+        {
+          "text": "a doença (sickness)",
+          "priority": 1
+        },
+        {
+          "text": "o olho (the eye)",
+          "priority": 1
+        },
+        {
+          "text": "sintoma (عَرَض)",
+          "priority": 1
+        },
+        {
+          "text": "tosse (سعال)",
+          "priority": 1
+        },
+        {
+          "text": "piorar (يسوء)",
+          "priority": 1
+        },
+        {
+          "text": "durante (لمدة/أثناء)",
+          "priority": 3
+        },
+        {
+          "text": "o pulso (the wrist)",
+          "priority": 3
+        },
+        {
+          "text": "o rabo (the butt)",
+          "priority": 3
+        },
+        {
+          "text": "o tornozelo (the ankle)",
+          "priority": 3
+        },
+        {
+          "text": "começou há…",
+          "priority": 2
+        },
+        {
+          "text": "está melhor",
+          "priority": 2
+        },
+        {
+          "text": "pior",
+          "priority": 2
+        },
+        {
+          "text": "Está a melhorar/piorar. (استخدم التعبير البرتغالي «Está a melhorar/piorar.» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Não consegui trabalhar porque… (استخدم التعبير البرتغالي «Não consegui trabalhar porque…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Começou há… dias. (بدأ من… أيام.)",
+          "priority": 2
+        },
+        {
+          "text": "Desde ontem, está melhor/pior. (من امبارح وهو أحسن/أسوأ.)",
+          "priority": 2
+        },
+        {
+          "text": "Dói mais quando… (بيوجع أكتر لما…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-041",
+      "lesson": 41,
+      "title": "الدوا",
+      "words": [
+        {
+          "text": "medicamento (دواء)",
+          "priority": 1
+        },
+        {
+          "text": "durar (يستمر / يدوم)",
+          "priority": 1
+        },
+        {
+          "text": "cuidado (حذر / عناية)",
+          "priority": 1
+        },
+        {
+          "text": "duas",
+          "priority": 1
+        },
+        {
+          "text": "três vezes",
+          "priority": 1
+        },
+        {
+          "text": "instrução (تعليمات)",
+          "priority": 1
+        },
+        {
+          "text": "a comida (أكل)",
+          "priority": 1
+        },
+        {
+          "text": "a bebida (the drink)",
+          "priority": 1
+        },
+        {
+          "text": "a taça (the bowl)",
+          "priority": 3
+        },
+        {
+          "text": "a tampa (the lid)",
+          "priority": 3
+        },
+        {
+          "text": "o fogo (the fire)",
+          "priority": 3
+        },
+        {
+          "text": "a terra (the earth)",
+          "priority": 3
+        },
+        {
+          "text": "Começou há… (استخدم التعبير البرتغالي «Começou há…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Está a melhorar/piorar. (استخدم التعبير البرتغالي «Está a melhorar/piorar.» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Não consegui trabalhar porque… (استخدم التعبير البرتغالي «Não consegui trabalhar porque…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Então, primeiro tenho de…? (استخدم التعبير البرتغالي «Então, primeiro tenho de…?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Quer dizer que…? (استخدم التعبير البرتغالي «Quer dizer que…?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-042",
+      "lesson": 42,
+      "title": "مراجعة: الصحة",
+      "words": []
+    },
+    {
+      "topic": "pl-043",
+      "lesson": 43,
+      "title": "تغيير معاد الدكتور",
+      "words": [
+        {
+          "text": "marcação (موعد محجوز)",
+          "priority": 1
+        },
+        {
+          "text": "alterar (يغير)",
+          "priority": 1
+        },
+        {
+          "text": "antecipar (يقدّم الموعد)",
+          "priority": 1
+        },
+        {
+          "text": "horário (ميعاد)",
+          "priority": 1
+        },
+        {
+          "text": "para mim (بالنسبة لي)",
+          "priority": 1
+        },
+        {
+          "text": "o tempo (وقت)",
+          "priority": 1
+        },
+        {
+          "text": "a vez (the time / the turn)",
+          "priority": 1
+        },
+        {
+          "text": "o dia (the day)",
+          "priority": 1
+        },
+        {
+          "text": "o lago (the lake)",
+          "priority": 3
+        },
+        {
+          "text": "até à próxima (see you next time)",
+          "priority": 3
+        },
+        {
+          "text": "boa sorte! (good luck!)",
+          "priority": 3
+        },
+        {
+          "text": "prever (to foresee)",
+          "priority": 3
+        },
+        {
+          "text": "queria alterar",
+          "priority": 2
+        },
+        {
+          "text": "antecipar",
+          "priority": 2
+        },
+        {
+          "text": "Queria alterar a minha marcação. (كنت عايز أغيّر ميعادي.)",
+          "priority": 2
+        },
+        {
+          "text": "Há algum horário disponível na…? (في ميعاد متاح يوم…؟)",
+          "priority": 2
+        },
+        {
+          "text": "Pode confirmar a nova data? (ممكن تأكد التاريخ الجديد؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-044",
+      "lesson": 44,
+      "title": "الغسالة بايظة",
+      "words": [
+        {
+          "text": "a máquina de lavar a roupa (the washing machine)",
+          "priority": 1
+        },
+        {
+          "text": "o dono (the owner)",
+          "priority": 1
+        },
+        {
+          "text": "a porta (the door)",
+          "priority": 1
+        },
+        {
+          "text": "a janela (the window)",
+          "priority": 1
+        },
+        {
+          "text": "luz (كهرباء/نور)",
+          "priority": 1
+        },
+        {
+          "text": "avariado (عطلان)",
+          "priority": 1
+        },
+        {
+          "text": "reparar (يصلح)",
+          "priority": 1
+        },
+        {
+          "text": "as escadas (the stairs)",
+          "priority": 1
+        },
+        {
+          "text": "a televisão (the television)",
+          "priority": 3
+        },
+        {
+          "text": "a máquina de lavar a loiça (the dishwasher)",
+          "priority": 3
+        },
+        {
+          "text": "o telhado (the roof)",
+          "priority": 3
+        },
+        {
+          "text": "o teto (the ceiling)",
+          "priority": 3
+        },
+        {
+          "text": "está avariado",
+          "priority": 2
+        },
+        {
+          "text": "desde ontem",
+          "priority": 2
+        },
+        {
+          "text": "A máquina não funciona. (الماكينة مش شغالة.)",
+          "priority": 2
+        },
+        {
+          "text": "Está assim desde ontem. (هي كده من امبارح.)",
+          "priority": 2
+        },
+        {
+          "text": "Pode mandar alguém? (ممكن تبعت حد؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-045",
+      "lesson": 45,
+      "title": "صاحب البيت عرض حل",
+      "words": [
+        {
+          "text": "esperar (ينتظر)",
+          "priority": 1
+        },
+        {
+          "text": "outro (آخر/أخرى)",
+          "priority": 1
+        },
+        {
+          "text": "solução (حل)",
+          "priority": 1
+        },
+        {
+          "text": "se (لو/إذا)",
+          "priority": 1
+        },
+        {
+          "text": "o elevador (the elevator)",
+          "priority": 1
+        },
+        {
+          "text": "o hall de entrada (the entrance hall)",
+          "priority": 1
+        },
+        {
+          "text": "o corredor (the hallway / the corridor)",
+          "priority": 1
+        },
+        {
+          "text": "a sala de estar (the living room)",
+          "priority": 1
+        },
+        {
+          "text": "a parede (the wall)",
+          "priority": 3
+        },
+        {
+          "text": "o chão (the floor)",
+          "priority": 3
+        },
+        {
+          "text": "o colchão (the mattress)",
+          "priority": 3
+        },
+        {
+          "text": "a mesa de cabeceira (the nightstand)",
+          "priority": 3
+        },
+        {
+          "text": "há outra opção?",
+          "priority": 2
+        },
+        {
+          "text": "pode ser",
+          "priority": 2
+        },
+        {
+          "text": "Essa opção não funciona para mim. Há outra? (الاختيار ده مش مناسب ليا. فيه غيره؟)",
+          "priority": 2
+        },
+        {
+          "text": "O que sugere? (تنصح بإيه؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-046",
+      "lesson": 46,
+      "title": "يوم التنضيف",
+      "words": [
+        {
+          "text": "limpo (clean)",
+          "priority": 1
+        },
+        {
+          "text": "sujo (dirty)",
+          "priority": 1
+        },
+        {
+          "text": "a vassoura (the broom)",
+          "priority": 1
+        },
+        {
+          "text": "o aspirador (the vacuum cleaner)",
+          "priority": 1
+        },
+        {
+          "text": "o caixote do lixo (the trash can)",
+          "priority": 1
+        },
+        {
+          "text": "pôr (to put / to place / to set)",
+          "priority": 1
+        },
+        {
+          "text": "tirar (to take out / to remove)",
+          "priority": 1
+        },
+        {
+          "text": "o micro-ondas (the microwave)",
+          "priority": 1
+        },
+        {
+          "text": "o eletrodoméstico (the appliance)",
+          "priority": 3
+        },
+        {
+          "text": "o congelador (the freezer)",
+          "priority": 3
+        },
+        {
+          "text": "a máquina de secar (the tumble dryer)",
+          "priority": 3
+        },
+        {
+          "text": "o estendal (the drying rack)",
+          "priority": 3
+        }
+      ]
+    },
+    {
+      "topic": "pl-047",
+      "lesson": 47,
+      "title": "أول طبخة في الشقة",
+      "words": [
+        {
+          "text": "o fogão (the stove)",
+          "priority": 1
+        },
+        {
+          "text": "o forno (the oven)",
+          "priority": 1
+        },
+        {
+          "text": "o frigorífico (the fridge)",
+          "priority": 1
+        },
+        {
+          "text": "a panela (the pot)",
+          "priority": 1
+        },
+        {
+          "text": "a frigideira (the pan)",
+          "priority": 1
+        },
+        {
+          "text": "preparar (to prepare)",
+          "priority": 1
+        },
+        {
+          "text": "o jantar (dinner)",
+          "priority": 1
+        },
+        {
+          "text": "o lanche (the snack)",
+          "priority": 1
+        },
+        {
+          "text": "a tábua de engomar (the ironing board)",
+          "priority": 3
+        },
+        {
+          "text": "o ferro de engomar (the iron)",
+          "priority": 3
+        },
+        {
+          "text": "o lava-loiças (the kitchen sink)",
+          "priority": 3
+        },
+        {
+          "text": "o lavatório (the bathroom sink)",
+          "priority": 3
+        },
+        {
+          "text": "primeiro… depois…",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-048",
+      "lesson": 48,
+      "title": "مراجعة: البيت",
+      "words": []
+    },
+    {
+      "topic": "pl-049",
+      "lesson": 49,
+      "title": "بدوّر على أوضة",
+      "words": [
+        {
+          "text": "renda (إيجار)",
+          "priority": 1
+        },
+        {
+          "text": "contrato (عقد)",
+          "priority": 1
+        },
+        {
+          "text": "a cama (the bed)",
+          "priority": 1
+        },
+        {
+          "text": "despesas (مصاريف)",
+          "priority": 1
+        },
+        {
+          "text": "cinquenta",
+          "priority": 1
+        },
+        {
+          "text": "cem",
+          "priority": 1
+        },
+        {
+          "text": "mil",
+          "priority": 1
+        },
+        {
+          "text": "mobiliado (مفروش)",
+          "priority": 1
+        },
+        {
+          "text": "a estante (the shelf)",
+          "priority": 3
+        },
+        {
+          "text": "a gaveta (the drawer)",
+          "priority": 3
+        },
+        {
+          "text": "ocupar (to occupy / to take up)",
+          "priority": 3
+        },
+        {
+          "text": "tocar (to touch / to play music)",
+          "priority": 3
+        },
+        {
+          "text": "quanto é a renda?",
+          "priority": 2
+        },
+        {
+          "text": "está incluído?",
+          "priority": 2
+        },
+        {
+          "text": "Procuro um apartamento… (استخدم التعبير البرتغالي «Procuro um apartamento…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "As despesas estão incluídas? (استخدم التعبير البرتغالي «As despesas estão incluídas?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-050",
+      "lesson": 50,
+      "title": "الفني جاي إمتى؟",
+      "words": [
+        {
+          "text": "vir (to come)",
+          "priority": 1
+        },
+        {
+          "text": "técnico (فني)",
+          "priority": 1
+        },
+        {
+          "text": "a torneira (the faucet)",
+          "priority": 1
+        },
+        {
+          "text": "o duche / o chuveiro (the shower)",
+          "priority": 1
+        },
+        {
+          "text": "a sanita (the toilet)",
+          "priority": 1
+        },
+        {
+          "text": "confirmar (يؤكد)",
+          "priority": 1
+        },
+        {
+          "text": "avaria (عطل)",
+          "priority": 1
+        },
+        {
+          "text": "visita (زيارة)",
+          "priority": 1
+        },
+        {
+          "text": "o balde (the bucket)",
+          "priority": 3
+        },
+        {
+          "text": "a esfregona (the mop)",
+          "priority": 3
+        },
+        {
+          "text": "envolver (to involve)",
+          "priority": 3
+        },
+        {
+          "text": "fugir (to escape / to flee)",
+          "priority": 3
+        },
+        {
+          "text": "A avaria continua. (استخدم التعبير البرتغالي «A avaria continua.» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Quando pode vir o técnico? (استخدم التعبير البرتغالي «Quando pode vir o técnico?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Só para confirmar… (استخدم التعبير البرتغالي «Só para confirmar…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Precisava de falar sobre… (كنت محتاج أتكلم بخصوص…)",
+          "priority": 2
+        },
+        {
+          "text": "Quando seria possível reparar…? (إمتى ممكن يتصلح…؟)",
+          "priority": 2
+        },
+        {
+          "text": "Podemos combinar…? (ممكن نتفق على…؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-051",
+      "lesson": 51,
+      "title": "الجيران صوتهم عالي",
+      "words": [
+        {
+          "text": "dormir (ينام)",
+          "priority": 1
+        },
+        {
+          "text": "acordar (يستيقظ)",
+          "priority": 1
+        },
+        {
+          "text": "o barulho (the noise)",
+          "priority": 1
+        },
+        {
+          "text": "o silêncio (the silence)",
+          "priority": 1
+        },
+        {
+          "text": "o vizinho",
+          "priority": 1
+        },
+        {
+          "text": "conseguir (يتمكن)",
+          "priority": 1
+        },
+        {
+          "text": "a cor (the color)",
+          "priority": 1
+        },
+        {
+          "text": "a quantidade (the quantity)",
+          "priority": 1
+        },
+        {
+          "text": "a figura (the figure)",
+          "priority": 3
+        },
+        {
+          "text": "a posição (the position)",
+          "priority": 3
+        },
+        {
+          "text": "o conjunto (the whole / the ensemble)",
+          "priority": 3
+        },
+        {
+          "text": "a guarda (the guard / the custody)",
+          "priority": 3
+        }
+      ]
+    },
+    {
+      "topic": "pl-052",
+      "lesson": 52,
+      "title": "رسالة لصاحب البيت",
+      "words": [
+        {
+          "text": "senhorio (صاحب البيت)",
+          "priority": 1
+        },
+        {
+          "text": "reparação (تصليح)",
+          "priority": 1
+        },
+        {
+          "text": "aviso (إشعار)",
+          "priority": 1
+        },
+        {
+          "text": "acordo (اتفاق)",
+          "priority": 1
+        },
+        {
+          "text": "possível (ممكن)",
+          "priority": 1
+        },
+        {
+          "text": "as persianas / os estores (the blinds)",
+          "priority": 1
+        },
+        {
+          "text": "a varanda (the balcony)",
+          "priority": 1
+        },
+        {
+          "text": "a almofada (the pillow)",
+          "priority": 1
+        },
+        {
+          "text": "indicar (to indicate)",
+          "priority": 3
+        },
+        {
+          "text": "valer (to be worth)",
+          "priority": 3
+        },
+        {
+          "text": "terminar (to end / to finish)",
+          "priority": 3
+        },
+        {
+          "text": "construir (to build / to construct)",
+          "priority": 3
+        },
+        {
+          "text": "precisava de…",
+          "priority": 2
+        },
+        {
+          "text": "seria possível…?",
+          "priority": 2
+        },
+        {
+          "text": "Precisava de falar sobre… (كنت محتاج أتكلم بخصوص…)",
+          "priority": 2
+        },
+        {
+          "text": "Quando seria possível reparar…? (إمتى ممكن يتصلح…؟)",
+          "priority": 2
+        },
+        {
+          "text": "Podemos combinar…? (ممكن نتفق على…؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-053",
+      "lesson": 53,
+      "title": "عفش للشقة",
+      "words": [
+        {
+          "text": "a cadeira (the chair)",
+          "priority": 1
+        },
+        {
+          "text": "o sofá (the sofa / the couch)",
+          "priority": 1
+        },
+        {
+          "text": "o candeeiro (the lamp)",
+          "priority": 1
+        },
+        {
+          "text": "o espelho (the mirror)",
+          "priority": 1
+        },
+        {
+          "text": "esse (that)",
+          "priority": 1
+        },
+        {
+          "text": "essa (that)",
+          "priority": 1
+        },
+        {
+          "text": "a secretária (the desk)",
+          "priority": 1
+        },
+        {
+          "text": "o armário (the closet / the cupboard)",
+          "priority": 1
+        },
+        {
+          "text": "destruir (to destroy)",
+          "priority": 3
+        },
+        {
+          "text": "definir (to define)",
+          "priority": 3
+        },
+        {
+          "text": "passar (to pass / to spend time)",
+          "priority": 3
+        },
+        {
+          "text": "gastar (to spend resources)",
+          "priority": 3
+        },
+        {
+          "text": "este",
+          "priority": 2
+        },
+        {
+          "text": "esse",
+          "priority": 2
+        },
+        {
+          "text": "aquele",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-054",
+      "lesson": 54,
+      "title": "مراجعة: البيت",
+      "words": []
+    },
+    {
+      "topic": "pl-055",
+      "lesson": 55,
+      "title": "تذكرة المترو",
+      "words": [
+        {
+          "text": "o metro (the metro / the subway)",
+          "priority": 1
+        },
+        {
+          "text": "o bilhete",
+          "priority": 1
+        },
+        {
+          "text": "a estação de comboios (the train station)",
+          "priority": 1
+        },
+        {
+          "text": "a paragem de autocarros (the bus stop)",
+          "priority": 1
+        },
+        {
+          "text": "entrar (to enter)",
+          "priority": 1
+        },
+        {
+          "text": "partida (مغادرة)",
+          "priority": 1
+        },
+        {
+          "text": "duração (مدة)",
+          "priority": 1
+        },
+        {
+          "text": "a estrada (the road)",
+          "priority": 1
+        },
+        {
+          "text": "a autoestrada (the highway)",
+          "priority": 3
+        },
+        {
+          "text": "o beco (the alley)",
+          "priority": 3
+        },
+        {
+          "text": "o arranha-céus (the skyscraper)",
+          "priority": 3
+        },
+        {
+          "text": "a bomba de gasolina (the gas station)",
+          "priority": 3
+        },
+        {
+          "text": "quero ir para…",
+          "priority": 2
+        },
+        {
+          "text": "ida e volta",
+          "priority": 2
+        },
+        {
+          "text": "Como chegamos a…? (استخدم التعبير البرتغالي «Como chegamos a…?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Quanto tempo demora? (استخدم التعبير البرتغالي «Quanto tempo demora?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Prefiro ir de… (استخدم التعبير البرتغالي «Prefiro ir de…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-056",
+      "lesson": 56,
+      "title": "الأتوبيس اتأخر",
+      "words": [
+        {
+          "text": "o elétrico (the tram)",
+          "priority": 1
+        },
+        {
+          "text": "a linha",
+          "priority": 1
+        },
+        {
+          "text": "próximo (القادم / الأقرب)",
+          "priority": 1
+        },
+        {
+          "text": "o táxi (the taxi)",
+          "priority": 1
+        },
+        {
+          "text": "atraso (تأخير)",
+          "priority": 1
+        },
+        {
+          "text": "cancelado (ملغى)",
+          "priority": 1
+        },
+        {
+          "text": "ligação (وصلة / تحويلة)",
+          "priority": 1
+        },
+        {
+          "text": "plataforma (رصيف المحطة)",
+          "priority": 1
+        },
+        {
+          "text": "deixar (to leave / to let)",
+          "priority": 3
+        },
+        {
+          "text": "parecer (to seem)",
+          "priority": 3
+        },
+        {
+          "text": "chamar (to call)",
+          "priority": 3
+        },
+        {
+          "text": "contar (to count / to tell something)",
+          "priority": 3
+        },
+        {
+          "text": "está atrasado?",
+          "priority": 2
+        },
+        {
+          "text": "há outro?",
+          "priority": 2
+        },
+        {
+          "text": "O comboio está atrasado? (استخدم التعبير البرتغالي «O comboio está atrasado?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Há outra ligação? (استخدم التعبير البرتغالي «Há outra ligação?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Como posso chegar a…? (استخدم التعبير البرتغالي «Como posso chegar a…?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-057",
+      "lesson": 57,
+      "title": "اوصفلي الطريق",
+      "words": [
+        {
+          "text": "a esquina (the corner)",
+          "priority": 1
+        },
+        {
+          "text": "a praça (the square)",
+          "priority": 1
+        },
+        {
+          "text": "a avenida (the avenue)",
+          "priority": 1
+        },
+        {
+          "text": "virar (يلف)",
+          "priority": 1
+        },
+        {
+          "text": "em frente",
+          "priority": 1
+        },
+        {
+          "text": "até (until / up to)",
+          "priority": 1
+        },
+        {
+          "text": "cruzamento (تقاطع)",
+          "priority": 1
+        },
+        {
+          "text": "semáforo (إشارة مرور)",
+          "priority": 1
+        },
+        {
+          "text": "entre (between / among)",
+          "priority": 3
+        },
+        {
+          "text": "terceiro",
+          "priority": 3
+        },
+        {
+          "text": "amar (to love)",
+          "priority": 3
+        },
+        {
+          "text": "aparecer (to appear / to show up)",
+          "priority": 3
+        },
+        {
+          "text": "vira",
+          "priority": 2
+        },
+        {
+          "text": "segue",
+          "priority": 2
+        },
+        {
+          "text": "atravessa",
+          "priority": 2
+        },
+        {
+          "text": "Segue em frente até… (امشي لقدام لحد…)",
+          "priority": 2
+        },
+        {
+          "text": "Vira à direita depois de… (لف يمين بعد…)",
+          "priority": 2
+        },
+        {
+          "text": "É mais fácil ir por… (أسهل طريق إنك تعدي من…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-058",
+      "lesson": 58,
+      "title": "المطار",
+      "words": [
+        {
+          "text": "o aeroporto (the airport)",
+          "priority": 1
+        },
+        {
+          "text": "o avião (the airplane)",
+          "priority": 1
+        },
+        {
+          "text": "a mala (the suitcase)",
+          "priority": 1
+        },
+        {
+          "text": "trazer (to bring / to carry)",
+          "priority": 1
+        },
+        {
+          "text": "o papel (the paper)",
+          "priority": 1
+        },
+        {
+          "text": "a caneta (the pen)",
+          "priority": 1
+        },
+        {
+          "text": "a mochila (the backpack)",
+          "priority": 1
+        },
+        {
+          "text": "treze",
+          "priority": 1
+        },
+        {
+          "text": "sentar-se (to sit down)",
+          "priority": 3
+        },
+        {
+          "text": "aproveitar (to enjoy / to take advantage of)",
+          "priority": 3
+        },
+        {
+          "text": "evitar (يتجنب)",
+          "priority": 3
+        },
+        {
+          "text": "faltar (to miss / to lack)",
+          "priority": 3
+        },
+        {
+          "text": "levar",
+          "priority": 2
+        },
+        {
+          "text": "trazer",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-059",
+      "lesson": 59,
+      "title": "جولة في لشبونة",
+      "words": [
+        {
+          "text": "a cidade (مدينة)",
+          "priority": 1
+        },
+        {
+          "text": "o museu (متحف)",
+          "priority": 1
+        },
+        {
+          "text": "a igreja (the church)",
+          "priority": 1
+        },
+        {
+          "text": "o rio (the river)",
+          "priority": 1
+        },
+        {
+          "text": "bonito (pretty)",
+          "priority": 1
+        },
+        {
+          "text": "visitar (يزور)",
+          "priority": 1
+        },
+        {
+          "text": "aquele (that far)",
+          "priority": 1
+        },
+        {
+          "text": "aquela (that far)",
+          "priority": 1
+        },
+        {
+          "text": "aquilo (that far)",
+          "priority": 1
+        },
+        {
+          "text": "o monte (the mount)",
+          "priority": 3
+        },
+        {
+          "text": "a colina (the hill)",
+          "priority": 3
+        },
+        {
+          "text": "o vale (the valley)",
+          "priority": 3
+        },
+        {
+          "text": "a planície (the plain)",
+          "priority": 3
+        },
+        {
+          "text": "foste",
+          "priority": 2
+        },
+        {
+          "text": "viste?",
+          "priority": 2
+        },
+        {
+          "text": "Gostei de… porque… (استخدم التعبير البرتغالي «Gostei de… porque…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Vale a pena visitar… (استخدم التعبير البرتغالي «Vale a pena visitar…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Estava muito cheio. (استخدم التعبير البرتغالي «Estava muito cheio.» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-060",
+      "lesson": 60,
+      "title": "مراجعة: المدينة والمواصلات",
+      "words": []
+    },
+    {
+      "topic": "pl-061",
+      "lesson": 61,
+      "title": "الأماكن اللي حواليك",
+      "words": [
+        {
+          "text": "o banco (the bank)",
+          "priority": 1
+        },
+        {
+          "text": "o multibanco (the ATM)",
+          "priority": 1
+        },
+        {
+          "text": "os correios (the post office)",
+          "priority": 1
+        },
+        {
+          "text": "a loja (the store / the shop)",
+          "priority": 1
+        },
+        {
+          "text": "o centro comercial (the mall / the shopping center)",
+          "priority": 1
+        },
+        {
+          "text": "o bar (the bar)",
+          "priority": 1
+        },
+        {
+          "text": "o cabeleireiro (the hairdresser)",
+          "priority": 1
+        },
+        {
+          "text": "o barbeiro (the barber shop)",
+          "priority": 1
+        },
+        {
+          "text": "discutir (to argue / to discuss)",
+          "priority": 3
+        },
+        {
+          "text": "o (the)",
+          "priority": 3
+        },
+        {
+          "text": "os (the)",
+          "priority": 3
+        },
+        {
+          "text": "as (the)",
+          "priority": 3
+        },
+        {
+          "text": "há um… perto daqui?",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-062",
+      "lesson": 62,
+      "title": "عربية مستعملة",
+      "words": [
+        {
+          "text": "comprar (to buy)",
+          "priority": 1
+        },
+        {
+          "text": "vender (to sell)",
+          "priority": 1
+        },
+        {
+          "text": "o carro / o automóvel (the car)",
+          "priority": 1
+        },
+        {
+          "text": "a mota (the motorcycle)",
+          "priority": 1
+        },
+        {
+          "text": "a bicicleta (the bicycle)",
+          "priority": 1
+        },
+        {
+          "text": "o mecânico (the mechanic)",
+          "priority": 1
+        },
+        {
+          "text": "o empregado (the employee)",
+          "priority": 1
+        },
+        {
+          "text": "o trabalhador (the worker)",
+          "priority": 1
+        },
+        {
+          "text": "duzentos",
+          "priority": 3
+        },
+        {
+          "text": "trezentos",
+          "priority": 3
+        },
+        {
+          "text": "quatrocentos",
+          "priority": 3
+        },
+        {
+          "text": "quinhentos",
+          "priority": 3
+        },
+        {
+          "text": "comprar",
+          "priority": 2
+        },
+        {
+          "text": "vender + quanto quer?",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-063",
+      "lesson": 63,
+      "title": "تهت!",
+      "words": [
+        {
+          "text": "procurar (to search / to look for)",
+          "priority": 1
+        },
+        {
+          "text": "olhar (to look)",
+          "priority": 1
+        },
+        {
+          "text": "mostrar (to show)",
+          "priority": 1
+        },
+        {
+          "text": "o mapa",
+          "priority": 1
+        },
+        {
+          "text": "perder-se",
+          "priority": 1
+        },
+        {
+          "text": "o passeio (the sidewalk)",
+          "priority": 1
+        },
+        {
+          "text": "a passadeira (the crosswalk)",
+          "priority": 1
+        },
+        {
+          "text": "o edifício / o prédio (the building)",
+          "priority": 1
+        },
+        {
+          "text": "euro (يورو)",
+          "priority": 3
+        },
+        {
+          "text": "seguir (يتابع/يمشي)",
+          "priority": 3
+        },
+        {
+          "text": "sem açúcar (من غير سكر)",
+          "priority": 3
+        },
+        {
+          "text": "para levar (تيك أواي)",
+          "priority": 3
+        },
+        {
+          "text": "procurar",
+          "priority": 2
+        },
+        {
+          "text": "olhar",
+          "priority": 2
+        },
+        {
+          "text": "mostrar",
+          "priority": 2
+        },
+        {
+          "text": "Aconteceu um problema com… (حصلت مشكلة في…)",
+          "priority": 2
+        },
+        {
+          "text": "Pode ajudar-me a…? (ممكن تساعدني في…؟)",
+          "priority": 2
+        },
+        {
+          "text": "O que posso fazer agora? (أقدر أعمل إيه دلوقتي؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-064",
+      "lesson": 64,
+      "title": "مشوار مستعجل",
+      "words": [
+        {
+          "text": "imprevisto (حاجة غير متوقعة)",
+          "priority": 1
+        },
+        {
+          "text": "urgente (عاجل)",
+          "priority": 1
+        },
+        {
+          "text": "resolver (يحل)",
+          "priority": 1
+        },
+        {
+          "text": "a necessidade (the need / the necessity)",
+          "priority": 1
+        },
+        {
+          "text": "rapidamente (quickly / fast)",
+          "priority": 1
+        },
+        {
+          "text": "o resultado (نتيجة)",
+          "priority": 1
+        },
+        {
+          "text": "a verdade (the truth)",
+          "priority": 1
+        },
+        {
+          "text": "a mentira (the lie)",
+          "priority": 1
+        },
+        {
+          "text": "a realidade (the reality)",
+          "priority": 3
+        },
+        {
+          "text": "a imaginação (the imagination)",
+          "priority": 3
+        },
+        {
+          "text": "a justiça (the justice)",
+          "priority": 3
+        },
+        {
+          "text": "o direito (the right)",
+          "priority": 3
+        },
+        {
+          "text": "aconteceu um problema com…",
+          "priority": 2
+        },
+        {
+          "text": "é urgente",
+          "priority": 2
+        },
+        {
+          "text": "Pode ajudar-me a…? (ممكن تساعدني في…؟)",
+          "priority": 2
+        },
+        {
+          "text": "O que posso fazer agora? (أقدر أعمل إيه دلوقتي؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-065",
+      "lesson": 65,
+      "title": "في البنك",
+      "words": [
+        {
+          "text": "a identificação (the ID)",
+          "priority": 1
+        },
+        {
+          "text": "assinar (يوقّع)",
+          "priority": 1
+        },
+        {
+          "text": "formulário (استمارة)",
+          "priority": 1
+        },
+        {
+          "text": "preencher (يملأ)",
+          "priority": 1
+        },
+        {
+          "text": "balcão (شباك الخدمة)",
+          "priority": 1
+        },
+        {
+          "text": "catorze",
+          "priority": 1
+        },
+        {
+          "text": "dezasseis",
+          "priority": 1
+        },
+        {
+          "text": "a conta (الحساب)",
+          "priority": 3
+        },
+        {
+          "text": "uma vez (مرة واحدة)",
+          "priority": 3
+        },
+        {
+          "text": "atrasar-se (يتأخر)",
+          "priority": 3
+        },
+        {
+          "text": "discordar (يختلف / لا يوافق)",
+          "priority": 3
+        },
+        {
+          "text": "parceiro (شريك / شريكة)",
+          "priority": 3
+        },
+        {
+          "text": "Que documentos preciso? (استخدم التعبير البرتغالي «Que documentos preciso?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Onde devo entregar isto? (استخدم التعبير البرتغالي «Onde devo entregar isto?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-066",
+      "lesson": 66,
+      "title": "مراجعة: الأوراق والخدمات",
+      "words": []
+    },
+    {
+      "topic": "pl-067",
+      "lesson": 67,
+      "title": "الطرد ماوصلش",
+      "words": [
+        {
+          "text": "encomenda (شحنة / طرد)",
+          "priority": 1
+        },
+        {
+          "text": "receber (يستلم)",
+          "priority": 1
+        },
+        {
+          "text": "entregar (يسلّم)",
+          "priority": 1
+        },
+        {
+          "text": "morada (عنوان)",
+          "priority": 1
+        },
+        {
+          "text": "a carta (the letter)",
+          "priority": 1
+        },
+        {
+          "text": "entrega (توصيل)",
+          "priority": 1
+        },
+        {
+          "text": "código (رمز)",
+          "priority": 1
+        },
+        {
+          "text": "dezassete",
+          "priority": 1
+        },
+        {
+          "text": "sentir-se (يشعر)",
+          "priority": 3
+        },
+        {
+          "text": "paisagem (منظر طبيعي)",
+          "priority": 3
+        },
+        {
+          "text": "cheio (مزدحم / ممتلئ)",
+          "priority": 3
+        },
+        {
+          "text": "vale a pena (يستحق الأمر)",
+          "priority": 3
+        },
+        {
+          "text": "calor (حر)",
+          "priority": 3
+        },
+        {
+          "text": "estou à espera de",
+          "priority": 2
+        },
+        {
+          "text": "quando chega?",
+          "priority": 2
+        },
+        {
+          "text": "Estou à espera de uma encomenda. (استخدم التعبير البرتغالي «Estou à espera de uma encomenda.» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "A morada é… (استخدم التعبير البرتغالي «A morada é…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-068",
+      "lesson": 68,
+      "title": "الفاتورة غلط",
+      "words": [
+        {
+          "text": "fatura (فاتورة)",
+          "priority": 1
+        },
+        {
+          "text": "o valor (قيمة / مبلغ)",
+          "priority": 1
+        },
+        {
+          "text": "verificar (يتحقق)",
+          "priority": 1
+        },
+        {
+          "text": "pagamento (دفع)",
+          "priority": 1
+        },
+        {
+          "text": "cobrar (يحصّل / يفرض رسومًا)",
+          "priority": 1
+        },
+        {
+          "text": "recibo (إيصال)",
+          "priority": 1
+        },
+        {
+          "text": "dezoito",
+          "priority": 1
+        },
+        {
+          "text": "dezanove",
+          "priority": 1
+        },
+        {
+          "text": "o dever (the duty)",
+          "priority": 3
+        },
+        {
+          "text": "a causa (the cause)",
+          "priority": 3
+        },
+        {
+          "text": "o efeito (the effect)",
+          "priority": 3
+        },
+        {
+          "text": "o processo (the process)",
+          "priority": 3
+        },
+        {
+          "text": "nublado (غائم)",
+          "priority": 3
+        },
+        {
+          "text": "há um erro",
+          "priority": 2
+        },
+        {
+          "text": "pode verificar?",
+          "priority": 2
+        },
+        {
+          "text": "Há um erro na fatura. (استخدم التعبير البرتغالي «Há um erro na fatura.» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Pode verificar o valor? (استخدم التعبير البرتغالي «Pode verificar o valor?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-069",
+      "lesson": 69,
+      "title": "في البلدية",
+      "words": [
+        {
+          "text": "a câmara municipal (the city hall)",
+          "priority": 1
+        },
+        {
+          "text": "o funcionário público (the public servant)",
+          "priority": 1
+        },
+        {
+          "text": "documento (مستند)",
+          "priority": 1
+        },
+        {
+          "text": "a lei (the law)",
+          "priority": 1
+        },
+        {
+          "text": "necessário (ضروري)",
+          "priority": 1
+        },
+        {
+          "text": "passo (خطوة)",
+          "priority": 1
+        },
+        {
+          "text": "a livraria (the bookstore)",
+          "priority": 1
+        },
+        {
+          "text": "a biblioteca (the library)",
+          "priority": 1
+        },
+        {
+          "text": "episódio (حلقة)",
+          "priority": 3
+        },
+        {
+          "text": "por (for / by / through)",
+          "priority": 3
+        },
+        {
+          "text": "contra (against)",
+          "priority": 3
+        },
+        {
+          "text": "sobre (about / over)",
+          "priority": 3
+        },
+        {
+          "text": "em baixo de (under / below)",
+          "priority": 3
+        },
+        {
+          "text": "é preciso",
+          "priority": 2
+        },
+        {
+          "text": "é obrigatório",
+          "priority": 2
+        },
+        {
+          "text": "É permitido…? (هل مسموح…؟)",
+          "priority": 2
+        },
+        {
+          "text": "É obrigatório trazer…? (هل لازم أجيب…؟)",
+          "priority": 2
+        },
+        {
+          "text": "Há alguma exceção? (في استثناء؟)",
+          "priority": 2
+        },
+        {
+          "text": "Primeiro tenho de… (الأول لازم…)",
+          "priority": 2
+        },
+        {
+          "text": "Depois é preciso… (بعد كده لازم…)",
+          "priority": 2
+        },
+        {
+          "text": "Só para confirmar: devo…? (بس للتأكيد: المفروض أ…؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-070",
+      "lesson": 70,
+      "title": "شكوى بأدب",
+      "words": [
+        {
+          "text": "reclamação (شكوى)",
+          "priority": 1
+        },
+        {
+          "text": "educado (polite)",
+          "priority": 1
+        },
+        {
+          "text": "mal-educado / malcriado (impolite)",
+          "priority": 1
+        },
+        {
+          "text": "a qualidade (the quality)",
+          "priority": 1
+        },
+        {
+          "text": "devolver (يرجع)",
+          "priority": 1
+        },
+        {
+          "text": "cobrança (مبلغ تم تحصيله)",
+          "priority": 1
+        },
+        {
+          "text": "corrigir (يصحح)",
+          "priority": 1
+        },
+        {
+          "text": "quarenta",
+          "priority": 1
+        },
+        {
+          "text": "o progresso (تقدم)",
+          "priority": 3
+        },
+        {
+          "text": "a evolução (the evolution)",
+          "priority": 3
+        },
+        {
+          "text": "o desenvolvimento (the development)",
+          "priority": 3
+        },
+        {
+          "text": "o produto (the product)",
+          "priority": 3
+        },
+        {
+          "text": "à frente de (in front of)",
+          "priority": 3
+        },
+        {
+          "text": "gostaria de…",
+          "priority": 2
+        },
+        {
+          "text": "foi cobrado",
+          "priority": 2
+        },
+        {
+          "text": "Gostaria de apresentar uma reclamação. (حابب أقدّم شكوى.)",
+          "priority": 2
+        },
+        {
+          "text": "Foi cobrado um valor que… (اتحسب مبلغ…)",
+          "priority": 2
+        },
+        {
+          "text": "Como podemos resolver isto? (إزاي نقدر نحل ده؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-071",
+      "lesson": 71,
+      "title": "في البوستة",
+      "words": [
+        {
+          "text": "senha (رقم انتظار)",
+          "priority": 1
+        },
+        {
+          "text": "o selo",
+          "priority": 1
+        },
+        {
+          "text": "o envelope",
+          "priority": 1
+        },
+        {
+          "text": "pesar",
+          "priority": 1
+        },
+        {
+          "text": "a fila",
+          "priority": 1
+        },
+        {
+          "text": "sessenta",
+          "priority": 1
+        },
+        {
+          "text": "setenta",
+          "priority": 1
+        },
+        {
+          "text": "atrás de (behind)",
+          "priority": 3
+        },
+        {
+          "text": "o planeta (the planet)",
+          "priority": 3
+        },
+        {
+          "text": "o nascer do sol (the sunrise)",
+          "priority": 3
+        },
+        {
+          "text": "o pôr do sol (the sunset)",
+          "priority": 3
+        },
+        {
+          "text": "o arco-íris (the rainbow)",
+          "priority": 3
+        },
+        {
+          "text": "queria enviar…",
+          "priority": 2
+        },
+        {
+          "text": "quanto custa enviar…?",
+          "priority": 2
+        },
+        {
+          "text": "Que documentos preciso? (استخدم التعبير البرتغالي «Que documentos preciso?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Onde devo entregar isto? (استخدم التعبير البرتغالي «Onde devo entregar isto?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-072",
+      "lesson": 72,
+      "title": "مراجعة: الأوراق والخدمات",
+      "words": []
+    },
+    {
+      "topic": "pl-073",
+      "lesson": 73,
+      "title": "السفارة",
+      "words": [
+        {
+          "text": "a embaixada (the embassy)",
+          "priority": 1
+        },
+        {
+          "text": "o consulado (the consulate)",
+          "priority": 1
+        },
+        {
+          "text": "o país (the country)",
+          "priority": 1
+        },
+        {
+          "text": "a capital (the capital)",
+          "priority": 1
+        },
+        {
+          "text": "a escola (the school)",
+          "priority": 1
+        },
+        {
+          "text": "a universidade (the university)",
+          "priority": 1
+        },
+        {
+          "text": "o teatro (the theater for plays)",
+          "priority": 1
+        },
+        {
+          "text": "a volta (the turn / the spin)",
+          "priority": 1
+        },
+        {
+          "text": "nascer (to be born)",
+          "priority": 3
+        },
+        {
+          "text": "o ponto (the dot / the point)",
+          "priority": 3
+        },
+        {
+          "text": "a vírgula (the comma)",
+          "priority": 3
+        },
+        {
+          "text": "a expressão (the expression)",
+          "priority": 3
+        },
+        {
+          "text": "a humidade (the humidity)",
+          "priority": 3
+        },
+        {
+          "text": "nasci em…",
+          "priority": 2
+        },
+        {
+          "text": "sou de…",
+          "priority": 2
+        },
+        {
+          "text": "Que documentos preciso? (استخدم التعبير البرتغالي «Que documentos preciso?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Onde devo entregar isto? (استخدم التعبير البرتغالي «Onde devo entregar isto?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-074",
+      "lesson": 74,
+      "title": "في المطعم",
+      "words": [
+        {
+          "text": "o prato principal (the main course)",
+          "priority": 1
+        },
+        {
+          "text": "a sobremesa (the dessert)",
+          "priority": 1
+        },
+        {
+          "text": "o empregado de mesa (the waiter / the server)",
+          "priority": 1
+        },
+        {
+          "text": "o vinho (the wine)",
+          "priority": 1
+        },
+        {
+          "text": "o restaurante (the restaurant)",
+          "priority": 1
+        },
+        {
+          "text": "a entrada (the appetizer)",
+          "priority": 1
+        },
+        {
+          "text": "a garrafa (the bottle)",
+          "priority": 1
+        },
+        {
+          "text": "os talheres (the cutlery)",
+          "priority": 1
+        },
+        {
+          "text": "o nevoeiro (the fog)",
+          "priority": 3
+        },
+        {
+          "text": "a neve (the snow)",
+          "priority": 3
+        },
+        {
+          "text": "o gelo (the ice)",
+          "priority": 3
+        },
+        {
+          "text": "a gruta (the cave)",
+          "priority": 3
+        },
+        {
+          "text": "o inseto (the bug / the insect)",
+          "priority": 3
+        },
+        {
+          "text": "para mim…",
+          "priority": 2
+        },
+        {
+          "text": "a conta",
+          "priority": 2
+        },
+        {
+          "text": "por favor",
+          "priority": 2
+        },
+        {
+          "text": "Queria…, sem… (كنت عايز… من غير…)",
+          "priority": 2
+        },
+        {
+          "text": "É para aqui ou para levar? (هنا ولا تيك أواي؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-075",
+      "lesson": 75,
+      "title": "بطبخ أكل مصري",
+      "words": [
+        {
+          "text": "o alho (the garlic)",
+          "priority": 1
+        },
+        {
+          "text": "a cebola (the onion)",
+          "priority": 1
+        },
+        {
+          "text": "o azeite (the olive oil)",
+          "priority": 1
+        },
+        {
+          "text": "o sal (the salt)",
+          "priority": 1
+        },
+        {
+          "text": "a batata (the potato)",
+          "priority": 1
+        },
+        {
+          "text": "a massa (the pasta / the noodles)",
+          "priority": 1
+        },
+        {
+          "text": "a cerveja (the beer)",
+          "priority": 1
+        },
+        {
+          "text": "os cereais (the cereal)",
+          "priority": 1
+        },
+        {
+          "text": "o fiambre (the ham)",
+          "priority": 3
+        },
+        {
+          "text": "a pimenta (the pepper)",
+          "priority": 3
+        },
+        {
+          "text": "o exterior (the outside / the exterior)",
+          "priority": 3
+        },
+        {
+          "text": "o instrumento (the instrument)",
+          "priority": 3
+        },
+        {
+          "text": "a ferramenta (the tool)",
+          "priority": 3
+        },
+        {
+          "text": "primeiro… depois… no fim",
+          "priority": 2
+        },
+        {
+          "text": "Primeiro… Depois… Finalmente… (الأول… بعد كده… وفي الآخر…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-076",
+      "lesson": 76,
+      "title": "عزومة على العشا",
+      "words": [
+        {
+          "text": "convidar",
+          "priority": 1
+        },
+        {
+          "text": "a festa (the party)",
+          "priority": 1
+        },
+        {
+          "text": "o copo (the glass)",
+          "priority": 1
+        },
+        {
+          "text": "o prato (the dish / the plate)",
+          "priority": 1
+        },
+        {
+          "text": "a refeição (the meal)",
+          "priority": 1
+        },
+        {
+          "text": "combinado (اتفقنا)",
+          "priority": 1
+        },
+        {
+          "text": "oitenta",
+          "priority": 1
+        },
+        {
+          "text": "noventa",
+          "priority": 1
+        },
+        {
+          "text": "o sentido (the sense)",
+          "priority": 3
+        },
+        {
+          "text": "de quem? (whose?)",
+          "priority": 3
+        },
+        {
+          "text": "por quem? (by whom?)",
+          "priority": 3
+        },
+        {
+          "text": "algo (something)",
+          "priority": 3
+        },
+        {
+          "text": "cada (each)",
+          "priority": 3
+        },
+        {
+          "text": "queres vir…?",
+          "priority": 2
+        },
+        {
+          "text": "podemos…",
+          "priority": 2
+        },
+        {
+          "text": "Hoje não posso, mas amanhã posso. (مش هقدر النهارده، بس أقدر بكرة.)",
+          "priority": 2
+        },
+        {
+          "text": "Às seis, pode ser? (الساعة ستة ينفع؟)",
+          "priority": 2
+        },
+        {
+          "text": "Queres ir… comigo? (تحب تيجي… معايا؟)",
+          "priority": 2
+        },
+        {
+          "text": "Gostava, mas não posso… (كنت أحب، بس مش هقدر…)",
+          "priority": 2
+        },
+        {
+          "text": "Podemos combinar para…? (ممكن نتفق على…؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-077",
+      "lesson": 77,
+      "title": "العزومة اتأجلت",
+      "words": [
+        {
+          "text": "convite (دعوة)",
+          "priority": 1
+        },
+        {
+          "text": "combinar (يتفق / يرتب)",
+          "priority": 1
+        },
+        {
+          "text": "adiar (يؤجل)",
+          "priority": 1
+        },
+        {
+          "text": "infelizmente (للأسف)",
+          "priority": 1
+        },
+        {
+          "text": "disponibilidade (التفرغ / التوفر)",
+          "priority": 1
+        },
+        {
+          "text": "janeiro (January)",
+          "priority": 1
+        },
+        {
+          "text": "fevereiro (February)",
+          "priority": 1
+        },
+        {
+          "text": "março (March)",
+          "priority": 1
+        },
+        {
+          "text": "a estação do ano (the season o)",
+          "priority": 3
+        },
+        {
+          "text": "duro (hard)",
+          "priority": 3
+        },
+        {
+          "text": "mole (soft)",
+          "priority": 3
+        },
+        {
+          "text": "seco (dry)",
+          "priority": 3
+        },
+        {
+          "text": "molhado (wet)",
+          "priority": 3
+        },
+        {
+          "text": "podemos combinar para…?",
+          "priority": 2
+        },
+        {
+          "text": "infelizmente",
+          "priority": 2
+        },
+        {
+          "text": "Infelizmente não posso… (استخدم التعبير البرتغالي «Infelizmente não posso…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Aviso-te se… (استخدم التعبير البرتغالي «Aviso-te se…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Queres ir… comigo? (تحب تيجي… معايا؟)",
+          "priority": 2
+        },
+        {
+          "text": "Gostava, mas não posso… (كنت أحب، بس مش هقدر…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-078",
+      "lesson": 78,
+      "title": "مراجعة: الأكل والعزومات",
+      "words": []
+    },
+    {
+      "topic": "pl-079",
+      "lesson": 79,
+      "title": "السوق",
+      "words": [
+        {
+          "text": "o vegetal (the vegetable)",
+          "priority": 1
+        },
+        {
+          "text": "o queijo (the cheese)",
+          "priority": 1
+        },
+        {
+          "text": "mais barato (أرخص)",
+          "priority": 1
+        },
+        {
+          "text": "o mercado",
+          "priority": 1
+        },
+        {
+          "text": "fresco",
+          "priority": 1
+        },
+        {
+          "text": "o batido (the shake / the smoothie)",
+          "priority": 1
+        },
+        {
+          "text": "o refrigerante (the soda)",
+          "priority": 1
+        },
+        {
+          "text": "a sopa (the soup)",
+          "priority": 1
+        },
+        {
+          "text": "suave (smooth)",
+          "priority": 3
+        },
+        {
+          "text": "áspero (rough)",
+          "priority": 3
+        },
+        {
+          "text": "assustador (scary)",
+          "priority": 3
+        },
+        {
+          "text": "maravilhoso (wonderful)",
+          "priority": 3
+        },
+        {
+          "text": "rico (rich)",
+          "priority": 3
+        },
+        {
+          "text": "quanto é o quilo?",
+          "priority": 2
+        },
+        {
+          "text": "mais barato",
+          "priority": 2
+        },
+        {
+          "text": "Queria…, mas… (كنت عايز…، بس…)",
+          "priority": 2
+        },
+        {
+          "text": "Onde fica…? (… فين؟)",
+          "priority": 2
+        },
+        {
+          "text": "Preciso de… porque… (أنا محتاج… عشان…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-080",
+      "lesson": 80,
+      "title": "الفطار",
+      "words": [
+        {
+          "text": "o pequeno-almoço (breakfast)",
+          "priority": 1
+        },
+        {
+          "text": "a manteiga (the butter)",
+          "priority": 1
+        },
+        {
+          "text": "o sumo (the juice)",
+          "priority": 1
+        },
+        {
+          "text": "a torrada (the grilled sandwich)",
+          "priority": 1
+        },
+        {
+          "text": "normalmente (عادةً)",
+          "priority": 1
+        },
+        {
+          "text": "geralmente (غالبًا)",
+          "priority": 1
+        },
+        {
+          "text": "durante a semana (خلال الأسبوع)",
+          "priority": 1
+        },
+        {
+          "text": "ao fim de semana (في عطلة نهاية الأسبوع)",
+          "priority": 1
+        },
+        {
+          "text": "pobre (poor)",
+          "priority": 3
+        },
+        {
+          "text": "famoso (famous)",
+          "priority": 3
+        },
+        {
+          "text": "conhecido (known)",
+          "priority": 3
+        },
+        {
+          "text": "desconhecido (unknown)",
+          "priority": 3
+        },
+        {
+          "text": "fantástico (fantastic)",
+          "priority": 3
+        },
+        {
+          "text": "normalmente",
+          "priority": 2
+        },
+        {
+          "text": "às vezes",
+          "priority": 2
+        },
+        {
+          "text": "nunca",
+          "priority": 2
+        },
+        {
+          "text": "Normalmente… (استخدم التعبير البرتغالي «Normalmente…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Durante a semana…, mas ao fim de semana… (استخدم التعبير البرتغالي «Durante a semana…, mas ao fim de semana…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-081",
+      "lesson": 81,
+      "title": "الحلويات البرتغالي",
+      "words": [
+        {
+          "text": "adorar (to really like)",
+          "priority": 1
+        },
+        {
+          "text": "o bolo",
+          "priority": 1
+        },
+        {
+          "text": "doce",
+          "priority": 1
+        },
+        {
+          "text": "a chávena (the cup)",
+          "priority": 1
+        },
+        {
+          "text": "a colher (the spoon)",
+          "priority": 1
+        },
+        {
+          "text": "o garfo (the fork)",
+          "priority": 1
+        },
+        {
+          "text": "a faca (the knife)",
+          "priority": 1
+        },
+        {
+          "text": "alguém (someone / somebody)",
+          "priority": 1
+        },
+        {
+          "text": "horrível (horrible)",
+          "priority": 3
+        },
+        {
+          "text": "terrível (terrible)",
+          "priority": 3
+        },
+        {
+          "text": "desonesto (dishonest)",
+          "priority": 3
+        },
+        {
+          "text": "certamente / decerto (certainly / surely)",
+          "priority": 3
+        },
+        {
+          "text": "nem (neither / nor)",
+          "priority": 3
+        },
+        {
+          "text": "adoro",
+          "priority": 2
+        },
+        {
+          "text": "prefiro… a…",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-082",
+      "lesson": 82,
+      "title": "عيلتي",
+      "words": [
+        {
+          "text": "o pai (the father)",
+          "priority": 1
+        },
+        {
+          "text": "a mãe (the mother)",
+          "priority": 1
+        },
+        {
+          "text": "o irmão (أخ)",
+          "priority": 1
+        },
+        {
+          "text": "a irmã (the sister)",
+          "priority": 1
+        },
+        {
+          "text": "os pais (الوالدان)",
+          "priority": 1
+        },
+        {
+          "text": "a relação (the relationship)",
+          "priority": 1
+        },
+        {
+          "text": "o homem (the man)",
+          "priority": 1
+        },
+        {
+          "text": "a mulher (the woman / the wife)",
+          "priority": 1
+        },
+        {
+          "text": "o noivo (the fiancé / the groom)",
+          "priority": 3
+        },
+        {
+          "text": "a noiva (the fiancée / the bride)",
+          "priority": 3
+        },
+        {
+          "text": "senão (otherwise)",
+          "priority": 3
+        },
+        {
+          "text": "realmente (really)",
+          "priority": 3
+        },
+        {
+          "text": "sobretudo (above all)",
+          "priority": 3
+        },
+        {
+          "text": "o meu",
+          "priority": 2
+        },
+        {
+          "text": "a minha",
+          "priority": 2
+        },
+        {
+          "text": "Ele é… (استخدم التعبير البرتغالي «Ele é…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Ela gosta de… (استخدم التعبير البرتغالي «Ela gosta de…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Conhecemo-nos… (استخدم التعبير البرتغالي «Conhecemo-nos…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-083",
+      "lesson": 83,
+      "title": "مكالمة مع مصر",
+      "words": [
+        {
+          "text": "o filho (the son)",
+          "priority": 1
+        },
+        {
+          "text": "a filha (the daughter)",
+          "priority": 1
+        },
+        {
+          "text": "o marido (the husband)",
+          "priority": 1
+        },
+        {
+          "text": "a criança (the child / the kid)",
+          "priority": 1
+        },
+        {
+          "text": "seu (his/her/your)",
+          "priority": 1
+        },
+        {
+          "text": "sua (his/her/your)",
+          "priority": 1
+        },
+        {
+          "text": "o senhor (the gentleman / sir)",
+          "priority": 1
+        },
+        {
+          "text": "a senhora (the lady / madam)",
+          "priority": 1
+        },
+        {
+          "text": "principalmente (mainly)",
+          "priority": 3
+        },
+        {
+          "text": "facilmente (easily)",
+          "priority": 3
+        },
+        {
+          "text": "calmamente (calmly)",
+          "priority": 3
+        },
+        {
+          "text": "acima (above)",
+          "priority": 3
+        },
+        {
+          "text": "abaixo (below)",
+          "priority": 3
+        },
+        {
+          "text": "ela",
+          "priority": 2
+        },
+        {
+          "text": "foi",
+          "priority": 2
+        },
+        {
+          "text": "fez",
+          "priority": 2
+        },
+        {
+          "text": "O que fizeste…? (عملت إيه…؟)",
+          "priority": 2
+        },
+        {
+          "text": "E depois, o que aconteceu? (وبعد كده إيه اللي حصل؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-084",
+      "lesson": 84,
+      "title": "مراجعة: الناس والمشاعر",
+      "words": []
+    },
+    {
+      "topic": "pl-085",
+      "lesson": 85,
+      "title": "صاحبي",
+      "words": [
+        {
+          "text": "engraçado (مضحك)",
+          "priority": 1
+        },
+        {
+          "text": "calmo (هادئ)",
+          "priority": 1
+        },
+        {
+          "text": "inteligente (intelligent)",
+          "priority": 1
+        },
+        {
+          "text": "chato (annoying)",
+          "priority": 1
+        },
+        {
+          "text": "divertido (fun)",
+          "priority": 1
+        },
+        {
+          "text": "alto (tall / high)",
+          "priority": 1
+        },
+        {
+          "text": "baixo (short)",
+          "priority": 1
+        },
+        {
+          "text": "ótimo (great)",
+          "priority": 1
+        },
+        {
+          "text": "burro (dumb)",
+          "priority": 3
+        },
+        {
+          "text": "estúpido (stupid)",
+          "priority": 3
+        },
+        {
+          "text": "próprio (own)",
+          "priority": 3
+        },
+        {
+          "text": "seguro (safe / sure)",
+          "priority": 3
+        },
+        {
+          "text": "tanto (as much / as many)",
+          "priority": 3
+        },
+        {
+          "text": "Ele é… (استخدم التعبير البرتغالي «Ele é…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Ela gosta de… (استخدم التعبير البرتغالي «Ela gosta de…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Conhecemo-nos… (استخدم التعبير البرتغالي «Conhecemo-nos…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-086",
+      "lesson": 86,
+      "title": "حاسس بإيه؟",
+      "words": [
+        {
+          "text": "feliz (سعيد)",
+          "priority": 1
+        },
+        {
+          "text": "triste (sad)",
+          "priority": 1
+        },
+        {
+          "text": "nervoso (متوتر)",
+          "priority": 1
+        },
+        {
+          "text": "preocupado (قلق)",
+          "priority": 1
+        },
+        {
+          "text": "sentir (to feel / to sense)",
+          "priority": 1
+        },
+        {
+          "text": "a alegria (joy)",
+          "priority": 1
+        },
+        {
+          "text": "frustrado (محبط)",
+          "priority": 1
+        },
+        {
+          "text": "tranquilo (هادئ / مطمئن)",
+          "priority": 1
+        },
+        {
+          "text": "a ideia (the idea)",
+          "priority": 3
+        },
+        {
+          "text": "o ódio (hate)",
+          "priority": 3
+        },
+        {
+          "text": "a paixão (passion)",
+          "priority": 3
+        },
+        {
+          "text": "o princípio (the principle / the beginning)",
+          "priority": 3
+        },
+        {
+          "text": "suficiente (enough)",
+          "priority": 3
+        },
+        {
+          "text": "sinto-me",
+          "priority": 2
+        },
+        {
+          "text": "fiquei… quando…",
+          "priority": 2
+        },
+        {
+          "text": "Sinto-me… porque… (استخدم التعبير البرتغالي «Sinto-me… porque…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-087",
+      "lesson": 87,
+      "title": "فرح صاحبك",
+      "words": [
+        {
+          "text": "o casamento (the wedding / the marriage)",
+          "priority": 1
+        },
+        {
+          "text": "o namorado (the boyfriend)",
+          "priority": 1
+        },
+        {
+          "text": "a namorada (the girlfriend)",
+          "priority": 1
+        },
+        {
+          "text": "casar (to marry)",
+          "priority": 1
+        },
+        {
+          "text": "o casal (the couple)",
+          "priority": 1
+        },
+        {
+          "text": "o rapaz (the boy)",
+          "priority": 1
+        },
+        {
+          "text": "a rapariga (the girl)",
+          "priority": 1
+        },
+        {
+          "text": "os irmãos (the siblings)",
+          "priority": 1
+        },
+        {
+          "text": "demasiado / demais (too / too much / too many)",
+          "priority": 3
+        },
+        {
+          "text": "no entanto (however)",
+          "priority": 3
+        },
+        {
+          "text": "embora (although)",
+          "priority": 3
+        },
+        {
+          "text": "apesar de (despite / in spite of)",
+          "priority": 3
+        },
+        {
+          "text": "entretanto (في هذه الأثناء)",
+          "priority": 3
+        },
+        {
+          "text": "casar + vou",
+          "priority": 2
+        },
+        {
+          "text": "fui",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-088",
+      "lesson": 88,
+      "title": "هدية لصاحبك",
+      "words": [
+        {
+          "text": "oferecer (to offer)",
+          "priority": 1
+        },
+        {
+          "text": "o presente (the present)",
+          "priority": 1
+        },
+        {
+          "text": "o aniversário",
+          "priority": 1
+        },
+        {
+          "text": "a amizade (friendship)",
+          "priority": 1
+        },
+        {
+          "text": "os avós (the grandparents)",
+          "priority": 1
+        },
+        {
+          "text": "a prima (the cousin feminine)",
+          "priority": 1
+        },
+        {
+          "text": "ninguém (no one / nobody)",
+          "priority": 1
+        },
+        {
+          "text": "tudo (everything / all)",
+          "priority": 1
+        },
+        {
+          "text": "assim que (as soon as)",
+          "priority": 3
+        },
+        {
+          "text": "bem como (as well as)",
+          "priority": 3
+        },
+        {
+          "text": "pois (for / because)",
+          "priority": 3
+        },
+        {
+          "text": "dado que (given that)",
+          "priority": 3
+        },
+        {
+          "text": "já que (since / while)",
+          "priority": 3
+        },
+        {
+          "text": "dar",
+          "priority": 2
+        },
+        {
+          "text": "oferecer + a alguém",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-089",
+      "lesson": 89,
+      "title": "العيلة الكبيرة",
+      "words": [
+        {
+          "text": "o avô (the grandfather)",
+          "priority": 1
+        },
+        {
+          "text": "a avó (the grandmother)",
+          "priority": 1
+        },
+        {
+          "text": "o tio (the uncle)",
+          "priority": 1
+        },
+        {
+          "text": "a tia (the aunt)",
+          "priority": 1
+        },
+        {
+          "text": "o primo (the cousin masculine)",
+          "priority": 1
+        },
+        {
+          "text": "dele (his)",
+          "priority": 1
+        },
+        {
+          "text": "dela (her)",
+          "priority": 1
+        },
+        {
+          "text": "deles (their)",
+          "priority": 1
+        },
+        {
+          "text": "já agora (by the way)",
+          "priority": 3
+        },
+        {
+          "text": "não só... mas também... (not only… but also…)",
+          "priority": 3
+        },
+        {
+          "text": "tanto... como... (both… and…)",
+          "priority": 3
+        },
+        {
+          "text": "ou... ou... (either… or…)",
+          "priority": 3
+        },
+        {
+          "text": "não... nem... (neither… nor…)",
+          "priority": 3
+        },
+        {
+          "text": "eles",
+          "priority": 2
+        },
+        {
+          "text": "elas",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-090",
+      "lesson": 90,
+      "title": "مراجعة: الناس والمشاعر",
+      "words": []
+    },
+    {
+      "topic": "pl-091",
+      "lesson": 91,
+      "title": "الويك إند",
+      "words": [
+        {
+          "text": "sábado (Saturday)",
+          "priority": 1
+        },
+        {
+          "text": "domingo (Sunday)",
+          "priority": 1
+        },
+        {
+          "text": "passear (يتمشى)",
+          "priority": 1
+        },
+        {
+          "text": "o cinema (سينما)",
+          "priority": 1
+        },
+        {
+          "text": "ler (يقرأ)",
+          "priority": 1
+        },
+        {
+          "text": "com quem?",
+          "priority": 1
+        },
+        {
+          "text": "cozinhar (يطبخ)",
+          "priority": 1
+        },
+        {
+          "text": "abril (April)",
+          "priority": 1
+        },
+        {
+          "text": "desenvolver (يطوّر)",
+          "priority": 3
+        },
+        {
+          "text": "produzir (to produce)",
+          "priority": 3
+        },
+        {
+          "text": "aumentar (to increase)",
+          "priority": 3
+        },
+        {
+          "text": "diminuir (to decrease)",
+          "priority": 3
+        },
+        {
+          "text": "manter (to maintain)",
+          "priority": 3
+        },
+        {
+          "text": "o que fizeste?",
+          "priority": 2
+        },
+        {
+          "text": "onde foste?",
+          "priority": 2
+        },
+        {
+          "text": "Costumo… (استخدم التعبير البرتغالي «Costumo…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Faço isso às vezes. (استخدم التعبير البرتغالي «Faço isso às vezes.» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Queres vir comigo? (استخدم التعبير البرتغالي «Queres vir comigo?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "O que fizeste…? (عملت إيه…؟)",
+          "priority": 2
+        },
+        {
+          "text": "E depois, o que aconteceu? (وبعد كده إيه اللي حصل؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-092",
+      "lesson": 92,
+      "title": "الجو",
+      "words": [
+        {
+          "text": "o sol (the sun)",
+          "priority": 1
+        },
+        {
+          "text": "a chuva (مطر)",
+          "priority": 1
+        },
+        {
+          "text": "o vento (رياح)",
+          "priority": 1
+        },
+        {
+          "text": "a nuvem (the cloud)",
+          "priority": 1
+        },
+        {
+          "text": "previsão (توقعات الطقس)",
+          "priority": 1
+        },
+        {
+          "text": "chover (تمطر)",
+          "priority": 1
+        },
+        {
+          "text": "fazer sol (تكون الشمس مشرقة)",
+          "priority": 1
+        },
+        {
+          "text": "a Natureza (Nature)",
+          "priority": 1
+        },
+        {
+          "text": "o clima (the climate)",
+          "priority": 3
+        },
+        {
+          "text": "a lua (the moon)",
+          "priority": 3
+        },
+        {
+          "text": "a estrela (the star)",
+          "priority": 3
+        },
+        {
+          "text": "o ar (the air)",
+          "priority": 3
+        },
+        {
+          "text": "defender (to defend)",
+          "priority": 3
+        },
+        {
+          "text": "está a chover",
+          "priority": 2
+        },
+        {
+          "text": "faz sol",
+          "priority": 2
+        },
+        {
+          "text": "Está a chover, por isso… (استخدم التعبير البرتغالي «Está a chover, por isso…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Se o tempo melhorar, vamos… (استخدم التعبير البرتغالي «Se o tempo melhorar, vamos…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-093",
+      "lesson": 93,
+      "title": "الفصول والشهور",
+      "words": [
+        {
+          "text": "o verão (summer)",
+          "priority": 1
+        },
+        {
+          "text": "o inverno (winter)",
+          "priority": 1
+        },
+        {
+          "text": "a primavera (spring)",
+          "priority": 1
+        },
+        {
+          "text": "o outono (fall / autumn)",
+          "priority": 1
+        },
+        {
+          "text": "julho (July)",
+          "priority": 1
+        },
+        {
+          "text": "agosto (August)",
+          "priority": 1
+        },
+        {
+          "text": "dezembro (December)",
+          "priority": 1
+        },
+        {
+          "text": "maio (May)",
+          "priority": 1
+        },
+        {
+          "text": "atacar (to attack)",
+          "priority": 3
+        },
+        {
+          "text": "tornar-se (to become)",
+          "priority": 3
+        },
+        {
+          "text": "existir (to exist)",
+          "priority": 3
+        },
+        {
+          "text": "considerar (to consider / to regard)",
+          "priority": 3
+        },
+        {
+          "text": "criar (to create / to raise someone)",
+          "priority": 3
+        },
+        {
+          "text": "no verão",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-094",
+      "lesson": 94,
+      "title": "يوم على البحر",
+      "words": [
+        {
+          "text": "a praia (شاطئ)",
+          "priority": 1
+        },
+        {
+          "text": "o mar (the sea)",
+          "priority": 1
+        },
+        {
+          "text": "nadar (to swim)",
+          "priority": 1
+        },
+        {
+          "text": "o protetor solar (the sunblock)",
+          "priority": 1
+        },
+        {
+          "text": "a toalha (the towel)",
+          "priority": 1
+        },
+        {
+          "text": "os óculos (the glasses)",
+          "priority": 1
+        },
+        {
+          "text": "o creme (the cream)",
+          "priority": 1
+        },
+        {
+          "text": "nada (nothing)",
+          "priority": 1
+        },
+        {
+          "text": "o deserto (the desert)",
+          "priority": 3
+        },
+        {
+          "text": "a costa (the coast)",
+          "priority": 3
+        },
+        {
+          "text": "a ilha (the island)",
+          "priority": 3
+        },
+        {
+          "text": "o continente (the continent)",
+          "priority": 3
+        },
+        {
+          "text": "morrer (to die)",
+          "priority": 3
+        },
+        {
+          "text": "matar (to kill)",
+          "priority": 3
+        },
+        {
+          "text": "vamos à praia + levar",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-095",
+      "lesson": 95,
+      "title": "رحلة لبورتو",
+      "words": [
+        {
+          "text": "viajar (to travel)",
+          "priority": 1
+        },
+        {
+          "text": "viagem (رحلة)",
+          "priority": 1
+        },
+        {
+          "text": "partir (to leave / to depart / to break)",
+          "priority": 1
+        },
+        {
+          "text": "as férias (the vacations)",
+          "priority": 1
+        },
+        {
+          "text": "chegada (وصول)",
+          "priority": 1
+        },
+        {
+          "text": "último (last)",
+          "priority": 1
+        },
+        {
+          "text": "leve (light)",
+          "priority": 1
+        },
+        {
+          "text": "voar (to fly)",
+          "priority": 3
+        },
+        {
+          "text": "afirmar (to say / to state / to affirm)",
+          "priority": 3
+        },
+        {
+          "text": "tratar (to treat / to handle)",
+          "priority": 3
+        },
+        {
+          "text": "odiar (to hate)",
+          "priority": 3
+        },
+        {
+          "text": "realizar (to carry out / to direct a film)",
+          "priority": 3
+        },
+        {
+          "text": "permitir (to allow / to enable)",
+          "priority": 3
+        },
+        {
+          "text": "quanto tempo demora?",
+          "priority": 2
+        },
+        {
+          "text": "de comboio",
+          "priority": 2
+        },
+        {
+          "text": "Como chegamos a…? (استخدم التعبير البرتغالي «Como chegamos a…?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Prefiro ir de… (استخدم التعبير البرتغالي «Prefiro ir de…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "A minha reserva foi… (حجزي ات…)",
+          "priority": 2
+        },
+        {
+          "text": "Que alternativas tenho? (إيه البدائل المتاحة ليا؟)",
+          "priority": 2
+        },
+        {
+          "text": "Posso receber um reembolso? (ممكن أسترد المبلغ؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-096",
+      "lesson": 96,
+      "title": "مراجعة: وقت الفراغ والطقس والسفر",
+      "words": []
+    },
+    {
+      "topic": "pl-097",
+      "lesson": 97,
+      "title": "الأعياد",
+      "words": [
+        {
+          "text": "o feriado (the holiday)",
+          "priority": 1
+        },
+        {
+          "text": "o Natal (Christmas)",
+          "priority": 1
+        },
+        {
+          "text": "o Ano Novo (New Year’s)",
+          "priority": 1
+        },
+        {
+          "text": "a Páscoa (Easter)",
+          "priority": 1
+        },
+        {
+          "text": "pesado (heavy)",
+          "priority": 1
+        },
+        {
+          "text": "aborrecido (boring)",
+          "priority": 1
+        },
+        {
+          "text": "o ano letivo (the academic / school year)",
+          "priority": 3
+        },
+        {
+          "text": "o Carnaval (Carnival)",
+          "priority": 3
+        },
+        {
+          "text": "o Dia do Trabalhador (Workers’ Day / Labor Day)",
+          "priority": 3
+        },
+        {
+          "text": "o Dia de Todos os Santos (All Saints’ Day)",
+          "priority": 3
+        },
+        {
+          "text": "proibir (to prohibit / to forbid)",
+          "priority": 3
+        },
+        {
+          "text": "ocorrer (to happen / to occur)",
+          "priority": 3
+        },
+        {
+          "text": "no Natal",
+          "priority": 2
+        },
+        {
+          "text": "na Páscoa + presente",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-098",
+      "lesson": 98,
+      "title": "رحلة للجبل",
+      "words": [
+        {
+          "text": "a montanha (the mountain)",
+          "priority": 1
+        },
+        {
+          "text": "a floresta (the forest)",
+          "priority": 1
+        },
+        {
+          "text": "o campo (the field / the countryside)",
+          "priority": 1
+        },
+        {
+          "text": "a árvore (the tree)",
+          "priority": 1
+        },
+        {
+          "text": "a flor (the flower)",
+          "priority": 1
+        },
+        {
+          "text": "o céu (the sky)",
+          "priority": 1
+        },
+        {
+          "text": "a planta (the plant)",
+          "priority": 1
+        },
+        {
+          "text": "saudável (healthy)",
+          "priority": 1
+        },
+        {
+          "text": "o oceano (the ocean)",
+          "priority": 3
+        },
+        {
+          "text": "a raiz (the root)",
+          "priority": 3
+        },
+        {
+          "text": "o tronco (the trunk)",
+          "priority": 3
+        },
+        {
+          "text": "o ramo (the branch)",
+          "priority": 3
+        },
+        {
+          "text": "esconder (to hide)",
+          "priority": 3
+        },
+        {
+          "text": "formar (to form / to make)",
+          "priority": 3
+        },
+        {
+          "text": "era",
+          "priority": 2
+        },
+        {
+          "text": "Gostei de… porque… (استخدم التعبير البرتغالي «Gostei de… porque…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Vale a pena visitar… (استخدم التعبير البرتغالي «Vale a pena visitar…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Estava muito cheio. (استخدم التعبير البرتغالي «Estava muito cheio.» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-099",
+      "lesson": 99,
+      "title": "كلب الجارة",
+      "words": [
+        {
+          "text": "o animal (the animal)",
+          "priority": 1
+        },
+        {
+          "text": "o cão (the dog)",
+          "priority": 1
+        },
+        {
+          "text": "o gato (the cat)",
+          "priority": 1
+        },
+        {
+          "text": "o pássaro (the bird)",
+          "priority": 1
+        },
+        {
+          "text": "o cavalo (the horse)",
+          "priority": 1
+        },
+        {
+          "text": "honesto (honest)",
+          "priority": 1
+        },
+        {
+          "text": "claro (واضح)",
+          "priority": 1
+        },
+        {
+          "text": "a folha (the leaf)",
+          "priority": 3
+        },
+        {
+          "text": "o macaco (the monkey)",
+          "priority": 3
+        },
+        {
+          "text": "o porco (the pig)",
+          "priority": 3
+        },
+        {
+          "text": "a vaca (the cow)",
+          "priority": 3
+        },
+        {
+          "text": "incluir (to include)",
+          "priority": 3
+        },
+        {
+          "text": "desaparecer (to disappear)",
+          "priority": 3
+        }
+      ]
+    },
+    {
+      "topic": "pl-100",
+      "lesson": 100,
+      "title": "الرياضة",
+      "words": [
+        {
+          "text": "correr (to run)",
+          "priority": 1
+        },
+        {
+          "text": "andar (to walk)",
+          "priority": 1
+        },
+        {
+          "text": "treinar (يتدرب)",
+          "priority": 1
+        },
+        {
+          "text": "rápido (سريع)",
+          "priority": 1
+        },
+        {
+          "text": "lento (slow)",
+          "priority": 1
+        },
+        {
+          "text": "tempo livre (وقت الفراغ)",
+          "priority": 1
+        },
+        {
+          "text": "feio (ugly)",
+          "priority": 1
+        },
+        {
+          "text": "jovem (young)",
+          "priority": 1
+        },
+        {
+          "text": "crescer (to grow)",
+          "priority": 3
+        },
+        {
+          "text": "publicar (to publish)",
+          "priority": 3
+        },
+        {
+          "text": "aperceber-se (to realize)",
+          "priority": 3
+        },
+        {
+          "text": "revelar (to reveal / to disclose)",
+          "priority": 3
+        },
+        {
+          "text": "bater (to hit / to knock / to beat)",
+          "priority": 3
+        },
+        {
+          "text": "acreditar (to believe)",
+          "priority": 3
+        },
+        {
+          "text": "Costumo… (استخدم التعبير البرتغالي «Costumo…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Faço isso às vezes. (استخدم التعبير البرتغالي «Faço isso às vezes.» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Queres vir comigo? (استخدم التعبير البرتغالي «Queres vir comigo?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-101",
+      "lesson": 101,
+      "title": "ماتش كورة",
+      "words": [
+        {
+          "text": "jogar (to play)",
+          "priority": 1
+        },
+        {
+          "text": "ganhar (to win / to gain)",
+          "priority": 1
+        },
+        {
+          "text": "perder (يفقد / يفوّت)",
+          "priority": 1
+        },
+        {
+          "text": "o jogo",
+          "priority": 1
+        },
+        {
+          "text": "equipa (فريق)",
+          "priority": 1
+        },
+        {
+          "text": "a direção (the direction)",
+          "priority": 1
+        },
+        {
+          "text": "Norte (North)",
+          "priority": 1
+        },
+        {
+          "text": "Sul (South)",
+          "priority": 1
+        },
+        {
+          "text": "a técnica (the technique)",
+          "priority": 3
+        },
+        {
+          "text": "a maioria (the majority)",
+          "priority": 3
+        },
+        {
+          "text": "a minoria (the minority)",
+          "priority": 3
+        },
+        {
+          "text": "o recurso (the resource)",
+          "priority": 3
+        },
+        {
+          "text": "duvidar (to doubt)",
+          "priority": 3
+        },
+        {
+          "text": "sorrir (to smile)",
+          "priority": 3
+        },
+        {
+          "text": "ganhar",
+          "priority": 2
+        },
+        {
+          "text": "perder + o jogo",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-102",
+      "lesson": 102,
+      "title": "مراجعة: وقت الفراغ والطقس والسفر",
+      "words": []
+    },
+    {
+      "topic": "pl-103",
+      "lesson": 103,
+      "title": "هدوم الشتا",
+      "words": [
+        {
+          "text": "a roupa (the clothing)",
+          "priority": 1
+        },
+        {
+          "text": "o casaco (the coat / the jacket)",
+          "priority": 1
+        },
+        {
+          "text": "a camisola (the sweatshirt / the jumper)",
+          "priority": 1
+        },
+        {
+          "text": "as calças (the pants / the trousers)",
+          "priority": 1
+        },
+        {
+          "text": "o cachecol (the scarf)",
+          "priority": 1
+        },
+        {
+          "text": "as luvas (the gloves)",
+          "priority": 1
+        },
+        {
+          "text": "uns (some)",
+          "priority": 1
+        },
+        {
+          "text": "umas (some)",
+          "priority": 1
+        },
+        {
+          "text": "os calções (the shorts)",
+          "priority": 3
+        },
+        {
+          "text": "as meias (the socks)",
+          "priority": 3
+        },
+        {
+          "text": "o ténis / a sapatilha (the sneaker / the trainer)",
+          "priority": 3
+        },
+        {
+          "text": "a bota (the boot)",
+          "priority": 3
+        },
+        {
+          "text": "rir-se (to laugh)",
+          "priority": 3
+        },
+        {
+          "text": "chorar (to cry)",
+          "priority": 3
+        },
+        {
+          "text": "fica-me bem?",
+          "priority": 2
+        },
+        {
+          "text": "o tamanho",
+          "priority": 2
+        },
+        {
+          "text": "Queria um pacote de… (عايز/كنت عايز عبوة من…)",
+          "priority": 2
+        },
+        {
+          "text": "Tem mais barato? (فيه أرخص؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-104",
+      "lesson": 104,
+      "title": "الألوان",
+      "words": [
+        {
+          "text": "branco (white)",
+          "priority": 1
+        },
+        {
+          "text": "preto (black)",
+          "priority": 1
+        },
+        {
+          "text": "azul (blue)",
+          "priority": 1
+        },
+        {
+          "text": "vermelho (red)",
+          "priority": 1
+        },
+        {
+          "text": "verde (green)",
+          "priority": 1
+        },
+        {
+          "text": "amarelo (yellow)",
+          "priority": 1
+        },
+        {
+          "text": "cinzento (grey)",
+          "priority": 1
+        },
+        {
+          "text": "cor-de-laranja (orange)",
+          "priority": 1
+        },
+        {
+          "text": "castanho (brown)",
+          "priority": 3
+        },
+        {
+          "text": "cor-de-rosa (pink)",
+          "priority": 3
+        },
+        {
+          "text": "roxo (purple)",
+          "priority": 3
+        },
+        {
+          "text": "causar (to cause)",
+          "priority": 3
+        },
+        {
+          "text": "determinar (to determine)",
+          "priority": 3
+        },
+        {
+          "text": "anunciar (to announce)",
+          "priority": 3
+        }
+      ]
+    },
+    {
+      "topic": "pl-105",
+      "lesson": 105,
+      "title": "المقاس غلط",
+      "words": [
+        {
+          "text": "o sapato (the shoe)",
+          "priority": 1
+        },
+        {
+          "text": "a camisa (the shirt)",
+          "priority": 1
+        },
+        {
+          "text": "a t-shirt (the t-shirt)",
+          "priority": 1
+        },
+        {
+          "text": "o vestido (the dress)",
+          "priority": 1
+        },
+        {
+          "text": "comprido (long)",
+          "priority": 1
+        },
+        {
+          "text": "curto (short)",
+          "priority": 1
+        },
+        {
+          "text": "trocar",
+          "priority": 1
+        },
+        {
+          "text": "a blusa (the blouse)",
+          "priority": 1
+        },
+        {
+          "text": "o chapéu (the hat)",
+          "priority": 3
+        },
+        {
+          "text": "a roupa interior (the underwear)",
+          "priority": 3
+        },
+        {
+          "text": "o cinto (the belt)",
+          "priority": 3
+        },
+        {
+          "text": "o gorro (the beanie)",
+          "priority": 3
+        },
+        {
+          "text": "exigir (to demand)",
+          "priority": 3
+        },
+        {
+          "text": "transformar (to transform)",
+          "priority": 3
+        },
+        {
+          "text": "comprei… mas…",
+          "priority": 2
+        },
+        {
+          "text": "queria trocar",
+          "priority": 2
+        },
+        {
+          "text": "Gostaria de apresentar uma reclamação. (حابب أقدّم شكوى.)",
+          "priority": 2
+        },
+        {
+          "text": "Foi cobrado um valor que… (اتحسب مبلغ…)",
+          "priority": 2
+        },
+        {
+          "text": "Como podemos resolver isto? (إزاي نقدر نحل ده؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-106",
+      "lesson": 106,
+      "title": "حاجات الحمام",
+      "words": [
+        {
+          "text": "a escova de dentes (the toothbrush)",
+          "priority": 1
+        },
+        {
+          "text": "a pasta de dentes (the toothpaste)",
+          "priority": 1
+        },
+        {
+          "text": "o sabão (the soap)",
+          "priority": 1
+        },
+        {
+          "text": "o champô (the shampoo)",
+          "priority": 1
+        },
+        {
+          "text": "o desodorizante (the deodorant)",
+          "priority": 1
+        },
+        {
+          "text": "escuro (dark)",
+          "priority": 1
+        },
+        {
+          "text": "frequentemente (often / frequently)",
+          "priority": 1
+        },
+        {
+          "text": "vencer (to win / to beat)",
+          "priority": 3
+        },
+        {
+          "text": "pegar (to take / to grab)",
+          "priority": 3
+        },
+        {
+          "text": "apontar (to point / to aim)",
+          "priority": 3
+        },
+        {
+          "text": "concluir (to conclude)",
+          "priority": 3
+        },
+        {
+          "text": "abandonar (to abandon)",
+          "priority": 3
+        },
+        {
+          "text": "obrigar (to force)",
+          "priority": 3
+        }
+      ]
+    },
+    {
+      "topic": "pl-107",
+      "lesson": 107,
+      "title": "رأيك إيه؟",
+      "words": [
+        {
+          "text": "a opinião (رأي)",
+          "priority": 1
+        },
+        {
+          "text": "concordar (يوافق)",
+          "priority": 1
+        },
+        {
+          "text": "importante (مهم)",
+          "priority": 1
+        },
+        {
+          "text": "interessante (مثير للاهتمام)",
+          "priority": 1
+        },
+        {
+          "text": "mesmo (even / really)",
+          "priority": 1
+        },
+        {
+          "text": "assim (so / this way)",
+          "priority": 1
+        },
+        {
+          "text": "o sistema (the system)",
+          "priority": 3
+        },
+        {
+          "text": "a satisfação (the satisfaction)",
+          "priority": 3
+        },
+        {
+          "text": "a sensação (the sensation / the feeling)",
+          "priority": 3
+        },
+        {
+          "text": "o sentimento (the feeling)",
+          "priority": 3
+        },
+        {
+          "text": "aplicar (to apply)",
+          "priority": 3
+        },
+        {
+          "text": "pertencer (to belong)",
+          "priority": 3
+        },
+        {
+          "text": "acho que… porque…",
+          "priority": 2
+        },
+        {
+          "text": "Na minha opinião… (استخدم التعبير البرتغالي «Na minha opinião…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Concordo, mas… (استخدم التعبير البرتغالي «Concordo, mas…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Na minha opinião,… (من وجهة نظري…)",
+          "priority": 2
+        },
+        {
+          "text": "Concordo em parte, porque… (متفق جزئيًا عشان…)",
+          "priority": 2
+        },
+        {
+          "text": "Por exemplo,… (مثلًا…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-108",
+      "lesson": 108,
+      "title": "مراجعة: آراء وحكايات",
+      "words": []
+    },
+    {
+      "topic": "pl-109",
+      "lesson": 109,
+      "title": "إيه الأحسن؟",
+      "words": [
+        {
+          "text": "igual (equal / same)",
+          "priority": 1
+        },
+        {
+          "text": "diferente (مختلف)",
+          "priority": 1
+        },
+        {
+          "text": "a diferença",
+          "priority": 1
+        },
+        {
+          "text": "maior (أكبر)",
+          "priority": 1
+        },
+        {
+          "text": "menor (أصغر)",
+          "priority": 1
+        },
+        {
+          "text": "demorado (بياخد وقت)",
+          "priority": 1
+        },
+        {
+          "text": "alegre (joyful)",
+          "priority": 1
+        },
+        {
+          "text": "primeiro (أولًا)",
+          "priority": 1
+        },
+        {
+          "text": "tão (so / so much / as much)",
+          "priority": 3
+        },
+        {
+          "text": "inseguro (unsafe / unsu)",
+          "priority": 3
+        },
+        {
+          "text": "orgulhoso (فخور)",
+          "priority": 3
+        },
+        {
+          "text": "envergonhado (ashamed)",
+          "priority": 3
+        },
+        {
+          "text": "retirar (to remove)",
+          "priority": 3
+        },
+        {
+          "text": "acrescentar (to add)",
+          "priority": 3
+        },
+        {
+          "text": "mais… do que",
+          "priority": 2
+        },
+        {
+          "text": "melhor",
+          "priority": 2
+        },
+        {
+          "text": "pior",
+          "priority": 2
+        },
+        {
+          "text": "É mais barato do que… (استخدم التعبير البرتغالي «É mais barato do que…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Prefiro… porque… (استخدم التعبير البرتغالي «Prefiro… porque…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Esta opção é mais… do que… (الاختيار ده أكثر… من…)",
+          "priority": 2
+        },
+        {
+          "text": "A melhor opção para mim é… (أنسب اختيار ليا هو…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-110",
+      "lesson": 110,
+      "title": "كان زمان",
+      "words": [
+        {
+          "text": "mudar (يغيّر)",
+          "priority": 1
+        },
+        {
+          "text": "o passado (the past)",
+          "priority": 1
+        },
+        {
+          "text": "habituar-se (يعتاد)",
+          "priority": 1
+        },
+        {
+          "text": "o momento (the moment)",
+          "priority": 1
+        },
+        {
+          "text": "o segundo (the second)",
+          "priority": 1
+        },
+        {
+          "text": "o relógio (the clock / the watch)",
+          "priority": 1
+        },
+        {
+          "text": "a meia-noite (midnight)",
+          "priority": 1
+        },
+        {
+          "text": "depressa (fast / quickly)",
+          "priority": 1
+        },
+        {
+          "text": "desejar (to wish / to desire)",
+          "priority": 3
+        },
+        {
+          "text": "imaginar (to imagine / to picture)",
+          "priority": 3
+        },
+        {
+          "text": "cento",
+          "priority": 3
+        },
+        {
+          "text": "antes + trabalhava",
+          "priority": 2
+        },
+        {
+          "text": "morava",
+          "priority": 2
+        },
+        {
+          "text": "Antes…, agora… (استخدم التعبير البرتغالي «Antes…, agora…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Está melhor do que… (استخدم التعبير البرتغالي «Está melhor do que…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Já me habituei a… (استخدم التعبير البرتغالي «Já me habituei a…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "No início era difícil, mas… (في الأول كان صعب، لكن…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-111",
+      "lesson": 111,
+      "title": "حكاية غريبة",
+      "words": [
+        {
+          "text": "acontecer (يحدث)",
+          "priority": 1
+        },
+        {
+          "text": "a história (حكاية)",
+          "priority": 1
+        },
+        {
+          "text": "cair (to fall)",
+          "priority": 1
+        },
+        {
+          "text": "encontrar (يقابل / يجد)",
+          "priority": 1
+        },
+        {
+          "text": "o fim (the end)",
+          "priority": 1
+        },
+        {
+          "text": "devagar (slowly)",
+          "priority": 1
+        },
+        {
+          "text": "felizmente (fortunately)",
+          "priority": 1
+        },
+        {
+          "text": "o conhecimento (the knowledge)",
+          "priority": 3
+        },
+        {
+          "text": "primeiro… depois… no fim",
+          "priority": 2
+        },
+        {
+          "text": "Primeiro, fui a… (أول حاجة رحت…)",
+          "priority": 2
+        },
+        {
+          "text": "Depois aconteceu… (بعد كده حصل…)",
+          "priority": 2
+        },
+        {
+          "text": "No fim, decidi… (في الآخر قررت…)",
+          "priority": 2
+        },
+        {
+          "text": "Primeiro… (استخدم التعبير البرتغالي «Primeiro…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Depois… (استخدم التعبير البرتغالي «Depois…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "No fim… (استخدم التعبير البرتغالي «No fim…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-112",
+      "lesson": 112,
+      "title": "غلطة واتعلمت منها",
+      "words": [
+        {
+          "text": "erro (خطأ)",
+          "priority": 1
+        },
+        {
+          "text": "esquecer-se (to forget)",
+          "priority": 1
+        },
+        {
+          "text": "lembrar-se (to remember / to remind)",
+          "priority": 1
+        },
+        {
+          "text": "aprender (يتعلم)",
+          "priority": 1
+        },
+        {
+          "text": "a vergonha (the shame / the embarrassment)",
+          "priority": 1
+        },
+        {
+          "text": "o amor (love)",
+          "priority": 1
+        },
+        {
+          "text": "a felicidade (happiness)",
+          "priority": 1
+        },
+        {
+          "text": "a morte (death)",
+          "priority": 1
+        },
+        {
+          "text": "a força (the strength)",
+          "priority": 3
+        },
+        {
+          "text": "a fraqueza (the weakness)",
+          "priority": 3
+        },
+        {
+          "text": "o caos (the chaos)",
+          "priority": 3
+        },
+        {
+          "text": "a vitória (the victory)",
+          "priority": 3
+        },
+        {
+          "text": "enganei-me",
+          "priority": 2
+        },
+        {
+          "text": "da próxima vez vou…",
+          "priority": 2
+        },
+        {
+          "text": "Enganei-me quando… (غلطت لما…)",
+          "priority": 2
+        },
+        {
+          "text": "Devia ter… (كان المفروض أ…)",
+          "priority": 2
+        },
+        {
+          "text": "Da próxima vez, vou… (المرة الجاية ه…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-113",
+      "lesson": 113,
+      "title": "ليه جيت البرتغال؟",
+      "words": [
+        {
+          "text": "a decisão (the decision)",
+          "priority": 1
+        },
+        {
+          "text": "decidir (يقرر)",
+          "priority": 1
+        },
+        {
+          "text": "escolher (يختار)",
+          "priority": 1
+        },
+        {
+          "text": "a vida (life)",
+          "priority": 1
+        },
+        {
+          "text": "a liberdade (the liberty / the freedom)",
+          "priority": 1
+        },
+        {
+          "text": "opção (خيار)",
+          "priority": 1
+        },
+        {
+          "text": "razão (سبب)",
+          "priority": 1
+        },
+        {
+          "text": "mudar de ideias (يغيّر رأيه)",
+          "priority": 1
+        },
+        {
+          "text": "a derrota (the defeat)",
+          "priority": 3
+        },
+        {
+          "text": "a coragem (the courage)",
+          "priority": 3
+        },
+        {
+          "text": "o ego (the ego)",
+          "priority": 3
+        },
+        {
+          "text": "a fé (the faith)",
+          "priority": 3
+        },
+        {
+          "text": "decidi… porque…",
+          "priority": 2
+        },
+        {
+          "text": "Pensei em…, mas… (استخدم التعبير البرتغالي «Pensei em…, mas…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Acabei por… (استخدم التعبير البرتغالي «Acabei por…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-114",
+      "lesson": 114,
+      "title": "مراجعة: آراء وحكايات",
+      "words": []
+    },
+    {
+      "topic": "pl-115",
+      "lesson": 115,
+      "title": "فيلم أو مسلسل",
+      "words": [
+        {
+          "text": "filme (فيلم)",
+          "priority": 1
+        },
+        {
+          "text": "a música (موسيقى)",
+          "priority": 1
+        },
+        {
+          "text": "a imagem (the image)",
+          "priority": 1
+        },
+        {
+          "text": "o som (the sound)",
+          "priority": 1
+        },
+        {
+          "text": "recomendar (ينصح بـ)",
+          "priority": 1
+        },
+        {
+          "text": "série (مسلسل)",
+          "priority": 1
+        },
+        {
+          "text": "personagem (شخصية)",
+          "priority": 1
+        },
+        {
+          "text": "enredo (حبكة)",
+          "priority": 1
+        },
+        {
+          "text": "o parágrafo (the paragraph)",
+          "priority": 3
+        },
+        {
+          "text": "o facto (the fact)",
+          "priority": 3
+        },
+        {
+          "text": "a guerra (the war)",
+          "priority": 3
+        },
+        {
+          "text": "a paz (the peace)",
+          "priority": 3
+        },
+        {
+          "text": "é sobre…",
+          "priority": 2
+        },
+        {
+          "text": "recomendo",
+          "priority": 2
+        },
+        {
+          "text": "Gostei especialmente de… (عجبني خصوصًا…)",
+          "priority": 2
+        },
+        {
+          "text": "Recomendo porque… (برشحه عشان…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-116",
+      "lesson": 116,
+      "title": "رأيك بمثال",
+      "words": [
+        {
+          "text": "exemplo (مثال)",
+          "priority": 1
+        },
+        {
+          "text": "por exemplo (على سبيل المثال)",
+          "priority": 1
+        },
+        {
+          "text": "depender (يعتمد)",
+          "priority": 1
+        },
+        {
+          "text": "desvantagem (عيب)",
+          "priority": 1
+        },
+        {
+          "text": "vantagem (ميزة)",
+          "priority": 1
+        },
+        {
+          "text": "depende (يعتمد على)",
+          "priority": 1
+        },
+        {
+          "text": "dentro (in / inside)",
+          "priority": 1
+        },
+        {
+          "text": "fora (out / outside)",
+          "priority": 1
+        },
+        {
+          "text": "por exemplo",
+          "priority": 2
+        },
+        {
+          "text": "depende de…",
+          "priority": 2
+        },
+        {
+          "text": "Acho que… porque… (استخدم التعبير البرتغالي «Acho que… porque…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Por exemplo… (استخدم التعبير البرتغالي «Por exemplo…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-117",
+      "lesson": 117,
+      "title": "دردشة خفيفة",
+      "words": [
+        {
+          "text": "assunto (موضوع)",
+          "priority": 1
+        },
+        {
+          "text": "costumar (عادةً)",
+          "priority": 1
+        },
+        {
+          "text": "ultimamente",
+          "priority": 1
+        },
+        {
+          "text": "Este (East)",
+          "priority": 1
+        },
+        {
+          "text": "Oeste (West)",
+          "priority": 1
+        },
+        {
+          "text": "à frente (in front)",
+          "priority": 1
+        },
+        {
+          "text": "atrás (behind)",
+          "priority": 1
+        },
+        {
+          "text": "a cultura (the culture)",
+          "priority": 3
+        },
+        {
+          "text": "o título (the title)",
+          "priority": 3
+        },
+        {
+          "text": "o elemento (the element)",
+          "priority": 3
+        },
+        {
+          "text": "o interior (the inside / the interior)",
+          "priority": 3
+        },
+        {
+          "text": "costumas…?",
+          "priority": 2
+        },
+        {
+          "text": "tens feito…?",
+          "priority": 2
+        },
+        {
+          "text": "Tens feito alguma coisa interessante ultimamente? (عملت حاجة لطيفة مؤخرًا؟)",
+          "priority": 2
+        },
+        {
+          "text": "Costumo… ao fim de semana. (عادةً بعمل… في الويك إند.)",
+          "priority": 2
+        },
+        {
+          "text": "E tu, o que achas? (وإنت رأيك إيه؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-118",
+      "lesson": 118,
+      "title": "إحساس جديد",
+      "words": [
+        {
+          "text": "surpreendido (متفاجئ)",
+          "priority": 1
+        },
+        {
+          "text": "a confiança (the confidence / the trust)",
+          "priority": 1
+        },
+        {
+          "text": "o orgulho (the pride)",
+          "priority": 1
+        },
+        {
+          "text": "o sucesso (the success)",
+          "priority": 1
+        },
+        {
+          "text": "a sorte (luck)",
+          "priority": 1
+        },
+        {
+          "text": "aprendizagem (درس مستفاد)",
+          "priority": 1
+        },
+        {
+          "text": "o início (the beginning)",
+          "priority": 1
+        },
+        {
+          "text": "a calma (the calm)",
+          "priority": 1
+        },
+        {
+          "text": "fiquei surpreendido",
+          "priority": 2
+        },
+        {
+          "text": "no início… mas depois…",
+          "priority": 2
+        },
+        {
+          "text": "Foi uma experiência que… (كانت تجربة…)",
+          "priority": 2
+        },
+        {
+          "text": "No início…, mas depois… (في البداية… لكن بعد كده…)",
+          "priority": 2
+        },
+        {
+          "text": "Aprendi que… (اتعلمت إن…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-119",
+      "lesson": 119,
+      "title": "مقابلة شغل",
+      "words": [
+        {
+          "text": "a entrevista (the interview)",
+          "priority": 1
+        },
+        {
+          "text": "experiência (خبرة / تجربة)",
+          "priority": 1
+        },
+        {
+          "text": "a carreira (the career)",
+          "priority": 1
+        },
+        {
+          "text": "a profissão (مهنة)",
+          "priority": 1
+        },
+        {
+          "text": "o salário",
+          "priority": 1
+        },
+        {
+          "text": "responsabilidade (مسؤولية)",
+          "priority": 1
+        },
+        {
+          "text": "projeto (مشروع)",
+          "priority": 1
+        },
+        {
+          "text": "o funcionário (the clerk)",
+          "priority": 1
+        },
+        {
+          "text": "o político (the politician)",
+          "priority": 3
+        },
+        {
+          "text": "o presidente (the president / the chairman)",
+          "priority": 3
+        },
+        {
+          "text": "o músico (the musician)",
+          "priority": 3
+        },
+        {
+          "text": "o ator (the actor)",
+          "priority": 3
+        },
+        {
+          "text": "tenho experiência em…",
+          "priority": 2
+        },
+        {
+          "text": "era responsável por…",
+          "priority": 2
+        },
+        {
+          "text": "O projeto ajudou-me a… (المشروع ساعدني إني…)",
+          "priority": 2
+        },
+        {
+          "text": "Trabalho como… (استخدم التعبير البرتغالي «Trabalho como…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Antes trabalhava… (استخدم التعبير البرتغالي «Antes trabalhava…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Agora trabalho em… (استخدم التعبير البرتغالي «Agora trabalho em…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-120",
+      "lesson": 120,
+      "title": "مراجعة: حياة أطول في البرتغال",
+      "words": []
+    },
+    {
+      "topic": "pl-121",
+      "lesson": 121,
+      "title": "بتشتغل إيه؟",
+      "words": [
+        {
+          "text": "o professor (the teacher / the professor)",
+          "priority": 1
+        },
+        {
+          "text": "o enfermeiro (the nurse)",
+          "priority": 1
+        },
+        {
+          "text": "o engenheiro (the engineer)",
+          "priority": 1
+        },
+        {
+          "text": "o cozinheiro (the cook)",
+          "priority": 1
+        },
+        {
+          "text": "o vendedor (the seller / the salesperson)",
+          "priority": 1
+        },
+        {
+          "text": "o polícia (the police officer)",
+          "priority": 1
+        },
+        {
+          "text": "o advogado (the lawyer)",
+          "priority": 1
+        },
+        {
+          "text": "o condutor / o motorista (the driver)",
+          "priority": 1
+        },
+        {
+          "text": "o escritor (the writer)",
+          "priority": 3
+        }
+      ]
+    },
+    {
+      "topic": "pl-122",
+      "lesson": 122,
+      "title": "بتعلم برتغالي",
+      "words": [
+        {
+          "text": "estudar (يدرس)",
+          "priority": 1
+        },
+        {
+          "text": "a língua (the language / the tongue)",
+          "priority": 1
+        },
+        {
+          "text": "a frase (the phrase / the sentence)",
+          "priority": 1
+        },
+        {
+          "text": "tentar (يحاول)",
+          "priority": 1
+        },
+        {
+          "text": "esquecer (ينسى)",
+          "priority": 1
+        },
+        {
+          "text": "praticar (يتدرب)",
+          "priority": 1
+        },
+        {
+          "text": "dificuldade (صعوبة)",
+          "priority": 1
+        },
+        {
+          "text": "todos os dias (كل يوم)",
+          "priority": 1
+        },
+        {
+          "text": "o indivíduo (the individual)",
+          "priority": 3
+        },
+        {
+          "text": "estou a tentar",
+          "priority": 2
+        },
+        {
+          "text": "consigo",
+          "priority": 2
+        },
+        {
+          "text": "Quero melhorar… (استخدم التعبير البرتغالي «Quero melhorar…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Estou a tentar… (استخدم التعبير البرتغالي «Estou a tentar…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "É difícil porque… (استخدم التعبير البرتغالي «É difícil porque…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "priority": 2
+        },
+        {
+          "text": "Não me lembro da palavra, mas é… (مش فاكر الكلمة، بس هو…)",
+          "priority": 2
+        },
+        {
+          "text": "É uma coisa que se usa para… (ده شيء بنستخدمه عشان…)",
+          "priority": 2
+        },
+        {
+          "text": "Como se diz… em português? (إزاي نقول… بالبرتغالي؟)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-123",
+      "lesson": 123,
+      "title": "طلب بأدب",
+      "words": [
+        {
+          "text": "favor (خدمة)",
+          "priority": 1
+        },
+        {
+          "text": "possibilidade (إمكانية)",
+          "priority": 1
+        },
+        {
+          "text": "agradecer (يشكر)",
+          "priority": 1
+        },
+        {
+          "text": "incomodar",
+          "priority": 1
+        },
+        {
+          "text": "gentileza (لطف)",
+          "priority": 1
+        },
+        {
+          "text": "pedido (طلب)",
+          "priority": 1
+        },
+        {
+          "text": "motivo (سبب)",
+          "priority": 1
+        },
+        {
+          "text": "em cima (on top of)",
+          "priority": 1
+        },
+        {
+          "text": "será que podia…?",
+          "priority": 2
+        },
+        {
+          "text": "agradecia se…",
+          "priority": 2
+        },
+        {
+          "text": "Importava-se de…? (ممكن تتكرم وت…؟)",
+          "priority": 2
+        },
+        {
+          "text": "Agradecia se pudesse… (هكون شاكر لو تقدر…)",
+          "priority": 2
+        },
+        {
+          "text": "Na minha opinião,… (من وجهة نظري…)",
+          "priority": 2
+        },
+        {
+          "text": "Por exemplo,… (مثلًا…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-124",
+      "lesson": 124,
+      "title": "تبعتلي الورق؟",
+      "words": [
+        {
+          "text": "me (me)",
+          "priority": 1
+        },
+        {
+          "text": "te (you)",
+          "priority": 1
+        },
+        {
+          "text": "lhe (to him/her)",
+          "priority": 1
+        },
+        {
+          "text": "nos (us)",
+          "priority": 1
+        },
+        {
+          "text": "mim (me)",
+          "priority": 1
+        },
+        {
+          "text": "em baixo (under)",
+          "priority": 1
+        },
+        {
+          "text": "quanto (مَن/أين/كيف/ماذا/كم)",
+          "priority": 1
+        },
+        {
+          "text": "lhes (to them)",
+          "priority": 3
+        },
+        {
+          "text": "vos (you pl)",
+          "priority": 3
+        },
+        {
+          "text": "ti (you)",
+          "priority": 3
+        },
+        {
+          "text": "si (yourself)",
+          "priority": 3
+        },
+        {
+          "text": "manda-me",
+          "priority": 2
+        },
+        {
+          "text": "dou-lhe",
+          "priority": 2
+        },
+        {
+          "text": "para ti",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-125",
+      "lesson": 125,
+      "title": "ملخص الاجتماع",
+      "words": [
+        {
+          "text": "o resumo",
+          "priority": 1
+        },
+        {
+          "text": "responsável",
+          "priority": 1
+        },
+        {
+          "text": "prazo (موعد نهائي)",
+          "priority": 1
+        },
+        {
+          "text": "o próximo passo",
+          "priority": 1
+        },
+        {
+          "text": "a reunião",
+          "priority": 1
+        },
+        {
+          "text": "revisão (مراجعة)",
+          "priority": 1
+        },
+        {
+          "text": "quase (almost)",
+          "priority": 1
+        },
+        {
+          "text": "bastante (a lot / quite)",
+          "priority": 1
+        },
+        {
+          "text": "então",
+          "priority": 2
+        },
+        {
+          "text": "decidimos que…",
+          "priority": 2
+        },
+        {
+          "text": "fico responsável por…",
+          "priority": 2
+        },
+        {
+          "text": "Então, decidimos que… (يبقى قررنا إن…)",
+          "priority": 2
+        },
+        {
+          "text": "O próximo passo é… (الخطوة الجاية هي…)",
+          "priority": 2
+        },
+        {
+          "text": "Aconteceu… e preciso de… (حصل… ومحتاج…)",
+          "priority": 2
+        },
+        {
+          "text": "O problema é que… (المشكلة إن…)",
+          "priority": 2
+        },
+        {
+          "text": "Só para confirmar,… (بس للتأكيد…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-126",
+      "lesson": 126,
+      "title": "مراجعة: حياة أطول في البرتغال",
+      "words": []
+    },
+    {
+      "topic": "pl-127",
+      "lesson": 127,
+      "title": "لما تنسى الكلمة",
+      "words": [
+        {
+          "text": "a coisa",
+          "priority": 1
+        },
+        {
+          "text": "significar (يعني)",
+          "priority": 1
+        },
+        {
+          "text": "explicar (يشرح)",
+          "priority": 1
+        },
+        {
+          "text": "parecido",
+          "priority": 1
+        },
+        {
+          "text": "mal-entendido (سوء تفاهم)",
+          "priority": 1
+        },
+        {
+          "text": "engano (غلط)",
+          "priority": 1
+        },
+        {
+          "text": "o lado (the side)",
+          "priority": 1
+        },
+        {
+          "text": "o centro (وسط المدينة)",
+          "priority": 1
+        },
+        {
+          "text": "é uma coisa que…",
+          "priority": 2
+        },
+        {
+          "text": "serve para…",
+          "priority": 2
+        },
+        {
+          "text": "Não me lembro da palavra, mas é… (مش فاكر الكلمة، بس هو…)",
+          "priority": 2
+        },
+        {
+          "text": "É uma coisa que se usa para… (ده شيء بنستخدمه عشان…)",
+          "priority": 2
+        },
+        {
+          "text": "Como se diz… em português? (إزاي نقول… بالبرتغالي؟)",
+          "priority": 2
+        },
+        {
+          "text": "Não era isso que eu queria dizer. (مش ده اللي كنت أقصده.)",
+          "priority": 2
+        },
+        {
+          "text": "O que quero dizer é… (اللي أقصده هو…)",
+          "priority": 2
+        },
+        {
+          "text": "Acho que houve um engano. (أعتقد إن حصل سوء فهم.)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-128",
+      "lesson": 128,
+      "title": "خطة الشهور الجاية",
+      "words": [
+        {
+          "text": "o futuro (the future)",
+          "priority": 1
+        },
+        {
+          "text": "o objetivo",
+          "priority": 1
+        },
+        {
+          "text": "plano (خطة)",
+          "priority": 1
+        },
+        {
+          "text": "melhorar (يتحسن)",
+          "priority": 1
+        },
+        {
+          "text": "quanto mais... mais/menos... (the more… the more/less…)",
+          "priority": 1
+        },
+        {
+          "text": "ensinar (to teach)",
+          "priority": 1
+        },
+        {
+          "text": "quero conseguir… até…",
+          "priority": 2
+        },
+        {
+          "text": "Estou a pensar em… (بفكر في…)",
+          "priority": 2
+        },
+        {
+          "text": "Primeiro vou…, depois… (الأول هعمل… وبعدها…)",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "topic": "pl-129",
+      "lesson": 129,
+      "title": "المهمة الأخيرة",
+      "words": [
+        {
+          "text": "descobrir (to discover / to find out)",
+          "priority": 1
+        },
+        {
+          "text": "parar (to stop)",
+          "priority": 1
+        },
+        {
+          "text": "Preciso de ajuda com… (محتاج مساعدة في…)",
+          "priority": 2
+        },
+        {
+          "text": "A situação é esta:… (الموضوع كالتالي…)",
+          "priority": 2
+        },
+        {
+          "text": "Só para confirmar,… (بس للتأكيد…)",
+          "priority": 2
+        },
+        {
+          "text": "Consigo explicar… (أقدر أشرح…)",
+          "priority": 2
+        },
+        {
+          "text": "Ainda preciso de praticar… (لسه محتاج أتدرب على…)",
+          "priority": 2
+        },
+        {
+          "text": "O meu próximo objetivo é… (هدفي الجاي هو…)",
+          "priority": 2
+        }
       ]
     }
   ]

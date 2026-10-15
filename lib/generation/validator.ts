@@ -331,6 +331,27 @@ function textOf(value) {
     .join(' ');
 }
 
+/** Normalize open-beat guard to a flat list of non-empty words. */
+function normalizeGuardWords(guard) {
+  if (guard == null) return [];
+  if (typeof guard === 'string') {
+    return guard
+      .split(/[,|]/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+  if (Array.isArray(guard)) {
+    return guard.map((w) => String(w || '').trim()).filter(Boolean);
+  }
+  if (typeof guard === 'object') {
+    const words = guard.requiredWords || guard.required_words || guard.words || [];
+    if (Array.isArray(words)) {
+      return words.map((w) => String(w || '').trim()).filter(Boolean);
+    }
+  }
+  return [];
+}
+
 function linePt(line) {
   if (!line || typeof line !== 'object') return '';
   return String(line.pt || line.alt_pt || '').trim();
@@ -362,7 +383,15 @@ function wordBankCount(raw) {
  * Structure-only validator for a story pack.
  * @returns {{ ok: boolean, errors: object[], warnings: object[] }}
  */
-function validatePack(pack, { allowedWords = [], nucleus = [], spec = null } = {}) {
+/**
+ * @param {any} pack
+ * @param {{ allowedWords?: any[], nucleus?: any[], spec?: any }} [ctx]
+ * @returns {{ ok: boolean, errors: any[], warnings: any[] }}
+ */
+function validatePack(pack, ctx = {}) {
+  const allowedWords = /** @type {any[]} */ (ctx.allowedWords ?? []);
+  const nucleus = /** @type {any[]} */ (ctx.nucleus ?? []);
+  const spec = ctx.spec ?? null;
   const errors = [];
   const warnings = [];
 
@@ -378,6 +407,32 @@ function validatePack(pack, { allowedWords = [], nucleus = [], spec = null } = {
         code: 'missing_field',
         path: field,
         message: `Missing required field: ${field}`,
+      });
+    }
+  }
+
+  const grammarCard = pack.grammar_card || pack.grammarCard;
+  if (!grammarCard || typeof grammarCard !== 'object') {
+    warnings.push({
+      code: 'missing_grammar_card',
+      path: 'grammar_card',
+      message: 'Pack is missing grammar_card (ليـه؟ / tool-why)',
+    });
+  } else {
+    const card = /** @type {Record<string, unknown>} */ (grammarCard);
+    if (!String(card.rule_ar || card.ruleAr || '').trim()) {
+      warnings.push({
+        code: 'missing_grammar_card',
+        path: 'grammar_card.rule_ar',
+        message: 'grammar_card needs rule_ar',
+      });
+    }
+    const examples = Array.isArray(card.examples) ? card.examples : [];
+    if (examples.length < 2) {
+      warnings.push({
+        code: 'missing_grammar_card',
+        path: 'grammar_card.examples',
+        message: 'grammar_card needs two examples',
       });
     }
   }
@@ -409,6 +464,11 @@ function validatePack(pack, { allowedWords = [], nucleus = [], spec = null } = {
     });
   }
   const sceneIds = new Set();
+  const seenSceneWordPt = new Map();
+  const isReviewSpec =
+    typeof spec?.pattern === 'string' &&
+    /بدون قواعد|review/i.test(String(spec.pattern));
+
   scenes.forEach((scene, idx) => {
     const id = scene?.id;
     if (!id) {
@@ -419,15 +479,169 @@ function validatePack(pack, { allowedWords = [], nucleus = [], spec = null } = {
       });
     } else sceneIds.add(id);
     requireText(errors, scene?.title_ar, `scenes[${idx}].title_ar`);
+
+    const words = Array.isArray(scene?.words) ? scene.words : null;
+    const sceneId = String(id || '').toLowerCase();
+    const isS03 = sceneId === 's03' || idx === 2;
+    const isEarly = sceneId === 's01' || sceneId === 's02' || idx === 0 || idx === 1;
+
+    if (isReviewSpec && words && words.length > 0) {
+      warnings.push({
+        code: 'scene_words_review',
+        path: `scenes[${idx}].words`,
+        message: `Review lesson scene should have empty words at scenes[${idx}]`,
+      });
+    }
+
+    if (isS03 && words && words.length > 0) {
+      warnings.push({
+        code: 'scene_words_on_s03',
+        path: `scenes[${idx}].words`,
+        message: `s03 scene should have empty words at scenes[${idx}]`,
+      });
+    } else if (isEarly && !isS03 && !isReviewSpec) {
+      const count = words ? words.filter(Boolean).length : 0;
+      if (count < 3 || count > 5) {
+        warnings.push({
+          code: 'missing_scene_words',
+          path: `scenes[${idx}].words`,
+          message: `s01/s02 scene words should have 3 to 5 items at scenes[${idx}]`,
+        });
+      }
+    }
+
+    if (words) {
+      words.forEach((entry, wi) => {
+        const path = `scenes[${idx}].words[${wi}]`;
+        const pt = String(entry?.pt || '').trim();
+        const ar = textOf(entry?.ar || entry?.meaning || entry);
+        const arz = String(entry?.arz || entry?.pronunciation || '').trim();
+        if (!pt) {
+          warnings.push({
+            code: 'missing_scene_words',
+            path: `${path}.pt`,
+            message: `Scene word missing pt at ${path}`,
+          });
+          return;
+        }
+        if (!ar) {
+          warnings.push({
+            code: 'missing_scene_words',
+            path: `${path}.ar`,
+            message: `Scene word missing ar at ${path}`,
+          });
+        }
+        if (ar && !arz) {
+          warnings.push({
+            code: 'missing_scene_word_arz',
+            path: `${path}.arz`,
+            message: `Scene word needs arz at ${path}`,
+          });
+        }
+        visibleSlot(errors, pt, `${path}.pt`);
+        visibleSlot(errors, ar, `${path}.ar`);
+        const key = pt.toLowerCase().normalize('NFC');
+        if (seenSceneWordPt.has(key)) {
+          warnings.push({
+            code: 'scene_word_duplicate',
+            path: `${path}.pt`,
+            message: `Scene word "${pt}" already listed at ${seenSceneWordPt.get(key)}`,
+          });
+        } else {
+          seenSceneWordPt.set(key, path);
+        }
+      });
+    }
   });
 
   const beats = Array.isArray(pack.beats) ? pack.beats : [];
-  if (beats.length < 8 || beats.length > 14) {
+  if (!Array.isArray(pack.beats) || beats.length === 0) {
     errors.push({
-      code: 'beat_count',
+      code: 'no_beats',
       path: 'beats',
-      message: `Beat count ${beats.length} outside 8 to 14`,
+      message: 'Pack has no beats',
     });
+  }
+
+  const cueForbidden = /\b(asks|invites|offers|suggests|then)\b/i;
+  const SLOT_IN_ACCEPTED = /\[(?:NAME|CITY|NUMBER|PLACE)\]/i;
+  const questionFingerprints = new Map(); // key: speaker|fingerprint → beat path
+
+  function normalizeQuestionPt(pt) {
+    return String(pt || '')
+      .normalize('NFC')
+      .toLowerCase()
+      .replace(/[.,!?;:…¿¡'"«»""''()[\]{}]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  /** Question-word + first content verb, for duplicate-ask detection. */
+  function questionFingerprint(pt) {
+    const norm = normalizeQuestionPt(pt);
+    if (!norm) return '';
+    if (/\boutra vez\b/.test(norm) || /\bmesmo\b/.test(norm)) {
+      return `repeat:${norm}`;
+    }
+    const qWords = [
+      'como',
+      'onde',
+      'quando',
+      'quanto',
+      'quanta',
+      'quantos',
+      'quantas',
+      'qual',
+      'quais',
+      'quem',
+      'que',
+      'o que',
+      'por que',
+      'porque',
+    ];
+    let qWord = '';
+    for (const w of qWords) {
+      if (norm === w || norm.startsWith(`${w} `)) {
+        qWord = w;
+        break;
+      }
+    }
+    if (!qWord && !norm.includes('?')) return '';
+    const tokens = norm.split(' ').filter(Boolean);
+    const skip = new Set([
+      ...qWords,
+      'o',
+      'a',
+      'os',
+      'as',
+      'um',
+      'uma',
+      'de',
+      'do',
+      'da',
+      'dos',
+      'das',
+      'te',
+      'se',
+      'me',
+      'lhe',
+      'tu',
+      'voce',
+      'você',
+      'é',
+      'e',
+      'está',
+      'esta',
+    ]);
+    const verb = tokens.find((t) => !skip.has(t) && t !== qWord) || '';
+    return `${qWord || '?'}|${verb}`;
+  }
+
+  function sameAsk(a, b) {
+    const fa = questionFingerprint(a);
+    const fb = questionFingerprint(b);
+    if (!fa || !fb) return normalizeQuestionPt(a) === normalizeQuestionPt(b) && Boolean(normalizeQuestionPt(a));
+    return fa === fb;
   }
 
   beats.forEach((beat, idx) => {
@@ -471,7 +685,34 @@ function validatePack(pack, { allowedWords = [], nucleus = [], spec = null } = {
       beat.word_bank.forEach((entry, wi) => visibleSlot(errors, textOf(entry), `${path}.word_bank[${wi}]`));
     }
 
+    const lineExplain = beat.line_explain ?? beat.lineExplain;
+    if (!textOf(lineExplain)) {
+      warnings.push({
+        code: 'missing_line_explain',
+        path: `${path}.line_explain`,
+        message: `Beat needs line_explain at ${path}`,
+      });
+    }
+
+    const bankCount = wordBankCount(beat.word_bank);
     const difficulty = beat.difficulty;
+    if (difficulty === 'guided') {
+      if (bankCount < 3 || bankCount > 5) {
+        warnings.push({
+          code: 'word_bank_count',
+          path: `${path}.word_bank`,
+          message: `Guided beat word_bank should have 3 to 5 pieces at ${path}`,
+        });
+      }
+    } else if (difficulty === 'supported' || difficulty === 'open') {
+      if (bankCount < 3 || bankCount > 6) {
+        warnings.push({
+          code: 'word_bank_count',
+          path: `${path}.word_bank`,
+          message: `${difficulty} beat word_bank should have 3 to 6 pieces at ${path}`,
+        });
+      }
+    }
     if (DIFFICULTY_ORDER[difficulty] == null) {
       errors.push({
         code: 'difficulty_order',
@@ -490,6 +731,98 @@ function validatePack(pack, { allowedWords = [], nucleus = [], spec = null } = {
         });
       }
     }
+
+    // Guard/criterion only for kind open. Difficulty open + kind known is code-graded.
+    if (kind === 'open') {
+      const guard = beat.guard ?? beat.code_guard ?? beat.codeGuard;
+      const guardWords = normalizeGuardWords(guard);
+      if (guardWords.length === 0) {
+        errors.push({
+          code: 'empty_guard',
+          path: `${path}.guard`,
+          message: `Open beat with empty guard at ${path}`,
+        });
+      } else if (guardWords.length !== 1) {
+        errors.push({
+          code: 'bad_guard',
+          path: `${path}.guard`,
+          message: `Open beat guard must be a list with exactly one word at ${path}`,
+        });
+      } else {
+        const frameText = String(beat.frame || beat.sentence_frame || beat.sentenceFrame || '')
+          .toLowerCase()
+          .normalize('NFC');
+        const word = guardWords[0].toLowerCase().normalize('NFC');
+        if (!frameText.includes(word)) {
+          errors.push({
+            code: 'bad_guard',
+            path: `${path}.guard`,
+            message: `Open beat guard word must appear in frame at ${path}`,
+          });
+        }
+      }
+      const hint = beat.hint_note ?? beat.hintNote;
+      if (!String(hint || '').trim()) {
+        errors.push({
+          code: 'missing_hint_note',
+          path: `${path}.hint_note`,
+          message: `Open beat needs hint_note at ${path}`,
+        });
+      }
+      const accepted = Array.isArray(beat.accepted) ? beat.accepted : [];
+      if (accepted.some((a) => SLOT_IN_ACCEPTED.test(String(a)))) {
+        errors.push({
+          code: 'open_with_slot',
+          path: `${path}.accepted`,
+          message: `Open beat must not use personal slots; use kind known at ${path}`,
+        });
+      }
+    } else if (difficulty === 'open') {
+      const hint = beat.hint_note ?? beat.hintNote;
+      if (!String(hint || '').trim()) {
+        errors.push({
+          code: 'missing_hint_note',
+          path: `${path}.hint_note`,
+          message: `Open-difficulty known beat needs hint_note at ${path}`,
+        });
+      }
+    }
+
+    const cue = String(beat.reaction_cue || beat.reactionCue || '');
+    if (cue.includes('?') || cueForbidden.test(cue)) {
+      errors.push({
+        code: 'reaction_cue_shape',
+        path: `${path}.reaction_cue`,
+        message: `reaction_cue must be a statement (no ?, asks/invites/offers/suggests/then) at ${path}`,
+      });
+    }
+
+    if (difficulty === 'supported' && Array.isArray(beat.accepted) && beat.accepted[0]) {
+      const tipText = textOf(beat.coach_tip).toLowerCase();
+      const firstAccepted = String(beat.accepted[0]).trim().toLowerCase();
+      if (firstAccepted && tipText.includes(firstAccepted)) {
+        errors.push({
+          code: 'supported_tip_leak',
+          path: `${path}.coach_tip`,
+          message: `Supported coach_tip contains the full first accepted answer at ${path}`,
+        });
+      }
+    }
+
+    const speaker = String(beat.speaker || '').trim().toLowerCase();
+    const fp = questionFingerprint(line.pt);
+    if (speaker && fp) {
+      const key = `${speaker}|${fp}`;
+      if (questionFingerprints.has(key)) {
+        errors.push({
+          code: 'duplicate_question',
+          path: `${path}.line.pt`,
+          message: `Same speaker asks the same thing as ${questionFingerprints.get(key)} at ${path}`,
+        });
+      } else {
+        questionFingerprints.set(key, path);
+      }
+    }
   });
 
   const hook = pack.closing_hook;
@@ -502,6 +835,19 @@ function validatePack(pack, { allowedWords = [], nucleus = [], spec = null } = {
     });
   }
   visibleSlot(errors, textOf(hook), 'closing_hook');
+
+  if (hookPt) {
+    beats.forEach((beat, idx) => {
+      const pt = beat?.line?.pt;
+      if (pt && sameAsk(hookPt, pt)) {
+        errors.push({
+          code: 'closing_matches_beat',
+          path: 'closing_hook.pt',
+          message: `closing_hook.pt matches beats[${idx}].line.pt`,
+        });
+      }
+    });
+  }
 
   const assessment = Array.isArray(pack.assessment) ? pack.assessment : [];
   assessment.forEach((task, idx) => {
@@ -570,38 +916,79 @@ function validatePack(pack, { allowedWords = [], nucleus = [], spec = null } = {
     }
   });
 
-  // Word-scope warning
-  const allow = new Set(
-    [...allowedWords.map((w) => (w.text || w).toLowerCase()), ...nucleus.map((w) => String(w).toLowerCase())]
-  );
+  // Word-scope warning: compare single words, not whole phrases.
+  function tokenizeWords(text) {
+    return String(text)
+      .toLowerCase()
+      .normalize('NFC')
+      .replace(/\[[a-z_]+\]/gi, ' ')
+      .replace(/[.,!?;:…¿¡'"«»""''()[\]{}]/g, ' ')
+      .split(/\s+/)
+      .map((w) => w.trim())
+      .filter((w) => w.length > 1);
+  }
+
+  const allowWords = new Set();
+  for (const entry of allowedWords) {
+    for (const word of tokenizeWords(entry?.text || entry)) allowWords.add(word);
+  }
+  for (const entry of nucleus) {
+    for (const word of tokenizeWords(entry)) allowWords.add(word);
+  }
   if (spec?.clusters) {
     for (const phrases of Object.values(spec.clusters)) {
-      for (const p of phrases || []) allow.add(String(p).toLowerCase());
+      for (const p of phrases || []) {
+        for (const word of tokenizeWords(p)) allowWords.add(word);
+      }
     }
   }
-  for (const w of spec?.support_words || []) allow.add(String(w).toLowerCase());
+  for (const w of spec?.support_words || []) {
+    for (const word of tokenizeWords(w)) allowWords.add(word);
+  }
+  for (const hear of spec?.hear || []) {
+    for (const word of tokenizeWords(hear?.pt || hear)) allowWords.add(word);
+  }
 
   walkStrings(pack, '', (text, path) => {
     if (!pathLooksPortuguese(path)) return;
-    // Soft heuristic: skip long sentences
-    if (text.split(/\s+/).length > 8) return;
-    const key = text.trim().toLowerCase();
-    if (key && allow.size && !allow.has(key) && !SLOT_RE.test(text)) {
-      // only warn for short phrase-like accepted answers
-      if (path.includes('accepted') || path.includes('word_bank')) {
+    if (
+      !(
+        path.includes('accepted') ||
+        path.includes('word_bank') ||
+        /\.words\[\d+\]\.pt$/.test(path) ||
+        path.includes('.words[')
+      )
+    ) {
+      return;
+    }
+    if (!allowWords.size) return;
+    for (const word of tokenizeWords(text)) {
+      if (!allowWords.has(word)) {
         warnings.push({
           code: 'word_scope',
           path,
-          message: `Possible out-of-allowlist phrase at ${path}: ${text}`,
+          message: `Out-of-allowlist word "${word}" at ${path}`,
         });
       }
     }
   });
 
+  // Only crash-hard issues block generation. Everything else is stored as a warning.
+  const HARD_CODES = new Set(['no_beats', 'empty_accepted', 'missing_scene']);
+  const hardErrors = [];
+  const softFromErrors = [];
+  for (const issue of errors) {
+    if (HARD_CODES.has(issue.code)) {
+      hardErrors.push(issue);
+    } else {
+      softFromErrors.push(issue);
+    }
+  }
+
   return {
-    ok: errors.length === 0,
-    errors,
-    warnings,
+    ok: hardErrors.length === 0,
+    errors: hardErrors,
+    warnings: [...warnings, ...softFromErrors],
   };
 }
 

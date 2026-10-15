@@ -3,12 +3,14 @@ import type {
   AssessmentTask,
   ExplanationExample,
   LessonPack,
+  SceneWord,
   StoryBeat,
   StoryLine,
 } from './lessons/types';
 import {
   PRAISE_PHRASES,
   type MessageType,
+  type PracticeFocus,
   type Progress,
   type TypedMessage,
 } from './progressTypes';
@@ -160,13 +162,19 @@ export function makeCharacterLine(speaker: string, line: StoryLine): TypedMessag
   };
 }
 
-export function makeCoachTip(ar: string, arz: string): TypedMessage {
+export function makeCoachTip(
+  ar: string,
+  arz: string,
+  opts?: { showWhyChip?: boolean },
+): TypedMessage {
   return {
     id: nextId(),
     role: 'assistant',
     type: 'coach',
     at: Date.now(),
     segments: [{ lang: 'ar', text: ar, pronunciation: arz || ar }],
+    coachKind: 'tip',
+    showWhyChip: opts?.showWhyChip === true,
   };
 }
 
@@ -176,6 +184,104 @@ export function makeRetryCoach(targetPt: string): TypedMessage {
   const ar = `الإجابة مش صح. خلّينا نعيد: ${target}. جرّب تاني.`;
   const arz = `الإِجابَة مِش صَح. خَلِّينا نِعيد: ${target}. جَرِّب تاني.`;
   return makeCoachTip(ar, arz);
+}
+
+/** Pack note or near-miss fix line (Egyptian / mixed, shown as coach). */
+export function makeCoachNote(text: string, pronunciation?: string): TypedMessage {
+  const ar = text.trim();
+  return {
+    id: nextId(),
+    role: 'assistant',
+    type: 'coach',
+    at: Date.now(),
+    segments: [{ lang: 'ar', text: ar, pronunciation: pronunciation?.trim() || ar }],
+    coachKind: 'note',
+  };
+}
+
+/** line_explain coach bubble (stuck step 1). */
+export function makeLineExplainCoach(explain: { ar: string; arz: string }): TypedMessage {
+  return {
+    id: nextId(),
+    role: 'assistant',
+    type: 'coach',
+    at: Date.now(),
+    segments: [{ lang: 'ar', text: explain.ar, pronunciation: explain.arz || explain.ar }],
+    coachKind: 'explain',
+  };
+}
+
+/** Stuck hint card: frame + tappable word_bank pieces. */
+export function makeHintCardMessage(opts: {
+  frame?: string;
+  words: { pt: string; meaning: string }[];
+}): TypedMessage {
+  return {
+    id: nextId(),
+    role: 'assistant',
+    type: 'hint',
+    at: Date.now(),
+    segments: [],
+    label: 'مساعدة',
+    hintCard: {
+      frame: opts.frame?.trim() || undefined,
+      words: opts.words,
+    },
+  };
+}
+
+/** In-thread scene vocabulary carousel (كلمات هنحتاجها). */
+export function makeSceneWordCardMessage(
+  pack: LessonPack,
+  sceneId: string,
+): TypedMessage | null {
+  const words = wordsForScene(pack, sceneId);
+  if (!words.length) return null;
+  const scene = pack.scenes.find((row) => row.id === sceneId);
+  return {
+    id: nextId(),
+    role: 'assistant',
+    type: 'scene-words',
+    at: Date.now(),
+    segments: [],
+    label: 'كلمات هنحتاجها',
+    sceneWordCard: {
+      sceneId,
+      titleAr: scene?.titleAr,
+      words: words.map((w: SceneWord) =>
+        w.emoji ? { pt: w.pt, ar: w.ar, arz: w.arz, emoji: w.emoji } : { pt: w.pt, ar: w.ar, arz: w.arz },
+      ),
+    },
+  };
+}
+
+/** Lesson grammar_card as an explanation bubble. */
+export function makeGrammarCardMessage(card: {
+  ruleAr: string;
+  ruleArz: string;
+  examples: { pt: string; meaningAr: string }[];
+  contrastAr?: string;
+}): TypedMessage {
+  return {
+    id: nextId(),
+    role: 'assistant',
+    type: 'explanation',
+    at: Date.now(),
+    segments: [{ lang: 'ar', text: card.ruleAr, pronunciation: card.ruleArz || card.ruleAr }],
+    examples: card.examples,
+    contrastAr: card.contrastAr?.trim() || undefined,
+  };
+}
+
+/** After grammar card: invite him back into the beat. */
+export function makeYallaNesta3melha(): TypedMessage {
+  return makeCoachNote('يلا نستخدمها', 'يَلّا نِسْتَخْدِمها');
+}
+
+/** Near-miss spelling fix when no authored anticipated_wrong note exists. */
+export function makeNearMissFixCoach(correctWord: string): TypedMessage {
+  const form = correctWord.trim() || '…';
+  return makeCoachNote(`بنكتبها ${form}.`, `بِنِكْتِبها ${form}.`);
 }
 
 /** Question with no story character (assessment). */
@@ -204,8 +310,51 @@ export function beatShowsPreHint(beat: StoryBeat | null | undefined, alt?: boole
   return beat.difficulty === 'guided' || beat.difficulty === 'supported';
 }
 
-/** Narration when the scene changes, the character line, and a coach pre-hint (guided/supported). */
-export function presentBeat(
+export function wordsForScene(pack: LessonPack, sceneId: string): SceneWord[] {
+  const scene = pack.scenes.find((row) => row.id === sceneId);
+  return scene?.words?.length ? scene.words : [];
+}
+
+export function sceneHasWordCard(pack: LessonPack, sceneId: string): boolean {
+  return wordsForScene(pack, sceneId).length > 0;
+}
+
+/** Scene change (and not an alt re-ask) that still needs a vocabulary card. */
+export function sceneNeedsWordCard(
+  pack: LessonPack,
+  index: number,
+  focus: Pick<PracticeFocus, 'sceneWordCardsSeen'> | null | undefined,
+  opts?: { alt?: boolean },
+): boolean {
+  if (opts?.alt) return false;
+  const beat = currentBeat(pack, index);
+  if (!beat || !sceneHasWordCard(pack, beat.sceneId)) return false;
+  const prev = index > 0 ? pack.beats[index - 1] : null;
+  const sceneChanged = !prev || prev.sceneId !== beat.sceneId;
+  if (!sceneChanged) return false;
+  const seen = focus?.sceneWordCardsSeen ?? [];
+  return !seen.includes(beat.sceneId);
+}
+
+/** Narration only when the scene changes (no tip/character). */
+export function presentBeatHead(
+  pack: LessonPack,
+  index: number,
+  opts?: { alt?: boolean },
+): TypedMessage[] {
+  const beat = currentBeat(pack, index);
+  if (!beat || opts?.alt) return [];
+  const prev = index > 0 ? pack.beats[index - 1] : null;
+  const sceneChanged = !prev || prev.sceneId !== beat.sceneId;
+  if (!sceneChanged || !beat.narrationAr) return [];
+  return [makeNarration(beat.narrationAr)];
+}
+
+/**
+ * Coach tip + character line (no narration).
+ * Guided: tip → character. Supported/open: character → tip.
+ */
+export function presentBeatTail(
   pack: LessonPack,
   index: number,
   opts?: { alt?: boolean },
@@ -213,20 +362,45 @@ export function presentBeat(
   const beat = currentBeat(pack, index);
   if (!beat) return [];
   const out: TypedMessage[] = [];
-  const prev = index > 0 ? pack.beats[index - 1] : null;
-  const sceneChanged = !prev || prev.sceneId !== beat.sceneId;
-  if (!opts?.alt && sceneChanged && beat.narrationAr) {
-    out.push(makeNarration(beat.narrationAr));
-  }
-  out.push(makeCharacterLine(beat.speaker, opts?.alt ? beat.altLine : beat.line));
-  if (beatShowsPreHint(beat, opts?.alt) && beat.coachTip) {
-    out.push(makeCoachTip(beat.coachTip.ar, beat.coachTip.arz));
+  const tip =
+    beatShowsPreHint(beat, opts?.alt) && beat.coachTip
+      ? makeCoachTip(beat.coachTip.ar, beat.coachTip.arz, {
+          showWhyChip: Boolean(pack.grammarCard),
+        })
+      : null;
+  const character = makeCharacterLine(beat.speaker, opts?.alt ? beat.altLine : beat.line);
+  if (beat.difficulty === 'guided') {
+    if (tip) out.push(tip);
+    out.push(character);
+  } else {
+    out.push(character);
+    if (tip) out.push(tip);
   }
   return out;
 }
 
+/**
+ * Narration when the scene changes, coach tip, and character line.
+ * Guided: narration → coach tip → character (tool first).
+ * Supported: narration → character → coach tip.
+ */
+export function presentBeat(
+  pack: LessonPack,
+  index: number,
+  opts?: { alt?: boolean },
+): TypedMessage[] {
+  return [...presentBeatHead(pack, index, opts), ...presentBeatTail(pack, index, opts)];
+}
+
 export function presentClosing(pack: LessonPack): TypedMessage {
-  return makeCharacterLine(pack.character.name, pack.closingHook);
+  const speaker = pack.closingHook.speaker?.trim() || pack.character.name;
+  return makeCharacterLine(speaker, pack.closingHook);
+}
+
+/** Farewell line after the friend bridge ends. */
+export function presentFarewell(pack: LessonPack): TypedMessage | null {
+  if (!pack.farewell?.pt?.trim()) return null;
+  return makeCharacterLine(pack.character.name, pack.farewell);
 }
 
 export function extractPlayablePt(segments: AuthoredSegment[]): string | undefined {

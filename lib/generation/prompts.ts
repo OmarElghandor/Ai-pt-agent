@@ -88,17 +88,14 @@ export function buildPackSystemPrompt(): string {
   return load('pack.md');
 }
 
-export function buildPackUserPrompt(
-  inputs: {
-    cefrLevel: string;
-    spec: unknown;
-    allowedWords: unknown;
-    nucleus: unknown;
-    cellForms: unknown;
-  },
-  opts?: { pack?: unknown; issues?: unknown },
-): string {
-  let body = `Write the story-lesson pack.
+export function buildPackUserPrompt(inputs: {
+  cefrLevel: string;
+  spec: unknown;
+  allowedWords: unknown;
+  nucleus: unknown;
+  cellForms: unknown;
+}): string {
+  return `Write the story-lesson pack.
 
 LEVEL: ${inputs.cefrLevel}
 
@@ -113,26 +110,8 @@ ${JSON.stringify(inputs.nucleus, null, 2)}
 
 CELL_FORMS:
 ${JSON.stringify(inputs.cellForms, null, 2)}
-`;
 
-  if (opts?.pack && opts?.issues) {
-    body += `
-
-FIX MODE
-PACK:
-${JSON.stringify(opts.pack, null, 2)}
-
-ISSUES:
-${JSON.stringify(opts.issues, null, 2)}
-
-Change only the fields named in ISSUES, keep every id, and return the full corrected pack as one valid JSON object.
-An open beat named in ISSUES must have frame (a Portuguese sentence start ending in …, never a slot) and word_bank (4 to 8 objects with pt and meaning, taken from ALLOWED_WORDS). A guided beat must have frame. A supported beat must have word_bank. Do not leave those arrays empty.
-`;
-  } else {
-    body +=
-      '\nReturn only one valid JSON object with keys intro_ar, intro_arz, character, scenes, beats, closing_hook, assessment. No markdown. No trailing commas. Fully closed.';
-  }
-  return body;
+Return only one valid JSON object with keys plan, intro_ar, intro_arz, character, scenes, beats, closing_hook (pt, ar, arz), assessment. No markdown. No trailing commas. Fully closed.`;
 }
 
 export function buildReviewerSystemPrompt(): string {

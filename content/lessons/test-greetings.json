@@ -9,10 +9,33 @@
   "introAr": "النهارده هتقابل جارتك ريتا وتسلم عليها.",
   "introArz": "النَّهَارْدَه هِتْقابِل جارْتَك ريتا وِتْسَلِّم عَلِيها.",
   "character": { "name": "Rita", "roleAr": "جارة" },
+  "grammarCard": {
+    "ruleAr": "لما نحيّي حد في البرتغال بنقول [Olá]، مش [Oi].",
+    "ruleArz": "لَمّا نِحَيِّي حَد في البُرتِغال بِنْقول [Olá]، مِش [Oi].",
+    "examples": [
+      { "pt": "Olá!", "meaningAr": "أهلاً!" },
+      { "pt": "Olá, tudo bem?", "meaningAr": "أهلاً، عامل إيه؟" }
+    ],
+    "contrastAr": "[Oi] دي برازيلية؛ في البرتغال بنقول [Olá]."
+  },
   "scenes": [
-    { "id": "s1", "titleAr": "الوصول" },
-    { "id": "s2", "titleAr": "التعرف" },
-    { "id": "s3", "titleAr": "الوداع" }
+    {
+      "id": "s1",
+      "titleAr": "الوصول",
+      "words": [
+        { "pt": "Olá", "ar": "أهلاً", "arz": "أَهْلاً", "emoji": "👋" },
+        { "pt": "Bom dia", "ar": "صباح الخير", "arz": "صَباح الخِير", "emoji": "☀️" }
+      ]
+    },
+    {
+      "id": "s2",
+      "titleAr": "التعرف",
+      "words": [
+        { "pt": "chamo-me", "ar": "اسمي", "arz": "اِسْمي", "emoji": "🪪" },
+        { "pt": "eu", "ar": "أنا", "arz": "أَنا" }
+      ]
+    },
+    { "id": "s3", "titleAr": "الوداع", "words": [] }
   ],
   "beats": [
     {
@@ -29,6 +52,15 @@
       },
       "reactionCue": "Rita is glad he greeted her and smiles.",
       "frame": "Olá",
+      "lineExplain": {
+        "ar": "بتسلم عليك، يعني محتاج ترد التحية.",
+        "arz": "بِتْسَلِّم عَلِيك، يَعْني مِحْتاج تِرُدّ التَحِيّة."
+      },
+      "wordBank": [
+        { "pt": "Olá", "meaning": "أهلاً" },
+        { "pt": "Bom dia", "meaning": "صباح الخير" },
+        { "pt": "tudo bem", "meaning": "عامل إيه" }
+      ],
       "kind": "known",
       "acceptedAnswers": ["Olá", "Olá!"],
       "anticipatedWrong": [
@@ -58,7 +90,19 @@
       "reactionCue": "Rita repeats his name and is happy to meet him.",
       "kind": "known",
       "acceptedAnswers": ["Chamo-me [NAME].", "Chamo-me [NAME]"],
-      "anticipatedWrong": [],
+      "anticipatedWrong": [
+        {
+          "answer": "Me chamo [NAME]",
+          "verdict": "wrong",
+          "feedback": [
+            {
+              "lang": "ar",
+              "text": "في البرتغال بنقول [Chamo-me]، و [Me chamo] دي برازيلي. جرّب تاني.",
+              "pronunciation": "في البُرتِغال بِنْقول [Chamo-me]، و [Me chamo] دي بَرازِيلي. جَرِّب تاني."
+            }
+          ]
+        }
+      ],
       "hintNote": "ابدأ بـ Chamo-me",
       "whyNote": "السؤال Como te chamas والإجابة Chamo-me مع اسمه.",
       "wordBank": [

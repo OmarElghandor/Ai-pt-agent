@@ -32,6 +32,16 @@ type Props = {
   sentenceFrame: string | null;
   onEndPractice?: () => void;
   canEndPractice?: boolean;
+  /** Disable composer / chips (e.g. while scene word card is blocking). */
+  controlsDisabled?: boolean;
+  /** Local reopen chip for scene words (scrolls to in-chat card). */
+  showSceneWordChip?: boolean;
+  onOpenSceneWords?: () => void;
+  /** Scene id currently gated — shows «يلا نبدأ» on matching scene-words message. */
+  sceneWordGateSceneId?: string | null;
+  onDismissSceneWords?: () => void;
+  /** When set, scroll this scene-words message into view (reopen chip). */
+  scrollToSceneId?: string | null;
 };
 
 export function ChatScreen({
@@ -54,12 +64,25 @@ export function ChatScreen({
   sentenceFrame,
   onEndPractice,
   canEndPractice,
+  controlsDisabled = false,
+  showSceneWordChip = false,
+  onOpenSceneWords,
+  sceneWordGateSceneId = null,
+  onDismissSceneWords,
+  scrollToSceneId = null,
 }: Props) {
   const bottomRef = useRef<HTMLDivElement>(null);
+  const locked = isBusy || controlsDisabled;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, status]);
+
+  useEffect(() => {
+    if (!scrollToSceneId) return;
+    const el = document.getElementById(`scene-words-${scrollToSceneId}`);
+    el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [scrollToSceneId, messages]);
 
   return (
     <>
@@ -97,13 +120,33 @@ export function ChatScreen({
                 </li>
               );
             }
+            const gateActive =
+              m.type === 'scene-words' &&
+              Boolean(m.sceneWordCard?.sceneId) &&
+              m.sceneWordCard!.sceneId === sceneWordGateSceneId;
             return (
               <li key={m.id} className="flex flex-col gap-1.5 items-start">
                 <TypedBubble
                   message={m}
                   onPlay={(segs) => onPlaySegments(segs)}
+                  onInsertWord={(pt) => setInput(input ? `${input} ${pt}` : pt)}
+                  onWhy={
+                    m.showWhyChip
+                      ? () =>
+                          onChip({
+                            id: 'why-grammar',
+                            label: 'ليه؟',
+                            action: { type: 'show-grammar-card' },
+                          })
+                      : undefined
+                  }
+                  sceneWordGateActive={gateActive}
+                  onDismissSceneWords={onDismissSceneWords}
                 />
-                {status !== 'streaming' && m.type !== 'praise' && m.type !== 'narration' ? (
+                {status !== 'streaming' &&
+                m.type !== 'praise' &&
+                m.type !== 'narration' &&
+                m.type !== 'scene-words' ? (
                   <button
                     type="button"
                     onClick={() => onPlaySegments(ttsSegmentsFor(m))}
@@ -117,9 +160,7 @@ export function ChatScreen({
           })}
         </ul>
 
-        {isBusy && (
-          <div className="mt-4 text-sm text-muted">بيكتب…</div>
-        )}
+        {isBusy && <div className="mt-4 text-sm text-muted">بيكتب…</div>}
 
         {error && (
           <p className="mt-4 text-center text-sm text-red-300">حصل خطأ: {error.message}</p>
@@ -139,10 +180,28 @@ export function ChatScreen({
       ) : null}
 
       <div className="px-3">
-        <ChipRow chips={chips} disabled={isBusy} onChip={onChip} />
+        {showSceneWordChip && onOpenSceneWords ? (
+          <div className="mb-2 flex justify-end">
+            <button
+              type="button"
+              onClick={onOpenSceneWords}
+              disabled={controlsDisabled}
+              className="rounded-full border border-accent-mint/35 bg-accent-mint/10 px-3 py-1.5 text-xs text-accent-mint disabled:opacity-40"
+            >
+              كلمات المشهد
+            </button>
+          </div>
+        ) : null}
+        <ChipRow chips={chips} disabled={locked} onChip={onChip} />
       </div>
       <form
-        onSubmit={onSubmit}
+        onSubmit={(e) => {
+          if (controlsDisabled) {
+            e.preventDefault();
+            return;
+          }
+          onSubmit(e);
+        }}
         className="safe-bottom flex items-center gap-2.5 px-4 pb-5 pt-2"
       >
         <div className="flex flex-1 items-center gap-2 rounded-full border border-border bg-surface/90 px-4 py-2.5 backdrop-blur">
@@ -152,7 +211,7 @@ export function ChatScreen({
             placeholder="اكتب رسالة..."
             dir="auto"
             className="min-w-0 flex-1 bg-transparent text-[15px] text-white outline-none placeholder:text-muted"
-            disabled={isBusy && status === 'submitted'}
+            disabled={controlsDisabled || (isBusy && status === 'submitted')}
           />
           <button
             type="button"
@@ -182,7 +241,7 @@ export function ChatScreen({
           <button
             type="submit"
             aria-label="إرسال"
-            disabled={!input.trim()}
+            disabled={controlsDisabled || !input.trim()}
             className="accent-gradient flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-[#04100e] shadow-lg shadow-teal-900/40 disabled:opacity-40"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="scale-x-[-1] translate-x-px">

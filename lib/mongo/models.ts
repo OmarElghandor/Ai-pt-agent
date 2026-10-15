@@ -4,6 +4,16 @@
  */
 import mongoose, { Schema, type InferSchemaType, type Model } from 'mongoose';
 
+const PRACTICE_LESSON_STATUSES = [
+  'spec',
+  'generating',
+  'live',
+  'reviewed',
+  'updating',
+  'failed',
+  'needs_review',
+] as const;
+
 const practiceLessonSchema = new Schema(
   {
     lesson_key: { type: String, required: true, index: true },
@@ -18,7 +28,7 @@ const practiceLessonSchema = new Schema(
     status: {
       type: String,
       required: true,
-      enum: ['spec', 'generating', 'live', 'reviewed', 'updating', 'failed'],
+      enum: PRACTICE_LESSON_STATUSES,
     },
     spec: { type: Schema.Types.Mixed, default: null },
     pack: { type: Schema.Types.Mixed, default: null },
@@ -146,10 +156,21 @@ export type PracticeNewAnswerDoc = InferSchemaType<typeof practiceNewAnswersSche
 };
 
 export function PracticeLessonModel(): Model<PracticeLessonDoc> {
-  return (
-    (mongoose.models.PracticeLessonOwned as Model<PracticeLessonDoc>) ||
-    mongoose.model<PracticeLessonDoc>('PracticeLessonOwned', practiceLessonSchema)
-  );
+  // Next.js HMR keeps the first-compiled model (old status enum without needs_review).
+  const cached = mongoose.models.PracticeLessonOwned as Model<PracticeLessonDoc> | undefined;
+  if (cached) {
+    const path = cached.schema.path('status') as
+      | (mongoose.SchemaType & { enumValues?: string[] })
+      | undefined;
+    const hasNeedsReview = path?.enumValues?.includes('needs_review');
+    if (!hasNeedsReview) {
+      delete mongoose.models.PracticeLessonOwned;
+      delete mongoose.connection.models.PracticeLessonOwned;
+    } else {
+      return cached;
+    }
+  }
+  return mongoose.model<PracticeLessonDoc>('PracticeLessonOwned', practiceLessonSchema);
 }
 
 export function PracticeGenerationJobModel(): Model<PracticeGenerationJobDoc> {
