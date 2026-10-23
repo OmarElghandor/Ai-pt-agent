@@ -14,6 +14,7 @@ type LessonRow = {
   generationStage: string | null;
   missingCells: string[];
   missingWords: string[];
+  source?: 'generated' | 'hand' | 'json' | null;
 };
 
 const LEARNER_KEY = 'pt-learner-id';
@@ -199,13 +200,15 @@ export default function LessonsPage() {
                         <StatusBadge status={row.uiStatus} />
                       </div>
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => void generateLesson(row, true)}
-                      className="mt-2 text-xs text-accent-mint"
-                    >
-                      ولّد تاني
-                    </button>
+                    {row.source !== 'hand' ? (
+                      <button
+                        type="button"
+                        onClick={() => void generateLesson(row, true)}
+                        className="mt-2 text-xs text-accent-mint"
+                      >
+                        ولّد تاني
+                      </button>
+                    ) : null}
                   </div>
                 </li>
               ))}

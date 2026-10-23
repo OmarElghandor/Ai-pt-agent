@@ -4,6 +4,8 @@ Nine phases, all in the `ai-agent-talk` repo (folder `ai-pt-agent`). Run each ph
 
 Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md` (the tie-breaker) and `01-architecture.md`. Build v2 under `app/(v2)`, `app/api/v2`, `lib/v2`, `components/v2`. Don't change the old `/lessons` and `/chat` pages unless the task says so."
 
+> **Status (2026-10-23):** Phases 0 and 1 are done. The conjugation seed is reviewed for ser, estar, ir, ter, dormir, falar, querer, poder, fazer, dizer, ver, sair, ficar and chegar (`verified: true`). The rule engine handles spelling changes (cheguei, fiquei, conheço, protejo) and computes `irregular` per form. Phases 2, 3 and 4 run in parallel, each on its own branch or worktree (`v2-phase2`, `v2-phase3`, `v2-phase4`), merged one at a time.
+
 > If Cursor already made a plan for "stateless grade/react endpoints with a shared secret", drop it. In the single-repo setup, the grader and the reactor are internal modules (Phase 6).
 
 ---
@@ -90,7 +92,7 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
 - Every block type has a fixture on `/v2-dev`.
 
 **Prompt**
-> Read docs/langify-v2/02-content-schema.md, 05-design-system.md, 06-screens.md (S2, S3). Open prototypes/ser-estar.html and prototypes/verb-endings.html: port their behaviour and timing. Build the 14 block components in components/v2/blocks, a Page player with guided, explore and static modes, Cover and Quiz, and the routes /day/[day] and /day/[day]/page/[pageId] rendering Day 6 from /api/v2/lessons/6. Ask answers POST to /api/v2/answers (stub it if Phase 4 isn't done).
+> Read docs/langify-v2/02-content-schema.md, 05-design-system.md, 06-screens.md (S2, S3). Open prototypes/ser-estar.html and prototypes/verb-endings.html: port their behaviour and timing. Build the 14 block components in components/v2/blocks, a Page player with guided, explore and static modes, Cover and Quiz, and the routes /day/[day] and /day/[day]/page/[pageId] rendering Day 6 from /api/v2/lessons/6. Ask answers POST to /api/v2/answers (stub it if Phase 4 isn't done). Also apply the Phase 0 review decisions: compare panels side by side down to 360px, highlight only the active row, headers never dimmed, and the CaptionBar with labeled chapter segments. Resolved forms come with {stem, ending, irregular}: color endings by verb class and mark irregular forms purple with ⚡.
 
 ---
 
@@ -117,7 +119,7 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
 - Days 1–3 generate, pass validation, have images and audio, render in the player and can be published.
 
 **Prompt**
-> Read the sections of docs/langify-v2/03-generation-and-learning.md named in 07-build-plan Phase 3, the PAGES block at the end of 02-content-schema.md, and 04-curriculum.md. Create content/v2/plan/pt-PT.days.json from the days 1–30 table, and lib/v2/generation/lesson with the pipeline described in Phase 3 (system prompt text verbatim from 03, with PAGE STEPS replaced by PAGES; the model never writes conjugated forms). Add the admin route and a /v2-admin review page. Pilot days 1–3.
+> Read the sections of docs/langify-v2/03-generation-and-learning.md named in 07-build-plan Phase 3, the PAGES block at the end of 02-content-schema.md, and 04-curriculum.md. Create content/v2/plan/pt-PT.days.json from the days 1–30 table, and lib/v2/generation/lesson with the pipeline described in Phase 3 (system prompt text verbatim from 03, with PAGE STEPS replaced by PAGES; the model never writes conjugated forms). Add the admin route and a /v2-admin review page. Pilot days 1–3. VERB_TABLE in the request lists only verbs with verified: true. Run the validator in strict mode before saving. Use examples/day06-example.json (and gold days 1–3 when they exist) as the in-prompt examples.
 
 ---
 
@@ -150,7 +152,7 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
   - a listening answer never calls a model.
 
 **Prompt**
-> Read docs/langify-v2/00-decisions.md §5–8 and the sections of 03 named in 07-build-plan Phase 4. Build the v2 progress models, lib/v2/answers (layered validation), POST /api/v2/answers as the only writer of progress, the question bank and session builder, and the cards endpoints. Write the unit tests listed under "Done when".
+> Read docs/langify-v2/00-decisions.md §5–8 and the sections of 03 named in 07-build-plan Phase 4. Build the v2 progress models, lib/v2/answers (layered validation), POST /api/v2/answers as the only writer of progress, the question bank and session builder, and the cards endpoints. Write the unit tests listed under "Done when". Item ids and skills must match lib/v2/content types exactly (skills: listening | reading | speaking | writing). Import the types; don't redefine them.
 
 ---
 

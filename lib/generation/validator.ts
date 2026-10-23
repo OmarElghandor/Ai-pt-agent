@@ -797,6 +797,60 @@ function validatePack(pack, ctx = {}) {
       });
     }
 
+    const skill = String(beat.skill || '').trim();
+    const SKILLS = new Set(['listening', 'reading', 'speaking', 'writing']);
+    if (!SKILLS.has(skill)) {
+      errors.push({
+        code: 'missing_skill',
+        path: `${path}.skill`,
+        message: `Beat needs skill (listening|reading|speaking|writing) at ${path}`,
+      });
+    } else if (skill === 'listening') {
+      const opts = beat.listening_options || beat.listeningOptions;
+      if (!Array.isArray(opts) || opts.length < 2) {
+        errors.push({
+          code: 'missing_listening_options',
+          path: `${path}.listening_options`,
+          message: `Listening beat needs at least 2 listening_options at ${path}`,
+        });
+      } else {
+        const correct = opts.filter((o) => o && o.correct).length;
+        if (correct !== 1) {
+          errors.push({
+            code: 'bad_listening_options',
+            path: `${path}.listening_options`,
+            message: `Listening beat needs exactly one correct option at ${path}`,
+          });
+        }
+      }
+    } else if (skill === 'reading') {
+      const art = beat.reading_artifact || beat.readingArtifact;
+      if (!art || typeof art !== 'object') {
+        errors.push({
+          code: 'missing_reading_artifact',
+          path: `${path}.reading_artifact`,
+          message: `Reading beat needs reading_artifact at ${path}`,
+        });
+      } else {
+        const kinds = new Set(['receipt', 'sign', 'label', 'menu']);
+        if (!kinds.has(String(art.kind || ''))) {
+          errors.push({
+            code: 'bad_reading_artifact',
+            path: `${path}.reading_artifact.kind`,
+            message: `reading_artifact.kind must be receipt|sign|label|menu at ${path}`,
+          });
+        }
+        const opts = art.options;
+        if (!Array.isArray(opts) || opts.length < 2) {
+          errors.push({
+            code: 'missing_reading_options',
+            path: `${path}.reading_artifact.options`,
+            message: `Reading artifact needs at least 2 options at ${path}`,
+          });
+        }
+      }
+    }
+
     if (difficulty === 'supported' && Array.isArray(beat.accepted) && beat.accepted[0]) {
       const tipText = textOf(beat.coach_tip).toLowerCase();
       const firstAccepted = String(beat.accepted[0]).trim().toLowerCase();
@@ -973,8 +1027,306 @@ function validatePack(pack, ctx = {}) {
     }
   });
 
+  // v4 soft checks: script match, duplicate s01/s02 lines, yes/no mismatch.
+  const scriptTurns = Array.isArray(pack.script) ? pack.script : null;
+  if (scriptTurns && scriptTurns.length > 0) {
+    const scriptPts = scriptTurns
+      .map((turn) => normalizeQuestionPt(turn?.pt))
+      .filter(Boolean);
+
+    function sentenceInScript(pt) {
+      const full = normalizeQuestionPt(pt);
+      if (!full) return true;
+      if (scriptPts.some((s) => s === full || s.includes(full) || full.includes(s))) {
+        return true;
+      }
+      // Joined lines: each sentence must appear in some script turn.
+      const parts = String(pt || '')
+        .split(/(?<=[.!?])\s+/)
+        .map((p) => normalizeQuestionPt(p))
+        .filter(Boolean);
+      if (parts.length <= 1) return false;
+      return parts.every((part) =>
+        scriptPts.some((s) => s === part || s.includes(part) || part.includes(s)),
+      );
+    }
+
+    beats.forEach((beat, idx) => {
+      const path = `beats[${idx}]`;
+      const line = beat?.line;
+      const linePt =
+        typeof line === 'string'
+          ? line.trim()
+          : line && typeof line === 'object'
+            ? String(line.pt || '').trim()
+            : '';
+      if (linePt && !sentenceInScript(linePt)) {
+        warnings.push({
+          code: 'line_not_in_script',
+          path: `${path}.line.pt`,
+          message: `Beat line not found in script at ${path}`,
+        });
+      }
+      const replyPt =
+        beat?.reply && typeof beat.reply === 'object'
+          ? String(beat.reply.pt || '').trim()
+          : '';
+      if (replyPt && !sentenceInScript(replyPt)) {
+        warnings.push({
+          code: 'reply_not_in_script',
+          path: `${path}.reply.pt`,
+          message: `Beat reply not found in script at ${path}`,
+        });
+      }
+    });
+  }
+
+  function beatLinePt(beat) {
+    const line = beat?.line;
+    if (!line) return '';
+    if (typeof line === 'string') return line.trim();
+    return String(line.pt || '').trim();
+  }
+
+  const earlyLineSeen = new Map();
+  beats.forEach((beat, idx) => {
+    const scene = String(beat?.scene || beat?.scene_id || beat?.sceneId || '');
+    if (scene !== 's01' && scene !== 's02') return;
+    const norm = normalizeQuestionPt(beatLinePt(beat));
+    if (!norm) return;
+    if (earlyLineSeen.has(norm)) {
+      warnings.push({
+        code: 'duplicate_line',
+        path: `beats[${idx}].line.pt`,
+        message: `Duplicate s01/s02 line also at ${earlyLineSeen.get(norm)}`,
+      });
+    } else {
+      earlyLineSeen.set(norm, `beats[${idx}]`);
+    }
+  });
+
+  beats.forEach((beat, idx) => {
+    const linePt = beatLinePt(beat);
+    if (!linePt.endsWith('?')) return;
+    const looksYesNo =
+      /,\s*sim\s*\?$/i.test(linePt) || /^É\s+.+\?$/u.test(linePt);
+    if (!looksYesNo) return;
+    const accepted = Array.isArray(beat?.accepted) ? beat.accepted : [];
+    const hasYesNo = accepted.some((a) => {
+      const n = normalizeQuestionPt(a);
+      return n === 'sim' || n === 'nao' || n === 'não' || n.startsWith('sim ') || n.startsWith('nao ') || n.startsWith('não ');
+    });
+    if (!hasYesNo) {
+      warnings.push({
+        code: 'yes_no_mismatch',
+        path: `beats[${idx}]`,
+        message: `Yes/no-looking line without sim/não in accepted at beats[${idx}]`,
+      });
+    }
+  });
+
+  // v5 soft checks: teach / info_card / summary / answer leakage.
+  function normalizeLoosePt(text) {
+    return String(text || '')
+      .toLowerCase()
+      .normalize('NFC')
+      .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function firstAcceptedPt(beat) {
+    const accepted = Array.isArray(beat?.accepted) ? beat.accepted : [];
+    return String(accepted[0] || '').trim();
+  }
+
+  function coachLeakBlob(beat) {
+    const parts = [];
+    parts.push(textOf(beat?.coach_tip));
+    const teach = beat?.teach;
+    if (teach && typeof teach === 'object') {
+      parts.push(
+        teach.moment_ar,
+        teach.rule_pt,
+        teach.rule_ar,
+        teach.example_pt,
+        teach.example_ar,
+        teach.ask_ar,
+      );
+    }
+    const card = beat?.info_card ?? beat?.infoCard;
+    if (card && typeof card === 'object') {
+      parts.push(card.title_ar, card.note_ar);
+      if (Array.isArray(card.rows)) {
+        for (const row of card.rows) {
+          parts.push(row?.pt, row?.ar);
+        }
+      }
+    }
+    return normalizeLoosePt(parts.filter(Boolean).join(' '));
+  }
+
+  const teachRuleSeen = new Map();
+  beats.forEach((beat, idx) => {
+    const path = `beats[${idx}]`;
+    const accepted0 = firstAcceptedPt(beat);
+    const acceptedNorm = normalizeLoosePt(accepted0);
+    if (acceptedNorm && acceptedNorm.length >= 4) {
+      const blob = coachLeakBlob(beat);
+      if (blob.includes(acceptedNorm)) {
+        warnings.push({
+          code: 'answer_leak',
+          path: `${path}.coach`,
+          message: `Coach/teach/info_card contains accepted[0] before he tries at ${path}`,
+        });
+      }
+    }
+
+    const teach = beat?.teach;
+    if (teach == null || teach === '') return;
+    if (typeof teach !== 'object') {
+      warnings.push({
+        code: 'malformed_teach',
+        path: `${path}.teach`,
+        message: `teach must be an object or null at ${path}`,
+      });
+      return;
+    }
+    const rulePt = String(teach.rule_pt || teach.rulePt || '').trim();
+    const examplePt = String(teach.example_pt || teach.examplePt || '').trim();
+    const momentAr = String(teach.moment_ar || teach.momentAr || '').trim();
+    const askAr = String(teach.ask_ar || teach.askAr || '').trim();
+    if (!rulePt || !examplePt || !momentAr || !askAr) {
+      warnings.push({
+        code: 'malformed_teach',
+        path: `${path}.teach`,
+        message: `teach is missing required fields at ${path}`,
+      });
+    }
+    if (acceptedNorm && examplePt) {
+      const exNorm = normalizeLoosePt(examplePt);
+      if (exNorm === acceptedNorm || (acceptedNorm.length >= 4 && exNorm.includes(acceptedNorm))) {
+        warnings.push({
+          code: 'teach_same_example',
+          path: `${path}.teach.example_pt`,
+          message: `teach example matches accepted answer at ${path}`,
+        });
+      }
+    }
+    const ruleKey = normalizeLoosePt(rulePt);
+    if (ruleKey) {
+      if (teachRuleSeen.has(ruleKey)) {
+        warnings.push({
+          code: 'duplicate_teach',
+          path: `${path}.teach`,
+          message: `Same teach rule already at ${teachRuleSeen.get(ruleKey)}`,
+        });
+      } else {
+        teachRuleSeen.set(ruleKey, path);
+      }
+    }
+  });
+
+  beats.forEach((beat, idx) => {
+    const card = beat?.info_card ?? beat?.infoCard;
+    if (card == null || card === '') return;
+    const path = `beats[${idx}].info_card`;
+    if (typeof card !== 'object') {
+      warnings.push({
+        code: 'malformed_info_card',
+        path,
+        message: `info_card must be an object or null at ${path}`,
+      });
+      return;
+    }
+    const rows = Array.isArray(card.rows) ? card.rows : [];
+    if (!String(card.title_ar || card.titleAr || '').trim() || rows.length === 0) {
+      warnings.push({
+        code: 'malformed_info_card',
+        path,
+        message: `info_card needs title_ar and rows at ${path}`,
+      });
+    }
+  });
+
+  const summary = pack.summary;
+  if (summary != null && summary !== '') {
+    if (typeof summary !== 'object') {
+      warnings.push({
+        code: 'malformed_summary',
+        path: 'summary',
+        message: 'summary must be an object',
+      });
+    } else {
+      const words = Array.isArray(summary.words) ? summary.words : [];
+      const rules = Array.isArray(summary.rules) ? summary.rules : [];
+      if (words.length === 0 && rules.length === 0) {
+        warnings.push({
+          code: 'malformed_summary',
+          path: 'summary',
+          message: 'summary needs words or rules',
+        });
+      }
+      if (rules.length > 3) {
+        warnings.push({
+          code: 'malformed_summary',
+          path: 'summary.rules',
+          message: 'summary.rules should have at most 3 entries',
+        });
+      }
+    }
+  }
+
+  if (scriptTurns && scriptTurns.length > 0) {
+    scriptTurns.forEach((turn, ti) => {
+      const ar = String(turn?.ar || '').trim();
+      if (!ar) {
+        warnings.push({
+          code: 'script_missing_ar',
+          path: `script[${ti}].ar`,
+          message: `Script turn missing ar translation at script[${ti}]`,
+        });
+      }
+    });
+  }
+
   // Only crash-hard issues block generation. Everything else is stored as a warning.
-  const HARD_CODES = new Set(['no_beats', 'empty_accepted', 'missing_scene']);
+  // Skill mix: for packs with 8–12 beats, scale the 3/3/2/2 default per 10.
+  if (beats.length >= 8) {
+    const counts = { speaking: 0, listening: 0, reading: 0, writing: 0 };
+    for (const beat of beats) {
+      const s = String(beat?.skill || '');
+      if (s in counts) counts[s] += 1;
+    }
+    const scale = beats.length / 10;
+    const expected = {
+      speaking: Math.max(1, Math.round(3 * scale)),
+      listening: Math.max(1, Math.round(3 * scale)),
+      reading: Math.max(1, Math.round(2 * scale)),
+      writing: Math.max(1, Math.round(2 * scale)),
+    };
+    for (const skill of Object.keys(expected)) {
+      const got = counts[skill];
+      const want = expected[skill];
+      if (Math.abs(got - want) > 1) {
+        errors.push({
+          code: 'skill_mix',
+          path: 'beats',
+          message: `Skill mix: expected ~${want} ${skill} beats, got ${got} (default 3/3/2/2 per 10)`,
+        });
+      }
+    }
+  }
+
+  const HARD_CODES = new Set([
+    'no_beats',
+    'empty_accepted',
+    'missing_scene',
+    'missing_skill',
+    'missing_listening_options',
+    'missing_reading_artifact',
+    'skill_mix',
+  ]);
   const hardErrors = [];
   const softFromErrors = [];
   for (const issue of errors) {

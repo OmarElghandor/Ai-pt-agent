@@ -1,9 +1,13 @@
 import type {
   AuthoredSegment,
   AssessmentTask,
+  BeatInfoCard,
+  BeatTeach,
   ExplanationExample,
   LessonPack,
+  LessonSummary,
   SceneWord,
+  ScriptTurn,
   StoryBeat,
   StoryLine,
 } from './lessons/types';
@@ -306,8 +310,96 @@ export function currentBeat(pack: LessonPack, beatIndex: number): StoryBeat | nu
 
 /** True when presentBeat emits a coach pre-hint for this beat. */
 export function beatShowsPreHint(beat: StoryBeat | null | undefined, alt?: boolean): boolean {
-  if (!beat || alt || !beat.coachTip) return false;
-  return beat.difficulty === 'guided' || beat.difficulty === 'supported';
+  if (!beat || alt) return false;
+  if (beat.difficulty !== 'guided' && beat.difficulty !== 'supported') return false;
+  return Boolean(beat.teach || beat.coachTip);
+}
+
+/** v5 first-use teach card (moment → rule → example → ask). */
+export function makeBeatTeachMessage(
+  teach: BeatTeach,
+  opts?: { showWhyChip?: boolean },
+): TypedMessage {
+  return {
+    id: nextId(),
+    role: 'assistant',
+    type: 'teach',
+    at: Date.now(),
+    segments: [{ lang: 'ar', text: teach.momentAr, pronunciation: teach.momentAr }],
+    beatTeach: teach,
+    teachMeaning: teach.rulePt
+      ? { pt: teach.rulePt, meaningAr: teach.ruleAr }
+      : undefined,
+    teachExample: teach.examplePt
+      ? { pt: teach.examplePt, meaningAr: teach.exampleAr }
+      : undefined,
+    showWhyChip: opts?.showWhyChip === true,
+  };
+}
+
+/** v5 info_card table after the character line. */
+export function makeInfoCardMessage(card: BeatInfoCard): TypedMessage {
+  return {
+    id: nextId(),
+    role: 'assistant',
+    type: 'info-card',
+    at: Date.now(),
+    segments: [{ lang: 'ar', text: card.titleAr, pronunciation: card.titleAr }],
+    label: card.titleAr,
+    infoCard: card,
+  };
+}
+
+/** Full conversation replay (v5 end-of-lesson). */
+export function makeScriptReplayMessage(script: ScriptTurn[]): TypedMessage {
+  return {
+    id: nextId(),
+    role: 'assistant',
+    type: 'script-replay',
+    at: Date.now(),
+    segments: [{ lang: 'ar', text: 'المحادثة كاملة', pronunciation: 'المُحادَثة كامِلة' }],
+    label: 'المحادثة كاملة',
+    scriptReplay: script,
+  };
+}
+
+/** Word/rule summary after replay (v5). */
+export function makeLessonSummaryMessage(summary: LessonSummary): TypedMessage {
+  return {
+    id: nextId(),
+    role: 'assistant',
+    type: 'summary',
+    at: Date.now(),
+    segments: [{ lang: 'ar', text: 'ملخص اللي اتعلمته', pronunciation: 'مُلَخَّص اللّي اتْعَلِّمْتُه' }],
+    label: 'ملخص',
+    lessonSummary: summary,
+  };
+}
+
+/** Final-task prompt: Egyptian situation; optional short PT line. */
+export function makeFinalTaskPrompt(task: AssessmentTask): TypedMessage {
+  const hasPt = Boolean(task.line.pt?.trim());
+  return {
+    id: nextId(),
+    role: 'assistant',
+    type: 'task',
+    at: Date.now(),
+    segments: hasPt
+      ? [{ lang: 'pt', text: task.line.pt }]
+      : [
+          {
+            lang: 'ar',
+            text: task.line.ar,
+            pronunciation: task.line.arz || task.line.ar,
+          },
+        ],
+    translation:
+      hasPt && task.line.ar
+        ? [{ lang: 'ar', text: task.line.ar, pronunciation: task.line.arz || task.line.ar }]
+        : undefined,
+    playablePt: hasPt ? task.line.pt : undefined,
+    label: 'مهمة أخيرة',
+  };
 }
 
 export function wordsForScene(pack: LessonPack, sceneId: string): SceneWord[] {
@@ -351,8 +443,8 @@ export function presentBeatHead(
 }
 
 /**
- * Coach tip + character line (no narration).
- * Guided: tip → character. Supported/open: character → tip.
+ * Character line → info_card → teach or coach tip (no narration).
+ * Order matches v5: narration is in presentBeatHead.
  */
 export function presentBeatTail(
   pack: LessonPack,
@@ -362,27 +454,33 @@ export function presentBeatTail(
   const beat = currentBeat(pack, index);
   if (!beat) return [];
   const out: TypedMessage[] = [];
-  const tip =
-    beatShowsPreHint(beat, opts?.alt) && beat.coachTip
-      ? makeCoachTip(beat.coachTip.ar, beat.coachTip.arz, {
-          showWhyChip: Boolean(pack.grammarCard),
-        })
-      : null;
   const character = makeCharacterLine(beat.speaker, opts?.alt ? beat.altLine : beat.line);
-  if (beat.difficulty === 'guided') {
-    if (tip) out.push(tip);
-    out.push(character);
-  } else {
-    out.push(character);
-    if (tip) out.push(tip);
+  out.push(character);
+
+  if (!opts?.alt && beat.infoCard) {
+    out.push(makeInfoCardMessage(beat.infoCard));
+  }
+
+  if (beatShowsPreHint(beat, opts?.alt)) {
+    if (beat.teach) {
+      out.push(
+        makeBeatTeachMessage(beat.teach, {
+          showWhyChip: Boolean(pack.grammarCard),
+        }),
+      );
+    } else if (beat.coachTip) {
+      out.push(
+        makeCoachTip(beat.coachTip.ar, beat.coachTip.arz, {
+          showWhyChip: Boolean(pack.grammarCard),
+        }),
+      );
+    }
   }
   return out;
 }
 
 /**
- * Narration when the scene changes, coach tip, and character line.
- * Guided: narration → coach tip → character (tool first).
- * Supported: narration → character → coach tip.
+ * Narration when the scene changes, then character → info → coach.
  */
 export function presentBeat(
   pack: LessonPack,
@@ -390,6 +488,18 @@ export function presentBeat(
   opts?: { alt?: boolean },
 ): TypedMessage[] {
   return [...presentBeatHead(pack, index, opts), ...presentBeatTail(pack, index, opts)];
+}
+
+/** Replay + summary messages after the last story beat (v5). */
+export function presentLessonEndingAids(pack: LessonPack): TypedMessage[] {
+  const out: TypedMessage[] = [];
+  if (pack.script?.length) {
+    out.push(makeScriptReplayMessage(pack.script));
+  }
+  if (pack.summary && (pack.summary.words.length || pack.summary.rules.length)) {
+    out.push(makeLessonSummaryMessage(pack.summary));
+  }
+  return out;
 }
 
 export function presentClosing(pack: LessonPack): TypedMessage {

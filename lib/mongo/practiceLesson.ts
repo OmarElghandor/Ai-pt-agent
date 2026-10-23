@@ -20,6 +20,7 @@ export type LessonPlanRow = {
   generationStage: string | null;
   needsOmarReview: boolean;
   audioCacheRefs: { key: string; url: string; language: string }[];
+  source: 'generated' | 'hand';
 };
 
 /** A stored pack counts only when it adapts into a playable story. */
@@ -79,6 +80,7 @@ function toPlanRow(doc: PracticeLessonDoc): LessonPlanRow {
       url: r.url ?? '',
       language: r.language ?? '',
     })),
+    source: doc.source === 'hand' ? 'hand' : 'generated',
   };
 }
 

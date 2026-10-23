@@ -2,16 +2,24 @@
 
 Replaces the single branching Prompt 4 with three short prompts. Each call sends ONE of them, already filled for the current case. The model never sees branches it is not in.
 
+The pack now writes the character's reaction itself (`reply` on each beat, taken from the script), so the live model is no longer called after ordinary correct answers. R1 runs only to react to his own personal value (his name, his city) when the beat has no reply.
+
 Placeholders in {BRACES} are filled by the app. Nothing else is sent: no lesson target, no other modes. R1 receives the next story line only so it does not repeat it; the output check drops any reaction that overlaps it.
+
+## Langify v2 (POST /api/react)
+
+v2 splits grading from reaction. Langify (or `/api/grade`) decides the verdict first. The reactor always has SOURCE=code: it never emits a hidden `VERDICT:` line and never judges. It receives MAIN_ERROR, CORRECTED_TL, WEAK_SPOT, mode (`practice` | `daily` | `open_question` | `assessment`), and skill. It corrects **one** error only. Implementation: `lib/reactor/buildReactPrompt.ts`.
+
+The R2 section below (with `VERDICT:` line 1) remains for the **legacy** `/api/chat` path until mobile switches to Langify.
 
 ## When the model is called
 
 | Case | Who decides the verdict | Model call |
 |---|---|---|
-| Known beat, answer matches accepted | code | R1 — character reaction |
-| Known beat, near miss (accent, one letter, authored near_miss) | code | R1 — character reaction; the fix line comes from the pack or a code template |
+| Known beat, answer matches accepted | code | none — show the beat's authored `reply` (or nothing), then the next line |
+| Known beat, near miss (accent, one letter, extra article, authored near_miss) | code | none — the fix line from the pack or a code template, then the authored `reply` |
 | Known beat, wrong (attempt 1 or 2) | code | none — the coach line comes from the pack (see the help ladder) |
-| Personal slot beat, code slot-matcher succeeds | code | R1 — reacting to his own value |
+| Personal slot beat, code slot-matcher succeeds | code | R1 — reacting to his own value, only when the beat has no `reply` |
 | Personal slot beat, code slot-matcher fails | model | R2 — judge, then react if right |
 | Open beat | model, then code guard | R2 — judge, then react if right |
 | Assessment task | model | R2 without the character part (judge only) |
@@ -41,6 +49,7 @@ The learner, an Egyptian beginner in European Portuguese, answered: "{ANSWER}"
 His answer is right.
 
 Write the ONE short sentence {NAME} says back.
+If his answer had a small slip, the app corrects it separately; your sentence never repeats the slip.
 Feeling and intent: {REACTION_CUE}
 {SLOT_NOTE}
 Right after your sentence, {NEXT_SPEAKER} will say: "{NEXT_LINE_PT}". Your sentence must lead into it naturally and must not say, ask or answer the same thing.
@@ -50,7 +59,9 @@ Rules:
 - A statement. No question mark. No invitation, no offer, no new topic.
 - React only to what he said. Do not add facts about yourself (your age, where you are from, comparisons).
 - Never say your own name ({NAME}); you are talking TO him.
-- Prefer his own words back to him ("Egípcio! Que bom.") over new words.
+- Do not repeat or echo his sentence. React the way {NAME} really would in this situation (a short acknowledgement, handing something over, a reaction to his news), following the feeling above.
+- If he gave an opinion about your own things (caro, barato), do not agree or argue; react as {ROLE} would.
+- Stay inside this scene: no nationality, name, place or thing that is not in "{LINE_PT}", his answer or the words below.
 - Use simple words a beginner knows: {WORDS}
 - Do not reuse these recent sentences: {RECENT}
 - Then the same sentence in Egyptian Arabic (عايز، إزاي، فين، دلوقتي، مش), never formal Arabic, never English.
@@ -150,6 +161,8 @@ A reply is dropped (and the case falls back to: praise + next story line, logged
 - the character `<pt>` contains "?", Arabic letters, or more than 12 words;
 - any `<pt>` or `<ar>` contains common English words (the, you, is, are, how, correct, answer, question, of course);
 - the character sentence contains the speaker's own name;
+- the character sentence shares more than half of its words with his answer (an echo), or repeats a slip of his answer;
+- the character sentence contains a word (other than small words: articles, de, em, e, sim, não, muito, que) that is in none of: the beat line, the next line, his answer, {WORDS}, the nucleus (a leak from another lesson, like "Egípcio" in a shop);
 - the character sentence repeats the next story line or the beat line, or shares its key words (the same question word, the same verb form);
 - a fix whose corrected sentence equals his answer once case, accents and punctuation are ignored (nothing to fix → treat as correct);
 - a voice appears that this case does not allow (R1 and R2 allow only `character` and `fix`; R3 only `coach`).

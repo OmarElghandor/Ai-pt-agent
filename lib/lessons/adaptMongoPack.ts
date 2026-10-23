@@ -3,16 +3,26 @@ import type {
   AnticipatedWrong,
   AssessmentTask,
   AuthoredSegment,
+  BeatInfoCard,
+  BeatReply,
+  BeatSkill,
+  BeatTeach,
   CodeGuard,
   GrammarCard,
   LessonPack,
+  LessonSummary,
   LineExplain,
+  ListeningOption,
+  ReadingArtifact,
+  ReadingArtifactKind,
   SceneWord,
+  ScriptTurn,
   StoryBeat,
   StoryLine,
   StoryScene,
   WordBankEntry,
 } from './types';
+import { BEAT_SKILLS } from './types';
 
 function asString(value: unknown): string {
   return typeof value === 'string' ? value : '';
@@ -222,6 +232,57 @@ function adaptDifficulty(raw: unknown): StoryBeat['difficulty'] {
   return 'guided';
 }
 
+function adaptSkill(raw: unknown): BeatSkill {
+  const value = asString(raw);
+  if ((BEAT_SKILLS as string[]).includes(value)) return value as BeatSkill;
+  return 'speaking';
+}
+
+function adaptListeningOptions(raw: unknown): ListeningOption[] | undefined {
+  if (!Array.isArray(raw) || raw.length === 0) return undefined;
+  const out: ListeningOption[] = [];
+  for (let i = 0; i < raw.length; i += 1) {
+    const row = raw[i];
+    if (!row || typeof row !== 'object') continue;
+    const o = row as Record<string, unknown>;
+    const tl = asString(o.tl || o.pt).trim();
+    if (!tl) continue;
+    out.push({
+      id: asString(o.id) || `opt${i + 1}`,
+      tl,
+      correct: Boolean(o.correct),
+    });
+  }
+  return out.length ? out : undefined;
+}
+
+function adaptReadingArtifact(raw: unknown): ReadingArtifact | undefined {
+  if (!raw || typeof raw !== 'object') return undefined;
+  const o = raw as Record<string, unknown>;
+  const kindRaw = asString(o.kind);
+  const kinds: ReadingArtifactKind[] = ['receipt', 'sign', 'label', 'menu'];
+  if (!kinds.includes(kindRaw as ReadingArtifactKind)) return undefined;
+  const linesRaw = Array.isArray(o.lines) ? o.lines : [];
+  const lines: { tl: string; ar?: string }[] = [];
+  for (const line of linesRaw) {
+    if (!line || typeof line !== 'object') continue;
+    const lo = line as Record<string, unknown>;
+    const tl = asString(lo.tl || lo.pt).trim();
+    if (!tl) continue;
+    const ar = asString(lo.ar).trim();
+    lines.push(ar ? { tl, ar } : { tl });
+  }
+  const options = adaptListeningOptions(o.options) ?? [];
+  const questionAr = asString(o.question_ar || o.questionAr).trim();
+  if (!lines.length || !questionAr || !options.length) return undefined;
+  return {
+    kind: kindRaw as ReadingArtifactKind,
+    lines,
+    questionAr,
+    options,
+  };
+}
+
 function adaptAnswer(
   o: Record<string, unknown>,
   kind: 'known' | 'open',
@@ -303,6 +364,16 @@ function adaptBeat(raw: unknown, index: number, sceneIds: string[]): StoryBeat |
         : 'known';
   const answer = adaptAnswer(o, kind);
   if (answer.kind === 'known' && answer.acceptedAnswers.length === 0) return null;
+  const reply = adaptReply(o.reply);
+  const teach = adaptTeach(o.teach);
+  const infoCard = adaptInfoCard(o.info_card || o.infoCard);
+  const skill = adaptSkill(o.skill);
+  const listeningOptions = adaptListeningOptions(
+    o.listening_options || o.listeningOptions,
+  );
+  const readingArtifact = adaptReadingArtifact(
+    o.reading_artifact || o.readingArtifact,
+  );
   return {
     id: asString(o.id) || `b${String(index + 1).padStart(2, '0')}`,
     sceneId,
@@ -310,18 +381,141 @@ function adaptBeat(raw: unknown, index: number, sceneIds: string[]): StoryBeat |
     speaker: asString(o.speaker || o.character) || '?',
     line,
     altLine: adaptAlt(o.line, line),
+    ...(reply !== undefined ? { reply } : {}),
     difficulty,
+    skill,
+    ...(listeningOptions ? { listeningOptions } : {}),
+    ...(readingArtifact ? { readingArtifact } : {}),
     coachTip: adaptCoachTip(o.coach_tip || o.coachTip, o.coach_tip_arz),
     reactionCue: asString(o.reaction_cue || o.reactionCue),
     lineExplain: adaptLineExplain(o.line_explain || o.lineExplain),
+    ...(teach ? { teach } : {}),
+    ...(infoCard ? { infoCard } : {}),
     ...answer,
   };
+}
+
+/** `undefined` = legacy (no reply key). Empty pt = authored, no bubble. */
+function adaptReply(raw: unknown): BeatReply | undefined {
+  if (raw == null) return undefined;
+  if (typeof raw === 'string') {
+    const pt = raw.trim();
+    return { pt, ar: '', arz: '' };
+  }
+  if (typeof raw !== 'object') return undefined;
+  const o = raw as Record<string, unknown>;
+  const pt = asString(o.pt).trim();
+  const ar = displayAr(o) || asString(o.ar).trim();
+  const arz = asString(o.arz || o.pronunciation).trim() || ar;
+  return { pt, ar, arz };
+}
+
+function adaptScript(raw: unknown): ScriptTurn[] | undefined {
+  if (!Array.isArray(raw) || raw.length === 0) return undefined;
+  const out: ScriptTurn[] = [];
+  for (const turn of raw) {
+    if (!turn || typeof turn !== 'object') continue;
+    const o = turn as Record<string, unknown>;
+    const pt = asString(o.pt).trim();
+    if (!pt) continue;
+    const ar = displayAr(o) || asString(o.ar).trim();
+    const arz = asString(o.arz || o.pronunciation).trim() || ar;
+    const turnOut: ScriptTurn = {
+      scene: asString(o.scene || o.scene_id || o.sceneId).trim() || 's01',
+      speaker: asString(o.speaker).trim() || '?',
+      pt,
+    };
+    if (ar) {
+      turnOut.ar = ar;
+      turnOut.arz = arz;
+    }
+    out.push(turnOut);
+  }
+  return out.length ? out : undefined;
+}
+
+/** First-use teach card. null / empty → absent. */
+function adaptTeach(raw: unknown): BeatTeach | undefined {
+  if (raw == null || raw === '') return undefined;
+  if (typeof raw !== 'object') return undefined;
+  const o = raw as Record<string, unknown>;
+  const momentAr = asString(o.moment_ar || o.momentAr).trim();
+  const rulePt = asString(o.rule_pt || o.rulePt).trim();
+  const ruleAr = asString(o.rule_ar || o.ruleAr).trim();
+  const examplePt = asString(o.example_pt || o.examplePt).trim();
+  const exampleAr = asString(o.example_ar || o.exampleAr).trim();
+  const askAr = asString(o.ask_ar || o.askAr).trim();
+  if (!momentAr && !rulePt && !askAr) return undefined;
+  return { momentAr, rulePt, ruleAr, examplePt, exampleAr, askAr };
+}
+
+function adaptInfoCard(raw: unknown): BeatInfoCard | undefined {
+  if (raw == null || raw === '') return undefined;
+  if (typeof raw !== 'object') return undefined;
+  const o = raw as Record<string, unknown>;
+  const titleAr = asString(o.title_ar || o.titleAr).trim();
+  const rowsRaw = Array.isArray(o.rows) ? o.rows : [];
+  const rows: { pt: string; ar: string }[] = [];
+  for (const row of rowsRaw) {
+    if (!row || typeof row !== 'object') continue;
+    const r = row as Record<string, unknown>;
+    const pt = asString(r.pt).trim();
+    const ar = displayAr(r) || asString(r.ar).trim();
+    if (pt) rows.push({ pt, ar });
+  }
+  if (!titleAr && rows.length === 0) return undefined;
+  const noteAr = asString(o.note_ar || o.noteAr).trim() || undefined;
+  return { titleAr, rows, ...(noteAr ? { noteAr } : {}) };
+}
+
+function adaptSummary(raw: unknown): LessonSummary | undefined {
+  if (raw == null || typeof raw !== 'object') return undefined;
+  const o = raw as Record<string, unknown>;
+  const words: { pt: string; ar: string }[] = [];
+  if (Array.isArray(o.words)) {
+    for (const entry of o.words) {
+      if (!entry || typeof entry !== 'object') continue;
+      const w = entry as Record<string, unknown>;
+      const pt = asString(w.pt).trim();
+      const ar = displayAr(w) || asString(w.ar).trim();
+      if (pt) words.push({ pt, ar });
+    }
+  }
+  const rules: LessonSummary['rules'] = [];
+  if (Array.isArray(o.rules)) {
+    for (const entry of o.rules) {
+      if (!entry || typeof entry !== 'object') continue;
+      const r = entry as Record<string, unknown>;
+      const pt = asString(r.pt).trim();
+      if (!pt) continue;
+      rules.push({
+        pt,
+        ar: displayAr(r) || asString(r.ar).trim(),
+        examplePt: asString(r.example_pt || r.examplePt).trim(),
+        exampleAr: asString(r.example_ar || r.exampleAr).trim(),
+      });
+    }
+  }
+  if (words.length === 0 && rules.length === 0) return undefined;
+  return { words, rules };
 }
 
 function adaptAssessmentTask(raw: unknown, index: number): AssessmentTask | null {
   if (!raw || typeof raw !== 'object') return null;
   const o = raw as Record<string, unknown>;
-  const line = adaptLine(o.line || o.prompts || o.prompt);
+  // v5 final tasks may have empty line.pt and only an Egyptian situation in line.ar.
+  let line = adaptLine(o.line || o.prompts || o.prompt);
+  if (!line && o.line && typeof o.line === 'object') {
+    const lo = o.line as Record<string, unknown>;
+    const ar = displayAr(lo) || asString(lo.ar).trim();
+    if (ar) {
+      line = {
+        pt: asString(lo.pt).trim(),
+        ar,
+        arz: asString(lo.arz || lo.pronunciation).trim() || ar,
+      };
+    }
+  }
   if (!line) return null;
   const authoredKind = asString(o.kind);
   const kind =
@@ -442,6 +636,8 @@ export function adaptMongoPack(doc: MongoLessonSource): LessonPack | null {
 
   const titleAr = asString(spec.title_ar) || asString(doc.topic) || doc.lesson_key;
   const grammarCard = adaptGrammarCard(pack.grammar_card || pack.grammarCard);
+  const script = adaptScript(pack.script);
+  const summary = adaptSummary(pack.summary);
 
   return {
     id: doc.lesson_key,
@@ -455,6 +651,8 @@ export function adaptMongoPack(doc: MongoLessonSource): LessonPack | null {
     character,
     extraCharacters: extraCharacters?.length ? extraCharacters : undefined,
     grammarCard,
+    ...(script ? { script } : {}),
+    ...(summary ? { summary } : {}),
     scenes,
     beats,
     closingHook: closing,

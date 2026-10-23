@@ -70,44 +70,86 @@ describe('structure-only validator', () => {
   ];
 
   function storyPack(over: Record<string, unknown> = {}) {
-    const beats = Array.from({ length: 8 }, (_, i) => ({
-      id: `b0${i + 1}`,
-      scene: i < 3 ? 's1' : i < 6 ? 's2' : 's3',
-      speaker: 'Rita',
-      line: {
-        pt: lines[i],
-        ar: 'أهلاً',
-        arz: 'أَهْلاً',
-        alt_pt: lines[i],
-        alt_ar: 'أهلاً',
-        alt_arz: 'أَهْلاً',
-      },
-      difficulty: i < 3 ? 'guided' : i < 6 ? 'supported' : 'open',
-      coach_tip:
-        i < 3
-          ? { ar: 'قول Olá', arz: 'قول Olá' }
-          : i < 6
-            ? { ar: 'ابدأ بـ O', arz: 'اِبْدَأ بـ O' }
+    // ~8 beats → ~2 of each skill (scaled 3/3/2/2 per 10)
+    const skills = [
+      'speaking',
+      'speaking',
+      'listening',
+      'listening',
+      'reading',
+      'reading',
+      'writing',
+      'writing',
+    ] as const;
+    const beats = Array.from({ length: 8 }, (_, i) => {
+      const skill = skills[i];
+      const row: Record<string, unknown> = {
+        id: `b0${i + 1}`,
+        scene: i < 3 ? 's1' : i < 6 ? 's2' : 's3',
+        speaker: 'Rita',
+        line: {
+          pt: lines[i],
+          ar: 'أهلاً',
+          arz: 'أَهْلاً',
+          alt_pt: lines[i],
+          alt_ar: 'أهلاً',
+          alt_arz: 'أَهْلاً',
+        },
+        difficulty: i < 3 ? 'guided' : i < 6 ? 'supported' : 'open',
+        skill,
+        coach_tip:
+          i < 3
+            ? { ar: 'قول Olá', arz: 'قول Olá' }
+            : i < 6
+              ? { ar: 'ابدأ بـ O', arz: 'اِبْدَأ بـ O' }
+              : undefined,
+        reaction_cue: 'glad; greets him warmly',
+        kind: i >= 6 ? 'open' : 'known',
+        accepted: i < 6 ? ['Olá'] : undefined,
+        anticipated_wrong: [],
+        frame: 'Olá …',
+        word_bank:
+          i >= 3
+            ? [
+                { pt: 'olá', meaning: '' },
+                { pt: 'bom', meaning: '' },
+                { pt: 'dia', meaning: '' },
+                { pt: 'eu', meaning: '' },
+              ]
             : undefined,
-      reaction_cue: 'glad; greets him warmly',
-      kind: i >= 6 ? 'open' : 'known',
-      accepted: i < 6 ? ['Olá'] : undefined,
-      anticipated_wrong: [],
-      frame: 'Olá …',
-      word_bank:
-        i >= 3
-          ? [
-              { pt: 'olá', meaning: '' },
-              { pt: 'bom', meaning: '' },
-              { pt: 'dia', meaning: '' },
-              { pt: 'eu', meaning: '' },
-            ]
-          : undefined,
-      criterion: i >= 6 ? 'He greets her.' : undefined,
-      guard: i >= 6 ? ['olá'] : undefined,
-      hint_note: i >= 6 ? 'فكّر في التحية' : undefined,
-      why_note: 'Olá',
-    }));
+        criterion: i >= 6 ? 'He greets her.' : undefined,
+        guard: i >= 6 ? ['olá'] : undefined,
+        hint_note: i >= 6 ? 'فكّر في التحية' : undefined,
+        why_note: 'Olá',
+      };
+      if (skill === 'listening') {
+        row.listening_options = [
+          { id: 'a', tl: lines[i], correct: true },
+          { id: 'b', tl: 'Tudo bem?', correct: false },
+          { id: 'c', tl: 'Até logo!', correct: false },
+        ];
+        row.accepted = [lines[i]];
+        row.kind = 'known';
+        delete row.criterion;
+        delete row.guard;
+      }
+      if (skill === 'reading') {
+        row.reading_artifact = {
+          kind: 'sign',
+          lines: [{ tl: lines[i], ar: 'أهلاً' }],
+          question_ar: 'إيه المكتوب؟',
+          options: [
+            { id: 'a', tl: lines[i], correct: true },
+            { id: 'b', tl: 'Adeus!', correct: false },
+          ],
+        };
+        row.accepted = [lines[i]];
+        row.kind = 'known';
+        delete row.criterion;
+        delete row.guard;
+      }
+      return row;
+    });
     return {
       intro_ar: 'مقدمة',
       intro_arz: 'مُقَدِّمَة',
@@ -220,6 +262,57 @@ describe('structure-only validator', () => {
       ),
       false,
     );
+  });
+
+  it('soft-warns when a beat line or reply is missing from script', () => {
+    const pack = storyPack({
+      script: [
+        { scene: 's01', speaker: 'Rita', pt: 'Olá!' },
+        { scene: 's01', speaker: 'EU', pt: 'Olá!' },
+      ],
+    });
+    (pack.beats[0] as { reply?: { pt: string; ar: string; arz: string } }).reply = {
+      pt: 'Claro.',
+      ar: 'تمام.',
+      arz: 'تَمام.',
+    };
+    const result = validatePack(pack, {
+      allowedWords: ['olá', 'bom', 'dia', 'eu'].map((text) => ({ text })),
+      nucleus: [],
+    });
+    assert.equal(result.ok, true);
+    const codes = result.warnings.map((w: { code: string }) => w.code);
+    assert.ok(codes.includes('line_not_in_script'), JSON.stringify(result.warnings));
+    assert.ok(codes.includes('reply_not_in_script'), JSON.stringify(result.warnings));
+  });
+
+  it('soft-warns on duplicate s01/s02 lines and yes/no mismatch', () => {
+    const pack = storyPack({
+      scenes: [
+        { id: 's01', title_ar: 'أ' },
+        { id: 's02', title_ar: 'ب' },
+        { id: 's03', title_ar: 'ج' },
+      ],
+    });
+    for (const beat of pack.beats) {
+      const b = beat as { scene: string };
+      if (b.scene === 's1') b.scene = 's01';
+      else if (b.scene === 's2') b.scene = 's02';
+      else if (b.scene === 's3') b.scene = 's03';
+    }
+    (pack.beats[0] as { line: { pt: string } }).line.pt = 'É caro?';
+    (pack.beats[0] as { accepted: string[] }).accepted = ['Quanto custa?'];
+    (pack.beats[1] as { line: { pt: string } }).line.pt = 'É caro?';
+    const result = validatePack(pack, {
+      allowedWords: ['olá', 'bom', 'dia', 'eu', 'caro', 'quanto', 'custa'].map((text) => ({
+        text,
+      })),
+      nucleus: [],
+    });
+    assert.equal(result.ok, true, JSON.stringify(result.errors));
+    const codes = new Set(result.warnings.map((w: { code: string }) => w.code));
+    assert.ok(codes.has('duplicate_line'), JSON.stringify(result.warnings));
+    assert.ok(codes.has('yes_no_mismatch'), JSON.stringify(result.warnings));
   });
 
   it('soft-warns on scene word counts, s03 words, duplicates, and missing arz', () => {

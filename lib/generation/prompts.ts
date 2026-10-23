@@ -111,7 +111,7 @@ ${JSON.stringify(inputs.nucleus, null, 2)}
 CELL_FORMS:
 ${JSON.stringify(inputs.cellForms, null, 2)}
 
-Return only one valid JSON object with keys plan, intro_ar, intro_arz, character, scenes, beats, closing_hook (pt, ar, arz), assessment. No markdown. No trailing commas. Fully closed.`;
+Return only one valid JSON object with keys script, intro_ar, intro_arz, character, grammar_card, scenes, beats, summary, closing_hook (pt, ar, arz), assessment. No markdown. No trailing commas. Fully closed.`;
 }
 
 export function buildReviewerSystemPrompt(): string {

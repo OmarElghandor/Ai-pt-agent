@@ -1,0 +1,1087 @@
+{
+  "script": [
+    {
+      "scene": "s01",
+      "speaker": "Lurdes",
+      "pt": "Bom dia! Diga."
+    },
+    {
+      "scene": "s01",
+      "speaker": "EU",
+      "pt": "Bom dia. Quanto custa o chá?"
+    },
+    {
+      "scene": "s01",
+      "speaker": "Lurdes",
+      "pt": "O chá? São dois euros."
+    },
+    {
+      "scene": "s01",
+      "speaker": "EU",
+      "pt": "É barato. Queria um chá."
+    },
+    {
+      "scene": "s01",
+      "speaker": "Lurdes",
+      "pt": "Aqui está. Mais alguma coisa?"
+    },
+    {
+      "scene": "s01",
+      "speaker": "EU",
+      "pt": "Sim. Quanto custa o café?"
+    },
+    {
+      "scene": "s02",
+      "speaker": "Lurdes",
+      "pt": "O preço do café? São seis euros."
+    },
+    {
+      "scene": "s02",
+      "speaker": "EU",
+      "pt": "É caro. Tem mais barato?"
+    },
+    {
+      "scene": "s02",
+      "speaker": "Lurdes",
+      "pt": "Tenho este. São três euros."
+    },
+    {
+      "scene": "s02",
+      "speaker": "EU",
+      "pt": "Queria este café."
+    },
+    {
+      "scene": "s02",
+      "speaker": "Lurdes",
+      "pt": "Então são cinco euros."
+    },
+    {
+      "scene": "s02",
+      "speaker": "EU",
+      "pt": "Cinco euros?"
+    },
+    {
+      "scene": "s02",
+      "speaker": "Lurdes",
+      "pt": "Sim, cinco."
+    },
+    {
+      "scene": "s02",
+      "speaker": "EU",
+      "pt": "Obrigado."
+    },
+    {
+      "scene": "s02",
+      "speaker": "Lurdes",
+      "pt": "De nada. Bom dia!"
+    },
+    {
+      "scene": "s03",
+      "speaker": "Joaquim",
+      "pt": "Olá! Diga."
+    },
+    {
+      "scene": "s03",
+      "speaker": "EU",
+      "pt": "Bom dia. Quanto custa a água?"
+    },
+    {
+      "scene": "s03",
+      "speaker": "Joaquim",
+      "pt": "É um euro."
+    },
+    {
+      "scene": "s03",
+      "speaker": "EU",
+      "pt": "É barato. Queria três águas."
+    },
+    {
+      "scene": "s03",
+      "speaker": "Joaquim",
+      "pt": "São três euros. Mais alguma coisa?"
+    },
+    {
+      "scene": "s03",
+      "speaker": "EU",
+      "pt": "Não, obrigado."
+    },
+    {
+      "scene": "s03",
+      "speaker": "Joaquim",
+      "pt": "Então, três euros. Obrigado!"
+    }
+  ],
+  "intro_ar": "انت في دكانة صغيرة جنب البيت، ومعاك 6 يورو. عايز شاي وقهوة، ومش عارف الأسعار.",
+  "intro_arz": "انْتَ في دُكّانَة صُغَيَّرَة جَنْب البيت، ومَعاك سِتَّة يورو. عايِز شاي وقَهْوَة، ومِش عارِف الأَسْعار.",
+  "character": {
+    "name": "Lurdes",
+    "role_ar": "صاحبة الدكانة"
+  },
+  "grammar_card": {
+    "rule_ar": "عشان تسأل عن السعر بنقول Quanto custa وبعدها الحاجة. والسعر بيرجع: São + الرقم + euros، ولو يورو واحد: É um euro.",
+    "rule_arz": "عَشان تِسْأَل عَن السِّعْر بِنْقول Quanto custa وبَعْدَها الحاجَة.",
+    "examples": [
+      {
+        "pt": "Quanto custa o chá?",
+        "ar": "الشاي بكام؟"
+      },
+      {
+        "pt": "São dois euros.",
+        "ar": "باتنين يورو."
+      }
+    ],
+    "contrast_ar": "ليه مرة É ومرة São؟ É ليورو واحد (É um euro)، وSão لاتنين وطالع (São dois euros)."
+  },
+  "scenes": [
+    {
+      "id": "s01",
+      "title_ar": "بكام الشاي؟",
+      "words": [
+        {
+          "pt": "dois",
+          "ar": "اتنين",
+          "arz": "اِتْنين",
+          "emoji": ""
+        },
+        {
+          "pt": "barato",
+          "ar": "رخيص",
+          "arz": "رِخيص",
+          "emoji": ""
+        }
+      ]
+    },
+    {
+      "id": "s02",
+      "title_ar": "القهوة غالية",
+      "words": [
+        {
+          "pt": "o preço",
+          "ar": "السعر",
+          "arz": "السِّعْر",
+          "emoji": "🏷️"
+        },
+        {
+          "pt": "seis",
+          "ar": "ستة",
+          "arz": "سِتَّة",
+          "emoji": ""
+        },
+        {
+          "pt": "caro",
+          "ar": "غالي",
+          "arz": "غالي",
+          "emoji": ""
+        },
+        {
+          "pt": "três",
+          "ar": "تلاتة",
+          "arz": "تَلاتَة",
+          "emoji": ""
+        },
+        {
+          "pt": "cinco",
+          "ar": "خمسة",
+          "arz": "خَمْسَة",
+          "emoji": ""
+        }
+      ]
+    },
+    {
+      "id": "s03",
+      "title_ar": "تاني يوم",
+      "words": []
+    }
+  ],
+  "beats": [
+    {
+      "id": "b01",
+      "scene": "s01",
+      "narration_ar": "الصبح دخلت الدكانة. لورديش ورا الكاونتر وبتبصلك.",
+      "speaker": "Lurdes",
+      "line": {
+        "pt": "Bom dia! Diga.",
+        "ar": "صباح الخير! اتفضل.",
+        "arz": "صباح الخير! اتفضل.",
+        "alt_pt": "Bom dia! O que vai ser?",
+        "alt_ar": "صباح الخير! هتاخد إيه؟",
+        "alt_arz": "صباح الخير! هتاخد إيه؟"
+      },
+      "reply": {
+        "pt": "",
+        "ar": "",
+        "arz": ""
+      },
+      "difficulty": "guided",
+      "kind": "known",
+      "teach": {
+        "moment_ar": "عايز شاي، بس مش عارف سعره.",
+        "rule_pt": "Quanto custa …?",
+        "rule_ar": "بكام …؟ (حط مكان … اسم الحاجة)",
+        "example_pt": "Quanto custa a água?",
+        "example_ar": "المياه بكام؟",
+        "ask_ar": "سلّم عليها، واسأل بنفس القاعدة عن الشاي."
+      },
+      "info_card": null,
+      "coach_tip": {
+        "ar": "عايز شاي ومش عارف سعره. القاعدة: Quanto custa + الحاجة؟ مثال: Quanto custa a água? (المياه بكام؟). سلّم عليها واسأل بنفس القاعدة عن الشاي.",
+        "arz": "عايز شاي ومش عارف سعره. القاعدة: Quanto custa + الحاجة؟ مثال: Quanto custa a água? (المياه بكام؟). سلّم عليها واسأل بنفس القاعدة عن الشاي."
+      },
+      "reaction_cue": "",
+      "frame": "Bom dia. Quanto custa…",
+      "line_explain": {
+        "ar": "بتقولك صباح الخير واتفضل، يعني مستنياك تقول عايز إيه.",
+        "arz": "بتقولك صباح الخير واتفضل، يعني مستنياك تقول عايز إيه."
+      },
+      "word_bank": [
+        {
+          "pt": "Bom dia",
+          "ar": "صباح الخير"
+        },
+        {
+          "pt": "Quanto custa",
+          "ar": "بكام"
+        },
+        {
+          "pt": "o chá",
+          "ar": "الشاي"
+        }
+      ],
+      "accepted": [
+        "Bom dia. Quanto custa o chá?",
+        "Quanto custa o chá?",
+        "Bom dia, quanto custa o chá?",
+        "Olá, quanto custa o chá?",
+        "Bom dia. Quanto é o chá?"
+      ],
+      "anticipated_wrong": [
+        {
+          "answer": "Quanto custa chá?",
+          "verdict": "near_miss",
+          "note": {
+            "ar": "قبل الحاجة بنحط o: o chá. جرّب تاني.",
+            "arz": "قبل الحاجة بنحط o: o chá. جرّب تاني."
+          }
+        },
+        {
+          "answer": "Quanto custa o cha",
+          "verdict": "near_miss",
+          "note": {
+            "ar": "بنكتبها chá بالعلامة. جرّب تاني.",
+            "arz": "بنكتبها chá بالعلامة. جرّب تاني."
+          }
+        }
+      ],
+      "hint_note": {
+        "ar": "الشاي بالبرتغالي o chá. حطها بعد Quanto custa. جرّب تاني.",
+        "arz": "الشاي بالبرتغالي o chá. حطها بعد Quanto custa. جرّب تاني."
+      },
+      "why_note": {
+        "ar": "Bom dia. Quanto custa o chá? (صباح الخير، الشاي بكام؟). Quanto custa + الحاجة.",
+        "arz": "Bom dia. Quanto custa o chá? (صباح الخير، الشاي بكام؟). Quanto custa + الحاجة."
+      }
+    },
+    {
+      "id": "b02",
+      "scene": "s01",
+      "narration_ar": "",
+      "speaker": "Lurdes",
+      "line": {
+        "pt": "O chá? São dois euros.",
+        "ar": "الشاي؟ باتنين يورو.",
+        "arz": "الشاي؟ باتنين يورو.",
+        "alt_pt": "O chá são dois euros.",
+        "alt_ar": "الشاي باتنين يورو.",
+        "alt_arz": "الشاي باتنين يورو."
+      },
+      "reply": {
+        "pt": "",
+        "ar": "",
+        "arz": ""
+      },
+      "difficulty": "guided",
+      "kind": "known",
+      "teach": null,
+      "info_card": {
+        "title_ar": "الأسعار",
+        "rows": [
+          {
+            "pt": "É um euro.",
+            "ar": "بيورو واحد"
+          },
+          {
+            "pt": "São dois euros.",
+            "ar": "باتنين يورو"
+          },
+          {
+            "pt": "São três euros.",
+            "ar": "بتلاتة يورو"
+          }
+        ],
+        "note_ar": "يورو واحد بنقول É، ومن اتنين وطالع بنقول São وبعدها euros."
+      },
+      "coach_tip": {
+        "ar": "اتنين يورو رخيص. عشان تقول رأيك: É + barato (رخيص) أو caro (غالي). مثال: É caro. قول رأيك، واطلب واحد بـ Queria من الدرس اللي فات.",
+        "arz": "اتنين يورو رخيص. عشان تقول رأيك: É + barato (رخيص) أو caro (غالي). مثال: É caro. قول رأيك، واطلب واحد بـ Queria من الدرس اللي فات."
+      },
+      "reaction_cue": "",
+      "frame": "É…",
+      "line_explain": {
+        "ar": "قالتلك السعر: dois euros يعني اتنين يورو. دلوقتي قول رأيك واطلب.",
+        "arz": "قالتلك السعر: dois euros يعني اتنين يورو. دلوقتي قول رأيك واطلب."
+      },
+      "word_bank": [
+        {
+          "pt": "É barato",
+          "ar": "ده رخيص"
+        },
+        {
+          "pt": "Queria",
+          "ar": "كنت عايز"
+        },
+        {
+          "pt": "um chá",
+          "ar": "شاي"
+        }
+      ],
+      "accepted": [
+        "É barato. Queria um chá.",
+        "É barato, queria um chá.",
+        "É barato. Queria o chá.",
+        "Queria um chá.",
+        "Queria um chá, é barato.",
+        "É barato. Queria um chá, se faz favor.",
+        "É barato. Queria um chá, por favor."
+      ],
+      "anticipated_wrong": [
+        {
+          "answer": "É caro. Queria um chá.",
+          "verdict": "wrong",
+          "note": {
+            "ar": "اتنين يورو رخيص، يعني barato مش caro. جرّب تاني.",
+            "arz": "اتنين يورو رخيص، يعني barato مش caro. جرّب تاني."
+          }
+        },
+        {
+          "answer": "Quero um chá.",
+          "verdict": "near_miss",
+          "note": {
+            "ar": "Quero مفهومة بس فيها أمر. في المحل بنقول Queria أرق. جرّب تاني.",
+            "arz": "Quero مفهومة بس فيها أمر. في المحل بنقول Queria أرق. جرّب تاني."
+          }
+        }
+      ],
+      "hint_note": {
+        "ar": "رخيص بالبرتغالي barato. وبعدها Queria um chá. جرّب تاني.",
+        "arz": "رخيص بالبرتغالي barato. وبعدها Queria um chá. جرّب تاني."
+      },
+      "why_note": {
+        "ar": "É barato. Queria um chá. (ده رخيص. كنت عايز شاي). É + رأيك، وQueria + الحاجة.",
+        "arz": "É barato. Queria um chá. (ده رخيص. كنت عايز شاي). É + رأيك، وQueria + الحاجة."
+      }
+    },
+    {
+      "id": "b03",
+      "scene": "s01",
+      "narration_ar": "",
+      "speaker": "Lurdes",
+      "line": {
+        "pt": "Aqui está. Mais alguma coisa?",
+        "ar": "اتفضل. حاجة تانية؟",
+        "arz": "اتفضل. حاجة تانية؟",
+        "alt_pt": "Aqui está o chá. Mais alguma coisa?",
+        "alt_ar": "اتفضل الشاي. حاجة تانية؟",
+        "alt_arz": "اتفضل الشاي. حاجة تانية؟"
+      },
+      "reply": {
+        "pt": "",
+        "ar": "",
+        "arz": ""
+      },
+      "difficulty": "guided",
+      "kind": "known",
+      "teach": null,
+      "info_card": null,
+      "coach_tip": {
+        "ar": "عايز قهوة كمان. نفس القاعدة، غيّر الحاجة بس.",
+        "arz": "عايز قهوة كمان. نفس القاعدة، غيّر الحاجة بس."
+      },
+      "reaction_cue": "",
+      "frame": "Sim. Quanto custa…",
+      "line_explain": {
+        "ar": "إديتك الشاي وبتسألك عايز حاجة تانية.",
+        "arz": "إديتك الشاي وبتسألك عايز حاجة تانية."
+      },
+      "word_bank": [
+        {
+          "pt": "Sim",
+          "ar": "أيوه"
+        },
+        {
+          "pt": "Quanto custa",
+          "ar": "بكام"
+        },
+        {
+          "pt": "o café",
+          "ar": "القهوة"
+        }
+      ],
+      "accepted": [
+        "Sim. Quanto custa o café?",
+        "Quanto custa o café?",
+        "Sim, quanto custa o café?",
+        "E o café?",
+        "Quanto é o café?"
+      ],
+      "anticipated_wrong": [],
+      "hint_note": {
+        "ar": "القهوة بالبرتغالي o café. جرّب تاني.",
+        "arz": "القهوة بالبرتغالي o café. جرّب تاني."
+      },
+      "why_note": {
+        "ar": "Sim. Quanto custa o café? (أيوه، القهوة بكام؟).",
+        "arz": "Sim. Quanto custa o café? (أيوه، القهوة بكام؟)."
+      }
+    },
+    {
+      "id": "b04",
+      "scene": "s02",
+      "narration_ar": "لورديش بتشاور على علبة قهوة على الرف.",
+      "speaker": "Lurdes",
+      "line": {
+        "pt": "O preço do café? São seis euros.",
+        "ar": "سعر القهوة؟ بستة يورو.",
+        "arz": "سعر القهوة؟ بستة يورو.",
+        "alt_pt": "O café são seis euros.",
+        "alt_ar": "القهوة بستة يورو.",
+        "alt_arz": "القهوة بستة يورو."
+      },
+      "reply": {
+        "pt": "",
+        "ar": "",
+        "arz": ""
+      },
+      "difficulty": "supported",
+      "kind": "known",
+      "teach": {
+        "moment_ar": "ستة يورو كتير، فاضل معاك أربعة بس.",
+        "rule_pt": "Tem mais …?",
+        "rule_ar": "فيه حاجة … أكتر؟ (حط مكان … الصفة)",
+        "example_pt": "Tem mais pequeno?",
+        "example_ar": "فيه أصغر؟",
+        "ask_ar": "قول رأيك في السعر، واسأل بنفس القاعدة لو فيه أرخص."
+      },
+      "info_card": null,
+      "coach_tip": {
+        "ar": "ستة يورو كتير، فاضل معاك أربعة بس. القاعدة: Tem mais + الصفة؟ مثال: Tem mais pequeno? (فيه أصغر؟). قول رأيك في السعر واسأل لو فيه أرخص.",
+        "arz": "ستة يورو كتير، فاضل معاك أربعة بس. القاعدة: Tem mais + الصفة؟ مثال: Tem mais pequeno? (فيه أصغر؟). قول رأيك في السعر واسأل لو فيه أرخص."
+      },
+      "reaction_cue": "",
+      "frame": "É caro. Tem…",
+      "line_explain": {
+        "ar": "قالتلك سعر القهوة: seis euros يعني ستة يورو.",
+        "arz": "قالتلك سعر القهوة: seis euros يعني ستة يورو."
+      },
+      "word_bank": [
+        {
+          "pt": "É caro",
+          "ar": "دي غالية"
+        },
+        {
+          "pt": "Tem",
+          "ar": "فيه"
+        },
+        {
+          "pt": "mais barato",
+          "ar": "أرخص"
+        }
+      ],
+      "accepted": [
+        "É caro. Tem mais barato?",
+        "É caro, tem mais barato?",
+        "Tem mais barato?",
+        "É muito caro. Tem mais barato?",
+        "É caro. Tem um mais barato?"
+      ],
+      "anticipated_wrong": [
+        {
+          "answer": "É barato. Tem mais barato?",
+          "verdict": "wrong",
+          "note": {
+            "ar": "ستة يورو غالي عليك، يعني caro. جرّب تاني.",
+            "arz": "ستة يورو غالي عليك، يعني caro. جرّب تاني."
+          }
+        },
+        {
+          "answer": "Tem barato?",
+          "verdict": "near_miss",
+          "note": {
+            "ar": "أرخص = mais barato. جرّب تاني.",
+            "arz": "أرخص = mais barato. جرّب تاني."
+          }
+        }
+      ],
+      "hint_note": {
+        "ar": "فيه = Tem، وأرخص = mais barato. جرّب تاني.",
+        "arz": "فيه = Tem، وأرخص = mais barato. جرّب تاني."
+      },
+      "why_note": {
+        "ar": "É caro. Tem mais barato? (دي غالية. فيه أرخص؟). Tem mais + الصفة.",
+        "arz": "É caro. Tem mais barato? (دي غالية. فيه أرخص؟). Tem mais + الصفة."
+      }
+    },
+    {
+      "id": "b05",
+      "scene": "s02",
+      "narration_ar": "",
+      "speaker": "Lurdes",
+      "line": {
+        "pt": "Tenho este. São três euros.",
+        "ar": "عندي دي. بتلاتة يورو.",
+        "arz": "عندي دي. بتلاتة يورو.",
+        "alt_pt": "Este é mais barato: três euros.",
+        "alt_ar": "دي أرخص: تلاتة يورو.",
+        "alt_arz": "دي أرخص: تلاتة يورو."
+      },
+      "reply": {
+        "pt": "",
+        "ar": "",
+        "arz": ""
+      },
+      "difficulty": "supported",
+      "kind": "known",
+      "teach": null,
+      "info_card": null,
+      "coach_tip": {
+        "ar": "تلاتة يورو مناسبة. اطلبها بـ Queria، والقهوة دي = este café.",
+        "arz": "تلاتة يورو مناسبة. اطلبها بـ Queria، والقهوة دي = este café."
+      },
+      "reaction_cue": "",
+      "frame": "Queria…",
+      "line_explain": {
+        "ar": "بتوريك قهوة تانية أرخص، بتلاتة يورو.",
+        "arz": "بتوريك قهوة تانية أرخص، بتلاتة يورو."
+      },
+      "word_bank": [
+        {
+          "pt": "Queria",
+          "ar": "كنت عايز"
+        },
+        {
+          "pt": "este",
+          "ar": "ده"
+        },
+        {
+          "pt": "café",
+          "ar": "قهوة"
+        }
+      ],
+      "accepted": [
+        "Queria este café.",
+        "Queria este.",
+        "Queria este, obrigado.",
+        "Queria este café, obrigado.",
+        "Sim, queria este café.",
+        "Queria este café, por favor."
+      ],
+      "anticipated_wrong": [],
+      "hint_note": {
+        "ar": "القهوة دي = este café. ابدأ بـ Queria. جرّب تاني.",
+        "arz": "القهوة دي = este café. ابدأ بـ Queria. جرّب تاني."
+      },
+      "why_note": {
+        "ar": "Queria este café. (كنت عايز القهوة دي). Queria + الحاجة.",
+        "arz": "Queria este café. (كنت عايز القهوة دي). Queria + الحاجة."
+      }
+    },
+    {
+      "id": "b06",
+      "scene": "s02",
+      "narration_ar": "",
+      "speaker": "Lurdes",
+      "line": {
+        "pt": "Então são cinco euros.",
+        "ar": "يبقى الحساب خمسة يورو.",
+        "arz": "يبقى الحساب خمسة يورو.",
+        "alt_pt": "Ao todo, cinco euros.",
+        "alt_ar": "الكل خمسة يورو.",
+        "alt_arz": "الكل خمسة يورو."
+      },
+      "reply": {
+        "pt": "",
+        "ar": "",
+        "arz": ""
+      },
+      "difficulty": "supported",
+      "kind": "known",
+      "teach": null,
+      "info_card": null,
+      "coach_tip": {
+        "ar": "اتأكد إنك سمعت الرقم صح: كرر الرقم وeuros كسؤال.",
+        "arz": "اتأكد إنك سمعت الرقم صح: كرر الرقم وeuros كسؤال."
+      },
+      "reaction_cue": "",
+      "frame": "…euros?",
+      "line_explain": {
+        "ar": "قالتلك الحساب كله: cinco euros.",
+        "arz": "قالتلك الحساب كله: cinco euros."
+      },
+      "word_bank": [
+        {
+          "pt": "cinco",
+          "ar": "خمسة"
+        },
+        {
+          "pt": "euros",
+          "ar": "يورو"
+        }
+      ],
+      "accepted": [
+        "Cinco euros?",
+        "São cinco euros?",
+        "Cinco?"
+      ],
+      "anticipated_wrong": [
+        {
+          "answer": "Seis euros?",
+          "verdict": "wrong",
+          "note": {
+            "ar": "اسمع تاني: cinco = خمسة. جرّب تاني.",
+            "arz": "اسمع تاني: cinco = خمسة. جرّب تاني."
+          }
+        }
+      ],
+      "hint_note": {
+        "ar": "خمسة بالبرتغالي cinco. جرّب تاني.",
+        "arz": "خمسة بالبرتغالي cinco. جرّب تاني."
+      },
+      "why_note": {
+        "ar": "Cinco euros? (خمسة يورو؟). تكرار الرقم كسؤال طريقة طبيعية تتأكد بيها.",
+        "arz": "Cinco euros? (خمسة يورو؟). تكرار الرقم كسؤال طريقة طبيعية تتأكد بيها."
+      }
+    },
+    {
+      "id": "b07",
+      "scene": "s02",
+      "narration_ar": "",
+      "speaker": "Lurdes",
+      "line": {
+        "pt": "Sim, cinco.",
+        "ar": "أيوه، خمسة.",
+        "arz": "أيوه، خمسة.",
+        "alt_pt": "Sim, são cinco.",
+        "alt_ar": "أيوه، خمسة.",
+        "alt_arz": "أيوه، خمسة."
+      },
+      "reply": {
+        "pt": "De nada. Bom dia!",
+        "ar": "العفو. نهارك سعيد!",
+        "arz": "العفو. نهارك سعيد!"
+      },
+      "difficulty": "supported",
+      "kind": "known",
+      "teach": null,
+      "info_card": null,
+      "coach_tip": {
+        "ar": "ادفع واشكرها، بكلمة فاكرها من الدرس اللي فات.",
+        "arz": "ادفع واشكرها، بكلمة فاكرها من الدرس اللي فات."
+      },
+      "reaction_cue": "",
+      "frame": "Obriga…",
+      "line_explain": {
+        "ar": "أكدتلك إن الحساب خمسة يورو.",
+        "arz": "أكدتلك إن الحساب خمسة يورو."
+      },
+      "word_bank": [
+        {
+          "pt": "Obrigado",
+          "ar": "شكراً (راجل)"
+        },
+        {
+          "pt": "Obrigada",
+          "ar": "شكراً (ست)"
+        }
+      ],
+      "accepted": [
+        "Obrigado.",
+        "Obrigada.",
+        "Muito obrigado.",
+        "Muito obrigada.",
+        "Obrigado, bom dia.",
+        "Obrigada, bom dia."
+      ],
+      "anticipated_wrong": [],
+      "hint_note": {
+        "ar": "شكراً = obrigado لو راجل، obrigada لو ست. جرّب تاني.",
+        "arz": "شكراً = obrigado لو راجل، obrigada لو ست. جرّب تاني."
+      },
+      "why_note": {
+        "ar": "Obrigado. (شكراً).",
+        "arz": "Obrigado. (شكراً)."
+      }
+    },
+    {
+      "id": "b08",
+      "scene": "s03",
+      "narration_ar": "تاني يوم رجعت الدكانة. جواكيم، ابن لورديش، ورا الكاونتر. عايز مياه.",
+      "speaker": "Joaquim",
+      "line": {
+        "pt": "Olá! Diga.",
+        "ar": "أهلاً! اتفضل.",
+        "arz": "أهلاً! اتفضل.",
+        "alt_pt": "Bom dia! Diga.",
+        "alt_ar": "صباح الخير! اتفضل.",
+        "alt_arz": "صباح الخير! اتفضل."
+      },
+      "reply": {
+        "pt": "",
+        "ar": "",
+        "arz": ""
+      },
+      "difficulty": "open",
+      "kind": "known",
+      "teach": null,
+      "info_card": null,
+      "coach_tip": {
+        "ar": "",
+        "arz": ""
+      },
+      "reaction_cue": "",
+      "frame": "Bom dia. Quanto custa…",
+      "line_explain": {
+        "ar": "بيسلّم عليك ومستنيك تقول عايز إيه.",
+        "arz": "بيسلّم عليك ومستنيك تقول عايز إيه."
+      },
+      "word_bank": [
+        {
+          "pt": "Bom dia",
+          "ar": "صباح الخير"
+        },
+        {
+          "pt": "Quanto custa",
+          "ar": "بكام"
+        },
+        {
+          "pt": "a água",
+          "ar": "المياه"
+        },
+        {
+          "pt": "o chá",
+          "ar": "الشاي"
+        }
+      ],
+      "accepted": [
+        "Bom dia. Quanto custa a água?",
+        "Quanto custa a água?",
+        "Olá, quanto custa a água?",
+        "Olá. Quanto custa a água?",
+        "Bom dia, quanto é a água?"
+      ],
+      "anticipated_wrong": [
+        {
+          "answer": "Quanto custa o água?",
+          "verdict": "near_miss",
+          "note": {
+            "ar": "água مؤنثة، بنقول a água. جرّب تاني.",
+            "arz": "água مؤنثة، بنقول a água. جرّب تاني."
+          }
+        }
+      ],
+      "hint_note": {
+        "ar": "المياه بالبرتغالي a água. جرّب تاني.",
+        "arz": "المياه بالبرتغالي a água. جرّب تاني."
+      },
+      "why_note": {
+        "ar": "Bom dia. Quanto custa a água? (صباح الخير، المياه بكام؟).",
+        "arz": "Bom dia. Quanto custa a água? (صباح الخير، المياه بكام؟)."
+      }
+    },
+    {
+      "id": "b09",
+      "scene": "s03",
+      "narration_ar": "",
+      "speaker": "Joaquim",
+      "line": {
+        "pt": "É um euro.",
+        "ar": "بيورو واحد.",
+        "arz": "بيورو واحد.",
+        "alt_pt": "Custa um euro.",
+        "alt_ar": "بيورو واحد.",
+        "alt_arz": "بيورو واحد."
+      },
+      "reply": {
+        "pt": "",
+        "ar": "",
+        "arz": ""
+      },
+      "difficulty": "open",
+      "kind": "known",
+      "teach": null,
+      "info_card": null,
+      "coach_tip": {
+        "ar": "",
+        "arz": ""
+      },
+      "reaction_cue": "",
+      "frame": "É barato. Queria…",
+      "line_explain": {
+        "ar": "المياه بيورو واحد: É um euro.",
+        "arz": "المياه بيورو واحد: É um euro."
+      },
+      "word_bank": [
+        {
+          "pt": "É barato",
+          "ar": "ده رخيص"
+        },
+        {
+          "pt": "Queria",
+          "ar": "كنت عايز"
+        },
+        {
+          "pt": "três",
+          "ar": "تلاتة"
+        },
+        {
+          "pt": "águas",
+          "ar": "مياه (جمع)"
+        }
+      ],
+      "accepted": [
+        "É barato. Queria três águas.",
+        "Queria três águas.",
+        "É barato, queria três águas.",
+        "Queria três águas, por favor.",
+        "Queria três águas, se faz favor.",
+        "É barato. Queria três."
+      ],
+      "anticipated_wrong": [
+        {
+          "answer": "Queria três água.",
+          "verdict": "near_miss",
+          "note": {
+            "ar": "أكتر من واحدة بنزود s: águas. جرّب تاني.",
+            "arz": "أكتر من واحدة بنزود s: águas. جرّب تاني."
+          }
+        }
+      ],
+      "hint_note": {
+        "ar": "عايز تلاتة: três águas. جرّب تاني.",
+        "arz": "عايز تلاتة: três águas. جرّب تاني."
+      },
+      "why_note": {
+        "ar": "É barato. Queria três águas. (ده رخيص. كنت عايز تلات إزايز مياه).",
+        "arz": "É barato. Queria três águas. (ده رخيص. كنت عايز تلات إزايز مياه)."
+      }
+    },
+    {
+      "id": "b10",
+      "scene": "s03",
+      "narration_ar": "",
+      "speaker": "Joaquim",
+      "line": {
+        "pt": "São três euros. Mais alguma coisa?",
+        "ar": "تلاتة يورو. حاجة تانية؟",
+        "arz": "تلاتة يورو. حاجة تانية؟",
+        "alt_pt": "Três águas, três euros. Mais alguma coisa?",
+        "alt_ar": "تلات مياه، تلاتة يورو. حاجة تانية؟",
+        "alt_arz": "تلات مياه، تلاتة يورو. حاجة تانية؟"
+      },
+      "reply": {
+        "pt": "Então, três euros. Obrigado!",
+        "ar": "يبقى تلاتة يورو. شكراً!",
+        "arz": "يبقى تلاتة يورو. شكراً!"
+      },
+      "difficulty": "open",
+      "kind": "known",
+      "teach": null,
+      "info_card": null,
+      "coach_tip": {
+        "ar": "",
+        "arz": ""
+      },
+      "reaction_cue": "",
+      "frame": "Não…",
+      "line_explain": {
+        "ar": "بيقولك الحساب تلاتة يورو، وبيسألك عايز حاجة تانية.",
+        "arz": "بيقولك الحساب تلاتة يورو، وبيسألك عايز حاجة تانية."
+      },
+      "word_bank": [
+        {
+          "pt": "Não",
+          "ar": "لأ"
+        },
+        {
+          "pt": "obrigado",
+          "ar": "شكراً"
+        }
+      ],
+      "accepted": [
+        "Não, obrigado.",
+        "Não, obrigada.",
+        "Não. Obrigado.",
+        "Não, muito obrigado.",
+        "Não, obrigado. Bom dia."
+      ],
+      "anticipated_wrong": [],
+      "hint_note": {
+        "ar": "لأ = Não، وبعدها obrigado. جرّب تاني.",
+        "arz": "لأ = Não، وبعدها obrigado. جرّب تاني."
+      },
+      "why_note": {
+        "ar": "Não, obrigado. (لأ، شكراً).",
+        "arz": "Não, obrigado. (لأ، شكراً)."
+      }
+    }
+  ],
+  "summary": {
+    "words": [
+      {
+        "pt": "dois",
+        "ar": "اتنين"
+      },
+      {
+        "pt": "três",
+        "ar": "تلاتة"
+      },
+      {
+        "pt": "quatro",
+        "ar": "أربعة"
+      },
+      {
+        "pt": "cinco",
+        "ar": "خمسة"
+      },
+      {
+        "pt": "seis",
+        "ar": "ستة"
+      },
+      {
+        "pt": "o preço",
+        "ar": "السعر"
+      },
+      {
+        "pt": "caro",
+        "ar": "غالي"
+      },
+      {
+        "pt": "barato",
+        "ar": "رخيص"
+      }
+    ],
+    "rules": [
+      {
+        "pt": "Quanto custa …?",
+        "ar": "عشان تسأل عن سعر أي حاجة.",
+        "example_pt": "Quanto custa o chá?",
+        "example_ar": "الشاي بكام؟"
+      },
+      {
+        "pt": "É um euro. / São … euros.",
+        "ar": "السعر: É ليورو واحد، São لاتنين وطالع.",
+        "example_pt": "São seis euros.",
+        "example_ar": "بستة يورو."
+      },
+      {
+        "pt": "É caro. / Tem mais barato?",
+        "ar": "رأيك في السعر، ولو عايز حاجة أرخص.",
+        "example_pt": "É caro. Tem mais barato?",
+        "example_ar": "دي غالية. فيه أرخص؟"
+      }
+    ]
+  },
+  "closing_hook": {
+    "speaker": "Joaquim",
+    "pt": "Queres um saco?",
+    "ar": "عايز كيس؟",
+    "arz": "عايِز كيس؟"
+  },
+  "assessment": [
+    {
+      "id": "a01",
+      "target": "تسأل عن سعر حاجة",
+      "speaker": "assessment",
+      "kind": "known",
+      "line": {
+        "pt": "Bom dia! Diga.",
+        "ar": "دخلت سوبرماركت، وشايف شاي على الرف من غير سعر. عايز تسأل البياع بكام. هتقول إيه؟",
+        "arz": "دخلت سوبرماركت، وشايف شاي على الرف من غير سعر. عايز تسأل البياع بكام. هتقول إيه؟"
+      },
+      "accepted": [
+        "Quanto custa o chá?",
+        "Quanto custa este chá?",
+        "Bom dia. Quanto custa o chá?",
+        "Olá, quanto custa o chá?",
+        "Quanto é o chá?"
+      ],
+      "anticipated_wrong": [],
+      "nudge_note": {
+        "ar": "راجع: Quanto custa + الحاجة. جرّب تاني.",
+        "arz": "راجع: Quanto custa + الحاجة. جرّب تاني."
+      },
+      "why_note": {
+        "ar": "Quanto custa o chá? (الشاي بكام؟).",
+        "arz": "Quanto custa o chá? (الشاي بكام؟)."
+      }
+    },
+    {
+      "id": "a02",
+      "target": "تقول إن السعر غالي وتسأل على أرخص",
+      "speaker": "assessment",
+      "kind": "known",
+      "line": {
+        "pt": "São seis euros.",
+        "ar": "البياع قالك السعر وشايفه غالي عليك. قول كده واسأل لو فيه أرخص.",
+        "arz": "البياع قالك السعر وشايفه غالي عليك. قول كده واسأل لو فيه أرخص."
+      },
+      "accepted": [
+        "É caro. Tem mais barato?",
+        "Tem mais barato?",
+        "É caro, tem mais barato?",
+        "É muito caro. Tem mais barato?"
+      ],
+      "anticipated_wrong": [],
+      "nudge_note": {
+        "ar": "راجع: É + رأيك، وTem mais + الصفة. جرّب تاني.",
+        "arz": "راجع: É + رأيك، وTem mais + الصفة. جرّب تاني."
+      },
+      "why_note": {
+        "ar": "É caro. Tem mais barato? (دي غالية. فيه أرخص؟).",
+        "arz": "É caro. Tem mais barato? (دي غالية. فيه أرخص؟)."
+      }
+    },
+    {
+      "id": "a03",
+      "target": "تفهم السعر اللي اتقال وتتأكد منه",
+      "speaker": "assessment",
+      "kind": "known",
+      "line": {
+        "pt": "São quatro euros.",
+        "ar": "البياعة قالت الحساب. اتأكد إنك سمعت صح: كرر الرقم كسؤال.",
+        "arz": "البياعة قالت الحساب. اتأكد إنك سمعت صح: كرر الرقم كسؤال."
+      },
+      "accepted": [
+        "Quatro euros?",
+        "São quatro euros?",
+        "Quatro?"
+      ],
+      "anticipated_wrong": [
+        {
+          "answer": "Cinco euros?",
+          "verdict": "wrong",
+          "note": {
+            "ar": "اسمع تاني: quatro = أربعة. جرّب تاني.",
+            "arz": "اسمع تاني: quatro = أربعة. جرّب تاني."
+          }
+        }
+      ],
+      "nudge_note": {
+        "ar": "راجع الرقم اللي سمعته. جرّب تاني.",
+        "arz": "راجع الرقم اللي سمعته. جرّب تاني."
+      },
+      "why_note": {
+        "ar": "Quatro euros? (أربعة يورو؟).",
+        "arz": "Quatro euros? (أربعة يورو؟)."
+      }
+    }
+  ]
+}

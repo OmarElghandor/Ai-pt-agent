@@ -29,6 +29,7 @@ export type LearnerLessonRow = {
   missingWords: string[];
   version: number | null;
   requirements: { cells: string[]; words: string[] };
+  source: 'generated' | 'hand' | 'json' | null;
 };
 
 const ASSESSMENT_COOLDOWN_MS = 12 * 60 * 60 * 1000;
@@ -89,6 +90,7 @@ function jsonPackFallback(
       missingWords: [],
       version: pack.version ?? 1,
       requirements: pack.requirements ?? { cells: [], words: [] },
+      source: 'json',
     };
   });
 
@@ -139,6 +141,7 @@ export function mergeSeedWithMongo(
       missingWords,
       version: mongo?.version ?? null,
       requirements,
+      source: mongo?.source ?? null,
     };
   });
 }

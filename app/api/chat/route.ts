@@ -19,7 +19,8 @@ import { normalizeAnswer, passesCodeGuard } from '@/lib/grade';
 import { lastExchanges } from '@/lib/history';
 import { warmKnownCache, getKnownCache } from '@/lib/knownCache';
 import { refreshMongoCatalogue } from '@/lib/lessons/catalogue';
-import { makeCoachNote, typedToPlain } from '@/lib/messages';
+import { makeCharacterLine, makeCoachNote, typedToPlain } from '@/lib/messages';
+import type { StoryBeat } from '@/lib/lessons/types';
 import {
   formatKnownForPrompt,
   markLessonPracticed,
@@ -231,9 +232,12 @@ export async function POST(req: Request) {
     writeLearner(learner);
   }
 
-  // Persist practice completion to Mongo when friend-bridge just finished
+  // Persist practice completion to Mongo when friend-bridge just finished.
+  // Gate with PRACTICE_WRITE_PROGRESS=false when Langify owns progress (v2).
+  const writeProgress = process.env.PRACTICE_WRITE_PROGRESS !== 'false';
   const prevBridge = learner.progress.practice?.phase === 'friend-bridge';
   const nowDone =
+    writeProgress &&
     prevBridge &&
     applied.progress.practice === null &&
     applied.progress.lastPractisedLessonId;
@@ -308,6 +312,16 @@ export async function POST(req: Request) {
             }
             const judging = reaction.source === 'you';
             const reactionKind = reaction.reactionKind ?? (reaction.mode === 'side' ? 'r3' : judging ? 'r2' : 'r1');
+            log.reactionModel =
+              reactionKind === 'r1' || reactionKind === 'r2' || reactionKind === 'r3'
+                ? reactionKind
+                : null;
+            if (progress.practice) {
+              progress.practice = {
+                ...progress.practice,
+                reactionCalls: (progress.practice.reactionCalls ?? 0) + 1,
+              };
+            }
             const system = buildLessonReactionInstruction({
               level,
               reaction,
@@ -375,8 +389,13 @@ export async function POST(req: Request) {
               reaction.mode === 'practice' || reaction.mode === 'assessment' || reaction.mode === 'side'
                 ? voicesForPracticeVerdict(parsedBody, verdictForVoices, reactionKind)
                 : parsedBody;
-            const filtered = filterReactionMessages(voiced, reaction, modelText);
-            const bodyMessages = filtered
+            const filtered = filterReactionMessages(
+              voiced,
+              reaction,
+              modelText,
+              reaction.answerForReaction || userText,
+            );
+            let bodyMessages = filtered
               ? dropJunkCoach(filtered, userText)
               : [];
 
@@ -384,6 +403,26 @@ export async function POST(req: Request) {
               verdictForVoices === 'near-miss' || verdictForVoices === 'near_miss';
             const passed =
               verdictForVoices === 'correct' || isNearMiss;
+
+            // Open beat (R2): prefer the authored reply over the model's character line.
+            const beatItem = item && 'reply' in item ? (item as StoryBeat) : null;
+            const authoredReply = beatItem?.reply;
+            if (
+              passed &&
+              reaction.source === 'you' &&
+              authoredReply &&
+              authoredReply.pt?.trim()
+            ) {
+              const replyBubble = makeCharacterLine(beatItem!.speaker, {
+                pt: authoredReply.pt,
+                ar: authoredReply.ar || '',
+                arz: authoredReply.arz || authoredReply.ar || '',
+              });
+              bodyMessages = [
+                ...bodyMessages.filter((m) => m.type !== 'character'),
+                replyBubble,
+              ];
+            }
 
             // App praise only for model-graded passes. Code-graded already praised in storyReaction.
             // Dropped R1 on a code pass → next story line only (no second praise).

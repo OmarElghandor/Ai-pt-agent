@@ -146,7 +146,11 @@ export function ChatScreen({
                 {status !== 'streaming' &&
                 m.type !== 'praise' &&
                 m.type !== 'narration' &&
-                m.type !== 'scene-words' ? (
+                m.type !== 'scene-words' &&
+                m.type !== 'script-replay' &&
+                m.type !== 'summary' &&
+                m.type !== 'info-card' &&
+                m.type !== 'teach' ? (
                   <button
                     type="button"
                     onClick={() => onPlaySegments(ttsSegmentsFor(m))}

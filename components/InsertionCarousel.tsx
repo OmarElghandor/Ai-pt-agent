@@ -13,22 +13,10 @@ type Props = {
 };
 
 function CardIcon({ emoji }: { emoji?: string }) {
-  if (emoji) {
-    return (
-      <span className="flex h-8 w-8 items-center justify-center text-xl leading-none" aria-hidden>
-        {emoji}
-      </span>
-    );
-  }
+  if (!emoji?.trim()) return null;
   return (
-    <span
-      className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-600 bg-zinc-900/80 text-zinc-400"
-      aria-hidden
-    >
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <rect x="4" y="5" width="16" height="15" rx="2" />
-        <path d="M8 3v4M16 3v4M4 11h16" strokeLinecap="round" />
-      </svg>
+    <span className="flex h-8 w-8 items-center justify-center text-xl leading-none" aria-hidden>
+      {emoji}
     </span>
   );
 }

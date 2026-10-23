@@ -99,11 +99,14 @@ export function buildR1CharacterReaction(input: {
   const slotNote = r.slotNote?.trim() || '';
   const nextLine = r.nextLine?.trim() || '';
   const nextSpeaker = r.nextSpeaker?.trim() || '';
+  // Prefer the corrected form after a near-miss so we never echo his slip.
+  const answered = (r.answerForReaction ?? input.userText).trim() || input.userText;
   return [
     `You are ${name}, ${role}, in a short everyday scene in Portugal.`,
     `You just said: "${r.beatLine || r.currentPromptPlain}"`,
-    `The learner, an Egyptian beginner in European Portuguese, answered: "${input.userText}"`,
+    `The learner, an Egyptian beginner in European Portuguese, answered: "${answered}"`,
     'His answer is right.',
+    'If his answer had a small slip, the app corrects it separately; your sentence never repeats the slip.',
     '',
     `Write the ONE short sentence ${name} says back.`,
     `Feeling and intent: ${r.reactionCue || 'warm and natural'}`,
@@ -115,10 +118,11 @@ export function buildR1CharacterReaction(input: {
     'Rules:',
     '- European Portuguese, informal tu, very simple (A0–A1), at most 8 words.',
     '- A statement. No question mark. No invitation, no offer, no new topic.',
+    '- Do not repeat or echo his sentence. React the way a real person in this role would (a short acknowledgement, handing something over, a reaction to his news).',
+    '- If he gave an opinion about your own things (caro, barato), do not agree or argue; react as your role would.',
+    `- Stay inside this scene: no nationality, name, place or thing that is not in the line, his answer, or these words: ${r.words || '(none)'}`,
     '- React only to what he said. Do not add facts about yourself (your age, where you are from, comparisons).',
     `- Never say your own name (${name}); you are talking TO him.`,
-    '- Prefer his own words back to him ("Egípcio! Que bom.") over new words.',
-    `- Use simple words a beginner knows: ${r.words || '(none)'}`,
     `- Do not reuse these recent sentences: ${(r.recentCharacterReactions ?? r.recentPraise).slice(-3).join(' | ') || '(none)'}`,
     '- Then the same sentence in Egyptian Arabic (عايز، إزاي، فين، دلوقتي، مش), never formal Arabic, never English.',
     '',
@@ -203,7 +207,7 @@ export function buildR3CoachArabic(input: {
   ].join('\n');
 }
 
-/** Pick R1 / R2 / R3 from reaction context. */
+/** Pick R1 / R2 / R3 from reaction context (legacy `/api/chat`). */
 export function buildLessonReactionInstruction(input: {
   level: CefrLevel;
   reaction: LessonReactionContext;
@@ -215,6 +219,9 @@ export function buildLessonReactionInstruction(input: {
   if (kind === 'r3') return buildR3CoachArabic(input);
   return buildR2Judge(input);
 }
+
+/** v2 reactor builder — re-export for Langify callers and tests. */
+export { buildV2ReactorPrompt } from '@/lib/reactor/buildReactPrompt';
 
 function inferReactionKind(r: LessonReactionContext): 'r1' | 'r2' | 'r3' {
   if (r.mode === 'side') return 'r3';

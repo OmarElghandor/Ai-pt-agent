@@ -1,8 +1,11 @@
 import type { CefrLevel } from './prompts';
 import type {
   AuthoredSegment,
+  BeatInfoCard,
+  BeatTeach,
   ExplanationExample,
   PromptShape,
+  ScriptTurn,
 } from './lessons/types';
 
 export type PartnerMode = 'friend' | 'practice' | 'assessment';
@@ -25,7 +28,10 @@ export type MessageType =
   | 'narration'
   | 'character'
   | 'coach'
-  | 'scene-words';
+  | 'scene-words'
+  | 'info-card'
+  | 'script-replay'
+  | 'summary';
 
 export type LearnerVerdictLabel = 'صح' | 'قربت' | string;
 
@@ -76,6 +82,17 @@ export type TypedMessage = {
   };
   /** Optional contrast line under a grammar explanation card. */
   contrastAr?: string;
+  /** v5 first-use teach card payload. */
+  beatTeach?: BeatTeach;
+  /** v5 info_card table after the character line. */
+  infoCard?: BeatInfoCard;
+  /** Full script replay at end of lesson (v5). */
+  scriptReplay?: ScriptTurn[];
+  /** End-of-lesson summary (v5). */
+  lessonSummary?: {
+    words: { pt: string; ar: string }[];
+    rules: { pt: string; ar: string; examplePt: string; exampleAr: string }[];
+  };
 };
 
 /** Which Prompt-4 builder to send (R1 / R2 / R3). */
@@ -90,6 +107,11 @@ export type LessonReactionContext = {
   /** Which short reaction prompt to send. */
   reactionKind?: ReactionKind;
   accepted?: string;
+  /**
+   * Text passed to R1 as his answer. After a near-miss this is the corrected
+   * accepted form so the character never repeats the slip.
+   */
+  answerForReaction?: string;
   mistakeNote?: string;
   hintNote?: string;
   whyNote?: string;
@@ -143,7 +165,11 @@ export type PracticeFocus = {
    */
   stuckCountOnCurrent: number;
   itemOutcomes: Record<string, ItemOutcome>;
-  phase: 'story' | 'friend-bridge';
+  phase: 'story' | 'final-task' | 'friend-bridge';
+  /** Immediate end-of-lesson check (v5); does not write formal assessment results. */
+  finalTaskIndex?: number;
+  finalTaskAttempts?: number;
+  finalTaskOutcomes?: Record<string, 'pass' | 'fail'>;
   /** Turns left in the post-practice Friend bridge (default 5). */
   friendBridgeTurnsLeft: number;
   /** Re-ask uses the beat's alternative line. */
@@ -157,6 +183,8 @@ export type PracticeFocus = {
   sceneWordGate?: { sceneId: string; beatIndex: number } | null;
   /** Scene ids whose word card was dismissed at least once (enables reopen chip). */
   sceneWordCardsSeen?: string[];
+  /** How many times the reaction model (R1/R2/R3) was called this lesson. */
+  reactionCalls?: number;
 };
 
 export type AssessmentFocus = {
@@ -190,6 +218,8 @@ export type TurnLogDetail = {
   modelVerdictRaw: string | null;
   /** Open beat wrong: model rejected it, or code guard demoted a pass. */
   openFailReason?: 'model' | 'guard' | null;
+  /** Which reaction model was streamed this turn (null = none). */
+  reactionModel?: 'r1' | 'r2' | 'r3' | null;
   messageTypes: MessageType[];
   modelLatencyMs: number | null;
   finishReason: string | null;
@@ -261,6 +291,7 @@ export function emptyTurnLog(): TurnLogDetail {
     matchedAnswer: null,
     modelVerdictRaw: null,
     openFailReason: null,
+    reactionModel: null,
     messageTypes: [],
     modelLatencyMs: null,
     finishReason: null,
@@ -329,7 +360,12 @@ function migratePracticeFocus(raw: unknown): PracticeFocus | null {
   const o = raw as Record<string, unknown>;
   if (typeof o.lessonId !== 'string') return null;
   const legacyPhase = o.phase === 'explanation' ? 'teach' : o.phase;
-  const phase = legacyPhase === 'friend-bridge' ? 'friend-bridge' : 'story';
+  const phase =
+    legacyPhase === 'friend-bridge'
+      ? 'friend-bridge'
+      : legacyPhase === 'final-task'
+        ? 'final-task'
+        : 'story';
   const beatIndex =
     typeof o.beatIndex === 'number'
       ? o.beatIndex
@@ -359,6 +395,12 @@ function migratePracticeFocus(raw: unknown): PracticeFocus | null {
         ? (o.itemOutcomes as PracticeFocus['itemOutcomes'])
         : {},
     phase,
+    finalTaskIndex: typeof o.finalTaskIndex === 'number' ? o.finalTaskIndex : undefined,
+    finalTaskAttempts: typeof o.finalTaskAttempts === 'number' ? o.finalTaskAttempts : undefined,
+    finalTaskOutcomes:
+      o.finalTaskOutcomes && typeof o.finalTaskOutcomes === 'object'
+        ? (o.finalTaskOutcomes as PracticeFocus['finalTaskOutcomes'])
+        : undefined,
     friendBridgeTurnsLeft:
       typeof o.friendBridgeTurnsLeft === 'number' ? o.friendBridgeTurnsLeft : 0,
     useAltLine: o.useAltLine === true,
@@ -367,6 +409,7 @@ function migratePracticeFocus(raw: unknown): PracticeFocus | null {
     sceneWordCardsSeen: Array.isArray(o.sceneWordCardsSeen)
       ? o.sceneWordCardsSeen.filter((id): id is string => typeof id === 'string')
       : [],
+    reactionCalls: typeof o.reactionCalls === 'number' ? o.reactionCalls : 0,
   };
 }
 

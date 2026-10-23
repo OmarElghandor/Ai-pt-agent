@@ -69,7 +69,10 @@ function acceptAnswer(progress: Progress, userText: string, verdict: 'correct' |
   const turn = applyLearnerTurn({ progress: ready, userText });
   let nextProgress = turn.progress;
   let follow: typeof turn.messages = [];
-  if (turn.modelContext?.reaction?.source === 'code') {
+  if (turn.streamKind === 'none' && turn.log.gradingSource === 'code') {
+    // Authored reply / final-task known answers already advanced.
+    follow = turn.messages;
+  } else if (turn.modelContext?.reaction?.source === 'code') {
     follow = [...(turn.modelContext.reaction.nextPrompts ?? [])];
   } else {
     const pack = lessonById('test-greetings');
@@ -98,12 +101,20 @@ describe('assessment', () => {
       assert.equal(step.turn.modelContext?.reaction?.reactionKind, 'r1');
       progress = step.progress;
     }
+    // v5: immediate final tasks before the friend bridge (practice check only).
+    assert.equal(progress.practice?.phase, 'final-task');
+    for (const answer of ['Olá!', 'Chamo-me Omar.', 'Tudo bem?']) {
+      const step = acceptAnswer(progress, answer);
+      progress = step.progress;
+    }
     assert.equal(progress.practice?.phase, 'friend-bridge');
     // Exhaust friend-bridge turns to mark practisedAt
     for (let i = 0; i < 5; i++) {
       progress = applyLearnerTurn({ progress, userText: 'Oi' }).progress;
     }
     assert.ok(progress.lessons['test-greetings']?.practisedAt);
+    // Formal assessment results are NOT written by the practice final-task phase.
+    assert.equal(progress.lessons['test-greetings']?.assessmentByTarget, undefined);
 
     progress.lessons['test-greetings'].practisedAt = Date.now();
     assert.ok(!chipsFor(progress).some((c) => c.id.startsWith('assess-')));
@@ -196,7 +207,20 @@ describe('Prompt 4 reaction builders', () => {
     assert.match(instruction, /You just said: "Como dizes adeus\?"/);
     assert.match(instruction, /Rita will say: "Bom dia!"/);
     assert.match(instruction, /Never say your own name/);
+    assert.match(instruction, /Do not repeat or echo his sentence/);
+    assert.doesNotMatch(instruction, /Egípcio! Que bom/);
     assert.doesNotMatch(instruction, /LESSON_TARGET|SITUATION:/);
+  });
+
+  it('R1 uses answerForReaction instead of the raw slip', () => {
+    const instruction = buildR1CharacterReaction({
+      userText: 'queria um pacote de o chá',
+      reaction: base({
+        answerForReaction: 'Queria um pacote de chá',
+      }),
+    });
+    assert.match(instruction, /answered: "Queria um pacote de chá"/);
+    assert.doesNotMatch(instruction, /de o chá/);
   });
 
   it('parses fix tags as coach bubbles with Arabic', () => {
@@ -294,11 +318,92 @@ describe('Prompt 4 reaction builders', () => {
       '<character name="Rita"><pt>Bom dia!</pt><ar>صباح الخير!</ar></character>';
     const kept = filterReactionMessages(
       parseFriendOutput(okRaw, { strict: true }),
-      base({ reactionKind: 'r1', characterName: 'Rita' }),
+      base({
+        reactionKind: 'r1',
+        characterName: 'Rita',
+        words: 'Bom dia · Adeus',
+      }),
       okRaw,
     );
     assert.ok(kept);
     assert.equal(kept!.length, 1);
+  });
+
+  it('drops an R1 that echoes more than half of his answer', () => {
+    const raw =
+      '<character name="Marta"><pt>Um café, perfeito!</pt><ar>قهوة، تمام!</ar></character>';
+    const dropped = filterReactionMessages(
+      parseFriendOutput(raw, { strict: true }),
+      base({
+        reactionKind: 'r1',
+        characterName: 'Marta',
+        beatLine: 'Um café ou um chá?',
+        currentPromptPlain: 'Um café ou um chá?',
+        nextLine: 'É para aqui ou para levar?',
+        words: 'café · chá · perfeito · claro',
+        answerForReaction: 'Um café',
+      }),
+      raw,
+      'Um café',
+    );
+    assert.equal(dropped, null);
+  });
+
+  it('keeps a short R1 that reacts without echoing his sentence', () => {
+    const raw =
+      '<character name="Marta"><pt>Claro.</pt><ar>تمام.</ar></character>';
+    const kept = filterReactionMessages(
+      parseFriendOutput(raw, { strict: true }),
+      base({
+        reactionKind: 'r1',
+        characterName: 'Marta',
+        beatLine: 'Um café ou um chá?',
+        currentPromptPlain: 'Um café ou um chá?',
+        nextLine: 'É para aqui ou para levar?',
+        words: 'café · chá · claro',
+        answerForReaction: 'Um café',
+      }),
+      raw,
+      'Um café',
+    );
+    assert.ok(kept);
+    assert.equal(kept!.length, 1);
+    assert.equal(kept![0].type, 'character');
+  });
+
+  it('drops an R1 that leaks a word from another lesson', () => {
+    const raw =
+      '<character name="Marta"><pt>Egípcio, que bom.</pt><ar>مصري، حلو.</ar></character>';
+    const dropped = filterReactionMessages(
+      parseFriendOutput(raw, { strict: true }),
+      base({
+        reactionKind: 'r1',
+        characterName: 'Marta',
+        beatLine: 'Quanto custa?',
+        currentPromptPlain: 'Quanto custa?',
+        words: 'caro · barato · euros',
+        answerForReaction: 'É caro',
+      }),
+      raw,
+      'É caro',
+    );
+    assert.equal(dropped, null);
+  });
+
+  it('drops an R1 that steals the next story line’s wording', () => {
+    const raw =
+      '<character name="Marta"><pt>Para aqui ou para levar.</pt><ar>هنا ولا تيك أواي.</ar></character>';
+    const dropped = filterReactionMessages(
+      parseFriendOutput(raw, { strict: true }),
+      base({
+        reactionKind: 'r1',
+        characterName: 'Marta',
+        beatLine: 'Um café ou um chá?',
+        nextLine: 'É para aqui ou para levar?',
+      }),
+      raw,
+    );
+    assert.equal(dropped, null);
   });
 });
 

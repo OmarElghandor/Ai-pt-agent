@@ -15,6 +15,7 @@ import { validateLessonPack } from '../lib/lessons';
 import { emptyProgress, type Progress } from '../lib/progressTypes';
 import { presentBeat, presentBeatHead, presentBeatTail } from '../lib/messages';
 import { learnerView } from '../lib/learnerView';
+import { lessonById } from '../lib/lessons/catalogue';
 import {
   advancePracticeAfterOutcome,
   applyLearnerTurn,
@@ -71,9 +72,15 @@ function judged(
   let nextProgress = turn.progress;
   let follow: typeof turn.messages = [];
   if (turn.streamKind === 'none' && turn.log.gradingSource === 'code') {
-    // Attempt-2 wrong advances in the same turn; next story lines are in messages.
+    // Attempt-2 wrong / authored reply / final-task advances in the same turn.
     follow = turn.messages.filter(
-      (m) => m.type === 'character' || m.type === 'narration' || m.type === 'results',
+      (m) =>
+        m.type === 'character' ||
+        m.type === 'narration' ||
+        m.type === 'results' ||
+        m.type === 'script-replay' ||
+        m.type === 'summary' ||
+        m.type === 'task',
     );
   } else if (turn.modelContext?.reaction?.source === 'code') {
     follow = [...(turn.modelContext.reaction.nextPrompts ?? [])];
@@ -147,6 +154,24 @@ describe('grading', () => {
     if (egpico.verdict === 'near-miss') {
       assert.equal(egpico.reason, 'spelling');
       assert.equal(egpico.correctedWord, 'egípcio');
+    }
+    // Extra article: "de o chá" vs "de chá".
+    const extraArt = gradeKnownAnswer('queria um pacote de o chá', [
+      'Queria um pacote de chá',
+    ]);
+    assert.equal(extraArt.verdict, 'near-miss');
+    if (extraArt.verdict === 'near-miss') {
+      assert.equal(extraArt.reason, 'article');
+      assert.match(extraArt.fixNote || '', /من غير/);
+    }
+    // Uncontracted: he wrote "de o" when accepted has "do".
+    const uncontracted = gradeKnownAnswer('Queria um pacote de o chá', [
+      'Queria um pacote do chá',
+    ]);
+    assert.equal(uncontracted.verdict, 'near-miss');
+    if (uncontracted.verdict === 'near-miss') {
+      assert.equal(uncontracted.reason, 'article');
+      assert.match(uncontracted.fixNote || '', /بتبقى do/);
     }
     // Adjacent letter swap counts as one edit.
     const swapped = gradeKnownAnswer('abdce', ['abcde']);
@@ -248,6 +273,75 @@ describe('story lesson turns', () => {
       step.follow.some((m) => m.type === 'character' && m.playablePt === 'Como te chamas?'),
       true,
     );
+  });
+
+  it('shows authored reply without calling the reaction model', () => {
+    const live = lessonById('test-greetings');
+    assert.ok(live);
+    const beat = live!.beats[0];
+    const prev = beat.reply;
+    beat.reply = { pt: 'Olá!', ar: 'أهلاً!', arz: 'أَهْلاً!' };
+    try {
+      const progress = startLesson();
+      const turn = applyLearnerTurn({ progress, userText: 'Olá!' });
+      assert.equal(turn.streamKind, 'none');
+      assert.equal(turn.log.reactionModel, null);
+      assert.equal(turn.modelContext?.reaction, undefined);
+      assert.ok(turn.messages.some((m) => m.type === 'praise'));
+      assert.ok(
+        turn.messages.some((m) => m.type === 'character' && m.playablePt === 'Olá!'),
+      );
+      assert.equal(turn.progress.practice?.itemOutcomes.b01, 'correct');
+    } finally {
+      if (prev === undefined) delete beat.reply;
+      else beat.reply = prev;
+    }
+  });
+
+  it('empty authored reply skips the model and advances with praise only', () => {
+    const live = lessonById('test-greetings');
+    assert.ok(live);
+    const beat = live!.beats[0];
+    const prev = beat.reply;
+    beat.reply = { pt: '', ar: '', arz: '' };
+    try {
+      const progress = startLesson();
+      const turn = applyLearnerTurn({ progress, userText: 'Olá!' });
+      assert.equal(turn.streamKind, 'none');
+      assert.equal(turn.log.reactionModel, null);
+      assert.ok(turn.messages.some((m) => m.type === 'praise'));
+      // No reply bubble; next prompts may include scene gate / next beat later.
+      assert.equal(
+        turn.messages.filter((m) => m.type === 'character' && m.playablePt === '').length,
+        0,
+      );
+    } finally {
+      if (prev === undefined) delete beat.reply;
+      else beat.reply = prev;
+    }
+  });
+
+  it('legacy packs without reply still call R1 after a correct answer', () => {
+    const live = lessonById('test-greetings');
+    assert.ok(live);
+    assert.equal(live!.beats[0].reply, undefined);
+    const progress = startLesson();
+    const turn = applyLearnerTurn({ progress, userText: 'Olá!' });
+    assert.equal(turn.streamKind, 'lesson-reaction');
+    assert.equal(turn.log.reactionModel, 'r1');
+    assert.equal(turn.modelContext?.reaction?.reactionKind, 'r1');
+  });
+
+  it('passes the corrected answer to R1 after a near-miss', () => {
+    const live = lessonById('test-greetings');
+    assert.ok(live);
+    assert.equal(live!.beats[0].reply, undefined);
+    // "Ola" vs accepted "Olá" → accent near-miss; R1 gets the corrected form.
+    const turn = applyLearnerTurn({ progress: startLesson(), userText: 'Ola' });
+    assert.equal(turn.streamKind, 'lesson-reaction');
+    assert.equal(turn.log.reactionModel, 'r1');
+    assert.equal(turn.modelContext?.reaction?.answerForReaction, 'Olá');
+    assert.notEqual(turn.modelContext?.userText, turn.modelContext?.reaction?.answerForReaction);
   });
 
   it('near-miss advances with بنكتبها and no praise', () => {
@@ -490,16 +584,22 @@ describe('story lesson turns', () => {
     assert.ok(resumed.messages.some((m) => m.type === 'character'));
   });
 
-  it('reaches the friend bridge after the last beat, with the closing hook queued', () => {
+  it('reaches final tasks after the last beat, then the friend bridge', () => {
     let progress = startLesson();
 
     for (const answer of ['Olá!', 'Chamo-me Omar', 'Tudo bem?']) {
       const step = judged(progress, answer);
       assert.equal(step.turn.log.gradingSource, 'code');
       progress = step.progress;
-      if (progress.practice?.phase === 'friend-bridge') {
-        assert.ok(step.follow.some((m) => m.playablePt === 'E tu, de onde és?'));
-      }
+    }
+
+    assert.equal(progress.practice?.phase, 'final-task');
+    assert.equal(progress.mode, 'practice');
+
+    // Complete immediate final tasks (practice check; not formal assessment).
+    for (const answer of ['Olá!', 'Chamo-me Omar.', 'Tudo bem?']) {
+      const step = judged(progress, answer);
+      progress = step.progress;
     }
 
     assert.equal(progress.mode, 'friend');
@@ -551,16 +651,29 @@ describe('story lesson turns', () => {
         }
         assert.equal(messages.some((m) => m.type === 'results'), false);
       } else {
+        // v5: ending aids + final tasks before the friend bridge.
+        assert.equal(progress.practice?.phase, 'final-task');
+        assert.ok(messages.some((m) => m.type === 'task'));
+        // Finish final tasks → bridge + checklist.
+        while (progress.practice?.phase === 'final-task') {
+          const task =
+            six.assessmentTasks[progress.practice.finalTaskIndex ?? 0];
+          assert.ok(task);
+          const accepted =
+            task.kind === 'known' ? task.acceptedAnswers[0] : 'ok';
+          const fin = applyLearnerTurn({ progress, userText: accepted });
+          progress = fin.progress;
+          if (fin.streamKind === 'lesson-reaction' && fin.modelContext?.reaction?.source === 'you') {
+            commitOpenVerdict(progress, six, task.id, 'correct');
+          }
+        }
         assert.equal(progress.practice?.phase, 'friend-bridge');
-        const done = messages.find((m) => m.type === 'results');
-        assert.ok(done);
-        assert.match(done.segments.map((s) => s.text).join(' '), /خلصت 6 من 6/);
       }
     }
     assert.deepEqual(asked, beats.map((beat) => beat.id));
   });
 
-  it('shows guided tip before the character line; supported tip after', () => {
+  it('shows character line before tip for guided and supported', () => {
     const gated = applyLearnerTurn({
       progress: emptyProgress(),
       userText: '',
@@ -577,7 +690,7 @@ describe('story lesson turns', () => {
     const guidedTypes = guided.map((m) => m.type);
     const coachIdx = guidedTypes.indexOf('coach');
     const charIdx = guidedTypes.indexOf('character');
-    assert.ok(coachIdx >= 0 && charIdx >= 0 && coachIdx < charIdx);
+    assert.ok(coachIdx >= 0 && charIdx >= 0 && charIdx < coachIdx);
 
     // Advance without auto-dismiss so we can assert the s2 gate.
     const afterFirst = applyLearnerTurn({ progress: started.progress, userText: 'Olá!' });
@@ -601,6 +714,44 @@ describe('story lesson turns', () => {
       supported.find((m) => m.type === 'coach')!.segments.map((s) => s.text).join(' '),
       /Chamo-me/,
     );
+  });
+
+  it('orders character → info_card → teach when present', () => {
+    const live = lessonById('test-greetings');
+    assert.ok(live);
+    const beat = live!.beats[0];
+    const prevTeach = beat.teach;
+    const prevInfo = beat.infoCard;
+    beat.teach = {
+      momentAr: 'محتاج تسلّم.',
+      rulePt: 'Olá',
+      ruleAr: 'أهلاً',
+      examplePt: 'Olá, bom dia!',
+      exampleAr: 'أهلاً، صباح الخير',
+      askAr: 'جرّبها.',
+    };
+    beat.infoCard = {
+      titleAr: 'تحية',
+      rows: [{ pt: 'Olá!', ar: 'أهلاً!' }],
+      noteAr: 'مش Oi',
+    };
+    try {
+      const shown = presentBeat(live!, 0);
+      const types = shown.map((m) => m.type);
+      const charIdx = types.indexOf('character');
+      const infoIdx = types.indexOf('info-card');
+      const teachIdx = types.indexOf('teach');
+      assert.ok(charIdx >= 0);
+      assert.ok(infoIdx > charIdx);
+      assert.ok(teachIdx > infoIdx);
+      assert.equal(shown[teachIdx].beatTeach?.rulePt, 'Olá');
+      assert.equal(shown[infoIdx].infoCard?.titleAr, 'تحية');
+    } finally {
+      if (prevTeach === undefined) delete beat.teach;
+      else beat.teach = prevTeach;
+      if (prevInfo === undefined) delete beat.infoCard;
+      else beat.infoCard = prevInfo;
+    }
   });
 
   it('shows s02 word card then none on s03; learnerView exposes reopen chip', () => {

@@ -163,7 +163,7 @@ const inFlight = new Map<string, Promise<{ ok: boolean; error?: string }>>();
  */
 export async function generateLessonDirect(
   lessonKey: string,
-  opts?: { force?: boolean },
+  opts?: { force?: boolean; overwriteHand?: boolean },
 ): Promise<{ ok: boolean; error?: string; stage?: string | null }> {
   const existing = inFlight.get(lessonKey);
   if (existing) return existing;
@@ -176,9 +176,17 @@ export async function generateLessonDirect(
     }
 
     let doc = await ensureLessonDoc(slot);
+    const isHand = (doc as { source?: string }).source === 'hand';
+    const overwriteHand = Boolean(opts?.overwriteHand);
     const forceRegen = Boolean(opts?.force) || process.env.PRACTICE_LESSON_REGENERATE === 'true';
 
     try {
+      // Hand packs are protected: force / PRACTICE_LESSON_REGENERATE alone cannot wipe them.
+      if (isHand && packIsAlignedLive(doc) && !overwriteHand) {
+        await setStage(doc, 'done');
+        return { ok: true, stage: 'done' };
+      }
+
       if (!forceRegen && packIsAlignedLive(doc)) {
         await setStage(doc, 'done');
         return { ok: true, stage: 'done' };
@@ -186,17 +194,25 @@ export async function generateLessonDirect(
 
       // Stale/misaligned pack or forced regen — clear pack so Prompt 2 rewrites it.
       // On force, also clear spec so Prompt 1 regenerates (avoids reusing a bad origin story).
+      // Hand packs only clear when overwriteHand is set.
+      const mayClear =
+        !isHand || overwriteHand;
       if (
-        forceRegen ||
-        (doc.pack &&
-          ['live', 'reviewed', 'failed', 'needs_review'].includes(String(doc.status)))
+        mayClear &&
+        (forceRegen ||
+          overwriteHand ||
+          (doc.pack &&
+            ['live', 'reviewed', 'failed', 'needs_review'].includes(String(doc.status))))
       ) {
-        if (!packIsAlignedLive(doc) || forceRegen) {
+        if (!packIsAlignedLive(doc) || forceRegen || overwriteHand) {
           doc.pack = null;
-          if (forceRegen) {
+          if (forceRegen || overwriteHand) {
             doc.spec = null;
           }
           doc.status = 'spec';
+          if (overwriteHand) {
+            (doc as { source?: string }).source = 'generated';
+          }
           doc.generation_error = null;
           doc.validator_warnings = [];
           await doc.save();

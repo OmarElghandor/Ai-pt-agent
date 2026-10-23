@@ -1,12 +1,16 @@
 import {
+  BEAT_SKILLS,
   BRAZILIAN_BLACKLIST,
   type AssessmentTask,
   type AuthoredSegment,
   type BeatDifficulty,
+  type BeatSkill,
   type GrammarCard,
   type KnownAnswerFields,
   type LineExplain,
+  type ListeningOption,
   type OpenAnswerFields,
+  type ReadingArtifact,
   type SceneWord,
   type StoryBeat,
   type StoryLine,
@@ -412,6 +416,33 @@ function validateBeat(
   if (difficulty !== 'guided' && difficulty !== 'supported' && difficulty !== 'open') {
     issues.push(issue(`${path}.difficulty`, 'must be guided, supported, or open'));
   }
+  const skillRaw = value.skill;
+  const skill: BeatSkill =
+    typeof skillRaw === 'string' && (BEAT_SKILLS as string[]).includes(skillRaw)
+      ? (skillRaw as BeatSkill)
+      : 'speaking';
+  if (skillRaw != null && skillRaw !== skill) {
+    issues.push(issue(`${path}.skill`, 'must be listening, reading, speaking, or writing'));
+  }
+  const listeningOptions = validateListeningOptions(
+    value.listeningOptions,
+    `${path}.listeningOptions`,
+    issues,
+  );
+  const readingArtifact = validateReadingArtifact(
+    value.readingArtifact,
+    `${path}.readingArtifact`,
+    issues,
+  );
+  if (skill === 'listening' && (!listeningOptions || listeningOptions.length < 2)) {
+    issues.push(issue(`${path}.listeningOptions`, 'listening beat needs at least 2 options'));
+  }
+  if (skill === 'listening' && listeningOptions && !listeningOptions.some((o) => o.correct)) {
+    issues.push(issue(`${path}.listeningOptions`, 'listening beat needs exactly one correct option'));
+  }
+  if (skill === 'reading' && !readingArtifact) {
+    issues.push(issue(`${path}.readingArtifact`, 'reading beat needs a reading artifact'));
+  }
   const reactionCue = requireString(value.reactionCue, `${path}.reactionCue`, issues);
   let narrationAr: string | undefined;
   if (typeof value.narrationAr === 'string' && value.narrationAr.trim()) {
@@ -470,11 +501,80 @@ function validateBeat(
     line,
     altLine,
     difficulty,
+    skill,
+    ...(listeningOptions ? { listeningOptions } : {}),
+    ...(readingArtifact ? { readingArtifact } : {}),
     coachTip,
     reactionCue,
     lineExplain,
     ...answer,
   };
+}
+
+function validateListeningOptions(
+  value: unknown,
+  path: string,
+  issues: ValidationIssue[],
+): ListeningOption[] | undefined {
+  if (value == null) return undefined;
+  if (!Array.isArray(value)) {
+    issues.push(issue(path, 'must be an array'));
+    return undefined;
+  }
+  const out: ListeningOption[] = [];
+  for (let i = 0; i < value.length; i += 1) {
+    const row = value[i];
+    if (!isObject(row)) {
+      issues.push(issue(`${path}[${i}]`, 'required object'));
+      continue;
+    }
+    const id = requireString(row.id, `${path}[${i}].id`, issues);
+    const tl = requireString(row.tl, `${path}[${i}].tl`, issues);
+    if (tl) checkPortugueseField(tl, `${path}[${i}].tl`, issues);
+    if (id && tl) out.push({ id, tl, correct: Boolean(row.correct) });
+  }
+  const correctCount = out.filter((o) => o.correct).length;
+  if (out.length > 0 && correctCount !== 1) {
+    issues.push(issue(path, 'exactly one option must be correct'));
+  }
+  return out.length ? out : undefined;
+}
+
+function validateReadingArtifact(
+  value: unknown,
+  path: string,
+  issues: ValidationIssue[],
+): ReadingArtifact | undefined {
+  if (value == null) return undefined;
+  if (!isObject(value)) {
+    issues.push(issue(path, 'required object'));
+    return undefined;
+  }
+  const kind = value.kind;
+  if (kind !== 'receipt' && kind !== 'sign' && kind !== 'label' && kind !== 'menu') {
+    issues.push(issue(`${path}.kind`, 'must be receipt, sign, label, or menu'));
+    return undefined;
+  }
+  if (!Array.isArray(value.lines) || value.lines.length === 0) {
+    issues.push(issue(`${path}.lines`, 'needs at least one line'));
+    return undefined;
+  }
+  const lines: { tl: string; ar?: string }[] = [];
+  for (let i = 0; i < value.lines.length; i += 1) {
+    const row = value.lines[i];
+    if (!isObject(row)) continue;
+    const tl = requireString(row.tl, `${path}.lines[${i}].tl`, issues);
+    if (!tl) continue;
+    checkPortugueseField(tl, `${path}.lines[${i}].tl`, issues);
+    const ar = typeof row.ar === 'string' && row.ar.trim() ? row.ar.trim() : undefined;
+    if (ar) checkArabicField(ar, `${path}.lines[${i}].ar`, issues);
+    lines.push(ar ? { tl, ar } : { tl });
+  }
+  const questionAr = requireString(value.questionAr, `${path}.questionAr`, issues);
+  if (questionAr) checkArabicField(questionAr, `${path}.questionAr`, issues);
+  const options = validateListeningOptions(value.options, `${path}.options`, issues);
+  if (!lines.length || !questionAr || !options?.length) return undefined;
+  return { kind, lines, questionAr, options };
 }
 
 function validateAssessment(

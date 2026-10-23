@@ -50,10 +50,6 @@
           "priority": 2
         },
         {
-          "text": "Chamo-me… (اسمي…)",
-          "priority": 2
-        },
-        {
           "text": "Sou de… (أنا من…)",
           "priority": 2
         },
@@ -103,10 +99,6 @@
         {
           "text": "Queria…, sem… (كنت عايز… من غير…)",
           "priority": 2
-        },
-        {
-          "text": "É para aqui ou para levar? (هنا ولا تيك أواي؟)",
-          "priority": 2
         }
       ]
     },
@@ -136,27 +128,19 @@
           "priority": 1
         },
         {
-          "text": "o preço (the price)",
+          "text": "o preço (السعر)",
           "priority": 1
         },
         {
-          "text": "caro (غالي/رخيص)",
+          "text": "caro (غالي)",
           "priority": 1
         },
         {
-          "text": "barato (غالي/رخيص)",
+          "text": "barato (رخيص)",
           "priority": 1
         },
         {
           "text": "Quanto custa? (بكام؟)",
-          "priority": 2
-        },
-        {
-          "text": "A que horas…? (الساعة كام…؟)",
-          "priority": 2
-        },
-        {
-          "text": "Queria um pacote de… (عايز/كنت عايز عبوة من…)",
           "priority": 2
         },
         {
@@ -250,7 +234,7 @@
           "priority": 1
         },
         {
-          "text": "a tarde (متأخرًا / بعد الظهر)",
+          "text": "a tarde (بعد الضهر)",
           "priority": 1
         },
         {
@@ -279,10 +263,6 @@
         },
         {
           "text": "Vou… porque… (ه… عشان…)",
-          "priority": 2
-        },
-        {
-          "text": "O que vais fazer? (هتعمل إيه؟)",
           "priority": 2
         }
       ]
@@ -329,14 +309,6 @@
         {
           "text": "trinta",
           "priority": 1
-        },
-        {
-          "text": "Quanto custa? (بكام؟)",
-          "priority": 2
-        },
-        {
-          "text": "A que horas…? (الساعة كام…؟)",
-          "priority": 2
         }
       ]
     },
@@ -396,10 +368,6 @@
         {
           "text": "Desculpa, não percebi. (معلش، مفهمتش.)",
           "priority": 2
-        },
-        {
-          "text": "Podes repetir mais devagar? (ممكن تعيد الكلام أبطأ؟)",
-          "priority": 2
         }
       ]
     },
@@ -433,11 +401,11 @@
           "priority": 1
         },
         {
-          "text": "este (هذا/هذه)",
+          "text": "este (ده)",
           "priority": 1
         },
         {
-          "text": "esta (هذا/هذه)",
+          "text": "esta (دي)",
           "priority": 1
         },
         {
@@ -450,10 +418,6 @@
         },
         {
           "text": "Queria um pacote de… (عايز/كنت عايز عبوة من…)",
-          "priority": 2
-        },
-        {
-          "text": "Tem mais barato? (فيه أرخص؟)",
           "priority": 2
         }
       ]
@@ -497,18 +461,6 @@
         },
         {
           "text": "há",
-          "priority": 2
-        },
-        {
-          "text": "Chamo-me… (اسمي…)",
-          "priority": 2
-        },
-        {
-          "text": "Sou de… (أنا من…)",
-          "priority": 2
-        },
-        {
-          "text": "Moro em… (أنا ساكن في…)",
           "priority": 2
         }
       ]
@@ -657,18 +609,6 @@
         {
           "text": "ao lado de",
           "priority": 2
-        },
-        {
-          "text": "Quem é? (مين ده؟)",
-          "priority": 2
-        },
-        {
-          "text": "O que é isto? (إيه ده؟)",
-          "priority": 2
-        },
-        {
-          "text": "Onde fica…? (… فين؟)",
-          "priority": 2
         }
       ]
     },
@@ -715,18 +655,6 @@
         },
         {
           "text": "a minha + ter",
-          "priority": 2
-        },
-        {
-          "text": "Chamo-me… (اسمي…)",
-          "priority": 2
-        },
-        {
-          "text": "Sou de… (أنا من…)",
-          "priority": 2
-        },
-        {
-          "text": "Moro em… (أنا ساكن في…)",
           "priority": 2
         }
       ]
@@ -824,10 +752,6 @@
           "priority": 2
         },
         {
-          "text": "Quanto custa? (بكام؟)",
-          "priority": 2
-        },
-        {
           "text": "A que horas…? (الساعة كام…؟)",
           "priority": 2
         }
@@ -891,14 +815,6 @@
         {
           "text": "o agricultor (the farmer)",
           "priority": 3
-        },
-        {
-          "text": "Sou de…, mas moro em… (أنا من…، بس ساكن في…)",
-          "priority": 2
-        },
-        {
-          "text": "Gosto de… porque… (بحب… عشان…)",
-          "priority": 2
         }
       ]
     },
@@ -995,7 +911,7 @@
           "priority": 1
         },
         {
-          "text": "você (you formal)",
+          "text": "você (حضرتك)",
           "priority": 1
         },
         {
@@ -1028,10 +944,6 @@
         },
         {
           "text": "Preciso de… porque… (أنا محتاج… عشان…)",
-          "priority": 2
-        },
-        {
-          "text": "…, por isso… (…، وعشان كده…)",
           "priority": 2
         }
       ]
@@ -1088,10 +1000,6 @@
         {
           "text": "a ceia (supper)",
           "priority": 3
-        },
-        {
-          "text": "Acordo de manhã e… (بصحى الصبح وبعدين…)",
-          "priority": 2
         },
         {
           "text": "Depois, … (بعد كده…)",
@@ -1169,19 +1077,11 @@
           "priority": 2
         },
         {
-          "text": "E tu, de que gostas? (وإنت بتحب إيه؟)",
-          "priority": 2
-        },
-        {
           "text": "Gosto de X e Y. (أنا بحب X وY.)",
           "priority": 2
         },
         {
           "text": "Quero ir, mas… (عايز أروح، بس…)",
-          "priority": 2
-        },
-        {
-          "text": "X ou Y? (X ولا Y؟)",
           "priority": 2
         }
       ]
@@ -1318,10 +1218,6 @@
         },
         {
           "text": "…, por isso… (…، وعشان كده…)",
-          "priority": 2
-        },
-        {
-          "text": "Isto não funciona. (ده مش شغال.)",
           "priority": 2
         },
         {
@@ -1520,18 +1416,6 @@
         {
           "text": "fazemos",
           "priority": 2
-        },
-        {
-          "text": "Vou fazer… porque… (هعمل… عشان…)",
-          "priority": 2
-        },
-        {
-          "text": "Se puder, vou… (لو أقدر، ه…)",
-          "priority": 2
-        },
-        {
-          "text": "Ainda não sei, mas aviso-te. (لسه مش عارف، بس هبلغك.)",
-          "priority": 2
         }
       ]
     },
@@ -1607,23 +1491,11 @@
           "priority": 2
         },
         {
-          "text": "O que fizeste…? (عملت إيه…؟)",
+          "text": "Ele é…",
           "priority": 2
         },
         {
-          "text": "E depois, o que aconteceu? (وبعد كده إيه اللي حصل؟)",
-          "priority": 2
-        },
-        {
-          "text": "Ele é… (استخدم التعبير البرتغالي «Ele é…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Ela gosta de… (استخدم التعبير البرتغالي «Ela gosta de…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Conhecemo-nos… (استخدم التعبير البرتغالي «Conhecemo-nos…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "Ela gosta de…",
           "priority": 2
         }
       ]
@@ -1727,10 +1599,6 @@
         {
           "text": "Estou a ligar para… (أنا بتصل عشان…)",
           "priority": 2
-        },
-        {
-          "text": "Só para confirmar: ficou para…? (بس للتأكيد: اتفقنا على…؟)",
-          "priority": 2
         }
       ]
     },
@@ -1781,10 +1649,6 @@
         },
         {
           "text": "Pode repetir a informação, por favor? (ممكن تعيد المعلومة لو سمحت؟)",
-          "priority": 2
-        },
-        {
-          "text": "Então, ficou combinado que… (يبقى اتفقنا إن…)",
           "priority": 2
         }
       ]
@@ -1916,10 +1780,6 @@
           "priority": 3
         },
         {
-          "text": "Tenho dor no… (عندي وجع في…)",
-          "priority": 2
-        },
-        {
           "text": "Começou ontem e ainda continua. (بدأ امبارح ولسه مستمر.)",
           "priority": 2
         }
@@ -2044,10 +1904,6 @@
         {
           "text": "Queria marcar uma consulta. (كنت عايز أحجز كشف/ميعاد.)",
           "priority": 2
-        },
-        {
-          "text": "Tem vaga amanhã? (فيه مكان فاضي بكرة؟)",
-          "priority": 2
         }
       ]
     },
@@ -2117,11 +1973,7 @@
           "priority": 2
         },
         {
-          "text": "Está a melhorar/piorar. (استخدم التعبير البرتغالي «Está a melhorar/piorar.» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Não consegui trabalhar porque… (استخدم التعبير البرتغالي «Não consegui trabalhar porque…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "Está a melhorar/piorar.",
           "priority": 2
         },
         {
@@ -2130,10 +1982,6 @@
         },
         {
           "text": "Desde ontem, está melhor/pior. (من امبارح وهو أحسن/أسوأ.)",
-          "priority": 2
-        },
-        {
-          "text": "Dói mais quando… (بيوجع أكتر لما…)",
           "priority": 2
         }
       ]
@@ -2190,26 +2038,6 @@
         {
           "text": "a terra (the earth)",
           "priority": 3
-        },
-        {
-          "text": "Começou há… (استخدم التعبير البرتغالي «Começou há…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Está a melhorar/piorar. (استخدم التعبير البرتغالي «Está a melhorar/piorar.» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Não consegui trabalhar porque… (استخدم التعبير البرتغالي «Não consegui trabalhar porque…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Então, primeiro tenho de…? (استخدم التعبير البرتغالي «Então, primeiro tenho de…?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Quer dizer que…? (استخدم التعبير البرتغالي «Quer dizer que…?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
         }
       ]
     },
@@ -2287,10 +2115,6 @@
         {
           "text": "Há algum horário disponível na…? (في ميعاد متاح يوم…؟)",
           "priority": 2
-        },
-        {
-          "text": "Pode confirmar a nova data? (ممكن تأكد التاريخ الجديد؟)",
-          "priority": 2
         }
       ]
     },
@@ -2362,10 +2186,6 @@
         {
           "text": "Está assim desde ontem. (هي كده من امبارح.)",
           "priority": 2
-        },
-        {
-          "text": "Pode mandar alguém? (ممكن تبعت حد؟)",
-          "priority": 2
         }
       ]
     },
@@ -2432,10 +2252,6 @@
         },
         {
           "text": "Essa opção não funciona para mim. Há outra? (الاختيار ده مش مناسب ليا. فيه غيره؟)",
-          "priority": 2
-        },
-        {
-          "text": "O que sugere? (تنصح بإيه؟)",
           "priority": 2
         }
       ]
@@ -2622,11 +2438,7 @@
           "priority": 2
         },
         {
-          "text": "Procuro um apartamento… (استخدم التعبير البرتغالي «Procuro um apartamento…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "As despesas estão incluídas? (استخدم التعبير البرتغالي «As despesas estão incluídas?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "As despesas estão incluídas?",
           "priority": 2
         }
       ]
@@ -2685,27 +2497,19 @@
           "priority": 3
         },
         {
-          "text": "A avaria continua. (استخدم التعبير البرتغالي «A avaria continua.» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "A avaria continua.",
           "priority": 2
         },
         {
-          "text": "Quando pode vir o técnico? (استخدم التعبير البرتغالي «Quando pode vir o técnico?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "Quando pode vir o técnico?",
           "priority": 2
         },
         {
-          "text": "Só para confirmar… (استخدم التعبير البرتغالي «Só para confirmar…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Precisava de falar sobre… (كنت محتاج أتكلم بخصوص…)",
+          "text": "Só para confirmar…",
           "priority": 2
         },
         {
           "text": "Quando seria possível reparar…? (إمتى ممكن يتصلح…؟)",
-          "priority": 2
-        },
-        {
-          "text": "Podemos combinar…? (ممكن نتفق على…؟)",
           "priority": 2
         }
       ]
@@ -2828,14 +2632,6 @@
         },
         {
           "text": "Precisava de falar sobre… (كنت محتاج أتكلم بخصوص…)",
-          "priority": 2
-        },
-        {
-          "text": "Quando seria possível reparar…? (إمتى ممكن يتصلح…؟)",
-          "priority": 2
-        },
-        {
-          "text": "Podemos combinar…? (ممكن نتفق على…؟)",
           "priority": 2
         }
       ]
@@ -2973,18 +2769,6 @@
         {
           "text": "ida e volta",
           "priority": 2
-        },
-        {
-          "text": "Como chegamos a…? (استخدم التعبير البرتغالي «Como chegamos a…?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Quanto tempo demora? (استخدم التعبير البرتغالي «Quanto tempo demora?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Prefiro ir de… (استخدم التعبير البرتغالي «Prefiro ir de…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
         }
       ]
     },
@@ -3050,15 +2834,11 @@
           "priority": 2
         },
         {
-          "text": "O comboio está atrasado? (استخدم التعبير البرتغالي «O comboio está atrasado?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "O comboio está atrasado?",
           "priority": 2
         },
         {
-          "text": "Há outra ligação? (استخدم التعبير البرتغالي «Há outra ligação?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Como posso chegar a…? (استخدم التعبير البرتغالي «Como posso chegar a…?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "Há outra ligação?",
           "priority": 2
         }
       ]
@@ -3134,10 +2914,6 @@
         },
         {
           "text": "Vira à direita depois de… (لف يمين بعد…)",
-          "priority": 2
-        },
-        {
-          "text": "É mais fácil ir por… (أسهل طريق إنك تعدي من…)",
           "priority": 2
         }
       ]
@@ -3271,15 +3047,7 @@
           "priority": 2
         },
         {
-          "text": "Gostei de… porque… (استخدم التعبير البرتغالي «Gostei de… porque…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Vale a pena visitar… (استخدم التعبير البرتغالي «Vale a pena visitar…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Estava muito cheio. (استخدم التعبير البرتغالي «Estava muito cheio.» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "Vale a pena visitar…",
           "priority": 2
         }
       ]
@@ -3476,18 +3244,6 @@
         {
           "text": "mostrar",
           "priority": 2
-        },
-        {
-          "text": "Aconteceu um problema com… (حصلت مشكلة في…)",
-          "priority": 2
-        },
-        {
-          "text": "Pode ajudar-me a…? (ممكن تساعدني في…؟)",
-          "priority": 2
-        },
-        {
-          "text": "O que posso fazer agora? (أقدر أعمل إيه دلوقتي؟)",
-          "priority": 2
         }
       ]
     },
@@ -3551,14 +3307,6 @@
         {
           "text": "é urgente",
           "priority": 2
-        },
-        {
-          "text": "Pode ajudar-me a…? (ممكن تساعدني في…؟)",
-          "priority": 2
-        },
-        {
-          "text": "O que posso fazer agora? (أقدر أعمل إيه دلوقتي؟)",
-          "priority": 2
         }
       ]
     },
@@ -3616,11 +3364,7 @@
           "priority": 3
         },
         {
-          "text": "Que documentos preciso? (استخدم التعبير البرتغالي «Que documentos preciso?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Onde devo entregar isto? (استخدم التعبير البرتغالي «Onde devo entregar isto?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "Que documentos preciso?",
           "priority": 2
         }
       ]
@@ -3697,11 +3441,11 @@
           "priority": 2
         },
         {
-          "text": "Estou à espera de uma encomenda. (استخدم التعبير البرتغالي «Estou à espera de uma encomenda.» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "Estou à espera de uma encomenda.",
           "priority": 2
         },
         {
-          "text": "A morada é… (استخدم التعبير البرتغالي «A morada é…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "A morada é…",
           "priority": 2
         }
       ]
@@ -3772,11 +3516,11 @@
           "priority": 2
         },
         {
-          "text": "Há um erro na fatura. (استخدم التعبير البرتغالي «Há um erro na fatura.» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "Há um erro na fatura.",
           "priority": 2
         },
         {
-          "text": "Pode verificar o valor? (استخدم التعبير البرتغالي «Pode verificar o valor?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "Pode verificar o valor?",
           "priority": 2
         }
       ]
@@ -3847,27 +3591,11 @@
           "priority": 2
         },
         {
-          "text": "É permitido…? (هل مسموح…؟)",
-          "priority": 2
-        },
-        {
           "text": "É obrigatório trazer…? (هل لازم أجيب…؟)",
           "priority": 2
         },
         {
-          "text": "Há alguma exceção? (في استثناء؟)",
-          "priority": 2
-        },
-        {
-          "text": "Primeiro tenho de… (الأول لازم…)",
-          "priority": 2
-        },
-        {
           "text": "Depois é preciso… (بعد كده لازم…)",
-          "priority": 2
-        },
-        {
-          "text": "Só para confirmar: devo…? (بس للتأكيد: المفروض أ…؟)",
           "priority": 2
         }
       ]
@@ -3944,10 +3672,6 @@
         {
           "text": "Foi cobrado um valor que… (اتحسب مبلغ…)",
           "priority": 2
-        },
-        {
-          "text": "Como podemos resolver isto? (إزاي نقدر نحل ده؟)",
-          "priority": 2
         }
       ]
     },
@@ -4010,14 +3734,6 @@
         },
         {
           "text": "quanto custa enviar…?",
-          "priority": 2
-        },
-        {
-          "text": "Que documentos preciso? (استخدم التعبير البرتغالي «Que documentos preciso?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Onde devo entregar isto? (استخدم التعبير البرتغالي «Onde devo entregar isto?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
           "priority": 2
         }
       ]
@@ -4092,14 +3808,6 @@
         {
           "text": "sou de…",
           "priority": 2
-        },
-        {
-          "text": "Que documentos preciso? (استخدم التعبير البرتغالي «Que documentos preciso?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Onde devo entregar isto? (استخدم التعبير البرتغالي «Onde devo entregar isto?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
         }
       ]
     },
@@ -4173,10 +3881,6 @@
           "priority": 2
         },
         {
-          "text": "Queria…, sem… (كنت عايز… من غير…)",
-          "priority": 2
-        },
-        {
           "text": "É para aqui ou para levar? (هنا ولا تيك أواي؟)",
           "priority": 2
         }
@@ -4241,10 +3945,6 @@
         },
         {
           "text": "primeiro… depois… no fim",
-          "priority": 2
-        },
-        {
-          "text": "Primeiro… Depois… Finalmente… (الأول… بعد كده… وفي الآخر…)",
           "priority": 2
         }
       ]
@@ -4315,19 +4015,7 @@
           "priority": 2
         },
         {
-          "text": "Hoje não posso, mas amanhã posso. (مش هقدر النهارده، بس أقدر بكرة.)",
-          "priority": 2
-        },
-        {
-          "text": "Às seis, pode ser? (الساعة ستة ينفع؟)",
-          "priority": 2
-        },
-        {
           "text": "Queres ir… comigo? (تحب تيجي… معايا؟)",
-          "priority": 2
-        },
-        {
-          "text": "Gostava, mas não posso… (كنت أحب، بس مش هقدر…)",
           "priority": 2
         },
         {
@@ -4402,19 +4090,7 @@
           "priority": 2
         },
         {
-          "text": "Infelizmente não posso… (استخدم التعبير البرتغالي «Infelizmente não posso…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Aviso-te se… (استخدم التعبير البرتغالي «Aviso-te se…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Queres ir… comigo? (تحب تيجي… معايا؟)",
-          "priority": 2
-        },
-        {
-          "text": "Gostava, mas não posso… (كنت أحب، بس مش هقدر…)",
+          "text": "Infelizmente não posso…",
           "priority": 2
         }
       ]
@@ -4489,18 +4165,6 @@
         {
           "text": "mais barato",
           "priority": 2
-        },
-        {
-          "text": "Queria…, mas… (كنت عايز…، بس…)",
-          "priority": 2
-        },
-        {
-          "text": "Onde fica…? (… فين؟)",
-          "priority": 2
-        },
-        {
-          "text": "Preciso de… porque… (أنا محتاج… عشان…)",
-          "priority": 2
         }
       ]
     },
@@ -4574,11 +4238,11 @@
           "priority": 2
         },
         {
-          "text": "Normalmente… (استخدم التعبير البرتغالي «Normalmente…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "Normalmente…",
           "priority": 2
         },
         {
-          "text": "Durante a semana…, mas ao fim de semana… (استخدم التعبير البرتغالي «Durante a semana…, mas ao fim de semana…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "Durante a semana…, mas ao fim de semana…",
           "priority": 2
         }
       ]
@@ -4714,18 +4378,6 @@
         {
           "text": "a minha",
           "priority": 2
-        },
-        {
-          "text": "Ele é… (استخدم التعبير البرتغالي «Ele é…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Ela gosta de… (استخدم التعبير البرتغالي «Ela gosta de…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Conhecemo-nos… (استخدم التعبير البرتغالي «Conhecemo-nos…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
         }
       ]
     },
@@ -4797,14 +4449,6 @@
         {
           "text": "fez",
           "priority": 2
-        },
-        {
-          "text": "O que fizeste…? (عملت إيه…؟)",
-          "priority": 2
-        },
-        {
-          "text": "E depois, o que aconteceu? (وبعد كده إيه اللي حصل؟)",
-          "priority": 2
         }
       ]
     },
@@ -4870,18 +4514,6 @@
         {
           "text": "tanto (as much / as many)",
           "priority": 3
-        },
-        {
-          "text": "Ele é… (استخدم التعبير البرتغالي «Ele é…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Ela gosta de… (استخدم التعبير البرتغالي «Ela gosta de…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Conhecemo-nos… (استخدم التعبير البرتغالي «Conhecemo-nos…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
         }
       ]
     },
@@ -4951,7 +4583,7 @@
           "priority": 2
         },
         {
-          "text": "Sinto-me… porque… (استخدم التعبير البرتغالي «Sinto-me… porque…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "Sinto-me… porque…",
           "priority": 2
         }
       ]
@@ -5229,18 +4861,6 @@
           "priority": 2
         },
         {
-          "text": "Costumo… (استخدم التعبير البرتغالي «Costumo…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Faço isso às vezes. (استخدم التعبير البرتغالي «Faço isso às vezes.» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Queres vir comigo? (استخدم التعبير البرتغالي «Queres vir comigo?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
           "text": "O que fizeste…? (عملت إيه…؟)",
           "priority": 2
         },
@@ -5316,11 +4936,7 @@
           "priority": 2
         },
         {
-          "text": "Está a chover, por isso… (استخدم التعبير البرتغالي «Está a chover, por isso…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Se o tempo melhorar, vamos… (استخدم التعبير البرتغالي «Se o tempo melhorar, vamos…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "Está a chover, por isso…",
           "priority": 2
         }
       ]
@@ -5519,26 +5135,6 @@
         {
           "text": "de comboio",
           "priority": 2
-        },
-        {
-          "text": "Como chegamos a…? (استخدم التعبير البرتغالي «Como chegamos a…?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Prefiro ir de… (استخدم التعبير البرتغالي «Prefiro ir de…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "A minha reserva foi… (حجزي ات…)",
-          "priority": 2
-        },
-        {
-          "text": "Que alternativas tenho? (إيه البدائل المتاحة ليا؟)",
-          "priority": 2
-        },
-        {
-          "text": "Posso receber um reembolso? (ممكن أسترد المبلغ؟)",
-          "priority": 2
         }
       ]
     },
@@ -5677,15 +5273,7 @@
           "priority": 2
         },
         {
-          "text": "Gostei de… porque… (استخدم التعبير البرتغالي «Gostei de… porque…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Vale a pena visitar… (استخدم التعبير البرتغالي «Vale a pena visitar…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Estava muito cheio. (استخدم التعبير البرتغالي «Estava muito cheio.» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "Estava muito cheio.",
           "priority": 2
         }
       ]
@@ -5811,15 +5399,7 @@
           "priority": 3
         },
         {
-          "text": "Costumo… (استخدم التعبير البرتغالي «Costumo…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Faço isso às vezes. (استخدم التعبير البرتغالي «Faço isso às vezes.» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Queres vir comigo? (استخدم التعبير البرتغالي «Queres vir comigo?» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "Costumo…",
           "priority": 2
         }
       ]
@@ -5969,14 +5549,6 @@
         {
           "text": "o tamanho",
           "priority": 2
-        },
-        {
-          "text": "Queria um pacote de… (عايز/كنت عايز عبوة من…)",
-          "priority": 2
-        },
-        {
-          "text": "Tem mais barato? (فيه أرخص؟)",
-          "priority": 2
         }
       ]
     },
@@ -6111,18 +5683,6 @@
         {
           "text": "queria trocar",
           "priority": 2
-        },
-        {
-          "text": "Gostaria de apresentar uma reclamação. (حابب أقدّم شكوى.)",
-          "priority": 2
-        },
-        {
-          "text": "Foi cobrado um valor que… (اتحسب مبلغ…)",
-          "priority": 2
-        },
-        {
-          "text": "Como podemos resolver isto? (إزاي نقدر نحل ده؟)",
-          "priority": 2
         }
       ]
     },
@@ -6243,11 +5803,7 @@
           "priority": 2
         },
         {
-          "text": "Na minha opinião… (استخدم التعبير البرتغالي «Na minha opinião…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Concordo, mas… (استخدم التعبير البرتغالي «Concordo, mas…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "Na minha opinião…",
           "priority": 2
         },
         {
@@ -6256,10 +5812,6 @@
         },
         {
           "text": "Concordo em parte, porque… (متفق جزئيًا عشان…)",
-          "priority": 2
-        },
-        {
-          "text": "Por exemplo,… (مثلًا…)",
           "priority": 2
         }
       ]
@@ -6344,11 +5896,7 @@
           "priority": 2
         },
         {
-          "text": "É mais barato do que… (استخدم التعبير البرتغالي «É mais barato do que…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Prefiro… porque… (استخدم التعبير البرتغالي «Prefiro… porque…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "É mais barato do que…",
           "priority": 2
         },
         {
@@ -6419,19 +5967,7 @@
           "priority": 2
         },
         {
-          "text": "Antes…, agora… (استخدم التعبير البرتغالي «Antes…, agora…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Está melhor do que… (استخدم التعبير البرتغالي «Está melhor do que…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Já me habituei a… (استخدم التعبير البرتغالي «Já me habituei a…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "No início era difícil, mas… (في الأول كان صعب، لكن…)",
+          "text": "Antes…, agora…",
           "priority": 2
         }
       ]
@@ -6490,15 +6026,15 @@
           "priority": 2
         },
         {
-          "text": "Primeiro… (استخدم التعبير البرتغالي «Primeiro…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "Primeiro…",
           "priority": 2
         },
         {
-          "text": "Depois… (استخدم التعبير البرتغالي «Depois…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "Depois…",
           "priority": 2
         },
         {
-          "text": "No fim… (استخدم التعبير البرتغالي «No fim…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "No fim…",
           "priority": 2
         }
       ]
@@ -6569,10 +6105,6 @@
           "priority": 2
         },
         {
-          "text": "Devia ter… (كان المفروض أ…)",
-          "priority": 2
-        },
-        {
           "text": "Da próxima vez, vou… (المرة الجاية ه…)",
           "priority": 2
         }
@@ -6633,14 +6165,6 @@
         },
         {
           "text": "decidi… porque…",
-          "priority": 2
-        },
-        {
-          "text": "Pensei em…, mas… (استخدم التعبير البرتغالي «Pensei em…, mas…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Acabei por… (استخدم التعبير البرتغالي «Acabei por…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
           "priority": 2
         }
       ]
@@ -6713,10 +6237,6 @@
           "priority": 2
         },
         {
-          "text": "Gostei especialmente de… (عجبني خصوصًا…)",
-          "priority": 2
-        },
-        {
           "text": "Recomendo porque… (برشحه عشان…)",
           "priority": 2
         }
@@ -6768,11 +6288,7 @@
           "priority": 2
         },
         {
-          "text": "Acho que… porque… (استخدم التعبير البرتغالي «Acho que… porque…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Por exemplo… (استخدم التعبير البرتغالي «Por exemplo…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
+          "text": "Por exemplo…",
           "priority": 2
         }
       ]
@@ -6837,14 +6353,6 @@
         {
           "text": "Tens feito alguma coisa interessante ultimamente? (عملت حاجة لطيفة مؤخرًا؟)",
           "priority": 2
-        },
-        {
-          "text": "Costumo… ao fim de semana. (عادةً بعمل… في الويك إند.)",
-          "priority": 2
-        },
-        {
-          "text": "E tu, o que achas? (وإنت رأيك إيه؟)",
-          "priority": 2
         }
       ]
     },
@@ -6894,15 +6402,7 @@
           "priority": 2
         },
         {
-          "text": "Foi uma experiência que… (كانت تجربة…)",
-          "priority": 2
-        },
-        {
           "text": "No início…, mas depois… (في البداية… لكن بعد كده…)",
-          "priority": 2
-        },
-        {
-          "text": "Aprendi que… (اتعلمت إن…)",
           "priority": 2
         }
       ]
@@ -6970,18 +6470,6 @@
         },
         {
           "text": "O projeto ajudou-me a… (المشروع ساعدني إني…)",
-          "priority": 2
-        },
-        {
-          "text": "Trabalho como… (استخدم التعبير البرتغالي «Trabalho como…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Antes trabalhava… (استخدم التعبير البرتغالي «Antes trabalhava…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Agora trabalho em… (استخدم التعبير البرتغالي «Agora trabalho em…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
           "priority": 2
         }
       ]
@@ -7085,27 +6573,7 @@
           "priority": 2
         },
         {
-          "text": "Quero melhorar… (استخدم التعبير البرتغالي «Quero melhorar…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Estou a tentar… (استخدم التعبير البرتغالي «Estou a tentar…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "É difícil porque… (استخدم التعبير البرتغالي «É difícil porque…» لتحقيق وظيفة «وظيفة تواصلية»، وبدّل التفاصيل حسب الموقف.)",
-          "priority": 2
-        },
-        {
-          "text": "Não me lembro da palavra, mas é… (مش فاكر الكلمة، بس هو…)",
-          "priority": 2
-        },
-        {
-          "text": "É uma coisa que se usa para… (ده شيء بنستخدمه عشان…)",
-          "priority": 2
-        },
-        {
-          "text": "Como se diz… em português? (إزاي نقول… بالبرتغالي؟)",
+          "text": "Estou a tentar…",
           "priority": 2
         }
       ]
@@ -7156,19 +6624,7 @@
           "priority": 2
         },
         {
-          "text": "Importava-se de…? (ممكن تتكرم وت…؟)",
-          "priority": 2
-        },
-        {
           "text": "Agradecia se pudesse… (هكون شاكر لو تقدر…)",
-          "priority": 2
-        },
-        {
-          "text": "Na minha opinião,… (من وجهة نظري…)",
-          "priority": 2
-        },
-        {
-          "text": "Por exemplo,… (مثلًا…)",
           "priority": 2
         }
       ]
@@ -7203,7 +6659,7 @@
           "priority": 1
         },
         {
-          "text": "quanto (مَن/أين/كيف/ماذا/كم)",
+          "text": "quanto (كام)",
           "priority": 1
         },
         {
@@ -7294,15 +6750,7 @@
           "priority": 2
         },
         {
-          "text": "Aconteceu… e preciso de… (حصل… ومحتاج…)",
-          "priority": 2
-        },
-        {
           "text": "O problema é que… (المشكلة إن…)",
-          "priority": 2
-        },
-        {
-          "text": "Só para confirmar,… (بس للتأكيد…)",
           "priority": 2
         }
       ]
@@ -7359,15 +6807,7 @@
           "priority": 2
         },
         {
-          "text": "Não me lembro da palavra, mas é… (مش فاكر الكلمة، بس هو…)",
-          "priority": 2
-        },
-        {
           "text": "É uma coisa que se usa para… (ده شيء بنستخدمه عشان…)",
-          "priority": 2
-        },
-        {
-          "text": "Como se diz… em português? (إزاي نقول… بالبرتغالي؟)",
           "priority": 2
         },
         {
@@ -7416,14 +6856,6 @@
         {
           "text": "quero conseguir… até…",
           "priority": 2
-        },
-        {
-          "text": "Estou a pensar em… (بفكر في…)",
-          "priority": 2
-        },
-        {
-          "text": "Primeiro vou…, depois… (الأول هعمل… وبعدها…)",
-          "priority": 2
         }
       ]
     },
@@ -7439,30 +6871,6 @@
         {
           "text": "parar (to stop)",
           "priority": 1
-        },
-        {
-          "text": "Preciso de ajuda com… (محتاج مساعدة في…)",
-          "priority": 2
-        },
-        {
-          "text": "A situação é esta:… (الموضوع كالتالي…)",
-          "priority": 2
-        },
-        {
-          "text": "Só para confirmar,… (بس للتأكيد…)",
-          "priority": 2
-        },
-        {
-          "text": "Consigo explicar… (أقدر أشرح…)",
-          "priority": 2
-        },
-        {
-          "text": "Ainda preciso de praticar… (لسه محتاج أتدرب على…)",
-          "priority": 2
-        },
-        {
-          "text": "O meu próximo objetivo é… (هدفي الجاي هو…)",
-          "priority": 2
         }
       ]
     }

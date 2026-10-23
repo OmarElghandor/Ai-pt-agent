@@ -24,9 +24,11 @@ export type GradeVerdict =
   | {
       verdict: 'near-miss';
       matched: string;
-      reason?: 'accent' | 'extra-words' | 'spelling';
+      reason?: 'accent' | 'extra-words' | 'spelling' | 'article';
       /** Accented accepted form of the first word he misspelled (for بنكتبها …). */
       correctedWord?: string;
+      /** Egyptian coach fix for article / contraction slips. */
+      fixNote?: string;
       promptEcho?: string;
     }
   | {
@@ -231,9 +233,47 @@ export function slotNoteForPattern(pattern: string, value: string): string {
   return `His own ${kind} is "${value}". Use it in your sentence exactly as he wrote it.`;
 }
 
+const STANDALONE_ARTICLES = new Set(['o', 'a', 'os', 'as']);
+
+const CONTRACTION_EXPAND: Record<string, string> = {
+  do: 'de o',
+  da: 'de a',
+  dos: 'de os',
+  das: 'de as',
+  no: 'em o',
+  na: 'em a',
+  nos: 'em os',
+  nas: 'em as',
+};
+
+/** Drop exactly one standalone article token; return null if none to drop. */
+function dropOneArticle(normalized: string): string[] {
+  const tokens = normalized.split(' ').filter(Boolean);
+  const variants: string[] = [];
+  for (let i = 0; i < tokens.length; i++) {
+    if (!STANDALONE_ARTICLES.has(tokens[i])) continue;
+    const next = [...tokens.slice(0, i), ...tokens.slice(i + 1)].join(' ');
+    if (next) variants.push(next);
+  }
+  return variants;
+}
+
+/** Expand each contraction once into de/em + article. */
+function expandContractionsOnce(normalized: string): string[] {
+  const tokens = normalized.split(' ').filter(Boolean);
+  const variants: string[] = [];
+  for (let i = 0; i < tokens.length; i++) {
+    const expanded = CONTRACTION_EXPAND[tokens[i]];
+    if (!expanded) continue;
+    const next = [...tokens.slice(0, i), ...expanded.split(' '), ...tokens.slice(i + 1)].join(' ');
+    variants.push(next);
+  }
+  return variants;
+}
+
 /**
  * Deterministic grade for known beats with a fixed accepted list.
- * Order: exact → anticipated_wrong → accent slip → one-letter edit → wrong.
+ * Order: exact → anticipated_wrong → extra article / uncontracted → accent → spelling → wrong.
  */
 export function gradeKnownAnswer(
   userText: string,
@@ -261,6 +301,42 @@ export function gradeKnownAnswer(
         feedback: entry.feedback,
         authoredVerdict: entry.verdict === 'near_miss' ? 'near_miss' : 'wrong',
       };
+    }
+  }
+
+  // Extra article: "de o chá" vs "de chá" — drop one o/a/os/as from his answer.
+  for (const accepted of acceptedAnswers) {
+    const acceptedNorm = normalizeAnswer(accepted);
+    for (const dropped of dropOneArticle(withAccents)) {
+      if (dropped === acceptedNorm) {
+        const article =
+          withAccents.split(' ').find((t) => STANDALONE_ARTICLES.has(t)) || 'o';
+        return {
+          verdict: 'near-miss',
+          matched: accepted,
+          reason: 'article',
+          fixNote: `هنا من غير ${article}`,
+        };
+      }
+    }
+  }
+
+  // Uncontracted: he wrote "de o" when accepted has "do".
+  for (const accepted of acceptedAnswers) {
+    const acceptedNorm = normalizeAnswer(accepted);
+    for (const expanded of expandContractionsOnce(acceptedNorm)) {
+      if (expanded === withAccents) {
+        const contraction =
+          acceptedNorm.split(' ').find((t) => t in CONTRACTION_EXPAND) || 'do';
+        const parts = CONTRACTION_EXPAND[contraction] || 'de o';
+        const [prep, art] = parts.split(' ');
+        return {
+          verdict: 'near-miss',
+          matched: accepted,
+          reason: 'article',
+          fixNote: `${prep} + ${art} بتبقى ${contraction}`,
+        };
+      }
     }
   }
 

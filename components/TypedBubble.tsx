@@ -318,67 +318,126 @@ export function TypedBubble({
   }
 
   if (message.type === 'teach') {
+    const beatTeach = message.beatTeach;
     const meaning = message.teachMeaning;
     const example = message.teachExample;
     const explanation = message.teachExplanation;
     const playSegs: AuthoredSegment[] = [];
-    if (explanation) {
-      playSegs.push({
-        lang: 'ar',
-        text: explanation.text,
-        pronunciation: explanation.pronunciation,
-      });
+    if (beatTeach) {
+      if (beatTeach.examplePt) playSegs.push({ lang: 'pt', text: beatTeach.examplePt });
+    } else {
+      if (explanation) {
+        playSegs.push({
+          lang: 'ar',
+          text: explanation.text,
+          pronunciation: explanation.pronunciation,
+        });
+      }
+      if (meaning?.pt) playSegs.push({ lang: 'pt', text: meaning.pt });
+      if (example?.pt) playSegs.push({ lang: 'pt', text: example.pt });
     }
-    if (meaning?.pt) playSegs.push({ lang: 'pt', text: meaning.pt });
-    if (example?.pt) playSegs.push({ lang: 'pt', text: example.pt });
     return (
-      <div className="rounded-2xl border border-emerald-800/50 bg-zinc-900/80 p-3 text-sm">
-        <div className="mb-1 text-[11px] font-medium uppercase tracking-wide text-emerald-400/80">
-          تعلّم
+      <div className="rounded-2xl border border-amber-600/40 bg-amber-950/20 p-3 text-sm">
+        <div className="mb-1 text-[11px] font-medium uppercase tracking-wide text-amber-300/90">
+          المدرب
         </div>
-        {explanation ? (
-          <div className="leading-relaxed text-zinc-100">{explanation.text}</div>
-        ) : (
-          <div className="leading-relaxed">
-            <MixedText segments={message.segments} />
-          </div>
-        )}
-        {meaning ? (
-          <div className="mt-3 flex items-start justify-between gap-2 rounded-xl bg-zinc-800/70 px-2 py-1.5">
-            <div>
-              <div className="text-emerald-300 text-base" dir="ltr">
-                {meaning.pt}
+        {beatTeach ? (
+          <>
+            {beatTeach.momentAr ? (
+              <div className="leading-relaxed text-zinc-100">{beatTeach.momentAr}</div>
+            ) : null}
+            {beatTeach.rulePt ? (
+              <div className="mt-3 rounded-xl bg-zinc-800/70 px-2.5 py-2">
+                <div className="text-emerald-300 text-base font-medium" dir="ltr">
+                  {beatTeach.rulePt}
+                </div>
+                {beatTeach.ruleAr ? (
+                  <div className="mt-0.5 text-xs text-zinc-400">{beatTeach.ruleAr}</div>
+                ) : null}
               </div>
-              <div className="text-zinc-400 text-xs">{meaning.meaningAr}</div>
-            </div>
-            {onPlay ? (
-              <button
-                type="button"
-                className="text-xs text-zinc-400 hover:text-white"
-                onClick={() => onPlay([{ lang: 'pt', text: meaning.pt }])}
-              >
-                ▶
-              </button>
             ) : null}
-          </div>
-        ) : null}
-        {example ? (
-          <div className="mt-2 rounded-xl border border-zinc-700/80 px-2 py-1.5">
-            <div className="text-[11px] text-zinc-500 mb-1">مثال</div>
-            <div className="text-emerald-300" dir="ltr">
-              {example.pt}
-            </div>
-            <div className="text-zinc-400 text-xs">{example.meaningAr}</div>
-            {onPlay ? (
-              <button
-                type="button"
-                className="mt-1 text-xs text-zinc-400 hover:text-white"
-                onClick={() => onPlay([{ lang: 'pt', text: example.pt }])}
-              >
-                ▶ اسمع المثال
-              </button>
+            {beatTeach.examplePt ? (
+              <div className="mt-2 flex items-start justify-between gap-2 rounded-xl border border-zinc-700/80 px-2.5 py-2">
+                <div>
+                  <div className="text-[11px] text-zinc-500 mb-1">مثال</div>
+                  <div className="text-emerald-300" dir="ltr">
+                    {beatTeach.examplePt}
+                  </div>
+                  {beatTeach.exampleAr ? (
+                    <div className="text-zinc-400 text-xs">{beatTeach.exampleAr}</div>
+                  ) : null}
+                </div>
+                {onPlay ? (
+                  <button
+                    type="button"
+                    className="text-xs text-zinc-400 hover:text-white"
+                    onClick={() => onPlay([{ lang: 'pt', text: beatTeach.examplePt }])}
+                  >
+                    ▶
+                  </button>
+                ) : null}
+              </div>
             ) : null}
-          </div>
+            {beatTeach.askAr ? (
+              <div className="mt-2 leading-relaxed text-zinc-100">{beatTeach.askAr}</div>
+            ) : null}
+          </>
+        ) : (
+          <>
+            {explanation ? (
+              <div className="leading-relaxed text-zinc-100">{explanation.text}</div>
+            ) : (
+              <div className="leading-relaxed">
+                <MixedText segments={message.segments} />
+              </div>
+            )}
+            {meaning ? (
+              <div className="mt-3 flex items-start justify-between gap-2 rounded-xl bg-zinc-800/70 px-2 py-1.5">
+                <div>
+                  <div className="text-emerald-300 text-base" dir="ltr">
+                    {meaning.pt}
+                  </div>
+                  <div className="text-zinc-400 text-xs">{meaning.meaningAr}</div>
+                </div>
+                {onPlay ? (
+                  <button
+                    type="button"
+                    className="text-xs text-zinc-400 hover:text-white"
+                    onClick={() => onPlay([{ lang: 'pt', text: meaning.pt }])}
+                  >
+                    ▶
+                  </button>
+                ) : null}
+              </div>
+            ) : null}
+            {example ? (
+              <div className="mt-2 rounded-xl border border-zinc-700/80 px-2 py-1.5">
+                <div className="text-[11px] text-zinc-500 mb-1">مثال</div>
+                <div className="text-emerald-300" dir="ltr">
+                  {example.pt}
+                </div>
+                <div className="text-zinc-400 text-xs">{example.meaningAr}</div>
+                {onPlay ? (
+                  <button
+                    type="button"
+                    className="mt-1 text-xs text-zinc-400 hover:text-white"
+                    onClick={() => onPlay([{ lang: 'pt', text: example.pt }])}
+                  >
+                    ▶ اسمع المثال
+                  </button>
+                ) : null}
+              </div>
+            ) : null}
+          </>
+        )}
+        {message.showWhyChip && onWhy ? (
+          <button
+            type="button"
+            onClick={onWhy}
+            className="mt-2 rounded-full border border-amber-500/50 bg-amber-900/30 px-2.5 py-0.5 text-xs text-amber-200"
+          >
+            ليه؟
+          </button>
         ) : null}
         {onPlay && playSegs.length ? (
           <button
@@ -388,6 +447,186 @@ export function TypedBubble({
           >
             ▶ اسمع
           </button>
+        ) : null}
+      </div>
+    );
+  }
+
+  if (message.type === 'info-card' && message.infoCard) {
+    const card = message.infoCard;
+    return (
+      <div className="w-full rounded-2xl border border-sky-700/40 bg-sky-950/30 px-3 py-3 text-sm">
+        <div className="mb-2 text-[11px] font-medium uppercase tracking-wide text-sky-300">
+          {card.titleAr || message.label || 'معلومة'}
+        </div>
+        <ul className="space-y-2">
+          {card.rows.map((row, i) => (
+            <li
+              key={i}
+              className="flex items-start justify-between gap-2 rounded-xl bg-zinc-800/60 px-2.5 py-1.5"
+            >
+              <div>
+                <div className="text-emerald-300" dir="ltr">
+                  {row.pt}
+                </div>
+                {row.ar ? <div className="text-xs text-zinc-400">{row.ar}</div> : null}
+              </div>
+              {onPlay ? (
+                <button
+                  type="button"
+                  className="text-xs text-zinc-400 hover:text-white"
+                  onClick={() => onPlay([{ lang: 'pt', text: row.pt }])}
+                >
+                  ▶
+                </button>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+        {card.noteAr ? (
+          <p className="mt-2 text-xs text-zinc-300">{card.noteAr}</p>
+        ) : null}
+      </div>
+    );
+  }
+
+  if (message.type === 'script-replay' && message.scriptReplay) {
+    const turns = message.scriptReplay;
+    const playAll = () => {
+      if (!onPlay) return;
+      onPlay(turns.map((t) => ({ lang: 'pt' as const, text: t.pt })));
+    };
+    return (
+      <div className="w-full rounded-2xl border border-emerald-800/40 bg-zinc-900/80 px-3 py-3 text-sm">
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <div className="text-[11px] font-medium uppercase tracking-wide text-emerald-400/80">
+            {message.label ?? 'المحادثة كاملة'}
+          </div>
+          {onPlay ? (
+            <button
+              type="button"
+              className="rounded-full border border-accent-mint/40 px-3 py-1 text-xs text-accent-mint"
+              onClick={playAll}
+            >
+              اسمع الكل
+            </button>
+          ) : null}
+        </div>
+        <ul className="flex flex-col gap-2.5">
+          {turns.map((turn, i) => {
+            const isEu = /^eu$/i.test(turn.speaker.trim());
+            return (
+              <li
+                key={i}
+                className={`flex ${isEu ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-[90%] rounded-2xl px-3 py-2 ${
+                    isEu ? 'bg-sky-700/40' : 'bg-zinc-800/90'
+                  }`}
+                >
+                  {!isEu ? (
+                    <div className="mb-0.5 text-[11px] font-medium text-emerald-400/80">
+                      {turn.speaker}
+                    </div>
+                  ) : (
+                    <div className="mb-0.5 text-[11px] font-medium text-sky-300/80">أنت</div>
+                  )}
+                  <div className="text-emerald-300" dir="ltr">
+                    {turn.pt}
+                  </div>
+                  {turn.ar ? (
+                    <div className="mt-0.5 text-xs text-zinc-400">{turn.ar}</div>
+                  ) : null}
+                  {onPlay ? (
+                    <button
+                      type="button"
+                      className="mt-1 text-[11px] text-zinc-500 hover:text-white"
+                      onClick={() => onPlay([{ lang: 'pt', text: turn.pt }])}
+                    >
+                      ▶
+                    </button>
+                  ) : null}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    );
+  }
+
+  if (message.type === 'summary' && message.lessonSummary) {
+    const summary = message.lessonSummary;
+    return (
+      <div className="w-full rounded-2xl border border-zinc-700 bg-zinc-900/80 px-3 py-3 text-sm">
+        <div className="mb-2 text-[11px] font-medium uppercase tracking-wide text-zinc-400">
+          {message.label ?? 'ملخص'}
+        </div>
+        {summary.words.length > 0 ? (
+          <div className="mb-3">
+            <div className="mb-1.5 text-xs text-zinc-500">كلمات</div>
+            <ul className="space-y-1.5">
+              {summary.words.map((w, i) => (
+                <li
+                  key={i}
+                  className="flex items-center justify-between gap-2 rounded-xl bg-zinc-800/70 px-2.5 py-1.5"
+                >
+                  <div>
+                    <span className="text-emerald-300" dir="ltr">
+                      {w.pt}
+                    </span>
+                    {w.ar ? <span className="ms-2 text-xs text-zinc-400">{w.ar}</span> : null}
+                  </div>
+                  {onPlay ? (
+                    <button
+                      type="button"
+                      className="text-xs text-zinc-400 hover:text-white"
+                      onClick={() => onPlay([{ lang: 'pt', text: w.pt }])}
+                    >
+                      ▶
+                    </button>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+        {summary.rules.length > 0 ? (
+          <div>
+            <div className="mb-1.5 text-xs text-zinc-500">قواعد</div>
+            <ul className="space-y-2">
+              {summary.rules.map((rule, i) => (
+                <li key={i} className="rounded-xl border border-zinc-700/80 px-2.5 py-2">
+                  <div className="text-emerald-300 font-medium" dir="ltr">
+                    {rule.pt}
+                  </div>
+                  {rule.ar ? <div className="text-xs text-zinc-400 mt-0.5">{rule.ar}</div> : null}
+                  {rule.examplePt ? (
+                    <div className="mt-2 flex items-start justify-between gap-2 rounded-lg bg-zinc-800/60 px-2 py-1.5">
+                      <div>
+                        <div className="text-emerald-300 text-sm" dir="ltr">
+                          {rule.examplePt}
+                        </div>
+                        {rule.exampleAr ? (
+                          <div className="text-xs text-zinc-500">{rule.exampleAr}</div>
+                        ) : null}
+                      </div>
+                      {onPlay ? (
+                        <button
+                          type="button"
+                          className="text-xs text-zinc-400 hover:text-white"
+                          onClick={() => onPlay([{ lang: 'pt', text: rule.examplePt }])}
+                        >
+                          ▶
+                        </button>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          </div>
         ) : null}
       </div>
     );
@@ -583,6 +822,26 @@ export function ttsSegmentsFor(message: TypedMessage): AuthoredSegment[] {
   }
   if (message.type === 'teach') {
     const out: AuthoredSegment[] = [];
+    if (message.beatTeach) {
+      if (message.beatTeach.momentAr) {
+        out.push({
+          lang: 'ar',
+          text: message.beatTeach.momentAr,
+          pronunciation: message.beatTeach.momentAr,
+        });
+      }
+      if (message.beatTeach.examplePt) {
+        out.push({ lang: 'pt', text: message.beatTeach.examplePt });
+      }
+      if (message.beatTeach.askAr) {
+        out.push({
+          lang: 'ar',
+          text: message.beatTeach.askAr,
+          pronunciation: message.beatTeach.askAr,
+        });
+      }
+      return out;
+    }
     if (message.teachExplanation) {
       out.push({
         lang: 'ar',
@@ -597,6 +856,22 @@ export function ttsSegmentsFor(message: TypedMessage): AuthoredSegment[] {
     }
     if (message.teachExample?.pt) {
       out.push({ lang: 'pt', text: message.teachExample.pt });
+    }
+    return out;
+  }
+  if (message.type === 'info-card' && message.infoCard) {
+    return message.infoCard.rows.map((r) => ({ lang: 'pt' as const, text: r.pt }));
+  }
+  if (message.type === 'script-replay' && message.scriptReplay) {
+    return message.scriptReplay.map((t) => ({ lang: 'pt' as const, text: t.pt }));
+  }
+  if (message.type === 'summary' && message.lessonSummary) {
+    const out: AuthoredSegment[] = [];
+    for (const w of message.lessonSummary.words) {
+      if (w.pt) out.push({ lang: 'pt', text: w.pt });
+    }
+    for (const r of message.lessonSummary.rules) {
+      if (r.examplePt) out.push({ lang: 'pt', text: r.examplePt });
     }
     return out;
   }

@@ -1,9 +1,67 @@
+import { loadNucleo } from './generation/wordData';
 import type { AuthoredSegment } from './lessons/types';
 import type { LessonReactionContext, TypedMessage } from './progressTypes';
 import { scrubTagDebris, stripThinkBlocks } from './parseTaggedMessage';
 
 function wordTokens(text: string): string[] {
   return text.toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+}
+
+/** Small function words ignored by the leak check. */
+const SMALL_WORDS = new Set([
+  'o',
+  'a',
+  'os',
+  'as',
+  'um',
+  'uma',
+  'uns',
+  'umas',
+  'de',
+  'do',
+  'da',
+  'dos',
+  'das',
+  'em',
+  'no',
+  'na',
+  'nos',
+  'nas',
+  'e',
+  'sim',
+  'nao',
+  'não',
+  'muito',
+  'que',
+]);
+
+let nucleusWordSet: Set<string> | null = null;
+
+function nucleusWords(): Set<string> {
+  if (!nucleusWordSet) {
+    try {
+      nucleusWordSet = new Set(
+        loadNucleo().map((w) =>
+          w
+            .normalize('NFC')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/\p{M}/gu, ''),
+        ),
+      );
+    } catch {
+      nucleusWordSet = new Set();
+    }
+  }
+  return nucleusWordSet;
+}
+
+function normalizeToken(word: string): string {
+  return word
+    .normalize('NFC')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '');
 }
 
 /** "SimSim": the same word written twice with no space. */
@@ -206,6 +264,10 @@ function normalizeEcho(text: string): string {
     .trim();
 }
 
+function logReactionDropped(reason: string, rawText: string): void {
+  console.warn('[reaction_dropped]', reason, rawText);
+}
+
 /**
  * Drop bad practice/assessment reactions per reaction.md output checks.
  * Returns null when the whole reply should be discarded.
@@ -214,9 +276,17 @@ export function filterReactionMessages(
   messages: TypedMessage[],
   reaction: Pick<
     LessonReactionContext,
-    'reactionKind' | 'mode' | 'beatLine' | 'currentPromptPlain' | 'nextLine' | 'characterName'
+    | 'reactionKind'
+    | 'mode'
+    | 'beatLine'
+    | 'currentPromptPlain'
+    | 'nextLine'
+    | 'characterName'
+    | 'answerForReaction'
+    | 'words'
   >,
   rawText: string,
+  learnerAnswer?: string,
 ): TypedMessage[] | null {
   const kind = reaction.reactionKind ?? (reaction.mode === 'side' ? 'r3' : 'r2');
   const allowed =
@@ -225,7 +295,7 @@ export function filterReactionMessages(
       : new Set(['character', 'coach']); // fix is mapped to coach
 
   if (messages.length === 0) {
-    console.warn('[reaction_dropped]', rawText);
+    logReactionDropped('empty_parse', rawText);
     return null;
   }
 
@@ -238,16 +308,34 @@ export function filterReactionMessages(
     .replace(/^\s*VERDICT:\s*.+$/im, '')
     .trim();
   if (stripped) {
-    console.warn('[reaction_dropped]', rawText);
+    logReactionDropped('untagged_text', rawText);
     return null;
   }
 
   const beatLine = normalizeEcho(reaction.beatLine || reaction.currentPromptPlain || '');
   const nextLine = normalizeEcho(reaction.nextLine || '');
+  const hisAnswer = normalizeEcho(
+    reaction.answerForReaction || learnerAnswer || '',
+  );
+  const hisAnswerTokens = new Set(wordTokens(hisAnswer).map(normalizeToken));
+  const allowedPool = new Set<string>();
+  for (const source of [
+    reaction.beatLine || reaction.currentPromptPlain || '',
+    reaction.nextLine || '',
+    reaction.answerForReaction || learnerAnswer || '',
+    reaction.words || '',
+  ]) {
+    for (const token of wordTokens(source)) {
+      allowedPool.add(normalizeToken(token));
+    }
+  }
+  for (const word of nucleusWords()) {
+    allowedPool.add(word);
+  }
 
   for (const message of messages) {
     if (!allowed.has(message.type)) {
-      console.warn('[reaction_dropped]', rawText);
+      logReactionDropped(`disallowed_type:${message.type}`, rawText);
       return null;
     }
     const pt = message.segments
@@ -270,8 +358,16 @@ export function filterReactionMessages(
       .trim();
 
     if (message.type === 'character') {
-      if (pt.includes('?') || ARABIC_LETTER_RE.test(pt) || wordTokens(pt).length > 12) {
-        console.warn('[reaction_dropped]', rawText);
+      if (pt.includes('?')) {
+        logReactionDropped('character_question', rawText);
+        return null;
+      }
+      if (ARABIC_LETTER_RE.test(pt)) {
+        logReactionDropped('character_arabic_in_pt', rawText);
+        return null;
+      }
+      if (wordTokens(pt).length > 12) {
+        logReactionDropped('character_too_long', rawText);
         return null;
       }
       const speakerName = (message.speaker || reaction.characterName || '').trim();
@@ -281,28 +377,49 @@ export function filterReactionMessages(
           'i',
         );
         if (nameRe.test(pt)) {
-          console.warn('[reaction_dropped]', rawText);
+          logReactionDropped('character_says_own_name', rawText);
           return null;
         }
       }
       const echo = normalizeEcho(pt);
-      if (echo && (echo === beatLine || (nextLine && echo === nextLine))) {
-        console.warn('[reaction_dropped]', rawText);
+      if (echo && echo === beatLine) {
+        logReactionDropped('echo_beat_line', rawText);
         return null;
       }
-      if (sharesKeyWords(pt, reaction.beatLine || reaction.currentPromptPlain || '')) {
-        console.warn('[reaction_dropped]', rawText);
+      if (echo && nextLine && echo === nextLine) {
+        logReactionDropped('echo_next_line', rawText);
         return null;
       }
+      // Sharing a content word with the beat question is fine (e.g. "Um café, perfeito!"
+      // after "Um café ou um chá?"). Only block when the reaction steals the NEXT line.
       if (nextLine && sharesKeyWords(pt, reaction.nextLine || '')) {
-        console.warn('[reaction_dropped]', rawText);
+        logReactionDropped('shares_next_line_keywords', rawText);
         return null;
+      }
+
+      // Echo of his answer: more than half of the character's words are his.
+      const charTokens = wordTokens(pt).map(normalizeToken);
+      if (hisAnswerTokens.size > 0 && charTokens.length > 0) {
+        const shared = charTokens.filter((t) => hisAnswerTokens.has(t)).length;
+        if (shared > charTokens.length / 2) {
+          logReactionDropped('echo_answer', rawText);
+          return null;
+        }
+      }
+
+      // Leak: a content word from another lesson / outside the scene pool.
+      for (const token of charTokens) {
+        if (SMALL_WORDS.has(token)) continue;
+        if (!allowedPool.has(token)) {
+          logReactionDropped('leak_word', rawText);
+          return null;
+        }
       }
     }
 
     for (const field of [pt, ar, translation, exampleText]) {
       if (field && ENGLISH_WORD_RE.test(field)) {
-        console.warn('[reaction_dropped]', rawText);
+        logReactionDropped('english_word', rawText);
         return null;
       }
     }

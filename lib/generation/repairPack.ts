@@ -141,6 +141,63 @@ export function repairStoryAids(pack: unknown, allowedWords: unknown[] = []): bo
       changed = copyArz(lineRow, 'alt_ar', 'alt_arz') || changed;
     }
 
+    // Normalize authored reply (v4); empty pt means "no reaction bubble".
+    if (row.reply != null && typeof row.reply === 'object') {
+      const replyRow = row.reply as Record<string, unknown>;
+      if (typeof replyRow.pt !== 'string') {
+        replyRow.pt = String(replyRow.pt || '').trim();
+        changed = true;
+      }
+      if (typeof replyRow.ar !== 'string') {
+        replyRow.ar = String(replyRow.ar || '').trim();
+        changed = true;
+      }
+      if (typeof replyRow.arz !== 'string') {
+        replyRow.arz = String(replyRow.arz || '').trim();
+        changed = true;
+      }
+      changed = copyArz(replyRow, 'ar', 'arz') || changed;
+    } else if (row.reply === null || row.reply === '') {
+      row.reply = { pt: '', ar: '', arz: '' };
+      changed = true;
+    }
+
+    // v5: normalize teach / info_card (null = absent).
+    if (row.teach === null || row.teach === '') {
+      delete row.teach;
+      changed = true;
+    } else if (row.teach && typeof row.teach === 'object') {
+      const teach = row.teach as Record<string, unknown>;
+      for (const key of [
+        'moment_ar',
+        'rule_pt',
+        'rule_ar',
+        'example_pt',
+        'example_ar',
+        'ask_ar',
+      ]) {
+        if (teach[key] != null && typeof teach[key] !== 'string') {
+          teach[key] = String(teach[key] || '').trim();
+          changed = true;
+        }
+      }
+    }
+
+    if (row.info_card === null || row.info_card === '') {
+      delete row.info_card;
+      changed = true;
+    } else if (row.info_card && typeof row.info_card === 'object') {
+      const card = row.info_card as Record<string, unknown>;
+      if (typeof card.title_ar !== 'string' && card.title_ar != null) {
+        card.title_ar = String(card.title_ar || '').trim();
+        changed = true;
+      }
+      if (typeof card.note_ar !== 'string' && card.note_ar != null) {
+        card.note_ar = String(card.note_ar || '').trim();
+        changed = true;
+      }
+    }
+
     const tip = row.coach_tip;
     if (tip && typeof tip === 'object') {
       changed = copyArz(tip as Record<string, unknown>, 'ar', 'arz') || changed;
@@ -193,6 +250,22 @@ export function repairStoryAids(pack: unknown, allowedWords: unknown[] = []): bo
       if (!task || typeof task !== 'object') continue;
       if (fillVerdicts((task as Record<string, unknown>).anticipated_wrong)) changed = true;
     }
+  }
+
+  // v5: fill script arz from ar when missing; leave empty ar alone (legacy).
+  const script = root.script;
+  if (Array.isArray(script)) {
+    for (const turn of script) {
+      if (!turn || typeof turn !== 'object') continue;
+      const row = turn as Record<string, unknown>;
+      if (copyArz(row, 'ar', 'arz')) changed = true;
+    }
+  }
+
+  // v5: drop empty summary.
+  if (root.summary === null || root.summary === '') {
+    delete root.summary;
+    changed = true;
   }
 
   return changed;

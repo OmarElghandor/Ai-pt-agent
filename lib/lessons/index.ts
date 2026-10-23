@@ -2,13 +2,17 @@ export type {
   AssessmentTask,
   AuthoredSegment,
   BeatDifficulty,
+  BeatSkill,
   CodeGuard,
   GrammarCard,
   KnownAnswerFields,
   LessonPack,
   LineExplain,
+  ListeningOption,
   OpenAnswerFields,
   PromptShape,
+  ReadingArtifact,
+  ReadingArtifactKind,
   SceneWord,
   StoryBeat,
   StoryCharacter,
@@ -18,7 +22,12 @@ export type {
   ValidationIssue,
   WordBankEntry,
 } from './types';
-export { BRAZILIAN_BLACKLIST, BEAT_DIFFICULTIES } from './types';
+export {
+  BRAZILIAN_BLACKLIST,
+  BEAT_DIFFICULTIES,
+  BEAT_SKILLS,
+  DEFAULT_SKILL_MIX,
+} from './types';
 export { validateLessonPack, formatValidationIssues } from './validate';
 export { loadLessonPacks, assertValidLessonCatalogue } from './load';
 export {

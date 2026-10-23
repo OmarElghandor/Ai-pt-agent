@@ -110,6 +110,185 @@ describe('adaptMongoPack story packs', () => {
     assert.ok(shown.some((m) => m.type === 'coach'));
   });
 
+  it('maps teach, info_card, summary and script translations from a v5 pack', () => {
+    const pack = storyPack({
+      script: [
+        { scene: 's01', speaker: 'Rita', pt: 'Olá!', ar: 'أهلاً!', arz: 'أَهْلاً!' },
+        { scene: 's01', speaker: 'EU', pt: 'Olá!', ar: 'أهلاً!', arz: 'أَهْلاً!' },
+      ],
+      summary: {
+        words: [{ pt: 'o café', ar: 'القهوة' }],
+        rules: [
+          {
+            pt: 'Quanto custa + الحاجة؟',
+            ar: 'بتسأل عن السعر',
+            example_pt: 'Quanto custa o chá?',
+            example_ar: 'الشاي بكام؟',
+          },
+        ],
+      },
+      beats: [
+        {
+          id: 'b01',
+          scene: 's1',
+          narration_ar: 'ريتا بتفتح الباب.',
+          speaker: 'Rita',
+          difficulty: 'guided',
+          line: {
+            pt: 'Olá!',
+            ar: 'أهلاً!',
+            arz: 'أَهْلاً!',
+            alt_pt: 'Olá, tudo bem?',
+            alt_ar: 'أهلاً، عامل إيه؟',
+            alt_arz: 'أَهْلاً، عامِل إيه؟',
+          },
+          reply: { pt: 'Olá!', ar: 'أهلاً!', arz: 'أَهْلاً!' },
+          teach: {
+            moment_ar: 'محتاج تسلّم.',
+            rule_pt: 'Olá',
+            rule_ar: 'أهلاً',
+            example_pt: 'Olá, bom dia!',
+            example_ar: 'أهلاً صباح الخير',
+            ask_ar: 'جرّبها.',
+          },
+          info_card: {
+            title_ar: 'تحية',
+            rows: [{ pt: 'Olá!', ar: 'أهلاً!' }],
+            note_ar: 'مش Oi',
+          },
+          coach_tip: { ar: 'جرّب', arz: 'جَرِّب' },
+          frame: 'Olá …',
+          reaction_cue: 'Rita smiles.',
+          kind: 'known',
+          accepted: ['Olá', 'Olá!'],
+          anticipated_wrong: [],
+          hint_note: { ar: 'تحية', arz: 'تَحِيّة' },
+          why_note: { ar: 'رد التحية', arz: 'رَدّ التَحِيّة' },
+        },
+        {
+          id: 'b02',
+          scene: 's2',
+          speaker: 'Rita',
+          difficulty: 'supported',
+          line: {
+            pt: 'Como te chamas?',
+            ar: 'اسمك إيه؟',
+            arz: 'اِسْمَك إيه؟',
+            alt_pt: 'Como te chamas?',
+            alt_ar: 'اسمك إيه؟',
+            alt_arz: 'اِسْمَك إيه؟',
+          },
+          reply: { pt: '', ar: '', arz: '' },
+          teach: null,
+          info_card: null,
+          coach_tip: { ar: 'قدّم نفسك', arz: 'قَدِّم نَفْسَك' },
+          reaction_cue: 'Rita is happy to meet him.',
+          kind: 'known',
+          accepted: ['Chamo-me [NAME].'],
+          word_bank: [
+            { pt: 'chamo-me', ar: 'اسمي' },
+            { pt: 'eu', ar: 'أنا' },
+            { pt: 'tu', ar: 'أنت' },
+          ],
+          hint_note: 'فكر في chamar',
+        },
+      ],
+      assessment: [
+        {
+          id: 'a1',
+          target: 'تحية',
+          kind: 'known',
+          line: { pt: '', ar: 'دخلت محل تاني وسلّم. هتقول إيه؟', arz: 'دَخَلْت مَحَل' },
+          accepted: ['Olá!'],
+          nudge_note: 'في حاجة تتظبط',
+        },
+      ],
+    });
+    assert.ok(pack);
+    assert.equal(pack!.script?.[0].ar, 'أهلاً!');
+    assert.equal(pack!.summary?.words[0].pt, 'o café');
+    assert.equal(pack!.summary?.rules[0].examplePt, 'Quanto custa o chá?');
+    assert.equal(pack!.beats[0].teach?.rulePt, 'Olá');
+    assert.equal(pack!.beats[0].infoCard?.titleAr, 'تحية');
+    assert.equal(pack!.beats[1].teach, undefined);
+    assert.equal(pack!.beats[1].infoCard, undefined);
+    assert.equal(pack!.assessmentTasks[0].line.pt, '');
+    assert.match(pack!.assessmentTasks[0].line.ar, /دخلت/);
+  });
+
+  it('maps reply and script from a v4 pack', () => {
+    const pack = storyPack({
+      script: [
+        { scene: 's01', speaker: 'Rita', pt: 'Olá!' },
+        { scene: 's01', speaker: 'EU', pt: 'Olá!' },
+        { scene: 's01', speaker: 'Rita', pt: 'Como te chamas?' },
+      ],
+      beats: [
+        {
+          id: 'b01',
+          scene: 's1',
+          narration_ar: 'ريتا بتفتح الباب.',
+          speaker: 'Rita',
+          difficulty: 'guided',
+          line: {
+            pt: 'Olá!',
+            ar: 'أهلاً!',
+            arz: 'أَهْلاً!',
+            alt_pt: 'Olá, tudo bem?',
+            alt_ar: 'أهلاً، عامل إيه؟',
+            alt_arz: 'أَهْلاً، عامِل إيه؟',
+          },
+          reply: { pt: 'Olá!', ar: 'أهلاً!', arz: 'أَهْلاً!' },
+          coach_tip: { ar: 'قول Olá', arz: 'قُول Olá' },
+          frame: 'Olá …',
+          reaction_cue: 'Rita smiles.',
+          kind: 'known',
+          accepted: ['Olá', 'Olá!'],
+          anticipated_wrong: [],
+          hint_note: { ar: 'تحية', arz: 'تَحِيّة' },
+          why_note: { ar: 'رد التحية', arz: 'رَدّ التَحِيّة' },
+        },
+        {
+          id: 'b02',
+          scene: 's2',
+          speaker: 'Rita',
+          difficulty: 'supported',
+          line: {
+            pt: 'Como te chamas?',
+            ar: 'اسمك إيه؟',
+            arz: 'اِسْمَك إيه؟',
+            alt_pt: 'Como te chamas?',
+            alt_ar: 'اسمك إيه؟',
+            alt_arz: 'اِسْمَك إيه؟',
+          },
+          reply: { pt: '', ar: '', arz: '' },
+          coach_tip: { ar: 'قدّم نفسك', arz: 'قَدِّم نَفْسَك' },
+          reaction_cue: 'Rita is happy to meet him.',
+          kind: 'known',
+          accepted: ['Chamo-me [NAME].'],
+          word_bank: [
+            { pt: 'chamo-me', ar: 'اسمي' },
+            { pt: 'eu', ar: 'أنا' },
+            { pt: 'tu', ar: 'أنت' },
+          ],
+          hint_note: 'فكر في chamar',
+        },
+      ],
+    });
+    assert.ok(pack);
+    assert.equal(pack!.script?.length, 3);
+    assert.equal(pack!.script?.[0].pt, 'Olá!');
+    assert.equal(pack!.beats[0].reply?.pt, 'Olá!');
+    assert.equal(pack!.beats[1].reply?.pt, '');
+  });
+
+  it('leaves reply undefined on legacy packs', () => {
+    const pack = storyPack();
+    assert.ok(pack);
+    assert.equal(pack!.beats[0].reply, undefined);
+    assert.equal(pack!.script, undefined);
+  });
+
   it('maps scenes[].words snake_case into SceneWord', () => {
     const pack = storyPack({
       scenes: [

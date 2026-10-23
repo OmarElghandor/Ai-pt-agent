@@ -20,9 +20,11 @@ import {
   currentAssessmentTask,
   currentBeat,
   makeAssessmentPrompt,
+  makeCharacterLine,
   makeChecklistDone,
   makeCoachNote,
   makeCoachTip,
+  makeFinalTaskPrompt,
   makeGrammarCardMessage,
   makeHintCardMessage,
   makeLineExplainCoach,
@@ -35,6 +37,7 @@ import {
   presentBeatTail,
   presentClosing,
   presentFarewell,
+  presentLessonEndingAids,
   makeIntro,
   makeSceneWordCardMessage,
   sceneNeedsWordCard,
@@ -329,6 +332,9 @@ function buildReactionBase(
 function nearMissFixMessage(grade: GradeVerdict, beat: StoryBeat): TypedMessage {
   const authored = mistakeNote(grade);
   if (authored) return makeCoachNote(authored);
+  if (grade.verdict === 'near-miss' && grade.fixNote?.trim()) {
+    return makeCoachNote(grade.fixNote.trim());
+  }
   if (grade.verdict === 'near-miss' && grade.correctedWord?.trim()) {
     return makeNearMissFixCoach(grade.correctedWord.trim());
   }
@@ -486,6 +492,208 @@ function enterFriendBridge(
   return next;
 }
 
+/**
+ * After the last story beat: replay + summary + first immediate final task (v5).
+ * Packs without assessment tasks still show ending aids, then the friend bridge.
+ * Does not write formal assessment results (12h assessment stays separate).
+ */
+function enterFinalTaskPhase(
+  progress: Progress,
+  pack: LessonPack,
+  focus: PracticeFocus,
+  outbound: TypedMessage[],
+): PracticeFocus {
+  outbound.push(...presentLessonEndingAids(pack));
+  const tasks = pack.assessmentTasks;
+  if (tasks.length === 0) {
+    return enterFriendBridge(progress, pack, focus, outbound);
+  }
+  outbound.push(makeFinalTaskPrompt(tasks[0]));
+  const next: PracticeFocus = {
+    ...focus,
+    phase: 'final-task',
+    finalTaskIndex: 0,
+    finalTaskAttempts: 0,
+    finalTaskOutcomes: {},
+    beatIndex: pack.beats.length,
+    attemptsOnCurrent: 0,
+    stuckCountOnCurrent: 0,
+    useAltLine: false,
+    coachTipShown: false,
+    sceneWordGate: null,
+  };
+  progress.mode = 'practice';
+  progress.practice = next;
+  return next;
+}
+
+function advanceFinalTask(
+  progress: Progress,
+  pack: LessonPack,
+  focus: PracticeFocus,
+  taskId: string,
+  outcome: 'pass' | 'fail',
+  outbound: TypedMessage[],
+): PracticeFocus {
+  const outcomes = { ...(focus.finalTaskOutcomes ?? {}), [taskId]: outcome };
+  const nextIndex = (focus.finalTaskIndex ?? 0) + 1;
+  if (nextIndex >= pack.assessmentTasks.length) {
+    return enterFriendBridge(
+      progress,
+      pack,
+      { ...focus, finalTaskOutcomes: outcomes, finalTaskIndex: nextIndex },
+      outbound,
+    );
+  }
+  const nextTask = pack.assessmentTasks[nextIndex];
+  outbound.push(makeFinalTaskPrompt(nextTask));
+  const next: PracticeFocus = {
+    ...focus,
+    phase: 'final-task',
+    finalTaskIndex: nextIndex,
+    finalTaskAttempts: 0,
+    finalTaskOutcomes: outcomes,
+  };
+  progress.practice = next;
+  return next;
+}
+
+function finalTaskWrongCoach(task: AssessmentTask, attempt: number): TypedMessage {
+  if (attempt >= 2) {
+    const why = task.whyNote?.trim();
+    if (why) return makeCoachNote(why);
+    const accepted = task.kind === 'known' ? task.acceptedAnswers[0] : '';
+    return makeCoachNote(accepted ? `الإجابة: ${accepted}` : 'خلّينا نكمّل.');
+  }
+  if (task.nudgeNote?.trim()) return makeCoachNote(task.nudgeNote.trim());
+  if (task.hintNote?.trim()) return makeCoachNote(task.hintNote.trim());
+  return makeCoachNote('جرّب تاني.', 'جَرِّب تاني.');
+}
+
+function handleFinalTaskTurn(
+  progress: Progress,
+  pack: LessonPack,
+  focus: PracticeFocus,
+  userText: string,
+  script: ReturnType<typeof classifyScript>,
+  log: TurnLogDetail,
+): TurnResult {
+  const outbound: TypedMessage[] = [];
+  const taskIndex = focus.finalTaskIndex ?? 0;
+  const task = pack.assessmentTasks[taskIndex];
+  log.mode = 'practice';
+  log.lessonId = pack.id;
+  log.itemId = task?.id ?? null;
+  log.stage = 'final-task';
+
+  if (!task) {
+    enterFriendBridge(progress, pack, focus, outbound);
+    log.messageTypes = outbound.map((m) => m.type);
+    log.finishReason = 'deterministic';
+    return { progress, messages: outbound, streamKind: 'none', log };
+  }
+
+  if (script === 'arabic-only') {
+    log.verdict = 'side-remark';
+    return {
+      progress,
+      messages: outbound,
+      streamKind: 'lesson-reaction',
+      log,
+      modelContext: {
+        item: task,
+        lesson: pack,
+        userText,
+        reaction: {
+          ...buildReactionBase(progress, pack, task, null),
+          mode: 'side',
+          verdict: 'correct',
+          source: 'code',
+          attempt: 1,
+          reactionKind: 'r3',
+          currentPromptPlain: task.line.pt || task.line.ar,
+          nextPrompt: makeFinalTaskPrompt(task),
+        },
+      },
+    };
+  }
+
+  if (script !== 'latin') {
+    log.verdict = 'ignored';
+    return { progress, messages: outbound, streamKind: 'none', log };
+  }
+
+  // Open final tasks still need R2.
+  if (task.kind === 'open') {
+    log.gradingSource = 'model';
+    log.reactionModel = 'r2';
+    return {
+      progress,
+      messages: outbound,
+      streamKind: 'lesson-reaction',
+      log,
+      modelContext: {
+        item: task,
+        lesson: pack,
+        userText,
+        reaction: {
+          ...buildReactionBase(progress, pack, task, null),
+          mode: 'practice',
+          verdict: 'wrong',
+          source: 'you',
+          attempt: (focus.finalTaskAttempts ?? 0) + 1,
+          reactionKind: 'r2',
+          currentPromptPlain: task.line.pt || task.line.ar,
+        },
+      },
+    };
+  }
+
+  const grade = gradeKnownAnswer(userText, task.acceptedAnswers, task.anticipatedWrong);
+  const attempt = (focus.finalTaskAttempts ?? 0) + 1;
+  const verdict = reactionVerdict(grade);
+  const passed = verdict === 'correct' || verdict === 'near_miss';
+
+  if (passed) {
+    if (verdict === 'near_miss') {
+      const authored = mistakeNote(grade);
+      if (authored) outbound.push(makeCoachNote(authored));
+      else if (grade.verdict === 'near-miss' && grade.fixNote?.trim()) {
+        outbound.push(makeCoachNote(grade.fixNote.trim()));
+      } else if (grade.verdict === 'near-miss' && grade.correctedWord?.trim()) {
+        outbound.push(makeNearMissFixCoach(grade.correctedWord.trim()));
+      }
+    } else {
+      outbound.push(takePracticePraise(progress));
+    }
+    advanceFinalTask(progress, pack, { ...focus, finalTaskAttempts: attempt }, task.id, 'pass', outbound);
+    log.gradingSource = 'code';
+    log.verdict = grade.verdict;
+    log.matchedAnswer = 'matched' in grade ? grade.matched : null;
+    log.finishReason = 'deterministic';
+    log.messageTypes = outbound.map((m) => m.type);
+    return {
+      progress,
+      messages: outbound,
+      learnerVerdict: learnerVerdictFor(grade),
+      streamKind: 'none',
+      log,
+    };
+  }
+
+  outbound.push(finalTaskWrongCoach(task, attempt));
+  if (attempt >= 2) {
+    advanceFinalTask(progress, pack, { ...focus, finalTaskAttempts: attempt }, task.id, 'fail', outbound);
+  } else {
+    progress.practice = { ...focus, finalTaskAttempts: attempt };
+  }
+  log.gradingSource = 'code';
+  log.verdict = grade.verdict;
+  log.finishReason = 'deterministic';
+  log.messageTypes = outbound.map((m) => m.type);
+  return { progress, messages: outbound, streamKind: 'none', log };
+}
+
 /** Record a beat outcome and queue the next story line, or the closing hook. */
 export function advancePracticeAfterOutcome(
   progress: Progress,
@@ -508,7 +716,7 @@ export function advancePracticeAfterOutcome(
   const idx = nextUnresolvedBeat(pack.beats, next.itemOutcomes, from < 0 ? 0 : from + 1);
   if (idx < 0) {
     if (allBeatsResolved(pack.beats, next.itemOutcomes)) {
-      return enterFriendBridge(progress, pack, next, outbound);
+      return enterFinalTaskPhase(progress, pack, next, outbound);
     }
     progress.practice = next;
     return next;
@@ -544,7 +752,7 @@ export function commitPersonalSlotAdvance(
   return outbound;
 }
 
-/** After Prompt 4 grades an open beat or assessment task. */
+/** After Prompt 4 grades an open beat, final task, or assessment task. */
 export function commitOpenVerdict(
   progress: Progress,
   pack: LessonPack,
@@ -555,7 +763,44 @@ export function commitOpenVerdict(
     return commitAssessmentVerdict(progress, pack, unitId, verdict);
   }
   const focus = progress.practice;
-  if (!focus || focus.phase !== 'story') return [];
+  if (!focus) return [];
+
+  // Immediate end-of-lesson final task (practice-only; no formal assessment write).
+  if (focus.phase === 'final-task') {
+    const task =
+      pack.assessmentTasks.find((item) => item.id === unitId) ??
+      pack.assessmentTasks[focus.finalTaskIndex ?? 0];
+    if (!task) return [];
+    const outbound: TypedMessage[] = [];
+    const attempts = (focus.finalTaskAttempts ?? 0) + 1;
+    if (verdict === 'correct' || verdict === 'near-miss') {
+      advanceFinalTask(
+        progress,
+        pack,
+        { ...focus, finalTaskAttempts: attempts },
+        task.id,
+        'pass',
+        outbound,
+      );
+      return outbound;
+    }
+    outbound.push(finalTaskWrongCoach(task, attempts));
+    if (attempts >= 2) {
+      advanceFinalTask(
+        progress,
+        pack,
+        { ...focus, finalTaskAttempts: attempts },
+        task.id,
+        'fail',
+        outbound,
+      );
+    } else {
+      progress.practice = { ...focus, finalTaskAttempts: attempts };
+    }
+    return outbound;
+  }
+
+  if (focus.phase !== 'story') return [];
   const beat = pack.beats.find((item) => item.id === unitId) ?? currentBeat(pack, focus.beatIndex);
   if (!beat) return [];
   const outbound: TypedMessage[] = [];
@@ -687,7 +932,7 @@ function storyReaction(
   }
 
   if (source === 'code' && passed) {
-    // Near-miss: no praise; show pack/template fix, then R1.
+    // Near-miss: no praise; show pack/template fix, then reply or R1.
     if (verdict === 'near_miss') {
       outbound.push(nearMissFixMessage(grade!, beat));
     } else {
@@ -701,6 +946,40 @@ function storyReaction(
       verdict === 'near_miss' ? 'near-miss' : 'correct',
       nextPrompts,
     );
+
+    // v4: authored reply replaces the live R1 reaction for ordinary known beats.
+    if (beat.reply !== undefined) {
+      const replyPt = beat.reply.pt?.trim() || '';
+      const needsSlotR1 = !replyPt && Boolean(opts?.slotNote);
+      if (!needsSlotR1) {
+        if (replyPt) {
+          outbound.push(
+            makeCharacterLine(beat.speaker, {
+              pt: beat.reply.pt,
+              ar: beat.reply.ar || '',
+              arz: beat.reply.arz || beat.reply.ar || '',
+            }),
+          );
+        }
+        outbound.push(...nextPrompts);
+        log.gradingSource = 'code';
+        log.verdict = grade?.verdict ?? null;
+        log.matchedAnswer = grade && 'matched' in grade ? grade.matched : null;
+        log.finishReason = 'deterministic';
+        log.itemId = beat.id;
+        log.stage = beat.difficulty;
+        log.reactionModel = null;
+        log.messageTypes = outbound.map((m) => m.type);
+        return {
+          progress,
+          messages: outbound,
+          learnerVerdict: grade ? learnerVerdictFor(grade) : undefined,
+          streamKind: 'none',
+          log,
+        };
+      }
+      // Empty reply + personal slot with his value → still call R1.
+    }
   }
 
   const nextBeat = progress.practice ? currentBeat(pack, progress.practice.beatIndex) : null;
@@ -722,12 +1001,19 @@ function storyReaction(
       ? beat.acceptedAnswers.find((answer) => hasPersonalSlot(answer))
       : undefined;
 
+  // After a near-miss, pass the corrected accepted answer so R1 never repeats the slip.
+  const answerForReaction =
+    verdict === 'near_miss' && grade && 'matched' in grade && grade.matched
+      ? grade.matched
+      : userText;
+
   log.gradingSource = source === 'code' ? 'code' : 'model';
   log.verdict = grade?.verdict ?? null;
   log.matchedAnswer = grade && 'matched' in grade ? grade.matched : null;
   log.finishReason = source === 'code' ? 'model' : null;
   log.itemId = beat.id;
   log.stage = beat.difficulty;
+  log.reactionModel = source === 'you' ? 'r2' : 'r1';
 
   return {
     progress,
@@ -753,6 +1039,7 @@ function storyReaction(
         nextPrompts,
         slotPattern: source === 'you' ? slotPattern : undefined,
         slotNote: opts?.slotNote,
+        answerForReaction,
       },
     },
   };
@@ -966,6 +1253,9 @@ export function applyLearnerTurn(input: {
     if (focus.phase === 'friend-bridge') {
       return friendTurn(progress, pack, input.userText, input.now, log);
     }
+    if (focus.phase === 'final-task') {
+      return handleFinalTaskTurn(progress, pack, focus, input.userText, script, log);
+    }
     const beat = currentBeat(pack, focus.beatIndex);
     log.itemId = beat?.id ?? null;
     log.stage = beat?.difficulty ?? null;
@@ -1123,6 +1413,11 @@ function friendTurn(
         const farewell = presentFarewell(packForFarewell);
         if (farewell) farewellMessages.push(farewell);
       }
+      console.log(
+        '[lesson_reaction_calls]',
+        progress.practice.lessonId,
+        progress.practice.reactionCalls ?? 0,
+      );
       const rec = lessonRecord(progress, progress.practice.lessonId);
       rec.practisedAt = now ?? Date.now();
       saveLesson(progress, rec);
@@ -1265,22 +1560,27 @@ export function stageProgressLabel(
   stages: { id: string; label: string; state: 'done' | 'current' | 'todo' }[];
   detail: string | null;
 } {
-  const currentScene =
-    focus.phase === 'friend-bridge' ? null : pack.beats[focus.beatIndex]?.sceneId;
+  const storyDone = focus.phase === 'friend-bridge' || focus.phase === 'final-task';
+  const currentScene = storyDone ? null : pack.beats[focus.beatIndex]?.sceneId;
   const currentIdx = pack.scenes.findIndex((scene) => scene.id === currentScene);
   const stages = pack.scenes.map((scene, i) => ({
     id: scene.id,
     label: scene.titleAr,
-    state: (focus.phase === 'friend-bridge' || (currentIdx >= 0 && i < currentIdx)
+    state: (storyDone || (currentIdx >= 0 && i < currentIdx)
       ? 'done'
       : i === currentIdx
         ? 'current'
         : 'todo') as 'done' | 'current' | 'todo',
   }));
   const total = pack.beats.length;
-  const pos =
-    focus.phase === 'friend-bridge' ? total : Math.min(focus.beatIndex + 1, total);
-  return { stages, detail: total > 0 ? `${pos} / ${total}` : null };
+  const pos = storyDone ? total : Math.min(focus.beatIndex + 1, total);
+  const detail =
+    focus.phase === 'final-task' && pack.assessmentTasks.length
+      ? `مهمة ${(focus.finalTaskIndex ?? 0) + 1} / ${pack.assessmentTasks.length}`
+      : total > 0
+        ? `${pos} / ${total}`
+        : null;
+  return { stages, detail };
 }
 
 export { ASSESSMENT_COOLDOWN_MS, FRIEND_BRIDGE_TURNS, availableLessons };

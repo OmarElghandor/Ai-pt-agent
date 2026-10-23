@@ -1,0 +1,12 @@
+---
+description: Rules for v2 practice — packs, grader, reactor, beat handling
+globs: ["lib/v2/grader/**", "lib/v2/reactor/**", "lib/v2/generation/pack/**", "lib/v2/answers/**", "app/(v2)/practice/**"]
+alwaysApply: false
+---
+# Practice agent
+
+- Spec: `docs/langify-v2/00-decisions.md` §9, `01-architecture.md` (flow of one practice beat), and the agent section in `03`.
+- The grader is a pure module: Claude Haiku, one non-streamed JSON call, 8s timeout, `unclear` on any failure. It returns: verdict (correct, near_miss, wrong, off_topic, arabic_only, unclear), items_used_correctly, errors (max 3), main_error, corrected_tl, feedback_ar, skill.
+- The reactor is Prompt 4 with SOURCE=code (no hidden VERDICT line). It takes MAIN_ERROR, CORRECTED_TL, WEAK_SPOT, mode, skill and attempt; it corrects one error only and returns {character_tl?, coach_eg?, advance}. Max 2 attempts per beat.
+- Every beat has one skill: listening, reading, speaking or writing. Listening and reading are graded by code and never sent to the LLM. The mix is a proportion from `skill_mix` (default 30/30/20/20, at least one of each); packs have 8–14 beats.
+- Never write learner progress from the grader, the reactor or pack generation; only `/api/v2/answers` does.

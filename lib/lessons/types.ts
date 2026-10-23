@@ -64,6 +64,24 @@ export type StoryLine = {
 
 export type BeatDifficulty = 'guided' | 'supported' | 'open';
 
+/** Four skills inside one practice conversation (Langify v2). */
+export type BeatSkill = 'listening' | 'reading' | 'speaking' | 'writing';
+
+export type ListeningOption = {
+  id: string;
+  tl: string;
+  correct: boolean;
+};
+
+export type ReadingArtifactKind = 'receipt' | 'sign' | 'label' | 'menu';
+
+export type ReadingArtifact = {
+  kind: ReadingArtifactKind;
+  lines: { tl: string; ar?: string }[];
+  questionAr: string;
+  options: ListeningOption[];
+};
+
 type AnswerNotes = {
   frame?: string;
   wordBank?: WordBankEntry[];
@@ -104,6 +122,46 @@ export type StoryScene = {
   words?: SceneWord[];
 };
 
+/** Authored character reaction after his turn (v4). Empty pt = no bubble. */
+export type BeatReply = {
+  pt: string;
+  ar: string;
+  arz: string;
+};
+
+/** One spoken turn in the authored script (replay / reviewer). */
+export type ScriptTurn = {
+  scene: string;
+  speaker: string;
+  pt: string;
+  /** Egyptian meaning for replay; optional on older v4 packs. */
+  ar?: string;
+  arz?: string;
+};
+
+/** First-use coach teaching card (v5). Null/absent = no teach on this beat. */
+export type BeatTeach = {
+  momentAr: string;
+  rulePt: string;
+  ruleAr: string;
+  examplePt: string;
+  exampleAr: string;
+  askAr: string;
+};
+
+/** Small reference table after a character line (v5). */
+export type BeatInfoCard = {
+  titleAr: string;
+  rows: { pt: string; ar: string }[];
+  noteAr?: string;
+};
+
+/** End-of-lesson review screen (v5). */
+export type LessonSummary = {
+  words: { pt: string; ar: string }[];
+  rules: { pt: string; ar: string; examplePt: string; exampleAr: string }[];
+};
+
 export type StoryBeat = {
   id: string;
   sceneId: string;
@@ -112,11 +170,29 @@ export type StoryBeat = {
   speaker: string;
   line: StoryLine;
   altLine: StoryLine;
+  /**
+   * Authored reaction after a correct answer (v4).
+   * `undefined` = legacy pack (use R1). Empty `pt` = no character bubble.
+   */
+  reply?: BeatReply;
   difficulty: BeatDifficulty;
+  /**
+   * Skill for this beat (v2). Soft-defaults to speaking when adapting old packs.
+   * Listening/reading are closed (code-graded); speaking/writing may use the LLM grader.
+   */
+  skill: BeatSkill;
+  /** Closed options for listening beats (text hidden until answered in UI). */
+  listeningOptions?: ListeningOption[];
+  /** In-chat reading artifact (receipt, sign, label, menu) with closed options. */
+  readingArtifact?: ReadingArtifact;
   coachTip?: { ar: string; arz: string };
   reactionCue: string;
   /** Shown on stuck (??? / مش فاهم); optional on older packs. */
   lineExplain?: LineExplain;
+  /** First-use tool teaching (v5). */
+  teach?: BeatTeach;
+  /** Reference table after the character line (v5). */
+  infoCard?: BeatInfoCard;
 } & (KnownAnswerFields | OpenAnswerFields);
 
 export type AssessmentTask = {
@@ -144,6 +220,10 @@ export type LessonPack = {
   extraCharacters?: StoryCharacter[];
   /** Optional; older packs omit it and hide ليه؟ / tool-why cards. */
   grammarCard?: GrammarCard;
+  /** Full conversation script (v4/v5); shown as replay at end of lesson in v5. */
+  script?: ScriptTurn[];
+  /** End-of-lesson word/rule review (v5). */
+  summary?: LessonSummary;
   scenes: StoryScene[];
   beats: StoryBeat[];
   closingHook: StoryLine;
@@ -178,3 +258,13 @@ export const BRAZILIAN_BLACKLIST = [
 ] as const;
 
 export const BEAT_DIFFICULTIES: BeatDifficulty[] = ['guided', 'supported', 'open'];
+
+export const BEAT_SKILLS: BeatSkill[] = ['listening', 'reading', 'speaking', 'writing'];
+
+/** Default mix per 10 beats when no weak skill is passed. */
+export const DEFAULT_SKILL_MIX: Record<BeatSkill, number> = {
+  speaking: 3,
+  listening: 3,
+  reading: 2,
+  writing: 2,
+};

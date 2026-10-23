@@ -3,6 +3,7 @@ import { ensureMongoLesson, refreshMongoCatalogue } from '@/lib/lessons/catalogu
 import { findSlot, generateLessonDirect } from '@/lib/generation/runPipeline';
 import { generationStageLabel } from '@/lib/generationLabels';
 import { mongoConfigured } from '@/lib/mongo';
+import { getCurrentPracticeLesson } from '@/lib/mongo/practiceLesson';
 
 export const runtime = 'nodejs';
 /** Generation can take several Claude round-trips. */
@@ -13,7 +14,9 @@ export async function POST(
   ctx: { params: Promise<{ lessonKey: string }> },
 ) {
   const { lessonKey } = await ctx.params;
-  const force = new URL(req.url).searchParams.get('force') === '1';
+  const url = new URL(req.url);
+  const force = url.searchParams.get('force') === '1';
+  const overwriteHand = url.searchParams.get('overwrite_hand') === '1';
   if (!lessonKey) {
     return NextResponse.json({ error: 'lessonKey required' }, { status: 400 });
   }
@@ -25,22 +28,47 @@ export async function POST(
     );
   }
 
-  if (!process.env.ANTHROPIC_API_KEY?.trim() && !process.env.CLAUDE_API_KEY?.trim()) {
-    return NextResponse.json(
-      { ok: false, error: 'ANTHROPIC_API_KEY مش متضبطة في .env.local' },
-      { status: 503 },
-    );
-  }
-
   if (!findSlot(lessonKey)) {
     return NextResponse.json({ ok: false, error: 'درس مش موجود في الخطة' }, { status: 404 });
   }
 
   try {
     await refreshMongoCatalogue(true);
+    const currentDoc = await getCurrentPracticeLesson(lessonKey);
+    const isHand = currentDoc?.source === 'hand';
+
+    // Hand packs stay put unless overwrite_hand=1 (even with ?force=1).
+    if (isHand && !overwriteHand) {
+      const existing = await ensureMongoLesson(lessonKey);
+      if (existing) {
+        if (force) {
+          return NextResponse.json(
+            {
+              ok: false,
+              error: 'الدرس مكتوب يدوي — لازم overwrite_hand=1 عشان تعيد توليده',
+              alreadyLive: true,
+              hasPack: true,
+              source: 'hand',
+              stageLabel: 'جاهز',
+              packId: existing.id,
+            },
+            { status: 409 },
+          );
+        }
+        return NextResponse.json({
+          ok: true,
+          alreadyLive: true,
+          hasPack: true,
+          source: 'hand',
+          stageLabel: 'جاهز',
+          packId: existing.id,
+        });
+      }
+    }
+
     const existing = await ensureMongoLesson(lessonKey);
     // Only short-circuit when an aligned bilingual pack is already playable.
-    if (existing && !force) {
+    if (existing && !force && !overwriteHand) {
       return NextResponse.json({
         ok: true,
         alreadyLive: true,
@@ -50,9 +78,16 @@ export async function POST(
       });
     }
 
+    if (!process.env.ANTHROPIC_API_KEY?.trim() && !process.env.CLAUDE_API_KEY?.trim()) {
+      return NextResponse.json(
+        { ok: false, error: 'ANTHROPIC_API_KEY مش متضبطة في .env.local' },
+        { status: 503 },
+      );
+    }
+
     // Direct HTTP to Anthropic — no job queue / worker.
-    // ?force=1 rewrites a live pack. A stale teach-step pack regenerates either way.
-    const result = await generateLessonDirect(lessonKey, { force });
+    // ?force=1 rewrites a live pack. Hand packs need overwrite_hand=1.
+    const result = await generateLessonDirect(lessonKey, { force, overwriteHand });
     await refreshMongoCatalogue(true);
     const pack = result.ok ? await ensureMongoLesson(lessonKey) : null;
 

@@ -99,6 +99,15 @@ export function learnerView(file: LearnerFile): LearnerView {
           showSceneWordChip = true;
         }
       }
+
+      // Immediate final task: no coach tip / word bank of the story; optional frame.
+      if (focus.phase === 'final-task') {
+        const task = pack.assessmentTasks[focus.finalTaskIndex ?? 0];
+        if (task) {
+          sentenceFrame = task.frame ?? null;
+          wordBank = null;
+        }
+      }
     }
   }
 

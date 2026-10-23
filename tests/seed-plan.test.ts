@@ -52,6 +52,7 @@ describe('mergeSeedWithMongo', () => {
           generationStage: null,
           needsOmarReview: false,
           audioCacheRefs: [],
+          source: 'generated',
         },
       ],
       {
