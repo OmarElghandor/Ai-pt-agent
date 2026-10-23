@@ -7,10 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx --test tests/lesson-packs.test.ts tests/practice.test.ts tests/friend-assessment.test.ts tests/mongo-adapter.test.ts tests/seed-plan.test.ts tests/generation-assembler.test.ts",
+    "test": "tsx --test tests/lesson-packs.test.ts tests/practice.test.ts tests/friend-assessment.test.ts tests/mongo-adapter.test.ts tests/seed-plan.test.ts tests/generation-assembler.test.ts tests/v2-content.test.ts",
     "validate:lessons": "tsx scripts/validate-lessons.ts",
     "warm:lesson-audio": "tsx scripts/warm-lesson-audio.ts",
-    "prebuild": "npm run validate:lessons"
+    "v2:load-example": "tsx scripts/v2/load-example.ts",
+    "v2:print-conjugations": "tsx scripts/v2/print-conjugations.ts",
+    "prebuild": "npm run validate:lessons",
+    "v2:seed-conjugations": "tsx scripts/v2/seed-conjugations.ts"
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^3.0.48",

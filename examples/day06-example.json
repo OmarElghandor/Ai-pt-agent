@@ -1,0 +1,299 @@
+{
+  "lesson": {
+    "id": "pt-PT.d06",
+    "target_lang": "pt-PT",
+    "day": 6,
+    "phase": 1,
+    "week": 1,
+    "kind": "lesson",
+    "situation": { "tl": "Como te sentes?", "eg": "حاسس بإيه" },
+    "can_do": [
+      { "eg": "تقول إنت عامل إيه دلوقتي", "proves": ["phrase.im_tired", "sentence.im_happy"] },
+      { "eg": "تقول إنت فين", "proves": ["phrase.at_home"] }
+    ],
+    "pages": ["p1", "p2"]
+  },
+
+  "items": [
+    {
+      "type": "phrase", "id": "phrase.im_tired",
+      "tl": "Estou cansado.", "tl_f": "Estou cansada.",
+      "ar": "أنا متعب.", "ar_f": "أنا متعبة.",
+      "say": "إشتو كانسادو", "ipa": "/ɨʃˈto kɐ̃ˈsaðu/",
+      "marks": [{ "text": "Estou", "group": "b" }],
+      "media": { "icon": "bedtime" },
+      "context_eg": "بعد يوم شغل طويل",
+      "cloze": "cansado"
+    },
+    {
+      "type": "phrase", "id": "phrase.at_home",
+      "tl": "Estou em casa.",
+      "ar": "أنا في البيت.",
+      "say": "إشتو إين كازا", "ipa": "/ɨʃˈto ɐ̃j ˈkazɐ/",
+      "marks": [{ "text": "Estou", "group": "b" }],
+      "media": { "icon": "home" },
+      "context_eg": "حد بيكلمك في التليفون وبيسألك إنت فين",
+      "cloze": "casa"
+    },
+    { "type": "sentence", "id": "sentence.i_am_yassin", "tl": "Sou o Yassin.", "ar": "أنا ياسين.", "say": "سو أو ياسين", "marks": [{ "text": "Sou", "group": "a" }] },
+    { "type": "sentence", "id": "sentence.i_am_egyptian", "tl": "Sou egípcio.", "ar": "أنا مصري.", "say": "سو إيچيپسيو", "marks": [{ "text": "Sou", "group": "a" }] },
+    { "type": "sentence", "id": "sentence.ines_nice", "tl": "A Inês é simpática.", "ar": "إنِس لطيفة.", "say": "أ إنيش إي سيمپاتيكا", "marks": [{ "text": "é", "group": "a" }] },
+    { "type": "sentence", "id": "sentence.im_happy", "tl": "Estou contente.", "ar": "أنا سعيد.", "say": "إشتو كونتينت", "marks": [{ "text": "Estou", "group": "b" }] },
+    { "type": "sentence", "id": "sentence.coffee_cold", "tl": "O café está frio.", "ar": "القهوة باردة.", "say": "أو كافي إشتا فريو", "marks": [{ "text": "está", "group": "b" }] },
+    { "type": "sentence", "id": "sentence.he_is_boring", "tl": "Ele é aborrecido.", "ar": "هو مُمِل.", "say": "إيل إي أبوغيسيدو", "marks": [{ "text": "é", "group": "a" }] },
+    { "type": "sentence", "id": "sentence.he_is_bored", "tl": "Ele está aborrecido.", "ar": "هو يشعر بالملل.", "say": "إيل إشتا أبوغيسيدو", "marks": [{ "text": "está", "group": "b" }] },
+    { "type": "sentence", "id": "sentence.soup_good_always", "tl": "A sopa é boa.", "ar": "الشوربة لذيذة دائمًا.", "say": "أ سوپا إي بوا", "marks": [{ "text": "é", "group": "a" }] },
+    { "type": "sentence", "id": "sentence.soup_good_today", "tl": "A sopa está boa.", "ar": "الشوربة لذيذة اليوم.", "say": "أ سوپا إشتا بوا", "marks": [{ "text": "está", "group": "b" }] },
+    { "type": "sentence", "id": "sentence.estou_bem", "tl": "Estou bem.", "ar": "أنا بخير.", "say": "إشتو باين", "marks": [{ "text": "Estou", "group": "b" }] },
+    { "type": "sentence", "id": "sentence.estas_cansado", "tl": "Estás cansado?", "ar": "هل أنت متعب؟", "say": "إشتاش كانسادو", "marks": [{ "text": "Estás", "group": "b" }] },
+    { "type": "sentence", "id": "sentence.ela_esta_em_casa", "tl": "Ela está em casa.", "ar": "هي في البيت.", "say": "إيلا إشتا إين كازا", "marks": [{ "text": "está", "group": "b" }] },
+    { "type": "sentence", "id": "sentence.estamos_no_cafe", "tl": "Estamos no café.", "ar": "نحن في المقهى.", "say": "إشتامُش نو كافي", "marks": [{ "text": "Estamos", "group": "b" }, { "text": "no", "group": "prep" }] },
+    { "type": "sentence", "id": "sentence.eles_estao_atrasados", "tl": "Eles estão atrasados.", "ar": "هم متأخرون.", "say": "إيليش إشتاون أتغازادوش", "marks": [{ "text": "estão", "group": "b" }] }
+  ],
+
+  "pages": [
+    {
+      "id": "p1",
+      "preset": "compare",
+      "mode": "guided",
+      "tool_id": "ser_vs_estar",
+      "pill": "القواعد",
+      "title": [
+        { "text": "SER", "lang": "tl", "group": "a" },
+        { "text": " vs ", "lang": "tl" },
+        { "text": "ESTAR", "lang": "tl", "group": "b" }
+      ],
+      "subtitle": [{ "text": "الاتنين معناهم «يكون». الفرق: ثابت ولا مؤقت؟", "lang": "eg" }],
+      "cover": "meaning",
+      "library": true,
+      "blocks": [
+        {
+          "id": "b1",
+          "type": "compare",
+          "columns": [
+            {
+              "head": [{ "text": "SER", "lang": "tl" }],
+              "sub": [{ "text": "ثابت · مين وإيه", "lang": "eg" }],
+              "group": "a",
+              "entries": [
+                { "label": [{ "text": "الهوية", "lang": "eg" }], "ref": "sentence.i_am_yassin", "media": { "image": "person.yassin.wave" } },
+                { "label": [{ "text": "الجنسية", "lang": "eg" }], "ref": "sentence.i_am_egyptian", "media": { "image": "flag.egypt" } },
+                { "label": [{ "text": "الصفات", "lang": "eg" }], "ref": "sentence.ines_nice", "media": { "image": "person.ines.smile" } }
+              ]
+            },
+            {
+              "head": [{ "text": "ESTAR", "lang": "tl" }],
+              "sub": [{ "text": "مؤقت · حالة دلوقتي", "lang": "eg" }],
+              "group": "b",
+              "entries": [
+                { "label": [{ "text": "الإحساس", "lang": "eg" }], "ref": "sentence.im_happy", "media": { "image": "emotion.happy" } },
+                { "label": [{ "text": "المكان", "lang": "eg" }], "ref": "phrase.at_home", "media": { "image": "place.home" } },
+                { "label": [{ "text": "حالة مؤقتة", "lang": "eg" }], "ref": "sentence.coffee_cold", "media": { "image": "food.coffee_cold" } }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "b2",
+          "type": "heading",
+          "text": [{ "text": "نفس الكلمة · معنى مختلف", "lang": "eg" }]
+        },
+        {
+          "id": "b3",
+          "type": "vs_pairs",
+          "pairs": [
+            {
+              "left": "sentence.he_is_boring",
+              "right": "sentence.he_is_bored",
+              "note": [
+                { "text": "é", "lang": "tl", "group": "a", "bold": true },
+                { "text": " = دي صفته. ", "lang": "eg" },
+                { "text": "está", "lang": "tl", "group": "b", "bold": true },
+                { "text": " = ده حاله دلوقتي.", "lang": "eg" }
+              ]
+            },
+            {
+              "left": "sentence.soup_good_always",
+              "right": "sentence.soup_good_today",
+              "note": [{ "text": "طعمها حلو عمومًا، ولا الطبق ده بالذات؟", "lang": "eg" }]
+            }
+          ]
+        },
+        {
+          "id": "b4",
+          "type": "tip",
+          "kind": "rule",
+          "title": [{ "text": "القاعدة المهمة", "lang": "eg" }],
+          "body": [
+            { "text": "لو الحاجة ممكن تتغير بكره، يبقى ", "lang": "eg" },
+            { "text": "ESTAR", "lang": "tl", "group": "b", "bold": true },
+            { "text": ". لو هي دي طبيعتها، يبقى ", "lang": "eg" },
+            { "text": "SER", "lang": "tl", "group": "a", "bold": true },
+            { "text": ".", "lang": "eg" }
+          ]
+        }
+      ],
+      "steps": [
+        { "target": "b1/col:0", "kind": "reveal", "chapter": "SER",
+          "tip": [{ "text": "نبدأ بـ ", "lang": "eg" }, { "text": "SER", "lang": "tl", "bold": true }, { "text": ": للحاجات اللي مش بتتغير.", "lang": "eg" }] },
+        { "target": "b1/entry:0:0", "kind": "reveal", "chapter": "SER",
+          "tip": [{ "text": "Sou", "lang": "tl", "bold": true }, { "text": " = أنا. اسمك مش هيتغير.", "lang": "eg" }] },
+        { "target": "b1/entry:0:1", "kind": "reveal", "chapter": "SER",
+          "tip": [{ "text": "الجنسية ثابتة برضه.", "lang": "eg" }] },
+        { "target": "b1/entry:0:2", "kind": "ask", "chapter": "SER",
+          "ask": {
+            "question": [{ "text": "A Inês ___ simpática.", "lang": "tl", "bold": true }, { "text": " دي صفة فيها. نقول إيه؟", "lang": "eg" }],
+            "options": [
+              { "label": [{ "text": "é", "lang": "tl" }], "correct": true },
+              { "label": [{ "text": "está", "lang": "tl" }], "correct": false }
+            ],
+            "why": [{ "text": "صح! دي طبيعتها، فبنقول SER.", "lang": "eg" }],
+            "hint": [{ "text": "هي لطيفة النهارده بس، ولا دايمًا؟", "lang": "eg" }]
+          } },
+        { "target": "b1/col:1", "kind": "reveal", "chapter": "ESTAR",
+          "tip": [{ "text": "دلوقتي ", "lang": "eg" }, { "text": "ESTAR", "lang": "tl", "bold": true }, { "text": ": إنت عامل إيه دلوقتي، وفين.", "lang": "eg" }] },
+        { "target": "b1/entry:1:0", "kind": "reveal", "chapter": "ESTAR",
+          "tip": [{ "text": "Estou", "lang": "tl", "bold": true }, { "text": " = أنا. مبسوط النهارده، بكره ممكن لأ.", "lang": "eg" }] },
+        { "target": "b1/entry:1:1", "kind": "ask", "chapter": "ESTAR",
+          "ask": {
+            "question": [{ "text": "Estou em casa.", "lang": "tl", "bold": true }, { "text": " بنستخدم SER ولا ESTAR؟", "lang": "eg" }],
+            "options": [
+              { "label": [{ "text": "SER", "lang": "tl" }], "correct": false },
+              { "label": [{ "text": "ESTAR", "lang": "tl" }], "correct": true }
+            ],
+            "why": [{ "text": "صح! المكان بيتغير.", "lang": "eg" }],
+            "hint": [{ "text": "إنت في البيت دلوقتي بس، وبعد شوية هتنزل.", "lang": "eg" }]
+          } },
+        { "target": "b1/entry:1:2", "kind": "reveal", "chapter": "ESTAR",
+          "tip": [{ "text": "القهوة كانت سخنة من شوية، يعني حالة مؤقتة.", "lang": "eg" }] },
+        { "target": "b2", "kind": "reveal", "chapter": "الصعب",
+          "tip": [{ "text": "الحتة الصعبة: نفس الكلمة، والمعنى بيتغير مع الفعل.", "lang": "eg" }] },
+        { "target": "b3/item:0", "kind": "reveal", "chapter": "الصعب",
+          "tip": [{ "text": "ممل طول الوقت، ولا زهقان دلوقتي؟", "lang": "eg" }] },
+        { "target": "b3/item:1", "kind": "ask", "chapter": "الصعب",
+          "ask": {
+            "question": [{ "text": "A sopa ___ boa hoje.", "lang": "tl", "bold": true }, { "text": " الشوربة حلوة النهارده.", "lang": "eg" }],
+            "options": [
+              { "label": [{ "text": "é", "lang": "tl" }], "correct": false },
+              { "label": [{ "text": "está", "lang": "tl" }], "correct": true }
+            ],
+            "why": [{ "text": "صح! hoje يعني النهارده بس.", "lang": "eg" }],
+            "hint": [{ "text": "الكلام عن الطبق ده بالذات.", "lang": "eg" }]
+          } },
+        { "target": "b4", "kind": "reveal", "chapter": "القاعدة",
+          "tip": [{ "text": "ده اللي تمشي عليه: هيتغير بكره؟ يبقى ESTAR.", "lang": "eg" }] }
+      ],
+      "quiz": ["q.d06.1"]
+    },
+
+    {
+      "id": "p2",
+      "preset": "conjugation",
+      "mode": "explore",
+      "tool_id": "estar_present",
+      "pill": "التصريف",
+      "title": [{ "text": "ESTAR", "lang": "tl", "group": "b" }],
+      "subtitle": [{ "text": "اختار شخص، وشوف الفعل بيتغير إزاي", "lang": "eg" }],
+      "cover": "tl",
+      "library": true,
+      "blocks": [
+        {
+          "id": "b1",
+          "type": "table",
+          "split_endings": false,
+          "cols": [
+            { "label": [{ "text": "ESTAR", "lang": "tl" }], "group": "b" },
+            { "label": [{ "text": "مثال", "lang": "eg" }], "group": "neutral" }
+          ],
+          "rows": [
+            { "label": [{ "text": "eu", "lang": "tl" }], "media": { "image": "person.eu" } },
+            { "label": [{ "text": "tu", "lang": "tl" }], "media": { "image": "person.tu" } },
+            { "label": [{ "text": "ele / ela / você", "lang": "tl" }], "media": { "image": "person.ele" } },
+            { "label": [{ "text": "nós", "lang": "tl" }], "media": { "image": "person.nos" } },
+            { "label": [{ "text": "eles / elas", "lang": "tl" }], "media": { "image": "person.eles" } }
+          ],
+          "cells": [
+            [{ "ref": "verb.estar:pres:eu" }, { "ref": "sentence.estou_bem" }],
+            [{ "ref": "verb.estar:pres:tu" }, { "ref": "sentence.estas_cansado" }],
+            [{ "ref": "verb.estar:pres:ele" }, { "ref": "sentence.ela_esta_em_casa" }],
+            [{ "ref": "verb.estar:pres:nos" }, { "ref": "sentence.estamos_no_cafe" }],
+            [{ "ref": "verb.estar:pres:eles" }, { "ref": "sentence.eles_estao_atrasados" }]
+          ]
+        },
+        {
+          "id": "b2",
+          "type": "practice",
+          "questions": ["q.d06.4"]
+        },
+        {
+          "id": "b3",
+          "type": "tip",
+          "kind": "culture",
+          "title": [{ "text": "مع الغريب", "lang": "eg" }],
+          "body": [
+            { "text": "مع الكاشير أو الدكتور قول ", "lang": "eg" },
+            { "text": "o senhor / a senhora", "lang": "tl", "bold": true },
+            { "text": "، والفعل بيبقى زي «هو»: ", "lang": "eg" },
+            { "text": "O senhor está bem?", "lang": "tl", "group": "b", "bold": true }
+          ]
+        }
+      ],
+      "controls": [
+        {
+          "id": "c1",
+          "type": "reveal_axis",
+          "target": "b1",
+          "axis": "rows",
+          "tips": [
+            [{ "text": "Estou", "lang": "tl", "bold": true }, { "text": ": شاذ، مش esto زي باقي الأفعال.", "lang": "eg" }],
+            [{ "text": "tu", "lang": "tl", "bold": true }, { "text": " بياخد s في الآخر: ", "lang": "eg" }, { "text": "estás", "lang": "tl", "bold": true }, { "text": ".", "lang": "eg" }],
+            [{ "text": "está", "lang": "tl", "bold": true }, { "text": ": لهو وهي، ولـ você وo senhor كمان.", "lang": "eg" }],
+            [{ "text": "nós", "lang": "tl", "bold": true }, { "text": " دايمًا بيخلص بـ ", "lang": "eg" }, { "text": "-mos", "lang": "tl", "bold": true }, { "text": ".", "lang": "eg" }],
+            [{ "text": "estão", "lang": "tl", "bold": true }, { "text": ": آخرها ão، زي ", "lang": "eg" }, { "text": "não", "lang": "tl", "bold": true }, { "text": ".", "lang": "eg" }]
+          ]
+        }
+      ],
+      "locked_until": [{ "control": "c1", "blocks": ["b2", "b3"] }],
+      "quiz": []
+    }
+  ],
+
+  "questions": [
+    {
+      "id": "q.d06.1", "type": "listen_meaning", "skill": "listening",
+      "tests": ["phrase.at_home"], "tool_id": "ser_vs_estar",
+      "prompt": { "audio_ref": "phrase.at_home" },
+      "options": [
+        [{ "text": "أنا في البيت.", "lang": "ar" }],
+        [{ "text": "أنا متعب.", "lang": "ar" }],
+        [{ "text": "أنا مصري.", "lang": "ar" }],
+        [{ "text": "أنا بخير.", "lang": "ar" }]
+      ],
+      "answer": 0,
+      "feedback_eg": [{ "text": "تمام! ", "lang": "eg" }, { "text": "em casa", "lang": "tl", "bold": true }, { "text": " = في البيت.", "lang": "eg" }],
+      "why_wrong_eg": [
+        null,
+        [{ "text": "متعب = ", "lang": "eg" }, { "text": "cansado", "lang": "tl" }],
+        [{ "text": "مصري = ", "lang": "eg" }, { "text": "egípcio", "lang": "tl" }],
+        [{ "text": "بخير = ", "lang": "eg" }, { "text": "bem", "lang": "tl" }]
+      ]
+    },
+    {
+      "id": "q.d06.4", "type": "gap", "skill": "writing",
+      "tests": ["verb.estar:pres:nos"], "tool_id": "estar_present",
+      "prompt": { "sentence": [{ "text": "Nós ___ no café.", "lang": "tl" }], "meaning": [{ "text": "نحن في المقهى.", "lang": "ar" }] },
+      "options": [
+        [{ "text": "estamos", "lang": "tl" }],
+        [{ "text": "estão", "lang": "tl" }],
+        [{ "text": "está", "lang": "tl" }]
+      ],
+      "answer": 0,
+      "feedback_eg": [{ "text": "nós", "lang": "tl", "bold": true }, { "text": " دايمًا بيخلص بـ -mos.", "lang": "eg" }],
+      "why_wrong_eg": [
+        null,
+        [{ "text": "estão", "lang": "tl" }, { "text": " لـ eles، يعني «هم».", "lang": "eg" }],
+        [{ "text": "está", "lang": "tl" }, { "text": " لـ ele / ela.", "lang": "eg" }]
+      ]
+    }
+  ]
+}

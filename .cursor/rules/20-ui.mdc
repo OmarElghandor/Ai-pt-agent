@@ -1,0 +1,14 @@
+---
+description: Rules for v2 UI (Next.js pages and components)
+globs: ["app/(v2)/**", "components/v2/**"]
+alwaysApply: false
+---
+# v2 UI
+
+- Design spec: `docs/langify-v2/05-design-system.md` and `06-screens.md`. The visual reference is `design/reference/01-grammar-page-guided-SER-ESTAR.png`: take its layout and components, not its text.
+- Mobile-first web app: the v2 layout is RTL (`dir="rtl"`), with a 390px design width and a centered column of at most 480px. Target-language text is LTR per segment through RichText. Tokens are CSS variables via Tailwind 4 `@theme`; no hex values in components.
+- Fonts via next/font: Barlow Condensed (Latin display), Lalezar (Arabic display), Newsreader (target text), IBM Plex Sans Arabic (Arabic), Work Sans (UI Latin).
+- One tab bar: المسار · الكروت · المكتبة · أنا. No phone status bar drawn in screens. No English or Spanish UI strings; UI copy goes through i18n.
+- Guided pages: unrevealed parts at 20% opacity, the active target with a pale-yellow fill and an amber border, and a caption bar that never covers content (add bottom padding).
+- Flashcard front: the word and audio only, with no autoplay. Irregular forms are purple with ⚡; verb endings are colored by class (-ar orange, -er blue, -ir green).
+- Practice: the character speaks in white bubbles (target language only); the coach speaks only in the yellow sticky note with a skill chip.

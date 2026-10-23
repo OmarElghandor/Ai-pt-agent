@@ -1,0 +1,806 @@
+{
+  "target_lang": "pt-PT",
+  "verified_note": "verified:true for the reviewed core set (ser, estar, ir, ter, dormir, falar, querer, poder, fazer, dizer, ver, sair, ficar, chegar). Others remain false until checked.",
+  "verbs": [
+    {
+      "lemma": "ser",
+      "class": "irregular",
+      "meaning_ar": "يكون (ثابت)",
+      "verified": true,
+      "overrides": {
+        "pres": {
+          "eu": {
+            "tl": "sou",
+            "say": "سو",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "és",
+            "say": "إيش",
+            "irregular": true
+          },
+          "ele": {
+            "tl": "é",
+            "say": "إي",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "somos",
+            "say": "سوموش",
+            "irregular": true
+          },
+          "eles": {
+            "tl": "são",
+            "say": "ساون",
+            "irregular": true
+          }
+        },
+        "pret": {
+          "eu": {
+            "tl": "fui",
+            "say": "فوي",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "foste",
+            "say": "فوشتي",
+            "irregular": true
+          },
+          "ele": {
+            "tl": "foi",
+            "say": "فوي",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "fomos",
+            "say": "فوموش",
+            "irregular": true
+          },
+          "eles": {
+            "tl": "foram",
+            "say": "فورام",
+            "irregular": true
+          }
+        }
+      }
+    },
+    {
+      "lemma": "estar",
+      "class": "irregular",
+      "meaning_ar": "يكون (حالة)",
+      "verified": true,
+      "overrides": {
+        "pres": {
+          "eu": {
+            "tl": "estou",
+            "say": "إشتو",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "estás",
+            "say": "إشتاش",
+            "irregular": true
+          },
+          "ele": {
+            "tl": "está",
+            "say": "إشتا",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "estamos",
+            "say": "إشتامُش",
+            "irregular": true
+          },
+          "eles": {
+            "tl": "estão",
+            "say": "إشتاون",
+            "irregular": true
+          }
+        },
+        "pret": {
+          "eu": {
+            "tl": "estive",
+            "say": "إشتيڤي",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "estiveste",
+            "say": "إشتيڤيشتي",
+            "irregular": true
+          },
+          "ele": {
+            "tl": "esteve",
+            "say": "إشتيڤي",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "estivemos",
+            "say": "إشتيڤيموش",
+            "irregular": true
+          },
+          "eles": {
+            "tl": "estiveram",
+            "say": "إشتيڤيرام",
+            "irregular": true
+          }
+        }
+      }
+    },
+    {
+      "lemma": "ter",
+      "class": "irregular",
+      "meaning_ar": "يملك / عنده",
+      "verified": true,
+      "overrides": {
+        "pres": {
+          "eu": {
+            "tl": "tenho",
+            "say": "تينّو",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "tens",
+            "say": "تينش",
+            "irregular": true
+          },
+          "ele": {
+            "tl": "tem",
+            "say": "تاين",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "temos",
+            "say": "تيموش",
+            "irregular": true
+          },
+          "eles": {
+            "tl": "têm",
+            "say": "تاين",
+            "irregular": true
+          }
+        },
+        "pret": {
+          "eu": {
+            "tl": "tive",
+            "say": "تيڤي",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "tiveste",
+            "say": "تيڤيشتي",
+            "irregular": true
+          },
+          "ele": {
+            "tl": "teve",
+            "say": "تيڤي",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "tivemos",
+            "say": "تيڤيموش",
+            "irregular": true
+          },
+          "eles": {
+            "tl": "tiveram",
+            "say": "تيڤيرام",
+            "irregular": true
+          }
+        }
+      }
+    },
+    {
+      "lemma": "ir",
+      "class": "irregular",
+      "meaning_ar": "يذهب",
+      "verified": true,
+      "overrides": {
+        "pres": {
+          "eu": {
+            "tl": "vou",
+            "say": "ڤو",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "vais",
+            "say": "ڤايش",
+            "irregular": true
+          },
+          "ele": {
+            "tl": "vai",
+            "say": "ڤاي",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "vamos",
+            "say": "ڤاموش",
+            "irregular": true
+          },
+          "eles": {
+            "tl": "vão",
+            "say": "ڤاون",
+            "irregular": true
+          }
+        },
+        "pret": {
+          "eu": {
+            "tl": "fui",
+            "say": "فوي",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "foste",
+            "say": "فوشتي",
+            "irregular": true
+          },
+          "ele": {
+            "tl": "foi",
+            "say": "فوي",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "fomos",
+            "say": "فوموش",
+            "irregular": true
+          },
+          "eles": {
+            "tl": "foram",
+            "say": "فورام",
+            "irregular": true
+          }
+        }
+      }
+    },
+    {
+      "lemma": "querer",
+      "class": "irregular",
+      "meaning_ar": "يريد",
+      "verified": true,
+      "overrides": {
+        "pres": {
+          "eu": {
+            "tl": "quero",
+            "say": "كيرو",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "queres",
+            "say": "كيريش",
+            "irregular": false
+          },
+          "ele": {
+            "tl": "quer",
+            "say": "كير",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "queremos",
+            "say": "كيريموش",
+            "irregular": false
+          },
+          "eles": {
+            "tl": "querem",
+            "say": "كيرين",
+            "irregular": false
+          }
+        },
+        "pret": {
+          "eu": {
+            "tl": "quis",
+            "say": "كيش",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "quiseste",
+            "say": "كيشيشتي",
+            "irregular": true
+          },
+          "ele": {
+            "tl": "quis",
+            "say": "كيش",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "quisemos",
+            "say": "كيشيموش",
+            "irregular": true
+          },
+          "eles": {
+            "tl": "quiseram",
+            "say": "كيشيرام",
+            "irregular": true
+          }
+        }
+      }
+    },
+    {
+      "lemma": "poder",
+      "class": "irregular",
+      "meaning_ar": "يقدر",
+      "verified": true,
+      "overrides": {
+        "pres": {
+          "eu": {
+            "tl": "posso",
+            "say": "پوسو",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "podes",
+            "say": "پوديش",
+            "irregular": false
+          },
+          "ele": {
+            "tl": "pode",
+            "say": "پودي",
+            "irregular": false
+          },
+          "nos": {
+            "tl": "podemos",
+            "say": "پوديموش",
+            "irregular": false
+          },
+          "eles": {
+            "tl": "podem",
+            "say": "پودين",
+            "irregular": false
+          }
+        },
+        "pret": {
+          "eu": {
+            "tl": "pude",
+            "say": "پودي",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "pudeste",
+            "say": "پوديشتي",
+            "irregular": true
+          },
+          "ele": {
+            "tl": "pôde",
+            "say": "پودي",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "pudemos",
+            "say": "پوديموش",
+            "irregular": true
+          },
+          "eles": {
+            "tl": "puderam",
+            "say": "پوديرام",
+            "irregular": true
+          }
+        }
+      }
+    },
+    {
+      "lemma": "fazer",
+      "class": "irregular",
+      "meaning_ar": "يعمل / يصنع",
+      "verified": true,
+      "overrides": {
+        "pres": {
+          "eu": {
+            "tl": "faço",
+            "say": "فاسو",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "fazes",
+            "say": "فازش",
+            "irregular": false
+          },
+          "ele": {
+            "tl": "faz",
+            "say": "فاش",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "fazemos",
+            "say": "فازيموش",
+            "irregular": false
+          },
+          "eles": {
+            "tl": "fazem",
+            "say": "فازين",
+            "irregular": false
+          }
+        },
+        "pret": {
+          "eu": {
+            "tl": "fiz",
+            "say": "فيش",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "fizeste",
+            "say": "فيزيشتي",
+            "irregular": true
+          },
+          "ele": {
+            "tl": "fez",
+            "say": "فيش",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "fizemos",
+            "say": "فيزيموش",
+            "irregular": true
+          },
+          "eles": {
+            "tl": "fizeram",
+            "say": "فيزيرام",
+            "irregular": true
+          }
+        }
+      }
+    },
+    {
+      "lemma": "dizer",
+      "class": "irregular",
+      "meaning_ar": "يقول",
+      "verified": true,
+      "overrides": {
+        "pres": {
+          "eu": {
+            "tl": "digo",
+            "say": "ديگو",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "dizes",
+            "say": "ديزش",
+            "irregular": false
+          },
+          "ele": {
+            "tl": "diz",
+            "say": "ديش",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "dizemos",
+            "say": "ديزيموش",
+            "irregular": false
+          },
+          "eles": {
+            "tl": "dizem",
+            "say": "ديزين",
+            "irregular": false
+          }
+        },
+        "pret": {
+          "eu": {
+            "tl": "disse",
+            "say": "ديسي",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "disseste",
+            "say": "ديسيشتي",
+            "irregular": true
+          },
+          "ele": {
+            "tl": "disse",
+            "say": "ديسي",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "dissemos",
+            "say": "ديسيموش",
+            "irregular": true
+          },
+          "eles": {
+            "tl": "disseram",
+            "say": "ديسيرام",
+            "irregular": true
+          }
+        }
+      }
+    },
+    {
+      "lemma": "ver",
+      "class": "irregular",
+      "meaning_ar": "يرى",
+      "verified": true,
+      "overrides": {
+        "pres": {
+          "eu": {
+            "tl": "vejo",
+            "say": "ڤيجو",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "vês",
+            "say": "ڤيش",
+            "irregular": true
+          },
+          "ele": {
+            "tl": "vê",
+            "say": "ڤي",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "vemos",
+            "say": "ڤيموش",
+            "irregular": false
+          },
+          "eles": {
+            "tl": "veem",
+            "say": "ڤيين",
+            "irregular": true
+          }
+        },
+        "pret": {
+          "eu": {
+            "tl": "vi",
+            "say": "ڤي",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "viste",
+            "say": "ڤيشتي",
+            "irregular": false
+          },
+          "ele": {
+            "tl": "viu",
+            "say": "ڤيو",
+            "irregular": false
+          },
+          "nos": {
+            "tl": "vimos",
+            "say": "ڤيموش",
+            "irregular": false
+          },
+          "eles": {
+            "tl": "viram",
+            "say": "ڤيرام",
+            "irregular": false
+          }
+        }
+      }
+    },
+    {
+      "lemma": "sair",
+      "class": "irregular",
+      "meaning_ar": "يخرج",
+      "verified": true,
+      "overrides": {
+        "pres": {
+          "eu": {
+            "tl": "saio",
+            "say": "سايو",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "sais",
+            "say": "سايش",
+            "irregular": true
+          },
+          "ele": {
+            "tl": "sai",
+            "say": "ساي",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "saímos",
+            "say": "سايموش",
+            "irregular": true
+          },
+          "eles": {
+            "tl": "saem",
+            "say": "ساين",
+            "irregular": true
+          }
+        },
+        "pret": {
+          "eu": {
+            "tl": "saí",
+            "say": "ساي",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "saíste",
+            "say": "سايشتِ",
+            "irregular": true
+          },
+          "ele": {
+            "tl": "saiu",
+            "say": "سايو",
+            "irregular": false
+          },
+          "nos": {
+            "tl": "saímos",
+            "say": "سايموش",
+            "irregular": true
+          },
+          "eles": {
+            "tl": "saíram",
+            "say": "سايرام",
+            "irregular": true
+          }
+        }
+      }
+    },
+    {
+      "lemma": "dormir",
+      "class": "irregular",
+      "meaning_ar": "ينام",
+      "verified": true,
+      "overrides": {
+        "pres": {
+          "eu": {
+            "tl": "durmo",
+            "say": "دورمو",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "dormes",
+            "say": "دورميش",
+            "irregular": false
+          },
+          "ele": {
+            "tl": "dorme",
+            "say": "دورمي",
+            "irregular": false
+          },
+          "nos": {
+            "tl": "dormimos",
+            "say": "دورميموش",
+            "irregular": false
+          },
+          "eles": {
+            "tl": "dormem",
+            "say": "دورمين",
+            "irregular": false
+          }
+        },
+        "pret": {
+          "eu": {
+            "tl": "dormi",
+            "say": "دورمي",
+            "irregular": false
+          },
+          "tu": {
+            "tl": "dormiste",
+            "say": "دورميشتي",
+            "irregular": false
+          },
+          "ele": {
+            "tl": "dormiu",
+            "say": "دورميو",
+            "irregular": false
+          },
+          "nos": {
+            "tl": "dormimos",
+            "say": "دورميموش",
+            "irregular": false
+          },
+          "eles": {
+            "tl": "dormiram",
+            "say": "دورميرام",
+            "irregular": false
+          }
+        }
+      }
+    },
+    {
+      "lemma": "ficar",
+      "class": "ar",
+      "meaning_ar": "يبقى / يصير",
+      "verified": true,
+      "overrides": {
+        "pres": {
+          "eu": {
+            "say": "فيكو"
+          },
+          "tu": {
+            "say": "فيكاش"
+          },
+          "ele": {
+            "say": "فيكا"
+          },
+          "nos": {
+            "say": "فيكموش"
+          },
+          "eles": {
+            "say": "فيكام"
+          }
+        },
+        "pret": {
+          "eu": {
+            "say": "فيكاي"
+          },
+          "tu": {
+            "say": "فيكاشتي"
+          },
+          "ele": {
+            "say": "فيكو"
+          },
+          "nos": {
+            "say": "فيكاموش"
+          },
+          "eles": {
+            "say": "فيكرام"
+          }
+        }
+      }
+    },
+    {
+      "lemma": "falar",
+      "class": "ar",
+      "meaning_ar": "يتكلم",
+      "verified": true,
+      "overrides": {}
+    },
+    {
+      "lemma": "comer",
+      "class": "er",
+      "meaning_ar": "يأكل",
+      "verified": false,
+      "overrides": {}
+    },
+    {
+      "lemma": "abrir",
+      "class": "ir",
+      "meaning_ar": "يفتح",
+      "verified": false,
+      "overrides": {}
+    },
+    {
+      "lemma": "morar",
+      "class": "ar",
+      "meaning_ar": "يسكن",
+      "verified": false,
+      "overrides": {}
+    },
+    {
+      "lemma": "chegar",
+      "class": "ar",
+      "meaning_ar": "يصل",
+      "verified": true,
+      "overrides": {
+        "pret": {
+          "eu": {
+            "say": "شيغاي"
+          }
+        }
+      }
+    },
+    {
+      "lemma": "beber",
+      "class": "er",
+      "meaning_ar": "يشرب",
+      "verified": false,
+      "overrides": {}
+    },
+    {
+      "lemma": "viver",
+      "class": "er",
+      "meaning_ar": "يعيش",
+      "verified": false,
+      "overrides": {}
+    },
+    {
+      "lemma": "partir",
+      "class": "ir",
+      "meaning_ar": "يغادر",
+      "verified": false,
+      "overrides": {}
+    },
+    {
+      "lemma": "decidir",
+      "class": "ir",
+      "meaning_ar": "يقرر",
+      "verified": false,
+      "overrides": {}
+    },
+    {
+      "lemma": "gostar",
+      "class": "ar",
+      "meaning_ar": "يحب / يعجبه",
+      "verified": false,
+      "overrides": {}
+    }
+  ]
+}

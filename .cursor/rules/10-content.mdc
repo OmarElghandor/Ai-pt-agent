@@ -1,0 +1,13 @@
+---
+description: Rules for lesson content, schema, validation and generation
+globs: ["lib/v2/content/**", "lib/v2/generation/**", "content/v2/**", "examples/**", "app/api/v2/**"]
+alwaysApply: false
+---
+# Content and generation
+
+- Spec: `docs/langify-v2/02-content-schema.md` (fields in English, text in Arabic) and `03-generation-and-learning.md`. Example: `examples/day06-example.json`, which must always pass the validator.
+- Four layers: lesson → page → block → item. Items are written once in the item bank; blocks reference them by id. Item ids are semantic and permanent.
+- Exactly 14 block types: heading, cards, table, compare, vs_pairs, formula, examples, tip, rules_list, dialogue, scene, panel, timeline, practice. No new types and no nesting.
+- Page modes: guided (12–20 steps, no ask in the first 3, an ask at least every 4), explore (controls: reveal_axis, swap, unlock; with locked_until) and static.
+- Target syntax: `b2`, `b2/col:0`, `b2/row:3`, `b2/cell:r:c`, `b2/entry:col:i`, `b4/item:2`.
+- Generation: the system prompt text is taken verbatim from 03, with the PAGE STEPS block replaced by the PAGES block from 02. Validate, retry once with the errors, then flag. Images have no text in them and pass Haiku vision QA.

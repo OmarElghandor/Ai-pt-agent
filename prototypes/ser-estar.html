@@ -1,0 +1,410 @@
+<title>SER ou ESTAR</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Cairo:wght@400;600;700;800&family=Lalezar&family=Nunito:ital,wght@0,600;0,800;1,600&display=swap">
+<style>
+/* Layout: one printed book page (the poster), built in place step by step. It plays itself like a narrated lesson and stops only at questions. */
+:root{
+  --paper:#fbf7ee; --ink:#12235a; --muted:#5c6b8a; --line:#e5dece;
+  --ser:#e8772e; --ser-soft:#fdeee2; --estar:#1f4fbf; --estar-soft:#e6edfb;
+  --pair:#6b3fc0; --pair-soft:#efe8fb; --tip:#fff3cf; --tip-line:#f2c94c;
+  --good:#2e7d32; --bad:#d64545; --white:#ffffff;
+  --display:'Anton','Lalezar',Impact,sans-serif;
+  --ar:'Cairo','Segoe UI',Tahoma,sans-serif;
+  --ar-display:'Lalezar','Cairo',sans-serif;
+  --pt:'Nunito','Segoe UI',Helvetica,sans-serif;
+  color-scheme:light;
+}
+html,body{background:#2b2b2b}
+body{font-family:var(--ar);color:var(--ink);padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,env(safe-area-inset-right,0px))}
+*{box-sizing:border-box}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--estar);outline-offset:2px}
+
+.app{max-width:440px;margin:0 auto;background:var(--paper);min-height:100%;direction:rtl;position:relative}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);display:flex;align-items:center;gap:8px;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--paper)}
+.bar .back{border:0;background:none;font-size:22px;color:var(--ink);padding:4px 6px}
+.bar .t{flex:1;min-width:0;font-weight:800;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .t small{display:block;font-weight:600;font-size:11px;color:var(--muted)}
+.chip{border:1.5px solid var(--ink);background:var(--white);color:var(--ink);border-radius:999px;padding:5px 12px;font-weight:700;font-size:12px}
+.chip.on{background:var(--ink);color:var(--white)}
+
+.page{position:relative;padding:18px max(16px,env(safe-area-inset-left,0px)) 120px max(16px,env(safe-area-inset-right,0px))}
+.pill{display:block;width:max-content;margin:0 auto 8px;background:var(--estar);color:var(--white);font-family:var(--display);letter-spacing:.06em;font-size:15px;padding:3px 16px;border-radius:999px}
+h1{margin:0;text-align:center;font-family:var(--display);font-weight:400;font-size:46px;line-height:1;direction:ltr;letter-spacing:.01em}
+h1 .s{color:var(--ser)} h1 .e{color:var(--estar)} h1 .vs{font-size:26px;color:var(--ink);margin:0 6px}
+.sub{text-align:center;font-weight:700;font-size:15px;margin:8px 0 16px}
+.sub b{font-family:var(--pt);direction:ltr;unicode-bidi:isolate}
+
+/* columns */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.col{border-radius:14px;overflow:hidden;border:2px solid var(--line);background:var(--white);display:flex;flex-direction:column}
+.col.ser.on{border-color:var(--ser)} .col.estar.on{border-color:var(--estar)}
+.head{padding:8px 6px;text-align:center;color:var(--white)}
+.head .big{font-family:var(--display);font-size:28px;line-height:1;letter-spacing:.03em;direction:ltr}
+.head .what{font-weight:700;font-size:12px;margin-top:2px}
+.ser .head{background:var(--ser)} .estar .head{background:var(--estar)}
+.row{display:flex;gap:6px;align-items:flex-start;padding:8px 7px;border-top:1px solid var(--line);min-height:76px}
+.ico{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:19px;background:var(--paper)}
+.txt{min-width:0}
+.lab{font-size:11px;font-weight:700;color:var(--muted)}
+.pt{font-family:var(--pt);font-weight:800;font-size:14.5px;line-height:1.25;direction:ltr;text-align:right;unicode-bidi:isolate}
+.ser .pt{color:var(--ser)} .estar .pt{color:var(--estar)}
+.ar{font-size:12px;color:var(--ink);opacity:.85;margin-top:1px}
+.note{margin-top:4px;font-size:10.5px;font-weight:700;color:var(--estar);background:var(--estar-soft);border-radius:6px;padding:2px 6px;display:inline-block}
+.note b{font-family:var(--pt);direction:ltr;unicode-bidi:isolate}
+
+/* tricky pairs */
+.ribbon{margin:18px auto 10px;width:max-content;background:var(--pair);color:var(--white);font-family:var(--ar-display);font-size:18px;padding:3px 18px;border-radius:6px}
+.pairs{display:flex;flex-direction:column;gap:8px}
+.pair{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;background:var(--white);border:2px solid var(--line);border-radius:12px;padding:8px}
+.pair .side .pt{font-size:14px}
+.pair .a .pt{color:var(--ser)} .pair .b .pt{color:var(--estar)}
+.vs-dot{width:30px;height:30px;border-radius:50%;background:var(--pair);color:var(--white);display:grid;place-items:center;font-family:var(--display);font-size:13px;direction:ltr}
+
+.tipbox{margin-top:14px;background:var(--tip);border:2px solid var(--tip-line);border-radius:14px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start}
+.tipbox .bulb{font-size:26px;line-height:1}
+.tipbox h3{margin:0 0 4px;font-family:var(--ar-display);font-weight:400;font-size:19px;color:var(--ser)}
+.tipbox p{margin:0;font-size:13.5px;line-height:1.7}
+.tipbox p b{font-family:var(--pt);direction:ltr;unicode-bidi:isolate}
+
+/* ghost (not revealed yet) */
+[data-step].ghost{background:repeating-linear-gradient(135deg,transparent 0 8px,rgba(18,35,90,.035) 8px 16px)}
+[data-step].ghost > *{visibility:hidden}
+.col.ghost-col{border-style:dashed}
+.ribbon[data-step].ghost,.tipbox[data-step].ghost,.pair[data-step].ghost{border:2px dashed #d6cfbf;background-color:transparent;color:transparent}
+.head[data-step].ghost{background:#efe9dc}
+[data-step].next{position:relative;cursor:pointer;animation:pulse 1.4s ease-in-out infinite;outline:2.5px solid var(--ink);outline-offset:-3px;z-index:2}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(18,35,90,.25)}50%{box-shadow:0 0 0 7px rgba(18,35,90,0)}}
+[data-step].pop > *{animation:pop .45s ease-out both}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.speaking{background:var(--tip)!important;transition:background .2s}
+
+/* coach bubble */
+.coach{position:absolute;z-index:15;width:min(290px,calc(100% - 20px));background:var(--ink);color:var(--white);border-radius:14px;padding:11px 13px 12px;box-shadow:0 10px 24px rgba(18,35,90,.28);font-size:13.5px;line-height:1.6;transition:top .25s ease,left .25s ease}
+.coach::before{content:"";position:absolute;top:-7px;left:var(--ax,50%);width:14px;height:14px;background:var(--ink);transform:translateX(-50%) rotate(45deg);border-radius:2px}
+.coach.up::before{top:auto;bottom:-7px}
+.coach .who{font-size:11px;opacity:.7;font-weight:700;margin-bottom:2px}
+.coach b{font-family:var(--pt);direction:ltr;unicode-bidi:isolate;color:#ffd58a}
+.coach .acts{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
+.coach .acts button{flex:1;min-width:84px;border:0;border-radius:10px;padding:8px 10px;font-weight:800;font-size:14px}
+.coach .go{background:var(--tip);color:var(--ink)}
+.coach .opt-ser{background:var(--ser);color:var(--white);font-family:var(--display);letter-spacing:.04em;font-weight:400;font-size:17px}
+.coach .opt-estar{background:var(--estar);color:var(--white);font-family:var(--display);letter-spacing:.04em;font-weight:400;font-size:17px}
+.coach .fb{margin-top:8px;font-weight:700;font-size:13px;border-radius:8px;padding:5px 8px}
+.coach .fb.bad{background:rgba(214,69,69,.25)} .coach .fb.good{background:rgba(46,125,50,.35)}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+/* cover mode after the page is done */
+.covered .ar{filter:blur(5px);cursor:pointer;user-select:none}
+.covered .ar.peek{filter:none}
+
+/* bottom bar */
+.foot{position:fixed;inset:auto 0 0;z-index:20;display:flex;justify-content:center;pointer-events:none}
+.foot .in{pointer-events:auto;width:100%;max-width:440px;background:var(--paper);border-top:1px solid var(--line);padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;align-items:center;gap:10px;direction:rtl}
+.prog{flex:1;min-width:0}
+.prog .lbl{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px}
+.track{height:6px;border-radius:99px;background:var(--line);overflow:hidden}
+.track i{display:block;height:100%;width:0;background:var(--ink);border-radius:99px;transition:width .3s}
+.ghostbtn{border:1.5px solid var(--ink);background:transparent;color:var(--ink);border-radius:10px;padding:7px 10px;font-weight:700;font-size:12.5px;white-space:nowrap}
+.donebar{display:none;background:var(--good);color:var(--white);border-radius:12px;padding:10px 12px;margin:0 0 14px;font-weight:700;font-size:13.5px;text-align:center}
+.done .donebar{display:block}
+
+
+/* caption + player dock */
+.dock{position:fixed;inset:auto 0 0;z-index:20;display:flex;flex-direction:column;align-items:center;pointer-events:none}
+.dock > *{pointer-events:auto;width:100%;max-width:440px;direction:rtl}
+.caption{display:flex;gap:10px;align-items:flex-start;background:var(--ink);color:var(--white);padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));font-size:14px;line-height:1.6;min-height:56px}
+.caption .av{flex:none;width:30px;height:30px;border-radius:50%;background:#f2c94c;color:var(--ink);display:grid;place-items:center;font-weight:800}
+.caption b{font-family:var(--pt);direction:ltr;unicode-bidi:isolate;color:#ffd58a}
+.player{display:flex;align-items:center;gap:10px;background:var(--paper);border-top:1px solid var(--line);padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.playbtn{flex:none;width:46px;height:46px;border-radius:50%;border:0;background:var(--ink);color:var(--white);font-size:17px}
+.chapters{flex:1;min-width:0;display:flex;gap:4px}
+.chap{flex:1;min-width:0;border:0;background:none;padding:0;display:flex;flex-direction:column;gap:4px;align-items:stretch;color:var(--muted);font-size:10.5px;font-weight:700}
+.chap i{display:block;height:5px;border-radius:99px;background:var(--ink);width:0;box-shadow:inset 0 0 0 99px transparent;transition:width .3s;position:relative}
+.chap{background:linear-gradient(var(--line),var(--line)) top/100% 5px no-repeat;border-radius:99px}
+.chap.cur{color:var(--ink)}
+.chap span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spd{flex:none;border:1.5px solid var(--ink);background:transparent;color:var(--ink);border-radius:8px;padding:5px 7px;font-weight:800;font-size:12px;direction:ltr}
+.page{padding-bottom:190px!important}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="app" id="app">
+  <header class="bar">
+    <button class="back" aria-label="رجوع">→</button>
+    <div class="t">SER ou ESTAR<small>Dia 6 · المشاعر والحالة · ٢ / ٦</small></div>
+    <button class="chip" id="coverBtn" hidden>غطّي</button>
+    <button class="chip" id="playAllBtn" hidden>اسمع الصفحة</button>
+  </header>
+
+  <main class="page" id="page">
+    <div class="donebar">الصفحة كملت واتحفظت في المكتبة. دوس على أي جملة تسمعها.</div>
+    <span class="pill">القواعد</span>
+    <h1><span class="s">SER</span><span class="vs">vs</span><span class="e">ESTAR</span></h1>
+    <p class="sub">الاتنين معناهم «يكون». الفرق: ثابت ولا مؤقت؟</p>
+
+    <div class="cols">
+      <section class="col ser ghost-col" id="colSer">
+        <div class="head" data-step="sHead"><div class="big">SER</div><div class="what">ثابت · مين وإيه</div></div>
+        <div class="row" data-step="s1" data-say="Sou o Yassin."><div class="ico">🙋‍♂️</div><div class="txt"><div class="lab">الهوية</div><div class="pt">Sou o Yassin.</div><div class="ar">أنا ياسين.</div></div></div>
+        <div class="row" data-step="s2" data-say="Sou egípcio."><div class="ico">🇪🇬</div><div class="txt"><div class="lab">الجنسية</div><div class="pt">Sou egípcio.</div><div class="ar">أنا مصري.</div></div></div>
+        <div class="row" data-step="s3" data-say="Sou engenheiro."><div class="ico">👷‍♂️</div><div class="txt"><div class="lab">الشغل</div><div class="pt">Sou engenheiro.</div><div class="ar">أنا مهندس.</div></div></div>
+        <div class="row" data-step="s4" data-say="Sou do Cairo."><div class="ico">📍</div><div class="txt"><div class="lab">منين</div><div class="pt">Sou do Cairo.</div><div class="ar">أنا من القاهرة.</div></div></div>
+        <div class="row" data-step="s5" data-say="A Inês é simpática."><div class="ico">😊</div><div class="txt"><div class="lab">الصفات</div><div class="pt">A Inês é simpática.</div><div class="ar">إنِس لطيفة.</div></div></div>
+        <div class="row" data-step="s6" data-say="São três horas."><div class="ico">🕒</div><div class="txt"><div class="lab">الوقت</div><div class="pt">São três horas.</div><div class="ar">الساعة الثالثة.</div></div></div>
+      </section>
+
+      <section class="col estar ghost-col" id="colEstar">
+        <div class="head" data-step="eHead"><div class="big">ESTAR</div><div class="what">مؤقت · حالة دلوقتي</div></div>
+        <div class="row" data-step="e1" data-say="Estou contente."><div class="ico">😄</div><div class="txt"><div class="lab">الإحساس</div><div class="pt">Estou contente.</div><div class="ar">أنا سعيد.</div></div></div>
+        <div class="row" data-step="e2" data-say="Estou em casa."><div class="ico">🏠</div><div class="txt"><div class="lab">المكان</div><div class="pt">Estou em casa.</div><div class="ar">أنا في البيت.</div></div></div>
+        <div class="row" data-step="e3" data-say="Estou doente."><div class="ico">🤒</div><div class="txt"><div class="lab">الصحة</div><div class="pt">Estou doente.</div><div class="ar">أنا مريض.</div></div></div>
+        <div class="row" data-step="e4" data-say="Estou a comer."><div class="ico">🍽️</div><div class="txt"><div class="lab">بيعمل دلوقتي</div><div class="pt">Estou a comer.</div><div class="ar">أنا آكل الآن.</div><span class="note">في البرتغال: <b>estar a</b> + الفعل</span></div></div>
+        <div class="row" data-step="e5" data-say="A porta está aberta."><div class="ico">🚪</div><div class="txt"><div class="lab">نتيجة</div><div class="pt">A porta está aberta.</div><div class="ar">الباب مفتوح.</div></div></div>
+        <div class="row" data-step="e6" data-say="O café está frio."><div class="ico">☕</div><div class="txt"><div class="lab">حالة مؤقتة</div><div class="pt">O café está frio.</div><div class="ar">القهوة باردة.</div></div></div>
+      </section>
+    </div>
+
+    <div class="ribbon" data-step="pHead"><span>نفس الكلمة · معنى مختلف</span></div>
+    <div class="pairs">
+      <div class="pair" data-step="p1" data-say="Ele é aborrecido. Ele está aborrecido.">
+        <div class="side a"><div class="pt">É aborrecido.</div><div class="ar">هو مُمِل.</div></div>
+        <div class="vs-dot">VS</div>
+        <div class="side b"><div class="pt">Está aborrecido.</div><div class="ar">هو يشعر بالملل.</div></div>
+      </div>
+      <div class="pair" data-step="p2" data-say="A sopa é boa. A sopa está boa.">
+        <div class="side a"><div class="pt">A sopa é boa.</div><div class="ar">الشوربة لذيذة دائمًا.</div></div>
+        <div class="vs-dot">VS</div>
+        <div class="side b"><div class="pt">A sopa está boa.</div><div class="ar">الشوربة لذيذة اليوم.</div></div>
+      </div>
+      <div class="pair" data-step="p3" data-say="Ele é bonito. Ele está bonito.">
+        <div class="side a"><div class="pt">Ele é bonito.</div><div class="ar">هو وسيم.</div></div>
+        <div class="vs-dot">VS</div>
+        <div class="side b"><div class="pt">Ele está bonito.</div><div class="ar">يبدو وسيمًا اليوم.</div></div>
+      </div>
+    </div>
+
+    <div class="tipbox" data-step="tip">
+      <div class="bulb">💡</div>
+      <div><h3>القاعدة المهمة</h3>
+      <p>لو الحاجة ممكن تتغير بكره، يبقى <b>ESTAR</b>. لو هي دي طبيعتها، يبقى <b>SER</b>. واللي بتعمله دلوقتي في البرتغال: <b>Estou a comer</b>، مش comiendo زي الإسباني.</p></div>
+    </div>
+
+    <div class="coach" id="coach" role="dialog" aria-live="polite"></div>
+  </main>
+
+  <div class="dock">
+    <div class="caption" id="caption" aria-live="polite"><span class="av">إ</span><span class="ctext" id="ctext">دوس ▶︎ وإنِس هتشرحلك الصفحة. هتقف بس لما تسألك.</span></div>
+    <div class="player">
+      <button class="playbtn" id="playBtn" aria-label="تشغيل">▶</button>
+      <div class="chapters" id="chapters"></div>
+      <button class="spd" id="spdBtn" aria-label="السرعة">1x</button>
+      <button class="ghostbtn" id="allBtn">الصفحة كلها</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  // Each step: the block it builds, Ines' line, and the chapter it belongs to. "ask" steps stop and wait for an answer.
+  const steps = [
+    {id:'sHead', ch:0, tip:'الاتنين معناهم «يكون». نبدأ بـ <b>SER</b>: للحاجات اللي مش بتتغير.'},
+    {id:'s1', ch:0, tip:'<b>Sou</b> = أنا. اسمك مش هيتغير، فبنقول SER.'},
+    {id:'s2', ch:0, tip:'الجنسية ثابتة برضه.'},
+    {id:'s3', ch:0, tip:'والشغل بنعتبره جزء منك.'},
+    {id:'s4', ch:0, tip:'إنت منين؟ لاحظ <b>do Cairo</b>.'},
+    {id:'eHead', ch:1, tip:'دلوقتي <b>ESTAR</b>: إنت عامل إيه دلوقتي، وفين.'},
+    {id:'e1', ch:1, tip:'<b>Estou</b> = أنا. مبسوط النهارده، بكره ممكن لأ.'},
+    {id:'e2', ch:1, ask:true, q:'<b>Estou em casa.</b> أنا في البيت.<br>SER ولا ESTAR؟', answer:'estar', why:'صح! المكان بيتغير.', hint:'إنت في البيت دلوقتي بس، وبعد شوية هتنزل.'},
+    {id:'e3', ch:1, tip:'تعبان النهارده؟ حالة مؤقتة.'},
+    {id:'e4', ch:1, tip:'مهمة في البرتغال: اللي بتعمله دلوقتي = <b>estar a</b> + الفعل.'},
+    {id:'s5', ch:1, ask:true, q:'<b>A Inês é simpática.</b> إنِس لطيفة.<br>SER ولا ESTAR؟', answer:'ser', why:'صح! دي طبيعتها.', hint:'هي لطيفة النهارده بس، ولا دايمًا؟'},
+    {id:'e5', ch:1, tip:'الباب اتفتح: نتيجة حاجة حصلت.'},
+    {id:'s6', ch:1, tip:'الوقت دايمًا بـ SER: <b>São três horas</b>.'},
+    {id:'e6', ch:1, ask:true, q:'<b>O café ___ frio.</b> القهوة بردت.<br>é ولا está؟', answer:'estar', labels:['é','está'], why:'صح! القهوة كانت سخنة من شوية.', hint:'القهوة طبيعتها باردة؟ ولا بردت؟'},
+    {id:'pHead', ch:2, tip:'الحتة الصعبة: نفس الكلمة، والمعنى بيتغير مع الفعل.'},
+    {id:'p1', ch:2, tip:'<b>é</b> = دي صفته. <b>está</b> = ده حاله دلوقتي.'},
+    {id:'p2', ch:2, tip:'طعمها حلو عمومًا، ولا الطبق ده بالذات؟'},
+    {id:'p3', ch:2, tip:'وسيم طول الوقت، ولا لابس حلو النهارده؟'},
+    {id:'tip', ch:3, tip:'وده اللي تمشي عليه: هيتغير بكره؟ يبقى ESTAR.'}
+  ];
+  const chapterNames = ['SER','ESTAR','الصعب','القاعدة'];
+
+  const page = document.getElementById('page');
+  const app = document.getElementById('app');
+  const coach = document.getElementById('coach');
+  const ctext = document.getElementById('ctext');
+  const playBtn = document.getElementById('playBtn');
+  const spdBtn = document.getElementById('spdBtn');
+  const chaptersEl = document.getElementById('chapters');
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const el = id => page.querySelector('[data-step="'+id+'"]');
+
+  let i = 0, playing = false, timer = null, speed = 1, token = 0;
+
+  // chapters bar
+  chapterNames.forEach((n, c) => {
+    const b = document.createElement('button');
+    b.className = 'chap'; b.innerHTML = '<i></i><span>'+n+'</span>';
+    b.addEventListener('click', () => jumpTo(steps.findIndex(s => s.ch === c)));
+    chaptersEl.appendChild(b);
+  });
+  function paintChapters(){
+    [...chaptersEl.children].forEach((b, c) => {
+      const idx = steps.map((s,k)=>s.ch===c?k:-1).filter(k=>k>=0);
+      const done = idx.filter(k => k < i).length;
+      b.querySelector('i').style.width = (done/idx.length*100)+'%';
+      b.classList.toggle('cur', i < steps.length && steps[i].ch === c);
+    });
+  }
+
+  // speech (Portuguese lines only)
+  let voice = null;
+  function pickVoice(){ try{ const vs = speechSynthesis.getVoices(); voice = vs.find(v => /pt[-_]PT/i.test(v.lang)) || vs.find(v => /^pt/i.test(v.lang)) || null; }catch(e){} }
+  try{ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }catch(e){}
+  function say(text, node, done){
+    if(node) node.classList.add('speaking');
+    let finished = false;
+    const end = () => { if(finished) return; finished = true; if(node) node.classList.remove('speaking'); if(done) done(); };
+    try{
+      if(!('speechSynthesis' in window) || !text){ setTimeout(end, 1200/speed); return; }
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'pt-PT'; if(voice) u.voice = voice; u.rate = .9*speed;
+      u.onend = end; u.onerror = end;
+      speechSynthesis.speak(u);
+      setTimeout(end, 6000);
+    }catch(e){ setTimeout(end, 1200/speed); }
+  }
+
+  function reveal(n){
+    n.classList.remove('ghost','next'); n.classList.add('pop');
+    const col = n.closest('.col'); if(col){ col.classList.remove('ghost-col'); col.classList.add('on'); }
+  }
+  function focusOn(n){
+    page.querySelectorAll('.next').forEach(x => x.classList.remove('next'));
+    n.classList.add('next');
+    try{ n.scrollIntoView({block:'center', behavior: reduce ? 'auto':'smooth'}); }catch(e){ n.scrollIntoView(); }
+  }
+  const readMs = html => Math.max(1400, html.replace(/<[^>]+>/g,'').length * 55) / speed;
+
+  function setPlaying(p){
+    playing = p;
+    playBtn.textContent = p ? '❚❚' : '▶';
+    playBtn.setAttribute('aria-label', p ? 'إيقاف' : 'تشغيل');
+    if(!p){ clearTimeout(timer); token++; try{ speechSynthesis.cancel(); }catch(e){} }
+  }
+
+  function run(){
+    if(!playing) return;
+    if(i >= steps.length){ finish(); return; }
+    const my = ++token;
+    const s = steps[i], n = el(s.id);
+    paintChapters();
+    focusOn(n);
+    if(s.ask){ ask(s, n); return; }
+    ctext.innerHTML = s.tip;
+    timer = setTimeout(() => {
+      if(my !== token) return;
+      reveal(n);
+      say(n.dataset.say, n, () => {
+        if(my !== token) return;
+        i++; timer = setTimeout(run, 500/speed);
+      });
+    }, readMs(s.tip));
+  }
+
+  function ask(s, n){
+    const labels = s.labels || ['SER','ESTAR'];
+    ctext.innerHTML = 'سؤال سريع قبل ما نكمّل 👇';
+    coach.innerHTML = '<div>'+s.q+'</div><div class="acts"><button class="opt-ser" data-a="ser">'+labels[0]+'</button><button class="opt-estar" data-a="estar">'+labels[1]+'</button></div><div class="fb" hidden></div>';
+    coach.hidden = false;
+    place(n);
+    setTimeout(() => place(n), reduce ? 0 : 400);
+  }
+  coach.addEventListener('click', e => {
+    const b = e.target.closest('button[data-a]'); if(!b) return;
+    const s = steps[i]; const fb = coach.querySelector('.fb'); fb.hidden = false;
+    if(b.dataset.a === s.answer){
+      fb.className = 'fb good'; fb.textContent = s.why;
+      coach.querySelectorAll('button').forEach(x => x.disabled = true);
+      const n = el(s.id), my = ++token;
+      setTimeout(() => {
+        if(my !== token) return;
+        coach.hidden = true; reveal(n);
+        say(n.dataset.say, n, () => { if(my !== token) return; i++; if(playing) timer = setTimeout(run, 500/speed); });
+      }, 900);
+    } else {
+      fb.className = 'fb bad'; fb.textContent = s.hint;
+      coach.classList.remove('shake'); void coach.offsetWidth; coach.classList.add('shake');
+    }
+  });
+
+  function place(target){
+    if(coach.hidden) return;
+    const pr = page.getBoundingClientRect(), tr = target.getBoundingClientRect(), w = coach.offsetWidth;
+    const cx = tr.left - pr.left + tr.width/2;
+    const left = Math.max(10, Math.min(pr.width - w - 10, cx - w/2));
+    coach.style.left = left+'px'; coach.style.top = (tr.bottom - pr.top + 12)+'px';
+    coach.style.setProperty('--ax', Math.max(16, Math.min(w-16, cx-left))+'px');
+  }
+
+  function jumpTo(k){
+    setPlaying(false); coach.hidden = true;
+    page.querySelectorAll('[data-step]').forEach(n => { n.classList.remove('next','pop'); n.classList.add('ghost'); });
+    ['colSer','colEstar'].forEach(id => { const c = document.getElementById(id); c.classList.add('ghost-col'); c.classList.remove('on'); });
+    for(let x=0;x<k;x++) reveal(el(steps[x].id));
+    i = k; app.classList.remove('done','covered');
+    document.getElementById('coverBtn').hidden = true; document.getElementById('playAllBtn').hidden = true;
+    paintChapters();
+    setPlaying(true); run();
+  }
+
+  function finish(){
+    setPlaying(false); coach.hidden = true;
+    page.querySelectorAll('.next').forEach(x => x.classList.remove('next'));
+    i = steps.length; paintChapters();
+    app.classList.add('done');
+    ctext.innerHTML = 'كده الصفحة كملت واتحفظت في المكتبة. دوس على أي جملة تسمعها تاني.';
+    playBtn.textContent = '↺'; playBtn.setAttribute('aria-label','من الأول');
+    document.getElementById('coverBtn').hidden = false; document.getElementById('playAllBtn').hidden = false;
+    try{ window.scrollTo({top:0, behavior: reduce?'auto':'smooth'}); }catch(e){ window.scrollTo(0,0); }
+  }
+
+  playBtn.addEventListener('click', () => {
+    if(i >= steps.length){ jumpTo(0); return; }
+    if(playing){ setPlaying(false); coach.hidden = true; ctext.innerHTML = 'واقفين. دوس ▶︎ نكمّل.'; }
+    else { setPlaying(true); run(); }
+  });
+  spdBtn.addEventListener('click', () => { speed = speed === 1 ? .8 : 1; spdBtn.textContent = speed === 1 ? '1x' : '0.8x'; });
+  document.getElementById('allBtn').addEventListener('click', () => {
+    setPlaying(false);
+    page.querySelectorAll('[data-step]').forEach(reveal);
+    i = steps.length; finish();
+  });
+  // tap a built block to hear it again; tap a blurred meaning to peek
+  page.addEventListener('click', e => {
+    if(app.classList.contains('covered')){ const a = e.target.closest('.ar'); if(a){ a.classList.toggle('peek'); return; } }
+    const n = e.target.closest('[data-step]');
+    if(n && !n.classList.contains('ghost') && n.dataset.say && !playing) say(n.dataset.say, n);
+  });
+  document.getElementById('coverBtn').addEventListener('click', e => {
+    const on = app.classList.toggle('covered'); e.currentTarget.classList.toggle('on', on);
+    page.querySelectorAll('.ar.peek').forEach(a => a.classList.remove('peek'));
+  });
+  document.getElementById('playAllBtn').addEventListener('click', () => {
+    const list = [...page.querySelectorAll('[data-say]')]; let k = 0;
+    const next = () => { if(k >= list.length) return; const n = list[k++]; try{ n.scrollIntoView({block:'center', behavior: reduce?'auto':'smooth'}); }catch(e){} say(n.dataset.say, n, () => setTimeout(next, 250)); };
+    next();
+  });
+  window.addEventListener('resize', () => { if(!coach.hidden && steps[i]) place(el(steps[i].id)); });
+
+  page.querySelectorAll('[data-step]').forEach(n => n.classList.add('ghost'));
+  coach.hidden = true;
+  paintChapters();
+})();
+</script>

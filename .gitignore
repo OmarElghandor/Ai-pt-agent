@@ -42,3 +42,6 @@ next-env.d.ts
 
 # learner progress, logs, and cached opener audio
 /data/
+
+# local acceptance screenshots
+/tmp/

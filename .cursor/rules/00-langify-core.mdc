@@ -1,0 +1,16 @@
+---
+description: Langify v2 core rules — always on
+alwaysApply: true
+---
+# Langify v2 · core rules
+
+- The spec lives in `docs/langify-v2/`. `00-decisions.md` is the tie-breaker. Read it before any v2 task.
+- v2 is built from scratch in this repo (`ai-agent-talk`, Next.js 16, read AGENTS.md): pages in `app/(v2)`, routes in `app/api/v2`, logic in `lib/v2`, components in `components/v2`, collections prefixed `v2_`. Don't change the old `/lessons` and `/chat` pages unless asked. The `langify` repo is legacy: read users only via `lib/langifyRead`, never write it.
+- The target-language field is `tl` (and `tl_f`). Never add a field named `pt`. The lesson carries `target_lang`.
+- Arabic registers: `ar`/`ar_f` meanings are simple MSA; `eg` explanations, tips and coach lines are Egyptian Arabic. Pronunciation `say` uses Arabic letters with the fixed mapping in 00 §2.
+- Mixed Arabic and target-language text is always rich text (`rt` segments) and renders through the RichText component. Never concatenate mixed strings.
+- Conjugated verb forms come only from the `conjugations` table, referenced as `verb.<lemma>:<tense>:<person>`. An LLM never writes them. Persons: eu, tu, ele, nos, eles.
+- Colors are meanings: JSON carries `group` (a, b, c, m, f, verb, prep, pron, neg, neutral); only the theme maps them to colors. No hex values outside the theme file.
+- `POST /api/v2/answers` is the only writer of learner progress. `lib/v2/grader` and `lib/v2/reactor` are pure modules with no DB writes.
+- Learner mistakes are shown in amber with one correction at a time, never red.
+- Never show a backlog count. The daily card cap is 15.
