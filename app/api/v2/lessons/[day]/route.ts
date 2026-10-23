@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
+import { getPublishedLesson } from '@/lib/v2/content/getPublishedLesson';
 import { resolvePackForms } from '@/lib/v2/content/resolvePack';
-import type { LessonPack } from '@/lib/v2/content/lesson';
-import { connectMongo, mongoConfigured } from '@/lib/mongo';
-import { V2LessonModel } from '@/lib/v2/mongo/models';
+import { mongoConfigured } from '@/lib/mongo';
 
 export const runtime = 'nodejs';
 
@@ -20,22 +19,16 @@ export async function GET(
     return NextResponse.json({ error: 'MongoDB not configured' }, { status: 503 });
   }
 
-  await connectMongo();
-  const doc = await V2LessonModel()
-    .findOne({ day, status: 'published' })
-    .sort({ version: -1 })
-    .lean();
-
-  if (!doc) {
+  const published = await getPublishedLesson(day);
+  if (!published) {
     return NextResponse.json({ error: 'not found' }, { status: 404 });
   }
 
-  const resolved = resolvePackForms(doc.data as LessonPack);
   return NextResponse.json({
-    day: doc.day,
-    target_lang: doc.target_lang,
-    version: doc.version,
-    status: doc.status,
-    lesson: resolved,
+    day: published.day,
+    target_lang: published.target_lang,
+    version: published.version,
+    status: published.status,
+    lesson: resolvePackForms(published.pack),
   });
 }

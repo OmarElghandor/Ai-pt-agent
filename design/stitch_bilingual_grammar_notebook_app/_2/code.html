@@ -1,0 +1,355 @@
+<!DOCTYPE html><html dir="rtl" lang="ar"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Falou · Guia de Conversação - No Café</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Editorial Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;family=Noto+Naskh+Arabic:wght@400;500;600;700&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-background": "#1c1c17",
+            "on-surface-variant": "#454650",
+            "secondary-container": "#678dff",
+            "on-primary-container": "#7d8cc9",
+            "on-tertiary": "#ffffff",
+            "on-surface": "#1c1c17",
+            "surface-tint": "#4c5b95",
+            "on-primary-fixed-variant": "#34437b",
+            "on-secondary-fixed": "#00174c",
+            "primary": "#000e3d",
+            "on-tertiary-fixed": "#211b06",
+            "primary-fixed-dim": "#b7c4ff",
+            "inverse-primary": "#b7c4ff",
+            "tertiary-fixed": "#eee2bf",
+            "outline": "#767681",
+            "primary-fixed": "#dce1ff",
+            "error": "#ba1a1a",
+            "secondary-fixed-dim": "#b4c5ff",
+            "surface-bright": "#fdf9f0",
+            "inverse-surface": "#31312b",
+            "on-error-container": "#93000a",
+            "inverse-on-surface": "#f4f0e7",
+            "surface-container-highest": "#e6e2d9",
+            "on-tertiary-fixed-variant": "#4e472d",
+            "secondary-fixed": "#dbe1ff",
+            "primary-container": "#12235a",
+            "tertiary-container": "#2d2710",
+            "error-container": "#ffdad6",
+            "on-primary": "#ffffff",
+            "surface-container-lowest": "#ffffff",
+            "outline-variant": "#c6c5d1",
+            "surface": "#fdf9f0",
+            "on-secondary": "#ffffff",
+            "secondary": "#2956c6",
+            "surface-container-low": "#f7f3ea",
+            "on-secondary-fixed-variant": "#003daa",
+            "on-primary-fixed": "#02164e",
+            "surface-container-high": "#ece8df",
+            "tertiary-fixed-dim": "#d1c6a4",
+            "on-secondary-container": "#002670",
+            "surface-dim": "#dddad1",
+            "tertiary": "#171201",
+            "on-error": "#ffffff",
+            "on-tertiary-container": "#978e6f",
+            "surface-container": "#f1eee5",
+            "background": "#fdf9f0",
+            "surface-variant": "#e6e2d9"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "arabic": ["'Noto Naskh Arabic'", "serif"],
+            "serif-book": ["Newsreader", "serif"],
+            "display": ["'Barlow Condensed'", "sans-serif"],
+            "sans": ["'Work Sans'", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    /* Subtle tactile printed book deckle texture */
+    .paper-texture {
+      background-color: #fdf9f0;
+      background-image: radial-gradient(#d8d2c4 0.75px, transparent 0.75px);
+      background-size: 14px 14px;
+    }
+    .book-card-shadow {
+      box-shadow: 0 1px 3px rgba(32, 28, 22, 0.06), 0 3px 8px rgba(32, 28, 22, 0.04);
+    }
+    .sticky-note-shadow {
+      box-shadow: 2px 3px 10px rgba(78, 71, 45, 0.12), -1px 2px 4px rgba(78, 71, 45, 0.05);
+    }
+    .cover-blur-scrim {
+      backdrop-filter: blur(7px);
+      -webkit-backdrop-filter: blur(7px);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="paper-texture text-on-surface font-arabic min-h-screen antialiased flex flex-col justify-between selection:bg-secondary-fixed selection:text-on-secondary-fixed">
+<!-- Mobile Viewport Container -->
+<main class="w-full max-w-md mx-auto min-h-screen flex flex-col justify-between border-x border-outline-variant/40 bg-surface/90 shadow-2xl relative overflow-hidden">
+<!-- Editorial Book Header / Navigation Bar (Back-to-Main Pattern) -->
+<header class="pt-4 pb-3 px-4 border-b border-surface-container-highest/80 bg-surface/95 sticky top-0 z-30 backdrop-blur-md">
+<div class="flex items-center justify-between gap-2 mb-2">
+<!-- Back Action -->
+<button aria-label="الرجوع للدروس" class="flex items-center justify-center size-9 rounded-lg hover:bg-surface-container text-primary transition-colors border border-surface-container-high active:scale-95" type="button">
+<span class="material-symbols-outlined text-[20px] rtl:rotate-180">arrow_back</span>
+</button>
+<!-- Chapter & Title -->
+<div class="flex-1 text-center">
+<p class="font-sans text-[11px] font-semibold text-secondary uppercase tracking-widest leading-none mb-1">Capítulo 1 · Lição 2</p>
+<h1 class="text-base font-bold text-primary leading-tight font-serif-book">NO CAFÉ <span class="font-normal text-on-surface-variant text-sm mx-1">·</span> في الكافيه</h1>
+</div>
+<!-- Quiz Me Button -->
+<button class="h-8 px-3 rounded-full border border-secondary/30 bg-surface-container-lowest text-secondary text-xs font-semibold hover:bg-secondary-fixed transition-all flex items-center gap-1 shadow-sm active:scale-95" type="button">
+<span>اختبرني</span>
+<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</button>
+</div>
+<!-- Mode Controls Bar -->
+<div class="flex items-center justify-between pt-2 gap-2">
+<!-- Active Cover State Tag -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-container text-surface-container-lowest text-xs font-medium shadow-sm">
+<span class="material-symbols-outlined text-[14px]">visibility_off</span>
+<span>نمط «غطّي» مفعّل</span>
+</div>
+<!-- Segmented Selector: What to Cover -->
+<div class="inline-flex items-center p-0.5 rounded-lg bg-surface-container-highest/70 border border-outline-variant/30 text-xs">
+<span class="text-on-surface-variant text-[11px] font-medium px-1.5 pl-0.5">تغطية:</span>
+<button class="px-2.5 py-1 rounded-md bg-surface-container-lowest text-primary font-bold shadow-sm transition-all text-xs" type="button">
+            العربي
+          </button>
+<button class="px-2.5 py-1 rounded-md text-on-surface-variant hover:text-on-surface transition-all text-xs" type="button">
+            البرتغالي
+          </button>
+</div>
+</div>
+</header>
+<!-- Page Body -->
+<div class="px-4 py-3 flex-1 flex flex-col justify-start">
+<!-- Editorial Page Stamp / Subhead -->
+<div class="flex items-center justify-between mb-3 border-b border-dashed border-outline-variant/60 pb-1.5">
+<div class="flex items-center gap-1.5">
+<span class="size-2 rounded-full bg-secondary"></span>
+<h2 class="font-display tracking-wide uppercase text-sm font-bold text-primary">Frases Essenciais <span class="font-normal font-arabic text-on-surface-variant text-xs">(العبارات الأساسية)</span></h2>
+</div>
+<span class="text-[11px] font-sans text-on-surface-variant tracking-tighter">الصفحة ٢ · الفصل الأول</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3 flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-secondary">touch_app</span>
+<span>المعنى العربي مغطى للتدريب؛ اضغط على البطاقة لإظهاره.</span>
+</p>
+<!-- 2-Column Grid of 6 Printed Cards -->
+<div class="grid grid-cols-2 gap-2.5 mb-4">
+<!-- CARD 1: Bom dia! (Covered) -->
+<article class="relative flex flex-col justify-between p-3 rounded-lg bg-surface-container-lowest border border-outline-variant/50 book-card-shadow min-h-[114px] group transition-transform active:scale-[0.98]">
+<div class="flex items-start justify-between gap-1 mb-1.5">
+<span class="material-symbols-outlined text-[17px] text-tertiary-fixed-dim" title="Greeting">wb_sunny</span>
+<button aria-label="استمع للنطق" class="text-on-surface-variant hover:text-secondary p-0.5 rounded-full hover:bg-surface-container-low transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+</button>
+</div>
+<div class="dir-ltr text-left">
+<p class="font-serif-book font-semibold text-[17px] leading-tight text-primary">Bom dia!</p>
+<p class="font-sans text-[11px] text-on-surface-variant/80 italic">/bõ ˈdi.ɐ/</p>
+</div>
+<!-- Covered Arabic Overlay Scrim -->
+<div class="mt-2 relative rounded overflow-hidden cursor-pointer">
+<p class="text-xs text-center font-medium text-transparent select-none py-1">صباح الخير!</p>
+<div class="absolute inset-0 bg-surface-container/75 cover-blur-scrim border border-dashed border-outline-variant/60 rounded flex items-center justify-center gap-1 px-1">
+<span class="material-symbols-outlined text-[13px] text-primary">visibility</span>
+<span class="text-[11px] font-semibold text-primary">اضغط عشان تشوف</span>
+</div>
+</div>
+</article>
+<!-- CARD 2: Queria um café, por favor (Covered) -->
+<article class="relative flex flex-col justify-between p-3 rounded-lg bg-surface-container-lowest border border-outline-variant/50 book-card-shadow min-h-[114px] group transition-transform active:scale-[0.98]">
+<div class="flex items-start justify-between gap-1 mb-1.5">
+<span class="material-symbols-outlined text-[17px] text-tertiary-fixed-dim" title="Coffee order">coffee</span>
+<button aria-label="استمع للنطق" class="text-on-surface-variant hover:text-secondary p-0.5 rounded-full hover:bg-surface-container-low transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+</button>
+</div>
+<div class="dir-ltr text-left">
+<p class="font-serif-book font-semibold text-[15px] leading-snug text-primary">Queria um café...</p>
+<p class="font-sans text-[10px] text-on-surface-variant/80 italic truncate">por favor</p>
+</div>
+<!-- Covered Arabic Overlay Scrim -->
+<div class="mt-2 relative rounded overflow-hidden cursor-pointer">
+<p class="text-xs text-center font-medium text-transparent select-none py-1">أريد قهوة، من فضلك</p>
+<div class="absolute inset-0 bg-surface-container/75 cover-blur-scrim border border-dashed border-outline-variant/60 rounded flex items-center justify-center gap-1 px-1">
+<span class="material-symbols-outlined text-[13px] text-primary">visibility</span>
+<span class="text-[11px] font-semibold text-primary">اضغط عشان تشوف</span>
+</div>
+</div>
+</article>
+<!-- CARD 3: Uma meia de leite (REVEALED STATE) -->
+<article class="relative flex flex-col justify-between p-3 rounded-lg bg-surface-bright border-2 border-secondary/40 book-card-shadow min-h-[114px] shadow-sm">
+<!-- Active tag marker -->
+<div class="absolute -top-2 left-2 bg-secondary text-on-secondary text-[9px] font-bold px-1.5 py-0.2 rounded-full uppercase tracking-wider flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[10px]" style="font-variation-settings: 'FILL' 1;">check</span>
+<span>مكشوف</span>
+</div>
+<div class="flex items-start justify-between gap-1 mb-1.5">
+<span class="material-symbols-outlined text-[17px] text-secondary" title="Milk coffee">local_cafe</span>
+<button aria-label="استمع للنطق" class="text-secondary hover:text-primary p-0.5 rounded-full hover:bg-secondary-fixed transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+</button>
+</div>
+<div class="dir-ltr text-left">
+<p class="font-serif-book font-bold text-[15px] leading-snug text-primary">Uma meia de leite</p>
+<p class="font-sans text-[10px] text-secondary/80 font-medium italic">café c/ leite</p>
+</div>
+<!-- REVEALED Arabic Meaning (No Blur, High Legibility, Crisp Print Accent) -->
+<div class="mt-2 rounded bg-surface-container-high/60 border border-outline-variant/40 py-1 px-1.5 text-center flex items-center justify-center gap-1">
+<span class="text-xs font-bold text-primary">قهوة بنص حليب</span>
+<span class="material-symbols-outlined text-[13px] text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</article>
+<!-- CARD 4: E um pastel de nata (Covered) -->
+<article class="relative flex flex-col justify-between p-3 rounded-lg bg-surface-container-lowest border border-outline-variant/50 book-card-shadow min-h-[114px] group transition-transform active:scale-[0.98]">
+<div class="flex items-start justify-between gap-1 mb-1.5">
+<span class="material-symbols-outlined text-[17px] text-tertiary-fixed-dim" title="Pastry">bakery_dining</span>
+<button aria-label="استمع للنطق" class="text-on-surface-variant hover:text-secondary p-0.5 rounded-full hover:bg-surface-container-low transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+</button>
+</div>
+<div class="dir-ltr text-left">
+<p class="font-serif-book font-semibold text-[15px] leading-snug text-primary">E um pastel de nata</p>
+<p class="font-sans text-[10px] text-on-surface-variant/80 italic">/pɐʃˈtɛɫ dɨ ˈnatɐ/</p>
+</div>
+<!-- Covered Arabic Overlay Scrim -->
+<div class="mt-2 relative rounded overflow-hidden cursor-pointer">
+<p class="text-xs text-center font-medium text-transparent select-none py-1">وتارت كاسترد</p>
+<div class="absolute inset-0 bg-surface-container/75 cover-blur-scrim border border-dashed border-outline-variant/60 rounded flex items-center justify-center gap-1 px-1">
+<span class="material-symbols-outlined text-[13px] text-primary">visibility</span>
+<span class="text-[11px] font-semibold text-primary">اضغط عشان تشوف</span>
+</div>
+</div>
+</article>
+<!-- CARD 5: Quanto é? (Covered) -->
+<article class="relative flex flex-col justify-between p-3 rounded-lg bg-surface-container-lowest border border-outline-variant/50 book-card-shadow min-h-[114px] group transition-transform active:scale-[0.98]">
+<div class="flex items-start justify-between gap-1 mb-1.5">
+<span class="material-symbols-outlined text-[17px] text-tertiary-fixed-dim" title="Price">payments</span>
+<button aria-label="استمع للنطق" class="text-on-surface-variant hover:text-secondary p-0.5 rounded-full hover:bg-surface-container-low transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+</button>
+</div>
+<div class="dir-ltr text-left">
+<p class="font-serif-book font-semibold text-[17px] leading-tight text-primary">Quanto é?</p>
+<p class="font-sans text-[11px] text-on-surface-variant/80 italic">/ˈkwɐ̃.tu ɛ/</p>
+</div>
+<!-- Covered Arabic Overlay Scrim -->
+<div class="mt-2 relative rounded overflow-hidden cursor-pointer">
+<p class="text-xs text-center font-medium text-transparent select-none py-1">كم السعر؟ / الحساب كم؟</p>
+<div class="absolute inset-0 bg-surface-container/75 cover-blur-scrim border border-dashed border-outline-variant/60 rounded flex items-center justify-center gap-1 px-1">
+<span class="material-symbols-outlined text-[13px] text-primary">visibility</span>
+<span class="text-[11px] font-semibold text-primary">اضغط عشان تشوف</span>
+</div>
+</div>
+</article>
+<!-- CARD 6: Obrigado! (Covered) -->
+<article class="relative flex flex-col justify-between p-3 rounded-lg bg-surface-container-lowest border border-outline-variant/50 book-card-shadow min-h-[114px] group transition-transform active:scale-[0.98]">
+<div class="flex items-start justify-between gap-1 mb-1.5">
+<span class="material-symbols-outlined text-[17px] text-tertiary-fixed-dim" title="Gratitude">sentiment_satisfied</span>
+<button aria-label="استمع للنطق" class="text-on-surface-variant hover:text-secondary p-0.5 rounded-full hover:bg-surface-container-low transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+</button>
+</div>
+<div class="dir-ltr text-left">
+<p class="font-serif-book font-semibold text-[17px] leading-tight text-primary">Obrigado!</p>
+<p class="font-sans text-[11px] text-on-surface-variant/80 italic">مؤنث: Obrigada</p>
+</div>
+<!-- Covered Arabic Overlay Scrim -->
+<div class="mt-2 relative rounded overflow-hidden cursor-pointer">
+<p class="text-xs text-center font-medium text-transparent select-none py-1">شكراً لك!</p>
+<div class="absolute inset-0 bg-surface-container/75 cover-blur-scrim border border-dashed border-outline-variant/60 rounded flex items-center justify-center gap-1 px-1">
+<span class="material-symbols-outlined text-[13px] text-primary">visibility</span>
+<span class="text-[11px] font-semibold text-primary">اضغط عشان تشوف</span>
+</div>
+</div>
+</article>
+</div>
+<!-- Tactile Yellow Sticky Notebook Tip -->
+<section class="relative bg-tertiary-fixed/40 border-l-4 border-l-tertiary-fixed-variant border-t border-r border-b border-tertiary-fixed-dim/40 rounded-lg p-3 my-1 sticky-note-shadow">
+<div class="flex items-start gap-2">
+<span class="text-lg leading-none select-none">💡</span>
+<div class="flex-1">
+<p class="font-sans font-bold text-xs text-on-tertiary-fixed mb-0.5">ملاحظة القهوة في البرتغال:</p>
+<p class="text-xs text-on-tertiary-fixed-variant leading-relaxed">
+              في البرتغال، لما تطلب <span class="font-serif-book font-semibold dir-ltr inline-block text-primary">um café</span> بيقصدوا بيه دائماً إسبريسو صغير ومركز! لو عايز قهوة بالحليب اطلب <span class="font-serif-book font-semibold dir-ltr inline-block text-primary">uma meia de leite</span> أو في كوب زجاجي طويل <span class="font-serif-book font-semibold dir-ltr inline-block text-primary">um galão</span>.
+            </p>
+</div>
+</div>
+</section>
+</div>
+<!-- Book Page Bottom Navigation & Printer Stamp -->
+<footer class="p-3 bg-surface-container-low/90 border-t border-surface-container-highest flex flex-col gap-2">
+<!-- Previous / Counter / Next Controls -->
+<div class="flex items-center justify-between">
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-outline-variant/60 bg-surface text-primary font-medium text-xs hover:bg-surface-container active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[16px] rtl:rotate-180">arrow_forward</span>
+<span>السابق</span>
+</button>
+<div class="flex flex-col items-center">
+<span class="font-sans text-xs font-bold text-primary tracking-widest">٢ / ٦</span>
+<span class="text-[10px] text-on-surface-variant">الصفحة ٢ من ٦</span>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-on-primary font-medium text-xs hover:bg-primary-container shadow-sm active:scale-95 transition-all" type="button">
+<span>التالي</span>
+<span class="material-symbols-outlined text-[16px] rtl:rotate-180">arrow_back</span>
+</button>
+</div>
+<!-- Fine-line Publisher Watermark -->
+<div class="text-center pt-1 border-t border-outline-variant/30 flex items-center justify-center gap-2 text-[10px] text-on-surface-variant/70 font-sans tracking-wide">
+<span>FALOU</span>
+<span>•</span>
+<span>GUIA DE CONVERSAÇÃO</span>
+<span>•</span>
+<span>EDIÇÃO PORTUGAL</span>
+</div>
+</footer>
+</main>
+<!-- Interactive Reveal Micro-script -->
+<script>
+    document.querySelectorAll('.cover-blur-scrim').forEach(scrim => {
+      scrim.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const parent = this.parentElement;
+        const hiddenText = parent.querySelector('p');
+        
+        // Remove scrim overlay with smooth fade
+        this.style.transition = 'opacity 0.25s ease-out';
+        this.style.opacity = '0';
+        setTimeout(() => {
+          this.remove();
+          hiddenText.classList.remove('text-transparent', 'select-none');
+          hiddenText.classList.add('text-primary', 'font-bold', 'bg-surface-container-high/60', 'border', 'border-outline-variant/40', 'rounded');
+        }, 250);
+      });
+    });
+  </script>
+</body></html>

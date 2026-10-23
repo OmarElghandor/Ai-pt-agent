@@ -1,7 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Person, Tense } from '../items';
+import { parseFormId } from './formId';
 import { conjugateRegular } from './regular';
+
+export { parseFormId } from './formId';
 
 export type ResolvedForm = {
   tl: string;
@@ -35,8 +38,6 @@ type SeedFile = {
   verbs: SeedVerb[];
 };
 
-const FORM_ID_RE = /^verb\.([a-zçãõáéíóúâêô]+):([a-z]+):([a-z]+)$/i;
-
 let cachedSeed: SeedFile | null = null;
 
 export function loadConjugationSeed(
@@ -50,18 +51,6 @@ export function loadConjugationSeed(
 /** Test helper — clear module cache between tests if needed. */
 export function resetConjugationSeedCache(): void {
   cachedSeed = null;
-}
-
-export function parseFormId(
-  id: string,
-): { lemma: string; tense: Tense; person: Person } | null {
-  const m = FORM_ID_RE.exec(id);
-  if (!m) return null;
-  return {
-    lemma: m[1]!,
-    tense: m[2] as Tense,
-    person: m[3] as Person,
-  };
 }
 
 export function resolveForm(

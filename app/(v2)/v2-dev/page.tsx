@@ -15,12 +15,17 @@ import {
   StickyNote,
   TitleBadge,
 } from '@/components/v2';
+import { BlockGallery } from '@/components/v2/blocks/gallery';
+import { FIXTURE_VERB_IDS } from '@/components/v2/blocks/fixtures';
 import { isV2DevAllowed, isV2Enabled } from '@/lib/v2/flags';
+import { buildFormMap } from '@/lib/v2/render/forms';
 
 export default function V2DevPage() {
   if (!isV2Enabled() || !isV2DevAllowed()) {
     notFound();
   }
+
+  const forms = buildFormMap(FIXTURE_VERB_IDS);
 
   return (
     <main className="flex flex-1 flex-col gap-8 overflow-y-auto px-4 py-6 pb-28">
@@ -184,6 +189,8 @@ export default function V2DevPage() {
           />
         </div>
       </section>
+
+      <BlockGallery forms={forms} />
     </main>
   );
 }
