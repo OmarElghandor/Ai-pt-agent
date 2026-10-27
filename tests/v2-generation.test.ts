@@ -59,9 +59,33 @@ describe('v2 generation · plan', () => {
     }
   });
 
-  it('day 4 refuses generate until new_items filled', () => {
+  it('day 4 is ready (core items from pt-PT.core-items.json)', () => {
     const plan = getDayPlan(4);
     const ready = canGenerate(plan);
+    assert.equal(ready.ok, true, JSON.stringify(ready));
+  });
+
+  it('refuses generate when a day has no page_plan (synthetic empty day)', () => {
+    // No core items + empty new_items is not enough alone — canGenerate
+    // requires a page_plan. Synthetic row with neither content nor pages.
+    const synthetic = {
+      day: 99,
+      week: 1,
+      title_tl: 'Empty',
+      title_ar: 'فارغ',
+      situation_eg: 'مفيش',
+      example_tl: '—',
+      rule_eg: '—',
+      extra_units_tl: [] as string[],
+      early_chunks_tl: [] as string[],
+      book_pages: [] as string[],
+      is_story: false,
+      generation: {
+        new_items: { words: [] as string[], phrases: [] as string[] },
+        page_plan: [] as { preset: string }[],
+      },
+    };
+    const ready = canGenerate(synthetic);
     assert.equal(ready.ok, false);
   });
 });

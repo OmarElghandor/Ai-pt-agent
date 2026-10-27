@@ -51,6 +51,12 @@ const WORD_OR_VERB_LEMMA_ID = z
 
 const ExtraFlag = z.boolean().optional();
 
+/**
+ * Flashcard eligibility. Explicit false for set items, recycle copies, etc.
+ * Omitted → inferred by isFlashcardItem (with NO_CARD_LEMMAS fallback).
+ */
+const HasCardFlag = z.boolean().optional();
+
 /** Derived pattern examples use pattern.<x>.ex.<n>; other phrases keep phrase.*. */
 const PhraseOrPatternExId = z
   .string()
@@ -78,6 +84,7 @@ const WordItemSchema = z.object({
   example: z.string().optional(),
   /** Optional: item beyond the day's core list (max 2 per day). */
   extra: ExtraFlag,
+  has_card: HasCardFlag,
   introduced_on_page: IntroducedOnPage,
 });
 
@@ -107,6 +114,7 @@ const PhraseItemSchema = z.object({
    */
   derived: z.boolean().optional(),
   extra: ExtraFlag,
+  has_card: HasCardFlag,
   introduced_on_page: IntroducedOnPage,
 });
 
@@ -120,6 +128,7 @@ const SentenceItemSchema = z.object({
   speaker: z.string().optional(),
   gloss: z.unknown().optional(),
   extra: ExtraFlag,
+  has_card: HasCardFlag,
   introduced_on_page: IntroducedOnPage,
 });
 
@@ -135,6 +144,7 @@ const FormItemSchema = z.object({
   irregular: z.boolean().optional(),
   say: z.string().optional(),
   extra: ExtraFlag,
+  has_card: HasCardFlag,
   introduced_on_page: IntroducedOnPage,
 });
 
@@ -169,6 +179,8 @@ const PatternItemSchema = z.object({
   /** Derived example item ids (pattern.<x>.ex.<n>) or phrase ids. */
   examples: z.array(z.string().min(1)).min(1),
   extra: ExtraFlag,
+  /** Patterns never get flashcards. */
+  has_card: HasCardFlag,
   introduced_on_page: IntroducedOnPage,
 });
 

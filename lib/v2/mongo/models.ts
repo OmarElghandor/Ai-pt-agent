@@ -241,6 +241,13 @@ const v2ReportSchema = new Schema(
     day: { type: Number, required: true, index: true },
     note: { type: String, required: true },
     user_id: { type: String, required: false, index: true },
+    status: {
+      type: String,
+      required: true,
+      enum: ['open', 'reviewed'],
+      default: 'open',
+      index: true,
+    },
   },
   { timestamps: true, collection: 'v2_reports' },
 );
@@ -256,4 +263,218 @@ export function V2ReportModel(): Model<V2ReportDoc> {
   );
 }
 
+const skillSrsSchema = new Schema(
+  {
+    interval: { type: Number, required: true, default: 0 },
+    dueAt: { type: Date, required: false },
+    streak: { type: Number, required: true, default: 0 },
+    lapses: { type: Number, required: true, default: 0 },
+  },
+  { _id: false },
+);
+
+const cardSrsSchema = new Schema(
+  {
+    interval: { type: Number, required: true, default: 0 },
+    dueAt: { type: Date, required: false },
+    masteryLevel: {
+      type: String,
+      required: true,
+      enum: ['learning', 'mastered'],
+      default: 'learning',
+    },
+    consecutiveCorrect: { type: Number, required: true, default: 0 },
+    face: { type: String, required: true, default: 'recognize' },
+    knowCheckDueAt: { type: Date, required: false },
+  },
+  { _id: false },
+);
+
+const v2ItemStateSchema = new Schema(
+  {
+    user_id: { type: String, required: true, index: true },
+    item_id: { type: String, required: true, index: true },
+    target_lang: { type: String, required: true, default: 'pt-PT' },
+    introducedDay: { type: Number, required: true },
+    usedCorrectlyIn: { type: [String], default: [] },
+    levels: {
+      heard: { type: Number, required: true, default: 0 },
+      understood: { type: Number, required: true, default: 0 },
+      said: { type: Number, required: true, default: 0 },
+      used: { type: Number, required: true, default: 0 },
+    },
+    skills: { type: Schema.Types.Mixed, default: {} },
+    card: { type: cardSrsSchema, required: true },
+    lastImplicitReviewLocalDate: { type: String, required: false },
+    weakToolIds: { type: [String], default: [] },
+  },
+  { timestamps: true, collection: 'v2_item_state' },
+);
+
+v2ItemStateSchema.index({ user_id: 1, item_id: 1 }, { unique: true });
+v2ItemStateSchema.index({ user_id: 1, 'card.dueAt': 1 });
+
+export type V2ItemStateDoc = InferSchemaType<typeof v2ItemStateSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2ItemStateModel(): Model<V2ItemStateDoc> {
+  return (
+    (mongoose.models.V2ItemState as Model<V2ItemStateDoc>) ||
+    mongoose.model<V2ItemStateDoc>('V2ItemState', v2ItemStateSchema)
+  );
+}
+
+const v2ErrorSchema = new Schema(
+  {
+    user_id: { type: String, required: true, index: true },
+    item_id: { type: String, required: false, index: true },
+    tool_id: { type: String, required: false, index: true },
+    skill: { type: String, required: false },
+    category: { type: String, required: true, index: true },
+    scope: { type: String, required: true, index: true },
+    wrong: { type: String, required: true },
+    right: { type: String, required: true },
+    at: { type: Date, required: true, default: () => new Date(), index: true },
+  },
+  { timestamps: true, collection: 'v2_errors' },
+);
+
+export type V2ErrorDoc = InferSchemaType<typeof v2ErrorSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2ErrorModel(): Model<V2ErrorDoc> {
+  return (
+    (mongoose.models.V2Error as Model<V2ErrorDoc>) ||
+    mongoose.model<V2ErrorDoc>('V2Error', v2ErrorSchema)
+  );
+}
+
+const v2SessionQueueItemSchema = new Schema(
+  {
+    item_id: { type: String, required: true },
+    bucket: {
+      type: String,
+      required: false,
+      enum: ['recent', 'weak', 'older'],
+    },
+    rating: {
+      type: String,
+      required: false,
+      enum: ['again', 'hard', 'easy', 'know'],
+    },
+    rated_at: { type: Date, required: false },
+  },
+  { _id: false },
+);
+
+const v2SessionSchema = new Schema(
+  {
+    user_id: { type: String, required: true, index: true },
+    kind: {
+      type: String,
+      required: true,
+      enum: ['lesson', 'cards', 'questions'],
+      index: true,
+    },
+    local_date: { type: String, required: false, index: true },
+    day: { type: Number, required: false },
+    status: {
+      type: String,
+      required: true,
+      enum: ['open', 'done'],
+      default: 'open',
+      index: true,
+    },
+    queue: { type: [v2SessionQueueItemSchema], default: [] },
+    items: { type: Schema.Types.Mixed, default: [] },
+    tz: { type: String, required: false },
+  },
+  { timestamps: true, collection: 'v2_sessions' },
+);
+
+v2SessionSchema.index(
+  { user_id: 1, kind: 1, local_date: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { kind: 'cards', local_date: { $type: 'string' } },
+  },
+);
+
+export type V2SessionDoc = InferSchemaType<typeof v2SessionSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2SessionModel(): Model<V2SessionDoc> {
+  return (
+    (mongoose.models.V2Session as Model<V2SessionDoc>) ||
+    mongoose.model<V2SessionDoc>('V2Session', v2SessionSchema)
+  );
+}
+
+const v2QuestionSchema = new Schema(
+  {
+    id: { type: String, required: true },
+    target_lang: { type: String, required: true, default: 'pt-PT' },
+    tests: { type: [String], default: [] },
+    skill: { type: String, required: true },
+    type: { type: String, required: true },
+    origin: {
+      type: String,
+      required: true,
+      enum: ['code', 'claude'],
+      index: true,
+    },
+    day: { type: Number, required: false, index: true },
+    prompt: { type: Schema.Types.Mixed, required: true },
+    options: { type: Schema.Types.Mixed, required: false },
+    answer: { type: Schema.Types.Mixed, required: false },
+    accepted: { type: [String], required: false },
+    tool_id: { type: String, required: false, index: true },
+    disabled: { type: Boolean, required: true, default: false },
+  },
+  { timestamps: true, collection: 'v2_questions' },
+);
+
+v2QuestionSchema.index({ id: 1, target_lang: 1 }, { unique: true });
+v2QuestionSchema.index({ skill: 1, disabled: 1 });
+
+export type V2QuestionDoc = InferSchemaType<typeof v2QuestionSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2QuestionModel(): Model<V2QuestionDoc> {
+  return (
+    (mongoose.models.V2Question as Model<V2QuestionDoc>) ||
+    mongoose.model<V2QuestionDoc>('V2Question', v2QuestionSchema)
+  );
+}
+
+const v2AnswerIdempotencySchema = new Schema(
+  {
+    answer_id: { type: String, required: true, unique: true, index: true },
+    user_id: { type: String, required: true, index: true },
+    verdict: { type: Schema.Types.Mixed, required: true },
+  },
+  { timestamps: true, collection: 'v2_answer_idempotency' },
+);
+
+export type V2AnswerIdempotencyDoc = InferSchemaType<
+  typeof v2AnswerIdempotencySchema
+> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2AnswerIdempotencyModel(): Model<V2AnswerIdempotencyDoc> {
+  return (
+    (mongoose.models.V2AnswerIdempotency as Model<V2AnswerIdempotencyDoc>) ||
+    mongoose.model<V2AnswerIdempotencyDoc>(
+      'V2AnswerIdempotency',
+      v2AnswerIdempotencySchema,
+    )
+  );
+}
+
 void overrideFormSchema;
+void skillSrsSchema;

@@ -39,6 +39,7 @@ export async function POST(req: Request) {
     day: body.day,
     note: body.note.trim().slice(0, 2000),
     user_id: userId || undefined,
+    status: 'open',
   });
   return NextResponse.json({ id: String(doc._id), ok: true });
 }

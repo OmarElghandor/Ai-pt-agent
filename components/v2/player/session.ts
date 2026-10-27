@@ -22,10 +22,39 @@ export function markPageDone(day: number, pageId: string): void {
   sessionStorage.setItem(key(day), JSON.stringify([...next]));
 }
 
-export function postPageAnswer(payload: PageAnswerPayload): void {
+function newAnswerId(): string {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
+export function postPageAnswer(
+  payload:
+    | (Omit<Extract<PageAnswerPayload, { kind: 'page_ask' }>, 'answer_id'> & {
+        answer_id?: string;
+      })
+    | (Omit<Extract<PageAnswerPayload, { kind: 'page_quiz' }>, 'answer_id'> & {
+        answer_id?: string;
+      }),
+): void {
+  const body = {
+    ...payload,
+    answer_id: payload.answer_id ?? newAnswerId(),
+  };
   void fetch('/api/v2/answers', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    headers: {
+      'Content-Type': 'application/json',
+      'x-timezone':
+        typeof Intl !== 'undefined'
+          ? Intl.DateTimeFormat().resolvedOptions().timeZone
+          : 'UTC',
+    },
+    body: JSON.stringify(body),
   }).catch(() => {});
 }

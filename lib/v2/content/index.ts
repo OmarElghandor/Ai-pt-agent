@@ -61,3 +61,10 @@ export {
 } from './conjugations/resolve';
 export { conjugateRegular } from './conjugations/regular';
 export { resolvePackForms } from './resolvePack';
+export {
+  flashcardItems,
+  isFlashcardItem,
+  NO_CARD_LEMMAS,
+  SET_ITEM_IDS,
+  shouldForceNoCard,
+} from './flashcards';

@@ -1,3 +1,4 @@
+import { shouldForceNoCard } from '@/lib/v2/content/flashcards';
 import { ItemSchema, type Item } from '@/lib/v2/content/items';
 import { validateLessonPack } from '@/lib/v2/content/validate';
 import type { LessonBrief } from '../brief';
@@ -33,6 +34,21 @@ import {
 import { ensureHeardReplies } from '../heardReplies';
 import { applyEgSayToItems } from '../egSay';
 import { callJobTool } from './call';
+
+/** Set has_card explicitly: false for pattern/derived/recycle/set items. */
+function applyHasCardFlags(items: Item[], recycleIds: Set<string>): Item[] {
+  return items.map((item) => {
+    if (shouldForceNoCard(item, { recycleIds })) {
+      return { ...item, has_card: false } as Item;
+    }
+    if (item.type === 'word' || item.type === 'phrase') {
+      const existing = (item as { has_card?: boolean }).has_card;
+      if (existing === false) return item;
+      return { ...item, has_card: true } as Item;
+    }
+    return { ...item, has_card: false } as Item;
+  });
+}
 
 const ARABIC_RE = /[\u0600-\u06FF]/
 const LATIN_RE = /[A-Za-zÀ-ÿ]/
@@ -608,6 +624,7 @@ ${knownLines}
     items = heard.items;
     items = coerceBank(applySayToItems(items) as Item[]);
     items = applyEgSayToItems(items);
+    items = applyHasCardFlags(items, new Set(opts.brief.recycle_ids));
     return items;
   };
 

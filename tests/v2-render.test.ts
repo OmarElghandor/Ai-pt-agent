@@ -137,8 +137,31 @@ describe('v2 render · explore', () => {
 });
 
 describe('v2 render · answer payload', () => {
-  it('accepts page asks and quiz answers', () => {
+  it('accepts page asks and quiz answers with answer_id', () => {
+    const aid = '11111111-1111-4111-8111-111111111111';
     assert.deepEqual(
+      parsePageAnswerPayload({
+        kind: 'page_ask',
+        answer_id: aid,
+        day: 6,
+        page_id: 'p1',
+        step_index: 3,
+        option_index: 0,
+      }),
+      {
+        kind: 'page_ask',
+        answer_id: aid,
+        day: 6,
+        page_id: 'p1',
+        step_index: 3,
+        option_index: 0,
+      },
+    );
+    assert.equal(
+      parsePageAnswerPayload({ kind: 'page_ask', day: 0, page_id: 'p1' }),
+      null,
+    );
+    assert.equal(
       parsePageAnswerPayload({
         kind: 'page_ask',
         day: 6,
@@ -146,12 +169,13 @@ describe('v2 render · answer payload', () => {
         step_index: 3,
         option_index: 0,
       }),
-      { kind: 'page_ask', day: 6, page_id: 'p1', step_index: 3, option_index: 0 },
+      null,
+      'missing answer_id',
     );
-    assert.equal(parsePageAnswerPayload({ kind: 'page_ask', day: 0, page_id: 'p1' }), null);
     assert.equal(
       parsePageAnswerPayload({
         kind: 'page_quiz',
+        answer_id: aid,
         day: 6,
         page_id: 'p1',
         question_id: 'q.d06.1',

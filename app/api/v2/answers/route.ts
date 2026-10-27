@@ -1,17 +1,22 @@
 import { NextResponse } from 'next/server';
-import { parsePageAnswerPayload } from '@/lib/v2/render/answerPayload';
+import { handleAnswerRequest } from '@/lib/v2/answers/handle';
+import { isV2Enabled } from '@/lib/v2/flags';
 
 export const runtime = 'nodejs';
 
 /**
- * Stub writer for page asks and quiz picks.
- * Correctness stays on the client. Phase 4 replaces this handler and is the only progress writer.
+ * Sole HTTP entry for lesson/quiz/open answers that write progress.
+ * Requires answer_id (uuid); duplicates return the stored verdict.
  */
 export async function POST(req: Request) {
-  const body = await req.json().catch(() => null);
-  const parsed = parsePageAnswerPayload(body);
-  if (!parsed) {
-    return NextResponse.json({ error: 'invalid' }, { status: 400 });
+  if (!isV2Enabled()) {
+    return NextResponse.json({ error: 'v2 disabled' }, { status: 403 });
   }
-  return NextResponse.json({ ok: true });
+  const body = await req.json().catch(() => null);
+  const tzHeader = req.headers.get('x-timezone') ?? undefined;
+  const result = await handleAnswerRequest(body, { timeZone: tzHeader });
+  if (result.status !== 200) {
+    return NextResponse.json({ error: result.error }, { status: result.status });
+  }
+  return NextResponse.json(result.body);
 }

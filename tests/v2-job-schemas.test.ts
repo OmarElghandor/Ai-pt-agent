@@ -224,16 +224,24 @@ describe('v2 job schemas · zod ↔ Ajv parity', () => {
           pages: [
             {
               index: 0,
-              page_id: 'p1',
               preset: 'phrases',
-              title: 'Olá',
-              purpose: 'greet',
-              introduces: [],
-              assumes: [],
+              title_eg: 'التحية',
+              introduces: ['phrase.hello'],
+              purpose_eg: 'تتعلم تقول أهلا',
             },
           ],
         },
-        bad: { pages: [] },
+        bad: {
+          pages: [
+            {
+              index: 0,
+              preset: 'free',
+              title_eg: 'غلط',
+              introduces: [],
+              purpose_eg: 'preset مش من السبعة',
+            },
+          ],
+        },
       },
     ];
     for (const { kind, good, bad } of cases) {

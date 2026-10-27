@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx --test tests/lesson-packs.test.ts tests/practice.test.ts tests/friend-assessment.test.ts tests/mongo-adapter.test.ts tests/seed-plan.test.ts tests/generation-assembler.test.ts tests/v2-content.test.ts tests/v2-render.test.ts tests/v2-generation.test.ts tests/v2-staged-generation.test.ts tests/v2-handoffs.test.ts tests/v2-job-schemas.test.ts",
+    "test": "tsx --test tests/lesson-packs.test.ts tests/practice.test.ts tests/friend-assessment.test.ts tests/mongo-adapter.test.ts tests/seed-plan.test.ts tests/generation-assembler.test.ts tests/v2-content.test.ts tests/v2-render.test.ts tests/v2-generation.test.ts tests/v2-staged-generation.test.ts tests/v2-handoffs.test.ts tests/v2-job-schemas.test.ts tests/v2-progress.test.ts",
     "validate:lessons": "tsx scripts/validate-lessons.ts",
     "warm:lesson-audio": "tsx scripts/warm-lesson-audio.ts",
     "warm:v2-lesson-audio": "tsx scripts/v2/warm-lesson-audio.ts",
