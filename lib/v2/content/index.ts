@@ -12,11 +12,15 @@ export {
 } from './items';
 export {
   LessonPackSchema,
+  MicroSchema,
   SkillSchema,
+  SpeakPromptSchema,
   type LessonMeta,
   type LessonPack,
+  type Micro,
   type Question,
   type Skill,
+  type SpeakPrompt,
 } from './lesson';
 export {
   ControlSchema,
@@ -24,6 +28,7 @@ export {
   ModeSchema,
   PageSchema,
   PresetSchema,
+  modeForPreset,
   type Control,
   type Page,
   type Step,
@@ -41,6 +46,9 @@ export {
 export {
   hasErrors,
   validateLessonPack,
+  checkIntroductionOrder,
+  collectPageItemRefs,
+  collectRefsFromBlock,
   type ConjugationLookup,
   type Issue,
   type ValidateOptions,

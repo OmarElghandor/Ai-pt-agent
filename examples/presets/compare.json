@@ -1,0 +1,738 @@
+{
+  "preset": "compare",
+  "mode": "guided",
+  "source_day": 3,
+  "title_tl": "Gramática Básica",
+  "situation_eg": "في السوبر ماركت",
+  "items": [
+    {
+      "type": "word",
+      "id": "word.bread",
+      "tl": "o pão",
+      "lemma": "pão",
+      "gender": "m",
+      "ar": "الخبز",
+      "say": "أو پاون",
+      "pos": "noun",
+      "media": {
+        "image": "food.bread"
+      },
+      "plural": "os pães"
+    },
+    {
+      "type": "word",
+      "id": "word.milk",
+      "tl": "o leite",
+      "lemma": "leite",
+      "gender": "m",
+      "ar": "الحليب",
+      "say": "أو لايت",
+      "pos": "noun",
+      "media": {
+        "image": "food.milk"
+      }
+    },
+    {
+      "type": "word",
+      "id": "word.cheese",
+      "tl": "o queijo",
+      "lemma": "queijo",
+      "gender": "m",
+      "ar": "الجبن",
+      "say": "أو كايچو",
+      "pos": "noun",
+      "media": {
+        "image": "food.cheese"
+      }
+    },
+    {
+      "type": "word",
+      "id": "word.water",
+      "tl": "a água",
+      "lemma": "água",
+      "gender": "f",
+      "ar": "الماء",
+      "say": "أ آجوا",
+      "pos": "noun",
+      "media": {
+        "image": "drink.water"
+      }
+    },
+    {
+      "type": "word",
+      "id": "word.apple",
+      "tl": "a maçã",
+      "lemma": "maçã",
+      "gender": "f",
+      "ar": "التفاحة",
+      "say": "أ مَسان",
+      "pos": "noun",
+      "media": {
+        "image": "food.apple"
+      },
+      "plural": "as maçãs"
+    },
+    {
+      "type": "word",
+      "id": "word.banana",
+      "tl": "a banana",
+      "lemma": "banana",
+      "gender": "f",
+      "ar": "الموز",
+      "say": "أ بانانا",
+      "pos": "noun",
+      "media": {
+        "image": "food.banana"
+      }
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.one_bread",
+      "tl": "Um pão, por favor.",
+      "ar": "رغيف خبز واحد، من فضلك.",
+      "say": "أون پاون، پور فاڤور",
+      "marks": [
+        {
+          "text": "Um",
+          "group": "m"
+        }
+      ]
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.two_breads",
+      "tl": "Dois pães, por favor.",
+      "ar": "رغيفان من الخبز، من فضلك.",
+      "say": "دويش پاينش، پور فاڤور",
+      "marks": [
+        {
+          "text": "Dois",
+          "group": "m"
+        }
+      ]
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.one_apple",
+      "tl": "Uma maçã, por favor.",
+      "ar": "تفاحة واحدة، من فضلك.",
+      "say": "أوما مَسان، پور فاڤور",
+      "marks": [
+        {
+          "text": "Uma",
+          "group": "f"
+        }
+      ]
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.two_apples",
+      "tl": "Duas maçãs, por favor.",
+      "ar": "تفاحتان، من فضلك.",
+      "say": "دواش مَسانش، پور فاڤور",
+      "marks": [
+        {
+          "text": "Duas",
+          "group": "f"
+        }
+      ]
+    }
+  ],
+  "page": {
+    "id": "p1",
+    "preset": "compare",
+    "mode": "guided",
+    "tool_id": "gender_o_a",
+    "pill": "القواعد",
+    "title": [
+      {
+        "text": "o",
+        "lang": "tl",
+        "group": "m"
+      },
+      {
+        "text": " vs ",
+        "lang": "tl"
+      },
+      {
+        "text": "a",
+        "lang": "tl",
+        "group": "f"
+      }
+    ],
+    "subtitle": [
+      {
+        "text": "كل اسم في البرتغالي ليه جنس: مذكر ولا مؤنث",
+        "lang": "eg"
+      }
+    ],
+    "cover": "meaning",
+    "library": true,
+    "blocks": [
+      {
+        "id": "b1",
+        "type": "compare",
+        "columns": [
+          {
+            "head": [
+              {
+                "text": "o",
+                "lang": "tl"
+              }
+            ],
+            "sub": [
+              {
+                "text": "مذكر",
+                "lang": "eg"
+              }
+            ],
+            "group": "m",
+            "entries": [
+              {
+                "label": [
+                  {
+                    "text": "عيش",
+                    "lang": "eg"
+                  }
+                ],
+                "ref": "word.bread",
+                "media": {
+                  "image": "food.bread"
+                }
+              },
+              {
+                "label": [
+                  {
+                    "text": "لبن",
+                    "lang": "eg"
+                  }
+                ],
+                "ref": "word.milk",
+                "media": {
+                  "image": "food.milk"
+                }
+              },
+              {
+                "label": [
+                  {
+                    "text": "جبنة",
+                    "lang": "eg"
+                  }
+                ],
+                "ref": "word.cheese",
+                "media": {
+                  "image": "food.cheese"
+                }
+              }
+            ]
+          },
+          {
+            "head": [
+              {
+                "text": "a",
+                "lang": "tl"
+              }
+            ],
+            "sub": [
+              {
+                "text": "مؤنث",
+                "lang": "eg"
+              }
+            ],
+            "group": "f",
+            "entries": [
+              {
+                "label": [
+                  {
+                    "text": "ميه",
+                    "lang": "eg"
+                  }
+                ],
+                "ref": "word.water",
+                "media": {
+                  "image": "drink.water"
+                }
+              },
+              {
+                "label": [
+                  {
+                    "text": "تفاحة",
+                    "lang": "eg"
+                  }
+                ],
+                "ref": "word.apple",
+                "media": {
+                  "image": "food.apple"
+                }
+              },
+              {
+                "label": [
+                  {
+                    "text": "موز",
+                    "lang": "eg"
+                  }
+                ],
+                "ref": "word.banana",
+                "media": {
+                  "image": "food.banana"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "b2",
+        "type": "heading",
+        "text": [
+          {
+            "text": "واحد ولا أكتر؟",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "id": "b3",
+        "type": "vs_pairs",
+        "pairs": [
+          {
+            "left": "sentence.one_bread",
+            "right": "sentence.two_breads",
+            "note": [
+              {
+                "text": "pão",
+                "lang": "tl",
+                "bold": true
+              },
+              {
+                "text": " في الجمع بقت ",
+                "lang": "eg"
+              },
+              {
+                "text": "pães",
+                "lang": "tl",
+                "bold": true
+              },
+              {
+                "text": ". احفظها كده.",
+                "lang": "eg"
+              }
+            ]
+          },
+          {
+            "left": "sentence.one_apple",
+            "right": "sentence.two_apples",
+            "note": [
+              {
+                "text": "uma",
+                "lang": "tl",
+                "group": "f",
+                "bold": true
+              },
+              {
+                "text": " بتبقى ",
+                "lang": "eg"
+              },
+              {
+                "text": "duas",
+                "lang": "tl",
+                "group": "f",
+                "bold": true
+              },
+              {
+                "text": "، والكلمة بتاخد s.",
+                "lang": "eg"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "b4",
+        "type": "tip",
+        "kind": "rule",
+        "title": [
+          {
+            "text": "القاعدة",
+            "lang": "eg"
+          }
+        ],
+        "body": [
+          {
+            "text": "احفظ كل كلمة مع ",
+            "lang": "eg"
+          },
+          {
+            "text": "o",
+            "lang": "tl",
+            "group": "m",
+            "bold": true
+          },
+          {
+            "text": " أو ",
+            "lang": "eg"
+          },
+          {
+            "text": "a",
+            "lang": "tl",
+            "group": "f",
+            "bold": true
+          },
+          {
+            "text": ". وفي الجمع: ",
+            "lang": "eg"
+          },
+          {
+            "text": "os",
+            "lang": "tl",
+            "group": "m",
+            "bold": true
+          },
+          {
+            "text": " و",
+            "lang": "eg"
+          },
+          {
+            "text": "as",
+            "lang": "tl",
+            "group": "f",
+            "bold": true
+          },
+          {
+            "text": ".",
+            "lang": "eg"
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "target": "b1/col:0",
+        "kind": "reveal",
+        "chapter": "o",
+        "tip": [
+          {
+            "text": "o",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": " قبل الكلمة المذكرة.",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b1/entry:0:0",
+        "kind": "reveal",
+        "chapter": "o",
+        "tip": [
+          {
+            "text": "o pão",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": " = العيش.",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b1/entry:0:1",
+        "kind": "reveal",
+        "chapter": "o",
+        "tip": [
+          {
+            "text": "اللبن مذكر هنا زي عندنا.",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b1/entry:0:2",
+        "kind": "ask",
+        "chapter": "o",
+        "ask": {
+          "question": [
+            {
+              "text": "___ queijo",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": " · الجبنة. نقول إيه؟",
+              "lang": "eg"
+            }
+          ],
+          "options": [
+            {
+              "label": [
+                {
+                  "text": "o",
+                  "lang": "tl"
+                }
+              ],
+              "correct": true
+            },
+            {
+              "label": [
+                {
+                  "text": "a",
+                  "lang": "tl"
+                }
+              ],
+              "correct": false
+            }
+          ],
+          "why": [
+            {
+              "text": "صح! ",
+              "lang": "eg"
+            },
+            {
+              "text": "queijo",
+              "lang": "tl"
+            },
+            {
+              "text": " مذكر.",
+              "lang": "eg"
+            }
+          ],
+          "hint": [
+            {
+              "text": "آخرها -o، وده غالبًا مذكر.",
+              "lang": "eg"
+            }
+          ]
+        }
+      },
+      {
+        "target": "b1/col:1",
+        "kind": "reveal",
+        "chapter": "a",
+        "tip": [
+          {
+            "text": "a",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": " قبل الكلمة المؤنثة.",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b1/entry:1:0",
+        "kind": "reveal",
+        "chapter": "a",
+        "tip": [
+          {
+            "text": "الميه مؤنثة: ",
+            "lang": "eg"
+          },
+          {
+            "text": "a água",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": ".",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b1/entry:1:1",
+        "kind": "reveal",
+        "chapter": "a",
+        "tip": [
+          {
+            "text": "a maçã",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": " = التفاحة.",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b1/entry:1:2",
+        "kind": "ask",
+        "chapter": "a",
+        "ask": {
+          "question": [
+            {
+              "text": "___ banana",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": " · الموز. نقول إيه؟",
+              "lang": "eg"
+            }
+          ],
+          "options": [
+            {
+              "label": [
+                {
+                  "text": "o",
+                  "lang": "tl"
+                }
+              ],
+              "correct": false
+            },
+            {
+              "label": [
+                {
+                  "text": "a",
+                  "lang": "tl"
+                }
+              ],
+              "correct": true
+            }
+          ],
+          "why": [
+            {
+              "text": "صح! آخرها -a ومؤنثة.",
+              "lang": "eg"
+            }
+          ],
+          "hint": [
+            {
+              "text": "بص على آخر حرف.",
+              "lang": "eg"
+            }
+          ]
+        }
+      },
+      {
+        "target": "b2",
+        "kind": "reveal",
+        "chapter": "الجمع",
+        "tip": [
+          {
+            "text": "دلوقتي عايز أكتر من واحد.",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b3/item:0",
+        "kind": "reveal",
+        "chapter": "الجمع",
+        "tip": [
+          {
+            "text": "um",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": " بتبقى ",
+            "lang": "eg"
+          },
+          {
+            "text": "dois",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": ".",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b3/item:1",
+        "kind": "reveal",
+        "chapter": "الجمع",
+        "tip": [
+          {
+            "text": "ومع المؤنث ",
+            "lang": "eg"
+          },
+          {
+            "text": "uma",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": " بتبقى ",
+            "lang": "eg"
+          },
+          {
+            "text": "duas",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": ".",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b4",
+        "kind": "ask",
+        "chapter": "القاعدة",
+        "ask": {
+          "question": [
+            {
+              "text": "Duas ___, por favor.",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": " · تفاحتين.",
+              "lang": "eg"
+            }
+          ],
+          "options": [
+            {
+              "label": [
+                {
+                  "text": "maçã",
+                  "lang": "tl"
+                }
+              ],
+              "correct": false
+            },
+            {
+              "label": [
+                {
+                  "text": "maçãs",
+                  "lang": "tl"
+                }
+              ],
+              "correct": true
+            }
+          ],
+          "why": [
+            {
+              "text": "صح! بعد ",
+              "lang": "eg"
+            },
+            {
+              "text": "duas",
+              "lang": "tl"
+            },
+            {
+              "text": " الكلمة جمع.",
+              "lang": "eg"
+            }
+          ],
+          "hint": [
+            {
+              "text": "اتنين يعني جمع.",
+              "lang": "eg"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "questions": []
+}

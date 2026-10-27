@@ -1,0 +1,447 @@
+{
+  "preset": "story",
+  "mode": "guided",
+  "source_day": 7,
+  "title_tl": "O Primeiro Dia",
+  "situation_eg": "أول يوم في لشبونة",
+  "note": "Every line is a sentence item with a speaker id from CHARACTERS. Uses only week-1 language.",
+  "items": [
+    {
+      "type": "sentence",
+      "id": "sentence.s1_manuel_bomdia",
+      "tl": "Bom dia!",
+      "ar": "صباح الخير!",
+      "say": "بون ديا",
+      "speaker": "manuel"
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.s1_yassin_cafe",
+      "tl": "Bom dia. Queria um café, por favor.",
+      "ar": "صباح الخير. أريد قهوة، من فضلك.",
+      "say": "بون ديا. كِريا أون كافيه، پور فاڤور",
+      "speaker": "yassin"
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.s2_manuel_euro",
+      "tl": "É um euro.",
+      "ar": "الحساب يورو واحد.",
+      "say": "إي أون إيورو",
+      "speaker": "manuel"
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.s2_yassin_thanks",
+      "tl": "Obrigado. Bom dia!",
+      "ar": "شكرًا. يومًا سعيدًا!",
+      "say": "أوبريجادو. بون ديا",
+      "speaker": "yassin"
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.s3_ines_hello",
+      "tl": "Olá! Chamo-me Inês.",
+      "ar": "مرحبًا! اسمي إنِس.",
+      "say": "أولا! شامو-م إينيش",
+      "speaker": "ines"
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.s3_yassin_prazer",
+      "tl": "Muito prazer. Chamo-me Yassin.",
+      "ar": "تشرفنا. اسمي ياسين.",
+      "say": "موينتو پرازير. شامو-م ياسين",
+      "speaker": "yassin"
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.s3_yassin_moro",
+      "tl": "Moro em Lisboa.",
+      "ar": "أسكن في لشبونة.",
+      "say": "مورو إين ليچبوا",
+      "speaker": "yassin"
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.s4_rita_price",
+      "tl": "São doze euros.",
+      "ar": "الحساب اثنا عشر يورو.",
+      "say": "ساون دوز إيوروش",
+      "speaker": "rita"
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.s4_yassin_repeat",
+      "tl": "Não percebo. Pode repetir?",
+      "ar": "لا أفهم. هل يمكنك أن تعيدي؟",
+      "say": "ناو پرسيبو. پود غِپِتير",
+      "speaker": "yassin"
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.s4_rita_repeat",
+      "tl": "Doze euros.",
+      "ar": "اثنا عشر يورو.",
+      "say": "دوز إيوروش",
+      "speaker": "rita"
+    }
+  ],
+  "page": {
+    "id": "p1",
+    "preset": "story",
+    "mode": "guided",
+    "tool_id": "story_week1",
+    "pill": "قصة الأسبوع",
+    "title": [
+      {
+        "text": "O Primeiro Dia",
+        "lang": "tl"
+      }
+    ],
+    "subtitle": [
+      {
+        "text": "أول يوم لياسين في لشبونة",
+        "lang": "eg"
+      }
+    ],
+    "cover": "tl",
+    "library": true,
+    "blocks": [
+      {
+        "id": "b1",
+        "type": "panel",
+        "image": "story.d07.p1",
+        "lines": [
+          "sentence.s1_manuel_bomdia",
+          "sentence.s1_yassin_cafe"
+        ]
+      },
+      {
+        "id": "b2",
+        "type": "panel",
+        "image": "story.d07.p2",
+        "lines": [
+          "sentence.s2_manuel_euro",
+          "sentence.s2_yassin_thanks"
+        ]
+      },
+      {
+        "id": "b3",
+        "type": "panel",
+        "image": "story.d07.p3",
+        "lines": [
+          "sentence.s3_ines_hello",
+          "sentence.s3_yassin_prazer",
+          "sentence.s3_yassin_moro"
+        ]
+      },
+      {
+        "id": "b4",
+        "type": "panel",
+        "image": "story.d07.p4",
+        "lines": [
+          "sentence.s4_rita_price",
+          "sentence.s4_yassin_repeat",
+          "sentence.s4_rita_repeat"
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "target": "b1",
+        "kind": "reveal",
+        "chapter": "الصبح",
+        "tip": [
+          {
+            "text": "أول يوم لياسين. داخل كافيه مانويل.",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b1/item:0",
+        "kind": "reveal",
+        "chapter": "الصبح",
+        "tip": [
+          {
+            "text": "مانويل بيصبّح عليه.",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b1/item:1",
+        "kind": "reveal",
+        "chapter": "الصبح",
+        "tip": [
+          {
+            "text": "ياسين بيطلب بالقالب: ",
+            "lang": "eg"
+          },
+          {
+            "text": "Queria",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": " + حاجة.",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b2",
+        "kind": "ask",
+        "chapter": "الصبح",
+        "ask": {
+          "question": [
+            {
+              "text": "ياسين دفع. يقول إيه وهو ماشي؟",
+              "lang": "eg"
+            }
+          ],
+          "options": [
+            {
+              "label": [
+                {
+                  "text": "Obrigado. Bom dia!",
+                  "lang": "tl"
+                }
+              ],
+              "correct": true
+            },
+            {
+              "label": [
+                {
+                  "text": "Muito prazer.",
+                  "lang": "tl"
+                }
+              ],
+              "correct": false
+            }
+          ],
+          "why": [
+            {
+              "text": "صح! بنشكر ونصبّح وإحنا ماشيين.",
+              "lang": "eg"
+            }
+          ],
+          "hint": [
+            {
+              "text": "Muito prazer",
+              "lang": "tl"
+            },
+            {
+              "text": " للتعارف.",
+              "lang": "eg"
+            }
+          ]
+        }
+      },
+      {
+        "target": "b2/item:0",
+        "kind": "reveal",
+        "chapter": "الصبح",
+        "tip": [
+          {
+            "text": "É um euro",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": ": الحساب يورو.",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b2/item:1",
+        "kind": "reveal",
+        "chapter": "الصبح",
+        "tip": [
+          {
+            "text": "وبيمشي بـ ",
+            "lang": "eg"
+          },
+          {
+            "text": "Bom dia",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": "، ودي عادة هنا.",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b3",
+        "kind": "reveal",
+        "chapter": "الشغل",
+        "tip": [
+          {
+            "text": "في الشغل، إنِس بتعرّف نفسها.",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b3/item:1",
+        "kind": "ask",
+        "chapter": "الشغل",
+        "ask": {
+          "question": [
+            {
+              "text": "إنِس قالت ",
+              "lang": "eg"
+            },
+            {
+              "text": "Chamo-me Inês.",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": " ياسين يرد يقول إيه؟",
+              "lang": "eg"
+            }
+          ],
+          "options": [
+            {
+              "label": [
+                {
+                  "text": "Muito prazer. Chamo-me Yassin.",
+                  "lang": "tl"
+                }
+              ],
+              "correct": true
+            },
+            {
+              "label": [
+                {
+                  "text": "Queria um café.",
+                  "lang": "tl"
+                }
+              ],
+              "correct": false
+            }
+          ],
+          "why": [
+            {
+              "text": "صح! تشرفنا، وبعدين اسمك.",
+              "lang": "eg"
+            }
+          ],
+          "hint": [
+            {
+              "text": "ده تعارف، مش طلب.",
+              "lang": "eg"
+            }
+          ]
+        }
+      },
+      {
+        "target": "b3/item:2",
+        "kind": "reveal",
+        "chapter": "الشغل",
+        "tip": [
+          {
+            "text": "Moro",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": ": من أفعال -ar، ",
+            "lang": "eg"
+          },
+          {
+            "text": "eu",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": " آخرها -o.",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b4",
+        "kind": "reveal",
+        "chapter": "السوبرماركت",
+        "tip": [
+          {
+            "text": "آخر اليوم في السوبر ماركت مع ريتا.",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b4/item:0",
+        "kind": "reveal",
+        "chapter": "السوبرماركت",
+        "tip": [
+          {
+            "text": "São doze euros",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": ": الحساب ١٢ يورو.",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b4/item:1",
+        "kind": "ask",
+        "chapter": "السوبرماركت",
+        "ask": {
+          "question": [
+            {
+              "text": "مسمعتش كويس. تقول إيه؟",
+              "lang": "eg"
+            }
+          ],
+          "options": [
+            {
+              "label": [
+                {
+                  "text": "Não percebo. Pode repetir?",
+                  "lang": "tl"
+                }
+              ],
+              "correct": true
+            },
+            {
+              "label": [
+                {
+                  "text": "Obrigado. Bom dia!",
+                  "lang": "tl"
+                }
+              ],
+              "correct": false
+            }
+          ],
+          "why": [
+            {
+              "text": "Pode repetir?",
+              "lang": "tl"
+            },
+            {
+              "text": " = ممكن تعيدي؟",
+              "lang": "eg"
+            }
+          ],
+          "hint": [
+            {
+              "text": "عايزها تقول تاني.",
+              "lang": "eg"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "questions": []
+}

@@ -1,0 +1,703 @@
+{
+  "preset": "pattern",
+  "mode": "guided",
+  "source_day": 2,
+  "title_tl": "Conversação Básica",
+  "situation_eg": "في الكافيه",
+  "note": "Step targets b1/item:i point to the formula's examples in order.",
+  "items": [
+    {
+      "type": "pattern",
+      "id": "pattern.queria_x",
+      "slots": [
+        {
+          "tl": "Queria"
+        },
+        {
+          "name_eg": "أداة",
+          "kind": "article_um_uma"
+        },
+        {
+          "name_eg": "الحاجة",
+          "kind": "word",
+          "fills": ["word.coffee", "word.water", "word.pastel_de_nata"]
+        },
+        {
+          "tl": ", por favor."
+        }
+      ],
+      "examples": [
+        "pattern.queria_x.ex.1",
+        "pattern.queria_x.ex.2",
+        "pattern.queria_x.ex.3"
+      ]
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.want_coffee",
+      "tl": "Queria um café, por favor.",
+      "ar": "أريد قهوة، من فضلك.",
+      "say": "كِريا أون كافيه، پور فاڤور",
+      "media": {
+        "icon": "coffee"
+      },
+      "context_eg": "وانت بتطلب من الكاونتر",
+      "cloze": "Queria",
+      "marks": [
+        {
+          "text": "Queria",
+          "group": "verb"
+        }
+      ]
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.want_water",
+      "tl": "Queria uma água, por favor.",
+      "ar": "أريد ماءً، من فضلك.",
+      "say": "كِريا أوما آجوا، پور فاڤور",
+      "media": {
+        "icon": "water"
+      },
+      "context_eg": "لما تكون عطشان في أي مطعم",
+      "cloze": "água",
+      "marks": [
+        {
+          "text": "Queria",
+          "group": "verb"
+        }
+      ]
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.want_pastel",
+      "tl": "Queria um pastel de nata.",
+      "ar": "أريد فطيرة كريمة.",
+      "say": "كِريا أون پاشتيل د ناتا",
+      "media": {
+        "icon": "food"
+      },
+      "context_eg": "أشهر حلو في لشبونة، مع القهوة",
+      "cloze": "pastel",
+      "marks": [
+        {
+          "text": "Queria",
+          "group": "verb"
+        }
+      ]
+    },
+    {
+      "type": "word",
+      "id": "word.coffee",
+      "tl": "o café",
+      "lemma": "café",
+      "gender": "m",
+      "ar": "القهوة",
+      "say": "أو كافيه",
+      "pos": "noun",
+      "media": {
+        "image": "drink.coffee"
+      }
+    },
+    {
+      "type": "word",
+      "id": "word.water",
+      "tl": "a água",
+      "lemma": "água",
+      "gender": "f",
+      "ar": "الماء",
+      "say": "أ آجوا",
+      "pos": "noun",
+      "media": {
+        "image": "drink.water"
+      }
+    },
+    {
+      "type": "word",
+      "id": "word.pastel_de_nata",
+      "tl": "o pastel de nata",
+      "lemma": "pastel de nata",
+      "gender": "m",
+      "ar": "فطيرة الكريمة البرتغالية",
+      "say": "أو پاشتيل د ناتا",
+      "pos": "noun",
+      "media": {
+        "image": "food.pastel_de_nata"
+      }
+    }
+  ],
+  "page": {
+    "id": "p1",
+    "preset": "pattern",
+    "mode": "guided",
+    "tool_id": "queria_x",
+    "pill": "القالب",
+    "title": [
+      {
+        "text": "Queria",
+        "lang": "tl",
+        "group": "verb"
+      },
+      {
+        "text": " + ",
+        "lang": "tl"
+      },
+      {
+        "text": "حاجة",
+        "lang": "eg"
+      }
+    ],
+    "subtitle": [
+      {
+        "text": "قالب واحد تطلب بيه أي حاجة بأدب",
+        "lang": "eg"
+      }
+    ],
+    "cover": "tl",
+    "library": true,
+    "blocks": [
+      {
+        "id": "b1",
+        "type": "formula",
+        "pattern": "pattern.queria_x",
+        "examples": [
+          "phrase.want_coffee",
+          "phrase.want_water",
+          "phrase.want_pastel"
+        ]
+      },
+      {
+        "id": "b2",
+        "type": "examples",
+        "items": [
+          {
+            "ref": "word.coffee",
+            "media": {
+              "image": "drink.coffee"
+            },
+            "group": "m"
+          },
+          {
+            "ref": "word.water",
+            "media": {
+              "image": "drink.water"
+            },
+            "group": "f"
+          },
+          {
+            "ref": "word.pastel_de_nata",
+            "media": {
+              "image": "food.pastel_de_nata"
+            },
+            "group": "m"
+          }
+        ]
+      },
+      {
+        "id": "b3",
+        "type": "practice",
+        "questions": [
+          "q.p.pat.1"
+        ]
+      },
+      {
+        "id": "b4",
+        "type": "tip",
+        "kind": "culture",
+        "title": [
+          {
+            "text": "ليه Queria؟",
+            "lang": "eg"
+          }
+        ],
+        "body": [
+          {
+            "text": "Queria",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": " معناها «كنت عايز»، بس البرتغاليين بيطلبوا بيها عشان أأدب. ",
+            "lang": "eg"
+          },
+          {
+            "text": "Quero",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": " أنشف شوية.",
+            "lang": "eg"
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "target": "b1",
+        "kind": "reveal",
+        "chapter": "القالب",
+        "tip": [
+          {
+            "text": "قالب واحد، وتغيّر الحاجة بس.",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b1/item:0",
+        "kind": "reveal",
+        "chapter": "القالب",
+        "tip": [
+          {
+            "text": "Queria",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": " + ",
+            "lang": "eg"
+          },
+          {
+            "text": "um café",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": " + ",
+            "lang": "eg"
+          },
+          {
+            "text": "por favor",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": ".",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b1/item:1",
+        "kind": "reveal",
+        "chapter": "القالب",
+        "tip": [
+          {
+            "text": "نفس القالب، والحاجة بقت ",
+            "lang": "eg"
+          },
+          {
+            "text": "uma água",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": ".",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b1/item:2",
+        "kind": "ask",
+        "chapter": "القالب",
+        "ask": {
+          "question": [
+            {
+              "text": "Queria ___ pastel de nata.",
+              "lang": "tl",
+              "bold": true
+            }
+          ],
+          "options": [
+            {
+              "label": [
+                {
+                  "text": "um",
+                  "lang": "tl"
+                }
+              ],
+              "correct": true
+            },
+            {
+              "label": [
+                {
+                  "text": "uma",
+                  "lang": "tl"
+                }
+              ],
+              "correct": false
+            }
+          ],
+          "why": [
+            {
+              "text": "صح! ",
+              "lang": "eg"
+            },
+            {
+              "text": "o pastel",
+              "lang": "tl"
+            },
+            {
+              "text": " مذكر، فبنقول ",
+              "lang": "eg"
+            },
+            {
+              "text": "um",
+              "lang": "tl"
+            },
+            {
+              "text": ".",
+              "lang": "eg"
+            }
+          ],
+          "hint": [
+            {
+              "text": "o pastel",
+              "lang": "tl"
+            },
+            {
+              "text": " ولا ",
+              "lang": "eg"
+            },
+            {
+              "text": "a pastel",
+              "lang": "tl"
+            },
+            {
+              "text": "؟",
+              "lang": "eg"
+            }
+          ]
+        }
+      },
+      {
+        "target": "b2",
+        "kind": "reveal",
+        "chapter": "الحاجات",
+        "tip": [
+          {
+            "text": "حاجات تطلبها في الكافيه.",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b2/item:0",
+        "kind": "reveal",
+        "chapter": "الحاجات",
+        "tip": [
+          {
+            "text": "o café",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": " ← ",
+            "lang": "eg"
+          },
+          {
+            "text": "um café",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": ".",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b2/item:1",
+        "kind": "reveal",
+        "chapter": "الحاجات",
+        "tip": [
+          {
+            "text": "a água",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": " ← ",
+            "lang": "eg"
+          },
+          {
+            "text": "uma água",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": ".",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b2/item:2",
+        "kind": "ask",
+        "chapter": "الحاجات",
+        "ask": {
+          "question": [
+            {
+              "text": "عايز فطيرة. تقول إيه؟",
+              "lang": "eg"
+            }
+          ],
+          "options": [
+            {
+              "label": [
+                {
+                  "text": "Queria um pastel de nata.",
+                  "lang": "tl"
+                }
+              ],
+              "correct": true
+            },
+            {
+              "label": [
+                {
+                  "text": "Um pastel de nata queria.",
+                  "lang": "tl"
+                }
+              ],
+              "correct": false
+            }
+          ],
+          "why": [
+            {
+              "text": "صح! ",
+              "lang": "eg"
+            },
+            {
+              "text": "Queria",
+              "lang": "tl"
+            },
+            {
+              "text": " الأول، وبعدين الحاجة.",
+              "lang": "eg"
+            }
+          ],
+          "hint": [
+            {
+              "text": "ابدأ بـ ",
+              "lang": "eg"
+            },
+            {
+              "text": "Queria",
+              "lang": "tl"
+            },
+            {
+              "text": ".",
+              "lang": "eg"
+            }
+          ]
+        }
+      },
+      {
+        "target": "b4",
+        "kind": "reveal",
+        "chapter": "الأدب",
+        "tip": [
+          {
+            "text": "Queria",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": " أأدب من ",
+            "lang": "eg"
+          },
+          {
+            "text": "Quero",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": ".",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b3",
+        "kind": "reveal",
+        "chapter": "اتمرن",
+        "tip": [
+          {
+            "text": "اسمع وجرّب بنفسك.",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b1",
+        "kind": "reveal",
+        "chapter": "اتمرن",
+        "tip": [
+          {
+            "text": "خلي القالب في دماغك: ",
+            "lang": "eg"
+          },
+          {
+            "text": "Queria",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": " + حاجة + ",
+            "lang": "eg"
+          },
+          {
+            "text": "por favor",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": ".",
+            "lang": "eg"
+          }
+        ]
+      },
+      {
+        "target": "b3",
+        "kind": "ask",
+        "chapter": "اتمرن",
+        "ask": {
+          "question": [
+            {
+              "text": "Queria ___ água, por favor.",
+              "lang": "tl",
+              "bold": true
+            }
+          ],
+          "options": [
+            {
+              "label": [
+                {
+                  "text": "uma",
+                  "lang": "tl"
+                }
+              ],
+              "correct": true
+            },
+            {
+              "label": [
+                {
+                  "text": "um",
+                  "lang": "tl"
+                }
+              ],
+              "correct": false
+            }
+          ],
+          "why": [
+            {
+              "text": "صح! ",
+              "lang": "eg"
+            },
+            {
+              "text": "a água",
+              "lang": "tl"
+            },
+            {
+              "text": " مؤنث، فبنقول ",
+              "lang": "eg"
+            },
+            {
+              "text": "uma",
+              "lang": "tl"
+            },
+            {
+              "text": ".",
+              "lang": "eg"
+            }
+          ],
+          "hint": [
+            {
+              "text": "a água",
+              "lang": "tl"
+            },
+            {
+              "text": ".",
+              "lang": "eg"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "questions": [
+    {
+      "id": "q.p.pat.1",
+      "type": "listen_meaning",
+      "skill": "listening",
+      "tests": [
+        "phrase.want_water"
+      ],
+      "tool_id": "queria_x",
+      "prompt": {
+        "audio_ref": "phrase.want_water"
+      },
+      "options": [
+        [
+          {
+            "text": "أريد ماءً، من فضلك.",
+            "lang": "ar"
+          }
+        ],
+        [
+          {
+            "text": "أريد قهوة، من فضلك.",
+            "lang": "ar"
+          }
+        ],
+        [
+          {
+            "text": "كم الحساب؟",
+            "lang": "ar"
+          }
+        ]
+      ],
+      "answer": 0,
+      "feedback_eg": [
+        {
+          "text": "تمام! ",
+          "lang": "eg"
+        },
+        {
+          "text": "água",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": " = ميه.",
+          "lang": "eg"
+        }
+      ],
+      "why_wrong_eg": [
+        null,
+        [
+          {
+            "text": "قهوة = ",
+            "lang": "eg"
+          },
+          {
+            "text": "café",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "كم الحساب = ",
+            "lang": "eg"
+          },
+          {
+            "text": "Quanto é?",
+            "lang": "tl"
+          }
+        ]
+      ]
+    }
+  ]
+}

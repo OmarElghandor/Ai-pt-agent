@@ -142,7 +142,7 @@ export function useGuidedPlayback({
 
   function answer(optionIndex: number) {
     const step = stepsRef.current[index];
-    if (!step?.ask || phase !== 'ask') return;
+    if (!step || step.kind !== 'ask' || phase !== 'ask') return;
     const option = step.ask.options[optionIndex];
     if (!option) return;
     onAnsweredRef.current?.(index, optionIndex);

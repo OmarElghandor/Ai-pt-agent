@@ -24,6 +24,8 @@ export const FIXTURE_ITEMS: Item[] = [
     id: 'phrase.bom-dia',
     tl: 'Bom dia.',
     ar: 'صباح الخير.',
+    context_eg: 'أول ما تشوف حد الصبح.',
+    cloze: 'dia',
   },
   {
     type: 'word',
@@ -40,7 +42,8 @@ export const FIXTURE_ITEMS: Item[] = [
   {
     type: 'pattern',
     id: 'pattern.queria',
-    slots: [{ tl: 'Queria' }, { name_eg: 'حاجة', group: 'verb' }],
+    slots: [{ tl: 'Queria' }, { name_eg: 'حاجة', group: 'verb', kind: 'word' }],
+    examples: ['sentence.queria-cafe'],
   },
   {
     type: 'sentence',
@@ -140,7 +143,14 @@ export const FIXTURE_BLOCKS: { label: string; block: Block }[] = [
   },
   {
     label: 'dialogue',
-    block: { id: 'dlg1', type: 'dialogue', lines: ['sentence.ola', 'sentence.tchau'] },
+    block: {
+      id: 'dlg1',
+      type: 'dialogue',
+      lines: [
+        { speaker: 'Inês', tl: 'Olá.', ar: 'أهلاً.', ids: ['sentence.ola'] },
+        { speaker: 'Inês', tl: 'Tchau.', ar: 'باي.', ids: ['sentence.tchau'] },
+      ],
+    },
   },
   {
     label: 'scene',

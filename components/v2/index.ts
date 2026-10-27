@@ -6,6 +6,7 @@ export { ExampleRow } from './ExampleRow';
 export { Panel } from './Panel';
 export { PrimaryButton } from './PrimaryButton';
 export { ProgressDots } from './ProgressDots';
+export { ReportErrorButton } from './ReportErrorButton';
 export { RichText } from './RichText';
 export { RuleRow } from './RuleRow';
 export { SecondaryButton } from './SecondaryButton';

@@ -18,7 +18,24 @@ export type ValidateOptions = {
   mode?: 'normal' | 'strict';
   conjugations?: ConjugationLookup;
   seed?: SeedFile;
+  /** Required core item ids (non-verb + verb stubs) that must appear in the bank. */
+  coreIds?: string[];
+  /**
+   * Closed set for page/question refs: core ∪ recycle ∪ KNOWN.
+   * When set, a non-form ref outside this set is an error even if it is in the bank.
+   */
+  allowedIds?: Iterable<string>;
 };
+
+/** Conjugated form id: verb.lemma:tense:person */
+export function isVerbFormId(ref: string): boolean {
+  return /^verb\.[^:]+:[^:]+:[^:]+$/i.test(ref);
+}
+
+/** Lemma card id: verb.falar (no colons). */
+export function isVerbLemmaId(ref: string): boolean {
+  return /^verb\.[a-z_]+$/i.test(ref) && !ref.includes(':');
+}
 
 export type ValidateResult = {
   issues: Issue[];
@@ -95,7 +112,8 @@ function formLookup(
   return (id) => hasForm(id, seed);
 }
 
-function collectRefsFromBlock(block: Block, refs: string[]): void {
+/** Collect item/form refs from a block (exported for staged page validation). */
+export function collectRefsFromBlock(block: Block, refs: string[]): void {
   switch (block.type) {
     case 'cards':
       refs.push(...block.items);
@@ -127,6 +145,12 @@ function collectRefsFromBlock(block: Block, refs: string[]): void {
       for (const it of block.items) refs.push(it.ref);
       break;
     case 'dialogue':
+      for (const line of block.lines) {
+        if (line && typeof line === 'object' && Array.isArray(line.ids)) {
+          refs.push(...line.ids);
+        }
+      }
+      break;
     case 'panel':
       refs.push(...block.lines);
       break;
@@ -221,12 +245,28 @@ function resolveTarget(
         if (parsed.index < 0 || parsed.index >= block.hotspots.length) {
           issues.push(issue(path, 'bad_target', `item out of range: ${target}`));
         }
+      } else if (block.type === 'formula') {
+        const examples = block.examples ?? [];
+        if (parsed.index < 0 || parsed.index >= examples.length) {
+          issues.push(
+            issue(path, 'bad_target', `item out of range on formula examples: ${target}`),
+          );
+        }
+      } else if (block.type === 'panel' || block.type === 'dialogue') {
+        if (parsed.index < 0 || parsed.index >= block.lines.length) {
+          issues.push(
+            issue(path, 'bad_target', `item out of range on ${block.type} lines: ${target}`),
+          );
+        }
       } else {
         issues.push(issue(path, 'bad_target', `item target unsupported on ${block.type}`));
       }
       return;
   }
 }
+
+/** Exported for unit tests / future renderer. */
+export { parseTarget, resolveTarget };
 
 function checkBlockLimits(block: Block, path: string, issues: Issue[]): void {
   switch (block.type) {
@@ -320,8 +360,8 @@ function checkBlockLimits(block: Block, path: string, issues: Issue[]): void {
       }
       break;
     case 'formula':
-      if ((block.examples?.length ?? 0) > 3) {
-        issues.push(issue(path, 'block_limit', 'formula ≤ 3 examples'));
+      if ((block.examples?.length ?? 0) > 4) {
+        issues.push(issue(path, 'block_limit', 'formula ≤ 4 examples'));
       }
       break;
     default:
@@ -392,6 +432,35 @@ function checkGuidedSteps(page: Page, path: string, issues: Issue[]): void {
   }
 }
 
+function checkAllowedRef(
+  ref: string,
+  path: string,
+  itemIds: Set<string>,
+  lookup: ConjugationLookup,
+  allowed: Set<string> | null,
+  issues: Issue[],
+): void {
+  if (isVerbFormId(ref)) {
+    if (!lookup(ref)) {
+      issues.push(issue(path, 'bad_form_id', `unknown form id ${ref}`));
+    }
+    return;
+  }
+  if (allowed && !allowed.has(ref)) {
+    issues.push(
+      issue(
+        path,
+        'ref_not_in_core_recycle_known',
+        `ref ${ref} not in core ∪ recycle ∪ KNOWN`,
+      ),
+    );
+    return;
+  }
+  if (!itemIds.has(ref)) {
+    issues.push(issue(path, 'unknown_item_ref', `unknown item ref ${ref}`));
+  }
+}
+
 export function validateLessonPack(
   pack: LessonPack,
   opts: ValidateOptions = {},
@@ -399,6 +468,11 @@ export function validateLessonPack(
   const mode = opts.mode ?? 'normal';
   const issues: Issue[] = [];
   const lookup = formLookup(opts);
+  const allowed = opts.allowedIds
+    ? new Set(
+        [...opts.allowedIds].filter((id) => typeof id === 'string' && id.length),
+      )
+    : null;
 
   walkStrings('lesson', pack.lesson, issues, false);
 
@@ -409,6 +483,65 @@ export function validateLessonPack(
     }
     itemIds.add(item.id);
     walkStrings(`items[${i}]`, item, issues, false);
+  }
+
+  if (opts.coreIds?.length) {
+    for (const id of opts.coreIds) {
+      if (!itemIds.has(id)) {
+        issues.push(
+          issue('items', 'core_id_missing', `core id ${id} missing from draft`),
+        );
+      }
+    }
+  }
+
+  for (const [i, item] of pack.items.entries()) {
+    if (item.type !== 'pattern') continue;
+    const path = `items[${i}]`;
+    for (const [si, slot] of item.slots.entries()) {
+      if ('fills' in slot && Array.isArray(slot.fills)) {
+        for (const fid of slot.fills) {
+          if (!itemIds.has(fid) && !lookup(fid)) {
+            issues.push(
+              issue(
+                `${path}.slots[${si}].fills`,
+                'unknown_item_ref',
+                `pattern fill "${fid}" not in item bank`,
+              ),
+            );
+          }
+        }
+      }
+    }
+    for (const [ei, ex] of (item.examples ?? []).entries()) {
+      if (!itemIds.has(ex)) {
+        issues.push(
+          issue(
+            `${path}.examples[${ei}]`,
+            'unknown_item_ref',
+            `pattern example "${ex}" not in item bank`,
+          ),
+        );
+      }
+    }
+    const literals = item.slots
+      .filter((s): s is { tl: string } => 'tl' in s)
+      .map((s) => s.tl);
+    const firstEx = item.examples?.[0];
+    const exItem = firstEx
+      ? pack.items.find((it) => it.id === firstEx)
+      : undefined;
+    const exTl =
+      exItem && 'tl' in exItem && typeof exItem.tl === 'string' ? exItem.tl : '';
+    if (!literals.length && !exTl) {
+      issues.push(
+        issue(
+          path,
+          'pattern_tl_missing',
+          'pattern digest needs literal slot tl or a resolvable example tl',
+        ),
+      );
+    }
   }
 
   const questionIds = new Set(pack.questions.map((q) => q.id));
@@ -456,15 +589,14 @@ export function validateLessonPack(
       const refs: string[] = [];
       collectRefsFromBlock(block, refs);
       for (const ref of refs) {
-        if (ref.startsWith('verb.')) {
-          if (!lookup(ref)) {
-            issues.push(
-              issue(`${base}.blocks[${bi}]`, 'bad_form_id', `unknown form id ${ref}`),
-            );
-          }
-        } else if (!itemIds.has(ref)) {
-          issues.push(issue(`${base}.blocks[${bi}]`, 'bad_ref', `unknown item ref ${ref}`));
-        }
+        checkAllowedRef(
+          ref,
+          `${base}.blocks[${bi}]`,
+          itemIds,
+          lookup,
+          allowed,
+          issues,
+        );
       }
 
       if (block.type === 'practice') {
@@ -526,12 +658,21 @@ export function validateLessonPack(
   // can_do proves refs
   for (const [i, cd] of (pack.lesson.can_do ?? []).entries()) {
     for (const ref of cd.proves ?? []) {
-      if (ref.startsWith('verb.')) {
+      if (isVerbFormId(ref)) {
         if (!lookup(ref)) {
-          issues.push(issue(`lesson.can_do[${i}]`, 'bad_form_id', `unknown form id ${ref}`));
+          issues.push(
+            issue(`lesson.can_do[${i}]`, 'bad_form_id', `unknown form id ${ref}`),
+          );
         }
-      } else if (!itemIds.has(ref)) {
-        issues.push(issue(`lesson.can_do[${i}]`, 'bad_ref', `unknown item ref ${ref}`));
+      } else {
+        checkAllowedRef(
+          ref,
+          `lesson.can_do[${i}]`,
+          itemIds,
+          lookup,
+          allowed,
+          issues,
+        );
       }
     }
   }
@@ -539,15 +680,153 @@ export function validateLessonPack(
   // question tests may include form ids
   for (const [qi, q] of pack.questions.entries()) {
     for (const ref of q.tests ?? []) {
-      if (ref.startsWith('verb.')) {
-        if (!lookup(ref)) {
-          issues.push(issue(`questions[${qi}].tests`, 'bad_form_id', `unknown form id ${ref}`));
+      checkAllowedRef(
+        ref,
+        `questions[${qi}].tests`,
+        itemIds,
+        lookup,
+        allowed,
+        issues,
+      );
+    }
+    const audioRef = (q as { prompt?: { audio_ref?: string } }).prompt
+      ?.audio_ref;
+    if (audioRef) {
+      checkAllowedRef(
+        audioRef,
+        `questions[${qi}].prompt.audio_ref`,
+        itemIds,
+        lookup,
+        allowed,
+        issues,
+      );
+    }
+  }
+
+  checkIntroductionOrder(pack, issues);
+
+  // Panel lines that are sentence items need speaker; dialogue lines carry speaker.
+  for (const [pi, page] of pack.pages.entries()) {
+    for (const [bi, block] of page.blocks.entries()) {
+      if (block.type === 'panel') {
+        for (const [li, lineId] of block.lines.entries()) {
+          const item = pack.items.find((it) => it.id === lineId);
+          if (item?.type === 'sentence' && !item.speaker) {
+            issues.push(
+              issue(
+                `pages[${pi}].blocks[${bi}].lines[${li}]`,
+                'sentence_speaker_required',
+                `sentence ${lineId} used in panel needs speaker`,
+              ),
+            );
+          }
         }
-      } else if (!itemIds.has(ref)) {
-        issues.push(issue(`questions[${qi}].tests`, 'bad_ref', `unknown item ref ${ref}`));
+      }
+      if (block.type === 'dialogue') {
+        for (const [li, line] of block.lines.entries()) {
+          if (!line.speaker?.trim()) {
+            issues.push(
+              issue(
+                `pages[${pi}].blocks[${bi}].lines[${li}].speaker`,
+                'dialogue_speaker_required',
+                'dialogue line needs speaker',
+              ),
+            );
+          }
+          if (!line.ids?.length) {
+            issues.push(
+              issue(
+                `pages[${pi}].blocks[${bi}].lines[${li}].ids`,
+                'dialogue_ids_required',
+                'dialogue line needs ids[]',
+              ),
+            );
+          }
+        }
       }
     }
   }
 
   return { issues };
+}
+
+/**
+ * Continuity contract: a page must not reference an item before the page that
+ * introduces it; every item with introduced_on_page N must appear on page N;
+ * questions may only test items introduced up to their page_index.
+ */
+export function checkIntroductionOrder(pack: LessonPack, issues: Issue[]): void {
+  const introById = new Map<string, number>();
+  for (const item of pack.items) {
+    if (typeof item.introduced_on_page === 'number') {
+      introById.set(item.id, item.introduced_on_page);
+    }
+  }
+  if (introById.size === 0) return;
+
+  const pageIndexById = new Map<string, number>();
+  for (const [pi, page] of pack.pages.entries()) {
+    pageIndexById.set(page.id, pi);
+  }
+
+  for (const [pi, page] of pack.pages.entries()) {
+    const refs: string[] = [];
+    for (const block of page.blocks) {
+      collectRefsFromBlock(block, refs);
+    }
+    const seenOnPage = new Set(refs.filter((r) => !isVerbFormId(r)));
+
+    for (const ref of seenOnPage) {
+      const intro = introById.get(ref);
+      if (intro != null && pi < intro) {
+        issues.push(
+          issue(
+            `pages[${pi}]`,
+            'item_before_intro',
+            `page references ${ref} before it is introduced on page ${intro}`,
+          ),
+        );
+      }
+    }
+
+    for (const [itemId, introPage] of introById) {
+      if (introPage !== pi) continue;
+      if (!seenOnPage.has(itemId)) {
+        issues.push(
+          issue(
+            `pages[${pi}]`,
+            'intro_missing_on_page',
+            `item ${itemId} is introduced_on_page ${pi} but does not appear on that page`,
+          ),
+        );
+      }
+    }
+  }
+
+  for (const [qi, q] of pack.questions.entries()) {
+    const pageIndex = q.page_index;
+    if (typeof pageIndex !== 'number') continue;
+    for (const ref of q.tests ?? []) {
+      if (isVerbFormId(ref)) continue;
+      const intro = introById.get(ref);
+      if (intro != null && intro > pageIndex) {
+        issues.push(
+          issue(
+            `questions[${qi}].tests`,
+            'question_before_intro',
+            `question on page ${pageIndex} tests ${ref} introduced on page ${intro}`,
+          ),
+        );
+      }
+    }
+  }
+}
+
+/** Collect non-form item refs used on a single page (includes verb lemma cards). */
+export function collectPageItemRefs(page: Page): string[] {
+  const refs: string[] = [];
+  for (const block of page.blocks) {
+    collectRefsFromBlock(block, refs);
+  }
+  return [...new Set(refs.filter((r) => !isVerbFormId(r)))];
 }

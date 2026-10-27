@@ -180,10 +180,11 @@ export function PagePlayer({ day, page, items, questions, forms, embedded = fals
   };
 
   const tip = captionTip(page, guided.phase, guided.playing, guided.index, activeChoice);
-  const askStep =
+  const currentStep =
     page.mode === 'guided' && guided.playing && (guided.phase === 'ask' || guided.phase === 'why')
       ? steps[guided.index]
       : undefined;
+  const ask = currentStep?.kind === 'ask' ? currentStep.ask : undefined;
   const titleTl = page.title
     .filter((seg) => seg.lang === 'tl')
     .map((seg) => seg.text)
@@ -310,10 +311,10 @@ export function PagePlayer({ day, page, items, questions, forms, embedded = fals
       {scroller}
       <div className={embedded ? 'absolute inset-x-0 bottom-0 z-20' : 'pointer-events-none fixed inset-x-0 bottom-0 z-20 flex justify-center'}>
         <div ref={dockRef} className={embedded ? 'px-3 pb-3' : 'pointer-events-auto w-full max-w-[480px] px-3 pb-3'}>
-          {askStep?.ask ? (
+          {ask ? (
             <AskBubble
-              question={askStep.ask.question}
-              options={askStep.ask.options}
+              question={ask.question}
+              options={ask.options}
               hint={guided.hint}
               why={guided.why}
               shake={guided.shake}
@@ -441,7 +442,8 @@ function captionTip(
       ? [{ text: 'دوس ▶︎ نبدأ.', lang: 'eg' }]
       : [{ text: 'واقفين. دوس ▶︎ نكمّل.', lang: 'eg' }];
   }
-  return page.steps?.[index]?.tip ?? [{ text: 'سؤال سريع…', lang: 'eg' }];
+  const step = page.steps?.[index];
+  return (step?.kind === 'reveal' ? step.tip : undefined) ?? [{ text: 'سؤال سريع…', lang: 'eg' }];
 }
 
 function axisSpeech(

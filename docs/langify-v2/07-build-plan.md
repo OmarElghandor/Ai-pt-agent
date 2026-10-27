@@ -101,7 +101,7 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
 **Read:** 03 (sections: برومبت Claude الثابت, رسالة الطلب لكل يوم, التحقق الآلي, نظام الصور, قوالب برومبت الصور, الإعدادات والتكلفة), the PAGES block at the end of 02, and 04.
 
 **Tasks**
-- `content/v2/plan/pt-PT.days.json` built from the days 1–30 table in `04`.
+- `content/v2/plan/pt-PT.days.json` built from the days 1–30 table in `04` (grammar-first order; fields day, week, title_tl, title_ar, situation_eg, example_tl, rule_eg, extra_units_tl, early_chunks_tl, book_pages, is_story).
 - `lib/v2/generation/lesson`:
   1. Build the request (plan + `VERB_TABLE` + `PAGE_PLAN`).
   2. Call Claude with the system prompt from `03`, with PAGE STEPS replaced by PAGES. Gold lessons in `examples/` go into the prompt as examples.

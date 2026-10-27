@@ -1,0 +1,782 @@
+{
+  "lesson": {
+    "id": "pt-PT.d02",
+    "target_lang": "pt-PT",
+    "day": 2,
+    "phase": 1,
+    "week": 1,
+    "kind": "lesson",
+    "situation": {
+      "tl": "No café",
+      "eg": "في الكافيه"
+    },
+    "can_do": [
+      {
+        "eg": "تطلب قهوة بأدب",
+        "proves": [
+          "phrase.order_coffee"
+        ]
+      },
+      {
+        "eg": "تقول من فضلك",
+        "proves": [
+          "phrase.order_coffee"
+        ]
+      }
+    ],
+    "pages": [
+      "p1",
+      "p2",
+      "p3",
+      "p4"
+    ]
+  },
+  "items": [
+    {
+      "type": "word",
+      "id": "word.cafe",
+      "tl": "o café",
+      "lemma": "café",
+      "gender": "m",
+      "ar": "القهوة",
+      "say": "أو كافي",
+      "pos": "noun",
+      "media": {
+        "image": "food.coffee",
+        "image_spec": {
+          "type": "object",
+          "subject": "a cup of coffee"
+        }
+      }
+    },
+    {
+      "type": "word",
+      "id": "word.cha",
+      "tl": "o chá",
+      "lemma": "chá",
+      "gender": "m",
+      "ar": "الشاي",
+      "say": "أو شا",
+      "pos": "noun"
+    },
+    {
+      "type": "word",
+      "id": "word.agua",
+      "tl": "a água",
+      "lemma": "água",
+      "gender": "f",
+      "ar": "الماء",
+      "say": "أ آغوا",
+      "pos": "noun"
+    },
+    {
+      "type": "word",
+      "id": "word.pastel",
+      "tl": "o pastel",
+      "lemma": "pastel",
+      "gender": "m",
+      "ar": "المعجنات",
+      "say": "أو پاشتيل",
+      "pos": "noun"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.order_coffee",
+      "tl": "Queria um café, por favor.",
+      "ar": "أريد قهوة من فضلك.",
+      "say": "كيريَا أوم كافي پور فاڤور",
+      "marks": [
+        {
+          "text": "Queria",
+          "group": "verb"
+        }
+      ],
+      "media": {
+        "icon": "coffee"
+      },
+      "context_eg": "عند الكاونتر",
+      "cloze": "Queria"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.order_water",
+      "tl": "Queria uma água, por favor.",
+      "ar": "أريد ماء من فضلك.",
+      "say": "كيريَا أوما آغوا پور فاڤور",
+      "marks": [
+        {
+          "text": "Queria",
+          "group": "verb"
+        }
+      ],
+      "media": {
+        "icon": "water"
+      },
+      "context_eg": "لما تطلب مية",
+      "cloze": "água"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.with_milk",
+      "tl": "Com leite?",
+      "ar": "مع حليب؟",
+      "say": "كوم لايتي",
+      "marks": [
+        {
+          "text": "leite",
+          "group": "neutral"
+        }
+      ],
+      "media": {
+        "icon": "milk"
+      },
+      "context_eg": "البائع بيسألك",
+      "cloze": "leite"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.thanks",
+      "tl": "Obrigado!",
+      "ar": "شكرا!",
+      "say": "وبريغادو",
+      "marks": [
+        {
+          "text": "Obrigado",
+          "group": "neutral"
+        }
+      ],
+      "media": {
+        "icon": "heart"
+      },
+      "context_eg": "بعد ما تاخد الطلب",
+      "cloze": "Obrigado"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.the_bill",
+      "tl": "A conta, por favor.",
+      "ar": "الحساب من فضلك.",
+      "say": "أ كونتا پور فاڤور",
+      "marks": [
+        {
+          "text": "conta",
+          "group": "neutral"
+        }
+      ],
+      "media": {
+        "icon": "money"
+      },
+      "context_eg": "لما تخلص",
+      "cloze": "conta"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.only_this",
+      "tl": "Só isto, obrigado.",
+      "ar": "هذا فقط شكرا.",
+      "say": "سو إشتو وبريغادو",
+      "marks": [
+        {
+          "text": "Só isto",
+          "group": "neutral"
+        }
+      ],
+      "media": {
+        "icon": "check"
+      },
+      "context_eg": "لما يسألوا عايز حاجة تانية",
+      "cloze": "isto"
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.queria_pastel",
+      "tl": "Queria um pastel.",
+      "ar": "أريد معجنات.",
+      "say": "كيريَا أوم پاشتيل",
+      "marks": [
+        {
+          "text": "Queria",
+          "group": "verb"
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "id": "p1",
+      "preset": "dictionary",
+      "mode": "static",
+      "title": [
+        {
+          "text": "مشروبات الكافيه",
+          "lang": "eg"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "b1",
+          "type": "heading",
+          "text": [
+            {
+              "text": "مشروبات الكافيه",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "id": "b2",
+          "type": "cards",
+          "items": [
+            "word.cafe",
+            "word.cha",
+            "word.agua",
+            "word.pastel"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "preset": "phrases",
+      "mode": "guided",
+      "title": [
+        {
+          "text": "جمل الطلب",
+          "lang": "eg"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "b1",
+          "type": "heading",
+          "text": [
+            {
+              "text": "جمل الطلب",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "id": "b2",
+          "type": "cards",
+          "items": [
+            "phrase.order_coffee",
+            "phrase.order_water",
+            "phrase.with_milk",
+            "phrase.thanks"
+          ]
+        },
+        {
+          "id": "b3",
+          "type": "tip",
+          "kind": "rule",
+          "title": [
+            {
+              "text": "ملاحظة",
+              "lang": "eg"
+            }
+          ],
+          "body": [
+            {
+              "text": "ركز على القاعدة بتاعة النهاردة",
+              "lang": "eg"
+            }
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "target": "b1",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "شوف العنوان",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "الجمل أو الكلمات",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b3",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "الملاحظة",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "ask",
+          "ask": {
+            "question": [
+              {
+                "text": "إيه أول عنصر؟",
+                "lang": "eg"
+              }
+            ],
+            "options": [
+              {
+                "label": [
+                  {
+                    "text": "الصح",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": true
+              },
+              {
+                "label": [
+                  {
+                    "text": "الغلط",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": false
+              }
+            ]
+          }
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "كمل",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "كمل تاني",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "كمل تالت",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "ask",
+          "ask": {
+            "question": [
+              {
+                "text": "فاهم القاعدة؟",
+                "lang": "eg"
+              }
+            ],
+            "options": [
+              {
+                "label": [
+                  {
+                    "text": "أيوه",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": true
+              },
+              {
+                "label": [
+                  {
+                    "text": "لأ",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": false
+              }
+            ]
+          }
+        },
+        {
+          "target": "b3",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "راجع",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b1",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "راجع تاني",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "آخر نظرة",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "ask",
+          "ask": {
+            "question": [
+              {
+                "text": "جاهز؟",
+                "lang": "eg"
+              }
+            ],
+            "options": [
+              {
+                "label": [
+                  {
+                    "text": "أيوه",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": true
+              },
+              {
+                "label": [
+                  {
+                    "text": "لأ",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "preset": "pattern",
+      "mode": "guided",
+      "title": [
+        {
+          "text": "Queria + um/uma",
+          "lang": "eg"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "b1",
+          "type": "heading",
+          "text": [
+            {
+              "text": "Queria + um/uma",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "id": "b2",
+          "type": "cards",
+          "items": [
+            "phrase.order_coffee",
+            "sentence.queria_pastel",
+            "phrase.order_water"
+          ]
+        },
+        {
+          "id": "b3",
+          "type": "tip",
+          "kind": "rule",
+          "title": [
+            {
+              "text": "ملاحظة",
+              "lang": "eg"
+            }
+          ],
+          "body": [
+            {
+              "text": "ركز على القاعدة بتاعة النهاردة",
+              "lang": "eg"
+            }
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "target": "b1",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "شوف العنوان",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "الجمل أو الكلمات",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b3",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "الملاحظة",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "ask",
+          "ask": {
+            "question": [
+              {
+                "text": "إيه أول عنصر؟",
+                "lang": "eg"
+              }
+            ],
+            "options": [
+              {
+                "label": [
+                  {
+                    "text": "الصح",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": true
+              },
+              {
+                "label": [
+                  {
+                    "text": "الغلط",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": false
+              }
+            ]
+          }
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "كمل",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "كمل تاني",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "كمل تالت",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "ask",
+          "ask": {
+            "question": [
+              {
+                "text": "فاهم القاعدة؟",
+                "lang": "eg"
+              }
+            ],
+            "options": [
+              {
+                "label": [
+                  {
+                    "text": "أيوه",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": true
+              },
+              {
+                "label": [
+                  {
+                    "text": "لأ",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": false
+              }
+            ]
+          }
+        },
+        {
+          "target": "b3",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "راجع",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b1",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "راجع تاني",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "آخر نظرة",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "ask",
+          "ask": {
+            "question": [
+              {
+                "text": "جاهز؟",
+                "lang": "eg"
+              }
+            ],
+            "options": [
+              {
+                "label": [
+                  {
+                    "text": "أيوه",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": true
+              },
+              {
+                "label": [
+                  {
+                    "text": "لأ",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "preset": "phrases",
+      "mode": "static",
+      "title": [
+        {
+          "text": "تمرين الكافيه",
+          "lang": "eg"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "b1",
+          "type": "heading",
+          "text": [
+            {
+              "text": "تمرين الكافيه",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "id": "b2",
+          "type": "cards",
+          "items": [
+            "phrase.the_bill",
+            "phrase.only_this",
+            "phrase.thanks"
+          ]
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "type": "mcq",
+      "skill": "reading",
+      "tests": [
+        "phrase.order_coffee"
+      ],
+      "prompt": [
+        {
+          "text": "عشان تطلب قهوة بأدب تقول؟",
+          "lang": "eg"
+        }
+      ],
+      "options": [
+        {
+          "label": [
+            {
+              "text": "Queria um café, por favor.",
+              "lang": "tl"
+            }
+          ],
+          "correct": true
+        },
+        {
+          "label": [
+            {
+              "text": "Dá-me café.",
+              "lang": "tl"
+            }
+          ],
+          "correct": false
+        }
+      ]
+    }
+  ]
+}
