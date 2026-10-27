@@ -1,3 +1,6 @@
+import { RichText } from '@/components/v2/RichText';
+import type { RtSegment } from '@/lib/v2/rt';
+
 type Chapter = {
   id: string;
   label: string;
@@ -7,30 +10,35 @@ type Chapter = {
 };
 
 type Props = {
-  tipEg: string;
+  tipEg?: string;
+  /** Rich tip. Wins over tipEg when both are set. */
+  tip?: RtSegment[];
   chapters?: Chapter[];
   avatarSrc?: string;
   paused?: boolean;
   speedLabel?: string;
   onTogglePause?: () => void;
   onCycleSpeed?: () => void;
+  onChapterSelect?: (id: string) => void;
   className?: string;
 };
 
 export function CaptionBar({
   tipEg,
+  tip,
   chapters = [],
   avatarSrc,
   paused,
   speedLabel = '1×',
   onTogglePause,
   onCycleSpeed,
+  onChapterSelect,
   className,
 }: Props) {
   return (
     <div
       className={[
-        'border-t border-v2-ink/20 bg-v2-ink text-white',
+        'rounded-2xl border border-white/10 bg-v2-ink text-white shadow-lg',
         className,
       ]
         .filter(Boolean)
@@ -51,47 +59,49 @@ export function CaptionBar({
           )}
         </div>
 
-        <p className="min-w-0 flex-1 font-[family-name:var(--font-v2-arabic)] text-sm leading-6">
-          {tipEg}
+        <p dir="rtl" className="min-w-0 flex-1 text-end font-[family-name:var(--font-v2-arabic)] text-[13px] font-bold leading-snug text-v2-highlight-fill">
+          {tip?.length ? <RichText segments={tip} tone="onDark" /> : tipEg}
         </p>
 
         <SoundWaveGlyph />
 
-        <div className="flex shrink-0 items-center gap-0.5">
-          <button
-            type="button"
-            aria-label={paused ? 'تشغيل' : 'إيقاف'}
-            onClick={onTogglePause}
-            className="rounded-v2-chip px-2 py-1 font-[family-name:var(--font-v2-ui)] text-xs text-white/90"
-          >
-            {paused ? '▶' : '❚❚'}
-          </button>
-          <button
-            type="button"
-            aria-label="السرعة"
-            onClick={onCycleSpeed}
-            className="rounded-v2-chip px-2 py-1 font-[family-name:var(--font-v2-ui)] text-xs text-white/90"
-          >
-            {speedLabel}
-          </button>
-        </div>
+        {onTogglePause || onCycleSpeed ? (
+          <div className="flex shrink-0 items-center gap-0.5">
+            {onTogglePause ? (
+              <button
+                type="button"
+                aria-label={paused ? 'تشغيل' : 'إيقاف'}
+                onClick={onTogglePause}
+                className="rounded-v2-chip px-2 py-1 font-[family-name:var(--font-v2-ui)] text-xs text-white/90"
+              >
+                {paused ? '▶' : '❚❚'}
+              </button>
+            ) : null}
+            {onCycleSpeed ? (
+              <button
+                type="button"
+                aria-label="السرعة"
+                onClick={onCycleSpeed}
+                className="rounded-v2-chip px-2 py-1 font-[family-name:var(--font-v2-ui)] text-xs text-white/90"
+              >
+                {speedLabel}
+              </button>
+            ) : null}
+          </div>
+        ) : null}
       </div>
 
       {chapters.length ? (
         <div className="flex gap-1.5 px-3 pb-2.5 pt-2">
           {chapters.map((ch) => {
-            const fill = ch.active
-              ? Math.min(1, Math.max(0, ch.progress ?? 0.45))
-              : ch.progress != null && ch.progress > 0
-                ? Math.min(1, ch.progress)
-                : 0;
-            return (
-              <div key={ch.id} className="min-w-0 flex-1">
+            const fill = segmentFill(ch);
+            const body = (
+              <>
                 <div className="h-1 overflow-hidden rounded-full bg-white/20">
                   <div
                     className={[
                       'h-full rounded-full transition-[width]',
-                      ch.active ? 'bg-v2-highlight-border' : 'bg-white/50',
+                      fill > 0 ? 'bg-v2-highlight-border' : 'bg-transparent',
                     ].join(' ')}
                     style={{ width: `${fill * 100}%` }}
                   />
@@ -104,13 +114,39 @@ export function CaptionBar({
                 >
                   {ch.label}
                 </p>
-              </div>
+              </>
+            );
+            if (!onChapterSelect) {
+              return (
+                <div key={ch.id} className="min-w-0 flex-1">
+                  {body}
+                </div>
+              );
+            }
+            return (
+              <button
+                key={ch.id}
+                type="button"
+                className="min-w-0 flex-1"
+                aria-current={ch.active ? 'step' : undefined}
+                onClick={() => onChapterSelect(ch.id)}
+              >
+                {body}
+              </button>
             );
           })}
         </div>
       ) : null}
     </div>
   );
+}
+
+/** Done chapters are full, the current one is partial, later ones stay empty. */
+function segmentFill(ch: Chapter): number {
+  const progress = ch.progress ?? 0;
+  if (progress >= 1) return 1;
+  if (ch.active) return progress > 0 ? Math.min(progress, 0.92) : 0.4;
+  return 0;
 }
 
 function SoundWaveGlyph() {

@@ -1,0 +1,328 @@
+<!DOCTYPE html><html class="h-full" dir="rtl" lang="ar"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>NO CAFÉ · في الكافيه - الدرس ٢</title>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&amp;family=Work+Sans:wght@500;600;700&amp;family=Amiri:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-lowest": "#ffffff",
+            "on-error-container": "#93000a",
+            "background": "#fdf9f0",
+            "tertiary-fixed-dim": "#d1c6a4",
+            "secondary": "#2956c6",
+            "surface-bright": "#fdf9f0",
+            "error": "#ba1a1a",
+            "on-secondary-fixed": "#00174c",
+            "on-surface-variant": "#454650",
+            "surface-container-highest": "#e6e2d9",
+            "on-primary-container": "#7d8cc9",
+            "on-background": "#1c1c17",
+            "on-tertiary": "#ffffff",
+            "surface-variant": "#e6e2d9",
+            "secondary-fixed-dim": "#b4c5ff",
+            "inverse-surface": "#31312b",
+            "primary-fixed": "#dce1ff",
+            "surface-tint": "#4c5b95",
+            "on-surface": "#1c1c17",
+            "on-tertiary-fixed": "#211b06",
+            "surface": "#fdf9f0",
+            "surface-container-high": "#ece8df",
+            "secondary-fixed": "#dbe1ff",
+            "on-tertiary-fixed-variant": "#4e472d",
+            "outline": "#767681",
+            "tertiary": "#171201",
+            "primary-fixed-dim": "#b7c4ff",
+            "error-container": "#ffdad6",
+            "primary": "#000e3d",
+            "tertiary-fixed": "#eee2bf",
+            "on-secondary": "#ffffff",
+            "on-secondary-fixed-variant": "#003daa",
+            "inverse-primary": "#b7c4ff",
+            "on-tertiary-container": "#978e6f",
+            "on-secondary-container": "#002670",
+            "surface-container": "#f1eee5",
+            "on-primary": "#ffffff",
+            "on-error": "#ffffff",
+            "surface-container-low": "#f7f3ea",
+            "secondary-container": "#678dff",
+            "tertiary-container": "#2d2710",
+            "on-primary-fixed": "#02164e",
+            "primary-container": "#12235a",
+            "inverse-on-surface": "#f4f0e7",
+            "outline-variant": "#c6c5d1",
+            "surface-dim": "#dddad1",
+            "on-primary-fixed-variant": "#34437b"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline-lg": ["Barlow Condensed", "sans-serif"],
+            "body-lg": ["Newsreader", "serif"],
+            "headline-xl": ["Barlow Condensed", "sans-serif"],
+            "body-sm": ["Newsreader", "serif"],
+            "title-md": ["Work Sans", "sans-serif"],
+            "body-md": ["Newsreader", "serif"],
+            "label-sm": ["Work Sans", "sans-serif"],
+            "headline-lg-mobile": ["Barlow Condensed", "sans-serif"],
+            "headline-md": ["Barlow Condensed", "sans-serif"],
+            "phonetic-md": ["Newsreader", "serif"],
+            "label-md": ["Work Sans", "sans-serif"],
+            "headline-xl-mobile": ["Barlow Condensed", "sans-serif"],
+            "arabic": ["Amiri", "serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .paper-texture {
+      background-color: #fdf9f0;
+      background-image: radial-gradient(#12235a08 0.75px, transparent 0.75px);
+      background-size: 12px 12px;
+    }
+    .subtle-tape {
+      background: rgba(255, 243, 207, 0.85);
+      backdrop-filter: blur(2px);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .hide-translations .translation-text {
+      filter: blur(5px);
+      user-select: none;
+      transition: filter 0.2s ease;
+    }
+    .hide-translations .translation-text:hover {
+      filter: blur(0px);
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.1); opacity: 0.3; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .audio-pulse {
+      animation: pulse-ring 2s infinite ease-in-out;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-[#ece8df] text-on-surface antialiased min-h-full flex justify-center py-0 sm:py-6 selection:bg-secondary-fixed selection:text-on-secondary-fixed">
+<!-- Mobile Book Page Canvas -->
+<main class="w-full max-w-[430px] min-h-screen sm:min-h-[920px] bg-background paper-texture border-x sm:border border-[#ded8cb] shadow-xl flex flex-col justify-between relative overflow-hidden">
+<!-- Editorial Inner Frame Rule -->
+<div class="absolute inset-2 pointer-events-none border border-[#12235a]/15 rounded-sm z-0"></div>
+<div class="absolute inset-[11px] pointer-events-none border border-[#12235a]/10 rounded-sm z-0"></div>
+<!-- Lesson Page Top Area -->
+<header class="relative z-10 px-5 pt-5 pb-3">
+<!-- Minimalist Back and Mode Header -->
+<div class="flex items-center justify-between gap-2 mb-3">
+<!-- Back Button -->
+<a aria-label="الرجوع إلى فهرس الدروس" class="inline-flex items-center justify-center size-9 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary-container border border-outline-variant/60 transition-colors shadow-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</a>
+<!-- Folio Header Indicator -->
+<div class="text-center">
+<span class="font-headline-md tracking-wider uppercase text-primary-container text-xs block font-bold">CAPÍTULO I · الفَصْلُ الأَوَّل</span>
+<span class="text-[11px] text-on-surface-variant font-body-sm italic">Caderno de Conversação</span>
+</div>
+<!-- Quiz CTA -->
+<button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md border border-primary-container bg-surface-container-lowest text-primary-container hover:bg-primary-container hover:text-white transition-all text-xs font-title-md font-semibold shadow-xs" type="button">
+<span>اختبرني</span>
+<span class="material-symbols-outlined text-sm">quiz</span>
+</button>
+</div>
+<!-- Title Banner & Chapter Heading -->
+<div class="border-b border-[#12235a]/20 pb-3 mt-1">
+<div class="flex items-center justify-between gap-2">
+<div>
+<h1 class="text-2xl font-bold font-headline-lg text-primary tracking-tight leading-none mb-1 flex items-center gap-2">
+<span class="text-secondary font-headline-xl">NO CAFÉ</span>
+<span class="text-base text-primary-container font-arabic font-normal">· في الكافيه</span>
+</h1>
+<p class="text-xs text-on-surface-variant font-arabic leading-snug">
+              العبارات الأساسية لطلب القهوة في لشبونة · <span class="font-body-sm italic">Frases Essenciais</span>
+</p>
+</div>
+<!-- Mask/Reveal Translation Toggle -->
+<button class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-outline-variant/80 bg-surface-container text-primary-container text-xs font-medium hover:bg-surface-container-high transition-colors shadow-xs" id="toggleTranslationsBtn" onclick="document.body.classList.toggle('hide-translations'); this.classList.toggle('bg-secondary-fixed');" title="إخفاء / إظهار الترجمة للمراجعة">
+<span class="material-symbols-outlined text-base">visibility_off</span>
+<span class="font-arabic font-semibold">غطّي</span>
+</button>
+</div>
+</div>
+</header>
+<!-- 2-Column Grid of 6 Phrase Cards -->
+<section class="relative z-10 px-4 py-1 flex-1">
+<div class="grid grid-cols-2 gap-2.5">
+<!-- Card 1: Bom dia -->
+<article class="bg-surface-container-lowest/90 rounded-lg p-2.5 border border-[#12235a]/15 shadow-xs flex flex-col justify-between group hover:border-primary-container transition-all">
+<div class="relative w-full aspect-[4/3] rounded bg-surface-container-low overflow-hidden border border-[#12235a]/10 mb-2 flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="Charming editorial ink line art with soft watercolor washes showing a friendly Portuguese barista behind a Lisbon wooden espresso bar, smiling and nodding in warm morning daylight. The palette features deep navy line work, warm cream paper tones, and soft mustard gold highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIYMYdyQE4iZcyS0iFC8jzk1OOfvRbOKu305J6bjMJixHUtWbfqVX7ji0p4DiWWQIeEZXH1CaBH7hEyg3zadUMzTl6p8nPAwUkuXcjyiY9BjMWnI--JfI8GgfXsXW1T7GLxRK67xM9rXC6sxbm8-0mPAnZ3_VZ8rwEdQiLOrg47s24IYD1tspnBnaJYltyC_HI5_UKVLgPhbfaD6m3eNLqEBtP9kXdv04S0hcroRVY5hT4-R6IafNpNQ">
+<span class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-surface-container-lowest/90 text-[10px] font-title-md font-bold text-primary border border-[#12235a]/20">01</span>
+</div>
+<div>
+<div class="flex items-baseline justify-between gap-1 dir-ltr text-left">
+<h2 class="text-sm font-bold text-primary font-title-md tracking-tight leading-snug">Bom dia!</h2>
+<button aria-label="تشغيل نطق Bom dia" class="size-6 shrink-0 rounded-full bg-surface-container hover:bg-secondary-fixed text-primary flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-sm">volume_up</span>
+</button>
+</div>
+<p class="translation-text text-xs text-on-surface-variant font-arabic font-medium mt-0.5 text-right">صباح الخير!</p>
+<p class="text-[10px] text-outline font-phonetic-md italic text-left dir-ltr mt-0.5">/bõ ˈdi.ɐ/</p>
+</div>
+</article>
+<!-- Card 2: Queria um café (ACTIVE / CURRENTLY PLAYING) -->
+<article class="bg-surface-container-lowest rounded-lg p-2.5 border-2 border-secondary shadow-md relative overflow-hidden flex flex-col justify-between ring-2 ring-secondary/20">
+<div class="absolute -top-6 -left-6 size-12 bg-secondary/10 rounded-full blur-sm pointer-events-none"></div>
+<div class="relative w-full aspect-[4/3] rounded bg-surface-container-low overflow-hidden border border-secondary/30 mb-2 flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="Fine line art illustration in editorial notebook style depicting a customer politely ordering at a traditional Lisbon pastry counter with Azulejo ceramic tiles in the background. Subtle warm amber and navy color palette bathed in cozy morning café sunlight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGN513Ds_K3h4NS7zLLXaABJQ4Pak_--JaZ2hjjVY1dCHhhrqJJAt2A11wplVWmhvowNrTu_KwLiM5x23VeA-9c29-TEeMWYmAG8OHO1aMFTXJhpnatiglbbEeWkT6jWPXcq0OuBVg9V6jBkxlHjNxvEZ2ezHv5VjUKX0YzlYEs2AWMHB2aGwdoIqEWJdM8cuXIp4VETKdntryxB5tJL1nmbKpz0iWSKRGK0sJskvlnw0YnWfLAuo5dA">
+<span class="absolute top-1 left-1 flex items-center gap-1 bg-secondary text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-xs">
+<span class="size-1.5 rounded-full bg-white audio-pulse"></span>
+              جاري الاستماع
+            </span>
+<span class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-surface-container-lowest/95 text-[10px] font-title-md font-bold text-secondary border border-secondary/30">02</span>
+</div>
+<div>
+<div class="flex items-baseline justify-between gap-1 dir-ltr text-left">
+<h2 class="text-xs sm:text-sm font-bold text-primary font-title-md tracking-tight leading-tight">Queria um café, por favor</h2>
+<button aria-label="إيقاف مؤقت للنطق الصوتي" class="size-6 shrink-0 rounded-full bg-secondary text-white flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">pause</span>
+</button>
+</div>
+<p class="translation-text text-xs text-primary-container font-arabic font-bold mt-0.5 text-right">عايز فنجان قهوة، لو سمحت</p>
+<div class="flex items-center justify-between text-[10px] text-secondary font-phonetic-md italic text-left dir-ltr mt-0.5">
+<span>/kɨˈɾi.ɐ ũ kɐˈfɛ/</span>
+<span class="font-arabic not-italic font-bold text-[9px] bg-secondary-fixed/50 px-1 rounded">المطلوبة</span>
+</div>
+</div>
+</article>
+<!-- Card 3: Uma meia de leite -->
+<article class="bg-surface-container-lowest/90 rounded-lg p-2.5 border border-[#12235a]/15 shadow-xs flex flex-col justify-between group hover:border-primary-container transition-all">
+<div class="relative w-full aspect-[4/3] rounded bg-surface-container-low overflow-hidden border border-[#12235a]/10 mb-2 flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="Delicate vintage study book illustration of a traditional Portuguese glass mug of meia de leite coffee with half steamed milk, set on an embossed saucer with a small metal spoon. Clean navy outlines with creamy sepia tones on beige textured paper." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxCCrnz1cDZCI4nUJV3_3risF5Ay1sYBuenQnCl7Lag94ed2xdqrqV-L30oZVTOjG2bYTD3oHp0RQDRQSokYTyBh1Whxb6kBoIQQMRWfTbakq5TmWmqLwW51yitl1RNNqYJvyhqZPEgF-a7eDR__vhCcqNJNaAlBcH0XGX6TxhR4KaHENZCSCuZ0Zu7dYr1cR6y_vOtaHCkSPt9nNqpxIqL0fTyU5KMkYxc_yWa3-KfiP_cRwAYP-avw">
+<span class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-surface-container-lowest/90 text-[10px] font-title-md font-bold text-primary border border-[#12235a]/20">03</span>
+</div>
+<div>
+<div class="flex items-baseline justify-between gap-1 dir-ltr text-left">
+<h2 class="text-sm font-bold text-primary font-title-md tracking-tight leading-snug">Uma meia de leite</h2>
+<button aria-label="تشغيل نطق Uma meia de leite" class="size-6 shrink-0 rounded-full bg-surface-container hover:bg-secondary-fixed text-primary flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-sm">volume_up</span>
+</button>
+</div>
+<p class="translation-text text-xs text-on-surface-variant font-arabic font-medium mt-0.5 text-right">قهوة بنص حليب (كافيه لاتيه)</p>
+<p class="text-[10px] text-outline font-phonetic-md italic text-left dir-ltr mt-0.5">/ˈmɐj.ɐ dɨ ˈlɐjt/ </p>
+</div>
+</article>
+<!-- Card 4: E um pastel de nata -->
+<article class="bg-surface-container-lowest/90 rounded-lg p-2.5 border border-[#12235a]/15 shadow-xs flex flex-col justify-between group hover:border-primary-container transition-all">
+<div class="relative w-full aspect-[4/3] rounded bg-surface-container-low overflow-hidden border border-[#12235a]/10 mb-2 flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="Classic culinary illustration of an authentic caramelized Pastel de Nata egg custard tart with flaky layered crust next to a classic glass powdered cinnamon shaker, rendered with crisp architectural navy linework and subtle custard yellow wash." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcpb_43QdFWv-lHgMlLoKYHUqGzb9fg7FMJdxGvgz5qos0Lr6RUA_uu5b1_tnxeaOU60k1rnZ86wjJaer29ud02NMbD0daxUaqgsoW8GhwnQuMc-VQPAhtfXtfiEimbEE8Ph1n3JpvqiZoiF34hyWUuaYxj3aNcR-SyDacG04IKMmfUNURU53jDCCi0poPUXePjryhJc3V4Ow7Y6GVEuxm1t2aWpfzB1YoWTa9OwrJAzfQQCG-CdVaDQ">
+<span class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-surface-container-lowest/90 text-[10px] font-title-md font-bold text-primary border border-[#12235a]/20">04</span>
+</div>
+<div>
+<div class="flex items-baseline justify-between gap-1 dir-ltr text-left">
+<h2 class="text-sm font-bold text-primary font-title-md tracking-tight leading-snug">E um pastel de nata</h2>
+<button aria-label="تشغيل نطق E um pastel de nata" class="size-6 shrink-0 rounded-full bg-surface-container hover:bg-secondary-fixed text-primary flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-sm">volume_up</span>
+</button>
+</div>
+<p class="translation-text text-xs text-on-surface-variant font-arabic font-medium mt-0.5 text-right">وفطيرة باستيل دي ناتا</p>
+<p class="text-[10px] text-outline font-phonetic-md italic text-left dir-ltr mt-0.5">/i ũ pɐʃˈtɛɫ dɨ ˈnatɐ/</p>
+</div>
+</article>
+<!-- Card 5: Quanto é? -->
+<article class="bg-surface-container-lowest/90 rounded-lg p-2.5 border border-[#12235a]/15 shadow-xs flex flex-col justify-between group hover:border-primary-container transition-all">
+<div class="relative w-full aspect-[4/3] rounded bg-surface-container-low overflow-hidden border border-[#12235a]/10 mb-2 flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="Editorial book illustration of vintage copper and brass euro coins beside a hand-written paper bill receipt on a marble café counter in Lisbon, captured in elegant graphic pen and ink line drawing with warm vintage parchment tone." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGSkxOtSuPvB-OcsJZn3ufuP1vnXMSVWN2lVlQOoHE3-Xup4VHtaQ116zIXwvsjrtRQu4nZPAqZz-viVKZaM7UFuidqIqhUAoyYJPO8uFAvmycNjbERN9IjbmXGz_-goyklOuZJJp6fT0E5EbsYvGtvqTCzoE60W9k6DCNQY_vBJXRxvPqELvPosnHvMALNhBFk59c-0QsC2cme8MOtUoVNdhb9hSNdLTBcjMVNHa7wFQdGxnNj_Y_QA">
+<span class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-surface-container-lowest/90 text-[10px] font-title-md font-bold text-primary border border-[#12235a]/20">05</span>
+</div>
+<div>
+<div class="flex items-baseline justify-between gap-1 dir-ltr text-left">
+<h2 class="text-sm font-bold text-primary font-title-md tracking-tight leading-snug">Quanto é?</h2>
+<button aria-label="تشغيل نطق Quanto é?" class="size-6 shrink-0 rounded-full bg-surface-container hover:bg-secondary-fixed text-primary flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-sm">volume_up</span>
+</button>
+</div>
+<p class="translation-text text-xs text-on-surface-variant font-arabic font-medium mt-0.5 text-right">الحساب كام؟</p>
+<p class="text-[10px] text-outline font-phonetic-md italic text-left dir-ltr mt-0.5">/ˈkwɐ̃.tu ˈɛ/</p>
+</div>
+</article>
+<!-- Card 6: Obrigado! -->
+<article class="bg-surface-container-lowest/90 rounded-lg p-2.5 border border-[#12235a]/15 shadow-xs flex flex-col justify-between group hover:border-primary-container transition-all">
+<div class="relative w-full aspect-[4/3] rounded bg-surface-container-low overflow-hidden border border-[#12235a]/10 mb-2 flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="Charming hand-drawn portrait in navy blue ink of a customer smiling and warmly raising a hand in polite departure from a cozy old-world café, framed in clean printed woodcut style on warm ivory paper background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1uEnC9Y0D7hm1-bsPlesXIy2tdWhjYa_McYBCdkXjfd7P4WRuyVkCf39qMZVn5u2z1ZEdtX3JXFfuLJdbhdxd3XVE4K5NQVJJKqp3oDdl_up_fFW1BogngAEtgwGmJ3kvO3mvY1QlldgjXXiaysgFVfYScR7bJvUpMvbLua3bvpLUQ5iNK47YqnO8dbPeAPQxvje27rx9xm8HBvRQkKw5qU2jVSywj17ZShkN6nK7L5z6CyIwahIvXg">
+<span class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-surface-container-lowest/90 text-[10px] font-title-md font-bold text-primary border border-[#12235a]/20">06</span>
+</div>
+<div>
+<div class="flex items-baseline justify-between gap-1 dir-ltr text-left">
+<h2 class="text-sm font-bold text-primary font-title-md tracking-tight leading-snug">Obrigado!</h2>
+<button aria-label="تشغيل نطق Obrigado" class="size-6 shrink-0 rounded-full bg-surface-container hover:bg-secondary-fixed text-primary flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-sm">volume_up</span>
+</button>
+</div>
+<p class="translation-text text-xs text-on-surface-variant font-arabic font-medium mt-0.5 text-right">شكراً لك!</p>
+<p class="text-[10px] text-outline font-arabic text-right leading-none mt-0.5">(للإناث: <span class="font-semibold text-primary">Obrigada</span>)</p>
+</div>
+</article>
+</div>
+</section>
+<!-- Bottom Sticky-Note Callout -->
+<section class="relative z-10 px-4 mt-2 mb-1">
+<div class="relative bg-[#fff3cf] border border-[#d6c48f] rounded-lg p-3 pt-3.5 shadow-sm">
+<!-- Sticky Note Paper Pin / Tape Accent -->
+<div class="absolute -top-2 left-1/2 -translate-x-1/2 w-16 h-3.5 subtle-tape border border-[#c9be9b]/50 rotate-[-1deg] rounded-xs pointer-events-none"></div>
+<div class="flex items-start gap-2">
+<span class="text-base leading-none select-none">💡</span>
+<div class="flex-1 text-right">
+<h3 class="font-arabic font-bold text-xs text-[#2d2710] mb-0.5">ملاحظة في الكافيه:</h3>
+<p class="font-arabic text-xs leading-relaxed text-[#4e472d]">
+              في البرتغال <span class="font-title-md font-bold text-primary dir-ltr inline-block">um café</span> يعني إسبريسو صغير مركز، لو عايز قهوة بالحليب اطلب <span class="font-title-md font-semibold text-primary dir-ltr inline-block">meia de leite</span> أو <span class="font-title-md font-semibold text-primary dir-ltr inline-block">galão</span>!
+            </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Tactile Book Page Footer & Pagination -->
+<footer class="relative z-10 px-5 pt-1 pb-4 border-t border-[#12235a]/15 bg-background/80">
+<div class="flex items-center justify-between">
+<!-- Previous Page Arrow -->
+<button aria-label="الصفحة السابقة" class="size-8 rounded-full border border-outline-variant hover:border-primary-container text-primary-container flex items-center justify-center bg-surface-container-lowest transition-colors">
+<span class="material-symbols-outlined text-base">arrow_forward</span>
+</button>
+<!-- Page Number / Folio -->
+<div class="text-center">
+<div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-surface-container border border-outline-variant/50">
+<span class="font-arabic font-bold text-xs text-primary">٢ / ٦</span>
+<span class="text-[10px] text-on-surface-variant font-body-sm italic">Pág.</span>
+</div>
+<p class="text-[10px] text-on-surface-variant font-arabic mt-1">كتاب المحادثة اليومية · الدرس ٢: في المقهى</p>
+</div>
+<!-- Next Page Arrow -->
+<button aria-label="الصفحة التالية" class="size-8 rounded-full border border-primary-container bg-primary-container text-white flex items-center justify-center hover:bg-secondary transition-colors shadow-xs">
+<span class="material-symbols-outlined text-base">arrow_back</span>
+</button>
+</div>
+</footer>
+</main>
+</body></html>

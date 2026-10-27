@@ -121,5 +121,6 @@ export const PageSchema = z.object({
 export type Page = z.infer<typeof PageSchema>;
 export type Step = z.infer<typeof StepSchema>;
 export type Control = z.infer<typeof ControlSchema>;
+export type Cover = z.infer<typeof CoverSchema>;
 export type Preset = z.infer<typeof PresetSchema>;
 export type Mode = z.infer<typeof ModeSchema>;

@@ -76,7 +76,7 @@ export function AudioButton({
         onClick={() => void play(false)}
         className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-v2-ink bg-v2-card text-v2-ink disabled:opacity-50"
       >
-        <SpeakerIcon />
+        <SpeakerIcon size={18} />
       </button>
       {showSlow ? (
         <button
@@ -93,9 +93,9 @@ export function AudioButton({
   );
 }
 
-function SpeakerIcon() {
+export function SpeakerIcon({ size = 18 }: { size?: number }) {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
       <path
         d="M11 5L6 9H3v6h3l5 4V5z"
         stroke="currentColor"

@@ -1,0 +1,471 @@
+<!DOCTYPE html><html dir="rtl" lang="ar"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><meta content="mobile_stack" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&amp;family=Work+Sans:wght@500;600&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+        "on-tertiary-fixed": "#211b06",
+        "surface": "#fdf9f0",
+        "on-primary-container": "#7d8cc9",
+        "on-primary-fixed": "#02164e",
+        "on-primary": "#ffffff",
+        "on-secondary-container": "#002670",
+        "surface-bright": "#fdf9f0",
+        "surface-container-highest": "#e6e2d9",
+        "outline": "#767681",
+        "surface-container-high": "#ece8df",
+        "on-error": "#ffffff",
+        "surface-container-lowest": "#ffffff",
+        "tertiary-fixed-dim": "#d1c6a4",
+        "outline-variant": "#c6c5d1",
+        "surface-dim": "#dddad1",
+        "secondary-fixed": "#dbe1ff",
+        "inverse-primary": "#b7c4ff",
+        "on-surface": "#1c1c17",
+        "tertiary-fixed": "#eee2bf",
+        "on-background": "#1c1c17",
+        "on-tertiary": "#ffffff",
+        "surface-variant": "#e6e2d9",
+        "inverse-surface": "#31312b",
+        "primary": "#000e3d",
+        "secondary-fixed-dim": "#b4c5ff",
+        "tertiary-container": "#2d2710",
+        "error-container": "#ffdad6",
+        "surface-container": "#f1eee5",
+        "on-primary-fixed-variant": "#34437b",
+        "primary-container": "#12235a",
+        "on-secondary-fixed": "#00174c",
+        "primary-fixed": "#dce1ff",
+        "secondary-container": "#678dff",
+        "error": "#ba1a1a",
+        "on-error-container": "#93000a",
+        "on-tertiary-fixed-variant": "#4e472d",
+        "inverse-on-surface": "#f4f0e7",
+        "tertiary": "#171201",
+        "surface-tint": "#4c5b95",
+        "on-secondary": "#ffffff",
+        "primary-fixed-dim": "#b7c4ff",
+        "on-tertiary-container": "#978e6f",
+        "background": "#fdf9f0",
+        "surface-container-low": "#f7f3ea",
+        "on-secondary-fixed-variant": "#003daa",
+        "on-surface-variant": "#454650",
+        "secondary": "#2956c6"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "space-md": "1rem",
+        "gutter": "1rem",
+        "margin-tablet": "2rem",
+        "gutter-lg": "1.5rem",
+        "margin": "1rem",
+        "space-2xl": "3rem",
+        "space-xs": "0.25rem",
+        "gutter-sm": "0.75rem",
+        "space-sm": "0.5rem",
+        "space-lg": "1.5rem",
+        "space-xl": "2rem"
+      },
+      "fontFamily": {
+        "phonetic-md": ["Newsreader"],
+        "headline-lg": ["Barlow Condensed"],
+        "headline-md": ["Barlow Condensed"],
+        "body-md": ["Newsreader"],
+        "body-sm": ["Newsreader"],
+        "headline-lg-mobile": ["Barlow Condensed"],
+        "title-md": ["Work Sans"],
+        "headline-xl-mobile": ["Barlow Condensed"],
+        "label-sm": ["Work Sans"],
+        "headline-xl": ["Barlow Condensed"],
+        "label-md": ["Work Sans"],
+        "body-lg": ["Newsreader"]
+      },
+      "fontSize": {
+        "phonetic-md": ["15px", { "lineHeight": "20px", "fontWeight": "400" }],
+        "headline-lg": ["30px", { "lineHeight": "34px", "fontWeight": "600" }],
+        "headline-md": ["22px", { "lineHeight": "26px", "fontWeight": "600" }],
+        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+        "headline-lg-mobile": ["24px", { "lineHeight": "28px", "fontWeight": "600" }],
+        "title-md": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+        "headline-xl-mobile": ["32px", { "lineHeight": "36px", "fontWeight": "700" }],
+        "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "600" }],
+        "headline-xl": ["40px", { "lineHeight": "44px", "fontWeight": "700" }],
+        "label-md": ["13px", { "lineHeight": "16px", "fontWeight": "500" }],
+        "body-lg": ["19px", { "lineHeight": "28px", "fontWeight": "400" }]
+      }
+    }
+  }
+}</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-title-md text-on-surface antialiased flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-20 px-gutter flex items-center justify-between"><div class="flex items-center gap-space-sm"><button aria-label="رجوع" class="w-11 h-11 flex items-center justify-center rounded-lg bg-surface-container-low text-primary hover:bg-surface-container transition-colors active:translate-y-px" onclick="history.back()"><span class="material-symbols-outlined text-[22px]">arrow_forward</span></button><div class="flex flex-col text-right"><span class="font-label-sm text-label-sm text-on-surface-variant tracking-wider uppercase">درس المفردات · Langify</span><h1 class="font-headline-md text-headline-md text-primary tracking-tight" dir="ltr">A COMIDA · الأكل</h1></div></div><div class="flex items-center gap-space-sm"><button class="h-10 px-gutter-sm flex items-center gap-space-xs rounded-full border border-outline-variant bg-surface text-on-surface hover:bg-surface-container transition-all active:translate-y-px"><span class="material-symbols-outlined text-[18px] text-outline">visibility_off</span><span class="font-label-md text-label-md font-medium">غطّي</span></button><button class="h-10 px-gutter-sm flex items-center gap-space-xs rounded-full bg-primary text-on-primary hover:bg-primary-container transition-all active:translate-y-px"><span class="material-symbols-outlined text-[18px]">quiz</span><span class="font-label-md text-label-md font-semibold">اختبرني</span></button><div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-20 pb-safe bg-surface min-h-screen"><div class="flex flex-col w-full px-gutter pb-space-lg select-none">
+<!-- Subheader Navigation & Game Trigger -->
+<div class="flex items-center justify-between gap-space-xs mt-space-sm mb-space-sm bg-surface-container-low p-space-sm rounded-xl shadow-sm">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="w-2 h-2 rounded-full bg-secondary shrink-0"></span>
+<div class="flex flex-col truncate">
+<span class="font-label-sm text-label-sm text-primary tracking-wide font-semibold truncate">القاموس المصوّر</span>
+<span class="font-phonetic-md text-body-sm text-on-surface-variant truncate">المفردات الأساسية · A1</span>
+</div>
+</div>
+<!-- Mini Game Action Pill -->
+<button class="flex items-center gap-space-xs px-gutter-sm py-space-xs rounded-lg bg-tertiary-fixed text-on-tertiary-fixed shadow-sm active:translate-y-0.5 transition-transform shrink-0" id="findGameBtn"><span class="material-symbols-outlined text-[18px]">sports_esports</span><span class="font-label-md text-label-md font-semibold">لعبة: حزّر الصورة</span></button>
+</div>
+<!-- Editorial Legend & Acoustic Controller -->
+<div class="flex items-center justify-between mb-space-md px-space-xs text-on-surface-variant">
+<div class="flex items-center gap-space-sm"><div class="flex items-center gap-1.5 px-2 py-0.5 rounded-md text-white font-medium" style="background-color: rgb(31, 79, 191);"><span class="font-headline-md text-[13px] font-bold">o</span><span class="font-label-sm text-label-sm">مذكر</span></div><div class="flex items-center gap-1.5 px-2 py-0.5 rounded-md text-white font-medium" style="background-color: rgb(229, 99, 77);"><span class="font-headline-md text-[13px] font-bold">a</span><span class="font-label-sm text-label-sm">مؤنث</span></div></div>
+<div class="flex items-center gap-space-xs">
+<button aria-label="صوت النطق التلقائي" class="w-8 h-8 flex items-center justify-center rounded-full bg-surface-container text-primary active:bg-surface-container-highest transition-colors" id="toggleAudioMode">
+<span class="material-symbols-outlined text-[17px]">volume_up</span>
+</button>
+<button aria-label="إعادة ترتيب" class="w-8 h-8 flex items-center justify-center rounded-full bg-surface-container text-primary active:bg-surface-container-highest transition-colors" id="shuffleCards">
+<span class="material-symbols-outlined text-[17px]">sync_alt</span>
+</button>
+</div>
+</div>
+<!-- Interactive Target Banner for the mini-game (Collapsible state) -->
+<div class="hidden mb-space-md p-space-sm rounded-xl bg-primary text-on-primary shadow-sm flex items-center justify-between animate-fade-in" id="gamePromptBanner">
+<div class="flex items-center gap-space-sm">
+<div class="w-7 h-7 rounded-full bg-on-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px] text-tertiary-fixed">travel_explore</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-secondary-fixed block">دوّر على صورة:</span>
+<span class="font-headline-md text-headline-md tracking-tight font-bold text-on-primary" dir="ltr" id="targetWord">o pão</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-md text-headline-md text-tertiary-fixed px-space-xs" id="gameScore">0/5</span>
+<button class="w-7 h-7 flex items-center justify-center rounded-full text-on-primary/60 hover:text-on-primary" id="closeGameBtn">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+<!-- 3-Column Grid of 12 Square Food Flashcards -->
+<div class="grid grid-cols-3 gap-space-xs w-full" id="cardGrid">
+<!-- Card 1: o pão -->
+<div class="vocab-card flex flex-col rounded-lg bg-surface-container-lowest p-space-xs shadow-sm hover:shadow-md transition-all active:scale-[0.98] cursor-pointer" data-item="o pão" data-trans="خبز">
+<div class="relative w-full aspect-square rounded-md overflow-hidden bg-surface-container-low mb-1.5">
+<img class="w-full h-full object-cover" data-alt="Charming flat editorial minimalist illustration of an artisanal crusty Portuguese rustic bread loaf, pão alentejano, warm golden crust with flour dusting on cream paper background with subtle ink linework." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1AGvldm1q7h5WdjkKTgoR_mOh_ng1FvhbOeVglhvIrvvuLumpeqYamRKedbagIDpWx5IrBGkHtp98eoVH3ZWzmyn--zAwbS019YSsed3A-Ha9wse-LyUBq3pLni6eD4s332YRMZQ5Y54T7mncfoSeqTWkpmdEpwU7M7ludtfZ-By-CithT63j_-lsoO4h-snq7BN75sqi6qclFgegStESU4DCdxTw-QKGq6alUOv6DtrU2GHAotwR7g">
+<button class="audio-btn absolute bottom-1 right-1 w-6 h-6 rounded-full bg-surface-container-lowest/90 text-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[14px]">volume_up</span>
+</button>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="flex items-center gap-1 leading-tight" dir="ltr">
+<span class="px-1 py-0.2 rounded font-headline-md text-[11px] font-bold bg-secondary-fixed text-on-secondary-fixed" style="background-color: rgb(31, 79, 191); color: rgb(255, 255, 255);">o</span>
+<span class="font-phonetic-md text-body-md font-bold text-primary">pão</span>
+</div>
+<span class="translation-label font-body-sm text-body-sm text-on-surface-variant font-medium mt-0.5">خبز</span>
+</div>
+</div>
+<!-- Card 2: a maçã -->
+<div class="vocab-card flex flex-col rounded-lg bg-surface-container-lowest p-space-xs shadow-sm hover:shadow-md transition-all active:scale-[0.98] cursor-pointer" data-item="a maçã" data-trans="تفاحة">
+<div class="relative w-full aspect-square rounded-md overflow-hidden bg-surface-container-low mb-1.5">
+<img class="w-full h-full object-cover" data-alt="Delicate flat vintage editorial illustration of a crisp ruby-red apple with a tiny green leaf and subtle woodcut cross-hatch texture on warm unbleached paper." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAl-C4QcbaVi5vmeurN8YU2w0WDz4bmMtykGKbS7WRo-nKFQIDOKNvzTqB7L-Si9qEamwEUjEO-8_AwJLM7dbNf5Khspy6iHpg3YJ3_T_OzT9qXVQ4ZPemV9tns63hZbhAF_Gc43XVwj9_ImbjmS0T5FW2NLDOUsiAsAi3DNZI5eEGAqvTx8WYtjAXbnNOortct3VFqfl6Ah1WqrPhVUVEdTOMq62DMOrF-9EkXBkoHaUATrhPa4lufgQ">
+<button class="audio-btn absolute bottom-1 right-1 w-6 h-6 rounded-full bg-surface-container-lowest/90 text-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[14px]">volume_up</span>
+</button>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="flex items-center gap-1 leading-tight" dir="ltr">
+<span class="px-1 py-0.2 rounded font-headline-md text-[11px] font-bold bg-tertiary-fixed-dim text-on-tertiary-fixed" style="background-color: rgb(229, 99, 77); color: rgb(255, 255, 255);">a</span>
+<span class="font-phonetic-md text-body-md font-bold text-primary">maçã</span>
+</div>
+<span class="translation-label font-body-sm text-body-sm text-on-surface-variant font-medium mt-0.5">تفاحة</span>
+</div>
+</div>
+<!-- Card 3: o leite -->
+<div class="vocab-card flex flex-col rounded-lg bg-surface-container-lowest p-space-xs shadow-sm hover:shadow-md transition-all active:scale-[0.98] cursor-pointer" data-item="o leite" data-trans="حليب">
+<div class="relative w-full aspect-square rounded-md overflow-hidden bg-surface-container-low mb-1.5">
+<img class="w-full h-full object-cover" data-alt="Minimalist editorial vector style glass bottle of farm-fresh milk with retro navy typography label on warm cream paper surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4XX3LTbu618GFNYy-iEZzoNqNbgBq8m0W-Es_4GxCA-cWLTseLR7fA4iNjG78IHPvCNqfgoxZnTpPtMVStCl9o9tG98P_BZlT8MJUpjsc8xNQy44YXR49A8lhtAX_aXHLPY4dTCCQJYZI6sIaBQWILgJ2WFHZZQ8zDjvzqxvF0XQaGMslevtcEe_ry52SrMyvBNAZuoEhkdw9dKZ1E0VvjnT2XXuNgtVtBrF0SNJnMAxK1KOC3yVKmw">
+<button class="audio-btn absolute bottom-1 right-1 w-6 h-6 rounded-full bg-surface-container-lowest/90 text-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[14px]">volume_up</span>
+</button>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="flex items-center gap-1 leading-tight" dir="ltr">
+<span class="px-1 py-0.2 rounded font-headline-md text-[11px] font-bold bg-secondary-fixed text-on-secondary-fixed" style="background-color: rgb(31, 79, 191); color: rgb(255, 255, 255);">o</span>
+<span class="font-phonetic-md text-body-md font-bold text-primary">leite</span>
+</div>
+<span class="translation-label font-body-sm text-body-sm text-on-surface-variant font-medium mt-0.5">حليب</span>
+</div>
+</div>
+<!-- Card 4: o queijo -->
+<div class="vocab-card flex flex-col rounded-lg bg-surface-container-lowest p-space-xs shadow-sm hover:shadow-md transition-all active:scale-[0.98] cursor-pointer" data-item="o queijo" data-trans="جبنة">
+<div class="relative w-full aspect-square rounded-md overflow-hidden bg-surface-container-low mb-1.5">
+<img class="w-full h-full object-cover" data-alt="Artisanal wheel of Portuguese Queijo da Serra da Estrela with a slice gently cut out, golden buttery texture, styled as warm textbook botanical illustration on cream paper." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwRmAf7hvajFfJkLK3DtGI8tKTXn2QftjppxtTBExf7a1tbUuZtNLSRhSahi6V0yhjSzl52ZhfzeKgLd98q8vNRzDGJ5WLh2rH3mZ1oOFbaXqxONw7TWEkkMVo26OBm2WMg0JQF39JmZkN4N7ANrJXprKUrG5edmXu3SmL98QTXDFMAvGx6OyHVvXVH89wfYCTuSkH14GgC0ee3eoAt7q6B5dSKvX-anDmulcgFCfGlCowfXh6Brn0Gg">
+<button class="audio-btn absolute bottom-1 right-1 w-6 h-6 rounded-full bg-surface-container-lowest/90 text-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[14px]">volume_up</span>
+</button>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="flex items-center gap-1 leading-tight" dir="ltr">
+<span class="px-1 py-0.2 rounded font-headline-md text-[11px] font-bold bg-secondary-fixed text-on-secondary-fixed" style="background-color: rgb(31, 79, 191); color: rgb(255, 255, 255);">o</span>
+<span class="font-phonetic-md text-body-md font-bold text-primary">queijo</span>
+</div>
+<span class="translation-label font-body-sm text-body-sm text-on-surface-variant font-medium mt-0.5">جبنة</span>
+</div>
+</div>
+<!-- Card 5: a água -->
+<div class="vocab-card flex flex-col rounded-lg bg-surface-container-lowest p-space-xs shadow-sm hover:shadow-md transition-all active:scale-[0.98] cursor-pointer" data-item="a água" data-trans="ماء">
+<div class="relative w-full aspect-square rounded-md overflow-hidden bg-surface-container-low mb-1.5">
+<img class="w-full h-full object-cover" data-alt="Clean minimal glass cup of crystal clear water with delicate condensation droplets, classic editorial linework and indigo shadows on paper." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeVvx-4ZGsX95DXGQjKKM4lLh0gpFLo6m1yF3g55vlWIpdYpOg81-rA60aB6fJP3XatswZE4ImMrm6b1N7qe5tIEZYuh-tZGVmu4PsfVAGhm7NiiAXWxdlUqRHMkAnwrSwbSXwyyPdIQHAZMN9Cdc1kKrSrXAOdDmmAQVxfnBUkA8G-gqwV4eVumQseM7O4jGnjC3wGyN8unj7fo3ApXKK1vXsbK8EAA9l90kjLWbKrdObEIux5Qt1JQ">
+<button class="audio-btn absolute bottom-1 right-1 w-6 h-6 rounded-full bg-surface-container-lowest/90 text-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[14px]">volume_up</span>
+</button>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="flex items-center gap-1 leading-tight" dir="ltr">
+<span class="px-1 py-0.2 rounded font-headline-md text-[11px] font-bold bg-tertiary-fixed-dim text-on-tertiary-fixed" style="background-color: rgb(229, 99, 77); color: rgb(255, 255, 255);">a</span>
+<span class="font-phonetic-md text-body-md font-bold text-primary">água</span>
+</div>
+<span class="translation-label font-body-sm text-body-sm text-on-surface-variant font-medium mt-0.5">ماء</span>
+</div>
+</div>
+<!-- Card 6: a banana -->
+<div class="vocab-card flex flex-col rounded-lg bg-surface-container-lowest p-space-xs shadow-sm hover:shadow-md transition-all active:scale-[0.98] cursor-pointer" data-item="a banana" data-trans="موز">
+<div class="relative w-full aspect-square rounded-md overflow-hidden bg-surface-container-low mb-1.5">
+<img class="w-full h-full object-cover" data-alt="A single perfectly curved ripe yellow banana with delicate speckled skin, vintage printmaker style with fine ink contours on warm cream background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3SbWsAdYZu2trsYdetsBXN6YQ-7uyuycKeBxtyGw6QkM3N40vi1cIeo37sOl6Pn5EeT1_mNXoU9MzTHOrd0JA5oKSwjeMJ4rqsC1lRHuNNPadTA9k3LS-pODTackheWL3HDqBASg4oDcYH-nrzHThdcqqgU54Qzd6Kamurjd1PGgqUPGlQEaZe556v80qDWxtPon5yPAevg4i6ZKmL31uXJbG_aNBXqv-rsOicfKKGhY_i9g-ebE-SQ">
+<button class="audio-btn absolute bottom-1 right-1 w-6 h-6 rounded-full bg-surface-container-lowest/90 text-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[14px]">volume_up</span>
+</button>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="flex items-center gap-1 leading-tight" dir="ltr">
+<span class="px-1 py-0.2 rounded font-headline-md text-[11px] font-bold bg-tertiary-fixed-dim text-on-tertiary-fixed" style="background-color: rgb(229, 99, 77); color: rgb(255, 255, 255);">a</span>
+<span class="font-phonetic-md text-body-md font-bold text-primary">banana</span>
+</div>
+<span class="translation-label font-body-sm text-body-sm text-on-surface-variant font-medium mt-0.5">موز</span>
+</div>
+</div>
+<!-- Card 7: o café -->
+<div class="vocab-card flex flex-col rounded-lg bg-surface-container-lowest p-space-xs shadow-sm hover:shadow-md transition-all active:scale-[0.98] cursor-pointer" data-item="o café" data-trans="قهوة">
+<div class="relative w-full aspect-square rounded-md overflow-hidden bg-surface-container-low mb-1.5">
+<img class="w-full h-full object-cover" data-alt="Steaming Lisbon porcelain espresso cup, classic Portuguese bica on a small saucer with rich crema, hand-etched editorial book print aesthetic on paper." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-PeCCFSaBcwEAQ0Zq-5LUaDCBLG5xUhzJGdrOe0uo2LBLezCRmOoNCcBjVXFEReV7D2IH7E-31fn5q4faEXdVqlDU8TP_dGVaO8LE_Z35jU5I5Z5NaD6vNNpvK14LMnNRlgTs-Ghr_rcQQIy_aSivyPh1usUDA2N5UGUYbcF7j0mTVkndYBihRm9ZnjdsB3LYCdIAAgIGCvZNvEbRGDYIdCsoCbeMLH5JvLGRMoSedl3hPQa3IwFDYg">
+<button class="audio-btn absolute bottom-1 right-1 w-6 h-6 rounded-full bg-surface-container-lowest/90 text-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[14px]">volume_up</span>
+</button>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="flex items-center gap-1 leading-tight" dir="ltr">
+<span class="px-1 py-0.2 rounded font-headline-md text-[11px] font-bold bg-secondary-fixed text-on-secondary-fixed" style="background-color: rgb(31, 79, 191); color: rgb(255, 255, 255);">o</span>
+<span class="font-phonetic-md text-body-md font-bold text-primary">café</span>
+</div>
+<span class="translation-label font-body-sm text-body-sm text-on-surface-variant font-medium mt-0.5">قهوة</span>
+</div>
+</div>
+<!-- Card 8: a laranja -->
+<div class="vocab-card flex flex-col rounded-lg bg-surface-container-lowest p-space-xs shadow-sm hover:shadow-md transition-all active:scale-[0.98] cursor-pointer" data-item="a laranja" data-trans="برتقالة">
+<div class="relative w-full aspect-square rounded-md overflow-hidden bg-surface-container-low mb-1.5">
+<img class="w-full h-full object-cover" data-alt="Vibrant citrus Algarve sweet orange, cut in half to showcase juicy pulp, styled with clean vintage Mediterranean botanical print lines on off-white paper." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDExI2ePzW3iutoHKaGGQ3LsMiexm3XMSuEE0B3FXZrqxMueCAs1XkHmeAPsEzp_lgsw40Ly-I9DnzggOwmvtwXXbCzXJIdM3a2yhLp2PKwHTlWrnRoXSenWeDhUmNW26jvrBJRotKCjfDYFoFHvb3I3ZgRY-sK0YD82uzk67Gf9IHyPDBNwH7nLjgFUp-SwFd42D9UtsgKcdYenCzQ8SFTUyuO1cCW0kI_RO6_gSzd65AiYX7E7Bring">
+<button class="audio-btn absolute bottom-1 right-1 w-6 h-6 rounded-full bg-surface-container-lowest/90 text-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[14px]">volume_up</span>
+</button>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="flex items-center gap-1 leading-tight" dir="ltr">
+<span class="px-1 py-0.2 rounded font-headline-md text-[11px] font-bold bg-tertiary-fixed-dim text-on-tertiary-fixed" style="background-color: rgb(229, 99, 77); color: rgb(255, 255, 255);">a</span>
+<span class="font-phonetic-md text-body-md font-bold text-primary">laranja</span>
+</div>
+<span class="translation-label font-body-sm text-body-sm text-on-surface-variant font-medium mt-0.5">برتقالة</span>
+</div>
+</div>
+<!-- Card 9: o peixe -->
+<div class="vocab-card flex flex-col rounded-lg bg-surface-container-lowest p-space-xs shadow-sm hover:shadow-md transition-all active:scale-[0.98] cursor-pointer" data-item="o peixe" data-trans="سمك">
+<div class="relative w-full aspect-square rounded-md overflow-hidden bg-surface-container-low mb-1.5">
+<img class="w-full h-full object-cover" data-alt="Fresh Atlantic silver sardine accompanied by a yellow lemon wedge, styled as a refined coastal field guide illustration on warm cream notebook paper." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-ivMgaxPOA41a65T366tGRZklDBdfBhDVftb6fto8_NgP0tV8GCyVzSn2TlOhJWwotqL-ytsCRR3gOPnXX41fn8IDJZZuCHk9Ji8QhW7Vr550nPRBHobE7w-E1-ki-2L5BLzp_D2e_OnZtB_IS965iPon8xkWEQjM4uTCRcAV31E0PwyjPrlk5wAx1mMR40XNYTPJBv4mWUmqgZYOw5FHs7GyD6DPXNDVFa2QHFJd0JCjG5ZVzH-f-g">
+<button class="audio-btn absolute bottom-1 right-1 w-6 h-6 rounded-full bg-surface-container-lowest/90 text-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[14px]">volume_up</span>
+</button>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="flex items-center gap-1 leading-tight" dir="ltr">
+<span class="px-1 py-0.2 rounded font-headline-md text-[11px] font-bold bg-secondary-fixed text-on-secondary-fixed" style="background-color: rgb(31, 79, 191); color: rgb(255, 255, 255);">o</span>
+<span class="font-phonetic-md text-body-md font-bold text-primary">peixe</span>
+</div>
+<span class="translation-label font-body-sm text-body-sm text-on-surface-variant font-medium mt-0.5">سمك</span>
+</div>
+</div>
+<!-- Card 10: a carne -->
+<div class="vocab-card flex flex-col rounded-lg bg-surface-container-lowest p-space-xs shadow-sm hover:shadow-md transition-all active:scale-[0.98] cursor-pointer" data-item="a carne" data-trans="لحم">
+<div class="relative w-full aspect-square rounded-md overflow-hidden bg-surface-container-low mb-1.5">
+<img class="w-full h-full object-cover" data-alt="Fresh prime butcher cut of beef steak with a sprig of fresh rosemary, clean editorial woodblock illustration with soft terracotta tones on cream paper." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCS2BNou8Qx5OEcyz1VaMev182lYctjrONBxvWbFAXGIoB47TBNfD7WhhqZQ8n5mipJSkNicwj9wTd8DfF0J01dZkJl5ajlUGq3ih3AoVCRMCmCDkXTFoZjOmJ1-a0WIiRoxeqMDF7g97_h6tyzXLRXCdmmX-Dc2xJYfXnJI8NUReFPTOo1OHGPD4muqWIerOGq6ItMe0FSt3uJjXE5Uy2GdkLQUqtTm8-8BmFmA1GhHSG9qjr7Rro7BQ">
+<button class="audio-btn absolute bottom-1 right-1 w-6 h-6 rounded-full bg-surface-container-lowest/90 text-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[14px]">volume_up</span>
+</button>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="flex items-center gap-1 leading-tight" dir="ltr">
+<span class="px-1 py-0.2 rounded font-headline-md text-[11px] font-bold bg-tertiary-fixed-dim text-on-tertiary-fixed" style="background-color: rgb(229, 99, 77); color: rgb(255, 255, 255);">a</span>
+<span class="font-phonetic-md text-body-md font-bold text-primary">carne</span>
+</div>
+<span class="translation-label font-body-sm text-body-sm text-on-surface-variant font-medium mt-0.5">لحم</span>
+</div>
+</div>
+<!-- Card 11: o arroz -->
+<div class="vocab-card flex flex-col rounded-lg bg-surface-container-lowest p-space-xs shadow-sm hover:shadow-md transition-all active:scale-[0.98] cursor-pointer" data-item="o arroz" data-trans="أرز">
+<div class="relative w-full aspect-square rounded-md overflow-hidden bg-surface-container-low mb-1.5">
+<img class="w-full h-full object-cover" data-alt="Rustic glazed ceramic bowl filled with fluffy white steamed Portuguese carolino rice with a small wooden spoon, soft ink linework on ivory background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD79_IYvbQmV3lgtr6yZM04t_15jje6AWRTT5NdR04zkIe_UFYCz4aJkO04HxQaBo0fj3TET2pwnbSTQ9_jQaHc4h3LMrQ2OXyxQfuNW_SBVM9M6gH2tT58V9cFMp4Ve4TqQZvjdunZdIzWAANuOKclRHGokh4XmrwCAQBHsKvLJGGZ-ZgSulC1LsW9xV5HxFgdRZC4gm5iJA3KQblS7-oKCEVhGaq9ODNEpBm8XjL0fDzfflXL3983Jg">
+<button class="audio-btn absolute bottom-1 right-1 w-6 h-6 rounded-full bg-surface-container-lowest/90 text-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[14px]">volume_up</span>
+</button>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="flex items-center gap-1 leading-tight" dir="ltr">
+<span class="px-1 py-0.2 rounded font-headline-md text-[11px] font-bold bg-secondary-fixed text-on-secondary-fixed" style="background-color: rgb(31, 79, 191); color: rgb(255, 255, 255);">o</span>
+<span class="font-phonetic-md text-body-md font-bold text-primary">arroz</span>
+</div>
+<span class="translation-label font-body-sm text-body-sm text-on-surface-variant font-medium mt-0.5">أرز</span>
+</div>
+</div>
+<!-- Card 12: o azeite -->
+<div class="vocab-card flex flex-col rounded-lg bg-surface-container-lowest p-space-xs shadow-sm hover:shadow-md transition-all active:scale-[0.98] cursor-pointer" data-item="o azeite" data-trans="زيت زيتون">
+<div class="relative w-full aspect-square rounded-md overflow-hidden bg-surface-container-low mb-1.5">
+<img class="w-full h-full object-cover" data-alt="Classic olive green glass bottle of authentic Portuguese extra virgin olive oil with a gold pourer nozzle, elegant vintage apothecary label on unbleached paper." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwd8pBnLNakMr_QTFMgH3R1V9-zTKlBqhjGi2C_uYsU7wpJ30gZG_8ALgaWlsmUxCugENWe8ffqHBFgcnEDcYDKKdw490tq_Och9NvHZ-OO5Ktdv2TkhMNeAiK_rkE6dKjpj3By0doNOKFHrl6N8ugfxgx9w5Dsvn7GZLtq95Ii2eykjKhjpATEYETt16yv7GOgG0UXb5MM1QYb92biKAy8yGXt_oYE0j2JnYWr-wRW53404hYRsLbzA">
+<button class="audio-btn absolute bottom-1 right-1 w-6 h-6 rounded-full bg-surface-container-lowest/90 text-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[14px]">volume_up</span>
+</button>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="flex items-center gap-1 leading-tight" dir="ltr">
+<span class="px-1 py-0.2 rounded font-headline-md text-[11px] font-bold bg-secondary-fixed text-on-secondary-fixed" style="background-color: rgb(31, 79, 191); color: rgb(255, 255, 255);">o</span>
+<span class="font-phonetic-md text-body-md font-bold text-primary">azeite</span>
+</div>
+<span class="translation-label font-body-sm text-body-sm text-on-surface-variant font-medium mt-0.5">زيت زيتون</span>
+</div>
+</div>
+</div>
+<!-- Notebook Footer & Progress Tracker -->
+<div class="mt-space-lg flex flex-col items-center justify-center gap-space-xs">
+<!-- Progress Indicator -->
+<div class="flex items-center gap-space-sm bg-surface-container-low px-gutter-sm py-1.5 rounded-full shadow-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Dia 3 · ٣ / ٦</span>
+<div class="w-16 h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-1/2 rounded-full"></div>
+</div>
+</div>
+<!-- Vintage Caderno Stamp -->
+<div class="flex items-center gap-2 mt-space-xs opacity-70"><span class="material-symbols-outlined text-[16px] text-outline">verified</span><span class="font-headline-md text-[12px] tracking-wider text-primary uppercase" dir="ltr">LANGIFY · A COMIDA</span></div>
+</div>
+</div>
+<script>
+  (function() {
+    let hideLabels = false;
+    let gameActive = false;
+    let score = 0;
+    const cards = Array.from(document.querySelectorAll('.vocab-card'));
+    const banner = document.getElementById('gamePromptBanner');
+    const targetWordEl = document.getElementById('targetWord');
+    const scoreEl = document.getElementById('gameScore');
+    let targetCard = null;
+
+    // Pronunciation animation & feedback
+    document.querySelectorAll('.audio-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const icon = btn.querySelector('.material-symbols-outlined');
+        btn.classList.add('bg-secondary', 'text-on-secondary');
+        icon.textContent = 'record_voice_over';
+        setTimeout(() => {
+          btn.classList.remove('bg-secondary', 'text-on-secondary');
+          icon.textContent = 'volume_up';
+        }, 700);
+      });
+    });
+
+    // Support shell's "غطّي" header control if clicked
+    const shellHideBtn = document.querySelector('header button:has(span:contains("غطّي"))') || 
+                         Array.from(document.querySelectorAll('header button')).find(b => b.textContent.includes('غطّي'));
+    if (shellHideBtn) {
+      shellHideBtn.addEventListener('click', toggleHideTranslations);
+    }
+
+    function toggleHideTranslations() {
+      hideLabels = !hideLabels;
+      document.querySelectorAll('.translation-label').forEach(el => {
+        el.style.opacity = hideLabels ? '0' : '1';
+        el.style.filter = hideLabels ? 'blur(4px)' : 'none';
+      });
+    }
+
+    // Mini Game: "لاقي الصورة"
+    const gameBtn = document.getElementById('findGameBtn');
+    const closeGameBtn = document.getElementById('closeGameBtn');
+
+    function startNewRound() {
+      const randomIndex = Math.floor(Math.random() * cards.length);
+      targetCard = cards[randomIndex];
+      const word = targetCard.getAttribute('data-item');
+      targetWordEl.textContent = word;
+      cards.forEach(c => c.classList.remove('ring-4', 'ring-secondary-container', 'opacity-40'));
+    }
+
+    gameBtn.addEventListener('click', () => {
+      gameActive = true;
+      score = 0;
+      scoreEl.textContent = `0/5`;
+      banner.classList.remove('hidden');
+      startNewRound();
+    });
+
+    closeGameBtn.addEventListener('click', () => {
+      gameActive = false;
+      banner.classList.add('hidden');
+      cards.forEach(c => c.classList.remove('ring-4', 'ring-secondary-container', 'opacity-40'));
+    });
+
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        if (!gameActive) {
+          // Play micro sound bounce effect
+          card.classList.add('scale-105');
+          setTimeout(() => card.classList.remove('scale-105'), 180);
+          return;
+        }
+
+        if (card === targetCard) {
+          score++;
+          scoreEl.textContent = `${score}/5`;
+          card.classList.add('bg-secondary-fixed');
+          setTimeout(() => card.classList.remove('bg-secondary-fixed'), 400);
+
+          if (score >= 5) {
+            targetWordEl.textContent = 'Parabéns! مبروك 🎉';
+            setTimeout(() => {
+              banner.classList.add('hidden');
+              gameActive = false;
+            }, 1200);
+          } else {
+            startNewRound();
+          }
+        } else {
+          card.classList.add('opacity-40');
+          setTimeout(() => card.classList.remove('opacity-40'), 500);
+        }
+      });
+    });
+
+    // Shuffle feature
+    const shuffleBtn = document.getElementById('shuffleCards');
+    const grid = document.getElementById('cardGrid');
+    shuffleBtn.addEventListener('click', () => {
+      for (let i = grid.children.length; i >= 0; i--) {
+        grid.appendChild(grid.children[Math.random() * i | 0]);
+      }
+      shuffleBtn.classList.add('rotate-180');
+      setTimeout(() => shuffleBtn.classList.remove('rotate-180'), 300);
+    });
+
+  })();
+</script><footer class="w-full mt-auto px-gutter py-space-md"><div class="flex items-center justify-between rounded-xl bg-surface-container-low/90 backdrop-blur-md px-gutter py-space-sm shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><button aria-label="السابق" class="flex items-center gap-1 px-3 h-11 rounded-lg bg-surface text-primary hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[18px]">arrow_forward</span><span class="font-label-md text-label-md font-semibold">السابق</span></button><div class="flex flex-col items-center justify-center"><span class="font-phonetic-md text-phonetic-md text-primary font-medium tracking-widest" dir="ltr">pág. 42 / 120</span><span class="font-label-sm text-label-sm text-on-surface-variant">الوحدة ٣: الأكل والشرب</span></div><button aria-label="التالي" class="flex items-center gap-1 px-3 h-11 rounded-lg bg-surface text-primary hover:bg-surface-container transition-colors"><span class="font-label-md text-label-md font-semibold">التالي</span><span class="material-symbols-outlined text-[18px]">arrow_back</span></button></div></footer></main>
+
+</body></html>

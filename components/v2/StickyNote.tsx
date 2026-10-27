@@ -23,7 +23,7 @@ export function StickyNote({ children, skill, className }: Props) {
           <SkillChip skill={skill} />
         </div>
       ) : null}
-      <p className="font-[family-name:var(--font-v2-arabic)] text-sm leading-6">
+      <p dir="rtl" className="text-end font-[family-name:var(--font-v2-arabic)] text-sm leading-6">
         {children}
       </p>
     </aside>
