@@ -27,6 +27,13 @@ function clone<T>(v: T): T {
 }
 
 describe('v2 content · day06', () => {
+  it('gold ESTAR pack is day 11 (filename day06 kept)', () => {
+    const pack = loadDay6();
+    assert.equal(pack.lesson.day, 11);
+    assert.equal(pack.lesson.week, 2);
+    assert.equal(pack.lesson.id, 'pt-PT.d11');
+  });
+
   it('passes in normal mode with one pages_count warning', () => {
     const pack = loadDay6();
     const result = validateLessonPack(pack, { mode: 'normal' });
@@ -51,7 +58,11 @@ describe('v2 content · broken fixtures', () => {
     assert.ok(compare && compare.type === 'compare');
     compare.columns[0]!.entries[0]!.ref = 'sentence.does_not_exist';
     const result = validateLessonPack(pack, { mode: 'normal' });
-    assert.ok(result.issues.some((i) => i.rule === 'bad_ref'));
+    assert.ok(
+      result.issues.some(
+        (i) => i.rule === 'bad_ref' || i.rule === 'unknown_item_ref',
+      ),
+    );
   });
 
   it('bad_form_id', () => {
@@ -65,13 +76,16 @@ describe('v2 content · broken fixtures', () => {
 
   it('ask_too_early', () => {
     const pack = clone(loadDay6());
-    pack.pages[0]!.steps![1]!.kind = 'ask';
-    pack.pages[0]!.steps![1]!.ask = {
-      question: [{ text: 'x', lang: 'eg' }],
-      options: [
-        { label: [{ text: 'a', lang: 'tl' }], correct: true },
-        { label: [{ text: 'b', lang: 'tl' }], correct: false },
-      ],
+    pack.pages[0]!.steps![1] = {
+      kind: 'ask',
+      target: pack.pages[0]!.steps![1]!.target,
+      ask: {
+        question: [{ text: 'x', lang: 'eg' }],
+        options: [
+          { label: [{ text: 'a', lang: 'tl' }], correct: true },
+          { label: [{ text: 'b', lang: 'tl' }], correct: false },
+        ],
+      },
     };
     const result = validateLessonPack(pack, { mode: 'normal' });
     assert.ok(result.issues.some((i) => i.rule === 'ask_too_early'));

@@ -1,0 +1,12 @@
+{
+  "keys": [],
+  "style_anchor": "content/v2/assets/style-anchor.png",
+  "characters": {
+    "yassin": "content/v2/assets/characters/yassin.png",
+    "ines": "content/v2/assets/characters/ines.png",
+    "rita": "content/v2/assets/characters/rita.png",
+    "manuel": "content/v2/assets/characters/manuel.png",
+    "sofia": "content/v2/assets/characters/sofia.png",
+    "carlos": "content/v2/assets/characters/carlos.png"
+  }
+}

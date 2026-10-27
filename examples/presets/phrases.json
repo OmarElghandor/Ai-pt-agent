@@ -1,0 +1,183 @@
+{
+  "preset": "phrases",
+  "mode": "static",
+  "source_day": 2,
+  "title_tl": "Conversação Básica",
+  "situation_eg": "في الكافيه",
+  "items": [
+    {
+      "type": "phrase",
+      "id": "phrase.hello",
+      "tl": "Olá!",
+      "ar": "مرحبًا.",
+      "say": "أولا",
+      "media": {
+        "icon": "smile"
+      },
+      "context_eg": "أول ما تدخل أي مكان",
+      "cloze": "Olá"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.good_morning",
+      "tl": "Bom dia.",
+      "ar": "صباح الخير.",
+      "say": "بون ديا",
+      "media": {
+        "icon": "sun"
+      },
+      "context_eg": "من الصبح لحد الضهر، وكمان وانت ماشي",
+      "cloze": "dia"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.want_coffee",
+      "tl": "Queria um café, por favor.",
+      "ar": "أريد قهوة، من فضلك.",
+      "say": "كِريا أون كافيه، پور فاڤور",
+      "media": {
+        "icon": "coffee"
+      },
+      "context_eg": "وانت بتطلب من الكاونتر",
+      "cloze": "Queria",
+      "marks": [
+        {
+          "text": "Queria",
+          "group": "verb"
+        }
+      ]
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.how_much",
+      "tl": "Quanto é?",
+      "ar": "كم الحساب؟",
+      "say": "كوانتو إي",
+      "media": {
+        "icon": "money"
+      },
+      "context_eg": "لما تيجي تدفع",
+      "cloze": "Quanto"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.thanks",
+      "tl": "Obrigado.",
+      "ar": "شكرًا.",
+      "say": "أوبريجادو",
+      "media": {
+        "icon": "heart"
+      },
+      "context_eg": "الراجل يقول obrigado والست تقول obrigada",
+      "cloze": "Obrigado",
+      "tl_f": "Obrigada."
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.see_you",
+      "tl": "Até logo.",
+      "ar": "إلى اللقاء.",
+      "say": "أتي لوجو",
+      "media": {
+        "icon": "door"
+      },
+      "context_eg": "وانت خارج من المحل",
+      "cloze": "logo"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.i_like_coffee",
+      "tl": "Gosto de café.",
+      "ar": "أحب القهوة.",
+      "say": "جوشتو د كافيه",
+      "media": {
+        "icon": "heart"
+      },
+      "context_eg": "لو حد سألك بتحب القهوة",
+      "cloze": "Gosto",
+      "marks": [
+        {
+          "text": "Gosto",
+          "group": "verb"
+        },
+        {
+          "text": "de",
+          "group": "prep"
+        }
+      ]
+    }
+  ],
+  "page": {
+    "id": "p1",
+    "preset": "phrases",
+    "mode": "static",
+    "pill": "جمل الموقف",
+    "title": [
+      {
+        "text": "اللي هتقوله في الكافيه",
+        "lang": "eg"
+      }
+    ],
+    "subtitle": [
+      {
+        "text": "سبع جمل تكفيك من أول ما تدخل لحد ما تخرج",
+        "lang": "eg"
+      }
+    ],
+    "cover": "meaning",
+    "library": false,
+    "blocks": [
+      {
+        "id": "b1",
+        "type": "cards",
+        "items": [
+          "phrase.hello",
+          "phrase.good_morning",
+          "phrase.want_coffee",
+          "phrase.how_much",
+          "phrase.thanks",
+          "phrase.see_you",
+          "phrase.i_like_coffee"
+        ],
+        "cols": 2,
+        "numbered": true
+      },
+      {
+        "id": "b2",
+        "type": "tip",
+        "kind": "culture",
+        "title": [
+          {
+            "text": "قهوة البرتغال",
+            "lang": "eg"
+          }
+        ],
+        "body": [
+          {
+            "text": "لو طلبت ",
+            "lang": "eg"
+          },
+          {
+            "text": "um café",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": " هيجيلك إسبريسو صغير. ولو عايز قهوة بلبن في كوباية اطلب ",
+            "lang": "eg"
+          },
+          {
+            "text": "um galão",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": ".",
+            "lang": "eg"
+          }
+        ]
+      }
+    ]
+  },
+  "questions": []
+}

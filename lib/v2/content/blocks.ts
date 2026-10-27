@@ -119,11 +119,19 @@ const RulesListBlockSchema = z.object({
   items: z.array(RtSchema),
 });
 
+/** One spoken line; tl/ar are hydrated from ids by generation code. */
+export const DialogueLineSchema = z.object({
+  speaker: z.string().min(1),
+  tl: z.string(),
+  ar: z.string(),
+  ids: z.array(z.string().min(1)).min(1),
+});
+
 const DialogueBlockSchema = z.object({
   id: z.string(),
   type: z.literal('dialogue'),
   group: RtGroupSchema.optional(),
-  lines: z.array(z.string()),
+  lines: z.array(DialogueLineSchema),
 });
 
 const SceneBlockSchema = z.object({
