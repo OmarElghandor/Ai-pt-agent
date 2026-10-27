@@ -17,6 +17,8 @@ export type RtSegment = {
   lang: RtLang;
   bold?: boolean;
   group?: RtGroup;
+  /** Intentionally wrong form — render struck through. */
+  wrong?: boolean;
 };
 
 export type Skill = 'listening' | 'reading' | 'speaking' | 'writing';

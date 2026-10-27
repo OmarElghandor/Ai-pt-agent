@@ -20,6 +20,8 @@ export const RtSegmentSchema = z.object({
   lang: RtLangSchema,
   bold: z.boolean().optional(),
   group: RtGroupSchema.optional(),
+  /** Intentionally wrong form — render struck through. */
+  wrong: z.boolean().optional(),
 });
 
 export const RtSchema = z.array(RtSegmentSchema).min(1);

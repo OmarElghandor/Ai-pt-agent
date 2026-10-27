@@ -37,6 +37,7 @@ export function RichText({ segments, className }: Props) {
               fontClass,
               groupClass,
               seg.bold ? 'font-semibold' : '',
+              seg.wrong ? 'line-through opacity-70' : '',
             ]
               .filter(Boolean)
               .join(' ')}

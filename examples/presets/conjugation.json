@@ -1,0 +1,534 @@
+{
+  "preset": "conjugation",
+  "mode": "explore",
+  "source_day": 6,
+  "title_tl": "Verbos -AR 1",
+  "situation_eg": "بتشتغل فين وساكن فين",
+  "note": "The table has one verb column; the swap control changes its lemma and the renderer recomputes the forms from v2_conjugations.",
+  "items": [
+    {
+      "type": "sentence",
+      "id": "sentence.moro_lisboa",
+      "tl": "Moro em Lisboa.",
+      "ar": "أسكن في لشبونة.",
+      "say": "مورو إين ليچبوا",
+      "marks": [
+        {
+          "text": "Moro",
+          "group": "verb"
+        }
+      ]
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.falo_pouco",
+      "tl": "Falo um pouco de português.",
+      "ar": "أتكلم قليلًا من البرتغالية.",
+      "say": "فالو أون پوكو د پورتوجيش",
+      "marks": [
+        {
+          "text": "Falo",
+          "group": "verb"
+        }
+      ]
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.chego_nove",
+      "tl": "Chego às nove.",
+      "ar": "أصل في التاسعة.",
+      "say": "شيجو آش نوڤ",
+      "marks": [
+        {
+          "text": "Chego",
+          "group": "verb"
+        },
+        {
+          "text": "às",
+          "group": "prep"
+        }
+      ]
+    }
+  ],
+  "page": {
+    "id": "p1",
+    "preset": "conjugation",
+    "mode": "explore",
+    "tool_id": "ar_present",
+    "pill": "التصريف",
+    "title": [
+      {
+        "text": "-AR",
+        "lang": "tl",
+        "group": "verb"
+      }
+    ],
+    "subtitle": [
+      {
+        "text": "اختار شخص، وشوف النهاية بتتغير إزاي",
+        "lang": "eg"
+      }
+    ],
+    "cover": "endings",
+    "library": true,
+    "blocks": [
+      {
+        "id": "b1",
+        "type": "table",
+        "split_endings": true,
+        "cols": [
+          {
+            "label": [
+              {
+                "text": "FALAR",
+                "lang": "tl"
+              }
+            ],
+            "group": "verb"
+          }
+        ],
+        "rows": [
+          {
+            "label": [
+              {
+                "text": "eu",
+                "lang": "tl"
+              }
+            ],
+            "media": {
+              "image": "person.eu"
+            }
+          },
+          {
+            "label": [
+              {
+                "text": "tu",
+                "lang": "tl"
+              }
+            ],
+            "media": {
+              "image": "person.tu"
+            }
+          },
+          {
+            "label": [
+              {
+                "text": "ele / ela / você",
+                "lang": "tl"
+              }
+            ],
+            "media": {
+              "image": "person.ele"
+            }
+          },
+          {
+            "label": [
+              {
+                "text": "nós",
+                "lang": "tl"
+              }
+            ],
+            "media": {
+              "image": "person.nos"
+            }
+          },
+          {
+            "label": [
+              {
+                "text": "eles / elas",
+                "lang": "tl"
+              }
+            ],
+            "media": {
+              "image": "person.eles"
+            }
+          }
+        ],
+        "cells": [
+          [
+            {
+              "ref": "verb.falar:pres:eu"
+            }
+          ],
+          [
+            {
+              "ref": "verb.falar:pres:tu"
+            }
+          ],
+          [
+            {
+              "ref": "verb.falar:pres:ele"
+            }
+          ],
+          [
+            {
+              "ref": "verb.falar:pres:nos"
+            }
+          ],
+          [
+            {
+              "ref": "verb.falar:pres:eles"
+            }
+          ]
+        ]
+      },
+      {
+        "id": "b2",
+        "type": "practice",
+        "questions": [
+          "q.p.conj.1",
+          "q.p.conj.2"
+        ]
+      },
+      {
+        "id": "b3",
+        "type": "examples",
+        "items": [
+          {
+            "ref": "sentence.moro_lisboa",
+            "group": "verb"
+          },
+          {
+            "ref": "sentence.falo_pouco",
+            "group": "verb"
+          },
+          {
+            "ref": "sentence.chego_nove",
+            "group": "verb"
+          }
+        ]
+      },
+      {
+        "id": "b4",
+        "type": "tip",
+        "kind": "rule",
+        "title": [
+          {
+            "text": "القاعدة",
+            "lang": "eg"
+          }
+        ],
+        "body": [
+          {
+            "text": "شيل ",
+            "lang": "eg"
+          },
+          {
+            "text": "-ar",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": " وحط النهاية: ",
+            "lang": "eg"
+          },
+          {
+            "text": "-o, -as, -a, -amos, -am",
+            "lang": "tl",
+            "group": "verb",
+            "bold": true
+          },
+          {
+            "text": ". وده بيمشي على أغلب أفعال -ar.",
+            "lang": "eg"
+          }
+        ]
+      }
+    ],
+    "controls": [
+      {
+        "id": "c1",
+        "type": "reveal_axis",
+        "target": "b1",
+        "axis": "rows",
+        "tips": [
+          [
+            {
+              "text": "eu",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": ": شيل -ar وحط ",
+              "lang": "eg"
+            },
+            {
+              "text": "-o",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": ": ",
+              "lang": "eg"
+            },
+            {
+              "text": "falo",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": ".",
+              "lang": "eg"
+            }
+          ],
+          [
+            {
+              "text": "tu",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": ": ",
+              "lang": "eg"
+            },
+            {
+              "text": "-as",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": "، والـ s في الآخر بتتنطق ش.",
+              "lang": "eg"
+            }
+          ],
+          [
+            {
+              "text": "ele / ela / você",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": ": ",
+              "lang": "eg"
+            },
+            {
+              "text": "-a",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": " بس.",
+              "lang": "eg"
+            }
+          ],
+          [
+            {
+              "text": "nós",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": ": ",
+              "lang": "eg"
+            },
+            {
+              "text": "-amos",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": "، ودايمًا آخرها -mos.",
+              "lang": "eg"
+            }
+          ],
+          [
+            {
+              "text": "eles",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": ": ",
+              "lang": "eg"
+            },
+            {
+              "text": "-am",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": "، وآخرها بيتنطق «اون».",
+              "lang": "eg"
+            }
+          ]
+        ]
+      },
+      {
+        "id": "c2",
+        "type": "swap",
+        "target": "b1/col:0",
+        "options": [
+          "verb.falar",
+          "verb.morar",
+          "verb.chegar"
+        ]
+      }
+    ],
+    "locked_until": [
+      {
+        "control": "c1",
+        "blocks": [
+          "b2"
+        ]
+      }
+    ]
+  },
+  "questions": [
+    {
+      "id": "q.p.conj.1",
+      "type": "gap",
+      "skill": "writing",
+      "tests": [
+        "verb.falar:pres:nos"
+      ],
+      "tool_id": "ar_present",
+      "prompt": {
+        "sentence": [
+          {
+            "text": "Nós ___ árabe em casa.",
+            "lang": "tl"
+          }
+        ],
+        "meaning": [
+          {
+            "text": "نحن نتكلم العربية في البيت.",
+            "lang": "ar"
+          }
+        ]
+      },
+      "options": [
+        [
+          {
+            "text": "falamos",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "falam",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "fala",
+            "lang": "tl"
+          }
+        ]
+      ],
+      "answer": 0,
+      "feedback_eg": [
+        {
+          "text": "nós",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": " آخرها دايمًا -mos.",
+          "lang": "eg"
+        }
+      ],
+      "why_wrong_eg": [
+        null,
+        [
+          {
+            "text": "falam",
+            "lang": "tl"
+          },
+          {
+            "text": " لـ eles، يعني «هم».",
+            "lang": "eg"
+          }
+        ],
+        [
+          {
+            "text": "fala",
+            "lang": "tl"
+          },
+          {
+            "text": " لـ ele / ela.",
+            "lang": "eg"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "q.p.conj.2",
+      "type": "gap",
+      "skill": "reading",
+      "tests": [
+        "verb.morar:pres:eu"
+      ],
+      "tool_id": "ar_present",
+      "prompt": {
+        "sentence": [
+          {
+            "text": "Eu ___ em Lisboa.",
+            "lang": "tl"
+          }
+        ],
+        "meaning": [
+          {
+            "text": "أنا أسكن في لشبونة.",
+            "lang": "ar"
+          }
+        ]
+      },
+      "options": [
+        [
+          {
+            "text": "moro",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "mora",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "moram",
+            "lang": "tl"
+          }
+        ]
+      ],
+      "answer": 0,
+      "feedback_eg": [
+        {
+          "text": "eu",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": " آخرها -o.",
+          "lang": "eg"
+        }
+      ],
+      "why_wrong_eg": [
+        null,
+        [
+          {
+            "text": "mora",
+            "lang": "tl"
+          },
+          {
+            "text": " لـ ele / ela.",
+            "lang": "eg"
+          }
+        ],
+        [
+          {
+            "text": "moram",
+            "lang": "tl"
+          },
+          {
+            "text": " لـ eles.",
+            "lang": "eg"
+          }
+        ]
+      ]
+    }
+  ]
+}

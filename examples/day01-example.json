@@ -1,0 +1,753 @@
+{
+  "lesson": {
+    "id": "pt-PT.d01",
+    "target_lang": "pt-PT",
+    "day": 1,
+    "phase": 1,
+    "week": 1,
+    "kind": "lesson",
+    "situation": {
+      "tl": "O primeiro dia no trabalho",
+      "eg": "أول يوم في الشغل"
+    },
+    "can_do": [
+      {
+        "eg": "تعرّف بنفسك",
+        "proves": [
+          "phrase.my_name"
+        ]
+      },
+      {
+        "eg": "تقول متشكر",
+        "proves": [
+          "phrase.pleasure"
+        ]
+      }
+    ],
+    "pages": [
+      "p1",
+      "p2",
+      "p3",
+      "p4"
+    ]
+  },
+  "items": [
+    {
+      "type": "phrase",
+      "id": "phrase.hello",
+      "tl": "Olá!",
+      "ar": "مرحبا.",
+      "say": "أولا",
+      "marks": [
+        {
+          "text": "Olá",
+          "group": "neutral"
+        }
+      ],
+      "media": {
+        "icon": "smile"
+      },
+      "context_eg": "لما تقابل حد",
+      "cloze": "Olá"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.good_morning",
+      "tl": "Bom dia!",
+      "ar": "صباح الخير.",
+      "say": "بوم ديا",
+      "marks": [
+        {
+          "text": "Bom dia",
+          "group": "neutral"
+        }
+      ],
+      "media": {
+        "icon": "sun"
+      },
+      "context_eg": "الصبح في الشغل",
+      "cloze": "dia"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.my_name",
+      "tl": "Chamo-me Omar.",
+      "ar": "اسمي عمر.",
+      "say": "شامو مي عومار",
+      "marks": [
+        {
+          "text": "Chamo-me",
+          "group": "pron"
+        }
+      ],
+      "media": {
+        "icon": "person"
+      },
+      "context_eg": "لما تعرّف بنفسك",
+      "cloze": "Chamo-me"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.pleasure",
+      "tl": "Muito prazer!",
+      "ar": "تشرفت.",
+      "say": "مويتو پرازير",
+      "marks": [
+        {
+          "text": "prazer",
+          "group": "neutral"
+        }
+      ],
+      "media": {
+        "icon": "heart"
+      },
+      "context_eg": "بعد ما تقول اسمك",
+      "cloze": "prazer"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.how_are_you",
+      "tl": "Tudo bem?",
+      "ar": "هل كل شيء بخير؟",
+      "say": "تودو باين",
+      "marks": [
+        {
+          "text": "Tudo bem",
+          "group": "neutral"
+        }
+      ],
+      "media": {
+        "icon": "smile"
+      },
+      "context_eg": "تحية سريعة",
+      "cloze": "bem"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.whats_your_name",
+      "tl": "Como se chama?",
+      "ar": "ما اسمك؟",
+      "say": "كومو سي شاما",
+      "marks": [
+        {
+          "text": "chama",
+          "group": "pron"
+        }
+      ],
+      "media": {
+        "icon": "person"
+      },
+      "context_eg": "تسأل عن الاسم",
+      "cloze": "chama"
+    },
+    {
+      "type": "word",
+      "id": "word.nome",
+      "tl": "o nome",
+      "lemma": "nome",
+      "gender": "m",
+      "ar": "الاسم",
+      "say": "أو نومي",
+      "pos": "noun"
+    },
+    {
+      "type": "word",
+      "id": "word.trabalho",
+      "tl": "o trabalho",
+      "lemma": "trabalho",
+      "gender": "m",
+      "ar": "العمل",
+      "say": "أو تغاباليو",
+      "pos": "noun"
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.chamo_me",
+      "tl": "Chamo-me Yassin.",
+      "ar": "اسمي ياسين.",
+      "say": "شامو مي ياسين",
+      "marks": [
+        {
+          "text": "Chamo-me",
+          "group": "pron"
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "id": "p1",
+      "preset": "phrases",
+      "mode": "guided",
+      "title": [
+        {
+          "text": "جمل التعارف",
+          "lang": "eg"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "b1",
+          "type": "heading",
+          "text": [
+            {
+              "text": "جمل التعارف",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "id": "b2",
+          "type": "cards",
+          "items": [
+            "phrase.hello",
+            "phrase.good_morning",
+            "phrase.my_name",
+            "phrase.pleasure"
+          ]
+        },
+        {
+          "id": "b3",
+          "type": "tip",
+          "kind": "rule",
+          "title": [
+            {
+              "text": "ملاحظة",
+              "lang": "eg"
+            }
+          ],
+          "body": [
+            {
+              "text": "ركز على القاعدة بتاعة النهاردة",
+              "lang": "eg"
+            }
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "target": "b1",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "شوف العنوان",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "الجمل أو الكلمات",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b3",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "الملاحظة",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "ask",
+          "ask": {
+            "question": [
+              {
+                "text": "إيه أول عنصر؟",
+                "lang": "eg"
+              }
+            ],
+            "options": [
+              {
+                "label": [
+                  {
+                    "text": "الصح",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": true
+              },
+              {
+                "label": [
+                  {
+                    "text": "الغلط",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": false
+              }
+            ]
+          }
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "كمل",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "كمل تاني",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "كمل تالت",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "ask",
+          "ask": {
+            "question": [
+              {
+                "text": "فاهم القاعدة؟",
+                "lang": "eg"
+              }
+            ],
+            "options": [
+              {
+                "label": [
+                  {
+                    "text": "أيوه",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": true
+              },
+              {
+                "label": [
+                  {
+                    "text": "لأ",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": false
+              }
+            ]
+          }
+        },
+        {
+          "target": "b3",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "راجع",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b1",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "راجع تاني",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "آخر نظرة",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "ask",
+          "ask": {
+            "question": [
+              {
+                "text": "جاهز؟",
+                "lang": "eg"
+              }
+            ],
+            "options": [
+              {
+                "label": [
+                  {
+                    "text": "أيوه",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": true
+              },
+              {
+                "label": [
+                  {
+                    "text": "لأ",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "preset": "pattern",
+      "mode": "guided",
+      "title": [
+        {
+          "text": "Chamo-me",
+          "lang": "eg"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "b1",
+          "type": "heading",
+          "text": [
+            {
+              "text": "Chamo-me",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "id": "b2",
+          "type": "cards",
+          "items": [
+            "phrase.my_name",
+            "sentence.chamo_me",
+            "phrase.whats_your_name"
+          ]
+        },
+        {
+          "id": "b3",
+          "type": "tip",
+          "kind": "rule",
+          "title": [
+            {
+              "text": "ملاحظة",
+              "lang": "eg"
+            }
+          ],
+          "body": [
+            {
+              "text": "ركز على القاعدة بتاعة النهاردة",
+              "lang": "eg"
+            }
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "target": "b1",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "شوف العنوان",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "الجمل أو الكلمات",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b3",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "الملاحظة",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "ask",
+          "ask": {
+            "question": [
+              {
+                "text": "إيه أول عنصر؟",
+                "lang": "eg"
+              }
+            ],
+            "options": [
+              {
+                "label": [
+                  {
+                    "text": "الصح",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": true
+              },
+              {
+                "label": [
+                  {
+                    "text": "الغلط",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": false
+              }
+            ]
+          }
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "كمل",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "كمل تاني",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "كمل تالت",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "ask",
+          "ask": {
+            "question": [
+              {
+                "text": "فاهم القاعدة؟",
+                "lang": "eg"
+              }
+            ],
+            "options": [
+              {
+                "label": [
+                  {
+                    "text": "أيوه",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": true
+              },
+              {
+                "label": [
+                  {
+                    "text": "لأ",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": false
+              }
+            ]
+          }
+        },
+        {
+          "target": "b3",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "راجع",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b1",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "راجع تاني",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "آخر نظرة",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "target": "b2",
+          "kind": "ask",
+          "ask": {
+            "question": [
+              {
+                "text": "جاهز؟",
+                "lang": "eg"
+              }
+            ],
+            "options": [
+              {
+                "label": [
+                  {
+                    "text": "أيوه",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": true
+              },
+              {
+                "label": [
+                  {
+                    "text": "لأ",
+                    "lang": "eg"
+                  }
+                ],
+                "correct": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "preset": "scene",
+      "mode": "static",
+      "title": [
+        {
+          "text": "أول يوم في الشغل",
+          "lang": "eg"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "b1",
+          "type": "heading",
+          "text": [
+            {
+              "text": "أول يوم في الشغل",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "id": "b2",
+          "type": "cards",
+          "items": [
+            "phrase.how_are_you",
+            "word.trabalho"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "preset": "phrases",
+      "mode": "static",
+      "title": [
+        {
+          "text": "تمرين سريع",
+          "lang": "eg"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "b1",
+          "type": "heading",
+          "text": [
+            {
+              "text": "تمرين سريع",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "id": "b2",
+          "type": "cards",
+          "items": [
+            "phrase.hello",
+            "phrase.my_name",
+            "phrase.pleasure"
+          ]
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "type": "mcq",
+      "skill": "reading",
+      "tests": [
+        "phrase.my_name"
+      ],
+      "prompt": [
+        {
+          "text": "Chamo-me معناها إيه؟",
+          "lang": "eg"
+        }
+      ],
+      "options": [
+        {
+          "label": [
+            {
+              "text": "اسمي",
+              "lang": "ar"
+            }
+          ],
+          "correct": true
+        },
+        {
+          "label": [
+            {
+              "text": "شكرا",
+              "lang": "ar"
+            }
+          ],
+          "correct": false
+        }
+      ]
+    }
+  ]
+}

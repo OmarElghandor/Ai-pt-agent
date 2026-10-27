@@ -1,0 +1,187 @@
+{
+  "preset": "scene",
+  "mode": "static",
+  "source_day": 3,
+  "title_tl": "Gramática Básica",
+  "situation_eg": "في السوبر ماركت",
+  "note": "Hotspot x and y are fractions (0–1) of the image width and height.",
+  "items": [
+    {
+      "type": "word",
+      "id": "word.bread",
+      "tl": "o pão",
+      "lemma": "pão",
+      "gender": "m",
+      "ar": "الخبز",
+      "say": "أو پاون",
+      "pos": "noun",
+      "media": {
+        "image": "food.bread"
+      },
+      "plural": "os pães"
+    },
+    {
+      "type": "word",
+      "id": "word.milk",
+      "tl": "o leite",
+      "lemma": "leite",
+      "gender": "m",
+      "ar": "الحليب",
+      "say": "أو لايت",
+      "pos": "noun",
+      "media": {
+        "image": "food.milk"
+      }
+    },
+    {
+      "type": "word",
+      "id": "word.cheese",
+      "tl": "o queijo",
+      "lemma": "queijo",
+      "gender": "m",
+      "ar": "الجبن",
+      "say": "أو كايچو",
+      "pos": "noun",
+      "media": {
+        "image": "food.cheese"
+      }
+    },
+    {
+      "type": "word",
+      "id": "word.apple",
+      "tl": "a maçã",
+      "lemma": "maçã",
+      "gender": "f",
+      "ar": "التفاحة",
+      "say": "أ مَسان",
+      "pos": "noun",
+      "media": {
+        "image": "food.apple"
+      },
+      "plural": "as maçãs"
+    },
+    {
+      "type": "word",
+      "id": "word.water",
+      "tl": "a água",
+      "lemma": "água",
+      "gender": "f",
+      "ar": "الماء",
+      "say": "أ آجوا",
+      "pos": "noun",
+      "media": {
+        "image": "drink.water"
+      }
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.where_is_milk",
+      "tl": "Onde fica o leite?",
+      "ar": "أين الحليب؟",
+      "say": "أوند فيكا أو لايت",
+      "media": {
+        "icon": "milk"
+      },
+      "context_eg": "لما تدوّر على حاجة في الرفوف",
+      "cloze": "Onde"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.what_is_this",
+      "tl": "O que é isto?",
+      "ar": "ما هذا؟",
+      "say": "أو كي إي إيشتو",
+      "media": {
+        "icon": "question"
+      },
+      "context_eg": "لما تشوف حاجة ومتعرفش اسمها",
+      "cloze": "isto"
+    }
+  ],
+  "page": {
+    "id": "p1",
+    "preset": "scene",
+    "mode": "static",
+    "pill": "المكان",
+    "title": [
+      {
+        "text": "جوه السوبر ماركت",
+        "lang": "eg"
+      }
+    ],
+    "subtitle": [
+      {
+        "text": "دوس على أي حاجة تسمع اسمها",
+        "lang": "eg"
+      }
+    ],
+    "cover": "meaning",
+    "library": false,
+    "blocks": [
+      {
+        "id": "b1",
+        "type": "scene",
+        "image": "scene.supermarket.aisle",
+        "hotspots": [
+          {
+            "x": 0.18,
+            "y": 0.3,
+            "ref": "word.bread"
+          },
+          {
+            "x": 0.42,
+            "y": 0.28,
+            "ref": "word.milk"
+          },
+          {
+            "x": 0.66,
+            "y": 0.34,
+            "ref": "word.cheese"
+          },
+          {
+            "x": 0.3,
+            "y": 0.62,
+            "ref": "word.apple"
+          },
+          {
+            "x": 0.58,
+            "y": 0.66,
+            "ref": "word.water"
+          },
+          {
+            "x": 0.82,
+            "y": 0.72,
+            "ref": "phrase.where_is_milk"
+          }
+        ]
+      },
+      {
+        "id": "b2",
+        "type": "tip",
+        "kind": "culture",
+        "title": [
+          {
+            "text": "مش عارف اسمها؟",
+            "lang": "eg"
+          }
+        ],
+        "body": [
+          {
+            "text": "شاور على الحاجة وقول ",
+            "lang": "eg"
+          },
+          {
+            "text": "O que é isto?",
+            "lang": "tl",
+            "bold": true
+          },
+          {
+            "text": ". أي حد في المحل هيرد عليك.",
+            "lang": "eg"
+          }
+        ]
+      }
+    ]
+  },
+  "questions": []
+}
