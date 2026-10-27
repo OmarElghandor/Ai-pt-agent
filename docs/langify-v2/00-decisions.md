@@ -15,7 +15,16 @@ If any other doc disagrees with this file, this file wins. Each line is a decisi
 ## 1. Product shape
 
 - Audience: Egyptian Arabic speakers living in Portugal, A0–A1. Target language: European Portuguese (pt-PT). Later: English and German on the same engine.
-- 90 days. Each day is a street situation, not a grammar topic. A grammar rule arrives on the first day the situation needs it, one rule per day. Day 7 of every week is a story. Full plan: `04-curriculum.md`.
+- **(changed 2026-10-25)** 90 days, ordered **grammar-first**. Each day is one grammar unit, following the unit order of Practice Portuguese A1: regular present -ar → -er → -ir, then ser/estar, then the irregulars, then the past. The unit is taught **inside a street situation** that needs it, and the situation supplies the phrases, the words and the character conversation.
+  - Anything urgent for a resident (Queria…, O que é isto?, Fui ao…, Dói-me…) comes early as a **ready-made chunk**, and its rule comes later in its place in the order. Numbers are the one exception, with their own day (day 4).
+  - Day 7 of every week is a story. Full plan: `04-curriculum.md`.
+- **(new)** Lesson titles are the Portuguese unit titles (e.g. "Verbos -AR 1", "Possessivos"), shown with an Arabic translation and the situation under them.
+  - When a day covers more than one of their units, the extra unit titles are listed on it.
+  - Story days and day 29 have our own titles.
+  - We reuse only the topic order and names, never their content.
+  - Plan fields: `title_tl`, `title_ar`, `situation_eg`, `example_tl`, `rule_eg`, `extra_units_tl`, `early_chunks_tl`.
+- **(new)** Days 1–30 are labeled **A1**, and weeks 5–8 start **A2**. This is aligned with the CIPLE A2 exam that residents need.
+- SER vs ESTAR is now days 10–11. `examples/day06-example.json` is the ESTAR day, which is **day 11** in the new order. The file keeps its name, but its `day` is 11.
 - A normal day has these steps, about 10 minutes in all: see the place (words) → situation phrases → one small rule → self-test → conversation with a character → review. Each step is one or more **pages**.
 - The "Library" (المكتبة) is the book in its original order: rules, tenses, verb cards, picture dictionary, stories. A page unlocks there when the learner reaches it on the path.
 
@@ -144,6 +153,7 @@ If any other doc disagrees with this file, this file wins. Each line is a decisi
 - Model: `gpt-image-2.5-flare-2026-09-08` through the edits endpoint (with references). Medium quality; high only for reference sheets. Every image gets a vision QA pass with Haiku. Budget: about $30–45 for 90 days.
 - No text inside generated images.
 - Audio: Azure TTS pt-PT, cached. Whether Azure pronunciation assessment supports pt-PT is still unknown; check before building scoring on it.
+- **(new)** Lesson **text** generation is staged and job-backed (`v2_jobs` + `npm run v2:worker`): outline → parallel pages (concurrency 6) ∥ questions → continuity pass → strict validate. Assets are **not** part of generate. `GENERATE_IMAGES` defaults to false; pages still store `image_spec` for later. TTS stays on-demand via `/api/tts` (optional warm script for published lessons). The prompts and step-by-step pipeline are in `08-lesson-generation-prompts.md`.
 
 ## 11. Open items
 

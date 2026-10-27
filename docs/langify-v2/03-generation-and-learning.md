@@ -6,6 +6,8 @@ Exported 2026-10-19. Language: Egyptian Arabic, with prompts and field names in 
 
 > **For Cursor, in English:** this is the detailed spec for lesson generation (Claude prompts, the request message per day, automatic checks), images (style, cast, `image_spec`, prompt templates, QA), flashcards, micro learning, daily use and gaps, the question bank, progress and error storage, and the practice agent prompts.
 >
+> **Live prompts:** the staged pipeline and the text the code actually sends are in `08-lesson-generation-prompts.md`. The system prompt later in this file is the original export (`PAGE STEPS`, `pt` / `say_ar`). Code uses the version in `lib/v2/generation/lesson/systemPrompt.ts`.
+>
 > **Superseded parts:** read these with `02-content-schema.md` and `00-decisions.md`.
 > - "شكل الصفحة" and "حقول كل نوع صفحة" (pages phrases / rule / dictionary / self_test / chat / done / story) describe the older page model. The page structure is now **blocks + presets + modes** from `02`. The day's sequence of steps still holds; each step is now one or more pages built from presets.
 > - In the Claude system prompt below, the `PAGE STEPS` block is replaced by the `PAGES` block at the end of `02`. The per-day request also gains `VERB_TABLE` and `PAGE_PLAN` (see `02`).
@@ -18,16 +20,18 @@ Oct 18, 2026 · @omar elghandour
 
 ## المسار: من الخطة لدرس جاهز
 
-كل يوم بيتولّد بطلب واحد لـ Claude، وبعده الكود بيكمّل الباقي. **Claude مبيكتبش برومبت صور.** هو بيكتب مواصفات الصورة في حقول ثابتة، والكود هو اللي بيركّب البرومبت. كده الستايل مستحيل يتغير من يوم لليوم اللي بعده.
+**(updated)** Text generation is **staged and resumable**, not one Claude call. Admin enqueues a `v2_jobs` row; `npm run v2:worker` runs the stages. Draft `meta.stages` is the resume source of truth. **Claude still does not write image prompts** — only `image_spec` fields. Images and TTS are **not** part of generate (`GENERATE_IMAGES` defaults false; audio stays on-demand `/api/tts`).
 
-1. **تجهيز ملف اليوم (كود):** الكود بياخد من الخطة الموقف والهدف والقاعدة والكلمات الجديدة والكلمات اللي هتتكرر. وبيضيف عليهم قائمة مفاتيح الصور الموجودة قبل كده.
-2. **التوليد (Claude):** Claude بيرجّع اليوم كامل في الهيكل الثابت: النصوص والكويزات والدردشة ومواصفات الصور. الرد بيبقى structured output، يعني مستحيل يرجع شكل غلط.
-3. **التحقق (كود، مش موديل):** الكود بيعمل فحوصات ثابتة. لو صفحة فشلت، بتتولّد هي بس تاني مرة واحدة. لو فشلت تاني، بتروح لطابور المراجعة اليدوية.
-4. **الصور (OpenAI):** لكل مفتاح صورة جديد، الكود بيركّب الستايل والشخصية والمواصفات، ويبعتهم مع صورة المرجع. لو المفتاح موجود قبل كده، مفيش توليد ولا تكلفة.
-5. **فحص الصورة:** موديل رؤية رخيص بيرد بنعم أو لا: فيها كلام مكتوب؟ عدد الأشخاص صح؟ الحاجة المطلوبة باينة؟ لو عدّت، بتترفع على Cloudinary.
-6. **الصوت والتخزين:** الصوت بيتولّد lazy زي النظام الحالي. واليوم بيتخزن في MongoDB ويظهر في المسار.
+1. **تجهيز ملف اليوم (كود):** من الخطة + KNOWN_ITEMS + VERB_TABLE + EXISTING_IMAGE_KEYS.
+2. **A · Outline (Claude):** item bank + page plan `{index, page_id, preset, mode, title, purpose, introduces, assumes, handoff}`. Validate refs/preset/mode. Save on draft.
+3. **B · Pages (Claude, parallel concurrency 6):** each call gets system+examples+item bank (prompt-cached), full outline, and only its plan entry. Returns one page (blocks/steps/controls/`image_spec`). Validate per page; retry that page once on fail.
+4. **C · Questions (Claude, parallel with B):** questions tagged with `page_index`; only items introduced up to that page.
+5. **Assemble** by outline index (never completion order). Set `introduced_on_page` on items.
+6. **Continuity pass (Claude):** short whole-lesson check → page indexes to regenerate (max one round).
+7. **Strict validate (code):** full pack once. Flagged drafts stay previewable; reviewed/published refused while flagged or invalid.
+8. **Images / audio (later, separate):** OpenAI edits from saved `image_spec` when `GENERATE_IMAGES=true`; warm TTS via admin/script for published lessons.
 
-اليوم اللي اتولّد مرة مبيتولّدش تاني. كل الأيام بتعدّي على نفس الطريق ده، سواء اتولّدت مسبقًا أو on-demand.
+Worker kill mid-run + restart resumes finished stages without redo.
 
 ## هيكل اليوم
 

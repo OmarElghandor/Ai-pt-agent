@@ -20,12 +20,13 @@ This pack holds everything decided in design sessions for Langify v2: European P
 | `docs/langify-v2/00-decisions.md` | **Single source of truth.** Every binding decision, short | English |
 | `docs/langify-v2/01-architecture.md` | Stack, folder layout, collections, API routes, practice beat flow | English |
 | `docs/langify-v2/02-content-schema.md` | Content JSON schema: lesson → page → block → item, 14 blocks, modes, presets | Arabic (source doc) |
-| `docs/langify-v2/03-generation-and-learning.md` | Generation pipeline, Claude system prompt, image prompts, flashcards, micro, daily use, question bank, progress, agent prompts | Arabic (source doc) |
+| `docs/langify-v2/03-generation-and-learning.md` | Original generation spec, image style, flashcards, micro, question bank, progress, agent prompts | Arabic (source doc) |
 | `docs/langify-v2/04-curriculum.md` | 90-day plan, day-by-day for days 1–30, weeks for 31–90 | Arabic (source doc) |
 | `docs/langify-v2/05-design-system.md` | Tokens, fonts, components, the visual reference screen | English |
 | `docs/langify-v2/06-screens.md` | Every screen and its states, with the reference image for each | English |
 | `docs/langify-v2/07-build-plan.md` | Phases, tasks, acceptance checks, Cursor prompts | English |
-| `examples/day06-example.json` | A full Day 6 lesson in the schema (SER vs ESTAR guided + ESTAR explore) | JSON |
+| `docs/langify-v2/08-lesson-generation-prompts.md` | Live lesson-generation pipeline, steps, and the prompts the code sends | English |
+| `examples/day06-example.json` | Gold ESTAR lesson (filename kept; `lesson.day` is **11** in the grammar-first order) | JSON |
 | `prototypes/ser-estar.html` | Working prototype of a guided (autoplay) page | HTML |
 | `prototypes/verb-endings.html` | Working prototype of an explore page (person dial, swap, build questions) | HTML |
 | `design/reference/*.png` | Stitch screens to match, numbered by screen | PNG |
@@ -35,4 +36,4 @@ The three Arabic docs are exports of the living docs in Claude. Links to the ori
 
 ## The product in one paragraph
 
-Every day is a street situation in Lisbon (café, supermarket, doctor). A day is 4–6 **pages**, and each page looks like a page from a visual-notes grammar book: a dense, illustrated poster. The page builds itself in front of the learner (guided autoplay that stops only for questions), or the learner explores it with controls (pick a person, swap a verb). After the pages, the learner practises the same situation with an AI character (Rita, Inês…) across the four skills. What they learn feeds **flashcards** (max 15 a day, newest lessons first), **3 micro units a day** that bring them back, and a **gaps** view that shows what they understand vs what they can say.
+Every day is one grammar unit (Practice Portuguese A1 order), taught inside a street situation in Lisbon. A day is 4–6 **pages**, and each page looks like a page from a visual-notes grammar book: a dense, illustrated poster. The page builds itself in front of the learner (guided autoplay that stops only for questions), or the learner explores it with controls (pick a person, swap a verb). After the pages, the learner practises the same situation with an AI character (Rita, Inês…) across the four skills. What they learn feeds **flashcards** (max 15 a day, newest lessons first), **3 micro units a day** that bring them back, and a **gaps** view that shows what they understand vs what they can say.

@@ -1,0 +1,3118 @@
+{
+  "lesson": {
+    "id": "pt-PT.d03",
+    "target_lang": "pt-PT",
+    "day": 3,
+    "phase": 1,
+    "week": 1,
+    "kind": "lesson",
+    "situation": {
+      "tl": "No supermercado",
+      "eg": "في السوبر ماركت"
+    },
+    "can_do": [
+      {
+        "eg": "تسأل فين الأكل وتطلب اللي عايزه",
+        "proves": [
+          "phrase.where_is_milk",
+          "phrase.bag"
+        ]
+      },
+      {
+        "eg": "تسأل على السعر",
+        "proves": [
+          "phrase.how_much",
+          "phrase.how_much_is"
+        ]
+      },
+      {
+        "eg": "تدفع بالكارت وترد على الكاشير",
+        "proves": [
+          "phrase.card_ok",
+          "phrase.only_this"
+        ]
+      }
+    ],
+    "pages": [
+      "p1",
+      "p2",
+      "p3",
+      "p4"
+    ]
+  },
+  "items": [
+    {
+      "type": "word",
+      "id": "word.pao",
+      "tl": "o pão",
+      "lemma": "pão",
+      "gender": "m",
+      "ar": "الخبز",
+      "say": "أو پاون",
+      "ipa": "/u ˈpɐ̃w̃/",
+      "pos": "noun",
+      "media": {
+        "image": "food.bread",
+        "image_spec": {
+          "type": "object",
+          "subject": "a loaf of bread"
+        }
+      }
+    },
+    {
+      "type": "word",
+      "id": "word.leite",
+      "tl": "o leite",
+      "lemma": "leite",
+      "gender": "m",
+      "ar": "الحليب",
+      "say": "أو لايتي",
+      "ipa": "/u ˈlɐjtɨ/",
+      "pos": "noun",
+      "media": {
+        "image": "food.milk",
+        "image_spec": {
+          "type": "object",
+          "subject": "a carton of milk"
+        }
+      }
+    },
+    {
+      "type": "word",
+      "id": "word.queijo",
+      "tl": "o queijo",
+      "lemma": "queijo",
+      "gender": "m",
+      "ar": "الجبن",
+      "say": "أو كايچو",
+      "ipa": "/u ˈkɐjʒu/",
+      "pos": "noun",
+      "media": {
+        "image": "food.cheese",
+        "image_spec": {
+          "type": "object",
+          "subject": "a wedge of yellow cheese"
+        }
+      }
+    },
+    {
+      "type": "word",
+      "id": "word.maca",
+      "tl": "a maçã",
+      "lemma": "maçã",
+      "gender": "f",
+      "ar": "التفاحة",
+      "say": "أ ماسان",
+      "ipa": "/ɐ mɐˈsɐ̃/",
+      "pos": "noun",
+      "media": {
+        "image": "food.apple",
+        "image_spec": {
+          "type": "object",
+          "subject": "one red apple"
+        }
+      }
+    },
+    {
+      "type": "word",
+      "id": "word.agua",
+      "tl": "a água",
+      "lemma": "água",
+      "gender": "f",
+      "ar": "الماء",
+      "say": "أ آجوا",
+      "ipa": "/ɐ ˈaɡwɐ/",
+      "pos": "noun",
+      "media": {
+        "image": "food.water",
+        "image_spec": {
+          "type": "object",
+          "subject": "a plastic bottle of water"
+        }
+      }
+    },
+    {
+      "type": "word",
+      "id": "word.banana",
+      "tl": "a banana",
+      "lemma": "banana",
+      "gender": "f",
+      "ar": "الموزة",
+      "say": "أ بانانا",
+      "ipa": "/ɐ bɐˈnɐnɐ/",
+      "pos": "noun",
+      "media": {
+        "image": "food.banana",
+        "image_spec": {
+          "type": "object",
+          "subject": "a ripe yellow banana"
+        }
+      }
+    },
+    {
+      "type": "word",
+      "id": "word.peixe",
+      "tl": "o peixe",
+      "lemma": "peixe",
+      "gender": "m",
+      "ar": "السمك",
+      "say": "أو پايشي",
+      "ipa": "/u ˈpɐjʃɨ/",
+      "pos": "noun",
+      "media": {
+        "image": "food.fish",
+        "image_spec": {
+          "type": "object",
+          "subject": "a whole fish lying on a plate"
+        }
+      }
+    },
+    {
+      "type": "word",
+      "id": "word.frango",
+      "tl": "o frango",
+      "lemma": "frango",
+      "gender": "m",
+      "ar": "الدجاج",
+      "say": "أو فرانجو",
+      "ipa": "/u ˈfɾɐ̃ɡu/",
+      "pos": "noun",
+      "media": {
+        "image": "food.chicken",
+        "image_spec": {
+          "type": "object",
+          "subject": "a whole roasted chicken on a plate"
+        }
+      }
+    },
+    {
+      "type": "word",
+      "id": "word.arroz",
+      "tl": "o arroz",
+      "lemma": "arroz",
+      "gender": "m",
+      "ar": "الأرز",
+      "say": "أو أغوش",
+      "ipa": "/u ɐˈʁoʃ/",
+      "pos": "noun",
+      "media": {
+        "image": "food.rice",
+        "image_spec": {
+          "type": "object",
+          "subject": "a bowl of white rice"
+        }
+      }
+    },
+    {
+      "type": "word",
+      "id": "word.cafe",
+      "tl": "o café",
+      "lemma": "café",
+      "gender": "m",
+      "ar": "القهوة",
+      "say": "أو كافي",
+      "ipa": "/u kɐˈfɛ/",
+      "pos": "noun",
+      "media": {
+        "image": "food.coffee",
+        "image_spec": {
+          "type": "object",
+          "subject": "a small cup of coffee on a saucer"
+        }
+      }
+    },
+    {
+      "type": "word",
+      "id": "word.acucar",
+      "tl": "o açúcar",
+      "lemma": "açúcar",
+      "gender": "m",
+      "ar": "السكر",
+      "say": "أو أسوكار",
+      "ipa": "/u ɐˈsukɐɾ/",
+      "pos": "noun",
+      "media": {
+        "image": "food.sugar",
+        "image_spec": {
+          "type": "object",
+          "subject": "a small bowl of white sugar with a spoon"
+        }
+      }
+    },
+    {
+      "type": "word",
+      "id": "word.carne",
+      "tl": "a carne",
+      "lemma": "carne",
+      "gender": "f",
+      "ar": "اللحم",
+      "say": "أ كارني",
+      "ipa": "/ɐ ˈkaɾnɨ/",
+      "pos": "noun",
+      "media": {
+        "image": "food.meat",
+        "image_spec": {
+          "type": "object",
+          "subject": "a raw red steak on a board"
+        }
+      }
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.how_much",
+      "tl": "Quanto custa?",
+      "ar": "كم السعر؟",
+      "say": "كوانتو كوشتا",
+      "ipa": "/ˈkwɐ̃tu ˈkuʃtɐ/",
+      "marks": [
+        {
+          "text": "Quanto",
+          "group": "neutral"
+        }
+      ],
+      "media": {
+        "icon": "money"
+      },
+      "context_eg": "بتسأل على سعر حاجة واحدة وإنت ماسكها",
+      "cloze": "custa"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.how_much_is",
+      "tl": "Quanto é?",
+      "ar": "كم المبلغ؟",
+      "say": "كوانتو إي",
+      "ipa": "/ˈkwɐ̃tu ˈɛ/",
+      "marks": [
+        {
+          "text": "Quanto",
+          "group": "neutral"
+        }
+      ],
+      "media": {
+        "icon": "money"
+      },
+      "context_eg": "عند الكاشير لما عايز تعرف الحساب كله",
+      "cloze": "Quanto"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.card_ok",
+      "tl": "Aceita cartão?",
+      "ar": "هل تقبل البطاقة؟",
+      "say": "أسايتا كارتاون",
+      "ipa": "/ɐˈsɐjtɐ kɐɾˈtɐ̃w̃/",
+      "marks": [
+        {
+          "text": "cartão",
+          "group": "neutral"
+        }
+      ],
+      "media": {
+        "icon": "card"
+      },
+      "context_eg": "قبل ما تدفع",
+      "cloze": "cartão"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.bag",
+      "tl": "Queria um saco, por favor.",
+      "ar": "أريد كيسا من فضلك.",
+      "say": "كيريا أون ساكو پور فاڤور",
+      "ipa": "/kɨˈɾiɐ ũ ˈsaku puɾ fɐˈvoɾ/",
+      "marks": [
+        {
+          "text": "Queria",
+          "group": "verb"
+        }
+      ],
+      "media": {
+        "icon": "bag"
+      },
+      "context_eg": "لما تحتاج كيس للمشتريات",
+      "cloze": "saco"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.anything_else",
+      "tl": "Mais alguma coisa?",
+      "ar": "هل تريد شيئا آخر؟",
+      "ar_f": "هل تريهذهن شيئا آخر؟",
+      "say": "مايش ألجوما كويزا",
+      "ipa": "/ˈmajʃ alˈɡumɐ ˈkojzɐ/",
+      "marks": [
+        {
+          "text": "Mais",
+          "group": "neutral"
+        }
+      ],
+      "media": {
+        "icon": "question"
+      },
+      "context_eg": "الكاشير بيسألك قبل ما تدفع",
+      "cloze": "alguma"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.only_this",
+      "tl": "Só isto, obrigado.",
+      "tl_f": "Só isto, obrigada.",
+      "ar": "هذا فقط، شكرا.",
+      "ar_f": "هذا فقط، شكرا.",
+      "say": "سو إشتو وبريجادو",
+      "ipa": "/ˈsɔ ˈiʃtu ubɾiˈɡadu/",
+      "marks": [
+        {
+          "text": "Só isto",
+          "group": "neutral"
+        }
+      ],
+      "media": {
+        "icon": "check"
+      },
+      "context_eg": "ردك على سؤال الكاشير لما تخلص",
+      "cloze": "isto"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.where_is_milk",
+      "tl": "Onde fica o leite?",
+      "ar": "أين يوجد الحليب؟",
+      "say": "أوندي فيكا أو لايتي",
+      "ipa": "/ˈõdɨ ˈfikɐ u ˈlɐjtɨ/",
+      "marks": [
+        {
+          "text": "o leite",
+          "group": "m"
+        }
+      ],
+      "media": {
+        "icon": "map"
+      },
+      "context_eg": "جوه السوبر ماركت لما بتدور على حاجة",
+      "cloze": "leite"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.order_coffee",
+      "tl": "Queria um café, por favor.",
+      "ar": "أريد قهوة من فضلك.",
+      "say": "كيريا أون كافي پور فاڤور",
+      "ipa": "/kɨˈɾiɐ ũ kɐˈfɛ puɾ fɐˈvoɾ/",
+      "marks": [
+        {
+          "text": "Queria",
+          "group": "verb"
+        }
+      ],
+      "media": {
+        "icon": "coffee"
+      },
+      "context_eg": "عند الكاونتر في الكافيه",
+      "cloze": "Queria"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.thanks",
+      "tl": "Obrigado!",
+      "tl_f": "Obrigada!",
+      "ar": "شكرا!",
+      "ar_f": "شكرا!",
+      "say": "وبريجادو",
+      "ipa": "/ubɾiˈɡadu/",
+      "marks": [
+        {
+          "text": "Obrigado",
+          "group": "neutral"
+        }
+      ],
+      "media": {
+        "icon": "heart"
+      },
+      "context_eg": "للكاشير لما تاخد الباقي والأكياس",
+      "cloze": "Obrigado"
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.greet_morning",
+      "tl": "Bom dia!",
+      "ar": "صباح الخير.",
+      "say": "بون ديا",
+      "ipa": "/bõ ˈdiɐ/",
+      "marks": [
+        {
+          "text": "Bom dia",
+          "group": "neutral"
+        }
+      ],
+      "media": {
+        "icon": "sun"
+      },
+      "context_eg": "أول ما تدخل السوبر ماركت الصبح",
+      "cloze": "dia"
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.onde_pao",
+      "tl": "Onde fica o pão?",
+      "ar": "أين يوجد الخبز؟",
+      "say": "أوندي فيكا أو پاون",
+      "marks": [
+        {
+          "text": "o pão",
+          "group": "m"
+        }
+      ]
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.onde_maca",
+      "tl": "Onde fica a maçã?",
+      "ar": "أين توجد التفاحة؟",
+      "say": "أوندي فيكا أ ماسان",
+      "marks": [
+        {
+          "text": "a maçã",
+          "group": "f"
+        }
+      ]
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.onde_agua",
+      "tl": "Onde fica a água?",
+      "ar": "أين يوجد الماء؟",
+      "say": "أوندي فيكا أ آجوا",
+      "marks": [
+        {
+          "text": "a água",
+          "group": "f"
+        }
+      ]
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.onde_frango",
+      "tl": "Onde fica o frango?",
+      "ar": "أين يوجد الدجاج؟",
+      "say": "أوندي فيكا أو فرانجو",
+      "marks": [
+        {
+          "text": "o frango",
+          "group": "m"
+        }
+      ]
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.custa_queijo",
+      "tl": "Quanto custa o queijo?",
+      "ar": "كم سعر الجبن؟",
+      "say": "كوانتو كوشتا أو كايچو",
+      "marks": [
+        {
+          "text": "o queijo",
+          "group": "m"
+        }
+      ]
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.custa_carne",
+      "tl": "Quanto custa a carne?",
+      "ar": "كم سعر اللحم؟",
+      "say": "كوانتو كوشتا أ كارني",
+      "marks": [
+        {
+          "text": "a carne",
+          "group": "f"
+        }
+      ]
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.custa_peixe",
+      "tl": "Quanto custa o peixe?",
+      "ar": "كم سعر السمك؟",
+      "say": "كوانتو كوشتا أو پايشي",
+      "marks": [
+        {
+          "text": "o peixe",
+          "group": "m"
+        }
+      ]
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.custa_arroz",
+      "tl": "Quanto custa o arroz?",
+      "ar": "كم سعر الأرز؟",
+      "say": "كوانتو كوشتا أو أغوش",
+      "marks": [
+        {
+          "text": "o arroz",
+          "group": "m"
+        }
+      ]
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.queria_pao_queijo",
+      "tl": "Queria um pão e um queijo.",
+      "ar": "أريد خبزا وجبنا.",
+      "say": "كيريا أون پاون إي أون كايچو",
+      "marks": [
+        {
+          "text": "Queria",
+          "group": "verb"
+        }
+      ]
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.queria_maca_banana",
+      "tl": "Queria uma maçã e uma banana.",
+      "ar": "أريد تفاحة وموزة.",
+      "say": "كيريا أوما ماسان إي أوما بانانا",
+      "marks": [
+        {
+          "text": "Queria",
+          "group": "verb"
+        }
+      ]
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.queria_mais_leite",
+      "tl": "Queria mais leite, por favor.",
+      "ar": "أريد المزيد من الحليب من فضلك.",
+      "say": "كيريا مايش لايتي پور فاڤور",
+      "marks": [
+        {
+          "text": "Queria",
+          "group": "verb"
+        }
+      ]
+    },
+    {
+      "type": "sentence",
+      "id": "sentence.cafe_acucar",
+      "tl": "Queria um café com açúcar.",
+      "ar": "أريد قهوة بسكر.",
+      "say": "كيريا أون كافي كوم أسوكار",
+      "marks": [
+        {
+          "text": "Queria",
+          "group": "verb"
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "id": "p1",
+      "preset": "dictionary",
+      "mode": "static",
+      "title": [
+        {
+          "text": "أكل السوبر ماركت",
+          "lang": "eg"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "b1",
+          "type": "heading",
+          "text": [
+            {
+              "text": "أكل السوبر ماركت",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "id": "b2",
+          "type": "heading",
+          "text": [
+            {
+              "text": "o",
+              "lang": "tl",
+              "bold": true,
+              "group": "m"
+            },
+            {
+              "text": " · مذكر",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "id": "b3",
+          "type": "cards",
+          "items": [
+            "word.pao",
+            "word.leite",
+            "word.queijo",
+            "word.peixe",
+            "word.frango",
+            "word.arroz",
+            "word.cafe",
+            "word.acucar"
+          ]
+        },
+        {
+          "id": "b4",
+          "type": "heading",
+          "text": [
+            {
+              "text": "a",
+              "lang": "tl",
+              "bold": true,
+              "group": "f"
+            },
+            {
+              "text": " · مؤنث",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "id": "b5",
+          "type": "cards",
+          "items": [
+            "word.maca",
+            "word.agua",
+            "word.banana",
+            "word.carne"
+          ]
+        },
+        {
+          "id": "b6",
+          "type": "tip",
+          "kind": "culture",
+          "title": [
+            {
+              "text": "القهوة في لشبونة",
+              "lang": "eg"
+            }
+          ],
+          "body": [
+            {
+              "text": "كلمة ",
+              "lang": "eg"
+            },
+            {
+              "text": "café",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": " في لشبونة معناها إسبريسو صغير. لو عايزها بلبن قول ",
+              "lang": "eg"
+            },
+            {
+              "text": "com leite",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": ".",
+              "lang": "eg"
+            }
+          ]
+        }
+      ],
+      "quiz": [
+        "q.d03.10",
+        "q.d03.11",
+        "q.d03.14"
+      ]
+    },
+    {
+      "id": "p2",
+      "preset": "phrases",
+      "mode": "guided",
+      "title": [
+        {
+          "text": "جمل السوبر ماركت",
+          "lang": "eg"
+        }
+      ],
+      "subtitle": [
+        {
+          "text": "من أول ما تدخل لحد الكاشير",
+          "lang": "eg"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "b1",
+          "type": "heading",
+          "text": [
+            {
+              "text": "جمل السوبر ماركت",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "id": "b2",
+          "type": "cards",
+          "items": [
+            "phrase.where_is_milk"
+          ]
+        },
+        {
+          "id": "b3",
+          "type": "cards",
+          "items": [
+            "phrase.how_much",
+            "phrase.how_much_is"
+          ]
+        },
+        {
+          "id": "b4",
+          "type": "cards",
+          "items": [
+            "phrase.card_ok",
+            "phrase.bag"
+          ]
+        },
+        {
+          "id": "b5",
+          "type": "cards",
+          "items": [
+            "phrase.anything_else",
+            "phrase.only_this"
+          ]
+        },
+        {
+          "id": "b6",
+          "type": "tip",
+          "kind": "culture",
+          "title": [
+            {
+              "text": "عند الكاشير",
+              "lang": "eg"
+            }
+          ],
+          "body": [
+            {
+              "text": "في لشبونة الناس بتحيّي الكاشير أول ما توصل: ",
+              "lang": "eg"
+            },
+            {
+              "text": "Bom dia!",
+              "lang": "tl",
+              "bold": true,
+              "group": "neutral"
+            },
+            {
+              "text": " وبتقول ",
+              "lang": "eg"
+            },
+            {
+              "text": "Obrigado!",
+              "lang": "tl",
+              "bold": true,
+              "group": "neutral"
+            },
+            {
+              "text": " وإنت ماشي. ده بيعمل فرق كبير.",
+              "lang": "eg"
+            }
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "target": "b1",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "هنمشي مع السوبر ماركت بالترتيب: تدور، تسأل على السعر، تدفع.",
+              "lang": "eg"
+            }
+          ],
+          "chapter": "المشوار"
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "Onde fica",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": " = فين. وبعدها الحاجة مع o أو a.",
+              "lang": "eg"
+            }
+          ],
+          "chapter": "تدور"
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "تقدر تبدل leite بأي كلمة من صفحة الأكل، بس خد بالك من o وa.",
+              "lang": "eg"
+            }
+          ],
+          "chapter": "تدور"
+        },
+        {
+          "target": "b2",
+          "kind": "ask",
+          "ask": {
+            "question": [
+              {
+                "text": "Onde fica ___ leite?",
+                "lang": "tl",
+                "bold": true
+              },
+              {
+                "text": " الحليب مذكر. نقول إيه؟",
+                "lang": "eg"
+              }
+            ],
+            "options": [
+              {
+                "label": [
+                  {
+                    "text": "o",
+                    "lang": "tl"
+                  }
+                ],
+                "correct": true
+              },
+              {
+                "label": [
+                  {
+                    "text": "a",
+                    "lang": "tl"
+                  }
+                ],
+                "correct": false
+              }
+            ],
+            "why": [
+              {
+                "text": "صح! leite مذكر، يبقى o leite.",
+                "lang": "eg"
+              }
+            ],
+            "hint": [
+              {
+                "text": "leite كان تحت o في صفحة الكلمات.",
+                "lang": "eg"
+              }
+            ]
+          },
+          "chapter": "تدور"
+        },
+        {
+          "target": "b3",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "Quanto custa?",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": " لحاجة واحدة وإنت ماسكها أو قدام الرف.",
+              "lang": "eg"
+            }
+          ],
+          "chapter": "السعر"
+        },
+        {
+          "target": "b3",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "Quanto é?",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": " للمبلغ كله عند الكاشير.",
+              "lang": "eg"
+            }
+          ],
+          "chapter": "السعر"
+        },
+        {
+          "target": "b3",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "الكاشير هيرد برقم بسرعة، وبكره هنتعلم الأرقام عشان تفهمه.",
+              "lang": "eg"
+            }
+          ],
+          "chapter": "السعر"
+        },
+        {
+          "target": "b3",
+          "kind": "ask",
+          "ask": {
+            "question": [
+              {
+                "text": "خلصت واقف عند الكاشير وعايز تعرف الإجمالي. تقول إيه؟",
+                "lang": "eg"
+              }
+            ],
+            "options": [
+              {
+                "label": [
+                  {
+                    "text": "Quanto é?",
+                    "lang": "tl"
+                  }
+                ],
+                "correct": true
+              },
+              {
+                "label": [
+                  {
+                    "text": "Onde fica o leite?",
+                    "lang": "tl"
+                  }
+                ],
+                "correct": false
+              },
+              {
+                "label": [
+                  {
+                    "text": "Mais alguma coisa?",
+                    "lang": "tl"
+                  }
+                ],
+                "correct": false
+              }
+            ],
+            "why": [
+              {
+                "text": "صح! Quanto é? = كام الحساب كله؟",
+                "lang": "eg"
+              }
+            ],
+            "hint": [
+              {
+                "text": "إنت عايز المبلغ، مش مكان ومش سؤال الكاشير.",
+                "lang": "eg"
+              }
+            ]
+          },
+          "chapter": "السعر"
+        },
+        {
+          "target": "b4",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "Aceita cartão?",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": " اسأل قبل ما الكاشير يحسب. بعض المحلات الصغيرة بتفضل الكاش.",
+              "lang": "eg"
+            }
+          ],
+          "chapter": "الدفع"
+        },
+        {
+          "target": "b4",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "Queria um saco",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": ": الكيس في أغلب السوبر ماركت بيتحسب بقرشين، فاطلبه قبل الدفع.",
+              "lang": "eg"
+            }
+          ],
+          "chapter": "الدفع"
+        },
+        {
+          "target": "b5",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "Mais alguma coisa?",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": " ده سؤال الكاشير. ردك الجاهز: ",
+              "lang": "eg"
+            },
+            {
+              "text": "Só isto, obrigado.",
+              "lang": "tl",
+              "bold": true
+            }
+          ],
+          "chapter": "الخروج"
+        },
+        {
+          "target": "b5",
+          "kind": "ask",
+          "ask": {
+            "question": [
+              {
+                "text": "الكاشير قالك ",
+                "lang": "eg"
+              },
+              {
+                "text": "Mais alguma coisa?",
+                "lang": "tl",
+                "bold": true
+              },
+              {
+                "text": " وإنت خلصت. ترد تقول إيه؟",
+                "lang": "eg"
+              }
+            ],
+            "options": [
+              {
+                "label": [
+                  {
+                    "text": "Só isto, obrigado.",
+                    "lang": "tl"
+                  }
+                ],
+                "correct": true
+              },
+              {
+                "label": [
+                  {
+                    "text": "Bom dia!",
+                    "lang": "tl"
+                  }
+                ],
+                "correct": false
+              },
+              {
+                "label": [
+                  {
+                    "text": "Quanto custa?",
+                    "lang": "tl"
+                  }
+                ],
+                "correct": false
+              }
+            ],
+            "why": [
+              {
+                "text": "صح! يعني: ده بس، شكرًا.",
+                "lang": "eg"
+              }
+            ],
+            "hint": [
+              {
+                "text": "الكاشير بيسألك لو عايز حاجة تانية، وإنت مش عايز.",
+                "lang": "eg"
+              }
+            ]
+          },
+          "chapter": "الخروج"
+        },
+        {
+          "target": "b6",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "التحية الصغيرة دي بتفرق مع الكاشير في لشبونة.",
+              "lang": "eg"
+            }
+          ],
+          "chapter": "الأدب"
+        }
+      ],
+      "quiz": [
+        "q.d03.1",
+        "q.d03.2",
+        "q.d03.3"
+      ]
+    },
+    {
+      "id": "p3",
+      "preset": "compare",
+      "mode": "guided",
+      "tool_id": "articles_o_a",
+      "title": [
+        {
+          "text": "o",
+          "lang": "tl",
+          "group": "a"
+        },
+        {
+          "text": " vs ",
+          "lang": "tl"
+        },
+        {
+          "text": "a",
+          "lang": "tl",
+          "group": "b"
+        }
+      ],
+      "subtitle": [
+        {
+          "text": "كل كلمة مذكر أو مؤنث، والأداة بتتغير معاها",
+          "lang": "eg"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "b1",
+          "type": "compare",
+          "columns": [
+            {
+              "head": [
+                {
+                  "text": "o",
+                  "lang": "tl"
+                }
+              ],
+              "sub": [
+                {
+                  "text": "مذكر · زي «ال»",
+                  "lang": "eg"
+                }
+              ],
+              "group": "a",
+              "entries": [
+                {
+                  "label": [
+                    {
+                      "text": "ينتهي بـ ",
+                      "lang": "eg"
+                    },
+                    {
+                      "text": "-o",
+                      "lang": "tl",
+                      "bold": true
+                    }
+                  ],
+                  "ref": "word.queijo"
+                },
+                {
+                  "label": [
+                    {
+                      "text": "ينتهي بـ ",
+                      "lang": "eg"
+                    },
+                    {
+                      "text": "-ão",
+                      "lang": "tl",
+                      "bold": true
+                    }
+                  ],
+                  "ref": "word.pao"
+                },
+                {
+                  "label": [
+                    {
+                      "text": "ينتهي بـ ",
+                      "lang": "eg"
+                    },
+                    {
+                      "text": "-e",
+                      "lang": "tl",
+                      "bold": true
+                    }
+                  ],
+                  "ref": "word.leite"
+                }
+              ]
+            },
+            {
+              "head": [
+                {
+                  "text": "a",
+                  "lang": "tl"
+                }
+              ],
+              "sub": [
+                {
+                  "text": "مؤنث · زي «ال»",
+                  "lang": "eg"
+                }
+              ],
+              "group": "b",
+              "entries": [
+                {
+                  "label": [
+                    {
+                      "text": "ينتهي بـ ",
+                      "lang": "eg"
+                    },
+                    {
+                      "text": "-a",
+                      "lang": "tl",
+                      "bold": true
+                    }
+                  ],
+                  "ref": "word.banana"
+                },
+                {
+                  "label": [
+                    {
+                      "text": "ينتهي بـ ",
+                      "lang": "eg"
+                    },
+                    {
+                      "text": "-ã",
+                      "lang": "tl",
+                      "bold": true
+                    }
+                  ],
+                  "ref": "word.maca"
+                },
+                {
+                  "label": [
+                    {
+                      "text": "ينتهي بـ ",
+                      "lang": "eg"
+                    },
+                    {
+                      "text": "-e",
+                      "lang": "tl",
+                      "bold": true
+                    }
+                  ],
+                  "ref": "word.carne"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "b2",
+          "type": "heading",
+          "text": [
+            {
+              "text": "نفس الجملة · أداة مختلفة",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "id": "b3",
+          "type": "vs_pairs",
+          "pairs": [
+            {
+              "left": "sentence.onde_pao",
+              "right": "sentence.onde_maca",
+              "note": [
+                {
+                  "text": "الجملة واحدة، بس ",
+                  "lang": "eg"
+                },
+                {
+                  "text": "o",
+                  "lang": "tl",
+                  "bold": true,
+                  "group": "m"
+                },
+                {
+                  "text": " للخبز و",
+                  "lang": "eg"
+                },
+                {
+                  "text": "a",
+                  "lang": "tl",
+                  "bold": true,
+                  "group": "f"
+                },
+                {
+                  "text": " للتفاحة.",
+                  "lang": "eg"
+                }
+              ]
+            },
+            {
+              "left": "sentence.custa_queijo",
+              "right": "sentence.custa_carne",
+              "note": [
+                {
+                  "text": "نفس الكلام مع السعر: ",
+                  "lang": "eg"
+                },
+                {
+                  "text": "o queijo",
+                  "lang": "tl",
+                  "bold": true,
+                  "group": "m"
+                },
+                {
+                  "text": " و",
+                  "lang": "eg"
+                },
+                {
+                  "text": "a carne",
+                  "lang": "tl",
+                  "bold": true,
+                  "group": "f"
+                },
+                {
+                  "text": ".",
+                  "lang": "eg"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "b4",
+          "type": "tip",
+          "kind": "rule",
+          "title": [
+            {
+              "text": "القاعدة المهمة",
+              "lang": "eg"
+            }
+          ],
+          "body": [
+            {
+              "text": "احفظ الكلمة دايمًا مع أداتها: ",
+              "lang": "eg"
+            },
+            {
+              "text": "o leite",
+              "lang": "tl",
+              "bold": true,
+              "group": "m"
+            },
+            {
+              "text": " و",
+              "lang": "eg"
+            },
+            {
+              "text": "a carne",
+              "lang": "tl",
+              "bold": true,
+              "group": "f"
+            },
+            {
+              "text": ". النهاية -o غالبًا مذكر، و-a أو -ã غالبًا مؤنث، بس النهاية -e مش بتقولك النوع.",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "id": "b5",
+          "type": "heading",
+          "text": [
+            {
+              "text": "جرب كمان",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "id": "b6",
+          "type": "cards",
+          "items": [
+            "sentence.onde_agua",
+            "sentence.onde_frango",
+            "sentence.custa_peixe",
+            "sentence.custa_arroz"
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "target": "b1/col:0",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "نبدأ بـ ",
+              "lang": "eg"
+            },
+            {
+              "text": "o",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": ": للمذكر. زي «ال» بس بيتغير حسب النوع.",
+              "lang": "eg"
+            }
+          ],
+          "chapter": "o"
+        },
+        {
+          "target": "b1/entry:0:0",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "queijo",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": " بينتهي بـ o، يبقى ",
+              "lang": "eg"
+            },
+            {
+              "text": "o queijo",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": ". أسهل حالة.",
+              "lang": "eg"
+            }
+          ],
+          "chapter": "o"
+        },
+        {
+          "target": "b1/entry:0:1",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "pão",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": " بينتهي بـ ão وبرضه مذكر: ",
+              "lang": "eg"
+            },
+            {
+              "text": "o pão",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": ".",
+              "lang": "eg"
+            }
+          ],
+          "chapter": "o"
+        },
+        {
+          "target": "b1/entry:0:2",
+          "kind": "ask",
+          "ask": {
+            "question": [
+              {
+                "text": "___ leite",
+                "lang": "tl",
+                "bold": true
+              },
+              {
+                "text": " بينتهي بـ e. نقول إيه؟",
+                "lang": "eg"
+              }
+            ],
+            "options": [
+              {
+                "label": [
+                  {
+                    "text": "o",
+                    "lang": "tl"
+                  }
+                ],
+                "correct": true
+              },
+              {
+                "label": [
+                  {
+                    "text": "a",
+                    "lang": "tl"
+                  }
+                ],
+                "correct": false
+              }
+            ],
+            "why": [
+              {
+                "text": "صح! الحليب مذكر: o leite.",
+                "lang": "eg"
+              }
+            ],
+            "hint": [
+              {
+                "text": "النهاية e مش بتقولك النوع، فاحفظ الكلمة مع o.",
+                "lang": "eg"
+              }
+            ]
+          },
+          "chapter": "o"
+        },
+        {
+          "target": "b1/col:1",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "دلوقتي ",
+              "lang": "eg"
+            },
+            {
+              "text": "a",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": ": للمؤنث.",
+              "lang": "eg"
+            }
+          ],
+          "chapter": "a"
+        },
+        {
+          "target": "b1/entry:1:0",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "banana",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": " بتنتهي بـ a: ",
+              "lang": "eg"
+            },
+            {
+              "text": "a banana",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": ".",
+              "lang": "eg"
+            }
+          ],
+          "chapter": "a"
+        },
+        {
+          "target": "b1/entry:1:1",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "maçã",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": " بتنتهي بـ ã وهي مؤنثة: ",
+              "lang": "eg"
+            },
+            {
+              "text": "a maçã",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": ".",
+              "lang": "eg"
+            }
+          ],
+          "chapter": "a"
+        },
+        {
+          "target": "b1/entry:1:2",
+          "kind": "ask",
+          "ask": {
+            "question": [
+              {
+                "text": "___ carne",
+                "lang": "tl",
+                "bold": true
+              },
+              {
+                "text": " بتنتهي بـ e برضه. نقول إيه؟",
+                "lang": "eg"
+              }
+            ],
+            "options": [
+              {
+                "label": [
+                  {
+                    "text": "o",
+                    "lang": "tl"
+                  }
+                ],
+                "correct": false
+              },
+              {
+                "label": [
+                  {
+                    "text": "a",
+                    "lang": "tl"
+                  }
+                ],
+                "correct": true
+              }
+            ],
+            "why": [
+              {
+                "text": "صح! اللحم مؤنث: a carne. وleite مذكر رغم إن النهاية واحدة.",
+                "lang": "eg"
+              }
+            ],
+            "hint": [
+              {
+                "text": "ماتعتمدش على النهاية هنا. افتكر الكلمة مع أداتها.",
+                "lang": "eg"
+              }
+            ]
+          },
+          "chapter": "a"
+        },
+        {
+          "target": "b2",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "الجملة بتفضل زي ما هي، والأداة بس هي اللي بتتغير.",
+              "lang": "eg"
+            }
+          ],
+          "chapter": "الجمل"
+        },
+        {
+          "target": "b3/item:0",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "Onde fica o pão?",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": " ثم ",
+              "lang": "eg"
+            },
+            {
+              "text": "Onde fica a maçã?",
+              "lang": "tl",
+              "bold": true
+            }
+          ],
+          "chapter": "الجمل"
+        },
+        {
+          "target": "b3/item:1",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "نفس الفكرة مع ",
+              "lang": "eg"
+            },
+            {
+              "text": "Quanto custa",
+              "lang": "tl",
+              "bold": true
+            },
+            {
+              "text": ".",
+              "lang": "eg"
+            }
+          ],
+          "chapter": "الجمل"
+        },
+        {
+          "target": "b3/item:1",
+          "kind": "ask",
+          "ask": {
+            "question": [
+              {
+                "text": "Onde fica ___ água?",
+                "lang": "tl",
+                "bold": true
+              },
+              {
+                "text": " الماء مؤنث. نقول إيه؟",
+                "lang": "eg"
+              }
+            ],
+            "options": [
+              {
+                "label": [
+                  {
+                    "text": "o",
+                    "lang": "tl"
+                  }
+                ],
+                "correct": false
+              },
+              {
+                "label": [
+                  {
+                    "text": "a",
+                    "lang": "tl"
+                  }
+                ],
+                "correct": true
+              }
+            ],
+            "why": [
+              {
+                "text": "صح! a água.",
+                "lang": "eg"
+              }
+            ],
+            "hint": [
+              {
+                "text": "água بتنتهي بـ a.",
+                "lang": "eg"
+              }
+            ]
+          },
+          "chapter": "الجمل"
+        },
+        {
+          "target": "b4",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "ده اللي تمشي عليه: احفظ كل كلمة مع o أو a.",
+              "lang": "eg"
+            }
+          ],
+          "chapter": "القاعدة"
+        },
+        {
+          "target": "b6",
+          "kind": "reveal",
+          "tip": [
+            {
+              "text": "جرب تقرا الجمل دي وتختار الأداة لوحدك.",
+              "lang": "eg"
+            }
+          ],
+          "chapter": "القاعدة"
+        }
+      ],
+      "quiz": [
+        "q.d03.4",
+        "q.d03.5",
+        "q.d03.6"
+      ]
+    },
+    {
+      "id": "p4",
+      "preset": "phrases",
+      "mode": "static",
+      "title": [
+        {
+          "text": "اختبر نفسك في السوبر ماركت",
+          "lang": "eg"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "b1",
+          "type": "heading",
+          "text": [
+            {
+              "text": "اختبر نفسك",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "id": "b2",
+          "type": "practice",
+          "questions": [
+            "q.d03.7",
+            "q.d03.8",
+            "q.d03.9"
+          ]
+        },
+        {
+          "id": "b3",
+          "type": "heading",
+          "text": [
+            {
+              "text": "جمل جاهزة للطلب",
+              "lang": "eg"
+            }
+          ]
+        },
+        {
+          "id": "b4",
+          "type": "cards",
+          "items": [
+            "phrase.greet_morning",
+            "sentence.queria_pao_queijo",
+            "sentence.queria_maca_banana",
+            "sentence.queria_mais_leite",
+            "sentence.cafe_acucar",
+            "phrase.order_coffee",
+            "phrase.bag",
+            "phrase.thanks"
+          ]
+        },
+        {
+          "id": "b5",
+          "type": "tip",
+          "kind": "culture",
+          "title": [
+            {
+              "text": "الميزان",
+              "lang": "eg"
+            }
+          ],
+          "body": [
+            {
+              "text": "الفاكهة في السوبر ماركت غالبًا بتتوزن بنفسك عند الميزان، وبتطبع ملصق السعر قبل ما توصل الكاشير.",
+              "lang": "eg"
+            }
+          ]
+        }
+      ],
+      "quiz": [],
+      "preset_reason": "Mixed self-test: practice questions plus ready-to-use order sentences; no other preset combines both."
+    }
+  ],
+  "questions": [
+    {
+      "id": "q.d03.1",
+      "type": "listen_meaning",
+      "skill": "listening",
+      "tests": [
+        "phrase.how_much"
+      ],
+      "prompt": {
+        "audio_ref": "phrase.how_much"
+      },
+      "options": [
+        [
+          {
+            "text": "كم السعر؟",
+            "lang": "ar"
+          }
+        ],
+        [
+          {
+            "text": "أين يوجد الحليب؟",
+            "lang": "ar"
+          }
+        ],
+        [
+          {
+            "text": "هل تقبل البطاقة؟",
+            "lang": "ar"
+          }
+        ],
+        [
+          {
+            "text": "هل تريد شيئا آخر؟",
+            "lang": "ar"
+          }
+        ]
+      ],
+      "answer": 0,
+      "feedback_eg": [
+        {
+          "text": "تمام! ",
+          "lang": "eg"
+        },
+        {
+          "text": "Quanto custa?",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": " = كام ده؟",
+          "lang": "eg"
+        }
+      ],
+      "why_wrong_eg": [
+        null,
+        [
+          {
+            "text": "ده ",
+            "lang": "eg"
+          },
+          {
+            "text": "Onde fica o leite?",
+            "lang": "tl"
+          },
+          {
+            "text": " يعني فين اللبن.",
+            "lang": "eg"
+          }
+        ],
+        [
+          {
+            "text": "ده ",
+            "lang": "eg"
+          },
+          {
+            "text": "Aceita cartão?",
+            "lang": "tl"
+          },
+          {
+            "text": " يعني بتقبل كارت؟",
+            "lang": "eg"
+          }
+        ],
+        [
+          {
+            "text": "ده ",
+            "lang": "eg"
+          },
+          {
+            "text": "Mais alguma coisa?",
+            "lang": "tl"
+          },
+          {
+            "text": " سؤال الكاشير.",
+            "lang": "eg"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "q.d03.2",
+      "type": "listen_meaning",
+      "skill": "listening",
+      "tests": [
+        "phrase.card_ok"
+      ],
+      "prompt": {
+        "audio_ref": "phrase.card_ok"
+      },
+      "options": [
+        [
+          {
+            "text": "أريد كيسا من فضلك.",
+            "lang": "ar"
+          }
+        ],
+        [
+          {
+            "text": "كم المبلغ؟",
+            "lang": "ar"
+          }
+        ],
+        [
+          {
+            "text": "هل تقبل البطاقة؟",
+            "lang": "ar"
+          }
+        ],
+        [
+          {
+            "text": "هذا فقط، شكرا.",
+            "lang": "ar"
+          }
+        ]
+      ],
+      "answer": 2,
+      "feedback_eg": [
+        {
+          "text": "صح! ",
+          "lang": "eg"
+        },
+        {
+          "text": "cartão",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": " = كارت.",
+          "lang": "eg"
+        }
+      ],
+      "why_wrong_eg": [
+        [
+          {
+            "text": "ده ",
+            "lang": "eg"
+          },
+          {
+            "text": "Queria um saco, por favor.",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "ده ",
+            "lang": "eg"
+          },
+          {
+            "text": "Quanto é?",
+            "lang": "tl"
+          }
+        ],
+        null,
+        [
+          {
+            "text": "ده ",
+            "lang": "eg"
+          },
+          {
+            "text": "Só isto, obrigado.",
+            "lang": "tl"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "q.d03.3",
+      "type": "listen_meaning",
+      "skill": "listening",
+      "tests": [
+        "phrase.anything_else"
+      ],
+      "prompt": {
+        "audio_ref": "phrase.anything_else"
+      },
+      "options": [
+        [
+          {
+            "text": "كم السعر؟",
+            "lang": "ar"
+          }
+        ],
+        [
+          {
+            "text": "هل تريد شيئا آخر؟",
+            "lang": "ar"
+          }
+        ],
+        [
+          {
+            "text": "صباح الخير.",
+            "lang": "ar"
+          }
+        ],
+        [
+          {
+            "text": "الحساب من فضلك.",
+            "lang": "ar"
+          }
+        ]
+      ],
+      "answer": 1,
+      "feedback_eg": [
+        {
+          "text": "تمام! ",
+          "lang": "eg"
+        },
+        {
+          "text": "Mais alguma coisa?",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": " الكاشير بيسألك لو عايز حاجة تانية.",
+          "lang": "eg"
+        }
+      ],
+      "why_wrong_eg": [
+        [
+          {
+            "text": "ده ",
+            "lang": "eg"
+          },
+          {
+            "text": "Quanto custa?",
+            "lang": "tl"
+          }
+        ],
+        null,
+        [
+          {
+            "text": "ده ",
+            "lang": "eg"
+          },
+          {
+            "text": "Bom dia!",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "ده ",
+            "lang": "eg"
+          },
+          {
+            "text": "A conta, por favor.",
+            "lang": "tl"
+          },
+          {
+            "text": " وبتقوله في الكافيه.",
+            "lang": "eg"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "q.d03.4",
+      "type": "gap",
+      "skill": "writing",
+      "tests": [
+        "phrase.where_is_milk",
+        "word.leite"
+      ],
+      "prompt": {
+        "sentence": [
+          {
+            "text": "Onde fica ___ leite?",
+            "lang": "tl"
+          }
+        ],
+        "meaning": [
+          {
+            "text": "أين يوجد الحليب؟",
+            "lang": "ar"
+          }
+        ]
+      },
+      "options": [
+        [
+          {
+            "text": "o",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "a",
+            "lang": "tl"
+          }
+        ]
+      ],
+      "answer": 0,
+      "feedback_eg": [
+        {
+          "text": "leite",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": " مذكر، يبقى ",
+          "lang": "eg"
+        },
+        {
+          "text": "o leite",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": ".",
+          "lang": "eg"
+        }
+      ],
+      "why_wrong_eg": [
+        null,
+        [
+          {
+            "text": "a",
+            "lang": "tl"
+          },
+          {
+            "text": " للمؤنث زي ",
+            "lang": "eg"
+          },
+          {
+            "text": "a água",
+            "lang": "tl"
+          },
+          {
+            "text": ".",
+            "lang": "eg"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "q.d03.5",
+      "type": "gap",
+      "skill": "writing",
+      "tests": [
+        "sentence.custa_carne",
+        "word.carne"
+      ],
+      "prompt": {
+        "sentence": [
+          {
+            "text": "Quanto custa ___ carne?",
+            "lang": "tl"
+          }
+        ],
+        "meaning": [
+          {
+            "text": "كم سعر اللحم؟",
+            "lang": "ar"
+          }
+        ]
+      },
+      "options": [
+        [
+          {
+            "text": "o",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "a",
+            "lang": "tl"
+          }
+        ]
+      ],
+      "answer": 1,
+      "feedback_eg": [
+        {
+          "text": "carne",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": " مؤنثة: ",
+          "lang": "eg"
+        },
+        {
+          "text": "a carne",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": ".",
+          "lang": "eg"
+        }
+      ],
+      "why_wrong_eg": [
+        [
+          {
+            "text": "o",
+            "lang": "tl"
+          },
+          {
+            "text": " للمذكر زي ",
+            "lang": "eg"
+          },
+          {
+            "text": "o queijo",
+            "lang": "tl"
+          },
+          {
+            "text": ".",
+            "lang": "eg"
+          }
+        ],
+        null
+      ]
+    },
+    {
+      "id": "q.d03.6",
+      "type": "gap",
+      "skill": "writing",
+      "tests": [
+        "sentence.custa_peixe",
+        "word.peixe"
+      ],
+      "prompt": {
+        "sentence": [
+          {
+            "text": "Quanto custa ___ peixe?",
+            "lang": "tl"
+          }
+        ],
+        "meaning": [
+          {
+            "text": "كم سعر السمك؟",
+            "lang": "ar"
+          }
+        ]
+      },
+      "options": [
+        [
+          {
+            "text": "a",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "o",
+            "lang": "tl"
+          }
+        ]
+      ],
+      "answer": 1,
+      "feedback_eg": [
+        {
+          "text": "peixe",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": " مذكر: ",
+          "lang": "eg"
+        },
+        {
+          "text": "o peixe",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": ".",
+          "lang": "eg"
+        }
+      ],
+      "why_wrong_eg": [
+        [
+          {
+            "text": "a",
+            "lang": "tl"
+          },
+          {
+            "text": " للمؤنث، وpeixe مذكر.",
+            "lang": "eg"
+          }
+        ],
+        null
+      ]
+    },
+    {
+      "id": "q.d03.7",
+      "type": "gap",
+      "skill": "writing",
+      "tests": [
+        "word.agua",
+        "phrase.order_coffee"
+      ],
+      "prompt": {
+        "sentence": [
+          {
+            "text": "Queria ___ água, por favor.",
+            "lang": "tl"
+          }
+        ],
+        "meaning": [
+          {
+            "text": "أريد ماء من فضلك.",
+            "lang": "ar"
+          }
+        ]
+      },
+      "options": [
+        [
+          {
+            "text": "um",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "uma",
+            "lang": "tl"
+          }
+        ]
+      ],
+      "answer": 1,
+      "feedback_eg": [
+        {
+          "text": "água",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": " مؤنثة، يبقى ",
+          "lang": "eg"
+        },
+        {
+          "text": "uma água",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": ".",
+          "lang": "eg"
+        }
+      ],
+      "why_wrong_eg": [
+        [
+          {
+            "text": "um",
+            "lang": "tl"
+          },
+          {
+            "text": " للمذكر زي ",
+            "lang": "eg"
+          },
+          {
+            "text": "um café",
+            "lang": "tl"
+          },
+          {
+            "text": ".",
+            "lang": "eg"
+          }
+        ],
+        null
+      ]
+    },
+    {
+      "id": "q.d03.8",
+      "type": "gap",
+      "skill": "writing",
+      "tests": [
+        "sentence.queria_maca_banana",
+        "word.banana"
+      ],
+      "prompt": {
+        "sentence": [
+          {
+            "text": "Queria uma maçã e ___ banana.",
+            "lang": "tl"
+          }
+        ],
+        "meaning": [
+          {
+            "text": "أريد تفاحة وموزة.",
+            "lang": "ar"
+          }
+        ]
+      },
+      "options": [
+        [
+          {
+            "text": "uma",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "um",
+            "lang": "tl"
+          }
+        ]
+      ],
+      "answer": 0,
+      "feedback_eg": [
+        {
+          "text": "banana",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": " مؤنثة: ",
+          "lang": "eg"
+        },
+        {
+          "text": "uma banana",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": ".",
+          "lang": "eg"
+        }
+      ],
+      "why_wrong_eg": [
+        null,
+        [
+          {
+            "text": "um",
+            "lang": "tl"
+          },
+          {
+            "text": " للمذكر، وbanana مؤنثة.",
+            "lang": "eg"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "q.d03.9",
+      "type": "gap",
+      "skill": "writing",
+      "tests": [
+        "sentence.cafe_acucar",
+        "word.acucar",
+        "word.cafe"
+      ],
+      "prompt": {
+        "sentence": [
+          {
+            "text": "Queria um café com ___.",
+            "lang": "tl"
+          }
+        ],
+        "meaning": [
+          {
+            "text": "أريد قهوة بسكر.",
+            "lang": "ar"
+          }
+        ]
+      },
+      "options": [
+        [
+          {
+            "text": "açúcar",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "leite",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "água",
+            "lang": "tl"
+          }
+        ]
+      ],
+      "answer": 0,
+      "feedback_eg": [
+        {
+          "text": "açúcar",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": " = السكر، زي ما المعنى بيقول.",
+          "lang": "eg"
+        }
+      ],
+      "why_wrong_eg": [
+        null,
+        [
+          {
+            "text": "leite",
+            "lang": "tl"
+          },
+          {
+            "text": " = الحليب، والمعنى هنا سكر.",
+            "lang": "eg"
+          }
+        ],
+        [
+          {
+            "text": "água",
+            "lang": "tl"
+          },
+          {
+            "text": " = الماء.",
+            "lang": "eg"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "q.d03.10",
+      "type": "gap",
+      "skill": "writing",
+      "tests": [
+        "word.frango",
+        "sentence.onde_frango"
+      ],
+      "prompt": {
+        "sentence": [
+          {
+            "text": "Quanto custa o ___?",
+            "lang": "tl"
+          }
+        ],
+        "meaning": [
+          {
+            "text": "كم سعر الدجاج؟",
+            "lang": "ar"
+          }
+        ]
+      },
+      "options": [
+        [
+          {
+            "text": "peixe",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "frango",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "arroz",
+            "lang": "tl"
+          }
+        ]
+      ],
+      "answer": 1,
+      "feedback_eg": [
+        {
+          "text": "frango",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": " = الدجاج.",
+          "lang": "eg"
+        }
+      ],
+      "why_wrong_eg": [
+        [
+          {
+            "text": "peixe",
+            "lang": "tl"
+          },
+          {
+            "text": " = السمك.",
+            "lang": "eg"
+          }
+        ],
+        null,
+        [
+          {
+            "text": "arroz",
+            "lang": "tl"
+          },
+          {
+            "text": " = الأرز.",
+            "lang": "eg"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "q.d03.11",
+      "type": "gap",
+      "skill": "writing",
+      "tests": [
+        "sentence.queria_pao_queijo",
+        "word.queijo",
+        "word.pao"
+      ],
+      "prompt": {
+        "sentence": [
+          {
+            "text": "Queria um pão e um ___.",
+            "lang": "tl"
+          }
+        ],
+        "meaning": [
+          {
+            "text": "أريد خبزا وجبنا.",
+            "lang": "ar"
+          }
+        ]
+      },
+      "options": [
+        [
+          {
+            "text": "leite",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "peixe",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "queijo",
+            "lang": "tl"
+          }
+        ]
+      ],
+      "answer": 2,
+      "feedback_eg": [
+        {
+          "text": "queijo",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": " = الجبن. وde جملتين مع ",
+          "lang": "eg"
+        },
+        {
+          "text": "e",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": " بتربطهم.",
+          "lang": "eg"
+        }
+      ],
+      "why_wrong_eg": [
+        [
+          {
+            "text": "leite",
+            "lang": "tl"
+          },
+          {
+            "text": " = الحليب.",
+            "lang": "eg"
+          }
+        ],
+        [
+          {
+            "text": "peixe",
+            "lang": "tl"
+          },
+          {
+            "text": " = السمك.",
+            "lang": "eg"
+          }
+        ],
+        null
+      ]
+    },
+    {
+      "id": "q.d03.12",
+      "type": "gap",
+      "skill": "writing",
+      "tests": [
+        "phrase.only_this",
+        "phrase.thanks"
+      ],
+      "prompt": {
+        "sentence": [
+          {
+            "text": "Só isto, ___.",
+            "lang": "tl"
+          }
+        ],
+        "meaning": [
+          {
+            "text": "هذا فقط، شكرا.",
+            "lang": "ar"
+          }
+        ]
+      },
+      "options": [
+        [
+          {
+            "text": "aqui",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "obrigado",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "mais",
+            "lang": "tl"
+          }
+        ]
+      ],
+      "answer": 1,
+      "feedback_eg": [
+        {
+          "text": "obrigado",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": " = شكرًا. والست تقول ",
+          "lang": "eg"
+        },
+        {
+          "text": "obrigada",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": ".",
+          "lang": "eg"
+        }
+      ],
+      "why_wrong_eg": [
+        [
+          {
+            "text": "aqui",
+            "lang": "tl"
+          },
+          {
+            "text": " = هنا.",
+            "lang": "eg"
+          }
+        ],
+        null,
+        [
+          {
+            "text": "mais",
+            "lang": "tl"
+          },
+          {
+            "text": " = أكتر.",
+            "lang": "eg"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "q.d03.13",
+      "type": "listen_meaning",
+      "skill": "listening",
+      "tests": [
+        "phrase.greet_morning"
+      ],
+      "prompt": {
+        "audio_ref": "phrase.greet_morning"
+      },
+      "options": [
+        [
+          {
+            "text": "شكرا!",
+            "lang": "ar"
+          }
+        ],
+        [
+          {
+            "text": "كم السعر؟",
+            "lang": "ar"
+          }
+        ],
+        [
+          {
+            "text": "صباح الخير.",
+            "lang": "ar"
+          }
+        ],
+        [
+          {
+            "text": "هل تريد شيئا آخر؟",
+            "lang": "ar"
+          }
+        ]
+      ],
+      "answer": 2,
+      "feedback_eg": [
+        {
+          "text": "تمام! ",
+          "lang": "eg"
+        },
+        {
+          "text": "Bom dia!",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": " تقولها أول ما تدخل.",
+          "lang": "eg"
+        }
+      ],
+      "why_wrong_eg": [
+        [
+          {
+            "text": "ده ",
+            "lang": "eg"
+          },
+          {
+            "text": "Obrigado!",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "ده ",
+            "lang": "eg"
+          },
+          {
+            "text": "Quanto custa?",
+            "lang": "tl"
+          }
+        ],
+        null,
+        [
+          {
+            "text": "ده ",
+            "lang": "eg"
+          },
+          {
+            "text": "Mais alguma coisa?",
+            "lang": "tl"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "q.d03.14",
+      "type": "gap",
+      "skill": "writing",
+      "tests": [
+        "word.arroz",
+        "sentence.custa_arroz"
+      ],
+      "prompt": {
+        "sentence": [
+          {
+            "text": "Quanto custa o ___?",
+            "lang": "tl"
+          }
+        ],
+        "meaning": [
+          {
+            "text": "كم سعر الأرز؟",
+            "lang": "ar"
+          }
+        ]
+      },
+      "options": [
+        [
+          {
+            "text": "açúcar",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "pão",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "arroz",
+            "lang": "tl"
+          }
+        ]
+      ],
+      "answer": 2,
+      "feedback_eg": [
+        {
+          "text": "arroz",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": " = الأرز، ومذكر: ",
+          "lang": "eg"
+        },
+        {
+          "text": "o arroz",
+          "lang": "tl",
+          "bold": true
+        },
+        {
+          "text": ".",
+          "lang": "eg"
+        }
+      ],
+      "why_wrong_eg": [
+        [
+          {
+            "text": "açúcar",
+            "lang": "tl"
+          },
+          {
+            "text": " = السكر.",
+            "lang": "eg"
+          }
+        ],
+        [
+          {
+            "text": "pão",
+            "lang": "tl"
+          },
+          {
+            "text": " = الخبز.",
+            "lang": "eg"
+          }
+        ],
+        null
+      ]
+    }
+  ],
+  "micro": {
+    "morning": {
+      "phrase": "phrase.where_is_milk",
+      "mission_eg": "النهارده في أي سوبر ماركت، اسأل حد من الموظفين فين حاجة واحدة بتدور عليها بدل ما تلف لوحدك."
+    },
+    "tool": {
+      "tool_id": "order_anything",
+      "step": 2,
+      "of": 5,
+      "builds_on_eg": "امبارح اتعلمت تطلب حاجة واحدة بـ Queria، والنهارده بنزود الكمية: واحد وواحدة وحاجتين مع بعض.",
+      "examples": [
+        "sentence.queria_pao_queijo",
+        "sentence.queria_maca_banana",
+        "sentence.queria_mais_leite"
+      ],
+      "notice": {
+        "question_eg": "بص على الجمل التلاتة. الطلب فيهم اتغير إزاي عن امبارح؟",
+        "options": [
+          {
+            "text": "بقى فيه حاجتين مع بعض أو كمية زيادة بعد الطلب",
+            "correct": true
+          },
+          {
+            "text": "بقينا بنسأل على السعر",
+            "correct": false
+          },
+          {
+            "text": "بقينا بنسأل على المكان",
+            "correct": false
+          }
+        ]
+      },
+      "rule_eg": "الكمية بتيجي بعد الطلب على طول: واحد للمذكر وواحدة للمؤنث، وللزيادة استخدم كلمة «مايش»، ولو عايز حاجتين اربطهم بحرف «إي». الأرقام بكره.",
+      "drills": [
+        "q.d03.7",
+        "q.d03.8"
+      ]
+    },
+    "evening": {
+      "teaser_eg": "بكره هنتعلم الأرقام، عشان تفهم الكاشير لما يقولك السعر وتطلب أكتر من حاجة."
+    }
+  },
+  "speak_prompts": [
+    {
+      "prompt_eg": "اشتريت إيه النهارده؟",
+      "answer_tl": "Queria um pão e um queijo.",
+      "ids": [
+        "sentence.queria_pao_queijo",
+        "word.pao",
+        "word.queijo"
+      ]
+    },
+    {
+      "prompt_eg": "عايز تعرف اللبن فين. تسأل إزاي؟",
+      "answer_tl": "Onde fica o leite?",
+      "ids": [
+        "phrase.where_is_milk",
+        "word.leite"
+      ]
+    },
+    {
+      "prompt_eg": "الكاشير سألك لو عايز حاجة تانية وإنت خلصت. بترد إزاي؟",
+      "answer_tl": "Só isto, obrigado.",
+      "ids": [
+        "phrase.only_this",
+        "phrase.thanks"
+      ]
+    },
+    {
+      "prompt_eg": "عايز تدفع بالكارت. تسأل إزاي؟",
+      "answer_tl": "Aceita cartão?",
+      "ids": [
+        "phrase.card_ok"
+      ]
+    }
+  ]
+}

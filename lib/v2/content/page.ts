@@ -10,16 +10,36 @@ export const PresetSchema = z.enum([
   'dictionary',
   'scene',
   'story',
-  'free',
 ]);
 
 export const ModeSchema = z.enum(['guided', 'explore', 'static']);
 
 export const CoverSchema = z.enum(['meaning', 'tl', 'endings']);
 
+/** Code-owned: model never chooses mode. */
+export function modeForPreset(
+  preset: z.infer<typeof PresetSchema> | string,
+): z.infer<typeof ModeSchema> {
+  switch (preset) {
+    case 'compare':
+    case 'pattern':
+    case 'story':
+      return 'guided';
+    case 'conjugation':
+      return 'explore';
+    case 'phrases':
+    case 'dictionary':
+    case 'scene':
+    default:
+      return 'static';
+  }
+}
+
 const AskOptionSchema = z.object({
   label: RtSchema,
   correct: z.boolean(),
+  /** Intentionally wrong distractor / hint form. */
+  wrong: z.boolean().optional(),
 });
 
 const AskSchema = z.object({
@@ -29,13 +49,24 @@ const AskSchema = z.object({
   hint: RtSchema.optional(),
 });
 
-const StepSchema = z.object({
+const RevealStepSchema = z.object({
+  kind: z.literal('reveal'),
   target: z.string(),
-  kind: z.enum(['reveal', 'ask']),
-  tip: RtSchema.optional(),
-  ask: AskSchema.optional(),
+  tip: RtSchema,
   chapter: z.string().optional(),
 });
+
+const AskStepSchema = z.object({
+  kind: z.literal('ask'),
+  target: z.string(),
+  ask: AskSchema,
+  chapter: z.string().optional(),
+});
+
+export const StepSchema = z.discriminatedUnion('kind', [
+  RevealStepSchema,
+  AskStepSchema,
+]);
 
 const RevealAxisControlSchema = z.object({
   id: z.string(),
@@ -91,3 +122,5 @@ export type Page = z.infer<typeof PageSchema>;
 export type Step = z.infer<typeof StepSchema>;
 export type Control = z.infer<typeof ControlSchema>;
 export type Cover = z.infer<typeof CoverSchema>;
+export type Preset = z.infer<typeof PresetSchema>;
+export type Mode = z.infer<typeof ModeSchema>;

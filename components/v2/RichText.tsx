@@ -73,7 +73,8 @@ export function RichText({ segments, className, tone = 'default' }: Props) {
                   tone === 'onDark' ? 'text-white' : '',
                   vs ? 'px-1 font-serif text-[0.7em] italic text-v2-ink-muted' : '',
                   seg.bold ? 'font-semibold' : '',
-                ]
+                  seg.wrong ? 'line-through opacity-70' : '',
+            ]
                   .filter(Boolean)
                   .join(' ')}
               >
