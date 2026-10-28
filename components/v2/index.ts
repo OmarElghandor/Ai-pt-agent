@@ -1,16 +1,20 @@
 export { AudioButton } from './AudioButton';
+export { CalloutBar } from './CalloutBar';
 export { CaptionBar } from './CaptionBar';
 export { Chip } from './Chip';
 export { CompareColumns } from './CompareColumns';
 export { ExampleRow } from './ExampleRow';
+export { Icon } from './Icon';
 export { Panel } from './Panel';
 export { PrimaryButton } from './PrimaryButton';
+export { ProgressBar } from './ProgressBar';
 export { ProgressDots } from './ProgressDots';
 export { ReportErrorButton } from './ReportErrorButton';
 export { RichText } from './RichText';
 export { RuleRow } from './RuleRow';
 export { SecondaryButton } from './SecondaryButton';
 export { SkillChip } from './SkillChip';
-export { StickyNote } from './StickyNote';
+export { NoteCard, StickyNote } from './NoteCard';
 export { TabBar } from './TabBar';
-export { TitleBadge } from './TitleBadge';
+export { TitleBlock } from './TitleBlock';
+

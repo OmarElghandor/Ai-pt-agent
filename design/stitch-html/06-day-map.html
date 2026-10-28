@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar" style=""><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "secondary-fixed-dim": "#ffb4a3",
+        "on-background": "#201b11",
+        "outline": "#70797a",
+        "tertiary-fixed": "#fee263",
+        "on-surface-variant": "#404849",
+        "canvas": "#EEF2F2",
+        "primary-fixed-dim": "#97d0d7",
+        "primary-container": "#14545a",
+        "on-tertiary-container": "#4b3f00",
+        "secondary-container": "#fe7354",
+        "surface-container-high": "#f2e7d6",
+        "on-secondary": "#ffffff",
+        "inverse-surface": "#363024",
+        "on-tertiary": "#ffffff",
+        "surface-container-highest": "#ece1d0",
+        "error": "#ba1a1a",
+        "primary-fixed": "#b2edf3",
+        "inverse-primary": "#97d0d7",
+        "surface-variant": "#ece1d0",
+        "on-surface": "#201b11",
+        "surface-dim": "#e4d9c8",
+        "surface-tint": "#2c676d",
+        "muted": "#8C8C86",
+        "inverse-on-surface": "#fbefde",
+        "outline-variant": "#bfc8c9",
+        "on-primary-container": "#8dc6cd",
+        "primary": "#003c41",
+        "background": "#fff8f2",
+        "on-error-container": "#93000a",
+        "on-secondary-fixed-variant": "#881f06",
+        "surface": "#FFFFFF",
+        "tertiary": "#6e5e00",
+        "surface-container-lowest": "#ffffff",
+        "surface-container-low": "#fef2e1",
+        "text": "#242424",
+        "secondary-fixed": "#ffdad2",
+        "surface-container": "#f8ecdb",
+        "on-primary-fixed": "#002023",
+        "tertiary-fixed-dim": "#e1c64a",
+        "on-error": "#ffffff",
+        "on-secondary-container": "#6b1100",
+        "on-tertiary-fixed": "#221b00",
+        "error-container": "#ffdad6",
+        "on-primary": "#ffffff",
+        "on-primary-fixed-variant": "#0a4f54",
+        "on-secondary-fixed": "#3d0600",
+        "secondary": "#a9361d",
+        "teal-700": "#1E6670",
+        "on-tertiary-fixed-variant": "#534600",
+        "tertiary-container": "#c4aa30",
+        "surface-bright": "#fff8f2",
+        "editorial-teal": "#14545A",
+        "editorial-coral": "#F56D4E",
+        "editorial-gold": "#F5D95B"
+      },
+      borderRadius: {
+        DEFAULT: "0.25rem",
+        lg: "0.5rem",
+        xl: "0.75rem",
+        full: "9999px"
+      },
+      spacing: {
+        "space-lg": "24px",
+        "margin": "24px",
+        "space-sm": "8px",
+        "space-xl": "32px",
+        "gutter": "16px",
+        "space-md": "16px",
+        "space-xs": "4px"
+      },
+      fontFamily: {
+        "headline-sm": ["Newsreader", "serif"],
+        "body-md": ["Inter", "sans-serif"],
+        "headline-lg": ["Newsreader", "serif"],
+        "body-lg": ["Inter", "sans-serif"],
+        "label-sm": ["Inter", "sans-serif"],
+        "label-lg": ["Inter", "sans-serif"],
+        "body-sm": ["Inter", "sans-serif"],
+        "label-md": ["Inter", "sans-serif"],
+        "headline-md": ["Newsreader", "serif"],
+        "serif": ["Newsreader", "serif"]
+      },
+      fontSize: {
+        "headline-sm": ["18px", {lineHeight: "24px", fontWeight: "600"}],
+        "body-md": ["14px", {lineHeight: "20px", fontWeight: "400"}],
+        "headline-lg": ["32px", {lineHeight: "40px", fontWeight: "700"}],
+        "body-lg": ["15px", {lineHeight: "22px", fontWeight: "400"}],
+        "label-sm": ["10px", {lineHeight: "14px", fontWeight: "500"}],
+        "label-lg": ["14px", {lineHeight: "18px", fontWeight: "600"}],
+        "body-sm": ["12px", {lineHeight: "16px", fontWeight: "400"}],
+        "label-md": ["12px", {lineHeight: "16px", fontWeight: "500"}],
+        "headline-md": ["24px", {lineHeight: "32px", fontWeight: "600"}]
+      }
+    }
+  }
+};</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-[#FFF8F2] text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 inset-x-0 z-50 bg-[#FFF8F2]/90 backdrop-blur-xl pt-safe border-b border-[#f2e7d6]"><div class="h-16 px-margin flex items-center justify-between"><div class="flex items-center gap-space-sm"><a class="flex items-center text-[#14545A] hover:opacity-80 transition-opacity" href="{{DATA:SCREEN:SCREEN_3}}"><span class="material-symbols-outlined text-[24px]">arrow_forward</span></a><h1 class="font-serif font-bold text-2xl text-[#14545A] tracking-tight">Langify</h1></div><div class="w-8 h-8 rounded-full bg-[#14545A] flex items-center justify-center shrink-0 shadow-sm"><span class="material-symbols-outlined text-white text-[18px]">person</span></div></div></header><main class="flex-1 flex flex-col relative w-full px-margin pt-16 pb-20 bg-[#FFF8F2]"><div class="flex flex-col w-full pb-28 space-y-space-md">
+<!-- Top Navigation & Notebook Breadcrumb Bar -->
+<div class="flex items-center justify-between py-space-xs"><a class="flex items-center gap-space-xs text-[#14545A] hover:opacity-80 transition-opacity" href="{{DATA:SCREEN:SCREEN_3}}"><span class="material-symbols-outlined text-[20px]">arrow_forward</span><span class="font-label-md text-label-md font-semibold text-[#14545A]">المسار التعليمي</span></a><div class="flex items-center gap-space-xs px-space-sm py-1 bg-[#f8ecdb] rounded-full border border-[#ece1d0]"><span class="material-symbols-outlined text-[16px] text-[#14545A]">bookmark</span><span class="font-label-sm text-label-sm text-on-surface font-medium">اليوم التالت · الأسبوع الأول</span></div><button class="w-8 h-8 rounded-full bg-[#f8ecdb] flex items-center justify-center text-[#14545A] hover:bg-[#f2e7d6] transition-colors border border-[#ece1d0]" type="button"><span class="material-symbols-outlined text-[18px]">info</span></button></div>
+<!-- Hero Visual Card -->
+<div class="relative w-full rounded-2xl bg-surface border border-[#f2e7d6] shadow-sm overflow-hidden flex flex-col">
+<!-- Scene Frame with Lisbon Grocery Illustration -->
+<div class="relative w-full h-48 bg-surface-container-high overflow-hidden">
+<img alt="Lisbon traditional mercearia grocery shop aisle filled with shelves of olive oil bottles, canned sardines, fresh bread baskets, and hanging garlic" class="w-full h-full object-cover object-center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCr2QUW2vPfsvzXqRyjEB5Wq-hoisgIDZnyev8MEElKvuyxPtUjYV7-rSbdymJwpYkzSEWlhUKoSKOjXV7EVOmiCAvBMvFdZJo0PWQ_mOmmWdKRu0NMLjc_yna7L2T1cpDX4gRg-KGfpBkv-H6VS7FIYnf4FgKHIfchRuXgcTfQCDHmWjf2hbGcUKIpM1Bvyh8r4S3rxIBM2kVecjv-sEhjWkIU54gK9QdFusJMMKogz2jQz5McXtRB2g"/>
+<!-- Gradient Scrim for readable badges -->
+<div class="absolute inset-0 bg-gradient-to-t from-[#14545A]/85 via-black/20 to-black/30"></div>
+<!-- Top Metadata Chips Overlay -->
+<div class="absolute top-space-sm inset-x-space-sm flex items-center justify-between">
+<span class="px-space-sm py-0.5 bg-[#FFF8F2]/95 backdrop-blur-md text-[#14545A] font-label-sm text-label-sm font-semibold rounded-full shadow-sm">
+          A1 · المستوى التأسيسي
+        </span>
+<span class="px-space-sm py-0.5 bg-[#14545A]/90 backdrop-blur-md text-white font-label-sm text-label-sm rounded-full shadow-sm flex items-center gap-1 border border-white/20">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+          ١١ دقيقة
+        </span>
+</div>
+<!-- Overlaid Portuguese Header Tag -->
+<div class="absolute bottom-space-sm right-space-sm left-space-sm text-right">
+<span class="inline-block px-3 py-1 bg-[#F5D95B] text-[#221b00] font-serif font-bold text-lg tracking-wider rounded-lg shadow-sm">
+          Dia 3 · No Supermercado
+        </span>
+</div>
+</div>
+<!-- Title & Overview Section -->
+<div class="p-space-md flex flex-col space-y-space-sm bg-surface">
+<div class="flex flex-col space-y-1"><h2 class="font-serif text-2xl font-bold text-[#14545A] tracking-tight">يومك التالت: في السوبرماركت</h2><p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">يلا نخلّص درس النهاردة · تعلم أهم الكلمات، أدوات التعريف <span class="font-bold text-[#14545A] font-body-sm">o</span> و <span class="font-bold text-[#14545A] font-body-sm">a</span>، وإجراء محادثة حقيقية عند الدفع في لشبونة.</p></div>
+<!-- Quick Summary Tags -->
+<div class="flex flex-wrap gap-1.5 pt-1">
+<!-- Grammar Tag -->
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#f8ecdb] font-label-sm text-label-sm text-on-surface">
+<span class="w-2 h-2 rounded-full bg-[#14545A]"></span>
+          أدوات التعريف o / a
+        </span>
+<!-- Vocabulary Tag -->
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#f8ecdb] font-label-sm text-label-sm text-on-surface">
+<span class="w-2 h-2 rounded-full bg-[#F56D4E]"></span>
+          ١٢ مفردة غذائية
+        </span>
+<!-- Conversational Tag -->
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#f8ecdb] font-label-sm text-label-sm text-on-surface">
+<span class="w-2 h-2 rounded-full bg-[#F5D95B]"></span>
+          محادثة الدفع
+        </span>
+</div>
+<!-- Progress Track Metric -->
+<div class="pt-space-xs flex flex-col space-y-1.5">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span class="">تم إنجاز خطوتين من أصل ٦ خطوات</span>
+<span class="font-semibold text-[#14545A] font-label-md">٣٣٪</span>
+</div>
+<div class="w-full h-2 rounded-full bg-[#f2e7d6] overflow-hidden">
+<div class="h-full bg-[#14545A] rounded-full" style="width: 33.3%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Step Breakdown Module -->
+<div class="flex flex-col space-y-space-xs">
+<div class="flex items-center justify-between px-1">
+<span class="font-serif text-xl font-bold text-[#14545A]">خريطة اليوم المنهجية</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">موزعة على محطات تفاعلية</span>
+</div>
+<!-- Step 1: Completed -->
+<div class="relative w-full rounded-xl bg-surface border border-[#f2e7d6] p-space-md shadow-sm transition-all hover:bg-[#fef2e1]">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-start gap-space-sm flex-1 min-w-0">
+<!-- Step Badge -->
+<div class="w-9 h-9 rounded-full bg-[#14545A] text-white flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[20px]">check</span>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center gap-2">
+<h3 class="font-serif font-bold text-lg text-[#14545A] truncate">جمل اليوم</h3>
+<span class="font-serif text-[14px] text-outline italic">Frases do Dia</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 line-clamp-2">
+              دقيقتان (2 min) · العبارات الأساسية للسؤال عن الأسعار والأماكن
+            </p>
+</div>
+</div>
+<button class="px-2.5 py-1 bg-[#f8ecdb] text-[#14545A] font-label-sm text-label-sm font-semibold rounded-lg hover:bg-[#f2e7d6] transition-colors shrink-0" type="button">
+          راجع
+        </button>
+</div>
+</div>
+<!-- Step 2: Completed -->
+<div class="relative w-full rounded-xl bg-surface border border-[#f2e7d6] p-space-md shadow-sm transition-all hover:bg-[#fef2e1]">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-start gap-space-sm flex-1 min-w-0">
+<!-- Step Badge -->
+<div class="w-9 h-9 rounded-full bg-[#14545A] text-white flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[20px]">check</span>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center gap-2">
+<h3 class="font-serif font-bold text-lg text-[#14545A] truncate">القاعدة: o و a</h3>
+<span class="font-serif text-[14px] text-outline italic">Artigos Definidos</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 line-clamp-2">
+              دقيقتان (2 min) · متى نستخدم o للمذكر و a للمؤنث مع أصناف الطعام
+            </p>
+</div>
+</div>
+<button class="px-2.5 py-1 bg-[#f8ecdb] text-[#14545A] font-label-sm text-label-sm font-semibold rounded-lg hover:bg-[#f2e7d6] transition-colors shrink-0" type="button">
+          راجع
+        </button>
+</div>
+</div>
+<!-- Step 3: Current / Active Card -->
+<div class="relative w-full rounded-xl bg-[#FFF8F2] border-2 border-[#14545A] p-space-md shadow-md ring-0 transform hover:-translate-y-0.5 transition-all">
+<!-- Active Ribbon Indicator -->
+<div class="flex items-center justify-between mb-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#14545A] text-white font-label-sm text-label-sm font-medium shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-[#F5D95B] animate-ping"></span>
+          الدرس الحالي · الخطوة التالية
+        </span>
+<span class="font-label-sm text-label-sm text-[#14545A] font-semibold">٣ دقائق</span>
+</div>
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-start gap-space-sm flex-1 min-w-0">
+<!-- Number Avatar -->
+<div class="w-10 h-10 rounded-full bg-[#14545A] text-white flex items-center justify-center shrink-0 font-serif font-bold text-xl shadow">
+            ٣
+          </div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center gap-2">
+<h3 class="font-serif font-bold text-xl text-[#14545A]">قاموس الأكل</h3>
+<span class="font-serif text-[15px] text-on-surface-variant italic">Comida &amp; Mercearia</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface mt-1">
+              تفاح، حليب، خبز، زيتون، جبنة والمزيد مصحوبة بنطق صوتي لشبوني نقي ومصوَّر.
+            </p>
+</div>
+</div>
+<div class="w-10 h-10 rounded-full bg-[#14545A] text-white flex items-center justify-center shrink-0 shadow self-center hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[24px]">play_arrow</span>
+</div>
+</div>
+</div>
+<!-- Step 4: Upcoming -->
+<div class="relative w-full rounded-xl bg-surface border border-[#f2e7d6] p-space-md shadow-sm opacity-90 transition-all hover:opacity-100">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-start gap-space-sm flex-1 min-w-0">
+<div class="w-9 h-9 rounded-full bg-[#f8ecdb] text-on-surface-variant flex items-center justify-center shrink-0 font-serif font-bold text-base">
+            ٤
+          </div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center gap-2">
+<h3 class="font-serif font-bold text-lg text-[#14545A] truncate">اختبر نفسك</h3>
+<span class="font-serif text-[14px] text-outline italic">Mini-Quiz</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 line-clamp-2">
+              دقيقة واحدة (1 min) · تثبيت الكلمات وتمييز المذكر والمؤنث عبر بطاقات سريعة
+            </p>
+</div>
+</div>
+<span class="material-symbols-outlined text-[20px] text-outline self-center">lock</span>
+</div>
+</div>
+<!-- Step 5: Upcoming -->
+<div class="relative w-full rounded-xl bg-surface border border-[#f2e7d6] p-space-md shadow-sm opacity-90 transition-all hover:opacity-100">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-start gap-space-sm flex-1 min-w-0">
+<div class="w-9 h-9 rounded-full bg-[#f8ecdb] text-on-surface-variant flex items-center justify-center shrink-0 font-serif font-bold text-base">
+            ٥
+          </div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center gap-2">
+<h3 class="font-serif font-bold text-lg text-[#14545A] truncate">اتكلم مع ريتا في الكاشير</h3>
+<span class="font-serif text-[14px] text-outline italic">Conversa</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 line-clamp-2">
+              دقيقتان (2 min) · محاكاة صوتية ذكية للتعامل مع كاشير السوبرماركت بلشبونة
+            </p>
+</div>
+</div>
+<span class="material-symbols-outlined text-[20px] text-outline self-center">lock</span>
+</div>
+</div>
+<!-- Step 6: Upcoming Final -->
+<div class="relative w-full rounded-xl bg-surface border border-[#f2e7d6] p-space-md shadow-sm opacity-90 transition-all hover:opacity-100">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-start gap-space-sm flex-1 min-w-0">
+<div class="w-9 h-9 rounded-full bg-[#f8ecdb] text-on-surface-variant flex items-center justify-center shrink-0 font-serif font-bold text-base">
+            ٦
+          </div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center gap-2">
+<h3 class="font-serif font-bold text-lg text-[#14545A] truncate">مراجعة ختامية ودفتر اليوم</h3>
+<span class="font-serif text-[14px] text-outline italic">Revisão</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 line-clamp-2">
+              دقيقة واحدة (1 min) · ملخص سريع وحفظ العبارات الجديدة في دفتر مذكراتك الشخصي
+            </p>
+</div>
+</div>
+<span class="material-symbols-outlined text-[20px] text-outline self-center">lock</span>
+</div>
+</div>
+</div>
+<!-- Bottom Floating Call-To-Action Card -->
+<div class="fixed bottom-20 inset-x-margin max-w-[680px] mx-auto z-40"><div class="p-2.5 bg-[#FFF8F2]/90 backdrop-blur-xl rounded-2xl shadow-xl border border-[#f2e7d6] flex items-center gap-3"><a class="flex-1 flex items-center justify-between px-space-md h-14 bg-[#F56D4E] hover:bg-[#e05e40] text-white rounded-xl shadow active:scale-[0.99] transition-all" href="{{DATA:SCREEN:SCREEN_6}}"><div class="flex flex-col text-right"><span class="font-serif text-lg font-bold tracking-tight text-white">كمّل من قاموس الأكل ←</span><span class="font-label-sm text-label-sm text-white/90">الخطوة ٣ من ٦ · باقيلك ٣ دقايق</span></div><span class="material-symbols-outlined text-[24px] text-white">arrow_back</span></a></div></div>
+</div></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-[#FFF8F2]/95 backdrop-blur-xl border-t border-[#f2e7d6] shadow-[0_-2px_12px_rgba(20,84,90,0.06)]" data-active-classes="text-[#14545A] font-semibold"><div class="flex justify-around items-center h-16 px-space-xs"><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 text-[#14545A] font-semibold transition-colors" data-path="learning-path" href="#"><span class="material-symbols-outlined text-[24px]">explore</span><span class="font-label-sm text-label-sm mt-0.5">المسار</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 text-on-surface-variant hover:text-[#14545A] transition-colors" data-path="review" href="#"><span class="material-symbols-outlined text-[24px]">stylus_note</span><span class="font-label-sm text-label-sm mt-0.5">المراجعة</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 text-on-surface-variant hover:text-[#14545A] transition-colors" data-path="library" href="#"><span class="material-symbols-outlined text-[24px]">local_library</span><span class="font-label-sm text-label-sm mt-0.5">المكتبة</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 text-on-surface-variant hover:text-[#14545A] transition-colors" data-path="profile" href="#"><span class="material-symbols-outlined text-[24px]">account_circle</span><span class="font-label-sm text-label-sm mt-0.5">أنا</span></a></div></nav>
+</body></html>

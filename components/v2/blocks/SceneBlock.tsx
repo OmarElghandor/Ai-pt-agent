@@ -16,7 +16,7 @@ export function SceneBlock({ block }: { block: Extract<Block, { type: 'scene' }>
   return (
     <div
       data-target={block.id}
-      className={['relative min-h-48 overflow-hidden rounded-v2-card border border-v2-ink bg-v2-rule', partClass(state)].join(' ')}
+      className={['relative min-h-48 overflow-hidden rounded-v2-card bg-v2-paper-deep shadow-[var(--shadow-v2-soft)]', partClass(state)].join(' ')}
     >
       <div className="absolute start-2 top-2">
         <MediaTile image={block.image} />
@@ -31,7 +31,7 @@ export function SceneBlock({ block }: { block: Extract<Block, { type: 'scene' }>
             type="button"
             data-target={`${block.id}/item:${index}`}
             className={[
-              'absolute max-w-[40%] rounded-v2-chip bg-v2-card px-2 py-1 text-xs shadow-[2px_2px_0_rgba(18,35,90,0.12)]',
+              'absolute max-w-[40%] rounded-v2-chip bg-v2-card px-2 py-1 text-xs shadow-[var(--shadow-v2-soft)]',
               partClass(spotState),
             ].join(' ')}
             style={{ left: pct(spot.x), top: pct(spot.y) }}

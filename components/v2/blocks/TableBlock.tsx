@@ -6,7 +6,7 @@ import type { Rt } from '@/lib/v2/content/rt';
 import { ENDING_STAGGER_MS } from '@/lib/v2/render/timing';
 import { ContentLine, MediaTile, VerbForm } from './content';
 import { useBlockChrome } from './chrome';
-import { GROUP_HEADER } from './groupHeader';
+import { tableColHeaderClass } from './groupHeader';
 import { partClass } from './visibility';
 
 type Cell = { ref: string } | Rt;
@@ -16,12 +16,12 @@ export function TableBlock({ block }: { block: Extract<Block, { type: 'table' }>
   const split = block.split_endings === true;
 
   return (
-    <div data-target={block.id} className="overflow-hidden rounded-v2-card border border-v2-ink bg-v2-card">
+    <div data-target={block.id} className="overflow-hidden rounded-v2-card bg-v2-card shadow-[var(--shadow-v2-soft)]">
       <div
         className="grid"
         style={{ gridTemplateColumns: `auto repeat(${block.cols.length}, minmax(0, 1fr))` }}
       >
-        <div className="border-b border-v2-rule bg-v2-paper" />
+        <div className="border-b border-v2-line bg-v2-primary px-1.5 py-1.5" aria-hidden />
         {block.cols.map((col, ci) => {
           const state = chrome.partState(block.id, `col:${ci}`);
           return (
@@ -29,8 +29,14 @@ export function TableBlock({ block }: { block: Extract<Block, { type: 'table' }>
               key={ci}
               data-target={`${block.id}/col:${ci}`}
               className={[
-                'border-b border-v2-rule px-1.5 py-1.5 text-center text-xs font-semibold',
-                GROUP_HEADER[col.group ?? 'neutral'],
+                'border-b border-v2-line px-1.5 py-1.5 text-center text-xs font-semibold',
+                tableColHeaderClass(
+                  col.label,
+                  col.group,
+                  block.cells as Cell[][],
+                  ci,
+                  split,
+                ),
                 partClass(state, true),
               ].join(' ')}
             >
@@ -46,7 +52,7 @@ export function TableBlock({ block }: { block: Extract<Block, { type: 'table' }>
               <div
                 data-target={`${block.id}/row:${ri}`}
                 className={[
-                  'flex items-center gap-1 border-b border-v2-rule px-1.5 py-2',
+                  'flex items-center gap-1 border-b border-v2-line px-1.5 py-2',
                   partClass(rowState),
                 ].join(' ')}
               >
@@ -64,7 +70,7 @@ export function TableBlock({ block }: { block: Extract<Block, { type: 'table' }>
                     key={ci}
                     data-target={`${block.id}/cell:${ri}:${ci}`}
                     className={[
-                      'min-w-0 border-b border-v2-rule px-1.5 py-2 text-center',
+                      'min-w-0 border-b border-v2-line px-1.5 py-2 text-center',
                       partClass(state),
                       chrome.freshCell(block.id, ri, ci) && state !== 'dim' ? 'v2-pop' : '',
                     ].join(' ')}

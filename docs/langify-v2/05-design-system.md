@@ -1,31 +1,52 @@
 # 05 · Design system
 
-## The reference
+> **Changed 2026-10-27:** v2 now uses the **Warm Editorial** look from the Stitch export `stitch_bilingual_grammar_notebook_app_5`. It replaces the earlier navy "Editorial Notebook" look. The old references are kept for history in `design/archive-v4/`. Don't copy colors from there. Phases 0–2 already built the components with the old tokens, so the switch is a token swap plus a few component changes (see "Migration from v4" at the end).
 
-Match `design/reference/01-grammar-page-guided-SER-ESTAR.png`. Take the **layout and components** from it. Ignore its text: it's Spanish with English glosses, and its tab bar is wrong. For tokens beyond this file, `design/stitch-DESIGN.md` has Stitch's own notes.
+## The references
 
-What makes that screen right, and must carry to every content page:
-- A centered top badge with the key words in big framed tiles (SER vs ESTAR).
-- Content split into bordered columns or panels, each with a solid colored header strip.
-- Rule rows: a square illustration tile, a numbered bold title and one short line.
-- Example rows: a white rounded card, a target sentence with the key word as a colored chip, the Arabic meaning under it and a round speaker button.
-- The active row has a pale-yellow fill with a 2px amber border. Rows not reached yet are at 20% opacity.
-- A navy caption bar pinned above the tab bar during guided pages.
+- **Screens:** `design/reference/*.png`, numbered by screen (see `06`).
+- **HTML:** `design/stitch-html/*.html`, the Stitch HTML for every screen. Use it to read structure and spacing. Don't copy it: it's Tailwind CDN, LTR-first and full of English labels.
+  - Two screens exist only as HTML, because their PNG exports are broken: `04-compare-o-a.html` and `11-practice-conversation.html`.
+- **Design notes:** `design/stitch-DESIGN.md` has Stitch's own notes ("Warm Editorial Learning Mobile Experience").
+- **Main content page reference:** `01-content-page-possessives.png` (O MEU · A MINHA). It sets the visual style for every content page. `02-conjugation-endings.png` is the reference for verb pages.
+
+What makes these screens right, and must carry to every content page:
+- **Warm cream paper background.** Content sits on white cards with large radii and soft shadows. No heavy outlines.
+- **Header group:**
+  - a small pill label on top (القواعد · LIÇÃO DE GRAMÁTICA);
+  - a big serif title in deep teal (O MEU · A MINHA, AR · -ER · -IR);
+  - one Arabic subtitle line.
+- **Panels and columns with solid colored header strips:**
+  - AR coral, ER teal…;
+  - masculine teal, feminine coral.
+- **Pronoun chips row:** a selector pill row (eu · tu · ele/ela · nós · eles/elas). The active chip is filled deep teal.
+- **Active row:** pale-yellow fill with a gold border (the `nós` row in `02`). Rows not reached yet are faded.
+- **Deep-teal callout bar** for the key rule (✨ + one line + an ending chip).
+- **Mustard note card** for tips: 💡 icon, cream-yellow fill and a gold left border.
+- **Primary actions:** coral pill buttons with a soft warm shadow. Secondary actions are outlined pills.
+- **Illustration tiles:** rounded corners, inside the card, with a small caption chip.
 
 ## Tokens
 
-Colors live in one theme file and are referenced by role. Content JSON never carries colors; it carries `group`, and the theme maps group → color.
+Colors live in one theme file and are referenced by role. Content JSON never carries colors. It carries `group`, and the theme maps group → color.
 
 | Role | Value | Use |
 |---|---|---|
-| paper | #FBF7EE | App background (warm cream) |
+| paper | #FFF8F2 | App background (warm cream) |
+| paper-deep | #FEF2E1 | Section fills, segmented-control track, header pill |
 | card | #FFFFFF | Cards, bubbles, example rows |
-| ink | #12235A | Main text, borders, primary buttons, caption bar |
-| ink-muted | #5C6B8A | Secondary text, pronunciation |
-| rule | #E5DECE | Hairlines, ruled-paper lines |
-| highlight-fill | #FFF3CF | Active row, coach sticky note, tips |
-| highlight-border | #F2B33D | Active row border |
-| success | #2E7D32 | Correct, graduated |
+| line | #ECE1D0 | Hairlines and inner dividers |
+| ink | #201B11 | Main text |
+| ink-muted | #8C8C86 | Secondary text, pronunciation |
+| primary | #14545A | Deep teal: titles, headers, active chips, the caption bar, dark hero cards |
+| primary-strong | #003C41 | Pressed teal, text on teal-tint fills |
+| primary-tint | #B2EDF3 / #E6F4F5 | Teal-tint fills (row bands, badges) |
+| action | #F56D4E | Coral: primary buttons, progress, "current" markers |
+| action-strong | #A9361D | Coral text on light fills |
+| action-tint | #FFDAD2 | Coral-tint fills |
+| note | #FEE263 | Mustard: active row fill (at 35%), tip cards, duration labels |
+| note-border | #E1C64A | Active row border, tip card border |
+| success | #1B5E20 | Correct, graduated |
 | attention | #E8A13A | Near-miss dot, the correction label (never red for learner mistakes) |
 | danger | #BA1A1A | System errors only |
 
@@ -33,70 +54,159 @@ Colors live in one theme file and are referenced by role. Content JSON never car
 
 | group | Color | Meaning |
 |---|---|---|
-| a | #1F3A93 (navy-blue) | First side of a comparison (SER, -ar column header when compared) |
-| b | #2E7D32 (green) | Second side (ESTAR) |
-| c | #E8772E (orange) | Third side |
-| m | #2956C6 (blue) | Masculine (o) |
-| f | #E0584F (coral) | Feminine (a) |
-| verb | #12235A chip on #DCE1FF | The verb inside a sentence |
-| prep | #E8772E | Prepositions and contractions |
+| a | primary #14545A | First side of a comparison (SER) |
+| b | action-strong #A9361D | Second side (ESTAR) |
+| c | #6E5E00 on note fill | Third side |
+| m | primary #14545A | Masculine (o, um, o meu) |
+| f | action-strong #A9361D | Feminine (a, uma, a minha) |
+| verb | primary-strong on primary-tint chip | The verb inside a sentence |
+| prep | #6E5E00 | Prepositions and contractions |
 | pron | #6B3FC0 | Pronouns |
-| neg | #BA1A1A text on #FFDAD6 | Negation (não, nada, nunca) |
+| neg | danger text on #FFDAD6 | Negation (não, nada, nunca) |
 | neutral | ink | Everything else |
 
-**Verb class colors** (endings and verb tiles): -ar #E8772E orange · -er #2956C6 blue · -ir #2E7D32 green · irregular #6B3FC0 purple with ⚡ · regular forms labeled "عادي" in ink-muted.
+**Verb class colors** (column headers, endings, verb tiles):
+- -ar = coral #F56D4E header, ending text #A9361D.
+- -er = deep teal #14545A.
+- -ir = gold: header #C4AA30, ending text #6E5E00.
+  - **Not** a second teal. The Stitch screen uses #1E6670 for -IR, which is too close to -ER. Don't copy that.
+- **Irregular** forms stay purple #6B3FC0 with ⚡. It's the only purple in the app, so irregular forms stand out. The Stitch flashcard back draws `durmo` in coral; that's wrong.
+- Regular forms are labeled "عادي" in ink-muted.
 
-**Skill colors** (practice beats, step dots, result tiles): listening #0F8B8D teal · reading #6B3FC0 purple · speaking #12235A navy · writing #E8772E orange.
+**Skill colors** (practice step dots, result tiles): listening = primary teal · reading #6B3FC0 purple · speaking = action coral · writing = gold #C4AA30.
 
 ## Type
 
 | Role | Font | Use |
 |---|---|---|
-| Display (Latin) | Barlow Condensed 700 | Big target-language words in title tiles and verb posters (SER, DORMIR) |
-| Display (Arabic) | Lalezar | Arabic screen titles ("الكروت", "خلّصت المشهد") |
-| Target text | Newsreader (serif) | Portuguese sentences and examples |
-| Arabic UI and body | IBM Plex Sans Arabic | All Arabic text; one size step larger than Latin at the same level |
-| UI Latin | Work Sans | Chips, labels, numbers |
+| Display + target text | Newsreader (serif), 600–700 | Page titles (O MEU · A MINHA), big words (DORMIR, o queijo), Portuguese sentences |
+| Arabic (all) | Noto Sans Arabic, 400–700 | All Arabic text, including Arabic screen titles at 700. One size step larger than Latin at the same level |
+| UI Latin | Inter | Chips, labels, numbers, buttons |
 
-Load the fonts with `next/font/google`. Every text node that can hold mixed languages renders through one **RichText** component. It takes `rt` segments, renders each segment as a span with its own `dir` (`rtl` for eg/ar, `ltr` for tl) and `unicode-bidi: isolate`, and applies `group` colors.
+Scale (from `stitch-DESIGN.md`):
+- headline-lg 32/40
+- headline-md 24/32
+- headline-sm 18/24
+- body-lg 15/22
+- body-md 14/20
+- label 12/16
+- label-sm 10/14
 
-**In code:** define every token above as a CSS variable in `app/(v2)/v2.css` and expose it to Tailwind 4 with `@theme` (e.g. `--color-ink`, `--color-group-a`, `--color-skill-listening`). Components use the Tailwind classes or variables, never hex values.
+Barlow Condensed, Lalezar, IBM Plex Sans Arabic and Work Sans from v4 are dropped.
+
+Load the fonts with `next/font/google`. Every text node that can hold mixed languages renders through one **RichText** component. It takes `rt` segments and renders each segment as a span with:
+- its own `dir`: `rtl` for eg/ar, `ltr` for tl;
+- `unicode-bidi: isolate`;
+- its `group` color.
+
+**In code:** define every token above as a CSS variable in `app/(v2)/v2.css` and expose it to Tailwind 4 with `@theme` (e.g. `--color-primary`, `--color-action`, `--color-group-m`, `--color-skill-listening`). Components use the Tailwind classes or the variables, never hex values.
 
 ## Shape and depth
 
-- Radius: 16px for cards and panels, 12px for rows, full for chips and audio buttons.
-- Borders: 1–1.5px; navy for primary frames, the `rule` color for inner dividers.
-- No blurred shadows. If a lift is needed, use a hard offset (2px 2px 0 ink at 12% opacity).
-- Spacing base is 4. Screen side gutter: 16.
+- **Radius:**
+  - 20–24px for cards and panels;
+  - 14px for rows and inputs;
+  - full (999px) for chips, pills, audio buttons and primary buttons.
+- **Borders:** none on most cards. Where a frame is needed, use 1px in `line`. The active row is the only thick border: 2px `note-border`.
+- **Shadows:** soft and diffuse, `0 8px 24px rgba(32,50,50,0.08)` for cards and floating buttons. No hard offsets. This replaces the v4 rule.
+- **Spacing:** base 8 with 4 micro-steps. Screen side gutter: 16.
+- **Touch targets:** at least 44×44.
+
+## Spacing rules (added 2026-10-28)
+
+One scale, used everywhere: 4 · 8 · 12 · 16 · 24 · 32.
+
+| Where | Value |
+|---|---|
+| Screen side gutter | 16 |
+| Space between blocks on a page | 24 |
+| Space between a section label and its content | 8 |
+| Gap between cards or columns in a row | 12 |
+| Card and panel inner padding | 16 (12 for compact cards like word cards) |
+| Row inner padding | 12 vertical, 16 horizontal |
+| Space between a title and its subtitle | 4 |
+
+- **No double gutters.** A page never sits inside another padded card. The content width at 390px is 358px (390 − 2×16).
+- **Columns hug their content.** Compare columns don't stretch to equal height when one side is much shorter; they align to the top.
+- **Header strips are full width.** A table header strip covers every column, including the row-label column.
+- **Fixed bars float.** The CaptionBar is pinned to the bottom of the viewport, 16 from the sides and 12 from the bottom, never inside the page flow. The page gets bottom padding equal to its height + 24.
+
+## Icons (added 2026-10-28)
+
+- **One family:** Material Symbols Rounded, weight 400, fill 0 (fill 1 only for the active state), the same family as the Stitch HTML. No emoji in the UI (✨ 💡 ⚡ become icons). The only exception is the irregular-verb mark: it's the `bolt` icon in purple.
+- **Sizes:** 20 inside chips and rows, 24 in buttons and headers.
+- **Colors:** primary by default, white on teal or coral fills, ink-muted when disabled. Never black.
+- **Audio button:**
+  - one size, 40px, with a primary-tint fill (#E6F4F5) and a primary icon;
+  - 32px only inside chips;
+  - never a white circle on a white card.
+- **Rule rows** use the icon given in content (`icon`, a Material Symbols name). Without one, they show the number in a 32px primary-tint circle. Never use the same generic placeholder icon on every row.
+- **Image placeholders** use a small `image` icon (24) centered on a paper-deep block with the same radius as the real image. They never stand as a big icon tile next to text.
 
 ## Direction
 
-- The v2 layout sets `<html dir="rtl" lang="ar">`. Target-language text is always LTR, isolated per segment.
-- The layout is mobile-first at a 390px design width; on wider screens the app column is centered with a max width of 480px on the paper background. It must have no horizontal scroll at 360px.
+- The v2 layout sets `<html dir="rtl" lang="ar">`. Target-language text is always LTR and isolated per segment.
+- **Bidi bugs in the Stitch screens. Don't copy them:**
+  - Portuguese punctuation is flipped ("!Bom dia", "?Quanto é", "...Queria um café").
+  - Endings show the hyphen on the wrong side ("o-", "AR-" instead of "-o", "-ar").
+  - Both bugs disappear when every tl string goes through RichText as one isolated LTR segment. Endings are tl segments too.
+- The layout is mobile-first at a 390px design width. On wider screens the app column is centered with a max width of 480px on the paper background. No horizontal scroll at 360px.
 - Navigation mirrors in RTL: back arrow on the right, primary actions on the left side of rows.
 - Never rely on string concatenation for mixed text. Use RichText.
 
 ## Core components (build once, reuse everywhere)
 
-- RichText.
-- AudioButton (normal and slow).
-- Chip (group-colored).
-- SkillChip.
-- TitleBadge: the framed word tiles.
-- Panel, with a colored header strip.
-- RuleRow.
-- ExampleRow.
-- StickyNote (coach and tips).
-- CaptionBar: tutor avatar, Egyptian line, waveform, pause, speed and chapter segments.
-- ProgressDots, colored by skill.
-- PrimaryButton (navy fill) and SecondaryButton (outline).
-- TabBar: المسار · الكروت · المكتبة · أنا.
+- **RichText.**
+- **AudioButton**, normal and slow: a round white button with a teal speaker icon. Slow uses the turtle.
+- **Chip**, group-colored. **PersonChips**: the pronoun selector row.
+- **SkillChip.**
+- **TitleBlock:** the pill label, the serif title and the Arabic subtitle. It replaces v4's TitleBadge tiles.
+- **Panel**, with a solid colored header strip (class or gender color).
+- **RuleRow**, **ExampleRow** (white card, sentence with the key word colored, Arabic under it, speaker).
+- **CalloutBar:** the deep-teal key-rule bar.
+- **NoteCard:** the mustard tip card. It replaces StickyNote.
+- **CaptionBar:** a deep-teal bar with the tutor avatar, the Egyptian line, a waveform, pause, speed and chapter segments.
+- **ProgressDots**, colored by skill. **ProgressBar**: a thin coral bar.
+- **PrimaryButton** (coral pill) and **SecondaryButton** (outlined pill). **HeroCard**: a deep-teal card with a coral button (the "١٥ كارت · ٣ دقايق" card).
+- **TimelineStep:** a numbered marker, a title (Arabic + Portuguese italic), minutes and a status. It's used on the day map and the path.
+- **TabBar:** المسار · الكروت · المكتبة · أنا. White bar, teal active icon, coral dot for "today".
 
 The 14 content blocks (`02`) are built from these components.
 
+## Images
+
+The Stitch screens use warm painted editorial illustrations: a Lisbon tram, a grocery shop, a café table. The dictionary screen (`05b`) uses product photos. **These are placeholders only.** The image style stays as agreed (confirmed 2026-10-27): a friendly educational cartoon with adult proportions, dark outlines, flat warm colors and a cream background, from the image templates in `03` and `00` §10. Image generation is off for now. Until images exist, illustration tiles show a soft `paper-deep` block with an icon.
+
 ## Things the designs got wrong that must not be copied
 
-- Spanish or English UI text, English screen titles ("Flashcard Review", "Quiz Session", "Study Page Reader"), and a phone status bar drawn inside the screen.
-- More than one tab bar style. There is one tab bar: المسار · الكروت · المكتبة · أنا.
-- An irregular `eu` form drawn in blue. It must be purple with ⚡.
-- The caption bar covering the last content. Scroll content needs bottom padding equal to the caption bar height.
+- **English or brand text in the UI:**
+  - "Grammar Lesson Reader · LANGIFY", "Interactive Practice Session", "Active Study Session", "Flashcard Review", "Flashcards";
+  - "(Masculine)/(Feminine)";
+  - "EDIÇÃO PORTUGAL · GUIA DE CONVERSAÇÃO · FALOU";
+  - the brand name **"Falou"** in the onboarding.
+
+  Titles are Arabic (and Portuguese where it is the lesson content). The app name is **Langify**.
+- **More than one header or tab bar style.** There is one tab bar: المسار · الكروت · المكتبة · أنا.
+- **`04-compare-o-a.html` uses Stitch's blue "My Design System"** (#005CB8). Take its layout only. Its colors are wrong. The blue design system file is not part of the pack.
+- **-IR in a second teal.** Use gold.
+- **Irregular forms in coral.** Use purple with ⚡.
+- **Flipped punctuation and hyphens** (see Direction).
+- **The caption bar covering the last content.** Scroll content needs bottom padding equal to the caption bar height.
+
+## Migration from v4 (for code already built in Phases 0–2)
+
+1. Swap the token values in `app/(v2)/v2.css` to the tables above, keeping the variable names where the role is the same:
+   - ink → primary for titles and headers;
+   - add the action, note and line tokens.
+2. Replace the fonts:
+   - Barlow Condensed and Lalezar → Newsreader / Noto Sans Arabic;
+   - IBM Plex Sans Arabic → Noto Sans Arabic;
+   - Work Sans → Inter.
+3. Component changes:
+   - PrimaryButton navy → coral pill;
+   - StickyNote → NoteCard;
+   - TitleBadge → TitleBlock;
+   - CaptionBar navy → deep teal;
+   - card radius 16 → 20–24;
+   - hard-offset shadow → soft shadow.
+4. Re-check `/v2-dev` and the Day 6 player against `01-content-page-possessives.png` and `02-conjugation-endings.png`.

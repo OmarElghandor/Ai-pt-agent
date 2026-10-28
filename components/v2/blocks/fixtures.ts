@@ -87,7 +87,7 @@ export const FIXTURE_BLOCKS: { label: string; block: Block }[] = [
       split_endings: true,
       cols: [
         { label: tl('ESTAR'), group: 'b' },
-        { label: tl('-AR'), group: 'c' },
+        { label: tl('-AR'), group: 'a' },
       ],
       rows: [{ label: tl('eu'), media: { image: 'person.eu' } }],
       cells: [[{ ref: 'verb.estar:pres:eu' }, { ref: 'verb.falar:pres:eu' }]],
@@ -196,9 +196,9 @@ export const EXPLORE_FIXTURE: Page = {
       type: 'table',
       split_endings: true,
       cols: [
-        { label: tl('-AR'), group: 'c' },
-        { label: tl('-ER'), group: 'm' },
-        { label: tl('-IR'), group: 'b' },
+        { label: tl('-AR'), group: 'a' },
+        { label: tl('-ER'), group: 'b' },
+        { label: tl('-IR'), group: 'c' },
       ],
       rows: [
         { label: tl('eu') },

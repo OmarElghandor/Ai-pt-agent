@@ -1,114 +1,103 @@
 ---
-name: Editorial Notebook
+name: Warm Editorial Learning Mobile Experience
 colors:
-  surface: '#fdf9f0'
-  surface-dim: '#dddad1'
-  surface-bright: '#fdf9f0'
+  surface: '#FFFFFF'
+  surface-dim: '#e4d9c8'
+  surface-bright: '#fff8f2'
   surface-container-lowest: '#ffffff'
-  surface-container-low: '#f7f3ea'
-  surface-container: '#f1eee5'
-  surface-container-high: '#ece8df'
-  surface-container-highest: '#e6e2d9'
-  on-surface: '#1c1c17'
-  on-surface-variant: '#454650'
-  inverse-surface: '#31312b'
-  inverse-on-surface: '#f4f0e7'
-  outline: '#767681'
-  outline-variant: '#c6c5d1'
-  surface-tint: '#4c5b95'
-  primary: '#000e3d'
+  surface-container-low: '#fef2e1'
+  surface-container: '#f8ecdb'
+  surface-container-high: '#f2e7d6'
+  surface-container-highest: '#ece1d0'
+  on-surface: '#201b11'
+  on-surface-variant: '#404849'
+  inverse-surface: '#363024'
+  inverse-on-surface: '#fbefde'
+  outline: '#70797a'
+  outline-variant: '#bfc8c9'
+  surface-tint: '#2c676d'
+  primary: '#003c41'
   on-primary: '#ffffff'
-  primary-container: '#12235a'
-  on-primary-container: '#7d8cc9'
-  inverse-primary: '#b7c4ff'
-  secondary: '#2956c6'
+  primary-container: '#14545a'
+  on-primary-container: '#8dc6cd'
+  inverse-primary: '#97d0d7'
+  secondary: '#a9361d'
   on-secondary: '#ffffff'
-  secondary-container: '#678dff'
-  on-secondary-container: '#002670'
-  tertiary: '#171201'
+  secondary-container: '#fe7354'
+  on-secondary-container: '#6b1100'
+  tertiary: '#6e5e00'
   on-tertiary: '#ffffff'
-  tertiary-container: '#2d2710'
-  on-tertiary-container: '#978e6f'
+  tertiary-container: '#c4aa30'
+  on-tertiary-container: '#4b3f00'
   error: '#ba1a1a'
   on-error: '#ffffff'
   error-container: '#ffdad6'
   on-error-container: '#93000a'
-  primary-fixed: '#dce1ff'
-  primary-fixed-dim: '#b7c4ff'
-  on-primary-fixed: '#02164e'
-  on-primary-fixed-variant: '#34437b'
-  secondary-fixed: '#dbe1ff'
-  secondary-fixed-dim: '#b4c5ff'
-  on-secondary-fixed: '#00174c'
-  on-secondary-fixed-variant: '#003daa'
-  tertiary-fixed: '#eee2bf'
-  tertiary-fixed-dim: '#d1c6a4'
-  on-tertiary-fixed: '#211b06'
-  on-tertiary-fixed-variant: '#4e472d'
-  background: '#fdf9f0'
-  on-background: '#1c1c17'
-  surface-variant: '#e6e2d9'
+  primary-fixed: '#b2edf3'
+  primary-fixed-dim: '#97d0d7'
+  on-primary-fixed: '#002023'
+  on-primary-fixed-variant: '#0a4f54'
+  secondary-fixed: '#ffdad2'
+  secondary-fixed-dim: '#ffb4a3'
+  on-secondary-fixed: '#3d0600'
+  on-secondary-fixed-variant: '#881f06'
+  tertiary-fixed: '#fee263'
+  tertiary-fixed-dim: '#e1c64a'
+  on-tertiary-fixed: '#221b00'
+  on-tertiary-fixed-variant: '#534600'
+  background: '#fff8f2'
+  on-background: '#201b11'
+  surface-variant: '#ece1d0'
+  teal-700: '#1E6670'
+  canvas: '#EEF2F2'
+  text: '#242424'
+  muted: '#8C8C86'
 typography:
-  headline-xl:
-    fontFamily: Barlow Condensed
-    fontSize: 40px
-    fontWeight: '700'
-    lineHeight: 44px
-  headline-xl-mobile:
-    fontFamily: Barlow Condensed
+  headline-lg:
+    fontFamily: Newsreader
     fontSize: 32px
     fontWeight: '700'
-    lineHeight: 36px
-  headline-lg:
-    fontFamily: Barlow Condensed
-    fontSize: 30px
-    fontWeight: '600'
-    lineHeight: 34px
-  headline-lg-mobile:
-    fontFamily: Barlow Condensed
+    lineHeight: 40px
+  headline-md:
+    fontFamily: Newsreader
     fontSize: 24px
     fontWeight: '600'
-    lineHeight: 28px
-  headline-md:
-    fontFamily: Barlow Condensed
-    fontSize: 22px
-    fontWeight: '600'
-    lineHeight: 26px
-  title-md:
-    fontFamily: Work Sans
+    lineHeight: 32px
+  headline-sm:
+    fontFamily: Newsreader
     fontSize: 18px
     fontWeight: '600'
     lineHeight: 24px
   body-lg:
-    fontFamily: Newsreader
-    fontSize: 19px
+    fontFamily: Inter
+    fontSize: 15px
     fontWeight: '400'
-    lineHeight: 28px
+    lineHeight: 22px
   body-md:
-    fontFamily: Newsreader
-    fontSize: 16px
-    fontWeight: '400'
-    lineHeight: 24px
-  body-sm:
-    fontFamily: Newsreader
+    fontFamily: Inter
     fontSize: 14px
     fontWeight: '400'
     lineHeight: 20px
+  body-sm:
+    fontFamily: Inter
+    fontSize: 12px
+    fontWeight: '400'
+    lineHeight: 16px
+  label-lg:
+    fontFamily: Inter
+    fontSize: 14px
+    fontWeight: '600'
+    lineHeight: 18px
   label-md:
-    fontFamily: Work Sans
-    fontSize: 13px
+    fontFamily: Inter
+    fontSize: 12px
     fontWeight: '500'
     lineHeight: 16px
   label-sm:
-    fontFamily: Work Sans
-    fontSize: 11px
-    fontWeight: '600'
+    fontFamily: Inter
+    fontSize: 10px
+    fontWeight: '500'
     lineHeight: 14px
-  phonetic-md:
-    fontFamily: Newsreader
-    fontSize: 15px
-    fontWeight: '400'
-    lineHeight: 20px
 rounded:
   sm: 0.25rem
   DEFAULT: 0.5rem
@@ -117,113 +106,68 @@ rounded:
   xl: 1.5rem
   full: 9999px
 spacing:
-  gutter: 1rem
-  gutter-sm: 0.75rem
-  gutter-lg: 1.5rem
-  margin: 1rem
-  margin-tablet: 2rem
-  space-xs: 0.25rem
-  space-sm: 0.5rem
-  space-md: 1rem
-  space-lg: 1.5rem
-  space-xl: 2rem
-  space-2xl: 3rem
+  gutter: 16px
+  margin: 24px
+  space-xs: 4px
+  space-sm: 8px
+  space-md: 16px
+  space-lg: 24px
+  space-xl: 32px
 ---
 
 ## Brand & Style
 
-This design system draws its soul from the tactile intimacy and deliberate pacing of a premium printed study notebook, reference grammar, and bilingual lexicon. Built for focused adult learners acquiring Portuguese through an Arabic-speaking interface, it rejects hyper-gamified tropes—eschewing cartoon mascots, heart-based life systems, casino-style reward flashes, and neon streak counters. Instead, it honors the craft of language acquisition: rigorous, tactile, academic, and deeply rewarding.
+This design system establishes a friendly, calm, modern, and lightly playful mobile learning experience. The visual language blends soft editorial illustrations with crisp, scannable mobile UI components. 
 
-The aesthetic marries classical editorial printmaking with utilitarian modern ergonomics:
-- **Print Craft & Tactility:** Warm paper tones, physical study cues like margin tabs, index ribbons, rule-line guides, and sticky-note annotations anchor the experience in physical media.
-- **Academic Serenity:** Structured white-space, deliberate typographic hierarchy, and discrete grammar color-coding mimic high-end bilingual textbooks and pocket dictionaries.
-- **Clean Structural Outlines:** Every card, field, and callout is held together by disciplined 1px to 1.5px navy line-work reminiscent of technical fountain-pen drawing.
-- **Bilingual Equilibrium:** Seamless accommodation of bidirectional layout shifts, balancing script-driven Arabic interface labels with Latin-script Portuguese grammatical structures.
+- **Personality:** Approachable, encouraging, intellectually stimulating yet warm.
+- **Target Audience:** Lifelong learners, students, and professionals seeking self-paced education in an aesthetically pleasing, low-friction environment.
+- **Design Style:** A tactile, soft-editorial hybrid featuring generous whitespace, rounded geometry, subtle diffuse shadows, and deliberate color blocking. Avoid heavy borders, harsh black lines, or dense visual clutter.
 
 ## Colors
 
-The palette is tuned around paper, archival ink, and focused pedagogical cues. All tones prioritize optical comfort during long evening reading and study sessions.
+The color palette uses deep teal to anchor primary dark surfaces and headers, softened by a pervasive warm cream background. Coral orange is strictly reserved for primary actions, critical path items, and progress markers, while golden yellow provides cheerful highlights and metadata accents.
 
-### Core Canvas & Inks
-- **Primary Ink (`#12235A`):** Deep fountain-pen navy. Used for core typography, structural borders, icons, and primary interactive buttons.
-- **Secondary Accent (`#1F4FBF`):** Indigo blue. Used for active tabs, selected states, phonetic highlights, and primary text links.
-- **Paper Background (`#FBF7EE`):** Warm, unbleached cream paper. Eliminates harsh digital glare and serves as the primary canvas.
-- **Paper Elevated Surface (`#FFFFFF`):** Pure warm white paper layer for foreground cards and active exercise surfaces.
-- **Annotation Yellow (`#FFF3CF`):** Soft sticky-note yellow used strictly for grammatical callouts, contextual tips, irregular verb warnings, and culture notes.
-
-### Grammatical Category Cues
-Applied conservatively as high-contrast structural accents (chips, ruled margin markers, left/right structural borders) rather than full card backgrounds:
-- **Verb & Action (`#2E7D32`):** Botanical green. Used for conjugation structures, tense tables, and correct verification states.
-- **Noun & Gender (`#6B3FC0`):** Royal violet. Used for grammatical gender (masculine/feminine inflections), syntax, and declension notes.
-- **Syntax, Particle & Preposition (`#E8772E`):** Warm terracotta orange. Used for connectors, irregular particles, and attention markers.
-
-### Neutral Sub-Tiers
-- **Subtle Ruled Line (`#E5DECE`):** Pale warm stone rule. Used for lined-paper underlines, graph-grid backgrounds, and secondary horizontal dividers.
-- **Muted Ink (`#5C6B8A`):** Secondary text, phonetics, and contextual metadata.
+- **Primary (Deep Teal - `#14545A`):** Used for primary headers, phone frames, and prominent brand anchors.
+- **Secondary (Coral Orange - `#F56D4E`):** Applied to primary buttons, interactive triggers, progress indicators, and focal illustration accents.
+- **Tertiary (Golden Yellow - `#F5D95B`):** Employed for duration labels, small illustrative highlights, and secondary decorative elements.
+- **Neutral (Warm Cream - `#FFF3E2` & White - `#FFFFFF`):** Creates an inviting canvas for content-rich surfaces and landing screens, supported by `#EEF2F2` for outer presentation contexts.
 
 ## Typography
 
-The typographic hierarchy models a curated language manual: bold, condensed index headlines paired with literary, authoritative serif reading text and clean, neutral sans-serif navigation controls.
+Typography pairs a bold editorial serif display face with a clean, highly legible sans-serif for UI elements and body copy. 
 
-### Type Roles & Pairing
-- **Headlines (`Barlow Condensed`):** Tall, structural, high-density display headings evoke traditional chapter titles, lexicon headings, and printed notebook sections. Kerning is set slightly tight with uppercase styling for labels and category headers.
-- **Editorial Body & Exemplars (`Newsreader`):** Used for target Portuguese sentences, bilingual translations, linguistic notes, and phonetic IPA transcriptions. Its humanist serif proportions retain maximum readability at small reading sizes on mobile screens.
-- **Interface & Controls (`Work Sans`):** Clean, neutral, highly legible sans-serif for interactive chips, buttons, tabs, timestamps, and metadata.
-
-### Bidirectional & Arabic UI Script Rules
-- **Arabic UI Elements:** When rendering Arabic text for instructions, navigation, and definitions, fallback to clean Naskh-proportioned system typography (such as IBM Plex Sans Arabic or system-native SF Arabic) scaled +1px larger than Latin counterparts to equalize perceived x-height.
-- **Bidirectional Inline Blocks:** Exercise items containing mixed Arabic explanations and Portuguese targets must enforce isolated directional spans (`dir="ltr"` and `dir="rtl"`) to prevent punctuation bleed and incorrect clause reordering.
+- **Headlines:** Set in an authoritative, warm editorial serif (`Newsreader`) to convey literary quality and modern publishing aesthetics.
+- **Body & Labels:** Set in a functional sans-serif (`Inter`) ensuring optimal legibility across compact mobile viewports without sacrificing the warm tone of the system.
+- **Hierarchy:** Ensure headline scales never sacrifice readability. On smaller viewports, clamp large display text gracefully and maintain comfortable line spacing.
 
 ## Layout & Spacing
 
-The layout is governed by a fluid mobile-first single-column structure that references ruled notebook dimensions and pocket-sized field guides.
+The layout model is built around a mobile-first, portrait-oriented frame structure utilizing an 8px base spacing grid (with 4px micro-increments).
 
-### Layout Rhythm
-- **Rhythm Unit:** 4px base with an 8px primary progression (`0.25rem`, `0.5rem`, `1rem`, `1.5rem`, `2rem`).
-- **Margins & Safe Zones:** Mobile viewport margins are locked at `1rem` (16px) to maximize screen area for vocabulary pairings. On tablet viewports, the margin increases to `2rem` (32px) with a centered maximum content container width of 680px to preserve comfortable book-like reading line-lengths (55–65 characters).
-- **Ruled Guides:** Background cards may use subtle horizontal guidelines spaced at `1.75rem` (28px) intervals using `#E5DECE` with a 1px dash or solid hairline, mirroring college-ruled leaves.
+- **Grid & Margins:** Content containers maintain consistent inner padding to ensure touch targets and text blocks never collide with rounded device boundaries. Generous outer margins isolate individual screens when presented on presentation canvases.
+- **Responsive Adaptation:** Designed natively for narrow mobile viewports, scaling up horizontally through centered container max-widths on tablet and desktop viewports.
 
 ## Elevation & Depth
 
-This system avoids digital drop-shadows and blurred ambient glares. Spatial hierarchy is communicated through structural layering, border strokes, and tactile print overlays.
+Visual hierarchy relies on soft tonal layering and diffuse ambient shadows rather than heavy borders or aggressive elevation steps.
 
-### Structural Ink Borders
-- **Standard Frame:** `1.5px solid #12235A`. Applied to primary cards, selectable lesson blocks, and sticky notes.
-- **Sub-rule Frame:** `1px solid #E5DECE`. Applied to nested word buckets and grammar tables.
-
-### Tangible Elevation & Hard Drops
-- **Flat Surface (Level 0):** Unbleached paper background (`#FBF7EE`).
-- **Elevated Leaf (Level 1):** Solid white card (`#FFFFFF`) framed with a 1.5px navy border. In interactive pressed or focused states, a hard, unblurred, offset shadow mimics a card resting on paper: `box-shadow: 2px 2px 0px #12235A`.
-- **Floating Sticky-Note (Level 2):** Sticky callouts use `#FFF3CF` with an offset hard drop: `box-shadow: 3px 3px 0px rgba(18, 35, 90, 0.12)`. No Gaussian blur is permitted.
+- **Shadows:** Use low-opacity, highly diffused shadows (e.g., `0 8px 24px rgba(32, 50, 50, 0.08)`) to lift floating elements like primary call-to-action buttons and overlapping search bars.
+- **Surfaces:** Contrast deep teal structural headers against crisp white content cards resting on warm cream or pale gray backgrounds. Avoid harsh black outlines; let color blocking and whitespace define boundaries.
 
 ## Shapes
 
-Shapes emulate trimmed book corners, index card tabs, and stamped paper labels.
+The shape language is defined by generous, friendly rounding that reinforces the approachable nature of the learning product.
 
-- **Base Radius (0.5rem / 8px):** Applied to standard content cards, exercise containers, input areas, and sticky note blocks.
-- **Large Radius (1rem / 16px):** Used for modal dialogs and bottom-sheet grammar drawers.
-- **Pill Shape (`rounded-full` / 9999px):** Reserved exclusively for interactive token chips, vocabulary audio buttons, and categorical tags.
-- **Index Tab Notch:** Margin bookmark indicators and index tabs use asymmetrical corner radiuses (e.g., top-left and top-right rounded at 8px, bottom edges sharp at 0px) to simulate notebook page dividers.
+- **Device Frames & Cards:** Large radii (`20px` to `34px`) soften structural containers and course cards.
+- **Controls & Pills:** Interactive elements, search inputs, and category filters utilize pill-shaped geometries (`999px`) or comfortable medium radii (`14px`) to invite touch interaction.
 
 ## Components
 
-### Buttons
-- **Primary Action (Call-to-Action):** Deep navy (`#12235A`) fill with warm white text, 1.5px solid border in `#12235A`, `rounded-md` (8px). Pressed state shifts down by `1px` with no shadow, evoking a physical stamp press.
-- **Secondary Action:** Cream fill (`#FBF7EE`), navy outline (`1.5px solid #12235A`), navy text. Active state fills with `#FFF3CF`.
-- **Audio Exemplar Button:** Circular (40px x 40px), 1.5px navy border, soft cream fill, featuring a clean speaker glyph.
+Reusable components must adhere strictly to the color, typography, and spacing tokens defined in this system.
 
-### Cards & Flashcards
-- **Vocabulary Card:** White card base, 1.5px navy outline, subtle lined ruling background. Contains bold Portuguese target phrase in `Newsreader` (20px), phonetics in muted ink, and right-aligned Arabic equivalent with clear typographic separation.
-- **Grammar Callout (Sticky Note):** Soft yellow surface (`#FFF3CF`), 1.5px navy outline, angled at a subtle static 0.5-degree slant or flat with a perforated top border. Top-left corner houses a categorical badge (e.g., "Verbo Irregular" or "قاعدة").
-
-### Categorical Chips & Tags
-- **Pill Tags:** Height 28px, pill-rounded (`9999px`), 1px navy border. Left-anchored (or right-anchored in RTL) color dot (6px) matching the grammar category: Green (`#2E7D32`), Purple (`#6B3FC0`), or Orange (`#E8772E`).
-
-### Exercise & Interaction Fields
-- **Sentence Builder Scaffolding:** Dotted-line placeholder targets (`1.5px dashed #12235A`) waiting for word tokens.
-- **Draggable Word Tiles:** Cream surface, 1.5px navy border, hard micro-shadow (`1.5px 1.5px 0px #12235A`).
-- **Input Fields:** Unfilled lined baseline (`1.5px solid #12235A`) mimicking handwriting lined paper, transitioning to `#1F4FBF` when focused.
-
-### Directional & Bilingual Layouts
-- Navigation and control orientation mirrors automatically when Arabic is the primary interface language.
-- Exercise prompt zones enforce strict LTR orientation for Portuguese phrase construction, with the Arabic explanation positioned above as an anchor header.
+- **Buttons:** Primary call-to-action buttons feature high-radius pill shapes, bold uppercase sans-serif text, coral orange backgrounds, and soft warm shadows.
+- **Search Bar:** A white rounded pill container overlapping structural header boundaries, complete with a leading text prompt and a coral accent search action icon.
+- **Course Cards:** Compact rectangular cards featuring colorful geometric square thumbnails, clear typographic hierarchy for titles and descriptions, and golden-yellow or muted duration metadata.
+- **Category Tabs:** Horizontally scrollable pill tabs with distinct active states indicated by darker fills or contrast text.
+- **Chapter Timeline:** A vertical sequence utilizing thin connector lines, numbered markers, and coral highlights for active/completed lessons, paired with right-aligned duration labels.
+- **Navigation Headers:** Clean top bars featuring back actions, centered contextual titles, profile avatars, and utility triggers (share, menu) with generous touch targets (minimum 44x44px).

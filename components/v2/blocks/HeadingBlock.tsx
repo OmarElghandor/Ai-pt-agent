@@ -13,7 +13,7 @@ export function HeadingBlock({ block }: { block: Extract<Block, { type: 'heading
       data-target={block.id}
       dir="rtl"
       className={[
-        'rounded-v2-row px-1 text-end font-[family-name:var(--font-v2-display-ar)] text-2xl text-v2-ink',
+        'rounded-v2-row px-1 text-start font-[family-name:var(--font-v2-display-ar)] text-2xl text-v2-ink',
         partClass(state),
       ].join(' ')}
     >

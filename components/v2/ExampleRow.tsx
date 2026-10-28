@@ -29,7 +29,7 @@ export function ExampleRow({
   return (
     <div
       className={[
-        'flex items-start gap-1.5 rounded-v2-row border border-v2-rule bg-v2-card p-2 sm:gap-2 sm:p-3',
+        'flex items-start gap-3 rounded-v2-row border border-v2-line bg-v2-card px-4 py-3',
         active ? 'border-2 border-v2-highlight-border bg-v2-highlight-fill' : '',
         dimmed ? 'opacity-20' : '',
         className,
@@ -39,11 +39,11 @@ export function ExampleRow({
     >
       <div className="min-w-0 flex-1">
         <p
-          className="font-[family-name:var(--font-v2-target)] text-[18px] leading-snug text-v2-ink"
+          className="text-end font-[family-name:var(--font-v2-target)] text-[18px] leading-snug text-v2-ink"
           dir="ltr"
         >
           {highlight ? (
-            <span className="inline-flex flex-wrap items-center gap-1">
+            <span className="inline-flex flex-wrap items-center justify-end gap-1">
               {segments.map((seg, i) =>
                 seg.group ? (
                   <Chip key={i} group={seg.group}>
@@ -60,11 +60,14 @@ export function ExampleRow({
             <RichText segments={segments} />
           )}
         </p>
-        <p className="mt-1 font-[family-name:var(--font-v2-arabic)] text-[14px] leading-5 text-v2-ink-muted">
+        <p
+          dir="rtl"
+          className="mt-1 text-start font-[family-name:var(--font-v2-arabic)] text-[14px] leading-5 text-v2-ink-muted"
+        >
           {ar}
         </p>
       </div>
-      <AudioButton text={tl} lang="pt" className="shrink-0 scale-90 sm:scale-100" />
+      <AudioButton text={tl} lang="pt" className="shrink-0" />
     </div>
   );
 }

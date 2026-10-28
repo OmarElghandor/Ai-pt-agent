@@ -11,7 +11,7 @@ const GROUP_STYLES: Record<RtGroup, string> = {
   prep: 'bg-v2-group-prep text-white',
   pron: 'bg-v2-group-pron text-white',
   neg: 'bg-v2-group-neg-bg text-v2-group-neg',
-  neutral: 'bg-v2-rule text-v2-ink',
+  neutral: 'bg-v2-paper-deep text-v2-ink',
 };
 
 type Props = {

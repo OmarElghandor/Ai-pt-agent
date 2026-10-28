@@ -49,9 +49,9 @@ export function DayMap({
       <p className="mt-3 font-[family-name:var(--font-v2-ui)] text-xs text-v2-ink-muted">
         Dia {day}
       </p>
-      <header className="mt-2 rounded-v2-card border border-v2-ink bg-v2-card px-4 py-4">
+      <header className="mt-2 rounded-v2-card bg-v2-card shadow-[var(--shadow-v2-soft)] px-4 py-4">
         <h1
-          className="font-[family-name:var(--font-v2-target)] text-3xl text-v2-ink"
+          className="font-[family-name:var(--font-v2-target)] text-3xl text-v2-primary"
           dir="ltr"
         >
           {situation?.tl ?? `Dia ${day}`}
@@ -68,7 +68,7 @@ export function DayMap({
                 className={[
                   'flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-[family-name:var(--font-v2-ui)] text-sm',
                   status === 'current'
-                    ? 'bg-v2-ink text-white'
+                    ? 'bg-v2-primary text-white'
                     : status === 'done'
                       ? 'bg-v2-success text-white'
                       : 'bg-v2-rule text-v2-ink-muted',
@@ -96,7 +96,7 @@ export function DayMap({
             status === 'current'
               ? 'border-2 border-v2-highlight-border bg-v2-highlight-fill'
               : status === 'done'
-                ? 'border-v2-ink bg-v2-card'
+                ? 'border-v2-primary bg-v2-card shadow-[var(--shadow-v2-soft)]'
                 : 'border-v2-rule bg-v2-card opacity-60',
           ].join(' ');
           if (status === 'locked' || !step.href) {

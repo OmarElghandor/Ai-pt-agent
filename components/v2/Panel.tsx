@@ -11,7 +11,7 @@ const HEADER: Record<RtGroup, string> = {
   prep: 'bg-v2-group-prep text-white',
   pron: 'bg-v2-group-pron text-white',
   neg: 'bg-v2-group-neg text-white',
-  neutral: 'bg-v2-ink text-white',
+  neutral: 'bg-v2-primary text-white',
 };
 
 const COUNT_CHIP: Record<RtGroup, string> = {
@@ -24,7 +24,7 @@ const COUNT_CHIP: Record<RtGroup, string> = {
   prep: 'bg-v2-group-prep/15 text-v2-group-prep',
   pron: 'bg-v2-group-pron/15 text-v2-group-pron',
   neg: 'bg-v2-group-neg-bg text-v2-group-neg',
-  neutral: 'bg-v2-rule text-v2-ink',
+  neutral: 'bg-v2-paper-deep text-v2-primary',
 };
 
 type Props = {
@@ -55,7 +55,7 @@ export function Panel({
   return (
     <section
       className={[
-        'min-w-0 overflow-hidden rounded-v2-card border border-v2-ink bg-v2-card',
+        'min-w-0 overflow-hidden rounded-v2-card bg-v2-card shadow-[var(--shadow-v2-soft)]',
         className,
       ]
         .filter(Boolean)
@@ -78,8 +78,11 @@ export function Panel({
         ) : null}
       </header>
 
-      <div className="flex items-center justify-between gap-1 border-b border-v2-rule px-2 py-1.5 sm:px-3">
-        <span className="font-[family-name:var(--font-v2-arabic)] text-[11px] font-semibold text-v2-ink sm:text-xs">
+      <div className="flex items-center justify-between gap-1 border-b border-v2-line px-2 py-1.5 sm:px-3">
+        <span
+          dir="rtl"
+          className="text-start font-[family-name:var(--font-v2-arabic)] text-[11px] font-semibold text-v2-ink sm:text-xs"
+        >
           {whenLabel}
         </span>
         {countLabel ? (
@@ -96,7 +99,7 @@ export function Panel({
 
       <div
         className={[
-          'p-1.5 sm:p-2.5',
+          'p-4',
           dimmedContent ? 'opacity-20' : '',
         ]
           .filter(Boolean)

@@ -21,7 +21,7 @@ export function ProgressDots({ dots, className }: Props) {
   return (
     <div className={['flex items-center gap-1.5', className].filter(Boolean).join(' ')}>
       {dots.map((dot, i) => {
-        const skillClass = dot.skill ? SKILL_DOT[dot.skill] : 'bg-v2-ink';
+        const skillClass = dot.skill ? SKILL_DOT[dot.skill] : 'bg-v2-primary';
         const stateClass =
           dot.state === 'todo'
             ? 'opacity-25'

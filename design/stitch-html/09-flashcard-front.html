@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&amp;family=Work+Sans:wght@500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "tertiary-container": "#c4aa30",
+          "tertiary": "#6e5e00",
+          "inverse-surface": "#363024",
+          "on-surface-variant": "#404849",
+          "on-secondary-container": "#6b1100",
+          "on-primary": "#ffffff",
+          "on-primary-container": "#8dc6cd",
+          "on-tertiary": "#ffffff",
+          "surface-container": "#f8ecdb",
+          "secondary": "#a9361d",
+          "surface-tint": "#2c676d",
+          "tertiary-fixed-dim": "#e1c64a",
+          "on-primary-fixed-variant": "#0a4f54",
+          "surface-container-lowest": "#ffffff",
+          "primary-container": "#14545a",
+          "error": "#ba1a1a",
+          "background": "#fff8f2",
+          "surface-container-high": "#f2e7d6",
+          "on-secondary": "#ffffff",
+          "text": "#242424",
+          "on-secondary-fixed": "#3d0600",
+          "secondary-fixed": "#ffdad2",
+          "secondary-fixed-dim": "#ffb4a3",
+          "inverse-on-surface": "#fbefde",
+          "on-error": "#ffffff",
+          "outline": "#70797a",
+          "on-tertiary-container": "#4b3f00",
+          "surface-variant": "#ece1d0",
+          "surface-container-highest": "#ece1d0",
+          "tertiary-fixed": "#fee263",
+          "on-error-container": "#93000a",
+          "primary-fixed-dim": "#97d0d7",
+          "teal-700": "#1E6670",
+          "surface-container-low": "#fef2e1",
+          "primary-fixed": "#b2edf3",
+          "outline-variant": "#bfc8c9",
+          "on-primary-fixed": "#002023",
+          "muted": "#8C8C86",
+          "error-container": "#ffdad6",
+          "canvas": "#EEF2F2",
+          "surface-dim": "#e4d9c8",
+          "on-secondary-fixed-variant": "#881f06",
+          "secondary-container": "#fe7354",
+          "surface-bright": "#fff8f2",
+          "on-surface": "#201b11",
+          "inverse-primary": "#97d0d7",
+          "on-tertiary-fixed": "#221b00",
+          "surface": "#FFFFFF",
+          "primary": "#14545a",
+          "on-tertiary-fixed-variant": "#534600",
+          "on-background": "#201b11",
+          "coral-cta": "#F56D4E"
+        },
+        fontFamily: {
+          "label-sm": ["Inter"],
+          "headline-lg": ["Newsreader"],
+          "headline-sm": ["Newsreader"],
+          "body-lg": ["Inter"],
+          "body-sm": ["Inter"],
+          "headline-md": ["Newsreader"],
+          "headline-xl": ["Newsreader"],
+          "label-lg": ["Inter"],
+          "label-md": ["Inter"],
+          "body-md": ["Inter"],
+          "title-md": ["Inter"]
+        }
+      }
+    }
+  };
+</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-[#FFF8F2] font-body-md text-on-surface antialiased flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 bg-[#FFF8F2]/90 backdrop-blur-md pt-safe"><div class="h-16 px-6 flex items-center justify-between"><div class="flex items-center gap-2"><button aria-label="الرجوع" class="w-10 h-10 flex items-center justify-center rounded-xl text-primary hover:bg-surface-variant/50 transition-colors" onclick="history.back()" type="button"><span class="material-symbols-outlined text-[24px]">arrow_forward</span></button><h1 class="font-headline-sm text-lg font-semibold text-primary tracking-tight">Flashcard Review</h1></div><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-[#14545a] flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-white text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full flex-1 px-5 pt-16 pb-safe bg-[#FFF8F2]"><div class="flex flex-col w-full py-3 pb-8 select-none max-w-md mx-auto">
+<!-- Top Session Bar: Notebook Index & Subtle Linear Progress -->
+<header class="flex flex-col gap-2 mb-5">
+<div class="flex items-center justify-between text-on-surface-variant font-label-md text-sm">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-[#14545a]"></span>
+<span class="font-semibold text-[#14545a]">مراجعة النهارده</span>
+<span class="text-outline">·</span>
+<span class="text-on-surface font-medium">٧ / ١٥</span>
+</div>
+<div class="flex items-center gap-1 text-outline">
+<span class="material-symbols-outlined text-[16px]">menu_book</span>
+<span class="text-xs font-label-sm">دفتر الأفعال</span>
+</div>
+</div>
+<!-- Deep Teal Editorial Progress Bar -->
+<div class="relative w-full h-[6px] bg-[#EBE3D7] rounded-full overflow-hidden">
+<div class="absolute right-0 top-0 bottom-0 bg-[#14545a] rounded-full transition-all duration-500 ease-out" style="width: 47%;"></div>
+</div>
+</header>
+<!-- Main Focus Container: Retrieval Flashcard -->
+<main class="w-full flex flex-col items-center">
+<!-- Tactile Flashcard Leaf -->
+<article class="relative w-full bg-[#FFFFFF] rounded-[28px] p-6 flex flex-col justify-between items-center min-h-[400px] border border-[#F0E6D8] shadow-[0_8px_30px_rgba(20,84,90,0.06),0_1px_3px_rgba(0,0,0,0.04)] transition-transform duration-200" id="flashcard">
+<!-- Top Meta Badge: Verbo Pill -->
+<div class="w-full flex items-center justify-between">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-label-sm font-semibold tracking-wider bg-[#14545a] text-white shadow-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-[#97d0d7]"></span>
+          VERBO
+        </span>
+<span class="text-outline/70 font-label-sm text-xs font-medium tracking-widest uppercase">A1 · 04</span>
+</div>
+<!-- Dead Center: Pure Retrieval Target Word -->
+<div class="flex flex-col items-center justify-center my-auto py-4 w-full">
+<h2 class="font-headline-xl text-[44px] leading-tight tracking-tight text-[#14545a] select-text font-serif font-bold mb-5 text-center italic" dir="ltr">
+          DORMIR
+        </h2>
+<!-- Tactile Acoustic Prompts (Audio Controls) -->
+<div class="flex items-center justify-center gap-3" dir="ltr">
+<!-- Primary Deep Teal Speaker Button -->
+<button aria-label="استمع للنطق الطبيعي" class="group flex items-center gap-2 bg-[#14545a] hover:bg-[#0e3c40] text-white font-label-md text-sm px-4 py-2.5 rounded-full transition-all active:scale-95 shadow-sm" id="audio-regular" type="button">
+<span class="w-6 h-6 rounded-full bg-white/20 text-white flex items-center justify-center group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[17px]">volume_up</span>
+</span>
+<span class="font-medium pr-0.5" dir="rtl">اسمع</span>
+</button>
+<!-- Secondary Slow Turtle Playback -->
+<button aria-label="استمع بالنطق البطيء" class="group flex items-center gap-1.5 bg-[#F8ECDB] hover:bg-[#F2E7D6] text-[#14545a] font-label-sm text-xs px-3.5 py-2.5 rounded-full transition-all active:scale-95 border border-[#E9DAC6]" id="audio-slow" type="button">
+<span class="material-symbols-outlined text-[16px] text-[#14545a]">slow_motion_video</span>
+<span class="font-medium" dir="rtl">ببطء</span>
+</button>
+</div>
+<!-- Warm Golden Yellow Hint Box -->
+<div class="mt-6 w-full max-w-xs px-4 py-3 rounded-2xl border border-[#FDE68A] bg-[#FEF3C7] flex items-center justify-center gap-2 select-text shadow-sm" dir="ltr">
+<span class="material-symbols-outlined text-[19px] text-[#14545a]">volume_up</span>
+<p class="font-headline-sm text-[17px] text-[#14545a] tracking-wide">
+  A que horas <span class="font-bold underline decoration-[#c4aa30] decoration-2 underline-offset-2">dormes</span>?
+</p>
+</div>
+</div>
+<!-- Bottom Edge: Discreet Cognitive Retrieval Cue -->
+<footer class="w-full pt-2 flex items-center justify-center">
+<p class="font-body-sm text-xs text-outline/80 text-center">
+          فاكر معناها؟ قولها في سرّك واقلب
+        </p>
+</footer>
+</article>
+</main>
+<!-- Interactive Action Deck -->
+<section class="w-full flex flex-col items-center mt-6 gap-3">
+<!-- Primary Flip Trigger: Wide Vibrant Coral Button -->
+<button class="w-full h-14 bg-[#F56D4E] hover:bg-[#E25C3E] text-white rounded-2xl flex items-center justify-center gap-2.5 font-label-lg text-base font-semibold shadow-[0_6px_20px_rgba(245,109,78,0.32)] active:translate-y-0.5 active:shadow-sm transition-all cursor-pointer" id="btn-flip" type="button">
+<span>اقلب البطاقة</span>
+<span class="material-symbols-outlined text-[20px] transition-transform duration-300">sync</span>
+</button>
+<!-- Subtle Hint Note -->
+<div class="inline-flex items-center gap-1 text-outline hover:text-on-surface-variant transition-colors py-1 px-2 font-label-sm text-xs select-none cursor-pointer" id="btn-hint">
+<span class="material-symbols-outlined text-[15px] text-[#14545a]">check_circle</span>
+<span class="text-on-surface-variant font-medium">استخدمت تلميح ✓</span>
+</div>
+</section>
+</div>
+<script>
+  const audioRegular = document.getElementById('audio-regular');
+  const audioSlow = document.getElementById('audio-slow');
+  const flipBtn = document.getElementById('btn-flip');
+  const flashcard = document.getElementById('flashcard');
+
+  const playSpeech = (rate = 1.0) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance('Dormir');
+      utterance.lang = 'pt-PT';
+      utterance.rate = rate;
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  audioRegular?.addEventListener('click', () => playSpeech(1.0));
+  audioSlow?.addEventListener('click', () => playSpeech(0.65));
+
+  // Tactile flip trigger animation
+  flipBtn?.addEventListener('click', () => {
+    flashcard.style.transform = 'scale(0.97) rotateY(12deg)';
+    setTimeout(() => {
+      flashcard.style.transform = '';
+    }, 180);
+  });
+</script></main>
+</body></html>

@@ -11,7 +11,7 @@ export function PanelBlock({ block }: { block: Extract<Block, { type: 'panel' }>
   return (
     <div
       data-target={block.id}
-      className={['space-y-2 rounded-v2-card border border-v2-ink bg-v2-card p-3', partClass(state)].join(' ')}
+      className={['space-y-2 rounded-v2-card bg-v2-card p-4 shadow-[var(--shadow-v2-soft)]', partClass(state)].join(' ')}
     >
       <MediaTile image={block.image} />
       {block.lines.map((ref) => (

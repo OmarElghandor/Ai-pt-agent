@@ -1,12 +1,15 @@
 'use client';
 
 import { useCallback, useRef, useState } from 'react';
+import { Icon } from '@/components/v2/Icon';
 
 type Props = {
   text: string;
   lang?: 'pt' | 'ar';
   /** When true, show both normal and slow (turtle) controls. */
   showSlow?: boolean;
+  /** 40 default; 32 inside chips */
+  size?: 'default' | 'chip';
   className?: string;
   label?: string;
 };
@@ -27,12 +30,16 @@ export function AudioButton({
   text,
   lang = 'pt',
   showSlow = false,
+  size = 'default',
   className,
   label = 'تشغيل',
 }: Props) {
   const cacheRef = useRef<Blob | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [busy, setBusy] = useState(false);
+  const chip = size === 'chip';
+  const box = chip ? 'h-8 w-8' : 'h-10 w-10';
+  const iconSize = chip ? 20 : 24;
 
   const play = useCallback(
     async (slow: boolean) => {
@@ -74,9 +81,9 @@ export function AudioButton({
         aria-label={label}
         disabled={busy}
         onClick={() => void play(false)}
-        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-v2-ink bg-v2-card text-v2-ink disabled:opacity-50"
+        className={`inline-flex ${box} items-center justify-center rounded-full bg-v2-primary-tint text-v2-primary disabled:opacity-50`}
       >
-        <SpeakerIcon size={18} />
+        <Icon name="volume_up" size={iconSize} />
       </button>
       {showSlow ? (
         <button
@@ -84,46 +91,17 @@ export function AudioButton({
           aria-label="بطيء"
           disabled={busy}
           onClick={() => void play(true)}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-v2-rule bg-v2-card text-v2-ink-muted disabled:opacity-50"
+          className={`inline-flex ${box} items-center justify-center rounded-full bg-v2-primary-tint text-v2-primary disabled:opacity-50`}
         >
-          <TurtleIcon />
+          <Icon name="pets" size={iconSize} />
         </button>
       ) : null}
     </span>
   );
 }
 
-export function SpeakerIcon({ size = 18 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path
-        d="M11 5L6 9H3v6h3l5 4V5z"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M15.5 8.5a4.5 4.5 0 010 7"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function TurtleIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <ellipse cx="12" cy="13" rx="7" ry="4.5" stroke="currentColor" strokeWidth="1.6" />
-      <path
-        d="M7 11c1-3 3-4.5 5-4.5S16 8 17 11"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-      <circle cx="9.5" cy="12.5" r="0.8" fill="currentColor" />
-      <circle cx="14.5" cy="12.5" r="0.8" fill="currentColor" />
-    </svg>
-  );
+/** @deprecated Prefer Icon name="volume_up" — kept for call sites that only need the glyph. */
+export function SpeakerIcon({ size = 24 }: { size?: number }) {
+  const s = size <= 20 ? 20 : 24;
+  return <Icon name="volume_up" size={s} />;
 }

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Grammar Lesson Reader · LANGIFY</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&amp;family=Noto+Sans+Arabic:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "muted": "#8C8C86",
+            "surface-container-lowest": "#ffffff",
+            "on-secondary-fixed": "#3d0600",
+            "teal-700": "#1E6670",
+            "surface-dim": "#e4d9c8",
+            "on-primary-fixed-variant": "#0a4f54",
+            "outline": "#70797a",
+            "background": "#fff8f2",
+            "surface-container-high": "#f2e7d6",
+            "on-error": "#ffffff",
+            "inverse-surface": "#363024",
+            "tertiary-fixed": "#fee263",
+            "tertiary-fixed-dim": "#e1c64a",
+            "primary-fixed": "#b2edf3",
+            "on-primary-container": "#8dc6cd",
+            "on-secondary-container": "#6b1100",
+            "surface-container": "#f8ecdb",
+            "surface": "#FFFFFF",
+            "primary": "#003c41",
+            "surface-tint": "#2c676d",
+            "secondary-container": "#fe7354",
+            "secondary-fixed": "#ffdad2",
+            "primary-container": "#14545a",
+            "canvas": "#EEF2F2",
+            "on-secondary": "#ffffff",
+            "on-primary": "#ffffff",
+            "on-primary-fixed": "#002023",
+            "on-background": "#201b11",
+            "tertiary-container": "#c4aa30",
+            "surface-bright": "#fff8f2",
+            "on-surface-variant": "#404849",
+            "on-tertiary-container": "#4b3f00",
+            "surface-container-highest": "#ece1d0",
+            "outline-variant": "#bfc8c9",
+            "tertiary": "#6e5e00",
+            "primary-fixed-dim": "#97d0d7",
+            "surface-container-low": "#fef2e1",
+            "on-secondary-fixed-variant": "#881f06",
+            "on-error-container": "#93000a",
+            "error": "#ba1a1a",
+            "inverse-primary": "#97d0d7",
+            "secondary": "#a9361d",
+            "text": "#242424",
+            "error-container": "#ffdad6",
+            "inverse-on-surface": "#fbefde",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-fixed": "#221b00"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-md": "16px",
+            "space-sm": "8px",
+            "space-lg": "24px",
+            "space-xs": "4px",
+            "margin": "24px",
+            "gutter": "16px",
+            "space-xl": "32px"
+          },
+          "fontFamily": {
+            "headline-sm": ["Newsreader", "serif"],
+            "headline-lg": ["Newsreader", "serif"],
+            "headline-md": ["Newsreader", "serif"],
+            "label-md": ["Inter", "Noto Sans Arabic", "sans-serif"],
+            "label-lg": ["Inter", "Noto Sans Arabic", "sans-serif"],
+            "label-sm": ["Inter", "Noto Sans Arabic", "sans-serif"],
+            "body-lg": ["Inter", "Noto Sans Arabic", "sans-serif"],
+            "body-md": ["Inter", "Noto Sans Arabic", "sans-serif"],
+            "body-sm": ["Inter", "Noto Sans Arabic", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-text min-h-screen font-body-md flex justify-center selection:bg-secondary-fixed selection:text-on-secondary-fixed">
+<!-- Mobile Reader Frame Container -->
+<main class="w-full max-w-md bg-background min-h-screen flex flex-col border-x border-surface-container-high shadow-sm relative pb-28">
+<!-- Top Navigation Bar (Consistent with Brand Anchors Reader) -->
+<header class="sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-background/95 backdrop-blur-md border-b border-surface-container-high/60 transition-all">
+<!-- Back Action -->
+<button aria-label="Go back" class="size-10 flex items-center justify-center rounded-full text-primary-container hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[24px]">arrow_forward</span>
+</button>
+<!-- Center Title -->
+<h2 class="text-primary-container font-headline-sm text-base md:text-lg font-bold tracking-tight text-center truncate px-2 dir-ltr" style="direction: ltr;">
+        Grammar Lesson Reader · LANGIFY
+      </h2>
+<!-- Bookmark Action -->
+<button aria-label="Bookmark this lesson" class="size-10 flex items-center justify-center rounded-full text-primary-container hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[24px]">bookmark</span>
+</button>
+</header>
+<!-- Lesson Header Title Area -->
+<section class="px-6 pt-7 pb-4 text-center">
+<span class="inline-block px-3 py-1 rounded-full bg-surface-container text-primary-container text-label-sm font-semibold tracking-wide uppercase mb-3">
+        Lição de Gramática · Pronomes Possessivos
+      </span>
+<h1 class="text-primary-container font-headline-lg text-3xl font-bold tracking-normal leading-tight font-serif dir-ltr" style="direction: ltr;">
+        O MEU · A MINHA
+      </h1>
+<p class="text-text font-medium text-base pt-2 opacity-90">
+        حاجتي وحاجتك (ضمائر الملكية في البرتغالية)
+      </p>
+</section>
+<!-- Gender Selector Filter Segmented Control -->
+<div class="px-6 py-2">
+<div class="flex h-12 w-full items-center justify-center rounded-xl bg-surface-container p-1 gap-1 border border-surface-container-high/60">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-3 transition-all has-[:checked]:bg-surface has-[:checked]:shadow-sm has-[:checked]:text-primary-container text-muted text-label-md font-semibold">
+<span>المذكر (Masculine)</span>
+<input checked="" class="sr-only" name="gender-toggle" type="radio" value="masculine"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-3 transition-all has-[:checked]:bg-surface has-[:checked]:shadow-sm has-[:checked]:text-secondary-container text-muted text-label-md font-semibold">
+<span>المؤنث (Feminine)</span>
+<input class="sr-only" name="gender-toggle" type="radio" value="feminine"/>
+</label>
+</div>
+</div>
+<!-- Pronoun Conjugation Table -->
+<section class="px-6 py-4">
+<div class="bg-surface rounded-xl border border-surface-container-high/80 shadow-sm overflow-hidden">
+<!-- Table Column Headers -->
+<div class="grid grid-cols-2 text-center border-b border-surface-container-high/80 py-3 bg-surface-container-low">
+<div class="text-primary-container font-headline-sm text-sm font-bold flex items-center justify-center gap-1.5 border-l border-surface-container-high/80">
+<span class="size-2 rounded-full bg-primary-container"></span>
+<span>المذكر · Masculino</span>
+</div>
+<div class="text-secondary-container font-headline-sm text-sm font-bold flex items-center justify-center gap-1.5">
+<span class="size-2 rounded-full bg-secondary-container"></span>
+<span>المؤنث · Feminino</span>
+</div>
+</div>
+<!-- Row Items -->
+<div class="divide-y divide-surface-container-high/60">
+<!-- 1st Person Singular -->
+<div class="grid grid-cols-2 py-3 px-4 hover:bg-surface-container-low/40 transition-colors">
+<div class="flex flex-col items-start border-l border-surface-container-high/60 pl-2">
+<span class="text-primary-container font-semibold font-serif text-base dir-ltr" style="direction: ltr;">O meu</span>
+<span class="text-text text-body-sm opacity-80 mt-0.5">لي (حاجتي)</span>
+</div>
+<div class="flex flex-col items-start pr-3">
+<span class="text-secondary font-semibold font-serif text-base dir-ltr" style="direction: ltr;">A minha</span>
+<span class="text-text text-body-sm opacity-80 mt-0.5">لي (حاجتي)</span>
+</div>
+</div>
+<!-- 2nd Person Singular -->
+<div class="grid grid-cols-2 py-3 px-4 hover:bg-surface-container-low/40 transition-colors">
+<div class="flex flex-col items-start border-l border-surface-container-high/60 pl-2">
+<span class="text-primary-container font-semibold font-serif text-base dir-ltr" style="direction: ltr;">O teu</span>
+<span class="text-text text-body-sm opacity-80 mt-0.5">لكَ / لكِ (غير رسمي)</span>
+</div>
+<div class="flex flex-col items-start pr-3">
+<span class="text-secondary font-semibold font-serif text-base dir-ltr" style="direction: ltr;">A tua</span>
+<span class="text-text text-body-sm opacity-80 mt-0.5">لكَ / لكِ (غير رسمي)</span>
+</div>
+</div>
+<!-- 3rd Person / Formal -->
+<div class="grid grid-cols-2 py-3 px-4 hover:bg-surface-container-low/40 transition-colors">
+<div class="flex flex-col items-start border-l border-surface-container-high/60 pl-2">
+<span class="text-primary-container font-semibold font-serif text-base dir-ltr" style="direction: ltr;">O seu</span>
+<span class="text-text text-body-sm opacity-80 mt-0.5">لحضرتك / له / لها</span>
+</div>
+<div class="flex flex-col items-start pr-3">
+<span class="text-secondary font-semibold font-serif text-base dir-ltr" style="direction: ltr;">A sua</span>
+<span class="text-text text-body-sm opacity-80 mt-0.5">لحضرتك / له / لها</span>
+</div>
+</div>
+<!-- 1st Person Plural -->
+<div class="grid grid-cols-2 py-3 px-4 hover:bg-surface-container-low/40 transition-colors">
+<div class="flex flex-col items-start border-l border-surface-container-high/60 pl-2">
+<span class="text-primary-container font-semibold font-serif text-base dir-ltr" style="direction: ltr;">O nosso</span>
+<span class="text-text text-body-sm opacity-80 mt-0.5">لنا (حاجتنا)</span>
+</div>
+<div class="flex flex-col items-start pr-3">
+<span class="text-secondary font-semibold font-serif text-base dir-ltr" style="direction: ltr;">A nossa</span>
+<span class="text-text text-body-sm opacity-80 mt-0.5">لنا (حاجتنا)</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Example Cards with Images -->
+<section class="px-6 py-3">
+<div class="flex items-center justify-between mb-3">
+<h3 class="font-headline-sm text-base text-primary-container font-bold">أمثلة سياقية (Exemplos Práticos)</h3>
+<span class="text-label-sm text-muted">صورة وتوضيح</span>
+</div>
+<div class="grid grid-cols-2 gap-3.5">
+<!-- Example Card 1: Masculine Object -->
+<article class="bg-surface rounded-xl border border-surface-container-high overflow-hidden shadow-sm flex flex-col group">
+<div class="h-28 w-full overflow-hidden relative bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A vintage leather journal with a dark fountain pen resting on an aged wooden writing desk bathed in warm morning editorial sunlight. The composition is calm and contemplative with a color palette of deep forest teal, parchment beige, and warm terracotta accents, fitting a classic European academic study atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlQotf8CbfrfbUc4rGvMAnmgiFMR1nO3wEjuMpLqsGKxCJf9BOod_9qKrgiAa7cdGFkrmdj-AiAKHFei918832_0LaxoPA4OJJgjp9gTq4f3EoAK8aUn5OXfVBX0JLhBZcu8OhDop41rRVWK7nLyAwioXXFI8pRlfi-uyMU3SKkmmSocMX9MZClDEAmcJN-K0K5OCzPxGrEbCJ2aw66gidW3T4kHSgvcYgG8Gsua5d7clY470BMHpLog"/>
+<span class="absolute top-2 right-2 px-2 py-0.5 rounded text-[11px] font-semibold bg-primary-container text-on-primary">
+              مذكر
+            </span>
+</div>
+<div class="p-3 flex-1 flex flex-col justify-between">
+<p class="font-headline-sm text-primary-container text-sm font-semibold dir-ltr text-left" style="direction: ltr;">
+              O meu livro
+            </p>
+<p class="text-text text-body-sm mt-1">كتابي (الشيء مذكر)</p>
+</div>
+</article>
+<!-- Example Card 2: Feminine Object -->
+<article class="bg-surface rounded-xl border border-surface-container-high overflow-hidden shadow-sm flex flex-col group">
+<div class="h-28 w-full overflow-hidden relative bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A warm handcrafted ceramic coffee mug placed next to fresh breakfast pastry on a sunlit marble cafe tabletop in Lisbon. Soft warm golden morning light highlights the textures of porcelain and stone, harmonizing with earthy tones, gentle rust-coral shades, and clean modern editorial styling." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7qhxU2bwQ9TBUG3e9BURqeD-Pfel7jaTmMPaMokmGTF98TRYMFjxk-njkdXII1xPq6q1fU61z11iyX8nLl3sVr16gej02pImNM9QlzNTW_1uvRGPTJs020ItBNVojejAdTkhAi1W3Ip0X5KNKjVy96wapexysmEneJF521PHzC-RHdEleGLh1mN_P5TWvqEpEQ1P606xX9zNkIy_Yd65K2MgTCekIirLI6_MiqTlVC1JCzxSd5n2IiA"/>
+<span class="absolute top-2 right-2 px-2 py-0.5 rounded text-[11px] font-semibold bg-secondary-container text-on-secondary">
+              مؤنث
+            </span>
+</div>
+<div class="p-3 flex-1 flex flex-col justify-between">
+<p class="font-headline-sm text-secondary text-sm font-semibold dir-ltr text-left" style="direction: ltr;">
+              A minha chávena
+            </p>
+<p class="text-text text-body-sm mt-1">فنجاني (الشيء مؤنث)</p>
+</div>
+</article>
+</div>
+</section>
+<!-- Golden Tip Box: Editorial Notice -->
+<section class="px-6 py-4">
+<div class="bg-surface-container-low border border-tertiary-container/30 rounded-xl p-4 relative overflow-hidden shadow-sm">
+<div class="flex items-start gap-3">
+<div class="size-8 rounded-lg bg-tertiary-fixed flex items-center justify-center text-on-tertiary-container shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+</div>
+<div class="space-y-1">
+<h4 class="font-bold text-on-tertiary-container text-sm">ملاحظة لغوية هامة: "Seu" مقابل "Dele / Dela"</h4>
+<p class="text-on-background text-body-sm leading-relaxed">
+              لتفادي اللبس في البرتغالية الحية، غالباً ما تستخدم <span class="font-serif font-bold text-primary-container dir-ltr inline-block">"dele"</span> (له) أو <span class="font-serif font-bold text-primary-container dir-ltr inline-block">"dela"</span> (لها) بدلاً من <span class="font-serif font-bold dir-ltr inline-block">"o seu / a sua"</span> حتى لا يُفهم أنك تخاطب الشخص مباشرة بـ "حضرتك".
+            </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Sticky Persistent Bottom Bar (Footer Flow Control) -->
+<footer class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-background/95 backdrop-blur-md border-t border-surface-container-high px-5 py-3.5 z-40 flex items-center justify-between shadow-[0_-4px_16px_rgba(36,36,36,0.04)]">
+<!-- Progress Indicator -->
+<div class="flex flex-col items-start gap-1">
+<span class="text-text font-semibold text-xs tracking-wide">
+          Dia 15 · ٢ / ٦
+        </span>
+<!-- Mini progress track -->
+<div class="w-24 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 33.33%;"></div>
+</div>
+</div>
+<!-- Action Button -->
+<button class="flex items-center gap-2 bg-secondary-container text-on-secondary px-6 py-2.5 rounded-xl font-label-lg font-semibold hover:opacity-95 active:scale-95 transition-all shadow-sm">
+<span>التالي</span>
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+</button>
+</footer>
+</main>
+</body></html>

@@ -1,19 +1,21 @@
 import { notFound } from 'next/navigation';
 import {
   AudioButton,
+  CalloutBar,
   CaptionBar,
   Chip,
   CompareColumns,
   ExampleRow,
+  NoteCard,
   Panel,
   PrimaryButton,
+  ProgressBar,
   ProgressDots,
   RichText,
   RuleRow,
   SecondaryButton,
   SkillChip,
-  StickyNote,
-  TitleBadge,
+  TitleBlock,
 } from '@/components/v2';
 import { BlockGallery } from '@/components/v2/blocks/gallery';
 import { FIXTURE_VERB_IDS } from '@/components/v2/blocks/fixtures';
@@ -30,24 +32,22 @@ export default function V2DevPage() {
   return (
     <main className="flex flex-1 flex-col gap-8 overflow-y-auto px-4 py-6 pb-28">
       <header className="space-y-1">
-        <h1 className="font-[family-name:var(--font-v2-display-ar)] text-3xl text-v2-ink">
+        <h1 className="font-[family-name:var(--font-v2-display-ar)] text-3xl text-v2-primary">
           v2-dev
         </h1>
         <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-          معرض المكوّنات — مرجع: SER vs ESTAR
+          معرض المكوّنات — Warm Editorial · مرجع: O MEU · A MINHA
         </p>
       </header>
 
       <section className="space-y-3">
         <h2 className="font-[family-name:var(--font-v2-ui)] text-sm font-semibold text-v2-ink-muted">
-          TitleBadge
+          TitleBlock
         </h2>
-        <TitleBadge
-          tiles={[
-            { text: 'SER', group: 'a' },
-            { text: 'ESTAR', group: 'b' },
-          ]}
-          subtitle="قواعد واضحة وأمثلة مرئية — من نظرة واحدة"
+        <TitleBlock
+          pill="القواعد"
+          title="O MEU · A MINHA"
+          subtitle="الملكية — بتاعي وبتاعتها"
         />
       </section>
 
@@ -55,7 +55,7 @@ export default function V2DevPage() {
         <h2 className="font-[family-name:var(--font-v2-ui)] text-sm font-semibold text-v2-ink-muted">
           RichText
         </h2>
-        <p className="rounded-v2-row border border-v2-rule bg-v2-card p-3 text-lg">
+        <p dir="rtl" className="rounded-v2-row border border-v2-line bg-v2-card p-3 text-start text-lg">
           <RichText
             segments={[
               { text: 'الجبنة', lang: 'ar' },
@@ -74,12 +74,14 @@ export default function V2DevPage() {
           <Panel title="SER" group="a" pill="ثابت" countLabel="٣ قواعد">
             <RuleRow
               n={1}
+              icon="badge"
               title="الهوية والوصف الثابت"
               body="مين أنت، منين، إيه شغلك."
               active
             />
             <RuleRow
               n={2}
+              icon="public"
               title="الأصل والجنسية"
               body="منين أنت، لغتك."
               dimmed
@@ -108,12 +110,14 @@ export default function V2DevPage() {
           <Panel title="ESTAR" group="b" pill="مؤقت" countLabel="٣ قواعد">
             <RuleRow
               n={1}
+              icon="location_on"
               title="الحالة والمكان"
               body="فين أنت دلوقتي، عامل إيه."
               active
             />
             <RuleRow
               n={2}
+              icon="mood"
               title="شعور مؤقت"
               body="تعبان، مبسوط، مستعجل."
               dimmed
@@ -135,7 +139,7 @@ export default function V2DevPage() {
 
       <section className="space-y-3">
         <h2 className="font-[family-name:var(--font-v2-ui)] text-sm font-semibold text-v2-ink-muted">
-          Chips · Skills · StickyNote
+          Chips · Skills · NoteCard · CalloutBar
         </h2>
         <div className="flex flex-wrap gap-2">
           <Chip group="a">SER</Chip>
@@ -148,12 +152,13 @@ export default function V2DevPage() {
           <SkillChip skill="reading" />
           <SkillChip skill="writing" />
         </div>
-        <StickyNote skill="speaking">صحّح الغلطة دي وبس — صيغة الفعل.</StickyNote>
+        <NoteCard skill="speaking">صحّح الغلطة دي وبس — صيغة الفعل.</NoteCard>
+        <CalloutBar chip="-amos">الصيغة دي للجماعة: نحن.</CalloutBar>
       </section>
 
       <section className="space-y-3">
         <h2 className="font-[family-name:var(--font-v2-ui)] text-sm font-semibold text-v2-ink-muted">
-          AudioButton · ProgressDots · Buttons
+          AudioButton · ProgressDots · ProgressBar · Buttons
         </h2>
         <div className="flex flex-wrap items-center gap-3">
           <AudioButton text="Bom dia." lang="pt" showSlow />
@@ -166,6 +171,7 @@ export default function V2DevPage() {
             ]}
           />
         </div>
+        <ProgressBar value={0.45} label="التقدّم" />
         <div className="flex flex-wrap gap-2">
           <PrimaryButton>ابدأ</PrimaryButton>
           <SecondaryButton>الصفحة كلها</SecondaryButton>
@@ -176,7 +182,7 @@ export default function V2DevPage() {
         <h2 className="font-[family-name:var(--font-v2-ui)] text-sm font-semibold text-v2-ink-muted">
           CaptionBar
         </h2>
-        <div className="overflow-hidden rounded-v2-card border border-v2-ink">
+        <div className="overflow-hidden rounded-v2-card bg-v2-card shadow-[var(--shadow-v2-soft)]">
           <CaptionBar
             tipEg="ESTAR = مؤقت: إنت عامل إيه دلوقتي، وفين."
             chapters={[

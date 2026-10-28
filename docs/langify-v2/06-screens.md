@@ -1,11 +1,11 @@
 # 06 · Screens
 
-All screens are routes under `app/(v2)/` in `ai-agent-talk`. Each screen lists its reference image (in `design/reference/`), what it shows, its states and its data source. All screens follow `05-design-system.md`. The app has one tab bar: **المسار · الكروت · المكتبة · أنا**. Screens marked "no tab bar" are full-screen flows.
+All screens are routes under `app/(v2)/` in `ai-agent-talk`. Each screen lists its reference image (in `design/reference/`, with the Stitch HTML of the same number in `design/stitch-html/`), what it shows, its states and its data source. All screens follow `05-design-system.md`. The app has one tab bar: **المسار · الكروت · المكتبة · أنا**. Screens marked "no tab bar" are full-screen flows.
 
 ## Tab: المسار (Path)
 
 ### S1 · Path / home
-- Reference: `13-learning-path.png` (structure only).
+- Reference: `13-learning-path.png`. Onboarding before first launch: `00-onboarding.png` (replace "Falou" with Langify).
 - Shows:
   - A greeting and "بتفهم N · بتقول M".
   - Today's day card with its situation illustration and a start button.
@@ -21,7 +21,7 @@ All screens are routes under `app/(v2)/` in `ai-agent-talk`. Each screen lists i
 - Data: GET `/api/v2/lessons/[day]` plus progress.
 
 ### S3 · Content page player (no tab bar)
-- References: `01-grammar-page-guided-SER-ESTAR.png` (guided), `02-conjugation-explore.png` (explore), `03-table-page-possessives.png`, `04-compare-page-o-a.png`, `05-phrases-page.png` (static and phrases).
+- References: `01-content-page-possessives.png` (the visual style for every content page, and table pages), `02-conjugation-endings.png` (verb and explore pages), `stitch-html/04-compare-o-a.html` (compare pages, layout only), `05-phrases-page.png` (phrases), `05b-dictionary-page.png` (dictionary). Guided behaviour still comes from `prototypes/ser-estar.html`.
 - Working prototypes: `prototypes/ser-estar.html` (guided) and `prototypes/verb-endings.html` (explore). Match their behaviour.
 - Header: back, small "Dia N · <pill>", the title, a speaker button for the page, "اختبرني" and "غطّي" toggles.
 - **Guided mode:**
@@ -87,11 +87,11 @@ All screens are routes under `app/(v2)/` in `ai-agent-talk`. Each screen lists i
 ## Practice (from the day map, or from a micro unit)
 
 ### S8 · Practice conversation (no tab bar)
-- Reference: `11-practice-agent-old.png` is the old version, kept for layout only. The target is described below and in `00` §9.
+- Reference: `stitch-html/11-practice-conversation.html` (HTML only; layout of bubbles, speaker labels, audio bar). The behaviour is described below and in `00` §9.
 - **Shared layout:**
   - Header: close, the situation title, "Dia 3 · مشهد ٢ من ٣", a speed toggle.
   - A mission strip: "المهمة: …" and 10 step dots colored by skill.
-  - The conversation on ruled paper. The character's bubbles are white, target language only, with pronunciation in grey, a speaker and "معناها؟". The learner's bubbles are navy. Narration lines are grey italic and centered.
+  - The conversation on ruled paper. The character's bubbles are white, target language only, with pronunciation in grey, a speaker and "معناها؟". The learner's bubbles are deep-teal. Narration lines are grey italic and centered.
   - A coach sticky note above the input, yellow, in Egyptian, with a skill chip.
 - **States**, one per beat type and outcome:
   1. Speaking (default): a sentence frame in the note. Big mic "اضغط واتكلم", a keyboard icon, "مساعدة", and the link "مش قادر أتكلم دلوقتي".
@@ -135,5 +135,5 @@ All screens are routes under `app/(v2)/` in `ai-agent-talk`. Each screen lists i
 
 ## Reference images not mapped above
 
-- `02b-conjugation-explore-alt.png`: an alternative explore layout; fine for tablets.
 - `12-quiz-find-image.png`: the "لاقي الصورة" review game (listen and pick the picture), used for word questions in sessions.
+- `12b-question-session.png`: a question-session screen (one MCQ with Arabic options, a correct state and a coral "التالي" button).

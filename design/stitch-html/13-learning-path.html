@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "secondary-fixed-dim": "#ffb4a3",
+        "on-background": "#201b11",
+        "outline": "#70797a",
+        "tertiary-fixed": "#fee263",
+        "on-surface-variant": "#404849",
+        "canvas": "#EEF2F2",
+        "primary-fixed-dim": "#97d0d7",
+        "primary-container": "#14545a",
+        "on-tertiary-container": "#4b3f00",
+        "secondary-container": "#fe7354",
+        "surface-container-high": "#f2e7d6",
+        "on-secondary": "#ffffff",
+        "inverse-surface": "#363024",
+        "on-tertiary": "#ffffff",
+        "surface-container-highest": "#ece1d0",
+        "error": "#ba1a1a",
+        "primary-fixed": "#b2edf3",
+        "inverse-primary": "#97d0d7",
+        "surface-variant": "#ece1d0",
+        "on-surface": "#201b11",
+        "surface-dim": "#e4d9c8",
+        "surface-tint": "#2c676d",
+        "muted": "#8C8C86",
+        "inverse-on-surface": "#fbefde",
+        "outline-variant": "#bfc8c9",
+        "on-primary-container": "#8dc6cd",
+        "primary": "#003c41",
+        "background": "#fff8f2",
+        "on-error-container": "#93000a",
+        "on-secondary-fixed-variant": "#881f06",
+        "surface": "#FFF8F2",
+        "tertiary": "#6e5e00",
+        "surface-container-lowest": "#ffffff",
+        "surface-container-low": "#fef2e1",
+        "text": "#242424",
+        "secondary-fixed": "#ffdad2",
+        "surface-container": "#f8ecdb",
+        "on-primary-fixed": "#002023",
+        "tertiary-fixed-dim": "#e1c64a",
+        "on-error": "#ffffff",
+        "on-secondary-container": "#6b1100",
+        "on-tertiary-fixed": "#221b00",
+        "error-container": "#ffdad6",
+        "on-primary": "#ffffff",
+        "on-primary-fixed-variant": "#0a4f54",
+        "on-secondary-fixed": "#3d0600",
+        "secondary": "#a9361d",
+        "coral": "#F56D4E",
+        "teal-700": "#1E6670",
+        "on-tertiary-fixed-variant": "#534600",
+        "tertiary-container": "#c4aa30",
+        "surface-bright": "#fff8f2"
+      },
+      borderRadius: {
+        DEFAULT: "0.25rem",
+        lg: "0.5rem",
+        xl: "0.75rem",
+        full: "9999px"
+      },
+      spacing: {
+        "space-lg": "24px",
+        "margin": "24px",
+        "space-sm": "8px",
+        "space-xl": "32px",
+        "gutter": "16px",
+        "space-md": "16px",
+        "space-xs": "4px"
+      },
+      fontFamily: {
+        "headline-sm": ["Newsreader", "serif"],
+        "body-md": ["Inter", "sans-serif"],
+        "headline-lg": ["Newsreader", "serif"],
+        "body-lg": ["Inter", "sans-serif"],
+        "label-sm": ["Inter", "sans-serif"],
+        "label-lg": ["Inter", "sans-serif"],
+        "body-sm": ["Inter", "sans-serif"],
+        "label-md": ["Inter", "sans-serif"],
+        "headline-md": ["Newsreader", "serif"],
+        "phonetic-md": ["Newsreader", "serif"]
+      },
+      fontSize: {
+        "headline-sm": ["18px", {lineHeight: "24px", fontWeight: "600"}],
+        "body-md": ["14px", {lineHeight: "20px", fontWeight: "400"}],
+        "headline-lg": ["32px", {lineHeight: "40px", fontWeight: "700"}],
+        "body-lg": ["15px", {lineHeight: "22px", fontWeight: "400"}],
+        "label-sm": ["10px", {lineHeight: "14px", fontWeight: "500"}],
+        "label-lg": ["14px", {lineHeight: "18px", fontWeight: "600"}],
+        "body-sm": ["12px", {lineHeight: "16px", fontWeight: "400"}],
+        "label-md": ["12px", {lineHeight: "16px", fontWeight: "500"}],
+        "headline-md": ["24px", {lineHeight: "32px", fontWeight: "600"}]
+      }
+    }
+  }
+};</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-background text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 inset-x-0 z-50 bg-background/90 backdrop-blur-xl pt-safe border-b border-surface-container-high/60 shadow-[0_1px_8px_rgba(20,84,90,0.04)]"><div class="h-16 px-margin flex items-center justify-between"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[#14545a] text-[24px]">menu_book</span><h1 class="font-headline-sm text-headline-sm text-[#14545a] tracking-tight">Langify</h1></div><div class="w-8 h-8 rounded-full bg-[#14545a] flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-white text-[18px]">person</span></div></div></header><main class="flex-1 flex flex-col relative w-full px-margin pt-16 pb-20 bg-background"><div class="flex flex-col w-full pb-8">
+<!-- Top Greeting & Study Journal Metadata -->
+<section class="flex flex-col gap-space-sm mb-space-lg">
+<!-- Breadcrumb / Notebook Header Stamp -->
+<div class="flex items-center justify-between">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container border border-surface-container-high shadow-xs">
+<span class="material-symbols-outlined text-[15px] text-[#14545a]">bookmark</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">الأسبوع الأول · محادثات الشارع اليومية</span>
+</div>
+<!-- Calibrated Streak Badge (Golden Yellow accent) -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#fee263]/80 border border-[#e1c64a] text-[#4b3f00] shadow-xs"><span class="material-symbols-outlined text-[16px] text-[#6e5e00]">calendar_today</span><span class="font-label-sm text-label-sm font-semibold tracking-wide">٥ أيام ورا بعض</span></div>
+</div>
+<!-- Main Personalized Greeting -->
+<div class="flex items-baseline justify-between mt-space-xs">
+<div>
+<h2 class="font-headline-md text-headline-md text-[#14545a] tracking-tight">صباح الفل يا عمر</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">يلا نكمّل خطة النهاردة ونظبط أدوات الاستفهام والمشتريات</p>
+</div>
+<span class="font-phonetic-md text-[17px] text-[#70797a] italic select-none" dir="ltr">Semana 1</span>
+</div>
+</section>
+<!-- Today's Featured Active Card ("اليوم ٣ · السوبرماركت") -->
+<section class="mb-space-xl">
+<div class="relative rounded-xl bg-surface-container-lowest p-gutter border border-[#14545a]/15 shadow-[0_4px_20px_rgba(20,84,90,0.08)] overflow-hidden">
+<!-- Notebook Ruled Line Decorative Underlay -->
+<div class="absolute inset-0 pointer-events-none opacity-30 bg-[linear-gradient(to_bottom,transparent_27px,#ece1d0_28px)] bg-[length:100%_28px]"></div>
+<div class="relative z-10 flex flex-col gap-space-md">
+<!-- Top Metadata & Level Pill -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-0.5 rounded-full bg-[#14545a] text-white font-label-sm text-label-sm tracking-wider font-semibold">
+              اليوم ٣ · السوبرماركت
+            </span>
+<span class="font-phonetic-md text-body-md text-on-surface-variant italic" dir="ltr">O Supermercado</span>
+</div>
+<!-- Tactile Mini Stamp -->
+<div class="px-2 py-0.5 rounded bg-surface-container text-[#14545a] font-label-sm text-label-sm font-semibold border border-surface-container-high">
+            A1 · أساسي
+          </div>
+</div>
+<!-- Lisbon Mercearia Editorial Visual -->
+<div class="relative w-full h-44 rounded-lg overflow-hidden bg-surface-container border border-surface-container-high shadow-inner">
+<img alt="Portuguese traditional grocery storefront in Lisbon" class="w-full h-full object-cover object-center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCU_CzZu-M_ONHBYNPp-2I1YNVb9KH63xNd6z5AVVvy43LG9d80mqsi7VTJU0YKPpGbK2FRCiFQllJ8hEPl0IoMCzW9t_zlAS9NHrre9JdNqEoDI4trDKJuuubGzQsmmttErq0IjCfFB7SKUgFvFcBI6Hj0hAHwCa3e0A5VFKHougToJd5Odmg51-8o48fj1mLjqscMZQVl4odvZStRkkEhO6jMVUc7WI_I3SaR4lb6sU40lodpiSvunA"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#14545a]/50 via-transparent to-transparent"></div>
+<div class="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded bg-[#fff8f2]/95 backdrop-blur-md border border-[#ece1d0] shadow-sm">
+<span class="font-phonetic-md text-body-md text-[#14545a] font-medium" dir="ltr">Frutas &amp; Mercearia</span>
+</div>
+</div>
+<!-- Target Phrase & Grammar Sticky Snippet -->
+<div class="rounded-lg bg-[#fef2e1] border border-[#f2e7d6] p-3 shadow-xs flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">العبارة المحورية اليوم:</span>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-[#fee263] text-[#4b3f00] font-medium">تعبير شائع</span>
+</div>
+<div class="flex items-baseline justify-between gap-2" dir="ltr">
+<span class="font-phonetic-md text-headline-sm text-[#14545a] font-semibold italic">"Quanto custa isto, por favor?"</span>
+<span class="font-body-md text-body-md text-on-surface font-normal" dir="rtl">«كم ثمن هذا، لو سمحت؟»</span>
+</div>
+</div>
+<!-- Grammar & Vocabulary Micro Chips -->
+<div class="flex flex-wrap items-center gap-2">
+<!-- Article rules chip -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-on-surface border border-surface-container-high"><span class="font-label-sm text-label-sm font-medium">أدوات التعريف:</span><span class="font-phonetic-md text-label-sm font-bold text-[#14545a]" dir="ltr">o</span><span class="text-outline text-label-sm">/</span><span class="font-phonetic-md text-label-sm font-bold text-[#F56D4E]" dir="ltr">a</span></div>
+<!-- Vocabulary count chip -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-on-surface border border-surface-container-high">
+<span class="w-1.5 h-1.5 rounded-full bg-[#F56D4E]"></span>
+<span class="font-label-sm text-label-sm">١٢ كلمة للأطعمة والخضار</span>
+</div>
+<!-- Pronunciation notice -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-on-surface border border-surface-container-high">
+<span class="w-1.5 h-1.5 rounded-full bg-[#14545a]"></span>
+<span class="font-label-sm text-label-sm">نطق لشبونة الأصيل</span>
+</div>
+</div>
+<!-- Progress Metrics & Action Button -->
+<div class="flex items-center justify-between pt-2">
+<!-- Circular / Meter Step Progress -->
+<div class="flex items-center gap-3">
+<div class="relative w-10 h-10 flex items-center justify-center shrink-0">
+<svg class="w-10 h-10 transform -rotate-90" viewbox="0 0 36 36">
+<circle cx="18" cy="18" fill="none" r="14" stroke="#ece1d0" stroke-width="3"></circle>
+<circle cx="18" cy="18" fill="none" r="14" stroke="#14545a" stroke-dasharray="88" stroke-dashoffset="58" stroke-linecap="round" stroke-width="3"></circle>
+</svg>
+<span class="font-label-sm text-label-sm font-bold text-[#14545a]">٢/٦</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-[#14545a]">خطوتان مكتملتان</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">متبقي ٤ خطوات قصيرة</span>
+</div>
+</div>
+<!-- Primary CTA Button (Coral Orange) -->
+<button class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#F56D4E] hover:bg-[#e05b3d] text-white active:translate-y-0.5 shadow-md shadow-[#F56D4E]/25 transition-all"><span class="font-label-lg text-label-lg font-semibold">يلا نكمّل اليوم</span><span class="material-symbols-outlined text-[20px] transition-transform">arrow_forward</span></button>
+</div>
+</div>
+</div>
+</section>
+<!-- Vertical Path of Week 1 as an Editorial Timeline / Journal Days -->
+<section class="flex flex-col">
+<!-- Section Header -->
+<div class="flex items-baseline justify-between mb-space-md">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-[#14545a] font-bold">خريطة الأسبوع الأول</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">٣ من ٧ أيام مكتملة أو قيد التقدم</p>
+</div>
+<span class="font-label-sm text-label-sm text-[#14545a] font-medium px-2 py-0.5 rounded bg-surface-container border border-surface-container-high">مرحلة التأسيس</span>
+</div>
+<!-- Timeline Container -->
+<div class="relative flex flex-col gap-space-md pr-2">
+<!-- Vertical Spine Indicator Line -->
+<div class="absolute right-[23px] top-4 bottom-8 w-[2px] bg-outline-variant/60"></div>
+<!-- DIA 1: Completed -->
+<div class="relative flex items-start gap-space-md">
+<!-- Node Marker -->
+<div class="relative z-10 w-9 h-9 rounded-full bg-[#14545a] text-white flex items-center justify-center shadow-sm shrink-0 mt-1">
+<span class="material-symbols-outlined text-[20px]">check</span>
+</div>
+<!-- Card Content -->
+<div class="flex-1 rounded-lg bg-surface-container-low border border-surface-container-high/60 p-3.5 shadow-xs transition-all">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">اليوم ١ · مكتمل</span>
+<span class="font-phonetic-md text-label-sm text-on-surface-variant italic" dir="ltr">No Trabalho</span>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<h4 class="font-label-lg text-label-lg text-[#14545a]">الشغل والتعارف المهني</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">صيغ التحية الرسمية والسؤال عن الوظيفة</p>
+</div>
+<button class="px-2.5 py-1 rounded bg-surface-container text-[#14545a] font-label-sm text-label-sm font-semibold hover:bg-surface-container-high border border-surface-container-high transition-colors">
+              مراجعة
+            </button>
+</div>
+</div>
+</div>
+<!-- DIA 2: Completed -->
+<div class="relative flex items-start gap-space-md">
+<!-- Node Marker -->
+<div class="relative z-10 w-9 h-9 rounded-full bg-[#14545a] text-white flex items-center justify-center shadow-sm shrink-0 mt-1">
+<span class="material-symbols-outlined text-[20px]">check</span>
+</div>
+<!-- Card Content -->
+<div class="flex-1 rounded-lg bg-surface-container-low border border-surface-container-high/60 p-3.5 shadow-xs transition-all">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">اليوم ٢ · مكتمل</span>
+<span class="font-phonetic-md text-label-sm text-on-surface-variant italic" dir="ltr">No Café</span>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<h4 class="font-label-lg text-label-lg text-[#14545a]">الكافيه وطلب القهوة</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">طلب الباستيل والقهوة البرتغالية (Bica)</p>
+</div>
+<button class="px-2.5 py-1 rounded bg-surface-container text-[#14545a] font-label-sm text-label-sm font-semibold hover:bg-surface-container-high border border-surface-container-high transition-colors">
+              مراجعة
+            </button>
+</div>
+</div>
+</div>
+<!-- DIA 3: Current Active Day (Highlighted) -->
+<div class="relative flex items-start gap-space-md">
+<!-- Node Marker (Active Pulser) -->
+<div class="relative z-10 w-9 h-9 rounded-full bg-surface-container-lowest text-[#14545a] border-2 border-[#14545a] shadow-md flex items-center justify-center shrink-0 mt-1">
+<div class="w-3.5 h-3.5 rounded-full bg-[#14545a]"></div>
+</div>
+<!-- Card Content -->
+<div class="flex-1 rounded-lg bg-surface-container-lowest border-2 border-[#14545a]/25 p-3.5 shadow-[0_2px_12px_rgba(20,84,90,0.08)]">
+<div class="flex items-center justify-between mb-1">
+<span class="px-2 py-0.5 rounded-full bg-[#fee263] text-[#4b3f00] font-label-sm text-label-sm font-bold border border-[#e1c64a]">
+              الدرس الحالي النشط
+            </span>
+<span class="font-phonetic-md text-label-md text-[#14545a] font-semibold italic" dir="ltr">No Supermercado</span>
+</div>
+<h4 class="font-label-lg text-label-lg text-[#14545a] font-bold">السوبرماركت والمشتريات</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">التسوق، حساب الأسعار، ومفردات الخضار واللحوم</p>
+</div>
+</div>
+<!-- DIA 4: Locked -->
+<div class="relative flex items-start gap-space-md opacity-70">
+<!-- Node Marker -->
+<div class="relative z-10 w-9 h-9 rounded-full bg-surface-container text-outline flex items-center justify-center shrink-0 mt-1 border border-surface-container-high">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+</div>
+<!-- Card Content -->
+<div class="flex-1 rounded-lg bg-surface-container/60 border border-surface-container-high/50 p-3.5">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">اليوم ٤ · مقفول</span>
+<span class="font-phonetic-md text-label-sm text-on-surface-variant/70 italic" dir="ltr">Metro e Transportes</span>
+</div>
+<h4 class="font-label-lg text-label-lg text-on-surface font-medium">المترو ووسائل المواصلات</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant/80 mt-0.5">شراء التذاكر، قراءة محطات قطار كاشكايش والترام</p>
+</div>
+</div>
+<!-- DIA 5: Locked -->
+<div class="relative flex items-start gap-space-md opacity-70">
+<!-- Node Marker -->
+<div class="relative z-10 w-9 h-9 rounded-full bg-surface-container text-outline flex items-center justify-center shrink-0 mt-1 border border-surface-container-high">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+</div>
+<!-- Card Content -->
+<div class="flex-1 rounded-lg bg-surface-container/60 border border-surface-container-high/50 p-3.5">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">اليوم ٥ · مقفول</span>
+<span class="font-phonetic-md text-label-sm text-on-surface-variant/70 italic" dir="ltr">Na Farmácia</span>
+</div>
+<h4 class="font-label-lg text-label-lg text-on-surface font-medium">الصيدلية والحالات الطارئة</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant/80 mt-0.5">وصف الأعراض الشائعة وطلب الأدوية المتاحة</p>
+</div>
+</div>
+<!-- DIA 6: Locked -->
+<div class="relative flex items-start gap-space-md opacity-70">
+<!-- Node Marker -->
+<div class="relative z-10 w-9 h-9 rounded-full bg-surface-container text-outline flex items-center justify-center shrink-0 mt-1 border border-surface-container-high">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+</div>
+<!-- Card Content -->
+<div class="flex-1 rounded-lg bg-surface-container/60 border border-surface-container-high/50 p-3.5">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">اليوم ٦ · مقفول</span>
+<span class="font-phonetic-md text-label-sm text-on-surface-variant/70 italic" dir="ltr">Pedir Direções</span>
+</div>
+<h4 class="font-label-lg text-label-lg text-on-surface font-medium">السؤال عن الطريق في أزقة ألفاما</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant/80 mt-0.5">اتجاهات السير: يمين، يسار، أمام، وقرب المعالم</p>
+</div>
+</div>
+<!-- DIA 7: Milestone / Realistic Story Assessment -->
+<div class="relative flex items-start gap-space-md mt-1">
+<!-- Milestone Special Node Marker (Coral Accent) -->
+<div class="relative z-10 w-9 h-9 rounded-full bg-[#F56D4E] text-white flex items-center justify-center shadow-md shadow-[#F56D4E]/30 shrink-0 mt-1">
+<span class="material-symbols-outlined text-[20px]">auto_stories</span>
+</div>
+<!-- Story Card (Warm Cream & Tactile Sticky Note Feel) -->
+<div class="flex-1 rounded-lg bg-[#fef2e1] border border-[#f2e7d6] p-4 shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between mb-2">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface-container-lowest text-[#14545a] font-label-sm text-label-sm font-semibold shadow-xs border border-surface-container-high">
+<span class="material-symbols-outlined text-[14px] text-[#14545a]">menu_book</span>
+              اليوم ٧ · قصة الأسبوع
+            </span>
+<span class="font-phonetic-md text-label-sm text-on-surface-variant italic" dir="ltr">O Primeiro Dia em Lisboa</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-[#14545a]">قصة تفاعلية: أول يوم متكامل في لشبونة</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 leading-relaxed">
+            محاكاة صوتية حقيقية غير مجزأة تدمج مواقف العمل، المقهى، السوبرماركت، والمترو في حوار واقعي مستمر.
+          </p>
+<!-- Sticky Note Badge Footnote -->
+<div class="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded bg-[#fee263] border border-[#e1c64a] text-[#4b3f00] shadow-xs">
+<span class="material-symbols-outlined text-[16px] text-[#6e5e00]">verified</span>
+<span class="font-label-sm text-label-sm font-semibold">اختبار تطبيقي لقياس الطلاقة والتلقائية</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Editorial Notebook Margin Footer Note -->
+<footer class="mt-space-xl pt-space-md flex items-center justify-between text-on-surface-variant/80 border-t border-surface-container-high/60"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px] text-[#14545a]">history_edu</span><span class="font-label-sm text-label-sm font-medium">دفتر دراسة البرتغالية الأوروبية · Langify</span></div><span class="font-phonetic-md text-label-sm text-on-surface-variant font-medium italic" dir="ltr">Página 12</span></footer>
+</div></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-background/95 backdrop-blur-xl border-t border-surface-container-high shadow-[0_-2px_12px_rgba(20,84,90,0.06)]" data-active-classes="text-[#14545a] font-semibold"><div class="flex justify-around items-center h-16 px-space-xs"><a aria-current="page" class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 transition-colors text-[#14545a] font-semibold" data-path="learning-path" href="#"><span class="material-symbols-outlined text-[24px]">explore</span><span class="font-label-sm text-label-sm mt-0.5 font-bold">المسار</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 text-on-surface-variant hover:text-[#14545a] transition-colors" data-path="review" href="#"><span class="material-symbols-outlined text-[24px]">stylus_note</span><span class="font-label-sm text-label-sm mt-0.5">المراجعة</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 text-on-surface-variant hover:text-[#14545a] transition-colors" data-path="library" href="#"><span class="material-symbols-outlined text-[24px]">local_library</span><span class="font-label-sm text-label-sm mt-0.5">المكتبة</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 text-on-surface-variant hover:text-[#14545a] transition-colors" data-path="profile" href="#"><span class="material-symbols-outlined text-[24px]">account_circle</span><span class="font-label-sm text-label-sm mt-0.5">أنا</span></a></div></nav>
+</body></html>
