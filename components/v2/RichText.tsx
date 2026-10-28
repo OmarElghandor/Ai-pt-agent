@@ -1,3 +1,4 @@
+import { directionRuns, splitLatinInArabic } from '@/lib/v2/bidi';
 import type { RtGroup, RtSegment } from '@/lib/v2/rt';
 
 const CHIP =
@@ -31,59 +32,121 @@ type Props = {
   tone?: 'default' | 'onDark' | 'display';
 };
 
-function segmentDir(lang: RtSegment['lang']): 'ltr' | 'rtl' {
-  return lang === 'tl' ? 'ltr' : 'rtl';
-}
-
-/** Consecutive same-direction segments stay one isolate, so an RTL page cannot reverse a Portuguese sentence. */
-function directionRuns(segments: RtSegment[]) {
-  const runs: { dir: 'ltr' | 'rtl'; segments: { seg: RtSegment; index: number }[] }[] = [];
-  segments.forEach((seg, index) => {
-    const dir = segmentDir(seg.lang);
-    const last = runs[runs.length - 1];
-    if (last && last.dir === dir) last.segments.push({ seg, index });
-    else runs.push({ dir, segments: [{ seg, index }] });
-  });
-  return runs;
-}
+const TL_FONT = 'font-[family-name:var(--font-v2-target)]';
+const AR_FONT = 'font-[family-name:var(--font-v2-arabic)]';
 
 export function RichText({ segments, className, tone = 'default' }: Props) {
   return (
     <span className={className}>
       {directionRuns(segments).map((run) => (
-        <span key={run.segments[0].index} dir={run.dir} style={{ unicodeBidi: 'isolate' }}>
+        <span
+          key={run.segments[0]!.index}
+          dir={run.dir}
+          style={{ unicodeBidi: 'isolate' }}
+        >
           {run.segments.map(({ seg, index }) => {
-            const vs = tone === 'display' && seg.lang === 'tl' && seg.text.trim().toLowerCase() === 'vs';
-            const groupClass =
-              tone === 'onDark' || !seg.group
-                ? ''
-                : tone === 'display'
-                  ? (DISPLAY_CLASS[seg.group] ?? GROUP_CLASS[seg.group])
-                  : GROUP_CLASS[seg.group];
-            const fontClass =
-              seg.lang === 'tl'
-                ? 'font-[family-name:var(--font-v2-target)]'
-                : 'font-[family-name:var(--font-v2-arabic)]';
+            if (seg.lang === 'eg' || seg.lang === 'ar') {
+              return (
+                <ArabicWithLatin
+                  key={`${index}-${seg.text.slice(0, 12)}`}
+                  seg={seg}
+                  tone={tone}
+                />
+              );
+            }
             return (
-              <span
+              <TlSpan
                 key={`${index}-${seg.text.slice(0, 12)}`}
-                className={[
-                  fontClass,
-                  groupClass,
-                  tone === 'onDark' ? 'text-white' : '',
-                  vs ? 'px-1 font-serif text-[0.7em] italic text-v2-ink-muted' : '',
-                  seg.bold ? 'font-semibold' : '',
-                  seg.wrong ? 'line-through opacity-70' : '',
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
-              >
-                {seg.text}
-              </span>
+                seg={seg}
+                tone={tone}
+              />
             );
           })}
         </span>
       ))}
     </span>
   );
+}
+
+function ArabicWithLatin({
+  seg,
+  tone,
+}: {
+  seg: RtSegment;
+  tone: NonNullable<Props['tone']>;
+}) {
+  const parts = splitLatinInArabic(seg.text);
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.latin ? (
+          <span
+            key={i}
+            dir="ltr"
+            style={{ unicodeBidi: 'isolate' }}
+            className={[
+              TL_FONT,
+              tone === 'onDark' ? 'text-white' : '',
+              seg.bold ? 'font-semibold' : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          >
+            {part.text}
+          </span>
+        ) : (
+          <span
+            key={i}
+            className={[
+              AR_FONT,
+              groupClass(seg.group, tone),
+              tone === 'onDark' ? 'text-white' : '',
+              seg.bold ? 'font-semibold' : '',
+              seg.wrong ? 'line-through opacity-70' : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          >
+            {part.text}
+          </span>
+        ),
+      )}
+    </>
+  );
+}
+
+function TlSpan({
+  seg,
+  tone,
+}: {
+  seg: RtSegment;
+  tone: NonNullable<Props['tone']>;
+}) {
+  const vs =
+    tone === 'display' && seg.lang === 'tl' && seg.text.trim().toLowerCase() === 'vs';
+  return (
+    <span
+      className={[
+        TL_FONT,
+        groupClass(seg.group, tone),
+        tone === 'onDark' ? 'text-white' : '',
+        vs ? 'px-1 font-serif text-[0.7em] italic text-v2-ink-muted' : '',
+        seg.bold ? 'font-semibold' : '',
+        seg.wrong ? 'line-through opacity-70' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
+      {seg.text}
+    </span>
+  );
+}
+
+function groupClass(
+  group: RtGroup | undefined,
+  tone: NonNullable<Props['tone']>,
+): string {
+  if (tone === 'onDark' || !group) return '';
+  if (tone === 'display') return DISPLAY_CLASS[group] ?? GROUP_CLASS[group];
+  return GROUP_CLASS[group];
 }

@@ -38,7 +38,7 @@ export function CaptionBar({
   return (
     <div
       className={[
-        'rounded-2xl border border-white/10 bg-v2-ink text-white shadow-lg',
+        'rounded-v2-card border border-white/10 bg-v2-primary text-white shadow-[var(--shadow-v2-soft)]',
         className,
       ]
         .filter(Boolean)
@@ -59,8 +59,12 @@ export function CaptionBar({
           )}
         </div>
 
-        <p dir="rtl" className="min-w-0 flex-1 text-end font-[family-name:var(--font-v2-arabic)] text-[13px] font-bold leading-snug text-v2-highlight-fill">
-          {tip?.length ? <RichText segments={tip} tone="onDark" /> : tipEg}
+        <p dir="rtl" className="min-w-0 flex-1 text-start font-[family-name:var(--font-v2-arabic)] text-[13px] font-bold leading-snug text-v2-highlight-fill">
+          {tip?.length ? (
+            <RichText segments={tip} tone="onDark" />
+          ) : tipEg ? (
+            <RichText segments={[{ text: tipEg, lang: 'eg' }]} tone="onDark" />
+          ) : null}
         </p>
 
         <SoundWaveGlyph />

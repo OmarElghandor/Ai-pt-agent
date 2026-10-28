@@ -9,7 +9,7 @@ export function PrimaryButton({ children, className, ...rest }: Props) {
     <button
       type="button"
       className={[
-        'inline-flex items-center justify-center rounded-v2-row bg-v2-ink px-4 py-2.5 font-[family-name:var(--font-v2-arabic)] text-base font-semibold text-white disabled:opacity-50',
+        'inline-flex min-h-11 items-center justify-center rounded-v2-chip bg-v2-action px-5 py-2.5 font-[family-name:var(--font-v2-arabic)] text-base font-semibold text-white shadow-[var(--shadow-v2-soft)] disabled:opacity-50',
         className,
       ]
         .filter(Boolean)

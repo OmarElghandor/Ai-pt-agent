@@ -554,7 +554,7 @@ export default function V2AdminPage() {
                     type="button"
                     disabled={!row.can_generate || anyBusy}
                     onClick={() => void generate(row.day)}
-                    className="rounded-v2-chip bg-v2-ink px-2 py-1 text-xs text-white disabled:opacity-40"
+                    className="rounded-v2-chip bg-v2-primary px-2 py-1 text-xs text-white disabled:opacity-40"
                   >
                     {rowBusy && busyKind === 'generate' ? 'Generating…' : 'Generate'}
                   </button>
@@ -757,7 +757,7 @@ export default function V2AdminPage() {
                 type="button"
                 disabled={anyBusy}
                 onClick={() => void saveItemEdit(preview.day, preview.version)}
-                className="rounded-v2-chip bg-v2-ink px-2 py-1 text-white disabled:opacity-40"
+                className="rounded-v2-chip bg-v2-primary px-2 py-1 text-white disabled:opacity-40"
               >
                 Save
               </button>

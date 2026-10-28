@@ -54,7 +54,7 @@ export function QuestionCard({
         : asRt(question.why_wrong_eg?.[picked] ?? null);
 
   return (
-    <div className="rounded-v2-card border border-v2-ink bg-v2-card p-3">
+    <div className="rounded-v2-card bg-v2-card p-4 shadow-[var(--shadow-v2-soft)]">
       {audioText ? (
         <div className="mb-2">
           <AudioButton text={audioText} lang="pt" label="اسمع" />

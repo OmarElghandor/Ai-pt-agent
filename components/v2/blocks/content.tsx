@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { SpeakerIcon } from '@/components/v2/AudioButton';
+import { AudioButton } from '@/components/v2/AudioButton';
+import { Icon } from '@/components/v2/Icon';
 import { RichText } from '@/components/v2/RichText';
 import { verbClass } from '@/lib/v2/content/conjugations/regular';
 import { parseFormId } from '@/lib/v2/content/conjugations/formId';
@@ -12,29 +13,20 @@ import { itemMeaning, itemTargetText } from '@/lib/v2/render/speechTarget';
 import { useBlockChrome } from './chrome';
 
 const ENDING_CLASS: Record<string, string> = {
-  ar: 'text-v2-verb-ar',
+  ar: 'text-v2-verb-ar-text',
   er: 'text-v2-verb-er',
-  ir: 'text-v2-verb-ir',
+  ir: 'text-v2-verb-ir-text',
 };
 
 export function MediaTile({ image, icon }: { image?: string; icon?: string }) {
   return (
     <div
-      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-v2-row bg-v2-rule text-v2-ink-muted"
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-v2-row bg-v2-paper-deep text-v2-ink-muted"
       aria-hidden
     >
-      {image || icon ? <PlaceholderIcon /> : null}
+      <Icon name={icon || 'image'} size={24} />
+      {image ? <span className="sr-only">{image}</span> : null}
     </div>
-  );
-}
-
-function PlaceholderIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" strokeWidth="1.6" />
-      <circle cx="9" cy="10" r="1.4" fill="currentColor" />
-      <path d="M7 16l3.2-3.2a1 1 0 011.4 0L17 17" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-    </svg>
   );
 }
 
@@ -61,19 +53,16 @@ export function VerbForm({
   const irregularWhole = form.irregular && !split && !coverTl;
   const showSplit = split && !coverTl;
   const body = irregularWhole ? (
-    <span dir="ltr" className="font-[family-name:var(--font-v2-target)] text-lg text-v2-verb-irregular">
+    <span dir="ltr" className="inline-flex items-center gap-0.5 font-[family-name:var(--font-v2-target)] text-lg text-v2-verb-irregular">
       <span className={coverClass}>{form.tl}</span>
-      <span aria-hidden> ⚡</span>
+      <Icon name="bolt" size={20} className="text-v2-verb-irregular" />
     </span>
   ) : showSplit ? (
-    <span dir="ltr" className="font-[family-name:var(--font-v2-target)] text-lg">
+    <span dir="ltr" className="inline-flex items-center gap-0.5 font-[family-name:var(--font-v2-target)] text-lg">
       <span className="text-v2-ink-muted">{form.stem}</span>
       <span className={[endingClass, coverClass].filter(Boolean).join(' ')}>{form.ending}</span>
       {form.irregular ? (
-        <span className="text-v2-verb-irregular" aria-hidden>
-          {' '}
-          ⚡
-        </span>
+        <Icon name="bolt" size={20} className="text-v2-verb-irregular" />
       ) : null}
     </span>
   ) : (
@@ -144,7 +133,7 @@ export function ContentLine({
   };
 
   const labelLine = label?.length ? (
-    <p dir="rtl" className="text-end font-[family-name:var(--font-v2-arabic)] text-[11px] font-bold text-v2-ink">
+    <p dir="rtl" className="text-start font-[family-name:var(--font-v2-arabic)] text-[11px] font-bold text-v2-ink">
       <RichText segments={label} />
     </p>
   ) : null;
@@ -171,7 +160,7 @@ export function ContentLine({
     <button
       type="button"
       dir="rtl"
-      className="mt-0.5 block w-full text-end font-[family-name:var(--font-v2-arabic)] text-[13px] leading-5 text-v2-ink-muted"
+      className="mt-0.5 block w-full text-start font-[family-name:var(--font-v2-arabic)] text-[13px] leading-5 text-v2-ink-muted"
       onClick={() => {
         if (hideAr) setPeek(true);
       }}
@@ -186,16 +175,7 @@ export function ContentLine({
     media?.image || media?.icon || (tl && onPlay) ? (
       <div className="mt-1 flex items-center gap-1.5">
         {media?.image || media?.icon ? <MediaTile image={media.image} icon={media.icon} /> : null}
-        {tl && onPlay ? (
-          <button
-            type="button"
-            aria-label="اسمع"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-v2-ink bg-v2-card text-v2-ink"
-            onClick={play}
-          >
-            <SpeakerIcon size={18} />
-          </button>
-        ) : null}
+        {tl && onPlay ? <AudioButton text={tl} lang="pt" label="اسمع" /> : null}
       </div>
     ) : null;
 
@@ -211,7 +191,7 @@ export function ContentLine({
   }
 
   return (
-    <div className="flex min-w-0 items-center gap-2" dir="ltr">
+    <div className="flex min-w-0 items-center gap-2">
       <div className="min-w-0 flex-1">
         {labelLine}
         {sentence}

@@ -52,10 +52,18 @@ If any other doc disagrees with this file, this file wins. Each line is a decisi
 - `cover` (the "غطّي" self-test) hides one of `meaning | tl | endings`.
 - Presets (block order per page type): phrases, compare, conjugation, pattern, dictionary, scene, story, free.
 
+- **(new 2026-10-24)** Lesson generation runs in resumable stages, as a background job:
+  1. **Outline:** item bank plus the page plan. This is the order contract: for each page, what it `introduces` and what it `assumes`, its purpose and its handoff.
+  2. **Pages:** generated in parallel, each one aware of the full outline, and assembled by outline index.
+  3. **Crafted questions.**
+  4. **Continuity pass:** regenerates only the flagged pages.
+
+  A page may never use an item before the page that introduces it. Generation is text only for now: `image_spec` is stored, but images and audio are deferred (audio plays on demand through `/api/tts`).
+
 ## 4. Page experience
 
-- **(new)** The visual reference for every content page is the **SER vs ESTAR** Stitch screen (`design/reference/01-grammar-page-guided-SER-ESTAR.png`). Content and chrome there are wrong (Spanish text), but the layout and components are the target. See `05-design-system.md`.
-- Guided pages autoplay: a navy caption bar pinned at the bottom shows one Egyptian sentence per step, with the tutor's voice, chapter segments, pause and speed. The current block gets a pale-yellow highlight. Parts not revealed yet are shown faint at 20% opacity, not hidden, so the learner always sees the whole poster. Playback stops only at `ask` steps. "الصفحة كلها" reveals everything at once.
+- **(changed 2026-10-27)** The look is **Warm Editorial** (Stitch export v5): cream paper, deep-teal titles and headers, coral pill actions, mustard tip cards, Newsreader + Noto Sans Arabic + Inter. The visual reference for every content page is `design/reference/01-content-page-possessives.png`, and `02-conjugation-endings.png` for verb pages. Guided behaviour still follows `prototypes/ser-estar.html`. The v4 navy look is archived in `design/archive-v4/`. See `05-design-system.md`.
+- Guided pages autoplay: a deep-teal caption bar pinned at the bottom shows one Egyptian sentence per step, with the tutor's voice, chapter segments, pause and speed. The current block gets a pale-yellow highlight. Parts not revealed yet are shown faint at 20% opacity, not hidden, so the learner always sees the whole poster. Playback stops only at `ask` steps. "الصفحة كلها" reveals everything at once.
 - Explore pages: the learner drives with controls (a person dial, verb swap chips). Each control has a short tip. Practice blocks unlock when all options of a control have been seen.
 - Few taps. Never one tap per line.
 
@@ -153,7 +161,6 @@ If any other doc disagrees with this file, this file wins. Each line is a decisi
 - Model: `gpt-image-2.5-flare-2026-09-08` through the edits endpoint (with references). Medium quality; high only for reference sheets. Every image gets a vision QA pass with Haiku. Budget: about $30–45 for 90 days.
 - No text inside generated images.
 - Audio: Azure TTS pt-PT, cached. Whether Azure pronunciation assessment supports pt-PT is still unknown; check before building scoring on it.
-- **(new)** Lesson **text** generation is staged and job-backed (`v2_jobs` + `npm run v2:worker`): outline → parallel pages (concurrency 6) ∥ questions → continuity pass → strict validate. Assets are **not** part of generate. `GENERATE_IMAGES` defaults to false; pages still store `image_spec` for later. TTS stays on-demand via `/api/tts` (optional warm script for published lessons). The prompts and step-by-step pipeline are in `08-lesson-generation-prompts.md`.
 
 ## 11. Open items
 

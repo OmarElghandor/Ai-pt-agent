@@ -4,6 +4,10 @@ Nine phases, all in the `ai-agent-talk` repo (folder `ai-pt-agent`). Run each ph
 
 Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md` (the tie-breaker) and `01-architecture.md`. Build v2 under `app/(v2)`, `app/api/v2`, `lib/v2`, `components/v2`. Don't change the old `/lessons` and `/chat` pages unless the task says so."
 
+> **Status (2026-10-27):** Phases 0–3 are done and pushed. Phase 3 shipped as a job DAG (brief → items → outline → pages/questions/micro/daily_use → critic → continuity → lang_check → assemble) on Kimi K3, about $0.28 per day. It uses the core items file `content/v2/plan/pt-PT.core-items.json`, pattern examples derived by code (`derived: true`), heard/said roles on phrases, question direction set by code (read_meaning · recall_tl · listen · writing), block-level critic reruns, lang_check patches (never regenerate) and a publish gate. Pipeline changes are frozen: change it only when the same issue shows up in 3+ days. Phase 4 is done (tests green after two stale Phase 3 tests were updated).
+>
+> **Design change (2026-10-27):** the look moved to **Warm Editorial** (Stitch export v5). Before Phase 5, run the "Migration from v4" steps at the end of `05-design-system.md` (a token, font and component swap), then build Phase 5 on the new references.
+>
 > **Status (2026-10-23):** Phases 0 and 1 are done. The conjugation seed is reviewed for ser, estar, ir, ter, dormir, falar, querer, poder, fazer, dizer, ver, sair, ficar and chegar (`verified: true`). The rule engine handles spelling changes (cheguei, fiquei, conheço, protejo) and computes `irregular` per form. Phases 2, 3 and 4 run in parallel, each on its own branch or worktree (`v2-phase2`, `v2-phase3`, `v2-phase4`), merged one at a time.
 
 > If Cursor already made a plan for "stateless grade/react endpoints with a shared secret", drop it. In the single-repo setup, the grader and the reactor are internal modules (Phase 6).
@@ -30,7 +34,7 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
 - A `V2_ENABLED` flag.
 
 **Done when**
-- `/v2-dev` matches the look of `design/reference/01-grammar-page-guided-SER-ESTAR.png` for the shared parts.
+- `/v2-dev` matches the look of `design/reference/01-content-page-possessives.png` for the shared parts (originally built against the v4 SER-ESTAR screen; see the migration in 05).
 - The mixed line «الجبنة = o queijo» renders in the right order.
 - No hex values appear outside the tokens file.
 - No horizontal scroll at 360px.
@@ -154,6 +158,12 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
 **Prompt**
 > Read docs/langify-v2/00-decisions.md §5–8 and the sections of 03 named in 07-build-plan Phase 4. Build the v2 progress models, lib/v2/answers (layered validation), POST /api/v2/answers as the only writer of progress, the question bank and session builder, and the cards endpoints. Write the unit tests listed under "Done when". Item ids and skills must match lib/v2/content types exactly (skills: listening | reading | speaking | writing). Import the types; don't redefine them.
 
+**Add-on after Phase 3 (2026-10-27)**
+- Items with `derived: true` (pattern examples) and recycle items never get their own card. Derived items still count as correct uses of their pattern and words.
+- Only items with `role: said` get speaking and writing questions. `heard` items get listening and reading only.
+- Use the generated question types as-is (read_meaning, recall_tl, listen, writing). Mechanical questions made by code follow the same direction rules: show the stimulus, and never show the answer in the prompt.
+- Store reports from the "report error" button in `v2_reports` ({item_id | question_id, day, note, user}). An item with 2+ reports gets hidden from new card mixes until it is reviewed in admin.
+
 ---
 
 ## Phase 5 · Cards UI
@@ -172,7 +182,7 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
 - An irregular `eu` form shows purple with ⚡.
 
 **Prompt**
-> Read docs/langify-v2/00-decisions.md §5 and 06-screens.md S5–S7. Match design/reference/08-decks-listing.png, 09-flashcard-front.png and 10-flashcard-back.png, with the corrections in 05 ("Things the designs got wrong"). Build /cards, /cards/deck/[id] and /cards/review against the Phase 4 endpoints.
+> Read docs/langify-v2/00-decisions.md §5 and 06-screens.md S5–S7. Match design/reference/08-decks-listing.png (Warm Editorial), 09-flashcard-front.png and 10-flashcard-back.png, with the corrections in 05 ("Things the designs got wrong"). Build /cards, /cards/deck/[id] and /cards/review against the Phase 4 endpoints.
 
 ---
 

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Falou · Guia de Conversação - No Café</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Editorial Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,600&amp;family=Noto+Naskh+Arabic:wght@400;500;600;700&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#14545A",
+          "primary-container": "#14545A",
+          "on-primary": "#ffffff",
+          "secondary": "#F56D4E",
+          "secondary-container": "#F56D4E",
+          "on-secondary": "#ffffff",
+          "tertiary": "#6e5e00",
+          "tertiary-container": "#F5D95B",
+          "tertiary-fixed": "#F5D95B",
+          "background": "#FFF8F2",
+          "surface": "#FFFFFF",
+          "surface-container": "#f8ecdb",
+          "surface-container-low": "#fef2e1",
+          "surface-container-high": "#f2e7d6",
+          "surface-container-highest": "#ece1d0",
+          "on-surface": "#201B11",
+          "on-surface-variant": "#596162",
+          "outline": "#70797A",
+          "outline-variant": "#D0D9DA",
+          "cream-paper": "#FFF8F2"
+        },
+        borderRadius: {
+          DEFAULT: "0.25rem",
+          lg: "0.5rem",
+          xl: "0.75rem",
+          full: "9999px"
+        },
+        fontFamily: {
+          arabic: ["'Noto Naskh Arabic'", "serif"],
+          "serif-book": ["Newsreader", "serif"],
+          display: ["Inter", "sans-serif"],
+          sans: ["Inter", "sans-serif"]
+        }
+      }
+    }
+  };
+</script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    /* Warm cream tactile editorial paper background */
+    .paper-texture {
+      background-color: #FFF8F2;
+      background-image: radial-gradient(#e7d7c6 0.75px, transparent 0.75px);
+      background-size: 14px 14px;
+    }
+    .book-card-shadow {
+      box-shadow: 0 1px 3px rgba(20, 84, 90, 0.05), 0 3px 8px rgba(32, 27, 17, 0.04);
+    }
+    .sticky-note-shadow {
+      box-shadow: 2px 3px 10px rgba(110, 94, 0, 0.1), -1px 2px 4px rgba(110, 94, 0, 0.04);
+    }
+    .cover-blur-scrim {
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    body {
+      min-height: max(884px, 100dvh);
+    }
+</style>
+</head>
+<body class="paper-texture text-on-surface font-arabic min-h-screen antialiased flex flex-col justify-between selection:bg-[#F56D4E]/20 selection:text-[#14545A]">
+<!-- Mobile Viewport Container -->
+<main class="w-full max-w-md mx-auto min-h-screen flex flex-col justify-between border-x border-[#D0D9DA]/60 bg-[#FFF8F2]/95 shadow-xl relative overflow-hidden">
+<!-- Editorial Book Header / Navigation Bar (Back-to-Main Pattern) -->
+<header class="pt-4 pb-3 px-4 border-b border-[#ece1d0] bg-[#FFF8F2]/95 sticky top-0 z-30 backdrop-blur-md">
+<div class="flex items-center justify-between gap-2 mb-2">
+<!-- Back Action -->
+<button aria-label="الرجوع للدروس" class="flex items-center justify-center size-9 rounded-lg hover:bg-[#f8ecdb] text-[#14545A] transition-colors border border-[#ece1d0] active:scale-95" type="button">
+<span class="material-symbols-outlined text-[20px] rtl:rotate-180">arrow_back</span>
+</button>
+<!-- Chapter & Title -->
+<div class="flex-1 text-center">
+<p class="font-sans text-[11px] font-semibold text-[#F56D4E] uppercase tracking-widest leading-none mb-1">Capítulo 1 · Lição 2</p>
+<h1 class="text-base font-bold text-[#14545A] leading-tight font-serif-book">NO CAFÉ <span class="font-normal text-on-surface-variant text-sm mx-1">·</span> في الكافيه</h1>
+</div>
+<!-- Quiz Me Button -->
+<button class="h-8 px-3 rounded-full border border-[#F56D4E]/30 bg-surface text-[#F56D4E] text-xs font-semibold hover:bg-[#F56D4E]/10 transition-all flex items-center gap-1 shadow-sm active:scale-95" type="button">
+<span>اختبرني</span>
+<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</button>
+</div>
+<!-- Mode Controls Bar -->
+<div class="flex items-center justify-between pt-2 gap-2">
+<!-- Active Cover State Tag (Deep Teal pill with white text) -->
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#14545A] text-white text-xs font-medium shadow-sm">
+<span class="material-symbols-outlined text-[14px]">visibility_off</span>
+<span>نمط «غطّي» مفعّل</span>
+</div>
+<!-- Segmented Selector: What to Cover -->
+<div class="inline-flex items-center p-0.5 rounded-lg bg-[#ece1d0]/70 border border-[#D0D9DA]/50 text-xs">
+<span class="text-on-surface-variant text-[11px] font-medium px-1.5 pl-0.5">تغطية:</span>
+<button class="px-2.5 py-1 rounded-md bg-[#14545A] text-white font-bold shadow-sm transition-all text-xs" type="button">
+            العربي
+          </button>
+<button class="px-2.5 py-1 rounded-md text-[#596162] hover:text-[#14545A] transition-all text-xs" type="button">
+            البرتغالي
+          </button>
+</div>
+</div>
+</header>
+<!-- Page Body -->
+<div class="px-4 py-3 flex-1 flex flex-col justify-start">
+<!-- Editorial Page Stamp / Subhead -->
+<div class="flex items-center justify-between mb-3 border-b border-dashed border-[#D0D9DA] pb-1.5">
+<div class="flex items-center gap-1.5">
+<span class="size-2 rounded-full bg-[#F56D4E]"></span>
+<h2 class="font-display tracking-wide uppercase text-sm font-bold text-[#14545A]">Frases Essenciais <span class="font-normal font-arabic text-on-surface-variant text-xs">(العبارات الأساسية)</span></h2>
+</div>
+<span class="text-[11px] font-sans text-on-surface-variant tracking-tighter">الصفحة ٢ · الفصل الأول</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3 flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-[#F56D4E]">touch_app</span>
+<span>المعنى العربي مغطى للتدريب؛ اضغط على البطاقة لإظهاره.</span>
+</p>
+<!-- 2-Column Grid of 6 Printed Cards -->
+<div class="grid grid-cols-2 gap-2.5 mb-4">
+<!-- CARD 1: Bom dia! (Covered) -->
+<article class="relative flex flex-col justify-between p-3 rounded-lg bg-surface border border-[#D0D9DA]/70 book-card-shadow min-h-[114px] group transition-transform active:scale-[0.98]">
+<div class="flex items-start justify-between gap-1 mb-1.5">
+<span class="material-symbols-outlined text-[18px] text-[#F5D95B]" style="color: #bfa11a;" title="Greeting">wb_sunny</span>
+<button aria-label="استمع للنطق" class="text-on-surface-variant hover:text-[#F56D4E] p-0.5 rounded-full hover:bg-[#fef2e1] transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+</button>
+</div>
+<div class="dir-ltr text-left">
+<p class="font-serif-book font-semibold text-[17px] leading-tight text-[#14545A]">Bom dia!</p>
+<p class="font-sans text-[11px] text-on-surface-variant/80 italic">/bõ ˈdi.ɐ/</p>
+</div>
+<!-- Covered Arabic Overlay Scrim -->
+<div class="mt-2 relative rounded overflow-hidden cursor-pointer">
+<p class="text-xs text-center font-medium text-transparent select-none py-1">صباح الخير!</p>
+<div class="absolute inset-0 bg-[#fef2e1]/80 cover-blur-scrim border border-dashed border-[#D0D9DA] rounded flex items-center justify-center gap-1 px-1">
+<span class="material-symbols-outlined text-[13px] text-[#14545A]">visibility</span>
+<span class="text-[11px] font-semibold text-[#14545A]">اضغط عشان تشوف</span>
+</div>
+</div>
+</article>
+<!-- CARD 2: Queria um café, por favor (Covered) -->
+<article class="relative flex flex-col justify-between p-3 rounded-lg bg-surface border border-[#D0D9DA]/70 book-card-shadow min-h-[114px] group transition-transform active:scale-[0.98]">
+<div class="flex items-start justify-between gap-1 mb-1.5">
+<span class="material-symbols-outlined text-[18px]" style="color: #F56D4E;" title="Coffee order">coffee</span>
+<button aria-label="استمع للنطق" class="text-on-surface-variant hover:text-[#F56D4E] p-0.5 rounded-full hover:bg-[#fef2e1] transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+</button>
+</div>
+<div class="dir-ltr text-left">
+<p class="font-serif-book font-semibold text-[15px] leading-snug text-[#14545A]">Queria um café...</p>
+<p class="font-sans text-[10px] text-on-surface-variant/80 italic truncate">por favor</p>
+</div>
+<!-- Covered Arabic Overlay Scrim -->
+<div class="mt-2 relative rounded overflow-hidden cursor-pointer">
+<p class="text-xs text-center font-medium text-transparent select-none py-1">أريد قهوة، من فضلك</p>
+<div class="absolute inset-0 bg-[#fef2e1]/80 cover-blur-scrim border border-dashed border-[#D0D9DA] rounded flex items-center justify-center gap-1 px-1">
+<span class="material-symbols-outlined text-[13px] text-[#14545A]">visibility</span>
+<span class="text-[11px] font-semibold text-[#14545A]">اضغط عشان تشوف</span>
+</div>
+</div>
+</article>
+<!-- CARD 3: Uma meia de leite (REVEALED STATE with coral accent badge) -->
+<article class="relative flex flex-col justify-between p-3 rounded-lg bg-surface border-2 border-[#F56D4E] book-card-shadow min-h-[114px] shadow-sm">
+<!-- Coral Accent Badge -->
+<div class="absolute -top-2 left-2 bg-[#F56D4E] text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-0.5 shadow-sm">
+<span class="material-symbols-outlined text-[10px]" style="font-variation-settings: 'FILL' 1;">check</span>
+<span>مكشوف</span>
+</div>
+<div class="flex items-start justify-between gap-1 mb-1.5">
+<span class="material-symbols-outlined text-[18px] text-[#F56D4E]" title="Milk coffee">local_cafe</span>
+<button aria-label="استمع للنطق" class="text-[#F56D4E] hover:text-[#14545A] p-0.5 rounded-full hover:bg-[#F56D4E]/10 transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+</button>
+</div>
+<div class="dir-ltr text-left">
+<p class="font-serif-book font-bold text-[15px] leading-snug text-[#14545A]">Uma meia de leite</p>
+<p class="font-sans text-[10px] text-[#F56D4E] font-medium italic">café c/ leite</p>
+</div>
+<!-- REVEALED Arabic Meaning -->
+<div class="mt-2 rounded bg-[#fef2e1] border border-[#F56D4E]/30 py-1 px-1.5 text-center flex items-center justify-center gap-1">
+<span class="text-xs font-bold text-[#14545A]">قهوة بنص حليب</span>
+<span class="material-symbols-outlined text-[13px] text-[#F56D4E]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</article>
+<!-- CARD 4: E um pastel de nata (Covered) -->
+<article class="relative flex flex-col justify-between p-3 rounded-lg bg-surface border border-[#D0D9DA]/70 book-card-shadow min-h-[114px] group transition-transform active:scale-[0.98]">
+<div class="flex items-start justify-between gap-1 mb-1.5">
+<span class="material-symbols-outlined text-[18px]" style="color: #bfa11a;" title="Pastry">bakery_dining</span>
+<button aria-label="استمع للنطق" class="text-on-surface-variant hover:text-[#F56D4E] p-0.5 rounded-full hover:bg-[#fef2e1] transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+</button>
+</div>
+<div class="dir-ltr text-left">
+<p class="font-serif-book font-semibold text-[15px] leading-snug text-[#14545A]">E um pastel de nata</p>
+<p class="font-sans text-[10px] text-on-surface-variant/80 italic">/pɐʃˈtɛɫ dɨ ˈnatɐ/</p>
+</div>
+<!-- Covered Arabic Overlay Scrim -->
+<div class="mt-2 relative rounded overflow-hidden cursor-pointer">
+<p class="text-xs text-center font-medium text-transparent select-none py-1">وتارت كاسترد</p>
+<div class="absolute inset-0 bg-[#fef2e1]/80 cover-blur-scrim border border-dashed border-[#D0D9DA] rounded flex items-center justify-center gap-1 px-1">
+<span class="material-symbols-outlined text-[13px] text-[#14545A]">visibility</span>
+<span class="text-[11px] font-semibold text-[#14545A]">اضغط عشان تشوف</span>
+</div>
+</div>
+</article>
+<!-- CARD 5: Quanto é? (Covered) -->
+<article class="relative flex flex-col justify-between p-3 rounded-lg bg-surface border border-[#D0D9DA]/70 book-card-shadow min-h-[114px] group transition-transform active:scale-[0.98]">
+<div class="flex items-start justify-between gap-1 mb-1.5">
+<span class="material-symbols-outlined text-[18px]" style="color: #F56D4E;" title="Price">payments</span>
+<button aria-label="استمع للنطق" class="text-on-surface-variant hover:text-[#F56D4E] p-0.5 rounded-full hover:bg-[#fef2e1] transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+</button>
+</div>
+<div class="dir-ltr text-left">
+<p class="font-serif-book font-semibold text-[17px] leading-tight text-[#14545A]">Quanto é?</p>
+<p class="font-sans text-[11px] text-on-surface-variant/80 italic">/ˈkwɐ̃.tu ɛ/</p>
+</div>
+<!-- Covered Arabic Overlay Scrim -->
+<div class="mt-2 relative rounded overflow-hidden cursor-pointer">
+<p class="text-xs text-center font-medium text-transparent select-none py-1">كم السعر؟ / الحساب كم؟</p>
+<div class="absolute inset-0 bg-[#fef2e1]/80 cover-blur-scrim border border-dashed border-[#D0D9DA] rounded flex items-center justify-center gap-1 px-1">
+<span class="material-symbols-outlined text-[13px] text-[#14545A]">visibility</span>
+<span class="text-[11px] font-semibold text-[#14545A]">اضغط عشان تشوف</span>
+</div>
+</div>
+</article>
+<!-- CARD 6: Obrigado! (Covered) -->
+<article class="relative flex flex-col justify-between p-3 rounded-lg bg-surface border border-[#D0D9DA]/70 book-card-shadow min-h-[114px] group transition-transform active:scale-[0.98]">
+<div class="flex items-start justify-between gap-1 mb-1.5">
+<span class="material-symbols-outlined text-[18px]" style="color: #F56D4E;" title="Gratitude">sentiment_satisfied</span>
+<button aria-label="استمع للنطق" class="text-on-surface-variant hover:text-[#F56D4E] p-0.5 rounded-full hover:bg-[#fef2e1] transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+</button>
+</div>
+<div class="dir-ltr text-left">
+<p class="font-serif-book font-semibold text-[17px] leading-tight text-[#14545A]">Obrigado!</p>
+<p class="font-sans text-[11px] text-on-surface-variant/80 italic">مؤنث: Obrigada</p>
+</div>
+<!-- Covered Arabic Overlay Scrim -->
+<div class="mt-2 relative rounded overflow-hidden cursor-pointer">
+<p class="text-xs text-center font-medium text-transparent select-none py-1">شكراً لك!</p>
+<div class="absolute inset-0 bg-[#fef2e1]/80 cover-blur-scrim border border-dashed border-[#D0D9DA] rounded flex items-center justify-center gap-1 px-1">
+<span class="material-symbols-outlined text-[13px] text-[#14545A]">visibility</span>
+<span class="text-[11px] font-semibold text-[#14545A]">اضغط عشان تشوف</span>
+</div>
+</div>
+</article>
+</div>
+<!-- Tactile Yellow Sticky Notebook Tip (Golden Yellow #F5D95B accent) -->
+<section class="relative bg-[#F5D95B]/30 border-l-4 border-l-[#c4aa30] border-t border-r border-b border-[#F5D95B]/50 rounded-lg p-3 my-1 sticky-note-shadow">
+<div class="flex items-start gap-2">
+<span class="text-lg leading-none select-none">💡</span>
+<div class="flex-1">
+<p class="font-sans font-bold text-xs text-[#221b00] mb-0.5">ملاحظة القهوة في البرتغال:</p>
+<p class="text-xs text-[#534600] leading-relaxed">
+              في البرتغال، لما تطلب <span class="font-serif-book font-semibold dir-ltr inline-block text-[#14545A]">um café</span> بيقصدوا بيه دائماً إسبريسو صغير ومركز! لو عايز قهوة بالحليب اطلب <span class="font-serif-book font-semibold dir-ltr inline-block text-[#14545A]">uma meia de leite</span> أو في كوب زجاجي طويل <span class="font-serif-book font-semibold dir-ltr inline-block text-[#14545A]">um galão</span>.
+            </p>
+</div>
+</div>
+</section>
+</div>
+<!-- Book Page Bottom Navigation & Printer Stamp -->
+<footer class="p-3 bg-[#FFF8F2] border-t border-[#ece1d0] flex flex-col gap-2">
+<!-- Previous (Coral #F56D4E) / Counter / Next (Deep Teal #14545A) Controls -->
+<div class="flex items-center justify-between">
+<!-- Previous Button (Coral #F56D4E) -->
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#F56D4E]/40 bg-surface text-[#F56D4E] font-semibold text-xs hover:bg-[#F56D4E]/10 active:scale-95 transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px] rtl:rotate-180">arrow_forward</span>
+<span>السابق</span>
+</button>
+<div class="flex flex-col items-center">
+<span class="font-sans text-xs font-bold text-[#14545A] tracking-widest">٢ / ٦</span>
+<span class="text-[10px] text-on-surface-variant">الصفحة ٢ من ٦</span>
+</div>
+<!-- Next Button (Deep Teal #14545A) -->
+<button class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#14545A] text-white font-semibold text-xs hover:bg-[#14545A]/90 shadow-sm active:scale-95 transition-all" type="button">
+<span>التالي</span>
+<span class="material-symbols-outlined text-[16px] rtl:rotate-180">arrow_back</span>
+</button>
+</div>
+<!-- Fine-line Publisher Watermark -->
+<div class="text-center pt-1 border-t border-[#D0D9DA]/40 flex items-center justify-center gap-2 text-[10px] text-on-surface-variant/70 font-sans tracking-wide">
+<span>FALOU</span>
+<span>•</span>
+<span>GUIA DE CONVERSAÇÃO</span>
+<span>•</span>
+<span>EDIÇÃO PORTUGAL</span>
+</div>
+</footer>
+</main>
+<!-- Interactive Reveal Micro-script -->
+<script>
+    document.querySelectorAll('.cover-blur-scrim').forEach(scrim => {
+      scrim.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const parent = this.parentElement;
+        const hiddenText = parent.querySelector('p');
+        
+        // Remove scrim overlay with smooth fade
+        this.style.transition = 'opacity 0.25s ease-out';
+        this.style.opacity = '0';
+        setTimeout(() => {
+          this.remove();
+          hiddenText.classList.remove('text-transparent', 'select-none');
+          hiddenText.classList.add('text-[#14545A]', 'font-bold', 'bg-[#fef2e1]', 'border', 'border-[#D0D9DA]', 'rounded');
+        }, 250);
+      });
+    });
+</script>
+</body></html>

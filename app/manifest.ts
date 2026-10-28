@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'تعلّم البرتغالي الأوروبي مع مواقف الشارع',
     start_url: '/path',
     display: 'standalone',
-    background_color: '#FBF7EE',
-    theme_color: '#12235A',
+    background_color: '#FFF8F2',
+    theme_color: '#14545A',
     lang: 'ar',
     dir: 'rtl',
     icons: [

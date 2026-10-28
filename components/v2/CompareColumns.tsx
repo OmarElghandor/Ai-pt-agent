@@ -13,12 +13,12 @@ const COLS: Record<1 | 2 | 3, string> = {
   3: 'grid-cols-3',
 };
 
-/** Equal columns that stay side by side down to 360px (8px gap). */
+/** Equal columns that stay side by side down to 360px (12px gap, top-aligned). */
 export function CompareColumns({ children, className, columns = 2 }: Props) {
   return (
     <div
       className={[
-        'grid gap-2',
+        'grid items-start gap-3',
         COLS[columns],
         className,
       ]

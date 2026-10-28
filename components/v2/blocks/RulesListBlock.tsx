@@ -11,7 +11,7 @@ export function RulesListBlock({ block }: { block: Extract<Block, { type: 'rules
   return (
     <ol
       data-target={block.id}
-      className={['space-y-2 rounded-v2-card border border-v2-ink bg-v2-card p-3', partClass(state)].join(' ')}
+      className={['space-y-2 rounded-v2-card bg-v2-card p-4 shadow-[var(--shadow-v2-soft)]', partClass(state)].join(' ')}
     >
       {block.items.map((item, index) => (
         <li key={index} className="flex gap-2 text-sm">

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#fff8f2;color:#201b11;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "background": "#fff8f2", "surface-bright": "#fff8f2", "on-primary": "#ffffff", "tertiary-container": "#c4aa30", "tertiary": "#6e5e00", "on-secondary-container": "#6b1100", "on-tertiary-fixed-variant": "#534600", "on-secondary-fixed-variant": "#881f06", "error": "#ba1a1a", "secondary-fixed-dim": "#ffb4a3", "teal-700": "#1E6670", "text": "#242424", "canvas": "#EEF2F2", "error-container": "#ffdad6", "on-surface-variant": "#404849", "inverse-primary": "#97d0d7", "on-tertiary-fixed": "#221b00", "on-tertiary-container": "#4b3f00", "on-primary-fixed-variant": "#0a4f54", "surface-dim": "#e4d9c8", "on-error": "#ffffff", "secondary": "#a9361d", "on-secondary-fixed": "#3d0600", "secondary-container": "#fe7354", "on-background": "#201b11", "inverse-surface": "#363024", "on-tertiary": "#ffffff", "tertiary-fixed-dim": "#e1c64a", "secondary-fixed": "#ffdad2", "on-primary-container": "#8dc6cd", "on-primary-fixed": "#002023", "on-secondary": "#ffffff", "primary": "#003c41", "surface-container": "#f8ecdb", "muted": "#8C8C86", "on-error-container": "#93000a", "surface-variant": "#ece1d0", "primary-container": "#14545a", "on-surface": "#201b11", "surface-container-high": "#f2e7d6", "tertiary-fixed": "#fee263", "surface": "#FFFFFF", "inverse-on-surface": "#fbefde", "surface-container-highest": "#ece1d0", "surface-container-lowest": "#ffffff", "primary-fixed": "#b2edf3", "surface-container-low": "#fef2e1", "outline-variant": "#bfc8c9", "primary-fixed-dim": "#97d0d7", "surface-tint": "#2c676d", "outline": "#70797a" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-md": "16px", "margin": "24px", "space-xs": "4px", "space-lg": "24px", "space-sm": "8px", "gutter": "16px", "space-xl": "32px" }, fontFamily: { "body-sm": ["Inter"], "body-md": ["Inter"], "body-lg": ["Inter"], "label-md": ["Inter"], "headline-lg": ["Newsreader"], "headline-md": ["Newsreader"], "label-sm": ["Inter"], "headline-sm": ["Newsreader"], "label-lg": ["Inter"] }, fontSize: { "body-sm": ["12px", { lineHeight: "16px", fontWeight: "400" }], "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }], "body-lg": ["15px", { lineHeight: "22px", fontWeight: "400" }], "label-md": ["12px", { lineHeight: "16px", fontWeight: "500" }], "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }], "headline-md": ["24px", { lineHeight: "32px", fontWeight: "600" }], "label-sm": ["10px", { lineHeight: "14px", fontWeight: "500" }], "headline-sm": ["18px", { lineHeight: "24px", fontWeight: "600" }], "label-lg": ["14px", { lineHeight: "18px", fontWeight: "600" }] } } } };</script></head><body class="bg-background font-body-md text-body-md text-on-surface min-h-screen flex flex-col antialiased selection:bg-secondary-fixed selection:text-on-secondary-fixed"><header class="fixed top-0 w-full z-50 bg-background/85 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.03)]"><div class="h-16 px-margin flex items-center justify-between"><div class="flex items-center gap-space-sm"><button aria-label="Voltar" class="w-11 h-11 -ml-2 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container active:scale-95 transition-all" onclick="history.back()"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button><h1 class="font-headline-sm text-headline-sm text-primary tracking-tight truncate max-w-[200px]">Interactive Practice Session</h1></div><div class="flex items-center gap-space-xs"><button aria-label="Ajuda ou Dica" class="w-11 h-11 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all"><span class="material-symbols-outlined text-[22px]">lightbulb</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 w-full pt-16 pb-safe px-margin bg-background"><div class="flex flex-col w-full pb-24 text-on-surface">
+<!-- Top Meta / Sub-header bar -->
+<div class="flex items-center justify-between py-space-sm mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">translate</span>
+        المستوى A1 · حوار تفاعلي
+      </span>
+</div>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary text-on-secondary shadow-sm active:scale-95 transition-transform font-label-md text-label-md">
+<span class="material-symbols-outlined text-[16px]">quiz</span>
+<span>أسئلة على القصة</span>
+</button>
+</div>
+<!-- Story Quick Info Badges -->
+<div class="flex items-center gap-space-xs overflow-x-auto pb-space-xs mb-space-md text-on-surface-variant text-label-sm font-label-sm">
+<div class="flex items-center gap-1 bg-surface-container-high px-2.5 py-1 rounded-full whitespace-nowrap">
+<span class="material-symbols-outlined text-[14px] text-secondary">location_on</span>
+<span>لشبونة، البرتغال</span>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-high px-2.5 py-1 rounded-full whitespace-nowrap">
+<span class="material-symbols-outlined text-[14px] text-tertiary">schedule</span>
+<span>٣ دقائق قراءة</span>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-high px-2.5 py-1 rounded-full whitespace-nowrap">
+<span class="material-symbols-outlined text-[14px] text-primary">record_voice_over</span>
+<span>البرتغالية الأوروبية (PT)</span>
+</div>
+</div>
+<!-- Comic Panel Card with Stepper -->
+<div class="relative overflow-hidden rounded-xl bg-surface shadow-md mb-space-lg">
+<!-- Panel Header Navigation -->
+<div class="flex items-center justify-between px-space-md py-space-sm bg-surface-container-low text-on-surface font-label-md text-label-md">
+<button class="w-8 h-8 rounded-full flex items-center justify-center bg-surface text-primary shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+<div class="text-center font-label-md text-label-md text-primary font-semibold">
+        لوحة ٢ / ٤ · عند محطة الترام (Paragem)
+      </div>
+<button class="w-8 h-8 rounded-full flex items-center justify-center bg-surface text-primary shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+</div>
+<!-- Comic Illustration -->
+<div class="relative w-full aspect-[16/10] bg-surface-container">
+<img alt="Yassin in Lisbon standing by vintage yellow tram 28" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1WzJDBLJlr3on1G76FgyCAd8PR5cDziuW8-VnCXKpgogtytFlVckUp7FOsmX-2rR5Es8Wad6lbkY2PQU8mbhzeTGXRbVB3T7CFqfXNzVBzy846lxCKvEtcH-VWpuVnzKt1Yo4gAZPl_j7IBBQDePWXwjHSHIpmPAIK5epgUGhs4bkSl6NQJYV6vKq481DsklFLAjmOAVb2_ncbmz8PDYwuOV4aCxFyg1df8b6Wz2cL7spV5I7-SbipoKkw"/>
+<!-- Sound FX Overlay / Badge -->
+<div class="absolute top-3 left-3 bg-secondary-container/90 text-on-secondary-container px-2.5 py-0.5 rounded-full font-headline-sm text-headline-sm italic shadow-sm tracking-wide">
+        CLANG!
+      </div>
+<div class="absolute bottom-3 right-3 bg-surface/90 backdrop-blur-md px-2.5 py-1 rounded-lg text-primary font-label-sm text-label-sm shadow-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">zoom_in</span>
+        انقر للتكبير
+      </div>
+</div>
+</div>
+<!-- Synchronized Audio Dialogue Section -->
+<div class="flex items-center justify-between mb-space-sm">
+<h2 class="font-headline-sm text-headline-sm text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">graphic_eq</span>
+      نص المحادثة المتزامن
+    </h2>
+<span class="text-label-sm font-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full">
+      مزامنة صوتية حية
+    </span>
+</div>
+<div class="flex flex-col gap-space-md mb-space-lg">
+<!-- 1. Narration Card -->
+<div class="bg-surface rounded-xl p-space-md shadow-sm transition-all">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-sm text-label-sm bg-surface-container px-2 py-0.5 rounded-full text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">menu_book</span>
+          سرد الموقف
+        </span>
+<button aria-label="تشغيل السطر" class="w-8 h-8 rounded-full flex items-center justify-center bg-surface-container-low text-primary active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+</button>
+</div>
+<p class="font-headline-sm text-headline-sm text-primary leading-relaxed mb-1.5" dir="ltr">
+        «O eléctrico 28 chega à paragem com um som metálico característico.»
+      </p>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+        الترام ٢٨ واصل المحطة بصوته المعدني المميز والرنان.
+      </p>
+</div>
+<!-- 2. Active Speaker Card (Yassin) - Highlighted -->
+<div class="relative bg-surface-container-low rounded-xl p-space-md shadow-md transition-all">
+<!-- Glow & Active Indicator -->
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[16px]">person</span>
+</div>
+<span class="font-label-md text-label-md text-primary font-semibold flex items-center gap-1">
+            ياسين
+            <span class="inline-block w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="text-label-sm font-label-sm text-secondary font-normal">شغال دلوقتي...</span>
+</span>
+</div>
+<div class="flex items-center gap-1">
+<button aria-label="إعادة السطر" class="w-8 h-8 rounded-full flex items-center justify-center bg-primary text-on-primary shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[18px]">replay</span>
+</button>
+</div>
+</div>
+<p class="font-headline-sm text-headline-sm text-primary leading-relaxed mb-2" dir="ltr">
+        «Bom dia! Este eléctrico vai para o <span class="text-secondary underline decoration-dotted decoration-2 underline-offset-4 cursor-pointer">Chiado</span>?», pergunta o Yassin.
+      </p>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed mb-3">
+        «صباح الخير! هو الترام ده رايح الشيادو؟»، بيسأل ياسين وهو بيجهز تذكرته.
+      </p>
+<!-- Cultural & Vocabulary Note Card -->
+<div class="bg-surface rounded-lg p-2.5 flex items-start gap-2 shadow-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary text-[18px] shrink-0 mt-0.5">info</span>
+<div class="font-body-sm text-body-sm">
+<span class="font-semibold text-primary">حي Chiado:</span> أحد أشهر وأعرق أحياء قلب العاصمة لشبونة، مليان مقاهي ومكتبات تاريخية.
+        </div>
+</div>
+</div>
+<!-- 3. Driver Reply Card -->
+<div class="bg-surface rounded-xl p-space-md shadow-sm transition-all">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[16px]">tram</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface font-medium">
+            السائق · <span class="font-headline-sm text-headline-sm text-[13px] text-on-surface-variant">O guarda-freio</span>
+</span>
+</div>
+<button aria-label="تشغيل السطر" class="w-8 h-8 rounded-full flex items-center justify-center bg-surface-container-low text-primary active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+</button>
+</div>
+<p class="font-headline-sm text-headline-sm text-primary leading-relaxed mb-1.5" dir="ltr">
+        «Sim, faz favor de entrar! Tem bilhete ou passe?», responde o guarda-freio.
+      </p>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+        «أيوة، اتفضل اركب! معاك تذكرة ولا كارت نقل؟»، بيرد السواق بابتسامة ترحيبية.
+      </p>
+</div>
+<!-- 4. Yassin Follow-up Card -->
+<div class="bg-surface rounded-xl p-space-md shadow-sm transition-all">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[16px]">person</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface font-medium">ياسين</span>
+</div>
+<button aria-label="تشغيل السطر" class="w-8 h-8 rounded-full flex items-center justify-center bg-surface-container-low text-primary active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+</button>
+</div>
+<p class="font-headline-sm text-headline-sm text-primary leading-relaxed mb-1.5" dir="ltr">
+        O Yassin tira a moeda do bolso e sorri: «Queria um bilhete, por favor».
+      </p>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+        ياسين بيطلع الفكة من جيبه ويبتسم: «عايز تذكرة بعد إذنك لو سمحت».
+      </p>
+</div>
+</div>
+<!-- Traveler Tip Box (Warm Yellow Tint) -->
+<div class="bg-[#FFF3CD] text-[#534600] rounded-xl p-space-md shadow-sm mb-space-lg flex gap-3 items-start">
+<div class="w-9 h-9 rounded-full bg-[#fee263] flex items-center justify-center shrink-0 text-[#4b3f00] shadow-sm">
+<span class="material-symbols-outlined text-[20px]">lightbulb</span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="font-label-lg text-label-lg text-[#221b00] font-bold">
+        ملاحظة سريعة للمسافر في البرتغال:
+      </div>
+<p class="font-body-md text-body-md leading-relaxed text-[#4b3f00]">
+        في المعاملات اليومية بالبرتغال، الأفضل دايماً استخدام صيغة الماضي الناقص <span class="font-bold underline decoration-1 text-[#221b00]">«Queria... por favor»</span> لما تطلب قهوة أو تذكرة، لأنها بتكون ألطف وفيها احترام وكياسة أكتر بكتير من «Quero».
+      </p>
+</div>
+</div>
+<!-- Persistent Bottom Audio Playback Controller -->
+<div class="fixed bottom-3 left-4 right-4 z-40 bg-surface/95 backdrop-blur-xl rounded-2xl shadow-[0_10px_30px_rgba(0,60,65,0.18)] p-3">
+<!-- Progress bar & Timestamps -->
+<div class="flex items-center gap-2 mb-2 font-label-sm text-label-sm text-on-surface-variant">
+<span>00:14</span>
+<div class="flex-1 h-1.5 bg-surface-container-highest rounded-full overflow-hidden relative cursor-pointer">
+<div class="h-full bg-primary rounded-full" style="width: 44%"></div>
+</div>
+<span>00:32</span>
+</div>
+<!-- Audio Action Controls -->
+<div class="flex items-center justify-between">
+<!-- Speed selector toggle -->
+<button class="px-2.5 py-1 rounded-full bg-surface-container text-primary font-label-sm text-label-sm flex items-center gap-1 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[15px]">speed</span>
+<span>0.75x هادي</span>
+</button>
+<!-- Center Playback Buttons -->
+<div class="flex items-center gap-3">
+<button aria-label="تأخير ١٠ ثواني" class="w-9 h-9 rounded-full flex items-center justify-center text-primary hover:bg-surface-container active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[22px]">replay_10</span>
+</button>
+<button aria-label="تشغيل أو إيقاف" class="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-md active:scale-95 transition-transform" id="audio-play-btn">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">pause</span>
+</button>
+<button aria-label="تقديم ١٠ ثواني" class="w-9 h-9 rounded-full flex items-center justify-center text-primary hover:bg-surface-container active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[22px]">forward_10</span>
+</button>
+</div>
+<!-- Quick note/bookmark trigger -->
+<button aria-label="الملاحظات والتسجيل" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[20px]">sticky_note_2</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+  // Simple interaction for play/pause state
+  const playBtn = document.getElementById('audio-play-btn');
+  if (playBtn) {
+    let isPlaying = true;
+    playBtn.addEventListener('click', () => {
+      isPlaying = !isPlaying;
+      const icon = playBtn.querySelector('.material-symbols-outlined');
+      if (icon) {
+        icon.textContent = isPlaying ? 'pause' : 'play_arrow';
+      }
+    });
+  }
+</script></main></body></html>

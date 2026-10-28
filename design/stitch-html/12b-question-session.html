@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<html dir="ltr" lang="pt" style=""><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400;1,6..72,600&amp;family=Noto+Sans+Arabic:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "on-error": "#ffffff",
+          "on-background": "#201b11",
+          "primary-fixed-dim": "#97d0d7",
+          "surface": "#FFFFFF",
+          "primary": "#003c41",
+          "on-tertiary-fixed-variant": "#534600",
+          "surface-tint": "#2c676d",
+          "surface-container-high": "#f2e7d6",
+          "on-tertiary-container": "#4b3f00",
+          "inverse-surface": "#363024",
+          "muted": "#8C8C86",
+          "inverse-on-surface": "#fbefde",
+          "on-tertiary-fixed": "#221b00",
+          "on-primary-container": "#8dc6cd",
+          "on-error-container": "#93000a",
+          "tertiary": "#6e5e00",
+          "surface-variant": "#ece1d0",
+          "text": "#242424",
+          "canvas": "#EEF2F2",
+          "tertiary-container": "#c4aa30",
+          "on-primary": "#ffffff",
+          "surface-container": "#f8ecdb",
+          "outline": "#70797a",
+          "primary-container": "#14545a",
+          "on-secondary-fixed-variant": "#881f06",
+          "on-primary-fixed": "#002023",
+          "surface-container-highest": "#ece1d0",
+          "error-container": "#ffdad6",
+          "tertiary-fixed": "#fee263",
+          "surface-dim": "#e4d9c8",
+          "secondary-fixed-dim": "#ffb4a3",
+          "error": "#ba1a1a",
+          "outline-variant": "#bfc8c9",
+          "on-secondary": "#ffffff",
+          "on-secondary-fixed": "#3d0600",
+          "on-surface": "#201b11",
+          "secondary": "#F56D4E",
+          "secondary-container": "#F56D4E",
+          "inverse-primary": "#97d0d7",
+          "surface-container-low": "#fef2e1",
+          "on-secondary-container": "#ffffff",
+          "on-tertiary": "#ffffff",
+          "surface-bright": "#fff8f2",
+          "surface-container-lowest": "#ffffff",
+          "on-primary-fixed-variant": "#0a4f54",
+          "secondary-fixed": "#ffdad2",
+          "teal-700": "#1E6670",
+          "teal-800": "#14545A",
+          "coral": "#F56D4E",
+          "on-surface-variant": "#6f6b64",
+          "tertiary-fixed-dim": "#e1c64a",
+          "primary-fixed": "#b2edf3",
+          "background": "#fff8f2"
+        },
+        borderRadius: {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "2xl": "0.875rem",
+          "full": "9999px"
+        },
+        spacing: {
+          "space-sm": "8px",
+          "space-lg": "24px",
+          "space-md": "16px",
+          "space-xs": "4px",
+          "space-xl": "32px",
+          "gutter": "16px",
+          "margin": "20px"
+        },
+        fontFamily: {
+          "body-sm": ["Inter", "Noto Sans Arabic", "sans-serif"],
+          "headline-lg": ["Newsreader", "serif"],
+          "headline-sm": ["Newsreader", "serif"],
+          "label-lg": ["Inter", "Noto Sans Arabic", "sans-serif"],
+          "body-md": ["Inter", "Noto Sans Arabic", "sans-serif"],
+          "body-lg": ["Newsreader", "serif"],
+          "label-md": ["Inter", "Noto Sans Arabic", "sans-serif"],
+          "headline-md": ["Newsreader", "serif"],
+          "label-sm": ["Inter", "Noto Sans Arabic", "sans-serif"],
+          "arabic": ["Noto Sans Arabic", "Inter", "sans-serif"]
+        },
+        fontSize: {
+          "body-sm": ["12px", { lineHeight: "16px", fontWeight: "400" }],
+          "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }],
+          "headline-sm": ["18px", { lineHeight: "24px", fontWeight: "600" }],
+          "label-lg": ["14px", { lineHeight: "18px", fontWeight: "600" }],
+          "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+          "body-lg": ["16px", { lineHeight: "22px", fontWeight: "400" }],
+          "label-md": ["12px", { lineHeight: "16px", fontWeight: "500" }],
+          "headline-md": ["24px", { lineHeight: "32px", fontWeight: "600" }],
+          "label-sm": ["11px", { lineHeight: "14px", fontWeight: "500" }]
+        }
+      }
+    }
+  };
+</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+      font-family: 'Inter', 'Noto Sans Arabic', sans-serif;
+    }
+  </style></head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-[#FFF8F2]/90 backdrop-blur-xl border-b border-[#ece1d0]"><div class="h-16 px-margin flex items-center justify-between"><div class="flex items-center gap-space-xs"><button aria-label="Voltar" class="w-10 h-10 flex items-center justify-center text-teal-800 hover:opacity-80 transition-colors rounded-full" onclick="history.back()" type="button"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button><div class="flex flex-col"><h1 class="font-headline-md text-[20px] font-bold text-teal-800 leading-none tracking-normal">No Café</h1><span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-space-xs mt-0.5"><span class="">Dia 2</span><span class="text-outline">·</span><span class="" dir="rtl">٢ / ٦</span></span></div></div><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-full bg-teal-800 flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-white text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 bg-[#FFF8F2] pb-safe"><div class="flex flex-col w-full relative select-none">
+<!-- Dimmed & Soft-Blurred Underlying Study Sheet -->
+<div class="w-full px-margin flex flex-col gap-space-md opacity-35 filter blur-[2px] pointer-events-none pt-space-xs">
+<!-- Topic Mini-banner -->
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-coral"></span>
+<span class="font-headline-sm text-[14px] text-teal-800 font-bold uppercase tracking-wider">NO CAFÉ · في الكافيه</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">سجل المفردات</span>
+</div>
+<!-- Background Faint Card 1 -->
+<div class="bg-surface p-space-md rounded-[14px] border border-[#ece1d0] shadow-sm flex flex-col gap-space-xs">
+<div class="flex justify-between items-start">
+<span class="font-headline-sm text-headline-sm text-teal-800 italic font-semibold">Um café, por favor</span>
+<span class="font-arabic font-medium text-on-surface" dir="rtl">واحد قهوة، لو سمحت</span>
+</div>
+<span class="font-body-sm text-on-surface-variant">/ũ kɐˈfɛ puɾ fɐˈvoɾ/</span>
+</div>
+<!-- Background Faint Card 2 -->
+<div class="bg-surface p-space-md rounded-[14px] border border-[#ece1d0] shadow-sm flex flex-col gap-space-xs">
+<div class="flex justify-between items-start">
+<span class="font-headline-sm text-headline-sm text-teal-800 italic font-semibold">Quanto é?</span>
+<span class="font-arabic font-medium text-on-surface" dir="rtl">الحساب كام؟</span>
+</div>
+<span class="font-body-sm text-on-surface-variant">/ˈkwɐ̃.tu ɛ/</span>
+</div>
+<!-- Background Faint Card 3 -->
+<div class="bg-surface p-space-md rounded-[14px] border border-[#ece1d0] shadow-sm flex flex-col gap-space-xs">
+<div class="flex justify-between items-start">
+<span class="font-headline-sm text-headline-sm text-teal-800 italic font-semibold">Obrigado</span>
+<span class="font-arabic font-medium text-on-surface" dir="rtl">شكراً جزيلاً</span>
+</div>
+<span class="font-body-sm text-on-surface-variant">/ɔ.bɾiˈɡa.du/</span>
+</div>
+<!-- Background Notebook Ruled Lines Mock -->
+<div class="flex flex-col gap-space-md mt-space-sm px-space-xs">
+<div class="h-3.5 bg-[#ece1d0] rounded-full w-5/6"></div>
+<div class="h-3.5 bg-[#ece1d0] rounded-full w-4/6"></div>
+<div class="h-3.5 bg-[#ece1d0] rounded-full w-full"></div>
+</div>
+</div>
+<!-- Modal Backdrop Layer (Ink wash scrim) -->
+<div class="fixed inset-0 bg-teal-800/40 backdrop-blur-[3px] z-40 pointer-events-auto"></div>
+<!-- Bottom Sheet Quiz Container (Tactile Study Leaf) -->
+<div class="fixed inset-x-0 bottom-0 z-50 flex flex-col max-h-[770px] bg-[#FFF8F2] rounded-t-[28px] shadow-[0_-8px_30px_rgba(20,84,90,0.18)] border-t border-[#f2e7d6] overflow-hidden transition-transform duration-300">
+<!-- Tactile Spine / Drag Notch -->
+<div class="w-full flex justify-center pt-3 pb-1 cursor-grab active:cursor-grabbing">
+<div class="w-12 h-1.5 rounded-full bg-[#e4d9c8]"></div>
+</div>
+<!-- Sheet Header with Progress Bar -->
+<div class="px-margin pt-1 pb-space-sm flex flex-col gap-space-xs bg-[#FFF8F2]">
+<div class="flex items-center justify-between">
+<!-- Dismiss Action -->
+<button aria-label="إغلاق التقييم" class="w-9 h-9 rounded-full bg-[#f8ecdb] flex items-center justify-center text-teal-800 hover:bg-[#ece1d0] transition-colors active:scale-95" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+<!-- Academic Quiz Stamp Header -->
+<div class="flex items-center gap-space-xs" dir="rtl">
+<span class="material-symbols-outlined text-coral text-[18px]">menu_book</span>
+<span class="font-arabic text-label-md font-bold text-teal-800 tracking-wide">اختبرني</span>
+<span class="text-outline">·</span>
+<span class="font-arabic text-label-md font-bold text-coral">٣ / ٥</span>
+</div>
+<!-- Metric Score Badge -->
+<div class="px-2.5 h-8 rounded-full bg-[#fef2e1] border border-[#ece1d0] flex items-center justify-center">
+<span class="font-arabic text-label-sm font-bold text-teal-800">60%</span>
+</div>
+</div>
+<!-- Linear Step Progress Indicator (3/5) -->
+<div class="w-full h-1.5 bg-[#ece1d0] rounded-full overflow-hidden mt-1">
+<div class="h-full bg-coral transition-all duration-500 rounded-full" style="width: 60%;"></div>
+</div>
+</div>
+<!-- Scrollable Question & Exercise Core -->
+<div class="flex-1 overflow-y-auto px-margin pt-space-xs pb-space-lg flex flex-col gap-space-md">
+<!-- Prompt Title & Instructions -->
+<div class="flex flex-col items-center text-center gap-1" dir="rtl">
+<h2 class="font-arabic text-[18px] font-bold text-teal-800 leading-snug">اسمع واختار المعنى</h2>
+<p class="font-arabic text-[13px] text-on-surface-variant font-normal">اضغط على زر النطق لسماع العبارة البرتغالية</p>
+</div>
+<!-- Interactive Phonetic Audio Plaque -->
+<div class="w-full bg-[#fef2e1] border border-[#f2e7d6] p-space-md rounded-[16px] flex items-center justify-between shadow-sm">
+<!-- Replay Prompt Capsule -->
+<div class="flex items-center gap-space-xs bg-[#FFF8F2] border border-[#ece1d0] px-space-sm py-1.5 rounded-full shadow-xs">
+<span class="material-symbols-outlined text-teal-800 text-[16px] animate-pulse">volume_up</span>
+<span class="font-arabic text-label-sm text-teal-800 font-semibold" dir="rtl">دوس عشان تسمع تاني 🔊</span>
+</div>
+<!-- Audio Exemplar Trigger Button with Wave Badge -->
+<div class="relative flex items-center justify-center">
+<span class="absolute w-12 h-12 rounded-full bg-coral/20 animate-ping"></span>
+<button aria-label="تشغيل النطق الصوتي" class="relative w-12 h-12 rounded-full bg-teal-800 text-white shadow-md flex items-center justify-center active:scale-90 hover:bg-teal-700 transition-all" type="button">
+<span class="material-symbols-outlined text-[24px] text-white" style="font-variation-settings: 'FILL' 1;">volume_up</span>
+</button>
+</div>
+</div>
+<!-- Options Deck (Arabic Only Choices with Option 2 expanded & marked correct in soft green/teal) -->
+<div class="flex flex-col gap-space-sm w-full" dir="rtl">
+<!-- Choice 1 (Clean Neutral Arabic Only) -->
+<div class="group w-full p-space-md rounded-[14px] bg-white border border-[#ece1d0] hover:border-teal-800/40 hover:bg-[#fffcf7] transition-all flex items-center justify-between cursor-pointer shadow-xs">
+<div class="flex items-center gap-space-md">
+<div class="w-6 h-6 rounded-full border-2 border-[#bfc8c9] flex items-center justify-center bg-white group-hover:border-teal-800 transition-colors">
+<span class="w-2.5 h-2.5 rounded-full bg-transparent"></span>
+</div>
+<span class="font-arabic text-[15px] font-medium text-on-surface">عايز قهوة لو سمحت</span>
+</div>
+</div>
+<!-- Choice 2 (Selected Correct Answer: soft green card with emerald checkmark, revealing Portuguese editorial serif & Arabic-letter pronunciation) -->
+<div class="w-full rounded-[14px] bg-[#f2f8f5] border-2 border-[#57a97b] p-space-md flex flex-col gap-space-sm shadow-sm transition-all">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-md">
+<!-- Checked Emerald Icon -->
+<div class="w-6 h-6 rounded-full bg-[#1b5e20] flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-white text-[16px] font-bold">check</span>
+</div>
+<span class="font-arabic text-[16px] font-bold text-[#1b5e20]">الحساب كام؟</span>
+</div>
+<span class="font-arabic text-label-sm font-bold text-[#1b5e20] bg-[#ddf0e3] px-2 py-0.5 rounded-md">إجابة صحيحة</span>
+</div>
+<!-- Sub-card revealing Portuguese Sentence (Editorial Serif) and Arabic-letter Pronunciation -->
+<div class="mt-1 bg-white p-space-sm rounded-[10px] flex items-center justify-between border border-[#cbe4d4] shadow-xs">
+<div class="flex items-center gap-space-sm">
+<span class="font-headline-sm text-[18px] font-semibold text-teal-800 italic" dir="ltr">Quanto é?</span>
+<span class="text-outline">·</span>
+<span class="font-arabic text-[14px] text-on-surface-variant font-medium" dir="rtl">كوانتو إي</span>
+</div>
+<button aria-label="إعادة الاستماع للنطق" class="flex items-center gap-1 text-teal-800 hover:text-coral px-2.5 py-1 rounded-md bg-[#FFF8F2] text-label-sm font-arabic font-semibold border border-[#ece1d0] transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">replay</span>
+<span class="">اسمع</span>
+</button>
+</div>
+</div>
+<!-- Choice 3 (Clean Neutral Arabic Only) -->
+<div class="group w-full p-space-md rounded-[14px] bg-white border border-[#ece1d0] hover:border-teal-800/40 hover:bg-[#fffcf7] transition-all flex items-center justify-between cursor-pointer shadow-xs">
+<div class="flex items-center gap-space-md">
+<div class="w-6 h-6 rounded-full border-2 border-[#bfc8c9] flex items-center justify-center bg-white group-hover:border-teal-800 transition-colors">
+<span class="w-2.5 h-2.5 rounded-full bg-transparent"></span>
+</div>
+<span class="font-arabic text-[15px] font-medium text-on-surface">صباح الخير</span>
+</div>
+</div>
+<!-- Choice 4 (Clean Neutral Arabic Only) -->
+<div class="group w-full p-space-md rounded-[14px] bg-white border border-[#ece1d0] hover:border-teal-800/40 hover:bg-[#fffcf7] transition-all flex items-center justify-between cursor-pointer shadow-xs">
+<div class="flex items-center gap-space-md">
+<div class="w-6 h-6 rounded-full border-2 border-[#bfc8c9] flex items-center justify-center bg-white group-hover:border-teal-800 transition-colors">
+<span class="w-2.5 h-2.5 rounded-full bg-transparent"></span>
+</div>
+<span class="font-arabic text-[15px] font-medium text-on-surface">شكراً</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Navigational Bar with Prominent Coral Orange Next CTA -->
+<div class="px-margin pt-space-xs pb-space-lg bg-[#FFF8F2]/95 backdrop-blur-sm flex items-center gap-space-sm shadow-[0_-4px_16px_rgba(0,0,0,0.03)] border-t border-[#ece1d0]">
+<button class="w-full h-13 py-3 px-space-md rounded-xl bg-coral hover:bg-[#e05839] text-white font-arabic text-[16px] font-bold flex items-center justify-center gap-space-sm active:translate-y-0.5 transition-all shadow-md" type="button">
+<span class="" dir="rtl">التالي</span>
+<span class="material-symbols-outlined text-[20px] transform rotate-180">arrow_forward</span>
+</button>
+</div>
+</div>
+</div></main>
+</body></html>

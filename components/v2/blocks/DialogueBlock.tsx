@@ -1,7 +1,7 @@
 'use client';
 
 import type { Block } from '@/lib/v2/content/blocks';
-import { SpeakerIcon } from '@/components/v2/AudioButton';
+import { AudioButton } from '@/components/v2/AudioButton';
 import { useBlockChrome } from './chrome';
 import { partClass } from './visibility';
 
@@ -16,7 +16,7 @@ export function DialogueBlock({ block }: { block: Extract<Block, { type: 'dialog
             key={`${index}-${line.tl}`}
             data-target={`${block.id}/item:${index}`}
             className={[
-              'rounded-v2-card border border-v2-ink bg-v2-card p-3',
+              'rounded-v2-card bg-v2-card p-4 shadow-[var(--shadow-v2-soft)]',
               partClass(state),
             ].join(' ')}
           >
@@ -34,19 +34,14 @@ export function DialogueBlock({ block }: { block: Extract<Block, { type: 'dialog
             {line.ar ? (
               <p
                 dir="rtl"
-                className="mt-0.5 text-end font-[family-name:var(--font-v2-arabic)] text-[13px] leading-5 text-v2-ink-muted"
+                className="mt-0.5 text-start font-[family-name:var(--font-v2-arabic)] text-[13px] leading-5 text-v2-ink-muted"
               >
                 {`«${line.ar}»`}
               </p>
             ) : null}
-            <button
-              type="button"
-              aria-label="اسمع"
-              className="mt-1 inline-flex h-10 w-10 items-center justify-center rounded-full border border-v2-ink bg-v2-card text-v2-ink"
-              onClick={() => chrome.onPlay(line.tl, 'pt')}
-            >
-              <SpeakerIcon size={18} />
-            </button>
+            <div className="mt-1">
+              <AudioButton text={line.tl} lang="pt" label="اسمع" />
+            </div>
           </div>
         );
       })}

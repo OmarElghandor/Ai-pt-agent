@@ -16,9 +16,9 @@ export function VsPairsBlock({ block }: { block: Extract<Block, { type: 'vs_pair
           <div
             key={index}
             data-target={`${block.id}/item:${index}`}
-            className={['rounded-v2-card border border-v2-ink bg-v2-card p-2', partClass(state)].join(' ')}
+            className={['rounded-v2-card bg-v2-card shadow-[var(--shadow-v2-soft)] p-2', partClass(state)].join(' ')}
           >
-            <div className="grid grid-cols-2 gap-2" dir="ltr">
+            <div className="grid grid-cols-2 items-start gap-3" dir="ltr">
               <ContentLine item={chrome.items.get(pair.left)} onPlay={chrome.onPlay} />
               <ContentLine item={chrome.items.get(pair.right)} onPlay={chrome.onPlay} />
             </div>

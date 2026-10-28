@@ -8,6 +8,7 @@ import { QuestionCard } from '@/components/v2/blocks/QuestionCard';
 import { CaptionBar } from '@/components/v2/CaptionBar';
 import { RichText } from '@/components/v2/RichText';
 import { SecondaryButton } from '@/components/v2/SecondaryButton';
+import { TitleBlock } from '@/components/v2/TitleBlock';
 import type { Item } from '@/lib/v2/content/items';
 import type { Question } from '@/lib/v2/content/lesson';
 import type { Page } from '@/lib/v2/content/page';
@@ -82,7 +83,7 @@ export function PagePlayer({ day, page, items, questions, forms, embedded = fals
   useEffect(() => {
     const node = dockRef.current;
     if (!node) return;
-    const apply = () => setPad(node.offsetHeight + 16);
+    const apply = () => setPad(node.offsetHeight + 24);
     apply();
     const observer = new ResizeObserver(apply);
     observer.observe(node);
@@ -191,12 +192,14 @@ export function PagePlayer({ day, page, items, questions, forms, embedded = fals
     .join('');
   const quizIds = page.quiz ?? [];
   const comparePage = page.blocks.some((block) => block.type === 'compare');
+  const softShadow = 'shadow-[var(--shadow-v2-soft)]';
   const circle =
-    'flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-v2-rule bg-v2-card text-sm text-v2-ink shadow-sm disabled:opacity-40';
+    `flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-v2-line bg-v2-card text-sm text-v2-ink ${softShadow} disabled:opacity-40`;
+  const titlePill = page.pill ?? (comparePage ? 'ملخّص القاعدة' : undefined);
 
   const scroller = (
     <div className={embedded ? 'min-h-0 flex-1 overflow-y-auto' : undefined} style={{ paddingBottom: pad }}>
-      <header className="sticky top-0 z-10 border-b border-v2-rule/80 bg-v2-paper/95 px-3 py-2 backdrop-blur-md">
+      <header className="sticky top-0 z-10 border-b border-v2-line/80 bg-v2-paper/95 px-4 py-2 backdrop-blur-md">
         <div className="flex items-center justify-between gap-2">
           {embedded ? (
             <span className={circle}>عرض</span>
@@ -211,15 +214,7 @@ export function PagePlayer({ day, page, items, questions, forms, embedded = fals
               <span dir="ltr" className="font-[family-name:var(--font-v2-ui)]">
                 {formatDayLabel(day)}
               </span>
-              {page.pill ? (
-                <span dir="rtl" className="font-[family-name:var(--font-v2-arabic)]">
-                  · {page.pill}
-                </span>
-              ) : null}
             </p>
-            <h1 className="text-sm font-extrabold leading-tight text-v2-ink">
-              <RichText segments={page.title} tone="display" />
-            </h1>
           </div>
           <div className="flex shrink-0 items-center gap-1">
             {titleTl ? (
@@ -232,13 +227,13 @@ export function PagePlayer({ day, page, items, questions, forms, embedded = fals
                   void playSpeech(titleTl, 'pt', ctrl.signal, speed);
                 }}
               >
-                <SpeakerIcon size={18} />
+                <SpeakerIcon size={20} />
               </button>
             ) : null}
             {quizIds.length ? (
               <button
                 type="button"
-                className="h-9 rounded-full border border-v2-rule bg-v2-card px-2.5 font-[family-name:var(--font-v2-arabic)] text-[11px] font-bold text-v2-ink shadow-sm"
+                className={`h-9 rounded-full border border-v2-line bg-v2-card px-2.5 font-[family-name:var(--font-v2-arabic)] text-[11px] font-bold text-v2-ink ${softShadow}`}
                 onClick={() => setQuizOpen(true)}
               >
                 اختبرني
@@ -248,7 +243,7 @@ export function PagePlayer({ day, page, items, questions, forms, embedded = fals
               <button
                 type="button"
                 disabled={!pageComplete}
-                className="h-9 rounded-full border border-v2-rule bg-v2-card px-2.5 font-[family-name:var(--font-v2-arabic)] text-[11px] font-bold text-v2-ink shadow-sm disabled:opacity-40"
+                className={`h-9 rounded-full border border-v2-line bg-v2-card px-2.5 font-[family-name:var(--font-v2-arabic)] text-[11px] font-bold text-v2-ink ${softShadow} disabled:opacity-40`}
                 onClick={() => setCoverOn((on) => !on)}
               >
                 {coverOn ? 'اظهر' : 'غطّي'}
@@ -257,27 +252,17 @@ export function PagePlayer({ day, page, items, questions, forms, embedded = fals
           </div>
         </div>
       </header>
-      {comparePage ? (
-        <section className="mx-3 mt-3 rounded-2xl border border-v2-rule bg-v2-card px-3 py-3 text-center shadow-sm">
-          <div className="mb-1.5 inline-flex items-center gap-1 rounded-full border border-v2-highlight-border bg-v2-highlight-fill px-3 py-0.5 font-[family-name:var(--font-v2-arabic)] text-[11px] font-bold text-v2-ink">
-            ملخّص القاعدة
-          </div>
-          <p className="text-3xl font-extrabold leading-tight">
-            <RichText segments={page.title} tone="display" />
-          </p>
-          {page.subtitle ? (
-            <p dir="rtl" className="mt-1 font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
-              <RichText segments={page.subtitle} />
-            </p>
-          ) : null}
-        </section>
-      ) : page.subtitle ? (
-        <p dir="rtl" className="mx-3 mt-3 text-end font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-          <RichText segments={page.subtitle} />
-        </p>
-      ) : null}
 
-      <div className="space-y-4 px-3 py-4">
+      <TitleBlock
+        className="mt-4 px-4"
+        pill={titlePill}
+        title={<RichText segments={page.title} tone="display" />}
+        subtitle={
+          page.subtitle ? <RichText segments={page.subtitle} /> : undefined
+        }
+      />
+
+      <div className="space-y-6 px-4 py-4">
         {page.mode === 'explore' ? (
           <ExploreControls
             page={page}
@@ -289,7 +274,7 @@ export function PagePlayer({ day, page, items, questions, forms, embedded = fals
           />
         ) : null}
         <BlockChromeProvider value={chrome}>
-          <div className="space-y-4">
+          <div className="space-y-6">
             {page.blocks.map((block) => (
               <BlockView key={block.id} block={block} />
             ))}
@@ -303,14 +288,13 @@ export function PagePlayer({ day, page, items, questions, forms, embedded = fals
     <div
       className={
         embedded
-          ? 'relative flex h-[720px] flex-col overflow-hidden rounded-v2-card border border-v2-ink bg-v2-paper'
+          ? 'relative flex h-[720px] flex-col overflow-hidden rounded-v2-card bg-v2-paper shadow-[var(--shadow-v2-soft)]'
           : 'relative flex min-h-dvh flex-col'
       }
-      dir="ltr"
     >
       {scroller}
       <div className={embedded ? 'absolute inset-x-0 bottom-0 z-20' : 'pointer-events-none fixed inset-x-0 bottom-0 z-20 flex justify-center'}>
-        <div ref={dockRef} className={embedded ? 'px-3 pb-3' : 'pointer-events-auto w-full max-w-[480px] px-3 pb-3'}>
+        <div ref={dockRef} className={embedded ? 'px-4 pb-3' : 'pointer-events-auto w-full max-w-[480px] px-4 pb-3'}>
           {ask ? (
             <AskBubble
               question={ask.question}
@@ -511,8 +495,8 @@ function ExploreControls({
                     className={[
                       'min-w-0 flex-1 rounded-v2-chip border px-1 py-1.5 text-xs',
                       on || done
-                        ? 'border-v2-ink bg-v2-ink text-white'
-                        : 'border-v2-ink bg-v2-card text-v2-ink',
+                        ? 'border-v2-primary bg-v2-primary text-white'
+                        : 'border-v2-line bg-v2-card text-v2-ink',
                       hintIndex === button.index ? 'animate-pulse' : '',
                     ].join(' ')}
                   >
@@ -535,7 +519,7 @@ function ExploreControls({
                     onClick={() => onSwap(control.id, index, lemma)}
                     className={[
                       'rounded-v2-chip border px-2 py-1 font-[family-name:var(--font-v2-target)] text-sm',
-                      on ? 'border-v2-ink bg-v2-ink text-white' : 'border-v2-ink bg-v2-card',
+                      on ? 'border-v2-primary bg-v2-primary text-white' : 'border-v2-line bg-v2-card',
                     ].join(' ')}
                   >
                     {lemma}
@@ -589,7 +573,7 @@ function AskBubble({
     <div
       key={shake}
       className={[
-        'mx-3 mb-2 rounded-v2-card border-2 border-v2-highlight-border bg-v2-highlight-fill p-3',
+        'mb-2 rounded-v2-card border-2 border-v2-highlight-border bg-v2-highlight-fill p-4',
         shake > 0 && !why ? 'v2-shake' : '',
       ].join(' ')}
     >
@@ -603,7 +587,7 @@ function AskBubble({
             type="button"
             disabled={locked}
             onClick={() => onChoose(index)}
-            className="rounded-v2-chip border border-v2-ink bg-white px-3 py-1.5 text-sm disabled:opacity-60"
+            className="rounded-v2-chip border border-v2-line bg-white px-3 py-1.5 text-sm disabled:opacity-60"
           >
             <RichText segments={option.label} />
           </button>

@@ -57,19 +57,19 @@ export function ReportErrorButton({
         بلّغ عن خطأ
       </button>
       {open ? (
-        <div className="mt-2 flex flex-col gap-2 rounded-lg border border-v2-border bg-v2-surface p-2">
+        <div className="mt-2 flex flex-col gap-2 rounded-v2-row border border-v2-line bg-v2-card p-2">
           <textarea
             value={note}
             onChange={(e) => setNote(e.target.value)}
             rows={2}
             placeholder="إيه الغلط؟"
-            className="font-[family-name:var(--font-v2-arabic)] w-full rounded border border-v2-border bg-transparent p-2 text-sm text-v2-ink"
+            className="font-[family-name:var(--font-v2-arabic)] w-full rounded-v2-row border border-v2-line bg-transparent p-2 text-sm text-v2-ink"
           />
           <button
             type="button"
             disabled={status === 'saving' || !note.trim()}
             onClick={() => void submit()}
-            className="font-[family-name:var(--font-v2-arabic)] rounded bg-v2-ink px-3 py-1 text-sm text-v2-surface disabled:opacity-50"
+            className="font-[family-name:var(--font-v2-arabic)] rounded-v2-chip bg-v2-action px-3 py-1 text-sm text-white disabled:opacity-50"
           >
             إرسال
           </button>
@@ -79,7 +79,7 @@ export function ReportErrorButton({
             </p>
           ) : null}
           {status === 'err' ? (
-            <p className="font-[family-name:var(--font-v2-arabic)] text-xs text-amber-700">
+            <p className="font-[family-name:var(--font-v2-arabic)] text-xs text-v2-attention">
               حصل خطأ — حاول تاني
             </p>
           ) : null}

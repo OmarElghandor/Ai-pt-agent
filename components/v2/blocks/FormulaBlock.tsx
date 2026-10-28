@@ -16,7 +16,7 @@ export function FormulaBlock({ block }: { block: Extract<Block, { type: 'formula
   return (
     <div
       data-target={block.id}
-      className={['space-y-2 rounded-v2-card border border-v2-ink bg-v2-card p-3', partClass(state)].join(' ')}
+      className={['space-y-2 rounded-v2-card bg-v2-card p-4 shadow-[var(--shadow-v2-soft)]', partClass(state)].join(' ')}
     >
       <div className="flex flex-wrap items-center gap-1.5" dir="ltr">
         {slots.map((slot, index) => {
@@ -36,7 +36,7 @@ export function FormulaBlock({ block }: { block: Extract<Block, { type: 'formula
             group: slot.group,
           };
           return (
-            <span key={index} className="rounded-v2-chip border border-dashed border-v2-ink px-2 py-0.5">
+            <span key={index} className="rounded-v2-chip border border-dashed border-v2-primary px-2 py-0.5">
               <RichText segments={[seg]} />
             </span>
           );

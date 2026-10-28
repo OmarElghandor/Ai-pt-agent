@@ -13,14 +13,14 @@ export function CompareBlock({ block }: { block: Extract<Block, { type: 'compare
   const columns = block.columns.length >= 3 ? 3 : block.columns.length === 1 ? 1 : 2;
 
   return (
-    <div data-target={block.id} dir="ltr">
+    <div data-target={block.id}>
       <CompareColumns columns={columns}>
         {block.columns.map((col, ci) => {
           const headerState = chrome.partState(block.id, `col:${ci}`);
           return (
             <section
               key={ci}
-              className="flex min-w-0 flex-col overflow-hidden rounded-2xl border-2 border-v2-ink/20 bg-v2-card shadow-sm"
+              className="flex min-w-0 flex-col overflow-hidden rounded-v2-card bg-v2-card shadow-[var(--shadow-v2-soft)]"
             >
               <header
                 data-target={`${block.id}/col:${ci}`}
@@ -37,7 +37,7 @@ export function CompareBlock({ block }: { block: Extract<Block, { type: 'compare
                 {col.sub ? (
                   <span
                     dir="rtl"
-                    className="rounded-md bg-white/15 px-1.5 py-0.5 text-end font-[family-name:var(--font-v2-arabic)] text-[10px] font-bold leading-tight"
+                    className="rounded-md bg-white/15 px-1.5 py-0.5 text-start font-[family-name:var(--font-v2-arabic)] text-[10px] font-bold leading-tight"
                   >
                     <RichText segments={col.sub} tone="onDark" />
                   </span>
@@ -50,7 +50,7 @@ export function CompareBlock({ block }: { block: Extract<Block, { type: 'compare
                     <div
                       key={ei}
                       data-target={`${block.id}/entry:${ci}:${ei}`}
-                      className={['rounded-xl bg-v2-card p-2', partClass(state) || 'border border-v2-rule'].join(' ')}
+                      className={['rounded-v2-row bg-v2-card p-2', partClass(state) || 'border border-v2-line'].join(' ')}
                     >
                       <ContentLine
                         layout="stack"
