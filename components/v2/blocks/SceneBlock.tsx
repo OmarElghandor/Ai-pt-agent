@@ -1,8 +1,8 @@
 'use client';
 
+import { ImageSlot } from '@/components/v2/ImageSlot';
 import type { Block } from '@/lib/v2/content/blocks';
 import { itemTargetText } from '@/lib/v2/render/speechTarget';
-import { MediaTile } from './content';
 import { useBlockChrome } from './chrome';
 import { partClass } from './visibility';
 
@@ -16,11 +16,10 @@ export function SceneBlock({ block }: { block: Extract<Block, { type: 'scene' }>
   return (
     <div
       data-target={block.id}
-      className={['relative min-h-48 overflow-hidden rounded-v2-card bg-v2-paper-deep shadow-[var(--shadow-v2-soft)]', partClass(state)].join(' ')}
+      className={['relative overflow-hidden', partClass(state)].join(' ')}
     >
-      <div className="absolute start-2 top-2">
-        <MediaTile image={block.image} />
-      </div>
+      <ImageSlot variant="cover" />
+      {block.image ? <span className="sr-only">{block.image}</span> : null}
       {block.hotspots.map((spot, index) => {
         const spotState = chrome.partState(block.id, `item:${index}`);
         const item = chrome.items.get(spot.ref);

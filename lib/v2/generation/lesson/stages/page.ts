@@ -172,8 +172,9 @@ export function normalizePageJson(data: unknown): unknown {
   if (!page || typeof page !== 'object') return data;
 
   const blocks = Array.isArray(page.blocks) ? page.blocks : [];
-  page.blocks = blocks.map((block, index) => {
-    if (!block || typeof block !== 'object') return block;
+  page.blocks = blocks
+    .map((block, index) => {
+    if (!block || typeof block !== 'object') return null;
     const b = { ...(block as Record<string, unknown>) };
 
     if (typeof b.id !== 'string' || !b.id.trim()) {
@@ -215,11 +216,7 @@ export function normalizePageJson(data: unknown): unknown {
         })
         .filter(Boolean);
       if ((b.items as unknown[]).length === 0) {
-        b.type = 'tip';
-        b.kind = 'culture';
-        b.title = [{ text: 'أمثلة', lang: 'eg' }];
-        b.body = [{ text: 'شوف الجمل في البطاقات', lang: 'eg' }];
-        delete b.items;
+        return null; // drop empty examples — never invent placeholder tips
       }
     }
 
@@ -267,11 +264,7 @@ export function normalizePageJson(data: unknown): unknown {
     if (b.type === 'compare') {
       const rawCols = Array.isArray(b.columns) ? b.columns : [];
       if (rawCols.length === 0) {
-        b.type = 'tip';
-        b.kind = 'culture';
-        b.title = [{ text: 'مقارنة', lang: 'eg' }];
-        b.body = [{ text: 'شوف الجمل في الصفحة', lang: 'eg' }];
-        delete b.columns;
+        return null; // drop empty compare — never invent placeholder tips
       } else {
         b.columns = rawCols.map((col, colIndex) => {
           if (!col || typeof col !== 'object') {
@@ -336,6 +329,16 @@ export function normalizePageJson(data: unknown): unknown {
       }
       if (b.title != null) b.title = asRt(b.title);
       if (b.body != null) b.body = asRt(b.body);
+      const bodyText = Array.isArray(b.body)
+        ? (b.body as { text?: string }[]).map((s) => s.text ?? '').join('').trim()
+        : '';
+      const GENERIC = new Set([
+        'ركز على القاعدة بتاعة النهاردة',
+        'شوف الجمل في الصفحة',
+        'شوف النمط في الصفحة',
+        'شوف الجمل في البطاقات',
+      ]);
+      if (!bodyText || GENERIC.has(bodyText)) return null;
     }
 
     if (b.type === 'formula') {
@@ -346,12 +349,7 @@ export function normalizePageJson(data: unknown): unknown {
       } else if (typeof b.pattern === 'string' && b.pattern.length > 0) {
         // keep
       } else {
-        b.type = 'tip';
-        b.kind = 'rule';
-        b.title = asRt(b.title) ?? [{ text: 'قاعدة', lang: 'eg' }];
-        b.body = asRt(b.body) ?? [{ text: 'شوف النمط في الصفحة', lang: 'eg' }];
-        delete b.pattern;
-        delete b.examples;
+        return null; // drop broken formula — never invent placeholder tips
       }
       if (Array.isArray(b.examples)) {
         b.examples = b.examples.map((e) => asItemId(e)).filter(Boolean);
@@ -371,49 +369,55 @@ export function normalizePageJson(data: unknown): unknown {
     }
 
     return b;
-  });
+  })
+    .filter(Boolean);
 
   if (page.title != null) page.title = asRt(page.title);
   if (page.subtitle != null) page.subtitle = asRt(page.subtitle);
 
   if (Array.isArray(page.steps)) {
-    page.steps = page.steps.map((step) => {
-      if (!step || typeof step !== 'object') return step;
+    page.steps = page.steps
+      .map((step) => {
+      if (!step || typeof step !== 'object') return null;
       const s = { ...(step as Record<string, unknown>) };
       if (s.tip != null) s.tip = asRt(s.tip);
-      if (s.ask && typeof s.ask === 'object') {
+      if (s.kind === 'ask') {
+        if (!s.ask || typeof s.ask !== 'object') return null;
         const ask = { ...(s.ask as Record<string, unknown>) };
         if (ask.question == null && ask.question_eg != null) {
           ask.question = asRt(ask.question_eg);
         } else if (ask.question != null) {
           ask.question = asRt(ask.question);
         } else {
-          ask.question = [{ text: '؟', lang: 'eg' }];
+          return null; // incomplete ask — do not invent
         }
         if (ask.why != null) ask.why = asRt(ask.why);
         if (ask.hint != null) ask.hint = asRt(ask.hint);
-        if (Array.isArray(ask.options)) {
-          ask.options = ask.options.map((opt) => {
-            if (!opt || typeof opt !== 'object') {
-              return { label: asRt(opt), correct: false };
-            }
-            const o = { ...(opt as Record<string, unknown>) };
-            if (o.label != null) o.label = asRt(o.label);
-            else if (o.text != null) o.label = asRt(o.text);
-            else o.label = [{ text: '…', lang: 'eg' }];
-            if (typeof o.correct !== 'boolean') o.correct = false;
-            return o;
-          });
-        } else {
-          ask.options = [
-            { label: [{ text: 'أ', lang: 'eg' }], correct: true },
-            { label: [{ text: 'ب', lang: 'eg' }], correct: false },
-          ];
+        if (!Array.isArray(ask.options) || ask.options.length < 2) {
+          return null; // incomplete ask — do not invent أ/ب
+        }
+        ask.options = ask.options.map((opt) => {
+          if (!opt || typeof opt !== 'object') {
+            return { label: asRt(opt), correct: false };
+          }
+          const o = { ...(opt as Record<string, unknown>) };
+          if (o.label != null) o.label = asRt(o.label);
+          else if (o.text != null) o.label = asRt(o.text);
+          else return null;
+          if (typeof o.correct !== 'boolean') o.correct = false;
+          return o;
+        });
+        if (
+          (ask.options as unknown[]).some((o) => o == null) ||
+          (ask.options as unknown[]).length < 2
+        ) {
+          return null;
         }
         s.ask = ask;
       }
       return s;
-    });
+    })
+      .filter(Boolean);
   }
 
   if (Array.isArray(page.controls)) {

@@ -45,3 +45,28 @@ export function weakToolAfterError(
   ).length;
   return n >= 3 ? last.tool_id : null;
 }
+
+/**
+ * Item ids that the weak-area rule marks weak.
+ * `errors` is chronological (oldest first). Uses the last 10 eligible attempts.
+ * An item is weak when 3 of those share its scope + tool_id.
+ */
+export function weakItemIdsFromErrors(errors: ProgressError[]): Set<string> {
+  const last10 = errors.slice(-10).filter(isWeakEligibleError);
+  const groups = new Map<string, ProgressError[]>();
+  for (const err of last10) {
+    if (!err.tool_id) continue;
+    const key = `${err.scope}::${err.tool_id}`;
+    const list = groups.get(key) ?? [];
+    list.push(err);
+    groups.set(key, list);
+  }
+  const ids = new Set<string>();
+  for (const list of groups.values()) {
+    if (list.length < 3) continue;
+    for (const err of list) {
+      if (err.item_id) ids.add(err.item_id);
+    }
+  }
+  return ids;
+}

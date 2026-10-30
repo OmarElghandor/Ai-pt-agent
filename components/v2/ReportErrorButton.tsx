@@ -7,6 +7,7 @@ type Props = {
   itemId?: string;
   questionId?: string;
   className?: string;
+  label?: string;
 };
 
 export function ReportErrorButton({
@@ -14,6 +15,7 @@ export function ReportErrorButton({
   itemId,
   questionId,
   className,
+  label = 'بلّغ عن خطأ',
 }: Props) {
   const [open, setOpen] = useState(false);
   const [note, setNote] = useState('');
@@ -54,7 +56,7 @@ export function ReportErrorButton({
         }}
         className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted underline underline-offset-2"
       >
-        بلّغ عن خطأ
+        {label}
       </button>
       {open ? (
         <div className="mt-2 flex flex-col gap-2 rounded-v2-row border border-v2-line bg-v2-card p-2">

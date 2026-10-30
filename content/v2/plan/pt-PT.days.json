@@ -221,7 +221,7 @@
           "step": 2,
           "of": 5,
           "previous": "Queria + thing",
-          "today": "Queria + quantity (dois pães)"
+          "today": "Queria + um/uma + today's noun (numbers wait until day 4)"
         },
         "tomorrow": {
           "tl": "Os números",

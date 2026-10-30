@@ -178,7 +178,7 @@
     {
       "id": "p1",
       "preset": "phrases",
-      "mode": "guided",
+      "mode": "static",
       "title": [
         {
           "text": "جمل التعارف",
@@ -205,211 +205,6 @@
             "phrase.my_name",
             "phrase.pleasure"
           ]
-        },
-        {
-          "id": "b3",
-          "type": "tip",
-          "kind": "rule",
-          "title": [
-            {
-              "text": "ملاحظة",
-              "lang": "eg"
-            }
-          ],
-          "body": [
-            {
-              "text": "ركز على القاعدة بتاعة النهاردة",
-              "lang": "eg"
-            }
-          ]
-        }
-      ],
-      "steps": [
-        {
-          "target": "b1",
-          "kind": "reveal",
-          "tip": [
-            {
-              "text": "شوف العنوان",
-              "lang": "eg"
-            }
-          ]
-        },
-        {
-          "target": "b2",
-          "kind": "reveal",
-          "tip": [
-            {
-              "text": "الجمل أو الكلمات",
-              "lang": "eg"
-            }
-          ]
-        },
-        {
-          "target": "b3",
-          "kind": "reveal",
-          "tip": [
-            {
-              "text": "الملاحظة",
-              "lang": "eg"
-            }
-          ]
-        },
-        {
-          "target": "b2",
-          "kind": "ask",
-          "ask": {
-            "question": [
-              {
-                "text": "إيه أول عنصر؟",
-                "lang": "eg"
-              }
-            ],
-            "options": [
-              {
-                "label": [
-                  {
-                    "text": "الصح",
-                    "lang": "eg"
-                  }
-                ],
-                "correct": true
-              },
-              {
-                "label": [
-                  {
-                    "text": "الغلط",
-                    "lang": "eg"
-                  }
-                ],
-                "correct": false
-              }
-            ]
-          }
-        },
-        {
-          "target": "b2",
-          "kind": "reveal",
-          "tip": [
-            {
-              "text": "كمل",
-              "lang": "eg"
-            }
-          ]
-        },
-        {
-          "target": "b2",
-          "kind": "reveal",
-          "tip": [
-            {
-              "text": "كمل تاني",
-              "lang": "eg"
-            }
-          ]
-        },
-        {
-          "target": "b2",
-          "kind": "reveal",
-          "tip": [
-            {
-              "text": "كمل تالت",
-              "lang": "eg"
-            }
-          ]
-        },
-        {
-          "target": "b2",
-          "kind": "ask",
-          "ask": {
-            "question": [
-              {
-                "text": "فاهم القاعدة؟",
-                "lang": "eg"
-              }
-            ],
-            "options": [
-              {
-                "label": [
-                  {
-                    "text": "أيوه",
-                    "lang": "eg"
-                  }
-                ],
-                "correct": true
-              },
-              {
-                "label": [
-                  {
-                    "text": "لأ",
-                    "lang": "eg"
-                  }
-                ],
-                "correct": false
-              }
-            ]
-          }
-        },
-        {
-          "target": "b3",
-          "kind": "reveal",
-          "tip": [
-            {
-              "text": "راجع",
-              "lang": "eg"
-            }
-          ]
-        },
-        {
-          "target": "b1",
-          "kind": "reveal",
-          "tip": [
-            {
-              "text": "راجع تاني",
-              "lang": "eg"
-            }
-          ]
-        },
-        {
-          "target": "b2",
-          "kind": "reveal",
-          "tip": [
-            {
-              "text": "آخر نظرة",
-              "lang": "eg"
-            }
-          ]
-        },
-        {
-          "target": "b2",
-          "kind": "ask",
-          "ask": {
-            "question": [
-              {
-                "text": "جاهز؟",
-                "lang": "eg"
-              }
-            ],
-            "options": [
-              {
-                "label": [
-                  {
-                    "text": "أيوه",
-                    "lang": "eg"
-                  }
-                ],
-                "correct": true
-              },
-              {
-                "label": [
-                  {
-                    "text": "لأ",
-                    "lang": "eg"
-                  }
-                ],
-                "correct": false
-              }
-            ]
-          }
         }
       ]
     },
@@ -455,7 +250,7 @@
           ],
           "body": [
             {
-              "text": "ركز على القاعدة بتاعة النهاردة",
+              "text": "اللي بنركّز عليه هنا: my_name",
               "lang": "eg"
             }
           ]
@@ -463,8 +258,8 @@
       ],
       "steps": [
         {
-          "target": "b1",
           "kind": "reveal",
+          "target": "b1",
           "tip": [
             {
               "text": "شوف العنوان",
@@ -473,8 +268,8 @@
           ]
         },
         {
-          "target": "b2",
           "kind": "reveal",
+          "target": "b2",
           "tip": [
             {
               "text": "الجمل أو الكلمات",
@@ -483,8 +278,8 @@
           ]
         },
         {
-          "target": "b3",
           "kind": "reveal",
+          "target": "b3",
           "tip": [
             {
               "text": "الملاحظة",
@@ -493,12 +288,12 @@
           ]
         },
         {
-          "target": "b2",
           "kind": "ask",
+          "target": "b2",
           "ask": {
             "question": [
               {
-                "text": "إيه أول عنصر؟",
+                "text": "إيه اللي بيظهر الأول؟",
                 "lang": "eg"
               }
             ],
@@ -506,8 +301,8 @@
               {
                 "label": [
                   {
-                    "text": "الصح",
-                    "lang": "eg"
+                    "text": "phrase.my_name",
+                    "lang": "tl"
                   }
                 ],
                 "correct": true
@@ -515,8 +310,8 @@
               {
                 "label": [
                   {
-                    "text": "الغلط",
-                    "lang": "eg"
+                    "text": "sentence.chamo_me",
+                    "lang": "tl"
                   }
                 ],
                 "correct": false
@@ -525,8 +320,8 @@
           }
         },
         {
-          "target": "b2",
           "kind": "reveal",
+          "target": "b2",
           "tip": [
             {
               "text": "كمل",
@@ -535,8 +330,8 @@
           ]
         },
         {
-          "target": "b2",
           "kind": "reveal",
+          "target": "b2",
           "tip": [
             {
               "text": "كمل تاني",
@@ -545,8 +340,8 @@
           ]
         },
         {
-          "target": "b2",
           "kind": "reveal",
+          "target": "b2",
           "tip": [
             {
               "text": "كمل تالت",
@@ -555,8 +350,8 @@
           ]
         },
         {
-          "target": "b2",
           "kind": "ask",
+          "target": "b2",
           "ask": {
             "question": [
               {
@@ -587,8 +382,8 @@
           }
         },
         {
-          "target": "b3",
           "kind": "reveal",
+          "target": "b3",
           "tip": [
             {
               "text": "راجع",
@@ -597,8 +392,8 @@
           ]
         },
         {
-          "target": "b1",
           "kind": "reveal",
+          "target": "b1",
           "tip": [
             {
               "text": "راجع تاني",
@@ -607,8 +402,8 @@
           ]
         },
         {
-          "target": "b2",
           "kind": "reveal",
+          "target": "b2",
           "tip": [
             {
               "text": "آخر نظرة",
@@ -617,8 +412,8 @@
           ]
         },
         {
-          "target": "b2",
           "kind": "ask",
+          "target": "b2",
           "ask": {
             "question": [
               {

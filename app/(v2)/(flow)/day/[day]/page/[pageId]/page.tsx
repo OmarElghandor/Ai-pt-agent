@@ -26,8 +26,12 @@ export default async function LessonPlayerPage({
   }
 
   const view = buildPlayerLesson(published.pack);
-  const page = view.pages.find((entry) => entry.id === pageId);
-  if (!page) notFound();
+  const pageIndex = view.pages.findIndex((entry) => entry.id === pageId);
+  if (pageIndex < 0) notFound();
+  const page = view.pages[pageIndex]!;
+  const nextPage = view.pages[pageIndex + 1];
+  const isLastPage = pageIndex >= view.pages.length - 1;
+  const nextHref = nextPage ? `/day/${day}/page/${nextPage.id}` : null;
 
   return (
     <PagePlayer
@@ -36,6 +40,8 @@ export default async function LessonPlayerPage({
       items={view.items}
       questions={view.questions}
       forms={view.forms}
+      nextHref={nextHref}
+      isLastPage={isLastPage}
     />
   );
 }

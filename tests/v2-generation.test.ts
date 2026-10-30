@@ -303,7 +303,7 @@ function minimalDayPack(day: number): LessonPack {
       },
     ],
     pages: [
-      guidedPage('p1', 'phrases', 'phrase.hello', 'phrase.my_name'),
+      staticPage('p1', 'phrases', 'phrase.hello', 'phrase.my_name'),
       guidedPage('p2', 'pattern', 'phrase.my_name', 'sentence.pleasure'),
       staticPage('p3', 'dictionary', 'word.nome'),
       staticPage('p4', 'phrases', 'phrase.hello'),
@@ -396,7 +396,7 @@ function guidedPage(
   return {
     id,
     preset,
-    mode: 'guided',
+    mode: 'guided' as const,
     title: [{ text: id, lang: 'tl' }],
     blocks,
     steps,
@@ -407,6 +407,7 @@ function staticPage(
   id: string,
   preset: 'dictionary' | 'phrases',
   ref: string,
+  refB?: string,
 ): LessonPack['pages'][number] {
   return {
     id,
@@ -422,7 +423,7 @@ function staticPage(
       {
         id: 'b2',
         type: 'cards',
-        items: [ref],
+        items: refB ? [ref, refB] : [ref],
       },
     ],
   };

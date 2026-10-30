@@ -51,11 +51,28 @@ export type ClosedSkillPayload = {
   tool_id?: string;
 };
 
+/** Practice beat. Client may send attempt; server ignores it for decisions. */
+export type BeatAnswerPayload = {
+  kind: 'beat';
+  answer_id: string;
+  day: number;
+  beat_id: string;
+  skill: Skill;
+  /** Ignored for decisions — server counts per (session, beat_id). */
+  attempt?: number;
+  answer_source: 'voice' | 'text';
+  text?: string;
+  option_id?: string;
+  switched_to_writing?: boolean;
+  session_id?: string;
+};
+
 export type AnswerPayload =
   | PageAskPayload
   | PageQuizPayload
   | OpenAnswerPayload
-  | ClosedSkillPayload;
+  | ClosedSkillPayload
+  | BeatAnswerPayload;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -146,6 +163,28 @@ export function parseAnswerPayload(body: unknown): AnswerPayload | null {
         typeof body.question_type === 'string' ? body.question_type : undefined,
       accepted,
       tool_id: typeof body.tool_id === 'string' ? body.tool_id : undefined,
+    };
+  }
+
+  if (body.kind === 'beat') {
+    if (typeof body.beat_id !== 'string' || !body.beat_id) return null;
+    if (typeof body.skill !== 'string' || !SKILLS.has(body.skill)) return null;
+    if (body.answer_source !== 'voice' && body.answer_source !== 'text') {
+      return null;
+    }
+    return {
+      kind: 'beat',
+      answer_id,
+      day,
+      beat_id: body.beat_id,
+      skill: body.skill as Skill,
+      attempt: intField(body.attempt) ?? undefined,
+      answer_source: body.answer_source,
+      text: typeof body.text === 'string' ? body.text : undefined,
+      option_id: typeof body.option_id === 'string' ? body.option_id : undefined,
+      switched_to_writing: body.switched_to_writing === true,
+      session_id:
+        typeof body.session_id === 'string' ? body.session_id : undefined,
     };
   }
 

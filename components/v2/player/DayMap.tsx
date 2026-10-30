@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { ImageSlot } from '@/components/v2/ImageSlot';
 import { readDonePages } from './session';
 
 export type DayMapStep = {
@@ -19,10 +20,16 @@ export function DayMap({
   day,
   situation,
   steps,
+  lastPageId,
+  practiceDevUnlock = false,
+  hasPublishedPack = false,
 }: {
   day: number;
   situation?: { tl: string; eg: string };
   steps: DayMapStep[];
+  lastPageId?: string | null;
+  practiceDevUnlock?: boolean;
+  hasPublishedPack?: boolean;
 }) {
   const [done, setDone] = useState<string[]>([]);
   useEffect(() => {
@@ -30,9 +37,22 @@ export function DayMap({
   }, [day]);
 
   const doneSet = new Set(done);
+  const lastPageDone = lastPageId ? doneSet.has(lastPageId) : false;
+  const practiceUnlocked =
+    hasPublishedPack && (lastPageDone || practiceDevUnlock);
+
   let markedCurrent = false;
   const rows = steps.map((step) => {
-    if (step.kind === 'practice') return { step, status: 'locked' as Status };
+    if (step.kind === 'practice') {
+      if (!practiceUnlocked || !step.href) {
+        return { step, status: 'locked' as Status };
+      }
+      if (!markedCurrent) {
+        markedCurrent = true;
+        return { step, status: 'current' as Status };
+      }
+      return { step, status: 'current' as Status };
+    }
     if (doneSet.has(step.id)) return { step, status: 'done' as Status };
     if (!markedCurrent) {
       markedCurrent = true;
@@ -43,13 +63,19 @@ export function DayMap({
 
   return (
     <main className="flex min-h-dvh flex-col px-4 py-4">
-      <Link href="/path" className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink">
+      <Link
+        href="/path"
+        className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink"
+      >
         المسار
       </Link>
       <p className="mt-3 font-[family-name:var(--font-v2-ui)] text-xs text-v2-ink-muted">
         Dia {day}
       </p>
-      <header className="mt-2 rounded-v2-card bg-v2-card shadow-[var(--shadow-v2-soft)] px-4 py-4">
+      <div className="mt-2">
+        <ImageSlot variant="cover" />
+      </div>
+      <header className="mt-3 rounded-v2-card bg-v2-card px-4 py-4 shadow-[var(--shadow-v2-soft)]">
         <h1
           className="font-[family-name:var(--font-v2-target)] text-3xl text-v2-primary"
           dir="ltr"
@@ -57,7 +83,9 @@ export function DayMap({
           {situation?.tl ?? `Dia ${day}`}
         </h1>
         {situation?.eg ? (
-          <p className="mt-1 font-[family-name:var(--font-v2-arabic)] text-lg">{situation.eg}</p>
+          <p className="mt-1 font-[family-name:var(--font-v2-arabic)] text-lg">
+            {situation.eg}
+          </p>
         ) : null}
       </header>
       <ol className="mt-4 space-y-2">

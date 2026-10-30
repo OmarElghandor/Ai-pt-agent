@@ -28,6 +28,7 @@ import {
 } from '../blockCritic';
 import { hydrateDialogueBlocks } from '../dialogueChecks';
 import { reorderGuidedSteps } from '../guidedSteps';
+import { fixPluralVsPairs } from '../patternFill';
 import { normalizePageJson } from '../stages/page';
 import { callJobTool } from './call';
 
@@ -209,6 +210,7 @@ Return via submit_page.
       finalizeGenPage(parsed.data.page, opts.entry, mode),
     );
     page = hydrateDialogueBlocks(page, bank);
+    page = fixPluralVsPairs(page, bank) as Page;
     const guided = reorderGuidedSteps(page);
     page = guided.page;
     softWarnings.push(...guided.warnings);
@@ -224,9 +226,20 @@ Return via submit_page.
         (b as { questions: string[] }).questions = [];
       }
     }
-    // Soft: keep page, store warnings — do not retry forever
+    const guidedFatals = vIssues.filter(
+      (vi) =>
+        vi.rule === 'guided_step_count' ||
+        vi.rule === 'ask_density' ||
+        vi.rule === 'ask_early',
+    );
+    // Soft: keep most page issues as warnings
     for (const vi of vIssues) {
       softWarnings.push(`${vi.rule}: ${vi.message}`);
+    }
+    // Guided step rules: retry once instead of accepting a 2-step page
+    if (guidedFatals.length && attempts < 2) {
+      issues = guidedFatals.map((vi) => `${vi.rule}: ${vi.message}`);
+      continue;
     }
     issues = [];
     break;

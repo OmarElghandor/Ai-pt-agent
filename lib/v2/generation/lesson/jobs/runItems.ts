@@ -29,10 +29,16 @@ import { applySayToItems } from '../../say';
 import { splitPlainToRt } from '../coerceRt';
 import {
   ensurePatternSkeleton,
+  ensurePluralPairItems,
   fillPatternsInBank,
 } from '../patternFill';
+import {
+  resolvePatternKind,
+  slotsForKind,
+} from '../patternTemplates';
 import { ensureHeardReplies } from '../heardReplies';
 import { applyEgSayToItems } from '../egSay';
+import { normalizeWordMeanings } from '../normalizeAr';
 import { callJobTool } from './call';
 
 /** Set has_card explicitly: false for pattern/derived/recycle/set items. */
@@ -178,6 +184,16 @@ function coreItemStub(core: CoreItem, _bank: Item[]): Item | null {
     };
   }
   if (core.kind === 'pattern') {
+    const kind = resolvePatternKind(core.id, core.pattern_kind);
+    if (kind) {
+      return {
+        type: 'pattern',
+        id: core.id,
+        kind,
+        slots: slotsForKind(kind),
+        examples: [`${core.id}.ex.1`],
+      } as Item;
+    }
     const head = core.tl.split(/\s+/)[0] ?? '…';
     return {
       type: 'pattern',
@@ -191,6 +207,32 @@ function coreItemStub(core: CoreItem, _bank: Item[]): Item | null {
     } as Item;
   }
   return null;
+}
+
+/** Stamp pattern.kind from core / id inference onto bank patterns. */
+function applyPatternKindsFromCore(
+  items: Item[],
+  coreItems: CoreItem[],
+): Item[] {
+  const coreKind = new Map(
+    coreItems
+      .filter((c) => c.kind === 'pattern')
+      .map((c) => [c.id, resolvePatternKind(c.id, c.pattern_kind)] as const),
+  );
+  return items.map((it) => {
+    if (it.type !== 'pattern') return it;
+    const kind =
+      resolvePatternKind(
+        it.id,
+        (it as { kind?: string }).kind ?? coreKind.get(it.id),
+      ) ?? null;
+    if (!kind) return it;
+    return {
+      ...it,
+      kind,
+      slots: slotsForKind(kind),
+    } as Item;
+  });
 }
 
 function mergeRecycleAndVerbs(
@@ -601,10 +643,12 @@ ${knownLines}
       ) as Item[],
     );
     const coreOpts = { coreItems: opts.brief.core_items };
+    items = applyPatternKindsFromCore(items, opts.brief.core_items);
     if (presets.includes('pattern')) {
       items = ensurePatternSkeleton(items, coreOpts);
     }
     items = fillPatternsInBank(items, coreOpts);
+    items = ensurePluralPairItems(items).bank;
     items = applyPhraseRolesFromCore(items, opts.brief.core_items);
     // Copy replies_to from core when present
     const repliesById = new Map(
@@ -624,6 +668,7 @@ ${knownLines}
     items = heard.items;
     items = coerceBank(applySayToItems(items) as Item[]);
     items = applyEgSayToItems(items);
+    normalizeWordMeanings(items);
     items = applyHasCardFlags(items, new Set(opts.brief.recycle_ids));
     return items;
   };

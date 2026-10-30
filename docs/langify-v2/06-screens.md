@@ -72,7 +72,7 @@ All screens are routes under `app/(v2)/` in `ai-agent-talk`. Each screen lists i
   - Only the target word, big. Under it, "اسمع" and the turtle slow button.
   - The line "فاكر معناها؟ قولها في سرّك واقلب", an "اقلب" button and a "محتاج تلميح؟" link.
   - No autoplay.
-- **Hint state:** the word inside a sentence (e.g. "A que horas dormes?") with no Arabic. The rating is locked to صعبة or worse.
+- **Hint state:** the word inside a sentence (e.g. "A que horas dormes?") with no Arabic. The rating is locked to صعب or متوسط.
 - **Back:**
   - The word plays once on flip. The answer comes first: Arabic meaning, pronunciation in Arabic letters, illustration.
   - Then the details by card type:
@@ -80,7 +80,7 @@ All screens are routes under `app/(v2)/` in `ai-agent-talk`. Each screen lists i
     - **word:** article colored; plural; one example.
     - **phrase:** when you say it, the reply you'll hear, one variation.
   - Then examples (2–3) and one tip note.
-- Rating row: تاني / صعبة / سهلة, plus a small "عارفها" link.
+- Rating row (right to left): صعب / متوسط / سهل — mapped to again / hard / easy — plus a small "عارفها" link. All three buttons have equal visual weight (none pre-highlighted).
 - Session end: "خلّصت ١٥ · بكرة N". No streak pressure.
 - Data: GET `/api/v2/cards/today`, POST `/api/v2/cards/[itemId]/review`.
 

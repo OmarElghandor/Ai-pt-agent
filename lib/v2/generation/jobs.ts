@@ -102,6 +102,58 @@ export async function enqueueGenerateLesson(opts: {
   };
 }
 
+export async function enqueueGeneratePack(opts: {
+  day: number;
+  targetLang?: string;
+}): Promise<{
+  jobId: string;
+  day: number;
+  version: number;
+  target_lang: string;
+  pack_id: string;
+  lesson_version: number;
+  jobIds: string[];
+}> {
+  const { enqueuePackDag } = await import('./pack/graph');
+  const dag = await enqueuePackDag(opts);
+  return {
+    jobId: dag.jobIds[0]!,
+    day: dag.day,
+    version: dag.version,
+    target_lang: dag.target_lang,
+    pack_id: dag.pack_id,
+    lesson_version: dag.lesson_version,
+    jobIds: dag.jobIds,
+  };
+}
+
+export async function enqueueAndStartGeneratePack(opts: {
+  day: number;
+  targetLang?: string;
+}): Promise<{
+  jobId: string;
+  day: number;
+  version: number;
+  target_lang: string;
+  pack_id: string;
+  lesson_version: number;
+  jobIds: string[];
+}> {
+  const enqueued = await enqueueGeneratePack(opts);
+  const workerId = `admin-pack-${process.pid}-${Date.now().toString(36)}`;
+  void runWorkerUntilIdle(workerId, {
+    maxEmptyRounds: 3,
+    idleMs: 1500,
+    deadlineMs: 120_000,
+  }).catch((err) => {
+    console.error(
+      '[v2-gen] pack worker failed',
+      err instanceof Error ? err.message : err,
+    );
+  });
+  return enqueued;
+}
+
 export function jobConcurrency(): number {
   const n = Number(process.env.V2_JOB_CONCURRENCY);
   // Default serial (1). Set V2_JOB_CONCURRENCY>1 only for deliberate parallel drains.
@@ -231,6 +283,22 @@ export async function processLessonJob(
   job: JobView,
   workerId: string,
 ): Promise<void> {
+  if (String(job.kind).startsWith('pack_')) {
+    const { processPackJob } = await import('./pack/process');
+    console.info(
+      `[v2-gen:job] start id=${job.id} kind=${job.kind} day=${job.day} v=${job.version} (pack)`,
+    );
+    const heartbeatTimer = setInterval(() => {
+      void heartbeat(job.id, workerId);
+    }, 60_000);
+    try {
+      await processPackJob(job, workerId);
+    } finally {
+      clearInterval(heartbeatTimer);
+    }
+    return;
+  }
+
   const { jobCallContext, logLastFailedPrompt } = await import(
     './lesson/jobs/call'
   );

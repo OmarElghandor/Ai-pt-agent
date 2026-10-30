@@ -12,7 +12,106 @@ import { maxWordsForPhase } from '../brief';
 import { phaseForDay } from '../buildRequest';
 import { runGenerationChecks } from '../generationChecks';
 import { validateQuestionShapes } from '../questionChecks';
-import { dedupeWritingAnswers, fillSkillQuota } from './runQuestions';
+import {
+  dedupeWritingAnswers,
+  fillSkillQuota,
+  isPatternRootId,
+  remapPatternTestId,
+} from './runQuestions';
+
+/** Rules that force dropping a question (path questions[N]…). */
+const DROP_QUESTION_RULES = new Set([
+  'question_options',
+  'question_stimulus',
+  'question_answer_index',
+  'pattern_not_testable',
+  'question_direction',
+  'writing_say_leak',
+  'question_accepted',
+  'duplicate_answer_tl',
+]);
+
+/** Pack rules that stay hard errors (never softened). */
+const HARD_PACK_RULES = new Set([
+  'core_id_missing',
+  'dialogue_check',
+  'guided_step_count',
+  'ask_density',
+  'ask_early',
+]);
+
+function questionIndexFromPath(path: string): number | null {
+  const m = path.match(/^questions\[(\d+)\]/);
+  return m ? Number(m[1]) : null;
+}
+
+/** Remap bare pattern tests → derived examples before shape validation. */
+function remapPatternQuestions(
+  questions: Question[],
+  items: Item[],
+): { questions: Question[]; warnings: Issue[] } {
+  const warnings: Issue[] = [];
+  const out: Question[] = [];
+  for (const q of questions) {
+    const tests = Array.isArray(q.tests) ? q.tests : [];
+    const first = String(tests[0] ?? '');
+    if (!isPatternRootId(first)) {
+      out.push(q);
+      continue;
+    }
+    if (q.type === 'choose_article') {
+      out.push(q);
+      continue;
+    }
+    const remapped = remapPatternTestId(first, items);
+    if (!remapped) {
+      warnings.push({
+        path: q.id,
+        rule: 'pattern_not_testable',
+        message: `dropped question testing pattern root ${first}`,
+        severity: 'warning',
+      });
+      continue;
+    }
+    out.push({ ...q, tests: [remapped, ...tests.slice(1)] });
+  }
+  return { questions: out, warnings };
+}
+
+/**
+ * Drop questions that fail shape rules; return filtered list + drop warnings.
+ */
+export function dropInvalidQuestions(
+  questions: Question[],
+  shapeIssues: Issue[],
+): { questions: Question[]; warnings: Issue[] } {
+  const dropIdx = new Set<number>();
+  for (const iss of shapeIssues) {
+    if (iss.severity !== 'error') continue;
+    if (!DROP_QUESTION_RULES.has(iss.rule)) continue;
+    const idx = questionIndexFromPath(iss.path);
+    if (idx != null) dropIdx.add(idx);
+  }
+  if (!dropIdx.size) return { questions, warnings: [] };
+  const warnings: Issue[] = [];
+  const kept: Question[] = [];
+  for (const [i, q] of questions.entries()) {
+    if (dropIdx.has(i)) {
+      warnings.push({
+        path: q.id,
+        rule: 'question_dropped',
+        message: `auto-dropped invalid question (${[...shapeIssues]
+          .filter((s) => questionIndexFromPath(s.path) === i)
+          .map((s) => s.rule)
+          .join(', ')})`,
+        severity: 'warning',
+      });
+      continue;
+    }
+    kept.push(q);
+  }
+  return { questions: kept, warnings };
+}
 
 export function runAssembleJob(opts: {
   day: number;
@@ -81,14 +180,23 @@ export function runAssembleJob(opts: {
     }
   }
 
-  const quota = fillSkillQuota(opts.questions);
+  const remapped = remapPatternQuestions(opts.questions, opts.items);
+  const quota = fillSkillQuota(remapped.questions);
   const deduped = dedupeWritingAnswers(quota.questions);
-  const pack = assembleLessonPack({
+
+  // Pre-drop pass: validate shapes, drop invalids, then assemble
+  const preShape = validateQuestionShapes(
+    deduped.questions as unknown as Array<Record<string, unknown>>,
+    opts.items,
+  );
+  const dropped = dropInvalidQuestions(deduped.questions, preShape);
+
+  let pack = assembleLessonPack({
     day: opts.day,
     targetLang: opts.targetLang,
     outline,
     pagesByIndex: pagesMapFromSparse(fixedPages),
-    questions: deduped.questions,
+    questions: dropped.questions,
     micro: opts.micro,
     speak_prompts: opts.speak_prompts,
     recycleIds: opts.recycleIds,
@@ -104,8 +212,7 @@ export function runAssembleJob(opts: {
     pack.questions as unknown as Array<Record<string, unknown>>,
     opts.items,
   );
-  // Soften: treat former errors as warnings except core_id_missing
-  const hard = new Set(['core_id_missing', 'dialogue_check']);
+
   const softRules = new Set([
     'rt_segment_lang',
     'raw_mixed_string',
@@ -116,9 +223,12 @@ export function runAssembleJob(opts: {
     'bad_distractor',
     'pages_count',
     'dictionary_cards',
+    'question_dropped',
+    'skill_quota',
   ]);
   const issues: Issue[] = [];
   const warnings: Issue[] = [
+    ...remapped.warnings,
     ...quota.warnings.map((w) => ({
       path: w.path,
       rule: w.rule,
@@ -131,6 +241,7 @@ export function runAssembleJob(opts: {
       message: w.message,
       severity: 'warning' as const,
     })),
+    ...dropped.warnings,
   ];
   // Dictionary cards 6–12 warning
   for (const [pi, page] of pack.pages.entries()) {
@@ -149,19 +260,14 @@ export function runAssembleJob(opts: {
     }
   }
   for (const iss of [...validation.issues, ...genChecks, ...qChecks]) {
-    if (hard.has(iss.rule) && iss.severity === 'error') {
+    if (HARD_PACK_RULES.has(iss.rule) && iss.severity === 'error') {
       issues.push(iss);
-    } else if (
-      iss.rule === 'question_direction' ||
-      iss.rule === 'writing_say_leak' ||
-      iss.rule === 'duplicate_answer_tl'
-    ) {
-      // Keep as errors for admin visibility
+    } else if (DROP_QUESTION_RULES.has(iss.rule) && iss.severity === 'error') {
+      // Survived drop pass — keep hard
       issues.push(iss);
     } else if (softRules.has(iss.rule) || iss.severity === 'warning') {
       warnings.push({ ...iss, severity: 'warning' });
     } else if (iss.severity === 'error') {
-      // Default to WARNING per plan
       warnings.push({ ...iss, severity: 'warning' });
     } else {
       warnings.push(iss);

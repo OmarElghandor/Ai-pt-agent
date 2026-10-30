@@ -39,7 +39,17 @@ export async function POST(req: Request) {
     const upstream = new FormData();
     upstream.append('file', file, file.name || 'speech.webm');
     upstream.append('model', process.env.WHISPER_MODEL || 'whisper-1');
-    // No language — auto-detect AR / PT for bilingual practice
+    // Optional language hint (v2 practice sends pt-PT → Whisper `pt`)
+    const langRaw = form.get('language');
+    if (typeof langRaw === 'string' && langRaw.trim()) {
+      const lang = langRaw.trim().toLowerCase();
+      const whisperLang = lang.startsWith('pt')
+        ? 'pt'
+        : lang.startsWith('ar')
+          ? 'ar'
+          : lang.slice(0, 2);
+      upstream.append('language', whisperLang);
+    }
 
     const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST',

@@ -22,6 +22,7 @@ const QuestionTypeSchema = z.enum([
   'recall_tl',
   'listen',
   'writing',
+  'choose_article',
   // Legacy aliases mapped in assemble
   'listening',
   'reading',
@@ -38,9 +39,86 @@ const QuestionDraftSchema = z.object({
   prompt: z.string().optional().default(''),
   /** Required for writing; optional for MCQ skills. */
   answer_tl: z.string().optional(),
+  /** choose_article: "def" (o/a) or "plural" (os/as). Default def. */
+  article_set: z.enum(['def', 'plural']).optional(),
   correct: z.string().optional(),
   feedback_eg: z.string().optional(),
 });
+
+/** Bare pattern.* root (not a derived .ex.N example). */
+export function isPatternRootId(id: string): boolean {
+  return (
+    id.startsWith('pattern.') && !/^pattern\..+\.ex\.\d+$/.test(id)
+  );
+}
+
+/** Prefer first derived example of a pattern; else null. */
+export function remapPatternTestId(
+  testsId: string,
+  bank: Item[],
+): string | null {
+  if (!isPatternRootId(testsId)) return testsId;
+  const pattern = bank.find((i) => i.id === testsId && i.type === 'pattern');
+  if (pattern && pattern.type === 'pattern') {
+    const ex = pattern.examples?.[0];
+    if (ex && bank.some((i) => i.id === ex)) return ex;
+  }
+  const derived = bank.find(
+    (i) =>
+      i.type === 'phrase' &&
+      i.id.startsWith(`${testsId}.ex.`) &&
+      /^pattern\..+\.ex\.\d+$/.test(i.id),
+  );
+  return derived?.id ?? null;
+}
+
+function stripArticlePrefixLocal(tl: string): string {
+  return tl.replace(/^(o|a|os|as|um|uma|uns|umas)\s+/i, '').trim() || tl;
+}
+
+function buildChooseArticle(
+  tested: Item,
+  articleSet: 'def' | 'plural',
+  egFrame: string,
+): {
+  prompt: ReturnType<typeof coerceToRt>;
+  options: ReturnType<typeof coerceToRt>[];
+  answer: number;
+} | null {
+  if (tested.type !== 'word') return null;
+  const gender = tested.gender === 'f' ? 'f' : 'm';
+  const noun = stripArticlePrefixLocal(tested.tl);
+  const optionsTl =
+    articleSet === 'plural'
+      ? gender === 'f'
+        ? ['os', 'as']
+        : ['os', 'as']
+      : gender === 'f'
+        ? ['o', 'a']
+        : ['o', 'a'];
+  // Always o/a or os/as in fixed order; answer by gender
+  const pair =
+    articleSet === 'plural' ? (['os', 'as'] as const) : (['o', 'a'] as const);
+  const correct = articleSet === 'plural'
+    ? gender === 'f'
+      ? 'as'
+      : 'os'
+    : gender === 'f'
+      ? 'a'
+      : 'o';
+  const answer = pair.indexOf(correct as 'o' | 'a' | 'os' | 'as');
+  void optionsTl;
+  const frame = egFrame || (articleSet === 'plural' ? 'إيه أداة الجمع؟' : 'o ولا a؟');
+  return {
+    prompt: [
+      ...coerceToRt(frame, 'eg'),
+      { text: ' ', lang: 'eg' as const },
+      { text: noun, lang: 'tl' as const },
+    ],
+    options: pair.map((t) => coerceToRt(t, 'tl')),
+    answer: answer < 0 ? 0 : answer,
+  };
+}
 
 export const QuestionsSchema = z.object({
   questions: z.array(QuestionDraftSchema).min(2).max(4),
@@ -49,9 +127,15 @@ export const QuestionsSchema = z.object({
 function normalizeQuestionType(
   type: string,
   skill?: string,
-): 'read_meaning' | 'recall_tl' | 'listen' | 'writing' {
+): 'read_meaning' | 'recall_tl' | 'listen' | 'writing' | 'choose_article' {
   const t = type.trim().toLowerCase();
-  if (t === 'read_meaning' || t === 'recall_tl' || t === 'listen' || t === 'writing') {
+  if (
+    t === 'read_meaning' ||
+    t === 'recall_tl' ||
+    t === 'listen' ||
+    t === 'writing' ||
+    t === 'choose_article'
+  ) {
     return t;
   }
   if (t === 'listen' || t === 'listening' || skill === 'listening') return 'listen';
@@ -63,7 +147,7 @@ function normalizeQuestionType(
 }
 
 function skillForType(
-  type: 'read_meaning' | 'recall_tl' | 'listen' | 'writing',
+  type: 'read_meaning' | 'recall_tl' | 'listen' | 'writing' | 'choose_article',
 ): 'listening' | 'reading' | 'writing' {
   if (type === 'listen') return 'listening';
   if (type === 'writing') return 'writing';
@@ -138,7 +222,62 @@ export function assembleQuestionFromDraft(
 ): { question: Question | null; fixes: TierIssue[]; warnings: TierIssue[] } {
   const fixes: TierIssue[] = [];
   const warnings: TierIssue[] = [];
-  const tested = opts.bank.find((i) => i.id === draft.tests);
+  let testsId = draft.tests;
+  let qType = normalizeQuestionType(draft.type, draft.skill);
+
+  // Pattern roots are not testable — remap to derived example, or drop
+  // (choose_article may test a word instead).
+  if (isPatternRootId(testsId) && qType !== 'choose_article') {
+    const remapped = remapPatternTestId(testsId, opts.bank);
+    if (!remapped) {
+      warnings.push(
+        fatal(
+          `q.${opts.pageId}.${opts.index}`,
+          'pattern_not_testable',
+          `cannot test pattern root ${testsId} without derived examples`,
+        ),
+      );
+      return { question: null, fixes, warnings };
+    }
+    fixes.push(
+      fix(
+        `q.${opts.pageId}.${opts.index}`,
+        'pattern_remap',
+        `${testsId} → ${remapped}`,
+      ),
+    );
+    testsId = remapped;
+  }
+
+  // choose_article on a pattern → pick a fill word from the pattern
+  if (qType === 'choose_article' && isPatternRootId(testsId)) {
+    const pattern = opts.bank.find((i) => i.id === testsId && i.type === 'pattern');
+    const fillId =
+      pattern && pattern.type === 'pattern'
+        ? pattern.slots
+            ?.flatMap((s) =>
+              s && typeof s === 'object' && 'fills' in s && Array.isArray(s.fills)
+                ? (s.fills as string[])
+                : [],
+            )
+            .find((id) => opts.bank.some((b) => b.id === id && b.type === 'word'))
+        : undefined;
+    const anyWord = opts.bank.find((i) => i.type === 'word');
+    const wordId = fillId ?? anyWord?.id;
+    if (!wordId) {
+      warnings.push(
+        fatal(
+          `q.${opts.pageId}.${opts.index}`,
+          'pattern_not_testable',
+          `choose_article needs a word; pattern ${testsId} has none`,
+        ),
+      );
+      return { question: null, fixes, warnings };
+    }
+    testsId = wordId;
+  }
+
+  const tested = opts.bank.find((i) => i.id === testsId);
   if (!tested) {
     fixes.push(
       warning(
@@ -150,7 +289,15 @@ export function assembleQuestionFromDraft(
     return { question: null, fixes, warnings };
   }
 
-  const qType = normalizeQuestionType(draft.type, draft.skill);
+  // Auto-promote article/plural pattern tests that still point at words
+  if (
+    qType !== 'choose_article' &&
+    tested.type === 'word' &&
+    isPatternRootId(draft.tests)
+  ) {
+    qType = 'choose_article';
+  }
+
   const skill = skillForType(qType);
   const id = `q.${opts.pageId}.${opts.index}`;
   const egFrame = (draft.prompt ?? '').trim();
@@ -159,12 +306,31 @@ export function assembleQuestionFromDraft(
     type: qType,
     skill,
     page_index: opts.pageIndex,
-    tests: [draft.tests],
+    tests: [testsId],
     prompt: coerceToRt(egFrame || 'اختار الإجابة', 'eg'),
     feedback_eg: draft.feedback_eg
       ? coerceToRt(draft.feedback_eg, 'eg')
       : undefined,
   };
+
+  if (qType === 'choose_article') {
+    const articleSet =
+      draft.article_set === 'plural' ||
+      /plural|جمع|os\/as/i.test(draft.tests + egFrame)
+        ? 'plural'
+        : 'def';
+    const built = buildChooseArticle(tested, articleSet, egFrame);
+    if (!built) {
+      warnings.push(
+        fatal(id, 'choose_article', 'choose_article requires a word item'),
+      );
+      return { question: null, fixes, warnings };
+    }
+    base.prompt = built.prompt;
+    base.options = built.options;
+    base.answer = built.answer;
+    return { question: base, fixes, warnings };
+  }
 
   if (qType === 'listen') {
     base.prompt = { audio_ref: draft.tests };

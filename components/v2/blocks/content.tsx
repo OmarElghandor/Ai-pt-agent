@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { AudioButton } from '@/components/v2/AudioButton';
 import { Icon } from '@/components/v2/Icon';
+import { ImageSlot } from '@/components/v2/ImageSlot';
 import { RichText } from '@/components/v2/RichText';
 import { verbClass } from '@/lib/v2/content/conjugations/regular';
 import { parseFormId } from '@/lib/v2/content/conjugations/formId';
@@ -18,15 +19,13 @@ const ENDING_CLASS: Record<string, string> = {
   ir: 'text-v2-verb-ir-text',
 };
 
+/** Example / table tile — fixed 56×56 ImageSlot (keys stay sr-only until URLs exist). */
 export function MediaTile({ image, icon }: { image?: string; icon?: string }) {
   return (
-    <div
-      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-v2-row bg-v2-paper-deep text-v2-ink-muted"
-      aria-hidden
-    >
-      <Icon name={icon || 'image'} size={24} />
+    <>
+      <ImageSlot variant="tile" placeholderIcon={icon || 'image'} />
       {image ? <span className="sr-only">{image}</span> : null}
-    </div>
+    </>
   );
 }
 

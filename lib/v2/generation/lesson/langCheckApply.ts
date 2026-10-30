@@ -21,6 +21,7 @@ export type LangCheckApplyResult = {
 const PAGE_TL_RE =
   /^pages\[(\d+)\]\.blocks\[(\d+)\]\.lines\[(\d+)\](?:\.tl)?$/i;
 const ITEM_TL_RE = /^items\[([^\]]+)\](?:\.tl)?$/i;
+const ITEM_PLURAL_RE = /^items\[([^\]]+)\]\.plural_tl$/i;
 
 function normalizeTl(s: string): string {
   return s.replace(/\s+/g, ' ').trim();
@@ -226,6 +227,54 @@ export function applyLangCheckPatches(
         continue;
       }
       nextItems = candidate;
+      applied.push(patch);
+      continue;
+    }
+
+    const pluralMatch = path.match(ITEM_PLURAL_RE);
+    if (pluralMatch) {
+      const id = pluralMatch[1]!;
+      const it = nextItems.find((i) => i.id === id && i.type === 'word');
+      if (!it || it.type !== 'word') {
+        discarded.push({
+          path,
+          rule: 'lang_check_bad_path',
+          message: `unknown word ${id}`,
+          patch,
+        });
+        continue;
+      }
+      const current =
+        (typeof it.plural_tl === 'string' && it.plural_tl.trim()) ||
+        (typeof it.plural === 'string' && it.plural.trim()) ||
+        '(missing)';
+      if (
+        normalizeTl(current) !== normalizeTl(patch.wrong_tl) &&
+        !(current === '(missing)' && patch.wrong_tl === '(missing)')
+      ) {
+        discarded.push({
+          path,
+          rule: 'lang_check_stale',
+          message: `wrong_tl does not match current plural_tl`,
+          patch,
+        });
+        continue;
+      }
+      const bare = patch.fixed_tl.replace(/^(o|a|os|as|um|uma)\s+/i, '').trim();
+      if (!bare) {
+        discarded.push({
+          path,
+          rule: 'lang_check_rejected',
+          message: 'empty plural_tl after strip',
+          patch,
+        });
+        continue;
+      }
+      nextItems = nextItems.map((i) =>
+        i.id === id && i.type === 'word'
+          ? ({ ...i, plural_tl: bare } as Item)
+          : i,
+      );
       applied.push(patch);
       continue;
     }

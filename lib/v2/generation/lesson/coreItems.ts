@@ -14,6 +14,12 @@ export type CoreItem = {
   replies_to?: string;
   /** Pattern: explicit word ids for holes (code uses these when present). */
   fills?: string[];
+  /** Pattern template kind — code builds slots/examples. */
+  pattern_kind?:
+    | 'article_def'
+    | 'article_indef'
+    | 'plural_def'
+    | 'polite_request';
 };
 
 export type CoreItemsDay = {

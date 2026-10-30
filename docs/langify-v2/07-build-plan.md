@@ -177,12 +177,28 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
 
 **Done when**
 - A 15-card session runs end to end.
-- The hint locks the rating to صعبة or worse.
+- The hint locks the rating to صعب or متوسط.
 - The front never autoplays.
 - An irregular `eu` form shows purple with ⚡.
 
 **Prompt**
 > Read docs/langify-v2/00-decisions.md §5 and 06-screens.md S5–S7. Match design/reference/08-decks-listing.png (Warm Editorial), 09-flashcard-front.png and 10-flashcard-back.png, with the corrections in 05 ("Things the designs got wrong"). Build /cards, /cards/deck/[id] and /cards/review against the Phase 4 endpoints.
+
+**Add-on (2026-10-28, after Phase 4 and the v5 design)**
+- Phase 4 built only GET `/api/v2/cards/today` and POST `/api/v2/cards/[itemId]/review`. Add two read-only routes:
+  - GET `/api/v2/decks` returns situation decks (one per published day: title_tl, title_ar, day, total, today, graduated, locked) and verb tiles (lemma, meaning, class, irregular, graduated).
+  - GET `/api/v2/decks/[id]` returns the item rows. **No Arabic meanings in that payload.**
+  - Both are computed from v2_item_state + published lessons. They write nothing.
+- Don't change the Phase 4 contracts.
+- **Hint used** → only صعب and متوسط are enabled (labels changed 2026-10-28: صعب = again, متوسط = hard, سهل = easy). "عارفها" sends the know rating.
+- A small "فيه غلط" link on the card back posts to `/api/v2/reports`.
+- **Card back by type:**
+  - verb: 5-row conjugation poster from v2_conjugations (endings colored by class, irregular purple bolt);
+  - word: colored article, plural and one example;
+  - phrase: when you say it and the reply you'll hear. A heard phrase shows "هتسمعها" instead.
+- **Session end:** "خلّصت ١٥ · بكرة N". Never a backlog. After done, /cards shows the hero card as done, with no restart.
+- **Dev seed:** `npm run v2:seed-cards` creates a test user with item states across days 1–7 (new, due, weak, graduated), so every state can be seen without real study.
+- Follow the Spacing and Icons sections in 05. Screens are checked at 390px.
 
 ---
 
@@ -209,6 +225,51 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
 
 **Prompt**
 > Read docs/langify-v2/00-decisions.md §9, 01-architecture.md ("Flow of one practice beat"), the agent section of 03, 06-screens.md S8, and docs/app-core-prompts-and-conversation-flow.md for the old flow you can reuse. Build v2 packs with skills, lib/v2/grader and lib/v2/reactor as pure modules (no DB writes), beat handling in /api/v2/answers, and the /practice/[day] screen with the 9 states and the end screen, as specified in Phase 6.
+
+**Add-on (2026-10-28, after Phases 3–5)**
+
+*Pack generation reuses the Phase 3 job pipeline. Don't build a second one.*
+- Packs are new job kinds in the same DAG and admin, running after the day's lesson is published:
+  - pack_outline: beats with a skill, item ids and a role;
+  - pack_beats: one job per 3–4 beats;
+  - critic;
+  - lang_check (patches only);
+  - assemble.
+- Same per-job model env (Kimi by default), same handoffs view, timing, publish gate, and block-level critic reruns.
+- Packs use only the day's items plus recycle and KNOWN. There are no new items in practice. The character comes from the brief's chat_character.
+- Reuse the Phase 3 code rules:
+  - `say` is computed by code;
+  - heard phrases are only on character lines, said phrases are only expected from the learner;
+  - every heard line that expects an answer has a said reply in the bank;
+  - the model writes plain strings, and code builds the rt segments;
+  - ids are namespaced.
+- **Listening beats:** the options are built by code from the bank (same direction rules as lesson questions). The model only picks the item and writes question_eg.
+- **Reading beats:** the artifact is structured (`kind: receipt|sign|label|menu`, `lines[] {tl, ids}`), rendered by one component. No free text.
+- **Speaking/writing beats:** `expected_tl` plus accepted variants, built by code (with and without the polite tail, accentless). The grader is called only when code can't decide.
+- The old pack validator and `tests/lesson-packs.test.ts` ideas carry over. The old pack collections stay untouched.
+
+*Grader and reactor*
+- Model from env (`V2_GRADER_MODEL`, default claude-haiku-5-5; Kimi allowed). 8s timeout → `unclear`, never counted as a learner error.
+- The reactor gets only one error. Its output `{character_tl?, coach_eg?, advance}` is validated by zod, and its character_tl goes through the same heard/said and allowed-words checks as packs. If a check fails, use the fallback coach line from the pack and don't show a character line.
+- Both stay pure modules. Every write goes through POST /api/v2/answers, with answer_id idempotency and the Phase 4 implicit-review cap.
+- Legacy `/api/grade` and `/api/react` stay until Phase 8.
+
+*Progress hooks*
+- Correct speaking/writing beats add `usedCorrectlyIn` with the situation id `day:<n>` for days after introducedDay (Phase 4 rule) and raise said/used levels. Listening/reading raise heard/understood.
+- The end-screen focus error is the Phase 4 weak-area path. It must appear in tomorrow's weak bucket (test this).
+- "مش قادر أتكلم دلوقتي" switches the beat to writing and counts for writing only.
+- Beats use `prompt_ids` (heard) and `expected_ids` (said). Attempt count is server-side per (session, beat_id).
+- Reactor only for speaking/writing near_miss|wrong|off_topic; correct/closed use `next_character_tl`.
+- Correct on attempt 2 skips the implicit easy review (first error still logged). Accent-only = correct + accent note.
+
+*UI*
+- Follow 05 (Warm Editorial, Spacing, Icons, ImageSlot) and the layout of `design/stitch-html/11-practice-conversation.html`.
+- Learner bubbles are deep teal. The coach uses a NoteCard.
+- Corrections are amber, never red, one at a time.
+- Screens are checked at 390px.
+- Practice unlocks after the day's last page is done (`?dev=1` override).
+- Pack meta stores `lesson_version`; republishing the lesson marks the pack stale.
+- `/api/stt` is called with `pt-PT`.
 
 ---
 
