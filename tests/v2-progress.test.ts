@@ -17,6 +17,8 @@ import {
   createCardsSession,
   createItemState,
   detectWeakArea,
+  endOfTomorrow,
+  weakItemIdsFromErrors,
   failKnowCheck,
   isKnowCheckDue,
   markCardRated,
@@ -196,6 +198,57 @@ describe('v2 progress · weak areas', () => {
       'pattern.queria_um_uma',
     );
     assert.equal(weakToolAfterError(errs), 'pattern.queria_um_uma');
+  });
+
+  it('3 errors in the last 10 mark that item weak', () => {
+    const errs: ProgressError[] = [];
+    for (let i = 0; i < 3; i++) {
+      errs.push({
+        user_id: 'u1',
+        item_id: 'word.leite',
+        tool_id: 'seed:word.leite',
+        category: 'vocabulary',
+        scope: 'forgot_word',
+        wrong: '—',
+        right: 'o leite',
+        at: new Date(i).toISOString(),
+      });
+    }
+    assert.deepEqual([...weakItemIdsFromErrors(errs)], ['word.leite']);
+  });
+
+  it('an 11th older error falls out of the weak window', () => {
+    const errs: ProgressError[] = [];
+    for (let i = 0; i < 3; i++) {
+      errs.push({
+        user_id: 'u1',
+        item_id: 'word.old',
+        tool_id: 'seed:word.old',
+        category: 'vocabulary',
+        scope: 'forgot_word',
+        wrong: '—',
+        right: 'velho',
+        at: new Date(i).toISOString(),
+      });
+    }
+    for (let i = 0; i < 10; i++) {
+      errs.push({
+        user_id: 'u1',
+        item_id: 'word.other',
+        tool_id: `other:${i}`,
+        category: 'vocabulary',
+        scope: 'wrong_word',
+        wrong: 'a',
+        right: 'b',
+        at: new Date(100 + i).toISOString(),
+      });
+    }
+    assert.equal(weakItemIdsFromErrors(errs).has('word.old'), false);
+  });
+
+  it('end of tomorrow is the last ms of the next UTC day', () => {
+    const end = endOfTomorrow(new Date('2026-10-28T22:00:00Z'), 'UTC');
+    assert.equal(end.toISOString(), '2026-10-29T23:59:59.999Z');
   });
 
   it('accent errors do not feed weak areas', () => {

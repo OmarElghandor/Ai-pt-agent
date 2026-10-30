@@ -63,6 +63,23 @@ function escapeRe(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/**
+ * When a high has no blocks[i]/bN path, pick the best content block so
+ * block regen still fires (story/compare dialogue etc.).
+ */
+export function defaultBlockKeyForPage(page: Page): string | null {
+  const prefer = ['dialogue', 'scene', 'vs_pairs', 'compare', 'panel', 'examples'];
+  for (const type of prefer) {
+    const hit = page.blocks.find((b) => b.type === type);
+    if (hit) return hit.id || null;
+  }
+  const content = page.blocks.find(
+    (b) => b.type !== 'heading' && b.type !== 'tip',
+  );
+  if (content) return content.id || null;
+  return page.blocks[0]?.id ?? null;
+}
+
 export type BlockRerunPlan = {
   /** Block keys to regenerate this pass. */
   targets: string[];
@@ -73,7 +90,7 @@ export type BlockRerunPlan = {
     critic_notes: Record<string, string[]>;
     critic_regen: Record<string, number>;
   };
-  /** High issues with no resolvable block → warnings only. */
+  /** High issues that still could not be assigned a block. */
   unresolvedHighs: CriticIssue[];
 };
 
@@ -89,9 +106,11 @@ export function planBlockCriticRerun(opts: {
 }): BlockRerunPlan {
   const notesByBlock: Record<string, string[]> = {};
   const unresolvedHighs: CriticIssue[] = [];
+  const fallback = defaultBlockKeyForPage(opts.page);
 
   for (const h of opts.highs) {
-    const key = parseBlockKeyFromIssue(h.path, h.message, opts.page);
+    const key =
+      parseBlockKeyFromIssue(h.path, h.message, opts.page) ?? fallback;
     if (!key) {
       unresolvedHighs.push(h);
       continue;

@@ -1,3 +1,4 @@
+import { ImageSlot } from '@/components/v2/ImageSlot';
 import { RichText } from '@/components/v2/RichText';
 import type { RtSegment } from '@/lib/v2/rt';
 
@@ -45,19 +46,21 @@ export function CaptionBar({
         .join(' ')}
     >
       <div className="flex items-center gap-2.5 px-3 pt-2.5">
-        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-white/15 ring-1 ring-white/25">
-          {avatarSrc ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={avatarSrc} alt="" className="h-full w-full object-cover" />
-          ) : (
-            <div
-              className="flex h-full w-full items-center justify-center font-[family-name:var(--font-v2-display-ar)] text-sm"
-              aria-hidden
-            >
-              م
-            </div>
-          )}
-        </div>
+        {avatarSrc ? (
+          <ImageSlot
+            variant="avatar"
+            size={40}
+            src={avatarSrc}
+            className="ring-1 ring-white/25"
+          />
+        ) : (
+          <div
+            className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/15 font-[family-name:var(--font-v2-display-ar)] text-sm ring-1 ring-white/25"
+            aria-hidden
+          >
+            م
+          </div>
+        )}
 
         <p dir="rtl" className="min-w-0 flex-1 text-start font-[family-name:var(--font-v2-arabic)] text-[13px] font-bold leading-snug text-v2-highlight-fill">
           {tip?.length ? (

@@ -73,7 +73,10 @@ const WordItemSchema = z.object({
   tl: z.string(),
   lemma: z.string().optional(),
   gender: z.enum(['m', 'f', 'n']).optional(),
+  /** Legacy plural field; prefer plural_tl. */
   plural: z.string().optional(),
+  /** Plural form in the target language (filled by future generations). */
+  plural_tl: z.string().optional(),
   ar: z.string(),
   ar_f: z.string().optional(),
   say: z.string().optional(),
@@ -81,6 +84,7 @@ const WordItemSchema = z.object({
   pos: z.string().optional(),
   rank: z.number().optional(),
   media: MediaSchema.optional(),
+  /** Example sentence TL, or an item id that resolves to one. */
   example: z.string().optional(),
   /** Optional: item beyond the day's core list (max 2 per day). */
   extra: ExtraFlag,
@@ -150,8 +154,18 @@ const FormItemSchema = z.object({
 
 export const PatternSlotKindSchema = z.enum([
   'word',
+  'word_plural',
   'article_um_uma',
   'article_o_a',
+  'article_os_as',
+]);
+
+/** Code-owned pattern template kinds — items job picks; code builds slots/examples. */
+export const PatternKindSchema = z.enum([
+  'article_def',
+  'article_indef',
+  'plural_def',
+  'polite_request',
 ]);
 
 /** Literal slot or typed hole (fills filled by code from today's words). */
@@ -175,6 +189,8 @@ const PatternItemSchema = z.object({
       (id) => id.startsWith('pattern.') && !/\.ex\.\d+$/.test(id),
       { message: 'pattern id must start with pattern. and not be an .ex.N example' },
     ),
+  /** Template kind — when set (or inferred from id), code overwrites slots. */
+  kind: PatternKindSchema.optional(),
   slots: z.array(PatternSlotSchema).min(1),
   /** Derived example item ids (pattern.<x>.ex.<n>) or phrase ids. */
   examples: z.array(z.string().min(1)).min(1),
@@ -183,6 +199,8 @@ const PatternItemSchema = z.object({
   has_card: HasCardFlag,
   introduced_on_page: IntroducedOnPage,
 });
+
+export type PatternKind = z.infer<typeof PatternKindSchema>;
 
 export const ItemSchema = z.discriminatedUnion('type', [
   WordItemSchema,

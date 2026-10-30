@@ -23,6 +23,7 @@ import {
   type CardsSession,
   type ItemState,
 } from '@/lib/v2/progress';
+import { loadWeakItemIds } from '@/lib/v2/progress/weakItems';
 
 function docToState(doc: Record<string, unknown>): ItemState {
   const card = (doc.card ?? {}) as Record<string, unknown>;
@@ -156,42 +157,11 @@ export async function getOrCreateTodayCards(opts: {
     });
   }
 
-  const states = await V2ItemStateModel()
-    .find({ user_id: opts.user_id })
-    .lean();
-  const stateById = new Map(
-    states.map((s) => [
-      s.item_id,
-      docToState(s as unknown as Record<string, unknown>),
-    ]),
-  );
-
-  // Seed from items if provided (introduced but not yet in state)
-  for (const item of opts.items ?? []) {
-    if (!isFlashcardItem(item)) continue;
-    if (stateById.has(item.id)) continue;
-    const st = createItemState({
-      user_id: opts.user_id,
-      item_id: item.id,
-      introducedDay: opts.currentDay,
-    });
-    stateById.set(item.id, st);
-  }
-
-  const reportCounts = await openReportCounts([...stateById.keys()]);
-  const candidates: CardCandidate[] = [];
-  for (const [itemId, state] of stateById) {
-    const item = opts.items?.find((i) => i.id === itemId);
-    const eligible = item ? isFlashcardItem(item) : true;
-    candidates.push({
-      item_id: itemId,
-      introducedDay: state.introducedDay,
-      state,
-      isWeak: (state.weakToolIds?.length ?? 0) > 0,
-      hasOpenReports: (reportCounts.get(itemId) ?? 0) >= 2,
-      eligible,
-    });
-  }
+  const candidates = await loadCardCandidates({
+    user_id: opts.user_id,
+    currentDay: opts.currentDay,
+    items: opts.items,
+  });
 
   const queue = buildTodayQueue({
     currentDay: opts.currentDay,
@@ -215,6 +185,76 @@ export async function getOrCreateTodayCards(opts: {
   });
 
   return session;
+}
+
+/**
+ * How many cards `buildTodayQueue` would pick at `now`. Does not write a session.
+ * Used for "بكرة N" (pass the end of tomorrow).
+ */
+export async function countQueueAt(opts: {
+  user_id: string;
+  currentDay: number;
+  now: Date;
+  items?: Item[];
+}): Promise<number> {
+  const candidates = await loadCardCandidates({
+    user_id: opts.user_id,
+    currentDay: opts.currentDay,
+    items: opts.items,
+  });
+  return buildTodayQueue({
+    currentDay: opts.currentDay,
+    now: opts.now,
+    candidates,
+  }).length;
+}
+
+async function loadCardCandidates(opts: {
+  user_id: string;
+  currentDay: number;
+  items?: Item[];
+}): Promise<CardCandidate[]> {
+  const states = await V2ItemStateModel()
+    .find({ user_id: opts.user_id })
+    .lean();
+  const stateById = new Map(
+    states.map((s) => [
+      s.item_id,
+      docToState(s as unknown as Record<string, unknown>),
+    ]),
+  );
+
+  for (const item of opts.items ?? []) {
+    if (!isFlashcardItem(item)) continue;
+    if (stateById.has(item.id)) continue;
+    stateById.set(
+      item.id,
+      createItemState({
+        user_id: opts.user_id,
+        item_id: item.id,
+        introducedDay: opts.currentDay,
+      }),
+    );
+  }
+
+  const [reportCounts, weakIds] = await Promise.all([
+    openReportCounts([...stateById.keys()]),
+    loadWeakItemIds(opts.user_id),
+  ]);
+  const candidates: CardCandidate[] = [];
+  for (const [itemId, state] of stateById) {
+    const item = opts.items?.find((i) => i.id === itemId);
+    const eligible = item ? isFlashcardItem(item) : true;
+    candidates.push({
+      item_id: itemId,
+      introducedDay: state.introducedDay,
+      state,
+      isWeak: weakIds.has(itemId) || (state.weakToolIds?.length ?? 0) > 0,
+      hasOpenReports: (reportCounts.get(itemId) ?? 0) >= 2,
+      eligible,
+    });
+  }
+  return candidates;
 }
 
 export async function reviewCard(opts: {

@@ -16,9 +16,9 @@ export function TabBar() {
   return (
     <nav
       aria-label="التنقل الرئيسي"
-      className="sticky bottom-0 z-20 border-t border-v2-line bg-v2-card shadow-[var(--shadow-v2-soft)]"
+      className="pointer-events-none fixed inset-x-0 bottom-0 z-20"
     >
-      <ul className="mx-auto grid max-w-[480px] grid-cols-4">
+      <ul className="pointer-events-auto mx-auto grid max-w-[480px] grid-cols-4 border-t border-v2-line bg-v2-card shadow-[var(--shadow-v2-soft)]">
         {TABS.map((tab) => {
           const active =
             pathname === tab.href || pathname.startsWith(`${tab.href}/`);

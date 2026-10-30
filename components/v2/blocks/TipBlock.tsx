@@ -13,9 +13,28 @@ const KIND_LABEL = {
   warning: 'خلي بالك',
 } as const;
 
+/** Boilerplate tip bodies that must never render. */
+const GENERIC_TIP_BODIES = new Set([
+  'ركز على القاعدة بتاعة النهاردة',
+  'شوف الجمل في الصفحة',
+  'شوف النمط في الصفحة',
+]);
+
+function tipBodyPlain(block: Extract<Block, { type: 'tip' }>): string {
+  return block.body
+    .map((s) => s.text)
+    .join('')
+    .trim();
+}
+
 export function TipBlock({ block }: { block: Extract<Block, { type: 'tip' }> }) {
   const chrome = useBlockChrome();
   const state = chrome.partState(block.id, null);
+  const bodyPlain = tipBodyPlain(block);
+  if (!bodyPlain || GENERIC_TIP_BODIES.has(bodyPlain)) {
+    return null;
+  }
+
   const kindLabel = KIND_LABEL[block.kind];
   const titlePlain = block.title.map((s) => s.text).join('').trim();
   const titleDupesKind = titlePlain === kindLabel;

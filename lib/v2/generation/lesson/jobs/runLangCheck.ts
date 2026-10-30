@@ -52,7 +52,36 @@ export function collectReviewPayload(pages: Page[], items: Item[]) {
       tl: 'tl' in i ? i.tl : '',
       ar: 'ar' in i ? (i as { ar?: string }).ar : '',
     }));
-  return { dialogue, derived };
+  // Words used by plural_def patterns must carry plural_tl for the reviewer
+  const pluralNeeded = new Set<string>();
+  for (const i of items) {
+    if (i.type !== 'pattern') continue;
+    const kind = (i as { kind?: string }).kind;
+    if (kind !== 'plural_def' && i.id !== 'pattern.plural_s') continue;
+    for (const slot of i.slots ?? []) {
+      if (
+        slot &&
+        typeof slot === 'object' &&
+        'fills' in slot &&
+        Array.isArray(slot.fills)
+      ) {
+        for (const id of slot.fills as string[]) pluralNeeded.add(id);
+      }
+    }
+  }
+  const plurals = items
+    .filter((i) => i.type === 'word' && pluralNeeded.has(i.id))
+    .map((i) => ({
+      path: `items[${i.id}].plural_tl`,
+      id: i.id,
+      tl: i.tl,
+      plural_tl:
+        (i as { plural_tl?: string }).plural_tl ??
+        (i as { plural?: string }).plural ??
+        '',
+      gender: (i as { gender?: string }).gender,
+    }));
+  return { dialogue, derived, plurals };
 }
 
 /**
@@ -76,12 +105,13 @@ export async function runLangCheckJob(opts: {
   const payload = collectReviewPayload(opts.pages, opts.items);
   const systemModules = [{ name: 'lang_check', version: '1' }];
   const user = `STAGE: LANG_CHECK (pt-PT only)
-Review ONLY dialogue lines + derived pattern examples for European Portuguese (Lisbon).
+Review dialogue lines + derived pattern examples + plural_tl on listed words for European Portuguese (Lisbon).
 If a tl is wrong (Brazilian, bad gender/article, unnatural), emit a patch.
+For PLURALS: if plural_tl is missing or wrong (must be bare noun, no article — e.g. "ovos", "maçãs"), patch with path items[id].plural_tl, wrong_tl = current plural_tl or "(missing)", fixed_tl = correct bare plural.
 Do NOT review Arabic/EG tips/questions. Do NOT invent new lines.
 
-PATHS: use the exact path field from the payload (pages[i].blocks[j].lines[k].tl or items[id].tl).
-wrong_tl MUST equal the current tl string exactly.
+PATHS: use the exact path field from the payload (pages[i].blocks[j].lines[k].tl or items[id].tl or items[id].plural_tl).
+wrong_tl MUST equal the current tl/plural_tl string exactly (or "(missing)").
 fixed_ar is optional (MSA). reason_eg is short Egyptian.
 
 DIALOGUE:
@@ -89,6 +119,9 @@ ${JSON.stringify(payload.dialogue)}
 
 DERIVED PATTERN EXAMPLES:
 ${JSON.stringify(payload.derived)}
+
+PLURALS (must have correct plural_tl):
+${JSON.stringify(payload.plurals)}
 
 Return { "patches": [{ path, wrong_tl, fixed_tl, fixed_ar?, reason_eg }] } via submit_lang_check.
 Max 5 patches. Empty array if clean. Never regenerate pages.

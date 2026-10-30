@@ -267,6 +267,45 @@ export default function V2AdminLessonPage() {
     }
   }
 
+  async function generatePack() {
+    setBusy(true);
+    setMessage(null);
+    try {
+      const res = await fetch(`/api/v2/admin/generate/pack/${day}`, {
+        method: 'POST',
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? res.statusText);
+      setMessage(
+        `Pack enqueued v${json.version} (lesson_version ${json.lesson_version})`,
+      );
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function publishPack() {
+    setBusy(true);
+    setMessage(null);
+    try {
+      const res = await fetch(`/api/v2/admin/packs/${day}/status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'published' }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? res.statusText);
+      setMessage(`Pack published v${json.version}`);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function rerunStale() {
     setBusy(true);
     try {
@@ -364,13 +403,28 @@ export default function V2AdminLessonPage() {
             {data.stale_count ? ` · stale ${data.stale_count}` : ''}
           </p>
         )}
-        <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+        <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
           <button type="button" disabled={busy} onClick={() => void generate()}>
             Generate from scratch
           </button>
           <button type="button" disabled={busy} onClick={() => void rerunStale()}>
             Rerun stale
           </button>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => void generatePack()}
+          >
+            Generate pack
+          </button>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => void publishPack()}
+          >
+            Publish pack
+          </button>
+          <Link href={`/practice/${day}?dev=1`}>Open practice</Link>
         </div>
       </header>
 

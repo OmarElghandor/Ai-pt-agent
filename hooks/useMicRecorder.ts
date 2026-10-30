@@ -13,7 +13,8 @@ function pickMimeType(): string | undefined {
   return candidates.find((t) => MediaRecorder.isTypeSupported(t));
 }
 
-export function useMicRecorder() {
+export function useMicRecorder(opts?: { language?: string }) {
+  const language = opts?.language;
   const [recording, setRecording] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -105,6 +106,7 @@ export function useMicRecorder() {
       const form = new FormData();
       const ext = blob.type.includes('mp4') ? 'm4a' : 'webm';
       form.append('file', blob, `speech.${ext}`);
+      if (language) form.append('language', language);
 
       const res = await fetch('/api/stt', { method: 'POST', body: form });
       const data = (await res.json()) as { text?: string; error?: string };
@@ -130,7 +132,7 @@ export function useMicRecorder() {
       setTranscribing(false);
       return null;
     }
-  }, [cleanupStream]);
+  }, [cleanupStream, language]);
 
   const toggle = useCallback(async (): Promise<string | null> => {
     if (recording) {

@@ -8,6 +8,7 @@ import {
   V2ErrorModel,
   V2ItemStateModel,
 } from '@/lib/v2/mongo/models';
+import { getPublishedPack } from '@/lib/v2/generation/pack/save';
 import {
   createItemState,
   localDateString,
@@ -19,10 +20,27 @@ import {
   type AnswerVerdict,
   type EvaluateContext,
 } from './evaluate';
+import { evaluateBeat, type BeatEvaluateResult } from './evaluateBeat';
 import { withIdempotency } from './idempotency';
-import { parseAnswerPayload, type AnswerPayload } from './payload';
+import {
+  parseAnswerPayload,
+  type AnswerPayload,
+  type BeatAnswerPayload,
+} from './payload';
+import {
+  bumpBeatAttempt,
+  completePracticeSession,
+  getOrCreatePracticeSession,
+  recordSkillResult,
+} from './practiceSession';
 
 export type { AnswerVerdict };
+
+export type BeatAnswerBody = BeatEvaluateResult & {
+  session_id: string;
+  skill_counts?: Record<string, { correct: number; total: number }>;
+  duplicate?: boolean;
+};
 
 function docToState(doc: Record<string, unknown>): ItemState {
   const card = (doc.card ?? {}) as Record<string, unknown>;
@@ -145,13 +163,6 @@ async function buildContext(
       const opt = step.ask.options[payload.option_index];
       ctx.pageAskCorrect = Boolean(opt?.correct);
       ctx.pageToolId = page?.tool_id ?? null;
-      // best-effort item from target
-      const target = step.target;
-      if (target?.includes('item:')) {
-        const idx = Number(target.split('item:')[1]);
-        // leave undefined if not parseable
-        void idx;
-      }
     }
   }
 
@@ -210,9 +221,108 @@ async function buildContext(
   return ctx;
 }
 
+async function handleBeat(
+  payload: BeatAnswerPayload,
+  userId: string,
+  tz: string,
+): Promise<BeatAnswerBody> {
+  const localDate = localDateString(new Date(), tz);
+  const pack = await getPublishedPack(payload.day);
+  if (!pack) {
+    throw Object.assign(new Error('pack_not_found'), { status: 404 });
+  }
+  const beat = pack.data.beats.find((b) => b.id === payload.beat_id);
+  if (!beat) {
+    throw Object.assign(new Error('beat_not_found'), { status: 400 });
+  }
+
+  const lesson = await getPublishedLesson(payload.day);
+  const items = lesson?.pack.items ?? [];
+
+  const session = await getOrCreatePracticeSession({
+    userId,
+    day: payload.day,
+    sessionId: payload.session_id,
+    localDate,
+    tz,
+  });
+
+  const priorAttempts = session.beat_attempts[payload.beat_id] ?? 0;
+  const hadPriorError = priorAttempts >= 1;
+  const attempt = await bumpBeatAttempt(session.id, payload.beat_id);
+
+  const itemStates = new Map<string, ItemState>();
+  const ids = [...new Set([...beat.prompt_ids, ...beat.expected_ids])];
+  for (const id of ids) {
+    const st = await loadItemState(userId, id);
+    if (st) itemStates.set(id, st);
+  }
+
+  const recent = await V2ErrorModel()
+    .find({ user_id: userId, tool_id: { $exists: true } })
+    .sort({ at: -1 })
+    .limit(10)
+    .lean();
+
+  const beatIndex = pack.data.beats.findIndex((b) => b.id === payload.beat_id);
+  const nextBeat = pack.data.beats[beatIndex + 1];
+
+  const result = await evaluateBeat(payload, {
+    user_id: userId,
+    localDate,
+    beat,
+    items,
+    attempt,
+    hadPriorError,
+    itemStates,
+    recentErrors: recent.map((r) => ({
+      user_id: userId,
+      item_id: r.item_id ?? undefined,
+      tool_id: r.tool_id ?? undefined,
+      skill: (r.skill as Skill | undefined) ?? undefined,
+      category: r.category as ProgressError['category'],
+      scope: r.scope,
+      wrong: r.wrong,
+      right: r.right,
+      at: new Date(r.at).toISOString(),
+    })),
+    character_name: pack.data.character.name_tl,
+    character_role: pack.data.character.role_eg,
+    next_beat_id: nextBeat?.id ?? null,
+    grammarFocusId:
+      (lesson?.pack.lesson as { grammar_focus?: string } | undefined)
+        ?.grammar_focus ?? null,
+  });
+
+  for (const st of result.item_states) {
+    await saveItemState(st);
+  }
+  if (result.errors.length) {
+    await appendErrors(result.errors);
+  }
+
+  let skill_counts = session.skill_counts;
+  if (result.advance) {
+    skill_counts = await recordSkillResult(
+      session.id,
+      result.skill,
+      result.correct,
+    );
+    if (!result.next_beat_id) {
+      await completePracticeSession(session.id);
+    }
+  }
+
+  return {
+    ...result,
+    session_id: session.id,
+    skill_counts,
+  };
+}
+
 export type HandleAnswerResult =
-  | { status: 400 | 401 | 403 | 503; error: string }
-  | { status: 200; body: AnswerVerdict };
+  | { status: 400 | 401 | 403 | 404 | 503; error: string }
+  | { status: 200; body: AnswerVerdict | BeatAnswerBody };
 
 export async function handleAnswerRequest(
   body: unknown,
@@ -232,6 +342,55 @@ export async function handleAnswerRequest(
 
   await connectMongo();
   const tz = opts?.timeZone ?? 'UTC';
+
+  if (payload.kind === 'beat') {
+    const store = {
+      async get(id: string) {
+        const doc = await V2AnswerIdempotencyModel()
+          .findOne({ answer_id: id, user_id: userId })
+          .lean();
+        if (!doc) return undefined;
+        return doc.verdict as BeatAnswerBody;
+      },
+      async set(id: string, verdict: BeatAnswerBody) {
+        await V2AnswerIdempotencyModel().create({
+          answer_id: id,
+          user_id: userId,
+          verdict,
+        });
+      },
+    };
+    try {
+      const verdict = await withIdempotency(
+        payload.answer_id,
+        store,
+        async () => handleBeat(payload, userId, tz),
+      );
+      return { status: 200, body: verdict };
+    } catch (err) {
+      if (err && typeof err === 'object' && 'status' in err) {
+        const status = (err as { status: number }).status;
+        if (status === 404 || status === 400) {
+          return {
+            status: status as 400 | 404,
+            error: err instanceof Error ? err.message : 'error',
+          };
+        }
+      }
+      if (
+        err &&
+        typeof err === 'object' &&
+        'code' in err &&
+        (err as { code: number }).code === 11000
+      ) {
+        const existing = await store.get(payload.answer_id);
+        if (existing) {
+          return { status: 200, body: { ...existing, duplicate: true } };
+        }
+      }
+      throw err;
+    }
+  }
 
   const store = {
     async get(id: string) {
@@ -264,7 +423,6 @@ export async function handleAnswerRequest(
     });
     return { status: 200, body: verdict };
   } catch (err) {
-    // Duplicate key on race: re-read
     if (
       err &&
       typeof err === 'object' &&

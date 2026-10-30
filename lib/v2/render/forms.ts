@@ -3,8 +3,26 @@ import {
   resolveForm,
   type ResolvedForm,
 } from '@/lib/v2/content/conjugations/resolve';
-import type { Page } from '@/lib/v2/content/page';
+import { modeForPreset, type Page } from '@/lib/v2/content/page';
 import { swapAlternateIds } from './explore';
+
+/** Resolve mode from preset; drop steps/controls that contradict it. */
+export function normalizePageForPlayer(page: Page): Page {
+  const mode = modeForPreset(page.preset);
+  if (mode === page.mode) return page;
+  const next: Page = { ...page, mode };
+  if (mode === 'static') {
+    const { steps: _s, controls: _c, locked_until: _l, ...rest } = next;
+    return rest;
+  }
+  if (mode === 'explore') {
+    const { steps: _s, ...rest } = next;
+    return rest;
+  }
+  // guided: drop controls
+  const { controls: _c, locked_until: _l, ...rest } = next;
+  return rest;
+}
 
 export type FormView = ResolvedForm & { id: string };
 
@@ -44,13 +62,14 @@ export type PlayerLesson = {
 };
 
 export function buildPlayerLesson(pack: LessonPack): PlayerLesson {
+  const pages = pack.pages.map(normalizePageForPlayer);
   return {
     day: pack.lesson.day,
     targetLang: pack.lesson.target_lang,
     situation: pack.lesson.situation,
-    pages: pack.pages,
+    pages,
     items: pack.items,
     questions: pack.questions,
-    forms: buildFormMap(verbIdsForPages(pack.pages)),
+    forms: buildFormMap(verbIdsForPages(pages)),
   };
 }

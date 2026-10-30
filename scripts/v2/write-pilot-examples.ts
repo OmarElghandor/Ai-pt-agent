@@ -8,8 +8,96 @@ import {
   LessonPackSchema,
   validateLessonPack,
   hasErrors,
+  modeForPreset,
   type LessonPack,
 } from '../../lib/v2/content';
+
+function contentPage(
+  id: string,
+  preset: 'phrases' | 'pattern' | 'compare' | 'dictionary' | 'scene' | 'story',
+  refs: string[],
+  titleEg: string,
+): LessonPack['pages'][number] {
+  const mode = modeForPreset(preset);
+  const first = refs[0] ?? 'item';
+  const second = refs[1] ?? first;
+  const blocks: LessonPack['pages'][number]['blocks'] = [
+    { id: 'b1', type: 'heading', text: [{ text: titleEg, lang: 'eg' }] },
+    { id: 'b2', type: 'cards', items: refs },
+  ];
+  if (mode === 'guided') {
+    blocks.push({
+      id: 'b3',
+      type: 'tip',
+      kind: 'rule',
+      title: [{ text: 'ملاحظة', lang: 'eg' }],
+      body: [{ text: `اللي بنركّز عليه هنا: ${first.split('.').pop() ?? first}`, lang: 'eg' }],
+    });
+  }
+  const page: LessonPack['pages'][number] = {
+    id,
+    preset,
+    mode,
+    title: [{ text: titleEg, lang: 'eg' }],
+    blocks,
+  };
+  if (mode === 'guided') {
+    page.steps = [
+      { target: 'b1', kind: 'reveal', tip: [{ text: 'شوف العنوان', lang: 'eg' }] },
+      { target: 'b2', kind: 'reveal', tip: [{ text: 'الجمل أو الكلمات', lang: 'eg' }] },
+      { target: 'b3', kind: 'reveal', tip: [{ text: 'الملاحظة', lang: 'eg' }] },
+      {
+        target: 'b2',
+        kind: 'ask',
+        ask: {
+          question: [{ text: `إيه اللي بيظهر الأول؟`, lang: 'eg' }],
+          options: [
+            { label: [{ text: first, lang: 'tl' }], correct: true },
+            { label: [{ text: second, lang: 'tl' }], correct: false },
+          ],
+        },
+      },
+      { target: 'b2', kind: 'reveal', tip: [{ text: 'كمل', lang: 'eg' }] },
+      { target: 'b2', kind: 'reveal', tip: [{ text: 'كمل تاني', lang: 'eg' }] },
+      { target: 'b2', kind: 'reveal', tip: [{ text: 'كمل تالت', lang: 'eg' }] },
+      {
+        target: 'b2',
+        kind: 'ask',
+        ask: {
+          question: [{ text: 'فاهم القاعدة؟', lang: 'eg' }],
+          options: [
+            { label: [{ text: 'أيوه', lang: 'eg' }], correct: true },
+            { label: [{ text: 'لأ', lang: 'eg' }], correct: false },
+          ],
+        },
+      },
+      { target: 'b3', kind: 'reveal', tip: [{ text: 'راجع', lang: 'eg' }] },
+      { target: 'b1', kind: 'reveal', tip: [{ text: 'راجع تاني', lang: 'eg' }] },
+      { target: 'b2', kind: 'reveal', tip: [{ text: 'آخر نظرة', lang: 'eg' }] },
+      {
+        target: 'b2',
+        kind: 'ask',
+        ask: {
+          question: [{ text: 'جاهز؟', lang: 'eg' }],
+          options: [
+            { label: [{ text: 'أيوه', lang: 'eg' }], correct: true },
+            { label: [{ text: 'لأ', lang: 'eg' }], correct: false },
+          ],
+        },
+      },
+    ];
+  }
+  return page;
+}
+
+function staticPage(
+  id: string,
+  preset: 'dictionary' | 'scene' | 'phrases',
+  refs: string[],
+  titleEg: string,
+): LessonPack['pages'][number] {
+  return contentPage(id, preset, refs, titleEg);
+}
 
 function guidedPage(
   id: string,
@@ -17,87 +105,7 @@ function guidedPage(
   refs: string[],
   titleEg: string,
 ): LessonPack['pages'][number] {
-  const blocks = [
-    { id: 'b1', type: 'heading' as const, text: [{ text: titleEg, lang: 'eg' as const }] },
-    { id: 'b2', type: 'cards' as const, items: refs },
-    {
-      id: 'b3',
-      type: 'tip' as const,
-      kind: 'rule' as const,
-      title: [{ text: 'ملاحظة', lang: 'eg' as const }],
-      body: [{ text: 'ركز على القاعدة بتاعة النهاردة', lang: 'eg' as const }],
-    },
-  ];
-  const steps = [
-    { target: 'b1', kind: 'reveal' as const, tip: [{ text: 'شوف العنوان', lang: 'eg' as const }] },
-    { target: 'b2', kind: 'reveal' as const, tip: [{ text: 'الجمل أو الكلمات', lang: 'eg' as const }] },
-    { target: 'b3', kind: 'reveal' as const, tip: [{ text: 'الملاحظة', lang: 'eg' as const }] },
-    {
-      target: 'b2',
-      kind: 'ask' as const,
-      ask: {
-        question: [{ text: 'إيه أول عنصر؟', lang: 'eg' as const }],
-        options: [
-          { label: [{ text: 'الصح', lang: 'eg' as const }], correct: true },
-          { label: [{ text: 'الغلط', lang: 'eg' as const }], correct: false },
-        ],
-      },
-    },
-    { target: 'b2', kind: 'reveal' as const, tip: [{ text: 'كمل', lang: 'eg' as const }] },
-    { target: 'b2', kind: 'reveal' as const, tip: [{ text: 'كمل تاني', lang: 'eg' as const }] },
-    { target: 'b2', kind: 'reveal' as const, tip: [{ text: 'كمل تالت', lang: 'eg' as const }] },
-    {
-      target: 'b2',
-      kind: 'ask' as const,
-      ask: {
-        question: [{ text: 'فاهم القاعدة؟', lang: 'eg' as const }],
-        options: [
-          { label: [{ text: 'أيوه', lang: 'eg' as const }], correct: true },
-          { label: [{ text: 'لأ', lang: 'eg' as const }], correct: false },
-        ],
-      },
-    },
-    { target: 'b3', kind: 'reveal' as const, tip: [{ text: 'راجع', lang: 'eg' as const }] },
-    { target: 'b1', kind: 'reveal' as const, tip: [{ text: 'راجع تاني', lang: 'eg' as const }] },
-    { target: 'b2', kind: 'reveal' as const, tip: [{ text: 'آخر نظرة', lang: 'eg' as const }] },
-    {
-      target: 'b2',
-      kind: 'ask' as const,
-      ask: {
-        question: [{ text: 'جاهز؟', lang: 'eg' as const }],
-        options: [
-          { label: [{ text: 'أيوه', lang: 'eg' as const }], correct: true },
-          { label: [{ text: 'لأ', lang: 'eg' as const }], correct: false },
-        ],
-      },
-    },
-  ];
-  return {
-    id,
-    preset,
-    mode: 'guided',
-    title: [{ text: titleEg, lang: 'eg' }],
-    blocks,
-    steps,
-  };
-}
-
-function staticPage(
-  id: string,
-  preset: 'dictionary' | 'free' | 'scene',
-  refs: string[],
-  titleEg: string,
-): LessonPack['pages'][number] {
-  return {
-    id,
-    preset,
-    mode: 'static',
-    title: [{ text: titleEg, lang: 'eg' }],
-    blocks: [
-      { id: 'b1', type: 'heading', text: [{ text: titleEg, lang: 'eg' }] },
-      { id: 'b2', type: 'cards', items: refs },
-    ],
-  };
+  return contentPage(id, preset, refs, titleEg);
 }
 
 function day1(): LessonPack {
@@ -228,7 +236,7 @@ function day1(): LessonPack {
       staticPage('p3', 'scene', ['phrase.how_are_you', 'word.trabalho'], 'أول يوم في الشغل'),
       staticPage(
         'p4',
-        'free',
+        'phrases',
         ['phrase.hello', 'phrase.my_name', 'phrase.pleasure'],
         'تمرين سريع',
       ),
@@ -411,7 +419,7 @@ function day2(): LessonPack {
       ),
       staticPage(
         'p4',
-        'free',
+        'phrases',
         ['phrase.the_bill', 'phrase.only_this', 'phrase.thanks'],
         'تمرين الكافيه',
       ),
@@ -640,7 +648,7 @@ function day3(): LessonPack {
       ),
       staticPage(
         'p4',
-        'free',
+        'phrases',
         ['phrase.bag', 'phrase.anything_else', 'phrase.how_much'],
         'تمرين التسوق',
       ),

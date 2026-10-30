@@ -131,6 +131,21 @@ One scale, used everywhere: 4 · 8 · 12 · 16 · 24 · 32.
 - **Header strips are full width.** A table header strip covers every column, including the row-label column.
 - **Fixed bars float.** The CaptionBar is pinned to the bottom of the viewport, 16 from the sides and 12 from the bottom, never inside the page flow. The page gets bottom padding equal to its height + 24.
 
+## Images: fixed sizes (added 2026-10-28)
+
+Every image slot has a fixed aspect ratio. The image fills it with `object-fit: cover`, and the placeholder has the exact same box, so the layout never jumps when images arrive.
+
+| Slot | Ratio | Width | Radius |
+|---|---|---|---|
+| Word card thumbnail, dictionary grid, quiz picture | 1:1 | fills its grid cell | 16 |
+| Flashcard back illustration | 4:3 | card width minus padding, max 280px tall | 20 |
+| Rule-row / example tile | 1:1 | 56px | 14 |
+| Deck row thumbnail | 1:1 | 64px | 14 |
+| Deck detail cover, day map cover, story panel | 16:9 | full content width | 20 |
+| Character avatar | 1:1 | 32 / 40 / 56 | full |
+
+Image generation uses the same ratios: 1024×1024 for 1:1, 1536×1152 for 4:3, 1536×864 for 16:9. A slot of one ratio never shows an image of another.
+
 ## Icons (added 2026-10-28)
 
 - **One family:** Material Symbols Rounded, weight 400, fill 0 (fill 1 only for the active state), the same family as the Stitch HTML. No emoji in the UI (✨ 💡 ⚡ become icons). The only exception is the irregular-verb mark: it's the `bolt` icon in purple.

@@ -131,6 +131,20 @@ export function validateQuestionShapes(
     const testedId = String(tests[0] ?? '');
     const tested = byId.get(testedId);
 
+    // Pattern roots have no tl/ar — never valid as a direct test target
+    if (
+      testedId.startsWith('pattern.') &&
+      !/^pattern\..+\.ex\.\d+$/.test(testedId)
+    ) {
+      issues.push(
+        issue(
+          `${base}.tests`,
+          'pattern_not_testable',
+          `questions cannot test pattern root "${testedId}" — use derived .ex.N or choose_article on a word`,
+        ),
+      );
+    }
+
     if (prompt && typeof prompt === 'object' && !Array.isArray(prompt)) {
       const pref = prompt as { audio_ref?: string };
       if (typeof pref.audio_ref === 'string' && !itemIds.has(pref.audio_ref)) {
@@ -154,6 +168,7 @@ export function validateQuestionShapes(
       type === 'read_meaning' ||
       type === 'recall_tl' ||
       type === 'listen' ||
+      type === 'choose_article' ||
       skill === 'listening' ||
       skill === 'reading';
 
@@ -172,6 +187,28 @@ export function validateQuestionShapes(
             'MCQ answer must be a valid option index',
           ),
         );
+      }
+
+      if (type === 'choose_article') {
+        const plain = promptPlain(prompt);
+        if (!plain.trim()) {
+          issues.push(
+            issue(
+              `${base}.prompt`,
+              'question_stimulus',
+              'choose_article prompt must show the noun stimulus',
+            ),
+          );
+        }
+        if (opts.length && !optionsAreTl(opts)) {
+          issues.push(
+            issue(
+              `${base}.options`,
+              'question_direction',
+              'choose_article requires article options (o/a or os/as)',
+            ),
+          );
+        }
       }
 
       // Stimulus must appear in prompt (tl for read_meaning, ar for recall_tl, audio for listen)

@@ -176,6 +176,7 @@
     {
      "id": "pattern.queria_um_uma",
      "kind": "pattern",
+     "pattern_kind": "polite_request",
      "tl": "Queria + um/uma + حاجة, por favor.",
      "eg": "الطلب بأدب",
      "fills": [
@@ -225,16 +226,10 @@
      "eg": "التفاحة"
     },
     {
-     "id": "word.apples",
+     "id": "word.egg",
      "kind": "word",
-     "tl": "as maçãs",
-     "eg": "التفاح (جمع)"
-    },
-    {
-     "id": "word.eggs",
-     "kind": "word",
-     "tl": "os ovos",
-     "eg": "البيض"
+     "tl": "o ovo",
+     "eg": "البيضة"
     },
     {
      "id": "word.rice",
@@ -275,14 +270,22 @@
     {
      "id": "pattern.article_gender",
      "kind": "pattern",
+     "pattern_kind": "article_def",
      "tl": "o + مذكر · a + مؤنث",
      "eg": "الأداة مع الاسم"
     },
     {
      "id": "pattern.plural_s",
      "kind": "pattern",
+     "pattern_kind": "plural_def",
      "tl": "os/as + اسم + s",
-     "eg": "الجمع"
+     "eg": "الجمع",
+     "fills": [
+      "word.apple",
+      "word.egg",
+      "word.bag",
+      "word.bread"
+     ]
     }
    ],
    "recycle_ids": [

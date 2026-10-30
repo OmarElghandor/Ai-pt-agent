@@ -6,6 +6,7 @@ import { BlockChromeProvider, type BlockChrome } from '@/components/v2/blocks/ch
 import { BlockView } from '@/components/v2/blocks/BlockView';
 import { QuestionCard } from '@/components/v2/blocks/QuestionCard';
 import { CaptionBar } from '@/components/v2/CaptionBar';
+import { PrimaryButton } from '@/components/v2/PrimaryButton';
 import { RichText } from '@/components/v2/RichText';
 import { SecondaryButton } from '@/components/v2/SecondaryButton';
 import { TitleBlock } from '@/components/v2/TitleBlock';
@@ -16,7 +17,7 @@ import type { Rt, RtSegment } from '@/lib/v2/content/rt';
 import { applySwap, completedControlIds, lockedBlockIds } from '@/lib/v2/render/explore';
 import type { FormView } from '@/lib/v2/render/forms';
 import { chapterFill, chapterSpans, guidedPartVisibility, type PartVisibility } from '@/lib/v2/render/guided';
-import { itemTargetText, targetSpeech } from '@/lib/v2/render/speechTarget';
+import { itemTargetText, plainRt, targetSpeech } from '@/lib/v2/render/speechTarget';
 import { formatDayLabel } from '@/lib/v2/render/dayMinutes';
 import { nextSpeed } from '@/lib/v2/render/timing';
 import { SpeakerIcon } from '@/components/v2/AudioButton';
@@ -30,11 +31,23 @@ type Props = {
   items: Item[];
   questions: Question[];
   forms: Record<string, FormView>;
+  /** Next content page href, or null when this is the last page. */
+  nextHref?: string | null;
+  isLastPage?: boolean;
   /** In-page demo: dock stays inside the frame instead of the viewport. */
   embedded?: boolean;
 };
 
-export function PagePlayer({ day, page, items, questions, forms, embedded = false }: Props) {
+export function PagePlayer({
+  day,
+  page,
+  items,
+  questions,
+  forms,
+  nextHref = null,
+  isLastPage = false,
+  embedded = false,
+}: Props) {
   const itemMap = useMemo(() => new Map(items.map((item) => [item.id, item])), [items]);
   const steps = page.steps ?? [];
   const [speed, setSpeed] = useState(1);
@@ -185,17 +198,24 @@ export function PagePlayer({ day, page, items, questions, forms, embedded = fals
     page.mode === 'guided' && guided.playing && (guided.phase === 'ask' || guided.phase === 'why')
       ? steps[guided.index]
       : undefined;
-  const ask = currentStep?.kind === 'ask' ? currentStep.ask : undefined;
+  const ask =
+    page.mode === 'guided' && currentStep?.kind === 'ask' ? currentStep.ask : undefined;
   const titleTl = page.title
     .filter((seg) => seg.lang === 'tl')
     .map((seg) => seg.text)
     .join('');
+  const titlePlain = plainRt(page.title).trim();
+  const subtitlePlain = plainRt(page.subtitle).trim();
+  const showSubtitle = Boolean(subtitlePlain) && subtitlePlain !== titlePlain;
   const quizIds = page.quiz ?? [];
   const comparePage = page.blocks.some((block) => block.type === 'compare');
   const softShadow = 'shadow-[var(--shadow-v2-soft)]';
   const circle =
     `flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-v2-line bg-v2-card text-sm text-v2-ink ${softShadow} disabled:opacity-40`;
   const titlePill = page.pill ?? (comparePage ? 'ملخّص القاعدة' : undefined);
+  const mapHref = `/day/${day}`;
+  const primaryEndHref = isLastPage ? mapHref : nextHref;
+  const primaryEndLabel = isLastPage ? 'خلّصت اليوم' : 'الصفحة الجاية';
 
   const scroller = (
     <div className={embedded ? 'min-h-0 flex-1 overflow-y-auto' : undefined} style={{ paddingBottom: pad }}>
@@ -258,7 +278,9 @@ export function PagePlayer({ day, page, items, questions, forms, embedded = fals
         pill={titlePill}
         title={<RichText segments={page.title} tone="display" />}
         subtitle={
-          page.subtitle ? <RichText segments={page.subtitle} /> : undefined
+          showSubtitle && page.subtitle ? (
+            <RichText segments={page.subtitle} />
+          ) : undefined
         }
       />
 
@@ -331,6 +353,21 @@ export function PagePlayer({ day, page, items, questions, forms, embedded = fals
               <SecondaryButton className="w-full" onClick={guided.showAll}>
                 الصفحة كلها
               </SecondaryButton>
+            </div>
+          ) : null}
+          {!embedded && pageComplete && !ask ? (
+            <div className="flex flex-col gap-2 px-1 pb-2">
+              {primaryEndHref ? (
+                <PrimaryButton href={primaryEndHref} className="w-full">
+                  {primaryEndLabel}
+                </PrimaryButton>
+              ) : null}
+              <Link
+                href={mapHref}
+                className="inline-flex min-h-11 items-center justify-center rounded-v2-chip border border-v2-primary bg-transparent px-5 py-2.5 font-[family-name:var(--font-v2-arabic)] text-base font-semibold text-v2-primary"
+              >
+                الخريطة
+              </Link>
             </div>
           ) : null}
         </div>
@@ -419,7 +456,7 @@ function captionTip(
     return page.subtitle ?? [{ text: 'دوس على أي سطر عشان تسمعه.', lang: 'eg' }];
   }
   if (phase === 'done') {
-    return [{ text: 'خلّصنا الصفحة. ارجع للخريطة، أو جرّب غطّي.', lang: 'eg' }];
+    return [{ text: 'خلّصنا الصفحة.', lang: 'eg' }];
   }
   if (!playing && phase !== 'ask' && phase !== 'why') {
     return index === 0 && phase === 'idle'
@@ -427,7 +464,9 @@ function captionTip(
       : [{ text: 'واقفين. دوس ▶︎ نكمّل.', lang: 'eg' }];
   }
   const step = page.steps?.[index];
-  return (step?.kind === 'reveal' ? step.tip : undefined) ?? [{ text: 'سؤال سريع…', lang: 'eg' }];
+  if (step?.kind === 'reveal') return step.tip;
+  if (step?.kind === 'ask') return step.ask.question;
+  return [{ text: '…', lang: 'eg' }];
 }
 
 function axisSpeech(

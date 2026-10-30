@@ -79,6 +79,11 @@ export const V2_JOB_KINDS = [
   'assemble',
   'lang_check',
   'image_specs',
+  'pack_outline',
+  'pack_beats',
+  'pack_critic',
+  'pack_lang_check',
+  'pack_assemble',
 ] as const;
 
 export type V2JobKind = (typeof V2_JOB_KINDS)[number];
@@ -375,7 +380,7 @@ const v2SessionSchema = new Schema(
     kind: {
       type: String,
       required: true,
-      enum: ['lesson', 'cards', 'questions'],
+      enum: ['lesson', 'cards', 'questions', 'practice'],
       index: true,
     },
     local_date: { type: String, required: false, index: true },
@@ -389,6 +394,10 @@ const v2SessionSchema = new Schema(
     },
     queue: { type: [v2SessionQueueItemSchema], default: [] },
     items: { type: Schema.Types.Mixed, default: [] },
+    /** Practice: attempts per beat_id (server-side). */
+    beat_attempts: { type: Schema.Types.Mixed, required: false },
+    /** Practice: per-skill tallies for the end screen. */
+    skill_counts: { type: Schema.Types.Mixed, required: false },
     tz: { type: String, required: false },
   },
   { timestamps: true, collection: 'v2_sessions' },
@@ -473,6 +482,39 @@ export function V2AnswerIdempotencyModel(): Model<V2AnswerIdempotencyDoc> {
       'V2AnswerIdempotency',
       v2AnswerIdempotencySchema,
     )
+  );
+}
+
+const V2_PACK_STATUSES = ['draft', 'reviewed', 'published'] as const;
+
+const v2PackSchema = new Schema(
+  {
+    day: { type: Number, required: true, index: true },
+    target_lang: { type: String, required: true, index: true },
+    version: { type: Number, required: true, min: 1 },
+    status: {
+      type: String,
+      required: true,
+      enum: V2_PACK_STATUSES,
+      index: true,
+    },
+    data: { type: Schema.Types.Mixed, required: true },
+    meta: { type: Schema.Types.Mixed, required: false },
+  },
+  { timestamps: true, collection: 'v2_packs' },
+);
+
+v2PackSchema.index({ day: 1, target_lang: 1, version: 1 }, { unique: true });
+v2PackSchema.index({ day: 1, target_lang: 1, status: 1 });
+
+export type V2PackDoc = InferSchemaType<typeof v2PackSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2PackModel(): Model<V2PackDoc> {
+  return (
+    (mongoose.models.V2Pack as Model<V2PackDoc>) ||
+    mongoose.model<V2PackDoc>('V2Pack', v2PackSchema)
   );
 }
 

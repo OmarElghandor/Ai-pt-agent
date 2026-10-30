@@ -24,11 +24,14 @@ import {
   fillPatternsInBank,
   stripPoliteTail,
 } from '../lib/v2/generation/lesson/patternFill';
+import { slotsForKind } from '../lib/v2/generation/lesson/patternTemplates';
+import { normalizeNounAr } from '../lib/v2/generation/lesson/normalizeAr';
 import { validateQuestionShapes } from '../lib/v2/generation/lesson/questionChecks';
 import {
   assembleQuestionFromDraft,
   dedupeWritingAnswers,
 } from '../lib/v2/generation/lesson/jobs/runQuestions';
+import { dropInvalidQuestions } from '../lib/v2/generation/lesson/jobs/runAssemble';
 import { LangCheckSchema } from '../lib/v2/generation/lesson/jobs/runLangCheck';
 import { applyLangCheckPatches } from '../lib/v2/generation/lesson/langCheckApply';
 import { MicroDrillSchema, MicroNoticeOptionSchema } from '../lib/v2/content/lesson';
@@ -117,6 +120,163 @@ describe('decideCriticRerun', () => {
       (merged.blocks[1] as { lines: { tl: string }[] }).lines[0]!.tl,
       /Queria/,
     );
+  });
+
+  it('pathless high on p3_story defaults to dialogue and bumps critic_regen', () => {
+    const page = {
+      id: 'p3_story',
+      preset: 'story',
+      mode: 'guided',
+      title: [{ text: 'قصة', lang: 'eg' }],
+      blocks: [
+        { id: 'b0', type: 'heading', text: [{ text: 'العنوان', lang: 'eg' }] },
+        {
+          id: 'b1',
+          type: 'dialogue',
+          lines: [
+            { speaker: 'learner', tl: 'Oi', ar: '…', ids: [] },
+          ],
+        },
+      ],
+    } as unknown as Page;
+    const plan = planBlockCriticRerun({
+      pageIndex: 3,
+      page,
+      highs: [
+        {
+          severity: 'high',
+          path: 'page',
+          message: 'dialogue feels unnatural for A0',
+        },
+      ],
+    });
+    assert.deepEqual(plan.targets, ['b1']);
+    assert.equal(plan.meta.critic_regen['3:b1'], 1);
+    assert.equal(plan.unresolvedHighs.length, 0);
+  });
+});
+
+describe('normalizeNounAr', () => {
+  it('adds ال and strips tashkeel except shadda', () => {
+    assert.equal(normalizeNounAr('قَهْوَة'), 'القهوة');
+    assert.equal(normalizeNounAr('العيش'), 'العيش');
+    // shadda kept
+    assert.match(normalizeNounAr('الشَّاي'), /ّ/);
+    assert.ok(normalizeNounAr('الشَّاي').startsWith('ال'));
+  });
+});
+
+describe('pattern templates by kind', () => {
+  it('builds article_def and plural_def examples from code', () => {
+    const words: Item[] = [
+      {
+        type: 'word',
+        id: 'word.egg',
+        tl: 'o ovo',
+        ar: 'البيضة',
+        gender: 'm',
+        plural_tl: 'ovos',
+      },
+      {
+        type: 'word',
+        id: 'word.apple',
+        tl: 'a maçã',
+        ar: 'التفاحة',
+        gender: 'f',
+        plural_tl: 'maçãs',
+      },
+      {
+        type: 'word',
+        id: 'word.bag',
+        tl: 'o saco',
+        ar: 'الكيس',
+        gender: 'm',
+        plural_tl: 'sacos',
+      },
+    ];
+    const bank = fillPatternsInBank(
+      [
+        ...words,
+        {
+          type: 'pattern',
+          id: 'pattern.article_gender',
+          kind: 'article_def',
+          slots: slotsForKind('article_def'),
+          examples: ['pattern.article_gender.ex.1'],
+        } as Item,
+        {
+          type: 'pattern',
+          id: 'pattern.plural_s',
+          kind: 'plural_def',
+          slots: slotsForKind('plural_def'),
+          examples: ['pattern.plural_s.ex.1'],
+        } as Item,
+      ],
+      {
+        coreItems: [
+          {
+            id: 'pattern.plural_s',
+            kind: 'pattern',
+            tl: 'os/as',
+            eg: 'جمع',
+            pattern_kind: 'plural_def',
+            fills: ['word.egg', 'word.apple', 'word.bag'],
+          },
+        ],
+      },
+    );
+    const defEx = bank.find((i) => i.id === 'pattern.article_gender.ex.1');
+    assert.ok(defEx && 'tl' in defEx);
+    assert.match(String(defEx.tl), /^(o|a)\s+/);
+    const plEx = bank.find((i) => i.id === 'pattern.plural_s.ex.1');
+    assert.ok(plEx && 'tl' in plEx);
+    assert.match(String(plEx.tl), /^(os|as)\s+/);
+  });
+});
+
+describe('dropInvalidQuestions', () => {
+  it('drops MCQs with empty options', () => {
+    const qs = [
+      {
+        id: 'q1',
+        type: 'read_meaning',
+        skill: 'reading',
+        tests: ['word.egg'],
+        prompt: [{ text: 'x', lang: 'eg' }],
+        options: [],
+        answer: 0,
+      },
+      {
+        id: 'q2',
+        type: 'read_meaning',
+        skill: 'reading',
+        tests: ['word.egg'],
+        prompt: [
+          { text: 'معناها؟ ', lang: 'eg' },
+          { text: 'o ovo', lang: 'tl' },
+        ],
+        options: [
+          [{ text: 'البيضة', lang: 'ar' }],
+          [{ text: 'التفاحة', lang: 'ar' }],
+        ],
+        answer: 0,
+      },
+    ];
+    const issues = validateQuestionShapes(
+      qs as unknown as Array<Record<string, unknown>>,
+      [
+        {
+          type: 'word',
+          id: 'word.egg',
+          tl: 'o ovo',
+          ar: 'البيضة',
+          gender: 'm',
+        },
+      ],
+    );
+    const dropped = dropInvalidQuestions(qs as never, issues);
+    assert.equal(dropped.questions.length, 1);
+    assert.equal(dropped.questions[0]!.id, 'q2');
   });
 });
 

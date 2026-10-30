@@ -230,14 +230,27 @@ export async function evaluateAnswer(
     });
   }
 
-  // No accepted list — grader stub
+  // No accepted list — real grader (Phase 6)
   const graded = await gradeAnswer({
     skill,
     answer: payload.text,
     item_ids: payload.item_id ? [payload.item_id] : [],
     tool_id,
   });
-  const correct = graded.verdict === 'correct' || graded.verdict === 'near_miss';
+  // unclear never counts as a learner error
+  if (graded.verdict === 'unclear') {
+    return finish({
+      verdict: 'unclear',
+      correct: false,
+      accent_only: false,
+      skill,
+      item_id: payload.item_id,
+      tool_id,
+      called_grader: true,
+      item_state: ctx.itemState ?? undefined,
+    });
+  }
+  const correct = graded.verdict === 'correct';
   let state = ctx.itemState ?? undefined;
   if (payload.item_id) {
     if (correct) {
@@ -248,7 +261,7 @@ export async function evaluateAnswer(
         day: payload.day,
         now,
       });
-    } else if (state) {
+    } else if (state && graded.verdict !== 'arabic_only') {
       state = applyImplicitWrongUse(state, now);
     }
   }

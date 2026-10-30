@@ -33,8 +33,9 @@ export type ImplicitApplyResult = {
 };
 
 /**
- * Correct use in lesson/quiz: maybe bump card as easy (once/local day),
+ * Correct use in lesson/quiz/practice: maybe bump card as easy (once/local day),
  * maybe add usedCorrectlyIn situation.
+ * `skipCardReview` — correct on attempt 2 after a logged miss (no easy bump).
  */
 export function applyImplicitCorrectUse(
   state: ItemState,
@@ -42,6 +43,7 @@ export function applyImplicitCorrectUse(
     curriculumDay: number;
     localDate: string;
     now?: Date;
+    skipCardReview?: boolean;
   },
 ): ImplicitApplyResult {
   const now = opts.now ?? new Date();
@@ -57,7 +59,10 @@ export function applyImplicitCorrectUse(
     }
   }
 
-  if (canImplicitCardReview(state, opts.curriculumDay, opts.localDate)) {
+  if (
+    !opts.skipCardReview &&
+    canImplicitCardReview(state, opts.curriculumDay, opts.localDate)
+  ) {
     next = {
       ...next,
       card: applyCardRating(state.card, 'easy', now),

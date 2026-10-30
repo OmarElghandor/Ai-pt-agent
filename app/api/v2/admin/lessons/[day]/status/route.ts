@@ -102,6 +102,17 @@ export async function POST(
       status: body.status as 'draft' | 'reviewed' | 'published',
       version: body.version,
     });
+
+    if (body.status === 'published' && saved) {
+      const { markPacksStaleForLesson } = await import(
+        '@/lib/v2/generation/pack/save'
+      );
+      await markPacksStaleForLesson({
+        day,
+        targetLang: saved.target_lang,
+        lessonVersion: saved.version,
+      });
+    }
     return NextResponse.json({
       day: saved.day,
       version: saved.version,

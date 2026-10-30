@@ -2,7 +2,7 @@ import { parseTarget } from '@/lib/v2/render/target';
 import type { Block } from './blocks';
 import { hasForm, loadConjugationSeed, type SeedFile } from './conjugations/resolve';
 import type { LessonPack } from './lesson';
-import type { Page } from './page';
+import { modeForPreset, type Page } from './page';
 import type { Rt, RtGroup } from './rt';
 
 export type Issue = {
@@ -571,6 +571,16 @@ export function validateLessonPack(
 
   for (const [pi, page] of pack.pages.entries()) {
     const base = `pages[${pi}]`;
+    const expectedMode = modeForPreset(page.preset);
+    if (page.mode !== expectedMode) {
+      issues.push(
+        issue(
+          `${base}.mode`,
+          'mode_preset',
+          `preset ${page.preset} requires mode ${expectedMode}, got ${page.mode}`,
+        ),
+      );
+    }
     if (page.blocks.length > 8) {
       issues.push(issue(`${base}.blocks`, 'block_limit', 'page ≤ 8 blocks'));
     }

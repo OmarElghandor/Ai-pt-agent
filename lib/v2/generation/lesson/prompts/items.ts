@@ -29,9 +29,10 @@ RULES
 4. Reuse every KNOWN_ITEMS recycle id with the same tl when present. If MISSING_RECYCLE lists an id, create it once with MSA ar (never Egyptian). Code merges known recycle payloads.
 5. Every phrase needs context_eg (Egyptian) and cloze (one token that appears in tl). Words/scenes may need image keys; phrases pick an icon from ICONS only.
 6. Meanings ar / ar_f = simple MSA only. Fill tl_f / ar_f when gender changes.
-7. If PAGE_PLAN includes a pattern preset, include ≥1 type "pattern" item. Slots are only { "tl": "…" } literals OR typed holes { "name_eg", "kind": "word" | "article_um_uma" | "article_o_a" }. Do NOT write fills or examples — code fills word holes (from CORE fills when listed, else today's words) and builds pattern.<id>.ex.<n> derived phrases.
-8. Phrases: set role "said" | "heard" when CORE lists it (said = learner speaks it; heard = barista/clerk). Code defaults missing role to said.
-9. Function words alone are not items. Conjugated verb surfaces are never written.
+7. Patterns: pick a template kind — "article_def" | "article_indef" | "plural_def" | "polite_request". Do NOT write slots, fills, or examples — code builds them from the kind (and CORE pattern_kind / fills when listed). If PAGE_PLAN has a pattern preset, include ≥1 pattern item.
+8. Countable nouns that form a regular plural: set plural_tl (bare noun, no article — e.g. "ovos", "maçãs"). Code builds plural_def examples and singular↔plural pairs only from words with plural_tl.
+9. Phrases: set role "said" | "heard" when CORE lists it (said = learner speaks it; heard = barista/clerk). Code defaults missing role to said.
+10. Function words alone are not items. Conjugated verb surfaces are never written.
 
 MEANING REGISTER — good vs bad
 ✓ ar: "أريد قهوة." · context_eg: "عايز قهوة وانت عند الكاونتر"
