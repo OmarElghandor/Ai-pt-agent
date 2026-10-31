@@ -17,14 +17,24 @@ All screens are routes under `app/(v2)/` in `ai-agent-talk`. Each screen lists i
 
 ### S2 · Day map
 - Reference: `06-day-map.png`.
-- Shows: a cover illustration, the day title (pt + ar) and the list of steps (pages and practice), each with minutes and a status (done, current, locked).
+- Shows: a cover illustration, the day title (pt + ar) and the list of steps, each with minutes and a status (done, current, locked).
+- **Steps in order (story first, 00 §4):**
+  1. القصة (the intro story, page 0);
+  2. "نفصّل اللي اتقال" (the detail pages);
+  3. "القصة تاني: من غير ترجمة" (page 0 in test mode: plays without stopping, then 3–4 questions at the end);
+  4. أسئلة اليوم;
+  5. the practice conversation.
 - Data: GET `/api/v2/lessons/[day]` plus progress.
 
 ### S3 · Content page player (no tab bar)
 - References: `01-content-page-possessives.png` (the visual style for every content page, and table pages), `02-conjugation-endings.png` (verb and explore pages), `stitch-html/04-compare-o-a.html` (compare pages, layout only), `05-phrases-page.png` (phrases), `05b-dictionary-page.png` (dictionary). Guided behaviour still comes from `prototypes/ser-estar.html`.
 - Working prototypes: `prototypes/ser-estar.html` (guided) and `prototypes/verb-endings.html` (explore). Match their behaviour.
 - Header: back, small "Dia N · <pill>", the title, a speaker button for the page, "اختبرني" and "غطّي" toggles.
-- **Guided mode:**
+- **Sections mode (grammar pages, 2026-10-31; replaces guided):**
+  - The rule's main block is visible at once. The Egyptian explanation under it is read by TTS once on open, with a pause/replay button. There is no other autoplay.
+  - An arrow button "الأمثلة ⌄" reveals all examples together. Each example plays on tap. The conjugation dial and verb chips, if the page has them, sit here.
+  - "فهمت؟": 2–3 simple questions under the examples. Each shows right or wrong at once with a why line. A wrong answer highlights the related example. The questions never block "التالي".
+- **Guided mode (retired 2026-10-31, kept for reference):**
   - Autoplay of steps. The current target is highlighted; unrevealed parts are at 20% opacity.
   - The caption bar shows the step's `tip` in Egyptian with TTS, plus chapter segments, pause and speed.
   - At an `ask` step, playback stops and the question shows as a bubble with options. After the answer, a short why line, then playback continues.
@@ -32,7 +42,10 @@ All screens are routes under `app/(v2)/` in `ai-agent-talk`. Each screen lists i
 - **Explore mode:**
   - Controls sit above the blocks: a person dial (`reveal_axis`) and verb swap chips (`swap`). Each control shows its tip in the caption bar.
   - `locked_until` blocks show a lock until their condition is met.
-- **Static mode:** everything visible; tapping an item plays its audio.
+- **Static mode:** dictionary and phrases pages open the **ItemViewer** (see 05): one word or phrase per full screen, picture on top, a learning sheet below (meaning with memory mode, an example from the story, prev/next). Other static blocks render in place; tapping an item plays its audio.
+- **Story pages** (`preset: story` with a `dialogue` block) open the **StoryPlayer** (see 05), full screen and without the guided caption bar. **The story never stops to ask the learner anything** (2026-10-31). Learner lines play like the others.
+  - **Intro mode (page 0):** passive. Every line plays by itself, the learner's included. The meaning is hidden and is shown per line on tap. There are no turns, asks or tips. The end screen shows "خلّصت القصة" and how many meanings were opened.
+  - **Test mode (after the detail pages):** the story plays again from start to end without stopping. The meaning is hidden, with no per-line reveal, no hint, no tips and no asks. When it ends, the end screen shows 3–4 short questions about the story (what the character asked, what you replied, one line meaning), then "فهمت n من N".
 - **Cover (غطّي):** hides `meaning`, `tl` or `endings`, as the page's `cover` says. Tap to peek.
 - **Quiz (اختبرني):** 3 questions from the page's `quiz` ids, then return.
 - Data: the page object from the lesson JSON. Answers go to POST `/api/v2/answers`.

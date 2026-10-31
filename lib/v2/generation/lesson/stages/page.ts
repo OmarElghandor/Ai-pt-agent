@@ -564,16 +564,23 @@ export function validatePageAgainstOutline(
     });
   }
 
+  const isIntro =
+    entry.role === 'intro' ||
+    page.role === 'intro' ||
+    (entry.index === 0 && entry.preset === 'story');
   const allowed = allowedItemIds(entry);
   const refs = collectPageItemRefs(page);
-  for (const ref of refs) {
-    if (!allowed.has(ref)) {
-      issues.push({
-        path: 'page',
-        rule: 'item_out_of_scope',
-        message: `page uses ${ref} which is not in introduces∪assumes`,
-        severity: 'error',
-      });
+  // Intro story previews today's items — skip introduces∪assumes scope.
+  if (!isIntro) {
+    for (const ref of refs) {
+      if (!allowed.has(ref)) {
+        issues.push({
+          path: 'page',
+          rule: 'item_out_of_scope',
+          message: `page uses ${ref} which is not in introduces∪assumes`,
+          severity: 'error',
+        });
+      }
     }
   }
   for (const id of entry.introduces) {

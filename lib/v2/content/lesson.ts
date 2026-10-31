@@ -17,6 +17,8 @@ const LessonMetaSchema = z.object({
   phase: z.number().int().optional(),
   week: z.number().int().optional(),
   kind: z.enum(['lesson', 'story', 'review']).default('lesson'),
+  /** Points at v2_stories; lines live on the story document. */
+  story_id: z.string().optional(),
   situation: z
     .object({
       tl: z.string(),

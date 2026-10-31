@@ -125,6 +125,83 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
 **Prompt**
 > Read the sections of docs/langify-v2/03-generation-and-learning.md named in 07-build-plan Phase 3, the PAGES block at the end of 02-content-schema.md, and 04-curriculum.md. Create content/v2/plan/pt-PT.days.json from the days 1–30 table, and lib/v2/generation/lesson with the pipeline described in Phase 3 (system prompt text verbatim from 03, with PAGE STEPS replaced by PAGES; the model never writes conjugated forms). Add the admin route and a /v2-admin review page. Pilot days 1–3. VERB_TABLE in the request lists only verbs with verified: true. Run the validator in strict mode before saving. Use examples/day06-example.json (and gold days 1–3 when they exist) as the in-prompt examples.
 
+### Phase 3 add-on · Story builder (2026-10-30)
+
+**Read:** 00 §4 "Story first" and "Story builder", and 00 §10 "Story scene image".
+
+**Tasks**
+1. **Story document.**
+   - A store of its own (file or collection), one document per day and language, with version, status, cast, setting, lines and image_spec.
+   - Lessons point to it by `story_id`.
+   - The admin preview shows it.
+   - The publish gate checks it with the lesson.
+2. **The `story` job** in the DAG, after items and before outline.
+   - The model returns the cast, the setting and the lines. Every line has an explicit speaker, and may carry `ids` and `extra`.
+   - Code adds the Arabic, the test-mode options, the bubble sides and the scene image prompt.
+3. **Story checks.**
+   - **Fatal** (then one rerun of the story job only):
+     - every core item covered;
+     - the grammar focus used twice or more;
+     - extras at 15% of tokens or less, each one glossed;
+     - every speaker valid, with 2 speakers;
+     - replies after the line they answer;
+     - no bare nouns;
+     - 6–10 lines.
+   - **Auto-fix:** drop ids whose words aren't in the line, and normalize punctuation.
+4. **Outline from the story.**
+   - Page 0 is the story in intro mode. After the detail pages comes a replay in test mode with the same `story_id`.
+   - Detail pages follow the order in which items first appear in the story.
+   - Tips and examples quote real line indexes.
+   - Remove the "story_ending" append in runOutline.
+5. **Lazy TTS cache.**
+   - On first play, a server route generates the audio for one line with the speaker's voice and writes the key back to the story document, using a per-line lock.
+   - Slow audio is generated on the first slow play.
+   - A change to `tl` clears the line's audio.
+6. **Weekly story days:** same job, with 12–20 lines in 2–3 scenes, recycle only, and one image_spec per scene.
+7. **Tests:** a Day 3 fixture that passes, and one failing fixture per fatal rule.
+
+**Done when**
+- Day 3 regenerates with the story first, the story document passes every check, and the lesson's detail pages quote its lines.
+- Playing a line for the first time saves its audio into the story document, and the second play makes no TTS call.
+
+### Phase 3 add-on · No-interrupt story and sectioned grammar (2026-10-31)
+
+**Read:** 00 §3 (page modes), 00 §4 ("Story again (test)" and "Grammar pages"), 05 (StoryPlayer interaction, SectionsPage), and 06 S3.
+
+**Tasks**
+1. **StoryPlayer.**
+   - Remove learner turns and mid-story options in both modes. Every line plays through.
+   - Test mode hides meanings and per-line reveal.
+   - The end screen of test mode shows 3–4 after-story questions from the story document, then "فهمت n من N".
+   - Answers are posted to `/api/v2/answers`, with scope story and the line index.
+2. **Story builder.**
+   - Replace the per-learner-line `options` with `after_questions` (3–4), built by code from the lines:
+     - what the character asked;
+     - what the learner replied to line i (right line plus 2 said distractors of the same role, today or recycle only);
+     - one line meaning.
+   - Fatal if there are fewer than 3.
+3. **Mode `sections`** in the schema and validator, for compare, pattern and conjugation.
+   - Page fields: the main block, `explain` (rt, 2–4 sentences), the examples block, and `check` (2–3 question ids with this page's `page_index`).
+   - Remove steps, chapters, asks and every step check (count, ask spacing, reveal order) for these presets.
+   - Old guided drafts convert on regeneration.
+4. **Page job prompt for grammar presets:** write only the main block, `explain` and any examples that code can't fill.
+   - patternFill gives pattern pages 3–5 examples.
+   - The questions job must give each grammar page at least 3 rule questions. Code picks 2–3 for `check`.
+5. **Player.** A SectionsPage component, as in 05:
+   - TTS reads the explanation once on open, with a pause/replay chip;
+   - the "الأمثلة" toggle shows all examples at once;
+   - the check cards give inline feedback and never block "التالي".
+6. **Critic and checks.** Drop the critic's step-order rules for grammar pages. New fatal rules:
+   - `explain` missing, or longer than 4 sentences;
+   - fewer than 3 examples on a pattern page;
+   - fewer than 2 check questions.
+7. **Tests:** Day 1's pattern page and Day 3's compare page as `sections` fixtures, plus the StoryPlayer test mode with after-story questions.
+
+**Done when**
+- Day 1 and Day 3 regenerate with no guided pages.
+- The story plays start to end in both modes without a single stop.
+- Grammar pages show explain → examples → check, and the only autoplay is the one-time explanation TTS.
+
 ---
 
 ## Phase 4 · Progress, SRS, answers, cards engine
@@ -252,24 +329,17 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
 - Model from env (`V2_GRADER_MODEL`, default claude-haiku-5-5; Kimi allowed). 8s timeout → `unclear`, never counted as a learner error.
 - The reactor gets only one error. Its output `{character_tl?, coach_eg?, advance}` is validated by zod, and its character_tl goes through the same heard/said and allowed-words checks as packs. If a check fails, use the fallback coach line from the pack and don't show a character line.
 - Both stay pure modules. Every write goes through POST /api/v2/answers, with answer_id idempotency and the Phase 4 implicit-review cap.
-- Legacy `/api/grade` and `/api/react` stay until Phase 8.
 
 *Progress hooks*
 - Correct speaking/writing beats add `usedCorrectlyIn` with the situation id `day:<n>` for days after introducedDay (Phase 4 rule) and raise said/used levels. Listening/reading raise heard/understood.
 - The end-screen focus error is the Phase 4 weak-area path. It must appear in tomorrow's weak bucket (test this).
 - "مش قادر أتكلم دلوقتي" switches the beat to writing and counts for writing only.
-- Beats use `prompt_ids` (heard) and `expected_ids` (said). Attempt count is server-side per (session, beat_id).
-- Reactor only for speaking/writing near_miss|wrong|off_topic; correct/closed use `next_character_tl`.
-- Correct on attempt 2 skips the implicit easy review (first error still logged). Accent-only = correct + accent note.
 
 *UI*
 - Follow 05 (Warm Editorial, Spacing, Icons, ImageSlot) and the layout of `design/stitch-html/11-practice-conversation.html`.
 - Learner bubbles are deep teal. The coach uses a NoteCard.
 - Corrections are amber, never red, one at a time.
 - Screens are checked at 390px.
-- Practice unlocks after the day's last page is done (`?dev=1` override).
-- Pack meta stores `lesson_version`; republishing the lesson marks the pack stale.
-- `/api/stt` is called with `pt-PT`.
 
 ---
 
@@ -292,6 +362,37 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
 
 **Prompt**
 > Read docs/langify-v2/00-decisions.md §1 and §6, the micro and daily-use sections of 03, and 06-screens.md S1, S4, S9–S11. Build the micro-unit logic and endpoints, and the /path, day done, /library and /me screens.
+
+**Add-on (2026-10-29, after Phases 3–6)**
+
+*Data already exists. Build screens and small read endpoints on top of it.*
+- **Learner day:** use the Phase 5 rule (the highest day the learner started, default 1). Day N+1 unlocks when day N's last page is done. Practice unlocks after the last page (Phase 6 rule). Never unlock by calendar.
+- **Micro units** come from the published lesson's `micro`:
+  - morning: phrase + mission_eg;
+  - midday: tool with step / of / notice / rule_eg / drills;
+  - evening: a check-in plus the due cards from GET /api/v2/cards/today.
+  - Series state = the `tool_id` + step per user (new `v2_micro_state`). Completing a unit goes through POST /api/v2/micro/[unitId]/done. Drill answers go through POST /api/v2/answers (kind: micro, with answer_id). Nothing else writes progress.
+- **«احكي يومك»** uses the lesson's `speak_prompts` (prompt_eg, answer_tl, ids). Answers are speaking/writing beats graded exactly like Phase 6 (code first, then the grader; no reactor needed). It runs as a short flow, not a chat.
+- **Day done (S4):**
+  - the items introduced today (from the lesson);
+  - the rule (`rule_eg`);
+  - "هتراجعها بكره" = the `tomorrow` count from Phase 5;
+  - calm streak dots;
+  - the next step (practice, if not done, or tomorrow's situation).
+- **/me and gaps (S10):**
+  - the 4 levels as counts from v2_item_state;
+  - skill bars from per-skill SRS;
+  - نواقصك = Phase 4 weak areas, labeled in Egyptian. "اتمرّن عليها" opens a 10-question session from the Phase 4 session builder, filtered to that tool_id.
+- **Weekly situation test:** on story days (7, 14, 21, 28), a 12-question session from the Phase 4 builder covering the week's items and all four skills. The result is stored in v2_sessions (kind: weekly_test) and shown on /me.
+- **/library (S9):**
+  - shelves from published lesson pages with `library: true`, unlocked when the learner's day ≥ the page's day;
+  - the verb shelf = verbs met (Phase 5 rule), opening the verb poster;
+  - stories open in the S3 player (static mode).
+- **/path (S1):** greeting, "بتفهم N · بتقول M", today's day card, the 3 micro units with done states, and the week map (story day marked).
+- **Onboarding:** one first-launch screen from `design/reference/00-onboarding.png` (with Langify, not "Falou"), then /path. No placement test for now.
+- **Reminders:** in-app only (a banner on /path for undone micro units). No push in this phase.
+- **Design:** 05 (Warm Editorial, Spacing, Icons, ImageSlot). References: 13-learning-path, 06-day-map, 07-day-done, 00-onboarding. Checked at 390px.
+- **Done-when test:** a seed user goes Day 1 → Day 3 through the path. Micro units appear and complete, and the levels and gaps on /me change.
 
 ---
 

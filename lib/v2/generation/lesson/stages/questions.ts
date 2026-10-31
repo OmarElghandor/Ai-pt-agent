@@ -148,6 +148,10 @@ export function validateQuestionsAgainstOutline(
   const intro = introducedByPage(outline);
   const maxIndex = Math.max(0, ...outline.pages.map((p) => p.index));
 
+  const introPage = outline.pages.find(
+    (p) => p.role === 'intro' || (p.index === 0 && p.preset === 'story'),
+  );
+
   for (const [qi, q] of questions.entries()) {
     const pageIndex = q.page_index;
     if (typeof pageIndex !== 'number') {
@@ -155,6 +159,15 @@ export function validateQuestionsAgainstOutline(
         path: `questions[${qi}].page_index`,
         rule: 'missing_page_index',
         message: 'question must have page_index',
+        severity: 'error',
+      });
+      continue;
+    }
+    if (introPage && pageIndex === introPage.index) {
+      issues.push({
+        path: `questions[${qi}].page_index`,
+        rule: 'question_on_intro',
+        message: 'questions must not target the intro story page',
         severity: 'error',
       });
       continue;

@@ -4,7 +4,11 @@ import { validateLessonPack, type LessonPack } from '../lib/v2/content';
 import { buildLessonBrief } from '../lib/v2/generation/lesson/brief';
 import {
   getCoreItemsDay,
+  loadCoreItemsFile,
+  MAX_CORE_ITEMS_PER_DAY,
   nonVerbCoreIds,
+  resetCoreItemsCache,
+  validateCoreItemsFile,
 } from '../lib/v2/generation/lesson/coreItems';
 import { getDayPlan } from '../lib/v2/generation/lesson/plan';
 
@@ -23,6 +27,23 @@ describe('core-items file', () => {
     assert.equal(getCoreItemsDay(30).core_items.length, 0);
     assert.equal(buildLessonBrief(getDayPlan(7)).no_new_items, true);
     assert.equal(buildLessonBrief(getDayPlan(30)).no_new_items, true);
+  });
+
+  it('passes validateCoreItemsFile (unique ids, ≤20/day, plural_tl on article nouns)', () => {
+    resetCoreItemsCache();
+    const file = loadCoreItemsFile();
+    const issues = validateCoreItemsFile(file);
+    assert.deepEqual(
+      issues,
+      [],
+      issues.map((i) => `${i.rule}: ${i.message}`).join('\n'),
+    );
+    for (const d of file.days) {
+      assert.ok(
+        (d.core_items?.length ?? 0) <= MAX_CORE_ITEMS_PER_DAY,
+        `day ${d.day} exceeds cap`,
+      );
+    }
   });
 });
 

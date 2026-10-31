@@ -6,6 +6,7 @@ export const PatternKindSchema = [
   'article_indef',
   'plural_def',
   'polite_request',
+  'chamo_me',
 ] as const;
 
 export type PatternKind = (typeof PatternKindSchema)[number];
@@ -15,6 +16,7 @@ const KIND_BY_ID: Record<string, PatternKind> = {
   'pattern.plural_s': 'plural_def',
   'pattern.queria_um_uma': 'polite_request',
   'pattern.day': 'polite_request',
+  'pattern.chamo_me': 'chamo_me',
 };
 
 /** Infer kind from explicit value or known pattern id. */
@@ -26,7 +28,8 @@ export function resolvePatternKind(
     kind === 'article_def' ||
     kind === 'article_indef' ||
     kind === 'plural_def' ||
-    kind === 'polite_request'
+    kind === 'polite_request' ||
+    kind === 'chamo_me'
   ) {
     return kind;
   }
@@ -58,5 +61,18 @@ export function slotsForKind(kind: PatternKind): PatternSlot[] {
         { name_eg: 'الحاجة', kind: 'word' },
         { tl: ', por favor.' },
       ];
+    case 'chamo_me':
+      return [
+        { tl: 'Chamo-me' },
+        { name_eg: 'اسم', kind: 'name' },
+      ];
   }
 }
+
+/** Default Portuguese names for chamo_me examples (with Arabic gloss). */
+export const CHAMO_ME_NAMES: { tl: string; ar: string }[] = [
+  { tl: 'Omar', ar: 'عمر' },
+  { tl: 'Inês', ar: 'إينيس' },
+  { tl: 'Rita', ar: 'ريتا' },
+  { tl: 'Manuel', ar: 'مانويل' },
+];

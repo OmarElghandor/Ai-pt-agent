@@ -81,11 +81,18 @@ export function resolveCriticIssuesByPatches(
   });
 }
 
-function hasUnresolvedHighCritic(issues: CriticIssueRecord[] | undefined): boolean {
-  return (issues ?? []).some(
-    (i) => i.severity === 'high' && !i.resolved_by,
-  );
-}
+/** Assemble / publish fatals — only these block the gate (00 §3 stop rule). */
+const FATAL_ASSEMBLE_RULES = new Set([
+  'dialogue_check',
+  'core_id_missing',
+  'duplicate_ar',
+  'duplicate_options',
+  'ar_sentence_gap',
+  'greeting_hello_collision',
+  'slash_in_tl',
+  'variant_group_uncovered',
+  'phrase_not_on_phrases_page',
+]);
 
 function hasDialogueFatal(issues: Issue[] | undefined): boolean {
   return (issues ?? []).some((i) => i.rule === 'dialogue_check');
@@ -95,7 +102,9 @@ function hasHardAssembleError(issues: Issue[] | undefined): boolean {
   return (issues ?? []).some(
     (i) =>
       i.severity === 'error' &&
-      (i.rule === 'dialogue_check' || i.rule === 'core_id_missing'),
+      (FATAL_ASSEMBLE_RULES.has(i.rule) ||
+        i.rule === 'dialogue_check' ||
+        i.rule === 'core_id_missing'),
   );
 }
 
@@ -106,38 +115,33 @@ export type PublishBlockMeta = Pick<
 
 /**
  * True when reviewed/published must be refused.
- * Ignores critic issues with resolved_by set.
+ * Stop rule (00 §3): only fatals block. Critic high/medium/low and soft
+ * warnings go to the review report; `meta.flagged` alone does not block.
  */
 export function isBlockedForPublish(meta: PublishBlockMeta | null | undefined): boolean {
   if (!meta) return false;
-  if (hasUnresolvedHighCritic(meta.critic_issues)) return true;
   if (hasDialogueFatal(meta.issues) || hasHardAssembleError(meta.issues)) {
     return true;
   }
   const lc = meta.lang_check as { discarded?: unknown[] } | undefined;
   if (Array.isArray(lc?.discarded) && lc!.discarded!.length > 0) return true;
-  // Legacy: flagged with no structured critic_issues still blocks unless
-  // we only have resolved critic_issues (empty unresolved highs).
-  if (meta.flagged) {
-    if (meta.critic_issues && meta.critic_issues.length > 0) {
-      return hasUnresolvedHighCritic(meta.critic_issues);
-    }
-    // flagged from assemble / other — still block
-    return true;
-  }
   return false;
 }
 
-/** Recompute flagged after lang_check apply + resolve. */
+/**
+ * Recompute flagged after lang_check apply + resolve.
+ * Flagged marks the review report; only fatals / discarded patches are true blocks.
+ */
 export function recomputeFlaggedAfterLangCheck(opts: {
   critic_issues: CriticIssueRecord[];
   discardedCount: number;
   assembleIssues?: Issue[];
 }): boolean {
   if (opts.discardedCount > 0) return true;
-  if (hasUnresolvedHighCritic(opts.critic_issues)) return true;
   if (hasDialogueFatal(opts.assembleIssues) || hasHardAssembleError(opts.assembleIssues)) {
     return true;
   }
-  return false;
+  // Soft: unresolved critic still flags the review report
+  const hasCritic = (opts.critic_issues ?? []).some((i) => !i.resolved_by);
+  return hasCritic;
 }

@@ -1,6 +1,7 @@
 export { CORE_PROMPT, wordCount } from './core';
 export { buildItemsSystemPrompt } from './items';
 export { buildOutlineSystemPrompt } from './outline';
+export { buildStorySystemPrompt } from './story';
 export { buildPageSystemPrompt, PRESET_CATALOGS } from './pageCatalog';
 export { buildQuestionsSystemPrompt } from './questions';
 export { buildMicroSystemPrompt } from './micro';

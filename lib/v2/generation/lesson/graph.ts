@@ -84,12 +84,21 @@ export function hashItemsJob(
   return inputHash({ kind: 'items', brief, known, planSlice });
 }
 
+export function hashStoryJob(
+  brief: LessonBrief,
+  items: KnownIdTl[],
+  planSlice: unknown,
+): string {
+  return inputHash({ kind: 'story', brief, items, planSlice });
+}
+
 export function hashOutlineJob(
   brief: LessonBrief,
   items: KnownIdTl[],
   pagePlan: unknown,
+  storyHandoff?: unknown,
 ): string {
-  return inputHash({ kind: 'outline', brief, items, pagePlan });
+  return inputHash({ kind: 'outline', brief, items, pagePlan, storyHandoff });
 }
 
 export function hashPageJob(
@@ -228,8 +237,8 @@ export async function enqueueLessonDag(opts: {
     input_hash: itemsHash,
   });
 
-  const outlineJob = await Job.create({
-    kind: 'outline',
+  const storyJob = await Job.create({
+    kind: 'story',
     lesson_id,
     day: opts.day,
     target_lang,
@@ -237,6 +246,17 @@ export async function enqueueLessonDag(opts: {
     status: 'queued',
     depends_on: [itemsJob._id],
     input_hash: '', // filled when items done
+  });
+
+  const outlineJob = await Job.create({
+    kind: 'outline',
+    lesson_id,
+    day: opts.day,
+    target_lang,
+    version,
+    status: 'queued',
+    depends_on: [storyJob._id],
+    input_hash: '', // filled when story done
   });
 
   // Fan-out shells — page + per-page questions created after outline.
@@ -314,6 +334,7 @@ export async function enqueueLessonDag(opts: {
     target_lang,
     jobIds: [
       String(itemsJob._id),
+      String(storyJob._id),
       String(outlineJob._id),
       String(microJob._id),
       String(dailyJob._id),
@@ -376,6 +397,13 @@ export async function expandPageJobs(opts: {
   const criticIds: mongoose.Types.ObjectId[] = [];
   const questionsIds: mongoose.Types.ObjectId[] = [];
   for (const entry of opts.outline.pages) {
+    // Story pointers (intro + test) are owned by story/assemble — no LLM page/critic/questions.
+    const isStoryPointer =
+      entry.role === 'intro' ||
+      entry.role === 'test' ||
+      (entry.index === 0 && entry.preset === 'story');
+    if (isStoryPointer) continue;
+
     const allowedIds = new Set([...entry.introduces, ...entry.assumes]);
     const allowed = opts.items.filter((i) => allowedIds.has(i.id));
     const hash = hashPageJob(brief, entry, allowed);
@@ -417,9 +445,7 @@ export async function expandPageJobs(opts: {
       page_id: entry.page_id,
       status: 'queued',
       depends_on: [outlineJob._id],
-      input_hash: hashQuestionsJob(brief, itemsAsKnown(opts.items), [
-        entry,
-      ]),
+      input_hash: hashQuestionsJob(brief, itemsAsKnown(opts.items), [entry]),
     });
     questionsIds.push(qJob._id as mongoose.Types.ObjectId);
   }
@@ -664,11 +690,18 @@ export async function rehashAfterItemEdit(opts: {
 
   return markStaleByHash(jobs, (job) => {
     switch (job.kind) {
+      case 'story':
+        return hashStoryJob(brief, known, {
+          core_items: brief.core_items,
+          recycle_ids: brief.recycle_ids,
+        });
       case 'outline':
         return hashOutlineJob(
           brief,
           known,
           dayPlan.generation?.page_plan ?? [],
+          (lesson.meta as { handoffs?: { story?: unknown } } | undefined)
+            ?.handoffs?.story,
         );
       case 'page': {
         if (!outline) return null;

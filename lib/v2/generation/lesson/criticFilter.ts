@@ -28,6 +28,18 @@ export function filterCriticIssues(
     const msg = issue.message ?? '';
     const path = issue.path ?? '';
 
+    // Sections pages: drop retired guided step-order critiques
+    if (opts.page.mode === 'sections') {
+      if (
+        /step|ask spacing|ask density|12–20|12-20|guided|autoplay|chapter/i.test(
+          msg,
+        )
+      ) {
+        dropped.push(issue);
+        continue;
+      }
+    }
+
     // پ ڤ چ غ are required say letters — never an error
     if (REQUIRED_SAY_LETTERS.test(msg) && FALSE_PRON_RE.test(msg)) {
       dropped.push(issue);

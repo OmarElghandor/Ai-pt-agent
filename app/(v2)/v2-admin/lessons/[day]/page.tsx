@@ -73,6 +73,13 @@ type GenPayload = {
   }[];
   budgets: Record<string, { system: number; input: number; output: number }>;
   handoffs: unknown;
+  story: {
+    id: string;
+    status: string;
+    setting: string;
+    cast: { id: string; name: string; role: string }[];
+    lines: { speaker: string; tl: string; ids?: string[]; ar?: string }[];
+  } | null;
   job: { status: string; error: string | null };
 };
 
@@ -473,6 +480,33 @@ export default function V2AdminLessonPage() {
           </div>
         </div>
       )}
+
+      {data?.story ? (
+        <section style={{ marginBottom: 20 }}>
+          <h2 style={{ fontSize: 16 }}>Story</h2>
+          <p style={{ fontSize: 13, color: '#555' }}>
+            {data.story.id} · {data.story.status} · {data.story.setting}
+          </p>
+          <p style={{ fontSize: 12, color: '#666' }}>
+            cast:{' '}
+            {data.story.cast.map((c) => `${c.id}(${c.role})`).join(', ')}
+          </p>
+          <ol style={{ fontSize: 13, paddingInlineStart: 20 }}>
+            {data.story.lines.map((line, i) => (
+              <li key={i} style={{ marginBottom: 4 }}>
+                <strong>{line.speaker}</strong>:{' '}
+                <span dir="ltr">{line.tl}</span>
+                {line.ids?.length ? (
+                  <span style={{ color: '#888' }}> [{line.ids.join(', ')}]</span>
+                ) : null}
+                {line.ar ? (
+                  <div style={{ color: '#444' }}>{line.ar}</div>
+                ) : null}
+              </li>
+            ))}
+          </ol>
+        </section>
+      ) : null}
 
       {/* Job graph */}
       <section style={{ marginBottom: 20 }}>

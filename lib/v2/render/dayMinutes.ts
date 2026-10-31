@@ -7,6 +7,7 @@ export function formatDayLabel(day: number): string {
 
 /** Display-only. Pages don't carry a minutes field yet. */
 export function minutesForMode(mode: string): number {
+  if (mode === 'sections') return 4;
   if (mode === 'guided') return 5;
   if (mode === 'explore') return 4;
   return 3;

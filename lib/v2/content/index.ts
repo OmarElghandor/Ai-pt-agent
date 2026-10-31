@@ -23,6 +23,14 @@ export {
   type SpeakPrompt,
 } from './lesson';
 export {
+  StoryDocSchema,
+  StoryLineSchema,
+  storyIdFor,
+  type StoryDoc,
+  type StoryLine,
+  type StoryStatus,
+} from './story';
+export {
   ControlSchema,
   CoverSchema,
   ModeSchema,

@@ -23,7 +23,7 @@ EXAMPLE PHRASE
 }
 
 RULES
-1. CORE_ITEMS is the source of truth. Create exactly those ids (word / phrase / pattern). Skip kind=verb — code adds them.
+1. CORE_ITEMS is the source of truth (up to 20 ids per day). Create exactly those ids (word / phrase / pattern). Skip kind=verb — code adds them.
 2. The eg field on CORE_ITEMS is a HINT only — write proper MSA ar / Egyptian context_eg yourself; do not copy eg verbatim as final copy.
 3. You may add at most 2 extra items beyond CORE_ITEMS; each MUST set "extra": true. On no_new_items days, add zero new items.
 4. Reuse every KNOWN_ITEMS recycle id with the same tl when present. If MISSING_RECYCLE lists an id, create it once with MSA ar (never Egyptian). Code merges known recycle payloads.

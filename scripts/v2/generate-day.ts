@@ -56,11 +56,16 @@ async function main() {
   );
 
   const workerId = `cli-${process.pid}-${randomBytes(3).toString('hex')}`;
-  const processed = await runWorkerBatch(workerId);
+  const filter = {
+    day: enqueued.day,
+    version: enqueued.version,
+    targetLang: enqueued.target_lang,
+  };
+  const processed = await runWorkerBatch(workerId, filter);
   console.info(`[v2-gen] worker processed ${processed} jobs`);
 
   // Keep draining until assemble done or failed (outline expands pages mid-run)
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 80; i++) {
     const jobs = await listJobsForVersion(
       enqueued.day,
       enqueued.version,
@@ -68,12 +73,17 @@ async function main() {
     );
     const summary = summarizeJobGraph(jobs);
     if (summary.status === 'done' || summary.status === 'failed') break;
-    const n = await runWorkerBatch(workerId);
+    const n = await runWorkerBatch(workerId, filter);
     if (n === 0) {
       // deps may still be unfinished — wait briefly
-      await new Promise((r) => setTimeout(r, 500));
-      const again = await runWorkerBatch(workerId);
-      if (again === 0) break;
+      await new Promise((r) => setTimeout(r, 1500));
+      const again = await runWorkerBatch(workerId, filter);
+      if (again === 0) {
+        // one more pause for critic requeues
+        await new Promise((r) => setTimeout(r, 3000));
+        const last = await runWorkerBatch(workerId, filter);
+        if (last === 0) continue;
+      }
     }
   }
 

@@ -1,0 +1,34 @@
+{
+  "lang": "pt-PT",
+  "tokens": [
+    "a", "o", "as", "os", "um", "uma", "uns", "umas",
+    "de", "do", "da", "dos", "das",
+    "em", "no", "na", "nos", "nas",
+    "ao", "à", "aos", "às",
+    "por", "para", "com", "sem",
+    "e", "ou", "mas", "que", "se",
+    "é", "são", "está", "estão", "tem", "têm", "há",
+    "não", "sim",
+    "eu", "tu", "ele", "ela", "você", "nós", "eles", "elas",
+    "me", "te", "nos",
+    "isto", "isso", "aquilo",
+    "este", "esta", "estes", "estas",
+    "esse", "essa", "esses", "essas",
+    "aquele", "aquela", "aqueles", "aquelas",
+    "muito", "mais", "menos", "também",
+    "já", "ainda", "agora", "hoje", "amanhã", "ontem",
+    "aqui", "ali", "onde", "quando", "como",
+    "porquê", "porque",
+    "olá", "obrigado", "obrigada",
+    "senhor", "senhora"
+  ],
+  "phrases": [
+    "por favor",
+    "bom dia",
+    "boa tarde",
+    "boa noite",
+    "se faz favor",
+    "o senhor",
+    "a senhora"
+  ]
+}

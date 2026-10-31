@@ -112,12 +112,22 @@ function hasForbiddenNumberToken(text: string, day: number): string | null {
   return null;
 }
 
-function saidPhraseIds(items: Item[]): string[] {
+/** Said phrases introduced today only (exclude recycle / KNOWN / heard). */
+export function saidPhraseIds(
+  items: Item[],
+  opts?: { introducedToday?: Iterable<string>; recycleIds?: Iterable<string> },
+): string[] {
+  const introduced = opts?.introducedToday
+    ? new Set(opts.introducedToday)
+    : null;
+  const recycle = new Set(opts?.recycleIds ?? []);
   return items
     .filter((i) => {
       if (i.type !== 'phrase') return false;
       if ((i as { derived?: boolean }).derived) return false;
       if (/^pattern\..+\.ex\.\d+$/.test(i.id)) return false;
+      if (recycle.has(i.id)) return false;
+      if (introduced && !introduced.has(i.id)) return false;
       const role = (i as { role?: string }).role;
       return role !== 'heard';
     })
@@ -221,6 +231,8 @@ export async function runMicroJob(opts: {
   items: Item[];
   phraseDigest?: { id: string; tl: string }[];
   prevMicroHandoff?: { series: string; step: number; examples_used: string[] } | null;
+  /** Item ids introduced on today's detail pages (not recycle/KNOWN). */
+  introducedToday?: string[];
 }): Promise<{
   micro: Micro;
   issues: string[];
@@ -245,7 +257,24 @@ export async function runMicroJob(opts: {
   const tomorrow = gen.tomorrow
     ? `tomorrow: ${gen.tomorrow.tl} · ${gen.tomorrow.eg}`
     : 'tomorrow: (next day)';
-  const saidIds = saidPhraseIds(opts.items);
+  const coreIds = new Set(
+    (opts.brief.core_items ?? [])
+      .filter((c) => c.kind === 'phrase')
+      .map((c) => c.id),
+  );
+  const introducedToday =
+    opts.introducedToday ??
+    opts.items
+      .filter(
+        (i) =>
+          typeof (i as { introduced_on_page?: number }).introduced_on_page ===
+            'number' || coreIds.has(i.id),
+      )
+      .map((i) => i.id);
+  const saidIds = saidPhraseIds(opts.items, {
+    introducedToday,
+    recycleIds: opts.brief.recycle_ids,
+  });
   const phrases =
     opts.phraseDigest ??
     opts.items
@@ -315,7 +344,12 @@ drills must be 2 full quiz objects (prompt + options), not question ids.
   let result = parsed.data.micro as Micro;
   const issues: string[] = [];
   const ids = new Set(opts.items.map((i) => i.id));
-  const said = new Set(saidPhraseIds(opts.items));
+  const said = new Set(
+    saidPhraseIds(opts.items, {
+      introducedToday,
+      recycleIds: opts.brief.recycle_ids,
+    }),
+  );
   if (!ids.has(result.morning.phrase)) {
     issues.push(`micro.morning.phrase unknown: ${result.morning.phrase}`);
   } else if (said.size && !said.has(result.morning.phrase)) {

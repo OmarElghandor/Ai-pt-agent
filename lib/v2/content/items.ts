@@ -112,6 +112,10 @@ const PhraseItemSchema = z.object({
   role: z.enum(['said', 'heard']).optional(),
   /** Said reply that answers this heard phrase (or heard id this said replies to). */
   replies_to: z.string().optional(),
+  /** Accepted alternate TL forms (never slash-joined into tl). */
+  variant_tl: z.array(z.string()).optional(),
+  /** Alternatives of each other (e.g. time-of-day greetings). */
+  variant_group: z.string().optional(),
   /**
    * Code-built pattern example — usable in questions/formula, not flashcards/SRS.
    * Does not count toward the day's extra-item cap.
@@ -158,6 +162,7 @@ export const PatternSlotKindSchema = z.enum([
   'article_um_uma',
   'article_o_a',
   'article_os_as',
+  'name',
 ]);
 
 /** Code-owned pattern template kinds — items job picks; code builds slots/examples. */
@@ -166,6 +171,7 @@ export const PatternKindSchema = z.enum([
   'article_indef',
   'plural_def',
   'polite_request',
+  'chamo_me',
 ]);
 
 /** Literal slot or typed hole (fills filled by code from today's words). */

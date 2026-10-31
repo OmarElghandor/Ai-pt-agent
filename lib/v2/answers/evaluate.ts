@@ -14,6 +14,7 @@ import {
 import { weakToolAfterError } from '@/lib/v2/progress/weakAreas';
 import { isArabicOnly } from './arabicOnly';
 import { accentError, classifyMiss } from './classify';
+import { matchKnownNearMiss } from './knownNearMiss';
 import { matchAnswer } from './match';
 import type { AnswerPayload } from './payload';
 import { resolveToolId } from './toolId';
@@ -33,6 +34,8 @@ export type AnswerVerdict = {
   /** Newly detected weak tool_id, if any. */
   weak_tool_id?: string | null;
   duplicate?: boolean;
+  /** Egyptian feedback for near_miss (e.g. missing clitic hyphen). */
+  feedback_eg?: string;
 };
 
 export type EvaluateContext = {
@@ -187,6 +190,53 @@ export async function evaluateAnswer(
         called_grader: false,
         item_state: state,
         errors,
+      });
+    }
+
+    // Grammar-breaking near_miss (e.g. Chamome vs Chamo-me) before hard wrong
+    const nearMissList = payload.near_miss ?? [];
+    for (const nm of nearMissList) {
+      const m = matchAnswer(payload.text, [nm.tl]);
+      if (m.kind === 'exact' || m.kind === 'accent') {
+        const recentNm = [...(ctx.recentErrors ?? []), ...errors];
+        const weakNm = weakToolAfterError(recentNm);
+        const stateNm = ctx.itemState
+          ? applyImplicitWrongUse(ctx.itemState, now)
+          : undefined;
+        return finish({
+          verdict: 'near_miss',
+          correct: false,
+          accent_only: false,
+          skill,
+          item_id: payload.item_id,
+          tool_id,
+          called_grader: false,
+          item_state: stateNm,
+          weak_tool_id: weakNm,
+          feedback_eg: nm.feedback_eg,
+        });
+      }
+    }
+
+    // Known near_miss from grammar explain / static taxonomy
+    const knownNm = matchKnownNearMiss(payload.text);
+    if (knownNm) {
+      const recentNm = [...(ctx.recentErrors ?? []), ...errors];
+      const weakNm = weakToolAfterError(recentNm);
+      const stateNm = ctx.itemState
+        ? applyImplicitWrongUse(ctx.itemState, now)
+        : undefined;
+      return finish({
+        verdict: 'near_miss',
+        correct: false,
+        accent_only: false,
+        skill,
+        item_id: payload.item_id,
+        tool_id,
+        called_grader: false,
+        item_state: stateNm,
+        weak_tool_id: weakNm,
+        feedback_eg: knownNm.feedback_eg,
       });
     }
 

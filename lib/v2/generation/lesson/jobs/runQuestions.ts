@@ -2,7 +2,12 @@ import { z } from 'zod';
 import type { Question } from '@/lib/v2/content/lesson';
 import type { Item } from '@/lib/v2/content/items';
 import type { LessonBrief } from '../brief';
-import { coerceToRt, stripAccentsPunct } from '../coerceRt';
+import {
+  coerceToRt,
+  hyphenlessNearMiss,
+  stripAccentsKeepHyphen,
+  stripAccentsPunct,
+} from '../coerceRt';
 import { transliteratePtToSay } from '@/lib/v2/content/translit';
 import { stripPoliteTail } from '../patternFill';
 import { buildQuestionsSystemPrompt } from '../prompts';
@@ -231,7 +236,7 @@ export function assembleQuestionFromDraft(
     const remapped = remapPatternTestId(testsId, opts.bank);
     if (!remapped) {
       warnings.push(
-        fatal(
+        warning(
           `q.${opts.pageId}.${opts.index}`,
           'pattern_not_testable',
           `cannot test pattern root ${testsId} without derived examples`,
@@ -266,7 +271,7 @@ export function assembleQuestionFromDraft(
     const wordId = fillId ?? anyWord?.id;
     if (!wordId) {
       warnings.push(
-        fatal(
+        warning(
           `q.${opts.pageId}.${opts.index}`,
           'pattern_not_testable',
           `choose_article needs a word; pattern ${testsId} has none`,
@@ -405,16 +410,7 @@ export function assembleQuestionFromDraft(
     }
     base.prompt = coerceToRt(egFrame || 'اكتب بالبرتغالي', 'eg');
     const withoutTail = stripPoliteTail(answerTl);
-    const accepted = [
-      ...new Set(
-        [
-          answerTl,
-          stripAccentsPunct(answerTl),
-          withoutTail,
-          withoutTail ? stripAccentsPunct(withoutTail) : '',
-        ].filter(Boolean),
-      ),
-    ];
+    const accepted = buildWritingAccepted(answerTl, withoutTail);
     if (!accepted.length) {
       return {
         question: null,
@@ -425,10 +421,80 @@ export function assembleQuestionFromDraft(
       };
     }
     base.accepted = accepted;
+    const nearMiss = buildWritingNearMiss(answerTl, withoutTail);
+    if (nearMiss.length) {
+      (base as { near_miss?: { tl: string; feedback_eg: string }[] }).near_miss =
+        nearMiss;
+    }
     fixes.push(fix('writing', 'accepted', 'built from answer_tl'));
   }
 
   return { question: base, fixes, warnings };
+}
+
+/** Accent-fold keeping hyphens — never put Chamome in accepted[]. */
+export function buildWritingAccepted(
+  answerTl: string,
+  withoutTail?: string,
+): string[] {
+  const tail = withoutTail ?? '';
+  return [
+    ...new Set(
+      [
+        answerTl,
+        stripAccentsKeepHyphen(answerTl),
+        tail,
+        tail ? stripAccentsKeepHyphen(tail) : '',
+      ].filter(Boolean),
+    ),
+  ];
+}
+
+const CLITIC_FEEDBACK_EG =
+  'الضمير بيتلصق بالفعل بشرطة — متكتبهاش لازقة من غير شرطة';
+
+/** Hyphen-breaking forms → near_miss with feedback (not accepted). */
+export function buildWritingNearMiss(
+  answerTl: string,
+  withoutTail?: string,
+): { tl: string; feedback_eg: string }[] {
+  const out: { tl: string; feedback_eg: string }[] = [];
+  const seen = new Set<string>();
+  for (const src of [answerTl, withoutTail ?? '']) {
+    if (!src) continue;
+    const miss = hyphenlessNearMiss(src);
+    if (!miss || seen.has(miss.toLowerCase())) continue;
+    seen.add(miss.toLowerCase());
+    out.push({ tl: miss, feedback_eg: CLITIC_FEEDBACK_EG });
+  }
+  return out;
+}
+
+/** Drop later questions that reuse an earlier exact (type, tests) pair. */
+export function dedupeTypeTests(questions: Question[]): {
+  questions: Question[];
+  warnings: TierIssue[];
+} {
+  const warnings: TierIssue[] = [];
+  const seen = new Set<string>();
+  const out: Question[] = [];
+  for (const q of questions) {
+    const tests = Array.isArray(q.tests) ? q.tests.map(String).join(',') : '';
+    const key = `${q.type}::${tests}`;
+    if (tests && seen.has(key)) {
+      warnings.push(
+        warning(
+          q.id,
+          'duplicate_type_tests',
+          `dropped question with duplicate (type, tests)=(${q.type}, ${tests})`,
+        ),
+      );
+      continue;
+    }
+    if (tests) seen.add(key);
+    out.push(q);
+  }
+  return { questions: out, warnings };
 }
 
 /** Drop later questions that reuse an earlier writing answer_tl. */
@@ -627,7 +693,14 @@ ${JSON.stringify(itemDigest.filter((i) => introduces.includes(i.id) || true).sli
       if (built.question) questions.push(built.question);
     }
     if (!questions.length) {
-      fatals.push(fatal('questions', 'empty', 'no valid questions after autofix'));
+      // Soft: page may only introduce untestable pattern roots; assemble continues.
+      warnings.push(
+        warning(
+          'questions',
+          'empty',
+          'no valid questions after autofix',
+        ),
+      );
     }
   }
 

@@ -14,6 +14,8 @@ export const OutlinePagePlanSchema = z.object({
   page_id: z.string().min(1),
   preset: PresetSchema,
   mode: ModeSchema,
+  /** Intro (page 0) or test replay pointer — no introduces; skipped by LLM page jobs. */
+  role: z.enum(['intro', 'test']).optional(),
   title: z.union([z.string().min(1), z.array(z.unknown())]).transform((t) =>
     typeof t === 'string' ? t : JSON.stringify(t).slice(0, 80),
   ),
@@ -44,6 +46,7 @@ export const OutlineResultSchema = z.object({
       phase: z.number().optional(),
       week: z.number().optional(),
       kind: z.enum(['lesson', 'story', 'review']).optional(),
+      story_id: z.string().optional(),
       situation: z
         .object({
           tl: z.string(),

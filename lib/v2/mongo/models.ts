@@ -69,6 +69,7 @@ export function V2ConjugationModel(): Model<V2ConjugationDoc> {
 
 export const V2_JOB_KINDS = [
   'items',
+  'story',
   'outline',
   'page',
   'critic',
@@ -173,11 +174,16 @@ export function V2JobModel(): Model<V2JobDoc> {
     const typePath = cached.schema.path('type') as
       | (mongoose.SchemaType & { enumValues?: string[] })
       | undefined;
-    const kindPath = cached.schema.path('kind');
+    const kindPath = cached.schema.path('kind') as
+      | (mongoose.SchemaType & { enumValues?: string[] })
+      | undefined;
     const hasNewFields = Boolean(cached.schema.path('handoff'));
     const staleTypeEnum =
       Array.isArray(typePath?.enumValues) && typePath.enumValues.length > 0;
-    if (staleTypeEnum || !kindPath || !hasNewFields) {
+    const kindEnums = kindPath?.enumValues;
+    const missingStoryKind =
+      Array.isArray(kindEnums) && !kindEnums.includes('story');
+    if (staleTypeEnum || !kindPath || !hasNewFields || missingStoryKind) {
       delete (mongoose.models as Record<string, unknown>).V2Job;
       delete (mongoose.connection.models as Record<string, unknown>).V2Job;
     } else {
@@ -515,6 +521,47 @@ export function V2PackModel(): Model<V2PackDoc> {
   return (
     (mongoose.models.V2Pack as Model<V2PackDoc>) ||
     mongoose.model<V2PackDoc>('V2Pack', v2PackSchema)
+  );
+}
+
+const V2_STORY_STATUSES = ['draft', 'ready', 'published', 'failed'] as const;
+
+const v2StorySchema = new Schema(
+  {
+    id: { type: String, required: true, index: true },
+    day: { type: Number, required: true, index: true },
+    target_lang: { type: String, required: true, index: true },
+    version: { type: Number, required: true, min: 1 },
+    status: {
+      type: String,
+      required: true,
+      enum: V2_STORY_STATUSES,
+      index: true,
+    },
+    cast: { type: Schema.Types.Mixed, required: true },
+    setting: { type: String, required: true },
+    lines: { type: Schema.Types.Mixed, required: true },
+    image_spec: { type: Schema.Types.Mixed, required: false },
+    scenes: { type: Schema.Types.Mixed, required: false },
+    is_weekly: { type: Boolean, required: false },
+    after_questions: { type: Schema.Types.Mixed, required: false },
+    reading: { type: Schema.Types.Mixed, required: false },
+  },
+  { timestamps: true, collection: 'v2_stories' },
+);
+
+v2StorySchema.index({ id: 1, version: 1 }, { unique: true });
+v2StorySchema.index({ day: 1, target_lang: 1, version: 1 }, { unique: true });
+v2StorySchema.index({ day: 1, target_lang: 1, status: 1 });
+
+export type V2StoryDoc = InferSchemaType<typeof v2StorySchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2StoryModel(): Model<V2StoryDoc> {
+  return (
+    (mongoose.models.V2Story as Model<V2StoryDoc>) ||
+    mongoose.model<V2StoryDoc>('V2Story', v2StorySchema)
   );
 }
 

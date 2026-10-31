@@ -15,6 +15,7 @@ import { LessonPackSchema } from '../../lib/v2/content/lesson';
 import { hasErrors, validateLessonPack } from '../../lib/v2/content/validate';
 import { connectMongo, mongoConfigured } from '../../lib/mongo';
 import { saveDraft, setLessonStatus } from '../../lib/v2/generation/lesson/save';
+import { publishLesson } from '../../lib/v2/generation/lesson/publish';
 import { warmLessonPackAudio } from '../../lib/v2/generation/warmAudio';
 import { seedConjugations } from './seed-conjugations';
 
@@ -82,8 +83,10 @@ async function loadDay(day: number, publish: boolean, warm: boolean) {
 
   if (publish) {
     await setLessonStatus({ day, status: 'reviewed', version: saved.version });
-    await setLessonStatus({ day, status: 'published', version: saved.version });
-    console.log(`day ${day}: published v${saved.version}`);
+    const pub = await publishLesson({ day, version: saved.version });
+    console.log(
+      `day ${day}: published v${pub.lesson.version} registry=${pub.registry.written}`,
+    );
   }
 }
 

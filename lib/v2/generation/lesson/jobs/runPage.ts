@@ -20,14 +20,18 @@ import {
   PageJobSchema,
   finalizeGenPage,
   hydratePageToolResult,
+  pageJobSchemaFor,
   summarizePagePayload,
 } from '../schemas/page';
+import { allowIdsForPage, isIntroStoryPage } from '../pageAllow';
+import { applyDeterminedBlocks } from '../pageCodeFill';
 import {
   blockIndexForKey,
   mergeBlockRegen,
 } from '../blockCritic';
 import { hydrateDialogueBlocks } from '../dialogueChecks';
 import { reorderGuidedSteps } from '../guidedSteps';
+import { forceDictionaryWordCards, coreWordIds } from '../dictionaryWords';
 import { fixPluralVsPairs } from '../patternFill';
 import { normalizePageJson } from '../stages/page';
 import { callJobTool } from './call';
@@ -39,6 +43,67 @@ export const BlockRegenSchema = z.object({
 
 /** @deprecated Prefer PageJobSchema — kept for JOB_SCHEMAS / tests alias. */
 export { PageJobSchema as PageOnlySchema };
+
+function blockCountOf(data: unknown): number {
+  if (!data || typeof data !== 'object') return 0;
+  const page = (data as { page?: { blocks?: unknown } }).page;
+  return Array.isArray(page?.blocks) ? page.blocks.length : 0;
+}
+
+function emptyPageStub(entry: OutlinePagePlan, mode: Mode): Page {
+  const title =
+    typeof entry.title === 'string' && entry.title.trim()
+      ? [{ text: entry.title.trim(), lang: 'eg' as const }]
+      : [{ text: entry.page_id, lang: 'eg' as const }];
+  return {
+    id: entry.page_id,
+    preset: entry.preset,
+    mode,
+    title,
+    blocks: [],
+    ...(entry.role === 'intro' ? { role: 'intro' as const } : {}),
+  };
+}
+
+function fatalPageResult(opts: {
+  page: Page;
+  taught_eg: string;
+  fatals: { path: string; rule: string; message: string }[];
+  softWarnings: string[];
+  pageId: string;
+  attempts: number;
+  call: Awaited<ReturnType<typeof callJobTool>>;
+  userBody: string;
+  systemModules: { name: string; version: string }[];
+  cachedExampleName?: string;
+}) {
+  const fatals = opts.fatals.map((f) => ({ ...f, tier: 'fatal' as const }));
+  return {
+    page: opts.page,
+    taught_eg: opts.taught_eg,
+    issues: fatals.map((f) => `${f.rule}: ${f.message}`),
+    fatals,
+    warnings: opts.softWarnings.map((m) => ({
+      path: opts.pageId,
+      rule: 'page',
+      message: m,
+      tier: 'warning' as const,
+    })),
+    fixes: [] as { path: string; rule: string; message: string; tier: 'fix' }[],
+    flagged: true,
+    retries: Math.max(0, opts.attempts - 1),
+    auto_fix_count: 0,
+    timing: opts.call.timing,
+    tokens: opts.call.tokens,
+    over_budget: opts.call.over_budget,
+    model: opts.call.model,
+    provider: opts.call.provider,
+    attempts: opts.attempts,
+    userBody: opts.userBody,
+    systemModules: opts.systemModules,
+    cachedExampleName: opts.cachedExampleName,
+  };
+}
 
 function stripPracticeQuestionIds(page: Page): Page {
   return {
@@ -58,6 +123,8 @@ export async function runPageJob(opts: {
   next?: NeighborPageStub | null;
   /** Full outline items bank for validation. */
   allItems?: Item[];
+  /** Sibling outline pages, so an empty introduces/assumes can reuse earlier ids. */
+  outlinePages?: OutlinePagePlan[];
   /** Critic notes for a regen pass. */
   criticNotes?: string[];
   /** Existing page + block keys → rewrite only those blocks (+ their steps). */
@@ -101,24 +168,55 @@ export async function runPageJob(opts: {
 
   const preset = opts.entry.preset as Preset;
   const mode = (opts.entry.mode ?? modeForPreset(preset)) as Mode;
+  const isStoryPointer = isIntroStoryPage(opts.entry);
+  const bank = opts.allItems ?? opts.allowedItems;
+  const outlinePages = opts.outlinePages?.length
+    ? opts.outlinePages
+    : [opts.entry];
+  const expandedIds = isStoryPointer
+    ? []
+    : allowIdsForPage(opts.entry, outlinePages);
+  let allowedItems = opts.allowedItems;
+  if (!isStoryPointer && expandedIds.length) {
+    const want = new Set(expandedIds);
+    const matched = bank.filter((item) => want.has(item.id));
+    if (matched.length) allowedItems = matched;
+  }
+  const effectiveEntry: OutlinePagePlan =
+    !isStoryPointer &&
+    expandedIds.length > 0 &&
+    !(opts.entry.introduces ?? []).length &&
+    !(opts.entry.assumes ?? []).length
+      ? { ...opts.entry, assumes: expandedIds }
+      : opts.entry;
+  const allowedIdList = allowedItems.length
+    ? allowedItems.map((item) => item.id)
+    : expandedIds;
+  const wordIds =
+    preset === 'dictionary'
+      ? opts.brief?.core_items != null
+        ? coreWordIds(opts.brief.core_items)
+        : bank.filter((item) => item.type === 'word').map((item) => item.id)
+      : [];
+
   const exampleText = formatPresetExampleForPrompt(preset);
   const exampleTokens = exampleText ? approxTokens(exampleText) : 0;
   const systemPrompt = buildPageSystemPrompt(preset, mode);
   const verbs = verifiedLemmas();
-  const allowed = opts.allowedItems.map((i) => i.id).join(', ');
-  const bank = opts.allItems ?? opts.allowedItems;
+  const allowed = allowedIdList.join(', ');
   const cachedExampleName = `presets/${preset}.json`;
   const catalog = PRESET_CATALOGS[preset] ?? PRESET_CATALOGS.phrases;
+  const toolSchema = pageJobSchemaFor(mode, { storyPointer: isStoryPointer });
 
   const criticBlock =
     opts.criticNotes && opts.criticNotes.length
       ? `\nCRITIC NOTES (fix these):\n${opts.criticNotes.map((n) => `- ${n}`).join('\n')}\n`
       : '';
 
-  const introIds = (opts.entry.introduces ?? []).join(', ') || '(none)';
-  const assumeIds = (opts.entry.assumes ?? []).join(', ') || '(none)';
+  const introIds = (effectiveEntry.introduces ?? []).join(', ') || '(none)';
+  const assumeIds = (effectiveEntry.assumes ?? []).join(', ') || '(none)';
   const user = `STAGE: ONE PAGE
-Write ONLY page index ${opts.entry.index} (${opts.entry.page_id}).
+Write ONLY page index ${effectiveEntry.index} (${effectiveEntry.page_id}).
 Mode is ${mode} (fixed by code). Do not put question ids in practice.questions — leave [].
 Targets are block addresses only (never item ids like phrase.x).
 ITEM IDS: use ONLY ids from Allowed ids below (exact strings). Do not invent pattern.X / phrase.X.
@@ -127,13 +225,13 @@ Assumes (may reuse): ${assumeIds}
 Also return taught_eg: one Egyptian line summarizing what this page taught.
 ${criticBlock}
 PLAN ENTRY:
-${JSON.stringify({ ...opts.entry, mode })}
+${JSON.stringify({ ...effectiveEntry, mode })}
 
 PREV PAGE: ${opts.prev ? JSON.stringify(opts.prev) : '(none)'}
 NEXT PAGE: ${opts.next ? JSON.stringify(opts.next) : '(none)'}
 
 ALLOWED ITEMS (full):
-${JSON.stringify(opts.allowedItems)}
+${JSON.stringify(allowedItems)}
 
 Allowed ids: ${allowed || '(none)'}
 VERB_TABLE: ${verbs.join(', ')}
@@ -155,22 +253,64 @@ Return via submit_page.
   let taught_eg = '';
   let issues: string[] = [];
   let lastUserBody = user;
+  let lastBlockCount = 0;
+  let strictOk = false;
   const softWarnings: string[] = [];
 
   const { formatRetryHints, warning: tierWarn } = await import('../tiers');
 
+  const modeHint =
+    mode === 'sections'
+      ? '\nSECTIONS: write explain (Egyptian rt, 2–4 sentences). No steps/asks. Code fills check later.'
+      : mode === 'guided'
+        ? '\nGUIDED: page.steps 12–20 (ask ~every 4th; none in first 3).'
+        : mode === 'explore'
+          ? '\nEXPLORE: page.controls at least one (reveal_axis, swap, or unlock).'
+          : '';
+
+  const contentHint = [
+    `needs blocks (${catalog.blocks})`,
+    `allowed ids: ${allowed || '(none)'}`,
+    mode === 'sections'
+      ? 'page.explain required; no steps'
+      : mode === 'guided'
+        ? 'page.steps must be 12–20'
+        : mode === 'explore'
+          ? 'page.controls at least one'
+          : '',
+  ].filter(Boolean);
+
+  const finishParsed = (data: {
+    page: Parameters<typeof finalizeGenPage>[0];
+    taught_eg?: string;
+  }): Page => {
+    taught_eg = data.taught_eg?.trim() || taught_eg;
+    let next = stripPracticeQuestionIds(
+      finalizeGenPage(data.page, effectiveEntry, mode),
+    );
+    next = hydrateDialogueBlocks(next, bank);
+    next = fixPluralVsPairs(next, bank) as Page;
+    if (preset === 'dictionary') {
+      next = forceDictionaryWordCards(next, wordIds);
+    }
+    if (mode === 'sections') {
+      const { steps: _drop, ...rest } = next;
+      next = { ...rest, mode: 'sections' };
+      return next;
+    }
+    const guided = reorderGuidedSteps(next);
+    softWarnings.push(...guided.warnings);
+    return guided.page;
+  };
+
   while (attempts < 2) {
     attempts += 1;
-    const guidedHint =
-      mode === 'guided'
-        ? '\nGUIDED: page.steps 12–20 (ask ~every 4th; none in first 3).'
-        : '';
     const body =
       attempts === 1
-        ? `${user}${guidedHint}`
-        : `${user}${guidedHint}\n\n${formatRetryHints(
+        ? `${user}${modeHint}`
+        : `${user}${modeHint}\n\n${formatRetryHints(
             issues.slice(0, 5).map((m) =>
-              tierWarn(`page`, 'retry', m.slice(0, 120)),
+              tierWarn(`page`, 'retry', m.slice(0, 400)),
             ),
           )}`;
     lastUserBody = body;
@@ -182,73 +322,232 @@ Return via submit_page.
       userBody: body,
       toolName: 'submit_page',
       toolDescription: 'Submit one lesson page with title and blocks.',
-      schema: PageJobSchema,
+      schema: toolSchema,
       cachedExtra: exampleText || undefined,
       exampleTokens: exampleTokens || undefined,
       maxTokens: mode === 'guided' ? 10_000 : undefined,
-      guidedPage: mode === 'guided',
+      guidedPage: mode === 'guided' || mode === 'sections',
       systemModules,
       cachedExampleName,
     });
 
-    // Keep model strings through Zod; normalizePageJson/finalize converts to rt.
-    const hydrated = hydratePageToolResult(call.data, opts.entry, mode);
-    const parsed = PageJobSchema.safeParse(hydrated);
+    const hydrated = hydratePageToolResult(call.data, effectiveEntry, mode);
+    const filled = applyDeterminedBlocks(hydrated, {
+      preset,
+      introduces: effectiveEntry.introduces ?? [],
+      allowedIds: allowedIdList,
+      wordIds,
+    });
+    lastBlockCount = blockCountOf(filled);
+    const parsed = toolSchema.safeParse(filled);
     if (!parsed.success) {
-      const shape = summarizePagePayload(call.data);
-      issues = [
-        parsed.error.issues[0]?.message ?? 'schema failed',
-        `shape: ${shape}`,
-      ];
+      const shape = summarizePagePayload(filled);
+      const zodMessage = parsed.error.issues[0]?.message ?? 'schema failed';
+      issues = [...contentHint, zodMessage, `shape: ${shape}`];
+      const loose = isStoryPointer ? parsed : PageJobSchema.safeParse(filled);
+      if (loose.success) {
+        page = finishParsed(
+          loose.data as {
+            page: Parameters<typeof finalizeGenPage>[0];
+            taught_eg?: string;
+          },
+        );
+      }
       console.warn(
         `[v2-gen:page] schema fail page=${opts.entry.page_id} attempt=${attempts} ${shape}`,
       );
-      continue;
-    }
-    taught_eg = parsed.data.taught_eg?.trim() || '';
-    page = stripPracticeQuestionIds(
-      finalizeGenPage(parsed.data.page, opts.entry, mode),
-    );
-    page = hydrateDialogueBlocks(page, bank);
-    page = fixPluralVsPairs(page, bank) as Page;
-    const guided = reorderGuidedSteps(page);
-    page = guided.page;
-    softWarnings.push(...guided.warnings);
+      if (attempts < 2) continue;
+    } else {
+      page = finishParsed(
+        parsed.data as {
+          page: Parameters<typeof finalizeGenPage>[0];
+          taught_eg?: string;
+        },
+      );
 
-    const vIssues = validatePageAgainstOutline(
-      page,
-      { ...opts.entry, mode },
-      bank,
-    );
-    for (const b of page.blocks) {
-      if (b.type === 'practice' && b.questions.length > 0) {
-        softWarnings.push('practice_ids_forbidden: cleared by code');
-        (b as { questions: string[] }).questions = [];
+      const vIssues = validatePageAgainstOutline(
+        page,
+        { ...effectiveEntry, mode },
+        bank,
+      );
+      for (const b of page.blocks) {
+        if (b.type === 'practice' && b.questions.length > 0) {
+          softWarnings.push('practice_ids_forbidden: cleared by code');
+          (b as { questions: string[] }).questions = [];
+        }
       }
+      const guidedFatals = vIssues.filter(
+        (vi) =>
+          vi.rule === 'guided_step_count' ||
+          vi.rule === 'ask_density' ||
+          vi.rule === 'ask_early' ||
+          vi.rule === 'ask_too_early',
+      );
+      for (const vi of vIssues) {
+        if (
+          vi.rule === 'guided_step_count' ||
+          vi.rule === 'ask_density' ||
+          vi.rule === 'ask_early' ||
+          vi.rule === 'ask_too_early'
+        ) {
+          continue;
+        }
+        softWarnings.push(`${vi.rule}: ${vi.message}`);
+      }
+      const exploreMissing =
+        mode === 'explore' && !(page.controls?.length);
+      const sectionsExplainMissing =
+        mode === 'sections' && !(page.explain?.length);
+      if (exploreMissing && attempts < 2) {
+        issues = [
+          ...contentHint,
+          'explore_controls: explore pages need at least one control',
+        ];
+        continue;
+      }
+      if (sectionsExplainMissing && attempts < 2) {
+        issues = [
+          ...contentHint,
+          'sections_explain_missing: write explain (Egyptian rt, 2–4 sentences)',
+        ];
+        continue;
+      }
+      if (
+        (guidedFatals.length || exploreMissing || sectionsExplainMissing) &&
+        !isStoryPointer
+      ) {
+        if (guidedFatals.length && attempts < 2 && mode === 'guided') {
+          issues = [
+            ...contentHint,
+            ...guidedFatals.map((vi) => `${vi.rule}: ${vi.message}`),
+          ];
+          continue;
+        }
+        if (guidedFatals.length && mode === 'guided') {
+          return fatalPageResult({
+            page,
+            taught_eg,
+            fatals: guidedFatals.map((vi) => ({
+              path: vi.path,
+              rule: vi.rule,
+              message: vi.message,
+            })),
+            softWarnings,
+            pageId: opts.entry.page_id,
+            attempts,
+            call,
+            userBody: lastUserBody,
+            systemModules,
+            cachedExampleName,
+          });
+        }
+        if (exploreMissing) {
+          return fatalPageResult({
+            page,
+            taught_eg,
+            fatals: [
+              {
+                path: opts.entry.page_id,
+                rule: 'explore_controls',
+                message: 'explore pages need at least one control, got 0',
+              },
+            ],
+            softWarnings,
+            pageId: opts.entry.page_id,
+            attempts,
+            call,
+            userBody: lastUserBody,
+            systemModules,
+            cachedExampleName,
+          });
+        }
+        if (sectionsExplainMissing) {
+          return fatalPageResult({
+            page,
+            taught_eg,
+            fatals: [
+              {
+                path: `${opts.entry.page_id}.explain`,
+                rule: 'sections_explain_missing',
+                message: 'sections page needs explain (2–4 sentences)',
+              },
+            ],
+            softWarnings,
+            pageId: opts.entry.page_id,
+            attempts,
+            call,
+            userBody: lastUserBody,
+            systemModules,
+            cachedExampleName,
+          });
+        }
+      }
+      strictOk = true;
+      issues = [];
+      break;
     }
-    const guidedFatals = vIssues.filter(
-      (vi) =>
-        vi.rule === 'guided_step_count' ||
-        vi.rule === 'ask_density' ||
-        vi.rule === 'ask_early',
-    );
-    // Soft: keep most page issues as warnings
-    for (const vi of vIssues) {
-      softWarnings.push(`${vi.rule}: ${vi.message}`);
+  }
+
+  if (!strictOk) {
+    if (!page && !isStoryPointer && lastBlockCount < 1) {
+      page = emptyPageStub(effectiveEntry, mode);
     }
-    // Guided step rules: retry once instead of accepting a 2-step page
-    if (guidedFatals.length && attempts < 2) {
-      issues = guidedFatals.map((vi) => `${vi.rule}: ${vi.message}`);
-      continue;
+    if (!page || !call) {
+      throw new Error(
+        `Page ${opts.entry.page_id} missing page key after retry: ${issues.join('; ')}`,
+      );
     }
-    issues = [];
-    break;
+    if (!isStoryPointer && page.blocks.length >= 1) {
+      const stepCount = page.steps?.length ?? 0;
+      if (mode === 'guided' && (stepCount < 12 || stepCount > 20)) {
+        return fatalPageResult({
+          page,
+          taught_eg,
+          fatals: [
+            {
+              path: `${opts.entry.page_id}.steps`,
+              rule: 'guided_step_count',
+              message: `guided pages need 12–20 steps, got ${stepCount}`,
+            },
+          ],
+          softWarnings,
+          pageId: opts.entry.page_id,
+          attempts,
+          call,
+          userBody: lastUserBody,
+          systemModules,
+          cachedExampleName,
+        });
+      }
+      if (mode === 'explore' && !(page.controls?.length)) {
+        return fatalPageResult({
+          page,
+          taught_eg,
+          fatals: [
+            {
+              path: opts.entry.page_id,
+              rule: 'explore_controls',
+              message: 'explore pages need at least one control, got 0',
+            },
+          ],
+          softWarnings,
+          pageId: opts.entry.page_id,
+          attempts,
+          call,
+          userBody: lastUserBody,
+          systemModules,
+          cachedExampleName,
+        });
+      }
+      throw new Error(
+        `Page ${opts.entry.page_id} schema failed after retry: ${issues.join('; ')}`,
+      );
+    }
   }
 
   if (!page || !call) {
-    // Fatal only when no page at all after retry
     throw new Error(
-      `Page ${opts.entry.page_id} missing page key after retry`,
+      `Page ${opts.entry.page_id} missing page key after retry: ${issues.join('; ')}`,
     );
   }
 

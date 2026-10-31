@@ -2,6 +2,7 @@ import type { Item, PatternSlot } from '@/lib/v2/content/items';
 import { transliteratePtToSay } from '@/lib/v2/content/translit';
 import type { CoreItem } from './coreItems';
 import {
+  CHAMO_ME_NAMES,
   resolvePatternKind,
   slotsForKind,
   type PatternKind,
@@ -48,6 +49,7 @@ const FIXED_SLOT_AR: Record<string, string> = {
   'por favor.': 'من فضلك.',
   ', por favor.': '، من فضلك.',
   ', por favor': '، من فضلك',
+  'chamo-me': 'اسمي',
 };
 
 function fixedSlotAr(tl: string): string {
@@ -200,7 +202,15 @@ export function fillPatternsInBank(
       coreFills.set(c.id, c.fills);
     }
   }
-  if (!words.length && !coreFills.size) return bank;
+  const hasChamoMe = bank.some(
+    (i) =>
+      i.type === 'pattern' &&
+      resolvePatternKind(
+        i.id,
+        (i as PatternItem).kind ?? kinds.get(i.id),
+      ) === 'chamo_me',
+  );
+  if (!words.length && !coreFills.size && !hasChamoMe) return bank;
 
   const derived: Item[] = [];
   const next = bank.map((item) => {
@@ -217,6 +227,48 @@ export function fillPatternsInBank(
 
     if (!slots.length) return item;
 
+    // Name-slot patterns (Chamo-me + name) — no article, names not words
+    if (kind === 'chamo_me') {
+      const nameSlots = slots.map((slot) => {
+        if (!isHole(slot)) return slot;
+        if ((slot.kind ?? 'word') === 'name') {
+          return {
+            ...slot,
+            kind: 'name' as const,
+            fills: CHAMO_ME_NAMES.map((n) => n.tl),
+          };
+        }
+        return slot;
+      }) as PatternSlot[];
+      const exampleIds: string[] = [];
+      for (const [i, name] of CHAMO_ME_NAMES.slice(0, 4).entries()) {
+        const n = i + 1;
+        const id = exampleId(pattern.id, n);
+        exampleIds.push(id);
+        const tl = `Chamo-me ${name.tl}.`;
+        const ar = `اسمي ${name.ar}`;
+        derived.push({
+          type: 'phrase',
+          id,
+          tl,
+          ar,
+          say: transliteratePtToSay(tl),
+          context_eg: 'مثال على التركيبة',
+          cloze: 'Chamo-me',
+          derived: true,
+        } as Item);
+      }
+      const { tl: _dropTl, ...restPattern } = pattern as PatternItem & {
+        tl?: string;
+      };
+      return {
+        ...restPattern,
+        kind,
+        slots: nameSlots,
+        examples: exampleIds,
+      } as Item;
+    }
+
     const needsPlural = kind === 'plural_def';
     const candidateIds =
       coreFills.get(pattern.id)?.filter((id) => wordById.has(id)) ??
@@ -227,6 +279,7 @@ export function fillPatternsInBank(
           return w != null && wordPluralTl(w) != null;
         })
       : candidateIds;
+
     if (!fillIds.length) {
       return kind != null
         ? ({ ...pattern, kind, slots } as Item)
@@ -247,7 +300,9 @@ export function fillPatternsInBank(
     }) as PatternSlot[];
 
     // Legacy free-form slots: auto-insert um/uma before word hole if no article.
+    // Never for name / chamo_me patterns.
     if (!kind) {
+      const hasName = slots.some((s) => isHole(s) && s.kind === 'name');
       const hasArticle = slots.some(
         (s) =>
           isHole(s) &&
@@ -258,7 +313,7 @@ export function fillPatternsInBank(
       const wordIdx = slots.findIndex(
         (s) => isHole(s) && (s.kind ?? 'word') === 'word',
       );
-      if (!hasArticle && wordIdx >= 0) {
+      if (!hasName && !hasArticle && wordIdx >= 0) {
         slots = [
           ...slots.slice(0, wordIdx),
           { name_eg: 'أداة', kind: 'article_um_uma' as const },

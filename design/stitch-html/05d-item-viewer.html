@@ -1,0 +1,307 @@
+<!DOCTYPE html><html dir="rtl" lang="ar"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Falou · Guia de Conversação - No Café</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<!-- Editorial Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,600&amp;family=Noto+Naskh+Arabic:wght@400;500;600;700&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#14545A",
+          "primary-container": "#14545A",
+          "on-primary": "#ffffff",
+          "secondary": "#F56D4E",
+          "secondary-container": "#F56D4E",
+          "on-secondary": "#ffffff",
+          "tertiary": "#6e5e00",
+          "tertiary-container": "#F5D95B",
+          "tertiary-fixed": "#F5D95B",
+          "background": "#FFF8F2",
+          "surface": "#FFFFFF",
+          "surface-container": "#f8ecdb",
+          "surface-container-low": "#fef2e1",
+          "surface-container-high": "#f2e7d6",
+          "surface-container-highest": "#ece1d0",
+          "on-surface": "#201B11",
+          "on-surface-variant": "#596162",
+          "outline": "#70797A",
+          "outline-variant": "#D0D9DA",
+          "cream-paper": "#FFF8F2"
+        },
+        borderRadius: {
+          DEFAULT: "0.25rem",
+          lg: "0.5rem",
+          xl: "0.75rem",
+          full: "9999px"
+        },
+        fontFamily: {
+          arabic: ["'Noto Naskh Arabic'", "serif"],
+          "serif-book": ["Newsreader", "serif"],
+          display: ["Inter", "sans-serif"],
+          sans: ["Inter", "sans-serif"]
+        }
+      }
+    }
+  };
+</script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    /* Warm cream tactile editorial paper background */
+    .paper-texture {
+      background-color: #FFF8F2;
+      background-image: radial-gradient(#e7d7c6 0.75px, transparent 0.75px);
+      background-size: 14px 14px;
+    }
+    .book-card-shadow {
+      box-shadow: 0 1px 3px rgba(20, 84, 90, 0.05), 0 3px 8px rgba(32, 27, 17, 0.04);
+    }
+    .sticky-note-shadow {
+      box-shadow: 2px 3px 10px rgba(110, 94, 0, 0.1), -1px 2px 4px rgba(110, 94, 0, 0.04);
+    }
+    .cover-blur-scrim {
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    body {
+      min-height: max(884px, 100dvh);
+    }
+</style>
+<meta content="web_standard" name="shell-type"></head>
+<body class="paper-texture text-on-surface font-arabic min-h-screen antialiased flex flex-col justify-between selection:bg-[#F56D4E]/20 selection:text-[#14545A]">
+<!-- Mobile Viewport Container -->
+<main class="w-full max-w-md mx-auto min-h-screen flex flex-col justify-between border-x border-[#D0D9DA]/60 bg-[#FFF8F2]/95 shadow-xl relative overflow-hidden"><div class="flex flex-col w-full relative select-none">
+<!-- Immersive Story Illustration Area (~68% visual height) -->
+<div class="relative w-full h-[520px] overflow-hidden">
+<!-- Visual Storytelling Canvas: Lisbon Street Cafe Watercolor -->
+<img class="w-full h-full object-cover object-center" data-alt="Warm editorial textbook illustration of a Portuguese uma meia de leite glass mug with spoon and saucer on a wooden cafe table in Lisbon" src="https://lh3.googleusercontent.com/aida/AEtjO1UbiShxTHVlRiGSxzu0_sSl5-CO2wh2HYQJCe9o0UaiBlQ2w5W5ML_yip7LfamF-YNfM3gPU8tmWL1p0H5jV2Q1_rH5YKoLcq3g5hLBsJ7TbHcCXNyPFFZgPN3d_lOTTQrVXXtMYwl1S4LTSdRm2lINMTcvS67so0V7SQxvPfHAN9jWMbyV7JA-MmUp5WLKFUR6cNBEZAn75K6pSrV8kBD9CqOnBp6zWUgwliiXyn5M">
+<!-- Ambient Subtle Vignette Overlay -->
+<div class="absolute inset-0 bg-gradient-to-t from-on-surface/80 via-transparent to-on-surface/40 pointer-events-none"></div>
+<!-- Top Floating App Bar Overlays (RTL: right=back, left=mode) -->
+<div class="absolute top-4 inset-x-3 flex items-center justify-between z-20">
+<!-- Right: Back Button -->
+<button aria-label="الرجوع" class="w-10 h-10 rounded-full bg-surface/90 text-primary flex items-center justify-center shadow-md active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-xl">arrow_forward</span>
+</button>
+<!-- Center: Chapter & Lesson Pill -->
+<div class="flex flex-col items-center px-3 py-1 rounded-full bg-surface-container-lowest/90 shadow-sm backdrop-blur-md">
+<span class="font-label-sm text-label-sm text-primary tracking-wider uppercase font-semibold">CAPÍTULO 1 · LIÇÃO 2</span>
+<span class="font-label-sm text-label-sm text-secondary font-bold">في الكافيه · NO CAFÉ</span>
+</div>
+<!-- Left: Active Mode Pill Toggle -->
+<button class="px-2.5 py-1.5 rounded-full bg-primary/85 text-on-primary flex items-center gap-1 shadow-md text-label-sm font-label-sm transition-colors active:scale-95" id="toggle-cover-mode">
+<span class="material-symbols-outlined text-sm">visibility</span>
+<span class="">نمط الحفظ</span>
+</button>
+</div>
+<!-- Location & Ambient Badge (Mid-Upper) -->
+<div class="absolute top-16 right-4 z-10">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-inverse-surface/60 backdrop-blur-sm text-inverse-on-surface text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-xs text-tertiary-fixed">location_on</span>
+<span class="">Café Nicola · Lisboa</span>
+</div>
+</div>
+<!-- Story Navigation Side Arrows -->
+<div class="absolute inset-y-0 inset-x-2 flex items-center justify-between pointer-events-none z-10">
+<!-- Story Previous (Right in RTL) -->
+<button aria-label="السابق" class="pointer-events-auto w-9 h-9 rounded-full bg-surface-container-lowest/80 text-primary flex items-center justify-center shadow-md backdrop-blur-xs active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</button>
+<!-- Story Progress Badge Pill -->
+<div class="pointer-events-auto px-2.5 py-1 rounded-full bg-inverse-surface/75 text-inverse-on-surface shadow-sm text-label-sm font-label-sm backdrop-blur-sm">
+        ٣ من ٦ · طلب مشروب
+      </div>
+<!-- Story Next (Left in RTL) -->
+<button aria-label="التالي" class="pointer-events-auto w-9 h-9 rounded-full bg-surface-container-lowest/80 text-primary flex items-center justify-center shadow-md backdrop-blur-xs active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-lg">chevron_left</span>
+</button>
+</div>
+<!-- Floating Audio Speech Bubble Bridge (Lower edge of hero) -->
+<div class="absolute bottom-6 inset-x-4 z-20">
+<div class="p-3 rounded-xl bg-surface-container-lowest/95 shadow-xl backdrop-blur-md flex items-center justify-between gap-3">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-base">record_voice_over</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-label-sm font-label-sm text-on-surface-variant font-medium">سياق المحادثة بالشارع</span>
+<p class="text-body-sm font-body-sm text-on-surface font-medium truncate">«طلب فنجان قهوة بالحليب في لشبونة»</p>
+</div>
+</div>
+<button aria-label="استمع للجملة" class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary flex items-center justify-center shrink-0 shadow-sm active:scale-90 transition-transform" id="hero-audio-btn">
+<span class="material-symbols-outlined text-lg">volume_up</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Bottom Editorial Learning Paper Container (Tactile overlap sheet) -->
+<div class="relative -mt-4 rounded-t-3xl bg-surface-container-lowest shadow-2xl px-5 pt-5 pb-6 flex flex-col z-20">
+<!-- Grab / Drag Indicator Decorator -->
+<div class="w-10 h-1 rounded-full bg-outline-variant/60 mx-auto mb-3"></div>
+<!-- Phrase Heading Area (Portuguese LTR with Audio) -->
+<div class="flex items-start justify-between gap-3 mb-2">
+<div class="flex flex-col text-right w-full" dir="ltr">
+<div class="flex items-center gap-2.5 justify-start">
+<h2 class="font-headline-md text-headline-md text-primary tracking-tight font-serif-book">
+            Uma meia de leite
+          </h2>
+<button aria-label="نطق الكلمة" class="w-7 h-7 rounded-full bg-surface-container-high text-primary flex items-center justify-center active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-sm">volume_up</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+<span class="font-sans text-outline text-label-sm">/u.mɐ ˈmɐj.ɐ dɨ ˈlɐj.tɨ/</span>
+<span class="text-primary-container font-semibold mx-1">·</span>
+<span class="font-arabic text-primary">أوما مايا دي لايتي</span>
+</p>
+</div>
+<!-- Quick Save / Bookmark -->
+<button aria-label="حفظ في المفضلة" class="w-8 h-8 rounded-full bg-surface-container-low text-primary flex items-center justify-center shrink-0 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-base">bookmark_border</span>
+</button>
+</div>
+<!-- Practice / Cover Card (Interactive Reveal for Active Recall) -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container-low p-3.5 my-2 shadow-sm transition-all duration-300" id="recall-card">
+<div class="flex items-center justify-between mb-1.5">
+<span class="text-label-sm font-label-sm text-primary font-bold">المعنى والاستخدام المحلي</span>
+<button class="text-label-sm font-label-sm text-secondary font-semibold flex items-center gap-1 active:opacity-75" id="toggle-reveal-btn">
+<span class="material-symbols-outlined text-xs">visibility</span>
+<span id="toggle-label" class="">إخفاء</span>
+</button>
+</div>
+<!-- Meaning content with veil capability -->
+<div class="relative min-h-[38px] flex items-center">
+<p class="text-body-md font-body-md text-on-surface font-semibold leading-relaxed" id="meaning-text">
+          قهوة بنص حليب <span class="text-on-surface-variant font-normal">(نصف قهوة سوداء ونصف حليب رغوي)</span>
+</p>
+<!-- Interactive Blur Veil Overlay -->
+<div class="absolute inset-0 bg-surface-container-high/90 backdrop-blur-sm rounded-lg flex items-center justify-center gap-1.5 cursor-pointer opacity-0 pointer-events-none transition-opacity duration-200" id="veil-scrim">
+<span class="material-symbols-outlined text-sm text-primary">touch_app</span>
+<span class="text-label-sm font-label-sm text-primary font-bold">المس للكشف عن المعنى</span>
+</div>
+</div>
+</div>
+<!-- Practical Phrase In Situ (Example Dialogue Box) -->
+<div class="rounded-xl bg-surface-container p-3 mb-4 flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-label-sm text-tertiary font-bold tracking-wide">مثال واقعي · EXEMPLO</span>
+<span class="text-label-sm font-label-sm text-outline">طلب مهذب</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-primary font-serif-book leading-snug" dir="ltr">
+        «Queria uma meia de leite e um pastel de nata, por favor.»
+      </p>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-0.5">
+        (عايز فنجان قهوة بحليب وواحدة باستيل دي ناتا، لو سمحت)
+      </p>
+</div>
+<!-- Pagination Dots & Status -->
+<div class="flex items-center justify-center gap-1.5 mb-4">
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-6 h-1.5 rounded-full bg-secondary-container"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+</div>
+<!-- Bottom Lesson Navigation Controls -->
+<div class="flex items-center justify-between gap-3 pt-1">
+<!-- Previous Button -->
+<button class="flex-1 py-2.5 px-3 rounded-full bg-surface-container-high text-primary font-label-lg text-label-lg font-bold flex items-center justify-center gap-1 active:scale-98 transition-transform">
+<span class="material-symbols-outlined text-base">arrow_forward</span>
+<span class="">السابق</span>
+</button>
+<!-- Page Marker Pill -->
+<div class="px-2.5 py-1 text-center shrink-0">
+<span class="font-label-sm text-label-sm text-outline font-semibold tracking-wider">Pág. 3 de 6</span>
+</div>
+<!-- Next Primary Button -->
+<button class="flex-1 py-2.5 px-3 rounded-full bg-secondary-container text-on-secondary font-label-lg text-label-lg font-bold flex items-center justify-center gap-1 shadow-md active:scale-98 transition-transform">
+<span class="">التالي</span>
+<span class="material-symbols-outlined text-base">arrow_back</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    const toggleCoverModeBtn = document.getElementById('toggle-cover-mode');
+    const toggleRevealBtn = document.getElementById('toggle-reveal-btn');
+    const veilScrim = document.getElementById('veil-scrim');
+    const toggleLabel = document.getElementById('toggle-label');
+    const heroAudioBtn = document.getElementById('hero-audio-btn');
+
+    let isCovered = false;
+
+    function setCoverState(covered) {
+      isCovered = covered;
+      if (isCovered) {
+        veilScrim.classList.remove('opacity-0', 'pointer-events-none');
+        veilScrim.classList.add('opacity-100');
+        toggleLabel.textContent = 'إظهار';
+        if (toggleCoverModeBtn) {
+          toggleCoverModeBtn.classList.replace('bg-primary/85', 'bg-secondary-container');
+        }
+      } else {
+        veilScrim.classList.add('opacity-0', 'pointer-events-none');
+        veilScrim.classList.remove('opacity-100');
+        toggleLabel.textContent = 'إخفاء';
+        if (toggleCoverModeBtn) {
+          toggleCoverModeBtn.classList.replace('bg-secondary-container', 'bg-primary/85');
+        }
+      }
+    }
+
+    if (toggleRevealBtn) {
+      toggleRevealBtn.addEventListener('click', () => setCoverState(!isCovered));
+    }
+
+    if (veilScrim) {
+      veilScrim.addEventListener('click', () => setCoverState(false));
+    }
+
+    if (toggleCoverModeBtn) {
+      toggleCoverModeBtn.addEventListener('click', () => setCoverState(!isCovered));
+    }
+
+    if (heroAudioBtn) {
+      heroAudioBtn.addEventListener('click', function() {
+        this.classList.add('scale-110');
+        setTimeout(() => this.classList.remove('scale-110'), 200);
+      });
+    }
+  })();
+</script></main>
+<!-- Interactive Reveal Micro-script -->
+<script>
+    document.querySelectorAll('.cover-blur-scrim').forEach(scrim => {
+      scrim.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const parent = this.parentElement;
+        const hiddenText = parent.querySelector('p');
+        
+        // Remove scrim overlay with smooth fade
+        this.style.transition = 'opacity 0.25s ease-out';
+        this.style.opacity = '0';
+        setTimeout(() => {
+          this.remove();
+          hiddenText.classList.remove('text-transparent', 'select-none');
+          hiddenText.classList.add('text-[#14545A]', 'font-bold', 'bg-[#fef2e1]', 'border', 'border-[#D0D9DA]', 'rounded');
+        }, 250);
+      });
+    });
+</script>
+
+
+</body></html>

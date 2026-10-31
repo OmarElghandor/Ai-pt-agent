@@ -16,12 +16,15 @@ export type LangCheckApplyResult = {
   items: Item[];
   applied: LangCheckPatch[];
   discarded: LangCheckDiscard[];
+  /** Patched weekly reading.tl when path was story.reading.tl. */
+  readingTl?: string;
 };
 
 const PAGE_TL_RE =
   /^pages\[(\d+)\]\.blocks\[(\d+)\]\.lines\[(\d+)\](?:\.tl)?$/i;
 const ITEM_TL_RE = /^items\[([^\]]+)\](?:\.tl)?$/i;
 const ITEM_PLURAL_RE = /^items\[([^\]]+)\]\.plural_tl$/i;
+const STORY_READING_RE = /^story\.reading\.tl$/i;
 
 function normalizeTl(s: string): string {
   return s.replace(/\s+/g, ' ').trim();
@@ -136,17 +139,42 @@ export function applyLangCheckPatches(
   pages: Page[],
   items: Item[],
   patches: LangCheckPatch[],
-  opts?: { max?: number },
+  opts?: { max?: number; readingTl?: string },
 ): LangCheckApplyResult {
   const max = opts?.max ?? 5;
   const capped = patches.slice(0, max);
   let nextPages = pages.map((p) => ({ ...p, blocks: [...p.blocks] }));
   let nextItems = [...items];
+  let readingTl = opts?.readingTl;
   const applied: LangCheckPatch[] = [];
   const discarded: LangCheckDiscard[] = [];
 
   for (const patch of capped) {
     const path = patch.path.trim();
+    if (STORY_READING_RE.test(path)) {
+      const current = readingTl ?? '';
+      if (!current) {
+        discarded.push({
+          path,
+          rule: 'lang_check_bad_path',
+          message: 'no story.reading.tl on this day',
+          patch,
+        });
+        continue;
+      }
+      if (normalizeTl(current) !== normalizeTl(patch.wrong_tl)) {
+        discarded.push({
+          path,
+          rule: 'lang_check_stale',
+          message: `wrong_tl does not match current reading.tl`,
+          patch,
+        });
+        continue;
+      }
+      readingTl = patch.fixed_tl;
+      applied.push(patch);
+      continue;
+    }
     const pageMatch = path.match(PAGE_TL_RE);
     const itemMatch = path.match(ITEM_TL_RE);
 
@@ -287,5 +315,11 @@ export function applyLangCheckPatches(
     });
   }
 
-  return { pages: nextPages, items: nextItems, applied, discarded };
+  return {
+    pages: nextPages,
+    items: nextItems,
+    applied,
+    discarded,
+    ...(readingTl != null ? { readingTl } : {}),
+  };
 }

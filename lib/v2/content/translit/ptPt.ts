@@ -92,6 +92,18 @@ function transliterateWord(raw: string): string {
       continue;
     }
 
+    // quei / quoi-style: qu + ei → كاي (queijo → كايچو)
+    if (
+      c === 'q' &&
+      next === 'u' &&
+      (next2 === 'e' || next2 === 'é' || next2 === 'ê') &&
+      peek(3) === 'i'
+    ) {
+      out += 'كاي';
+      take(4);
+      atWordStart = false;
+      continue;
+    }
     // que / qui → كِ (+ following vowel absorbed into kasra)
     if (c === 'q' && next === 'u' && /[eiéêí]/.test(next2)) {
       out += 'كِ';

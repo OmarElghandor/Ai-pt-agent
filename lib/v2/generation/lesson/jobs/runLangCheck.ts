@@ -18,7 +18,11 @@ export const LangCheckSchema = z.object({
 
 export type LangCheckPatch = z.infer<typeof LangCheckPatchSchema>;
 
-export function collectReviewPayload(pages: Page[], items: Item[]) {
+export function collectReviewPayload(
+  pages: Page[],
+  items: Item[],
+  opts?: { readingTl?: string },
+) {
   const dialogue: unknown[] = [];
   for (const [pi, page] of pages.entries()) {
     for (const [bi, block] of page.blocks.entries()) {
@@ -81,7 +85,10 @@ export function collectReviewPayload(pages: Page[], items: Item[]) {
         '',
       gender: (i as { gender?: string }).gender,
     }));
-  return { dialogue, derived, plurals };
+  const reading = opts?.readingTl?.trim()
+    ? { path: 'story.reading.tl', tl: opts.readingTl.trim() }
+    : null;
+  return { dialogue, derived, plurals, reading };
 }
 
 /**
@@ -92,6 +99,8 @@ export async function runLangCheckJob(opts: {
   brief: LessonBrief;
   pages: Page[];
   items: Item[];
+  /** Weekly story reading passage (lang-checked with dialogue). */
+  readingTl?: string;
 }): Promise<{
   patches: LangCheckPatch[];
   timing: Awaited<ReturnType<typeof callJobTool>>['timing'];
@@ -102,15 +111,19 @@ export async function runLangCheckJob(opts: {
   userBody: string;
   systemModules: { name: string; version: string }[];
 }> {
-  const payload = collectReviewPayload(opts.pages, opts.items);
+  const payload = collectReviewPayload(opts.pages, opts.items, {
+    readingTl: opts.readingTl,
+  });
   const systemModules = [{ name: 'lang_check', version: '1' }];
   const user = `STAGE: LANG_CHECK (pt-PT only)
-Review dialogue lines + derived pattern examples + plural_tl on listed words for European Portuguese (Lisbon).
+Review dialogue lines + derived pattern examples + plural_tl on listed words${
+    payload.reading ? ' + weekly story.reading.tl' : ''
+  } for European Portuguese (Lisbon).
 If a tl is wrong (Brazilian, bad gender/article, unnatural), emit a patch.
 For PLURALS: if plural_tl is missing or wrong (must be bare noun, no article — e.g. "ovos", "maçãs"), patch with path items[id].plural_tl, wrong_tl = current plural_tl or "(missing)", fixed_tl = correct bare plural.
 Do NOT review Arabic/EG tips/questions. Do NOT invent new lines.
 
-PATHS: use the exact path field from the payload (pages[i].blocks[j].lines[k].tl or items[id].tl or items[id].plural_tl).
+PATHS: use the exact path field from the payload (pages[i].blocks[j].lines[k].tl or items[id].tl or items[id].plural_tl or story.reading.tl).
 wrong_tl MUST equal the current tl/plural_tl string exactly (or "(missing)").
 fixed_ar is optional (MSA). reason_eg is short Egyptian.
 
@@ -123,12 +136,15 @@ ${JSON.stringify(payload.derived)}
 PLURALS (must have correct plural_tl):
 ${JSON.stringify(payload.plurals)}
 
+READING (weekly only; null if none):
+${JSON.stringify(payload.reading)}
+
 Return { "patches": [{ path, wrong_tl, fixed_tl, fixed_ar?, reason_eg }] } via submit_lang_check.
 Max 5 patches. Empty array if clean. Never regenerate pages.
 `;
 
   const systemPrompt = `You are a strict European Portuguese (pt-PT) proofreader for A0–A1 café/street Portuguese in Lisbon.
-Prefer Queria / Podia, o senhor / a senhora. Never Brazilian (ônibus, trem, celular, café da manhã).
+Prefer Queria / Podia, o senhor / a senhora, or verb without pronoun. Never teach "use você when in doubt". Never Brazilian (ônibus, trem, celular, café da manhã).
 Output ONLY patches for clear errors. Empty patches = pass.`;
 
   let call: Awaited<ReturnType<typeof callJobTool>>;

@@ -208,6 +208,58 @@ export function buildOutlineHandoff(outline: OutlineResult): OutlineHandoff {
   };
 }
 
+/** Slim story handoff for outline / page jobs (no audio blobs). */
+export type StoryHandoff = {
+  story_id: string;
+  setting: string;
+  cast: { id: string; name: string; role: string }[];
+  lines: {
+    index: number;
+    speaker: string;
+    tl: string;
+    ids: string[];
+    ar?: string;
+  }[];
+  /** First outline-relevant appearance order of item ids in the story. */
+  item_first_index: { id: string; line: number }[];
+};
+
+export function buildStoryHandoff(story: {
+  id: string;
+  setting: string;
+  cast: { id: string; name: string; role: string }[];
+  lines: { speaker: string; tl: string; ids?: string[]; ar?: string }[];
+}): StoryHandoff {
+  const seen = new Set<string>();
+  const item_first_index: { id: string; line: number }[] = [];
+  const lines = story.lines.map((line, index) => {
+    for (const id of line.ids ?? []) {
+      if (!seen.has(id)) {
+        seen.add(id);
+        item_first_index.push({ id, line: index });
+      }
+    }
+    return {
+      index,
+      speaker: line.speaker,
+      tl: line.tl,
+      ids: [...(line.ids ?? [])],
+      ar: line.ar,
+    };
+  });
+  return {
+    story_id: story.id,
+    setting: story.setting,
+    cast: story.cast.map((c) => ({
+      id: c.id,
+      name: c.name,
+      role: c.role,
+    })),
+    lines,
+    item_first_index,
+  };
+}
+
 export function neighborStubs(
   pages: OutlinePagePlan[],
   index: number,

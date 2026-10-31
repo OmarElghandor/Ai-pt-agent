@@ -23,7 +23,7 @@ The assembled lesson has keys lesson, items, pages, questions, micro, speak_prom
 PORTUGUESE RULES
 1. European Portuguese only: comboio, autocarro, elétrico, pequeno-almoço, telemóvel, casa de banho, bilhete, fixe, "estar a + infinitive" for ongoing actions. Never Brazilian forms: ônibus, trem, celular, banheiro, café da manhã, gerund (-ndo) for ongoing actions, "você" as the default "you".
 2. Object and reflexive pronouns go after the verb in affirmative sentences: Chamo-me, Dói-me.
-3. Polite requests use Queria / Podia and o senhor / a senhora.
+3. Polite requests use Queria / Podia and o senhor / a senhora, or the verb with no pronoun (Pode ajudar? / Como está?). Never teach "when in doubt, use você" — face to face você can sound rude. tu is for friends, family and peers who offer it.
 4. Use ONLY words from NEW_ITEMS, KNOWN_ITEMS and FUNCTION_WORDS. If a sentence needs any other word, rewrite the sentence.
 5. Maximum words per sentence: phase 1 = 7, phase 2 = 10, phase 3 = 14.
 6. Every phrase must be something people really say in this situation in Lisbon.

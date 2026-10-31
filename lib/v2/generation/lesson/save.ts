@@ -238,11 +238,17 @@ export async function getLessonVersion(
 export async function setLessonStatus(opts: {
   day: number;
   targetLang?: string;
-  status: 'draft' | 'reviewed' | 'published';
+  /** Published is only allowed via publishLesson(). */
+  status: 'draft' | 'reviewed';
   version?: number;
 }): Promise<SavedLesson> {
   if (!mongoConfigured()) {
     throw new Error('MongoDB not configured');
+  }
+  if ((opts.status as string) === 'published') {
+    throw new Error(
+      "setLessonStatus refuses 'published' — use publishLesson()",
+    );
   }
   await connectMongo();
   const target_lang = opts.targetLang ?? 'pt-PT';
@@ -254,18 +260,6 @@ export async function setLessonStatus(opts: {
   const doc = await Model.findOne(query).sort({ version: -1 });
   if (!doc) {
     throw new Error(`No lesson for day ${opts.day}`);
-  }
-
-  if (opts.status === 'published') {
-    await Model.updateMany(
-      {
-        day: opts.day,
-        target_lang,
-        status: 'published',
-        _id: { $ne: doc._id },
-      },
-      { $set: { status: 'reviewed' } },
-    );
   }
 
   doc.status = opts.status;

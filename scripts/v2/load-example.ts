@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 /**
- * Validate examples/day06-example.json (normal mode) and upsert as published
+ * Validate examples/day06-example.json (strict) and publish via publishLesson.
  * Day 11 (ESTAR gold pack; filename kept from the old day-6 order).
  * Also seeds v2_conjugations from content/v2/conjugations/pt-PT.json.
  */
@@ -9,7 +9,8 @@ import { resolve } from 'node:path';
 import { LessonPackSchema } from '../../lib/v2/content/lesson';
 import { hasErrors, validateLessonPack } from '../../lib/v2/content/validate';
 import { connectMongo, mongoConfigured } from '../../lib/mongo';
-import { V2LessonModel } from '../../lib/v2/mongo/models';
+import { saveDraft, setLessonStatus } from '../../lib/v2/generation/lesson/save';
+import { publishLesson } from '../../lib/v2/generation/lesson/publish';
 import { seedConjugations } from './seed-conjugations';
 
 function loadEnvFile(name: string) {
@@ -45,7 +46,7 @@ async function main() {
     process.exit(1);
   }
 
-  const result = validateLessonPack(parsed.data, { mode: 'normal' });
+  const result = validateLessonPack(parsed.data, { mode: 'strict' });
   for (const issue of result.issues) {
     console.log(`[${issue.severity}] ${issue.rule} @ ${issue.path}: ${issue.message}`);
   }
@@ -64,29 +65,27 @@ async function main() {
   console.log(`Seeded ${conjCount} conjugations`);
 
   const day = parsed.data.lesson.day;
-  const target_lang = parsed.data.lesson.target_lang;
-  const Model = V2LessonModel();
+  const saved = await saveDraft({
+    day,
+    targetLang: parsed.data.lesson.target_lang,
+    pack: parsed.data,
+    meta: { flagged: false, issues: result.issues },
+  });
+  await setLessonStatus({
+    day,
+    targetLang: parsed.data.lesson.target_lang,
+    status: 'reviewed',
+    version: saved.version,
+  });
+  const pub = await publishLesson({
+    day,
+    targetLang: parsed.data.lesson.target_lang,
+    version: saved.version,
+  });
 
-  const existing = await Model.findOne({ day, target_lang, status: 'published' })
-    .sort({ version: -1 })
-    .lean();
-  const version = existing ? existing.version : 1;
-
-  await Model.updateOne(
-    { day, target_lang, version },
-    {
-      $set: {
-        day,
-        target_lang,
-        version,
-        status: 'published',
-        data: parsed.data,
-      },
-    },
-    { upsert: true },
+  console.log(
+    `Published Day ${day} (${pub.lesson.target_lang}) version ${pub.lesson.version}`,
   );
-
-  console.log(`Upserted published Day ${day} (${target_lang}) version ${version}`);
   const mongoose = await import('mongoose');
   await mongoose.default.disconnect();
   process.exit(0);

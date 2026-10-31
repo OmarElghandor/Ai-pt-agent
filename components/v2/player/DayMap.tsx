@@ -7,7 +7,7 @@ import { readDonePages } from './session';
 
 export type DayMapStep = {
   id: string;
-  kind: 'page' | 'practice';
+  kind: 'page' | 'practice' | 'story_test' | 'questions';
   title: string;
   subtitle?: string;
   minutes: number;
@@ -23,6 +23,8 @@ export function DayMap({
   lastPageId,
   practiceDevUnlock = false,
   hasPublishedPack = false,
+  storyTestAfterId = null,
+  questionsAfterId = null,
 }: {
   day: number;
   situation?: { tl: string; eg: string };
@@ -30,6 +32,10 @@ export function DayMap({
   lastPageId?: string | null;
   practiceDevUnlock?: boolean;
   hasPublishedPack?: boolean;
+  /** Detail page that must be done before story test unlocks. */
+  storyTestAfterId?: string | null;
+  /** Story-test step id that must be done before questions unlock. */
+  questionsAfterId?: string | null;
 }) {
   const [done, setDone] = useState<string[]>([]);
   useEffect(() => {
@@ -37,12 +43,15 @@ export function DayMap({
   }, [day]);
 
   const doneSet = new Set(done);
-  const lastPageDone = lastPageId ? doneSet.has(lastPageId) : false;
+  const gateDone = lastPageId ? doneSet.has(lastPageId) : false;
   const practiceUnlocked =
-    hasPublishedPack && (lastPageDone || practiceDevUnlock);
+    hasPublishedPack && (gateDone || practiceDevUnlock);
 
   let markedCurrent = false;
-  const rows = steps.map((step) => {
+  const rows = steps.map((step, i) => {
+    const prev = steps[i - 1];
+    const prevDone = !prev || doneSet.has(prev.id);
+
     if (step.kind === 'practice') {
       if (!practiceUnlocked || !step.href) {
         return { step, status: 'locked' as Status };
@@ -53,7 +62,40 @@ export function DayMap({
       }
       return { step, status: 'current' as Status };
     }
+
+    if (step.kind === 'story_test') {
+      const unlocked =
+        practiceDevUnlock ||
+        (storyTestAfterId
+          ? doneSet.has(storyTestAfterId)
+          : prevDone);
+      if (!unlocked) return { step, status: 'locked' as Status };
+    }
+
+    if (step.kind === 'questions') {
+      const unlocked =
+        practiceDevUnlock ||
+        (questionsAfterId
+          ? doneSet.has(questionsAfterId)
+          : prevDone);
+      if (!unlocked) return { step, status: 'locked' as Status };
+    }
+
+    if (step.kind === 'page' && prev && !prevDone && !practiceDevUnlock) {
+      // sequential pages
+      if (prev.kind === 'page' || prev.kind === 'story_test' || prev.kind === 'questions') {
+        return { step, status: 'locked' as Status };
+      }
+    }
+
     if (doneSet.has(step.id)) return { step, status: 'done' as Status };
+    if (!markedCurrent && (prevDone || practiceDevUnlock || i === 0)) {
+      markedCurrent = true;
+      return { step, status: 'current' as Status };
+    }
+    if (!prevDone && !practiceDevUnlock) {
+      return { step, status: 'locked' as Status };
+    }
     if (!markedCurrent) {
       markedCurrent = true;
       return { step, status: 'current' as Status };

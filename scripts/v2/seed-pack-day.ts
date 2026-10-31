@@ -53,6 +53,7 @@ async function ensurePublishedLesson(day: number) {
   const { saveDraft, setLessonStatus } = await import(
     '@/lib/v2/generation/lesson/save'
   );
+  const { publishLesson } = await import('@/lib/v2/generation/lesson/publish');
   const path = resolve(
     process.cwd(),
     `examples/day${String(day).padStart(2, '0')}-example.json`,
@@ -81,11 +82,7 @@ async function ensurePublishedLesson(day: number) {
     status: 'reviewed',
     version: saved.version,
   });
-  await setLessonStatus({
-    day,
-    status: 'published',
-    version: saved.version,
-  });
+  await publishLesson({ day, version: saved.version });
   lesson = await getPublishedLesson(day);
   if (!lesson) throw new Error('publish failed');
   return lesson;

@@ -5,9 +5,11 @@ import {
   getLessonVersion,
   setLessonStatus,
 } from '@/lib/v2/generation/lesson/save';
-import { publishItemsToRegistry } from '@/lib/v2/generation/lesson/registry';
+import {
+  PublishLessonError,
+  publishLesson,
+} from '@/lib/v2/generation/lesson/publish';
 import { isBlockedForPublish } from '@/lib/v2/generation/lesson/issueResolve';
-import type { Item } from '@/lib/v2/content/items';
 import { mongoConfigured } from '@/lib/mongo';
 import { hasErrors, validateLessonPack } from '@/lib/v2/content/validate';
 
@@ -47,7 +49,20 @@ export async function POST(
   }
 
   try {
-    if (body.status === 'reviewed' || body.status === 'published') {
+    if (body.status === 'published') {
+      const result = await publishLesson({
+        day,
+        version: body.version,
+      });
+      return NextResponse.json({
+        day: result.lesson.day,
+        version: result.lesson.version,
+        status: result.lesson.status,
+        registry: result.registry,
+      });
+    }
+
+    if (body.status === 'reviewed') {
       const lesson =
         body.version != null
           ? await getLessonVersion(day, body.version)
@@ -73,53 +88,33 @@ export async function POST(
       }
     }
 
-    let registry: { written: number; conflicts: string[] } | null = null;
-    if (body.status === 'published') {
-      const lesson =
-        body.version != null
-          ? await getLessonVersion(day, body.version)
-          : await getLatestLesson(day);
-      if (lesson) {
-        registry = await publishItemsToRegistry({
-          day,
-          targetLang: lesson.target_lang,
-          items: (lesson.data.items as Item[]) ?? [],
-        });
-        if (registry.conflicts.length) {
-          return NextResponse.json(
-            {
-              error: 'Registry tl conflicts',
-              conflicts: registry.conflicts,
-            },
-            { status: 409 },
-          );
-        }
-      }
-    }
-
     const saved = await setLessonStatus({
       day,
-      status: body.status as 'draft' | 'reviewed' | 'published',
+      status: body.status as 'draft' | 'reviewed',
       version: body.version,
     });
 
-    if (body.status === 'published' && saved) {
-      const { markPacksStaleForLesson } = await import(
-        '@/lib/v2/generation/pack/save'
-      );
-      await markPacksStaleForLesson({
-        day,
-        targetLang: saved.target_lang,
-        lessonVersion: saved.version,
-      });
-    }
     return NextResponse.json({
       day: saved.day,
       version: saved.version,
       status: saved.status,
-      registry,
+      registry: null,
     });
   } catch (err) {
+    if (err instanceof PublishLessonError) {
+      const status =
+        err.code === 'not_found'
+          ? 404
+          : err.code === 'registry'
+            ? 409
+            : err.code === 'mongo'
+              ? 503
+              : 400;
+      return NextResponse.json(
+        { error: err.message, code: err.code, details: err.details },
+        { status },
+      );
+    }
     const message = err instanceof Error ? err.message : String(err);
     return NextResponse.json({ error: message }, { status: 404 });
   }

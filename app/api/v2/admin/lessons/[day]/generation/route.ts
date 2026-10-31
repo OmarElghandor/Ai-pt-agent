@@ -9,6 +9,7 @@ import {
 import { BUDGETS } from '@/lib/v2/generation/lesson/budgets';
 import { getDayPlan } from '@/lib/v2/generation/lesson/plan';
 import { getLatestLesson, getLessonVersion } from '@/lib/v2/generation/lesson/save';
+import { getStoryVersion } from '@/lib/v2/generation/lesson/storySave';
 import { mongoConfigured } from '@/lib/mongo';
 
 export const runtime = 'nodejs';
@@ -155,6 +156,10 @@ export async function GET(
     items: (lesson?.data as { items?: unknown } | undefined)?.items ?? [],
     questions:
       (lesson?.data as { questions?: unknown } | undefined)?.questions ?? [],
+    story:
+      summary.version != null
+        ? await getStoryVersion({ day, version: summary.version })
+        : null,
     budgets: BUDGETS,
   });
 }

@@ -1,7 +1,7 @@
 {
  "version": 1,
  "lang": "pt-PT",
- "note": "core_items_tl per day. id namespaced; verb.* ids match v2_conjugations lemma. eg = hint for the generator, not final copy.",
+ "note": "core_items_tl per day. id namespaced; verb.* ids match v2_conjugations lemma. eg = hint for the generator, not final copy. plural_tl: os/as plural for countable nouns (null = mass/uncountable, no plural examples). singular_tl on plural-only entries. variant_group: alternatives of each other (story needs one; rest on phrases page). variant_tl: accepted alternatives, never shown with slashes.",
  "days": [
   {
    "day": 1,
@@ -18,19 +18,22 @@
      "id": "phrase.good_morning",
      "kind": "phrase",
      "tl": "Bom dia!",
-     "eg": "صباح الخير"
+     "eg": "صباح الخير",
+     "variant_group": "greeting.time_of_day"
     },
     {
      "id": "phrase.good_afternoon",
      "kind": "phrase",
      "tl": "Boa tarde!",
-     "eg": "مساء الخير (بعد الضهر)"
+     "eg": "مساء الخير (بعد الضهر)",
+     "variant_group": "greeting.time_of_day"
     },
     {
      "id": "phrase.good_night",
      "kind": "phrase",
      "tl": "Boa noite!",
-     "eg": "مساء الخير / تصبح على خير"
+     "eg": "مساء الخير / تصبح على خير",
+     "variant_group": "greeting.time_of_day"
     },
     {
      "id": "phrase.my_name_is",
@@ -71,8 +74,29 @@
     {
      "id": "phrase.bye",
      "kind": "phrase",
-     "tl": "Adeus! / Tchau!",
-     "eg": "مع السلامة"
+     "tl": "Adeus!",
+     "eg": "مع السلامة",
+     "variant_tl": [
+      "Tchau!"
+     ]
+    },
+    {
+     "id": "phrase.likewise",
+     "kind": "phrase",
+     "tl": "Igualmente.",
+     "eg": "وأنا كمان (رد على Muito prazer)"
+    },
+    {
+     "id": "phrase.how_are_you_formal",
+     "kind": "phrase",
+     "tl": "Como está?",
+     "eg": "إزي حضرتك؟ (بأدب)"
+    },
+    {
+     "id": "phrase.im_fine",
+     "kind": "phrase",
+     "tl": "Estou bem, obrigado.",
+     "eg": "أنا كويس، شكراً (obrigada للست)"
     },
     {
      "id": "pattern.chamo_me",
@@ -92,43 +116,78 @@
      "id": "word.coffee",
      "kind": "word",
      "tl": "o café",
-     "eg": "القهوة (إسبريسو صغير)"
+     "eg": "القهوة (إسبريسو صغير)",
+     "plural_tl": "os cafés"
     },
     {
      "id": "word.galao",
      "kind": "word",
      "tl": "o galão",
-     "eg": "قهوة بلبن في كوباية"
+     "eg": "قهوة بلبن في كوباية",
+     "plural_tl": "os galões"
     },
     {
      "id": "word.water",
      "kind": "word",
      "tl": "a água",
-     "eg": "المية"
+     "eg": "المية",
+     "plural_tl": null
     },
     {
      "id": "word.milk",
      "kind": "word",
      "tl": "o leite",
-     "eg": "اللبن"
+     "eg": "اللبن",
+     "plural_tl": null
     },
     {
      "id": "word.tea",
      "kind": "word",
      "tl": "o chá",
-     "eg": "الشاي"
+     "eg": "الشاي",
+     "plural_tl": "os chás"
     },
     {
      "id": "word.pastel_de_nata",
      "kind": "word",
      "tl": "o pastel de nata",
-     "eg": "تارت الكريمة البرتغالي"
+     "eg": "تارت الكريمة البرتغالي",
+     "plural_tl": "os pastéis de nata"
     },
     {
      "id": "word.toast",
      "kind": "word",
      "tl": "a torrada",
-     "eg": "التوست"
+     "eg": "التوست",
+     "plural_tl": "as torradas"
+    },
+    {
+     "id": "word.sugar",
+     "kind": "word",
+     "tl": "o açúcar",
+     "eg": "السكر",
+     "plural_tl": null
+    },
+    {
+     "id": "word.juice",
+     "kind": "word",
+     "tl": "o sumo",
+     "eg": "العصير",
+     "plural_tl": "os sumos"
+    },
+    {
+     "id": "word.cake",
+     "kind": "word",
+     "tl": "o bolo",
+     "eg": "الكيكة",
+     "plural_tl": "os bolos"
+    },
+    {
+     "id": "word.glass",
+     "kind": "word",
+     "tl": "o copo",
+     "eg": "الكوباية",
+     "plural_tl": "os copos"
     },
     {
      "id": "phrase.order_coffee",
@@ -174,6 +233,18 @@
      "role": "said"
     },
     {
+     "id": "phrase.youre_welcome",
+     "kind": "phrase",
+     "tl": "De nada.",
+     "eg": "العفو"
+    },
+    {
+     "id": "phrase.excuse_me_pass",
+     "kind": "phrase",
+     "tl": "Com licença.",
+     "eg": "لو سمحت (عايز أعدّي أو أقاطع)"
+    },
+    {
      "id": "pattern.queria_um_uma",
      "kind": "pattern",
      "pattern_kind": "polite_request",
@@ -205,43 +276,85 @@
      "id": "word.supermarket",
      "kind": "word",
      "tl": "o supermercado",
-     "eg": "السوبر ماركت"
+     "eg": "السوبر ماركت",
+     "plural_tl": "os supermercados"
     },
     {
      "id": "word.bread",
      "kind": "word",
      "tl": "o pão",
-     "eg": "العيش"
+     "eg": "العيش",
+     "plural_tl": "os pães"
     },
     {
      "id": "word.cheese",
      "kind": "word",
      "tl": "o queijo",
-     "eg": "الجبنة"
+     "eg": "الجبنة",
+     "plural_tl": "os queijos"
     },
     {
      "id": "word.apple",
      "kind": "word",
      "tl": "a maçã",
-     "eg": "التفاحة"
+     "eg": "التفاحة",
+     "plural_tl": "as maçãs"
     },
     {
      "id": "word.egg",
      "kind": "word",
      "tl": "o ovo",
-     "eg": "البيضة"
+     "eg": "البيضة",
+     "plural_tl": "os ovos"
     },
     {
      "id": "word.rice",
      "kind": "word",
      "tl": "o arroz",
-     "eg": "الرز"
+     "eg": "الرز",
+     "plural_tl": null
     },
     {
      "id": "word.bag",
      "kind": "word",
      "tl": "o saco",
-     "eg": "الكيس"
+     "eg": "الكيس",
+     "plural_tl": "os sacos"
+    },
+    {
+     "id": "word.banana",
+     "kind": "word",
+     "tl": "a banana",
+     "eg": "الموز",
+     "plural_tl": "as bananas"
+    },
+    {
+     "id": "word.orange",
+     "kind": "word",
+     "tl": "a laranja",
+     "eg": "البرتقانة",
+     "plural_tl": "as laranjas"
+    },
+    {
+     "id": "word.tomato",
+     "kind": "word",
+     "tl": "o tomate",
+     "eg": "الطماطم",
+     "plural_tl": "os tomates"
+    },
+    {
+     "id": "word.potato",
+     "kind": "word",
+     "tl": "a batata",
+     "eg": "البطاطس",
+     "plural_tl": "as batatas"
+    },
+    {
+     "id": "word.fruit",
+     "kind": "word",
+     "tl": "a fruta",
+     "eg": "الفاكهة",
+     "plural_tl": "as frutas"
     },
     {
      "id": "phrase.where_is_x",
@@ -321,13 +434,43 @@
      "id": "word.euro",
      "kind": "word",
      "tl": "o euro",
-     "eg": "اليورو"
+     "eg": "اليورو",
+     "plural_tl": "os euros"
     },
     {
      "id": "word.cent",
      "kind": "word",
      "tl": "o cêntimo",
-     "eg": "السنت"
+     "eg": "السنت",
+     "plural_tl": "os cêntimos"
+    },
+    {
+     "id": "word.price",
+     "kind": "word",
+     "tl": "o preço",
+     "eg": "السعر",
+     "plural_tl": "os preços"
+    },
+    {
+     "id": "word.card",
+     "kind": "word",
+     "tl": "o cartão",
+     "eg": "الكارت",
+     "plural_tl": "os cartões"
+    },
+    {
+     "id": "word.money",
+     "kind": "word",
+     "tl": "o dinheiro",
+     "eg": "الفلوس",
+     "plural_tl": null
+    },
+    {
+     "id": "word.change",
+     "kind": "word",
+     "tl": "o troco",
+     "eg": "الباقي",
+     "plural_tl": null
     },
     {
      "id": "phrase.its_x_euros",
@@ -360,6 +503,18 @@
      "eg": "لا شكراً"
     },
     {
+     "id": "phrase.how_old",
+     "kind": "phrase",
+     "tl": "Quantos anos tem?",
+     "eg": "عندك كام سنة؟ (بأدب)"
+    },
+    {
+     "id": "phrase.i_am_x_years",
+     "kind": "phrase",
+     "tl": "Tenho trinta e dois anos.",
+     "eg": "عندي ٣٢ سنة"
+    },
+    {
      "id": "pattern.sao_x_euros",
      "kind": "pattern",
      "tl": "São + رقم + euros",
@@ -370,6 +525,12 @@
      "kind": "pattern",
      "tl": "vinte e um = 20 + e + 1",
      "eg": "تركيب الأرقام"
+    },
+    {
+     "id": "pattern.tenho_x_anos",
+     "kind": "pattern",
+     "tl": "Tenho + رقم + anos",
+     "eg": "السن بـ ter مش بـ ser"
     }
    ],
    "recycle_ids": [
@@ -423,13 +584,15 @@
      "id": "word.neighbour_m",
      "kind": "word",
      "tl": "o vizinho",
-     "eg": "الجار"
+     "eg": "الجار",
+     "plural_tl": "os vizinhos"
     },
     {
      "id": "word.neighbour_f",
      "kind": "word",
      "tl": "a vizinha",
-     "eg": "الجارة"
+     "eg": "الجارة",
+     "plural_tl": "as vizinhas"
     },
     {
      "id": "word.you_tu",
@@ -454,6 +617,25 @@
      "kind": "word",
      "tl": "nunca",
      "eg": "أبداً"
+    },
+    {
+     "id": "phrase.see_you_later",
+     "kind": "phrase",
+     "tl": "Até logo!",
+     "eg": "أشوفك بعدين"
+    },
+    {
+     "id": "phrase.welcome",
+     "kind": "phrase",
+     "tl": "Bem-vindo!",
+     "eg": "أهلاً بيك (Bem-vinda للست)",
+     "tl_f": "Bem-vinda!"
+    },
+    {
+     "id": "phrase.no_problem",
+     "kind": "phrase",
+     "tl": "Não faz mal.",
+     "eg": "مش مشكلة"
     },
     {
      "id": "pattern.nao_verb",
@@ -531,7 +713,43 @@
      "id": "word.office",
      "kind": "word",
      "tl": "o escritório",
-     "eg": "المكتب"
+     "eg": "المكتب",
+     "plural_tl": "os escritórios"
+    },
+    {
+     "id": "word.work",
+     "kind": "word",
+     "tl": "o trabalho",
+     "eg": "الشغل",
+     "plural_tl": "os trabalhos"
+    },
+    {
+     "id": "word.school",
+     "kind": "word",
+     "tl": "a escola",
+     "eg": "المدرسة",
+     "plural_tl": "as escolas"
+    },
+    {
+     "id": "word.city",
+     "kind": "word",
+     "tl": "a cidade",
+     "eg": "المدينة",
+     "plural_tl": "as cidades"
+    },
+    {
+     "id": "word.country",
+     "kind": "word",
+     "tl": "o país",
+     "eg": "البلد",
+     "plural_tl": "os países"
+    },
+    {
+     "id": "word.company",
+     "kind": "word",
+     "tl": "a empresa",
+     "eg": "الشركة",
+     "plural_tl": "as empresas"
     },
     {
      "id": "phrase.i_work_in_a_cafe",
@@ -614,37 +832,78 @@
      "id": "word.restaurant",
      "kind": "word",
      "tl": "o restaurante",
-     "eg": "المطعم"
+     "eg": "المطعم",
+     "plural_tl": "os restaurantes"
     },
     {
      "id": "word.menu",
      "kind": "word",
      "tl": "a ementa",
-     "eg": "المنيو"
+     "eg": "المنيو",
+     "plural_tl": "as ementas"
     },
     {
      "id": "word.soup",
      "kind": "word",
      "tl": "a sopa",
-     "eg": "الشوربة"
+     "eg": "الشوربة",
+     "plural_tl": "as sopas"
     },
     {
      "id": "word.fish",
      "kind": "word",
      "tl": "o peixe",
-     "eg": "السمك"
+     "eg": "السمك",
+     "plural_tl": "os peixes"
     },
     {
      "id": "word.meat",
      "kind": "word",
      "tl": "a carne",
-     "eg": "اللحمة"
+     "eg": "اللحمة",
+     "plural_tl": "as carnes"
     },
     {
      "id": "word.dish_of_day",
      "kind": "word",
      "tl": "o prato do dia",
-     "eg": "طبق اليوم"
+     "eg": "طبق اليوم",
+     "plural_tl": "os pratos do dia"
+    },
+    {
+     "id": "word.chicken",
+     "kind": "word",
+     "tl": "o frango",
+     "eg": "الفراخ",
+     "plural_tl": "os frangos"
+    },
+    {
+     "id": "word.salad",
+     "kind": "word",
+     "tl": "a salada",
+     "eg": "السلطة",
+     "plural_tl": "as saladas"
+    },
+    {
+     "id": "word.dessert",
+     "kind": "word",
+     "tl": "a sobremesa",
+     "eg": "الحلو",
+     "plural_tl": "as sobremesas"
+    },
+    {
+     "id": "word.wine",
+     "kind": "word",
+     "tl": "o vinho",
+     "eg": "النبيذ",
+     "plural_tl": "os vinhos"
+    },
+    {
+     "id": "word.table",
+     "kind": "word",
+     "tl": "a mesa",
+     "eg": "الترابيزة",
+     "plural_tl": "as mesas"
     },
     {
      "id": "phrase.table_for_two",
@@ -717,25 +976,64 @@
      "id": "word.house",
      "kind": "word",
      "tl": "a casa",
-     "eg": "البيت"
+     "eg": "البيت",
+     "plural_tl": "as casas"
     },
     {
      "id": "word.bedroom",
      "kind": "word",
      "tl": "o quarto",
-     "eg": "أوضة النوم"
+     "eg": "أوضة النوم",
+     "plural_tl": "os quartos"
     },
     {
      "id": "word.window",
      "kind": "word",
      "tl": "a janela",
-     "eg": "الشباك"
+     "eg": "الشباك",
+     "plural_tl": "as janelas"
     },
     {
      "id": "word.door",
      "kind": "word",
      "tl": "a porta",
-     "eg": "الباب"
+     "eg": "الباب",
+     "plural_tl": "as portas"
+    },
+    {
+     "id": "word.kitchen",
+     "kind": "word",
+     "tl": "a cozinha",
+     "eg": "المطبخ",
+     "plural_tl": "as cozinhas"
+    },
+    {
+     "id": "word.bathroom",
+     "kind": "word",
+     "tl": "a casa de banho",
+     "eg": "الحمام",
+     "plural_tl": "as casas de banho"
+    },
+    {
+     "id": "word.living_room",
+     "kind": "word",
+     "tl": "a sala",
+     "eg": "الصالة",
+     "plural_tl": "as salas"
+    },
+    {
+     "id": "word.bed",
+     "kind": "word",
+     "tl": "a cama",
+     "eg": "السرير",
+     "plural_tl": "as camas"
+    },
+    {
+     "id": "word.sofa",
+     "kind": "word",
+     "tl": "o sofá",
+     "eg": "الكنبة",
+     "plural_tl": "os sofás"
     },
     {
      "id": "phrase.i_open_window",
@@ -801,7 +1099,26 @@
      "id": "word.egypt",
      "kind": "word",
      "tl": "o Egito",
-     "eg": "مصر"
+     "eg": "مصر",
+     "plural_tl": null
+    },
+    {
+     "id": "word.teacher",
+     "kind": "word",
+     "tl": "professor / professora",
+     "eg": "مدرس / مدرسة"
+    },
+    {
+     "id": "word.doctor",
+     "kind": "word",
+     "tl": "médico / médica",
+     "eg": "دكتور / دكتورة"
+    },
+    {
+     "id": "word.student",
+     "kind": "word",
+     "tl": "estudante",
+     "eg": "طالب / طالبة"
     },
     {
      "id": "phrase.where_are_you_from",
@@ -888,6 +1205,24 @@
      "eg": "متوتر"
     },
     {
+     "id": "word.glad",
+     "kind": "word",
+     "tl": "feliz",
+     "eg": "فرحان"
+    },
+    {
+     "id": "word.sad",
+     "kind": "word",
+     "tl": "triste",
+     "eg": "زعلان"
+    },
+    {
+     "id": "word.busy",
+     "kind": "word",
+     "tl": "ocupado / ocupada",
+     "eg": "مشغول / مشغولة"
+    },
+    {
      "id": "phrase.im_tired",
      "kind": "phrase",
      "tl": "Estou cansado.",
@@ -945,19 +1280,29 @@
      "id": "word.mobile",
      "kind": "word",
      "tl": "o telemóvel",
-     "eg": "الموبايل"
+     "eg": "الموبايل",
+     "plural_tl": "os telemóveis"
     },
     {
      "id": "word.call",
      "kind": "word",
      "tl": "a chamada",
-     "eg": "المكالمة"
+     "eg": "المكالمة",
+     "plural_tl": "as chamadas"
     },
     {
      "id": "word.message",
      "kind": "word",
      "tl": "a mensagem",
-     "eg": "الرسالة"
+     "eg": "الرسالة",
+     "plural_tl": "as mensagens"
+    },
+    {
+     "id": "word.number",
+     "kind": "word",
+     "tl": "o número",
+     "eg": "الرقم",
+     "plural_tl": "os números"
     },
     {
      "id": "phrase.phone_hello",
@@ -996,6 +1341,18 @@
      "eg": "بتعمل إيه دلوقتي؟"
     },
     {
+     "id": "phrase.can_you_spell",
+     "kind": "phrase",
+     "tl": "Pode soletrar, por favor?",
+     "eg": "ممكن تتهجّاها؟"
+    },
+    {
+     "id": "phrase.how_is_it_written",
+     "kind": "phrase",
+     "tl": "Como se escreve?",
+     "eg": "بتتكتب إزاي؟"
+    },
+    {
      "id": "pattern.estar_a_inf",
      "kind": "pattern",
      "tl": "estar + a + مصدر",
@@ -1023,25 +1380,50 @@
      "id": "word.cinema",
      "kind": "word",
      "tl": "o cinema",
-     "eg": "السينما"
+     "eg": "السينما",
+     "plural_tl": "os cinemas"
     },
     {
      "id": "word.beach",
      "kind": "word",
      "tl": "a praia",
-     "eg": "البحر / الشط"
+     "eg": "البحر / الشط",
+     "plural_tl": "as praias"
     },
     {
      "id": "word.football",
      "kind": "word",
      "tl": "o futebol",
-     "eg": "الكورة"
+     "eg": "الكورة",
+     "plural_tl": null
     },
     {
      "id": "word.music",
      "kind": "word",
      "tl": "a música",
-     "eg": "المزيكا"
+     "eg": "المزيكا",
+     "plural_tl": "as músicas"
+    },
+    {
+     "id": "word.park",
+     "kind": "word",
+     "tl": "o parque",
+     "eg": "الجنينة",
+     "plural_tl": "os parques"
+    },
+    {
+     "id": "word.book",
+     "kind": "word",
+     "tl": "o livro",
+     "eg": "الكتاب",
+     "plural_tl": "os livros"
+    },
+    {
+     "id": "word.tv",
+     "kind": "word",
+     "tl": "a televisão",
+     "eg": "التليفزيون",
+     "plural_tl": "as televisões"
     },
     {
      "id": "phrase.i_like_x",
@@ -1078,6 +1460,30 @@
      "kind": "phrase",
      "tl": "Adoro a praia!",
      "eg": "بموت في البحر"
+    },
+    {
+     "id": "phrase.i_prefer",
+     "kind": "phrase",
+     "tl": "Prefiro chá.",
+     "eg": "أنا بفضّل الشاي"
+    },
+    {
+     "id": "phrase.its_hot",
+     "kind": "phrase",
+     "tl": "Está calor.",
+     "eg": "الجو حر"
+    },
+    {
+     "id": "phrase.its_cold",
+     "kind": "phrase",
+     "tl": "Está frio.",
+     "eg": "الجو برد"
+    },
+    {
+     "id": "phrase.its_raining",
+     "kind": "phrase",
+     "tl": "Está a chover.",
+     "eg": "بتمطر"
     },
     {
      "id": "pattern.gostar_de",
@@ -1148,13 +1554,29 @@
      "id": "word.time",
      "kind": "word",
      "tl": "o tempo",
-     "eg": "الوقت"
+     "eg": "الوقت",
+     "plural_tl": null
     },
     {
      "id": "word.dinner",
      "kind": "word",
      "tl": "o jantar",
-     "eg": "العشا"
+     "eg": "العشا",
+     "plural_tl": "os jantares"
+    },
+    {
+     "id": "word.museum",
+     "kind": "word",
+     "tl": "o museu",
+     "eg": "المتحف",
+     "plural_tl": "os museus"
+    },
+    {
+     "id": "word.film",
+     "kind": "word",
+     "tl": "o filme",
+     "eg": "الفيلم",
+     "plural_tl": "os filmes"
     },
     {
      "id": "phrase.i_have_time",
@@ -1287,37 +1709,64 @@
      "id": "word.centre",
      "kind": "word",
      "tl": "o centro",
-     "eg": "وسط البلد"
+     "eg": "وسط البلد",
+     "plural_tl": "os centros"
     },
     {
      "id": "word.metro",
      "kind": "word",
      "tl": "o metro",
-     "eg": "المترو"
+     "eg": "المترو",
+     "plural_tl": null
     },
     {
      "id": "word.bus",
      "kind": "word",
      "tl": "o autocarro",
-     "eg": "الأتوبيس"
+     "eg": "الأتوبيس",
+     "plural_tl": "os autocarros"
     },
     {
      "id": "word.train",
      "kind": "word",
      "tl": "o comboio",
-     "eg": "القطر"
+     "eg": "القطر",
+     "plural_tl": "os comboios"
     },
     {
      "id": "word.ticket",
      "kind": "word",
      "tl": "o bilhete",
-     "eg": "التذكرة"
+     "eg": "التذكرة",
+     "plural_tl": "os bilhetes"
     },
     {
      "id": "word.bus_stop",
      "kind": "word",
      "tl": "a paragem",
-     "eg": "المحطة (أتوبيس)"
+     "eg": "المحطة (أتوبيس)",
+     "plural_tl": "as paragens"
+    },
+    {
+     "id": "word.taxi",
+     "kind": "word",
+     "tl": "o táxi",
+     "eg": "التاكسي",
+     "plural_tl": "os táxis"
+    },
+    {
+     "id": "word.airport",
+     "kind": "word",
+     "tl": "o aeroporto",
+     "eg": "المطار",
+     "plural_tl": "os aeroportos"
+    },
+    {
+     "id": "word.bike",
+     "kind": "word",
+     "tl": "a bicicleta",
+     "eg": "العجلة",
+     "plural_tl": "as bicicletas"
     },
     {
      "id": "phrase.go_to_centre",
@@ -1372,19 +1821,22 @@
      "id": "word.station",
      "kind": "word",
      "tl": "a estação",
-     "eg": "المحطة (قطر/مترو)"
+     "eg": "المحطة (قطر/مترو)",
+     "plural_tl": "as estações"
     },
     {
      "id": "word.street",
      "kind": "word",
      "tl": "a rua",
-     "eg": "الشارع"
+     "eg": "الشارع",
+     "plural_tl": "as ruas"
     },
     {
      "id": "word.pharmacy",
      "kind": "word",
      "tl": "a farmácia",
-     "eg": "الصيدلية"
+     "eg": "الصيدلية",
+     "plural_tl": "as farmácias"
     },
     {
      "id": "word.left",
@@ -1397,6 +1849,34 @@
      "kind": "word",
      "tl": "à direita",
      "eg": "يمين"
+    },
+    {
+     "id": "word.bank",
+     "kind": "word",
+     "tl": "o banco",
+     "eg": "البنك",
+     "plural_tl": "os bancos"
+    },
+    {
+     "id": "word.hospital",
+     "kind": "word",
+     "tl": "o hospital",
+     "eg": "المستشفى",
+     "plural_tl": "os hospitais"
+    },
+    {
+     "id": "word.corner",
+     "kind": "word",
+     "tl": "a esquina",
+     "eg": "الناصية",
+     "plural_tl": "as esquinas"
+    },
+    {
+     "id": "word.square",
+     "kind": "word",
+     "tl": "a praça",
+     "eg": "الميدان",
+     "plural_tl": "as praças"
     },
     {
      "id": "phrase.where_is_station",
@@ -1532,10 +2012,28 @@
      "eg": "عايز أحجز ميعاد"
     },
     {
+     "id": "word.months",
+     "kind": "word",
+     "tl": "janeiro, fevereiro, março … dezembro",
+     "eg": "شهور السنة (بحروف صغيرة)"
+    },
+    {
+     "id": "phrase.whats_the_date",
+     "kind": "phrase",
+     "tl": "Que dia é hoje? — É dia cinco de março.",
+     "eg": "النهارده كام في الشهر؟"
+    },
+    {
      "id": "pattern.days_periods",
      "kind": "pattern",
      "tl": "na + يوم · de manhã / à tarde",
      "eg": "إمتى في الأسبوع"
+    },
+    {
+     "id": "pattern.date",
+     "kind": "pattern",
+     "tl": "dia + رقم + de + شهر",
+     "eg": "التاريخ: dia 5 de março"
     }
    ],
    "recycle_ids": [
@@ -1653,19 +2151,36 @@
      "id": "word.weekend",
      "kind": "word",
      "tl": "o fim de semana",
-     "eg": "الويك إند"
+     "eg": "الويك إند",
+     "plural_tl": "os fins de semana"
     },
     {
      "id": "word.next_week",
      "kind": "word",
      "tl": "a próxima semana",
-     "eg": "الأسبوع الجاي"
+     "eg": "الأسبوع الجاي",
+     "plural_tl": null
     },
     {
      "id": "word.friends",
      "kind": "word",
      "tl": "os amigos",
-     "eg": "الصحاب"
+     "eg": "الصحاب",
+     "singular_tl": "o amigo"
+    },
+    {
+     "id": "word.party",
+     "kind": "word",
+     "tl": "a festa",
+     "eg": "الحفلة",
+     "plural_tl": "as festas"
+    },
+    {
+     "id": "word.trip",
+     "kind": "word",
+     "tl": "a viagem",
+     "eg": "الرحلة",
+     "plural_tl": "as viagens"
     },
     {
      "id": "phrase.what_will_you_do",
@@ -1720,25 +2235,50 @@
      "id": "word.cough",
      "kind": "word",
      "tl": "a tosse",
-     "eg": "الكحة"
+     "eg": "الكحة",
+     "plural_tl": null
     },
     {
      "id": "word.fever",
      "kind": "word",
      "tl": "a febre",
-     "eg": "السخونية"
+     "eg": "السخونية",
+     "plural_tl": null
     },
     {
      "id": "word.pill",
      "kind": "word",
      "tl": "o comprimido",
-     "eg": "البرشامة"
+     "eg": "البرشامة",
+     "plural_tl": "os comprimidos"
     },
     {
      "id": "word.prescription",
      "kind": "word",
      "tl": "a receita",
-     "eg": "الروشتة"
+     "eg": "الروشتة",
+     "plural_tl": "as receitas"
+    },
+    {
+     "id": "word.pain",
+     "kind": "word",
+     "tl": "a dor",
+     "eg": "الوجع",
+     "plural_tl": "as dores"
+    },
+    {
+     "id": "word.flu",
+     "kind": "word",
+     "tl": "a gripe",
+     "eg": "الإنفلونزا",
+     "plural_tl": null
+    },
+    {
+     "id": "word.syrup",
+     "kind": "word",
+     "tl": "o xarope",
+     "eg": "الشراب (دوا الكحة)",
+     "plural_tl": "os xaropes"
     },
     {
      "id": "phrase.something_for_cough",
@@ -1793,37 +2333,63 @@
      "id": "word.mother",
      "kind": "word",
      "tl": "a mãe",
-     "eg": "الأم"
+     "eg": "الأم",
+     "plural_tl": "as mães"
     },
     {
      "id": "word.father",
      "kind": "word",
      "tl": "o pai",
-     "eg": "الأب"
+     "eg": "الأب",
+     "plural_tl": "os pais"
     },
     {
      "id": "word.brother",
      "kind": "word",
      "tl": "o irmão",
-     "eg": "الأخ"
+     "eg": "الأخ",
+     "plural_tl": "os irmãos"
     },
     {
      "id": "word.sister",
      "kind": "word",
      "tl": "a irmã",
-     "eg": "الأخت"
+     "eg": "الأخت",
+     "plural_tl": "as irmãs"
     },
     {
      "id": "word.children",
      "kind": "word",
      "tl": "os filhos",
-     "eg": "الولاد"
+     "eg": "الولاد",
+     "singular_tl": "o filho"
     },
     {
      "id": "word.husband_wife",
      "kind": "word",
      "tl": "o marido · a mulher",
      "eg": "الجوز · المراة"
+    },
+    {
+     "id": "word.grandparents",
+     "kind": "word",
+     "tl": "o avô · a avó",
+     "eg": "الجد · الجدة",
+     "plural_tl": null
+    },
+    {
+     "id": "word.uncle_aunt",
+     "kind": "word",
+     "tl": "o tio · a tia",
+     "eg": "العم/الخال · العمة/الخالة",
+     "plural_tl": null
+    },
+    {
+     "id": "word.cousin",
+     "kind": "word",
+     "tl": "o primo · a prima",
+     "eg": "ابن العم · بنت العم",
+     "plural_tl": null
     },
     {
      "id": "phrase.i_have_two_brothers",
@@ -1872,7 +2438,8 @@
      "id": "word.sweater",
      "kind": "word",
      "tl": "a camisola",
-     "eg": "البلوفر"
+     "eg": "البلوفر",
+     "plural_tl": "as camisolas"
     },
     {
      "id": "word.trousers",
@@ -1884,19 +2451,22 @@
      "id": "word.shirt",
      "kind": "word",
      "tl": "a camisa",
-     "eg": "القميص"
+     "eg": "القميص",
+     "plural_tl": "as camisas"
     },
     {
      "id": "word.shoes",
      "kind": "word",
      "tl": "os sapatos",
-     "eg": "الجزمة"
+     "eg": "الجزمة",
+     "singular_tl": "o sapato"
     },
     {
      "id": "word.jacket",
      "kind": "word",
      "tl": "o casaco",
-     "eg": "الجاكت"
+     "eg": "الجاكت",
+     "plural_tl": "os casacos"
     },
     {
      "id": "word.colours",
@@ -1909,6 +2479,27 @@
      "kind": "word",
      "tl": "grande · pequeno",
      "eg": "كبير · صغير"
+    },
+    {
+     "id": "word.skirt",
+     "kind": "word",
+     "tl": "a saia",
+     "eg": "الجيبة",
+     "plural_tl": "as saias"
+    },
+    {
+     "id": "word.dress",
+     "kind": "word",
+     "tl": "o vestido",
+     "eg": "الفستان",
+     "plural_tl": "os vestidos"
+    },
+    {
+     "id": "word.hat",
+     "kind": "word",
+     "tl": "o chapéu",
+     "eg": "البرنيطة",
+     "plural_tl": "os chapéus"
     },
     {
      "id": "phrase.blue_sweater_big",
@@ -1980,7 +2571,8 @@
      "id": "word.fitting_room",
      "kind": "word",
      "tl": "o provador",
-     "eg": "البروفة"
+     "eg": "البروفة",
+     "plural_tl": "os provadores"
     },
     {
      "id": "phrase.can_i_try",
@@ -2041,13 +2633,36 @@
      "id": "word.breakfast",
      "kind": "word",
      "tl": "o pequeno-almoço",
-     "eg": "الفطار"
+     "eg": "الفطار",
+     "plural_tl": null
     },
     {
      "id": "word.key",
      "kind": "word",
      "tl": "a chave",
-     "eg": "المفتاح"
+     "eg": "المفتاح",
+     "plural_tl": "as chaves"
+    },
+    {
+     "id": "word.shower",
+     "kind": "word",
+     "tl": "o duche",
+     "eg": "الدُش",
+     "plural_tl": "os duches"
+    },
+    {
+     "id": "word.toothbrush",
+     "kind": "word",
+     "tl": "a escova de dentes",
+     "eg": "فرشة السنان",
+     "plural_tl": "as escovas de dentes"
+    },
+    {
+     "id": "word.watch",
+     "kind": "word",
+     "tl": "o relógio",
+     "eg": "الساعة (اللي في الإيد)",
+     "plural_tl": "os relógios"
     },
     {
      "id": "phrase.i_put_on_jacket",
@@ -2113,6 +2728,13 @@
    "title_tl": "O Que Fizeste Ontem?",
    "is_story": false,
    "core_items": [
+    {
+     "id": "word.market",
+     "kind": "word",
+     "tl": "o mercado",
+     "eg": "السوق",
+     "plural_tl": "os mercados"
+    },
     {
      "id": "verb.comprar",
      "kind": "verb",

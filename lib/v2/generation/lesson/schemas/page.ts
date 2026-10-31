@@ -1,8 +1,11 @@
 import { z } from 'zod';
+import { BlockSchema } from '@/lib/v2/content/blocks';
 import {
+  ControlSchema,
   ModeSchema,
-  PageSchema,
+  PageObjectSchema,
   PresetSchema,
+  StepSchema,
   type Mode,
   type Page,
 } from '@/lib/v2/content/page';
@@ -10,24 +13,82 @@ import { RtSchema } from '@/lib/v2/content/rt';
 import type { OutlinePagePlan } from '../stages/types';
 import { normalizePageJson } from '../stages/page';
 
-/**
- * Generation page tool schema: id / preset / mode are code-owned (injected from
- * the outline entry). Model must still return title + ≥1 blocks.
- */
-export const GenPageSchema = PageSchema.omit({
+const GenPageBase = PageObjectSchema.omit({
   id: true,
   preset: true,
   mode: true,
+  blocks: true,
+  steps: true,
+  controls: true,
 }).extend({
   id: z.string().optional(),
   preset: PresetSchema.optional(),
   mode: ModeSchema.optional(),
 });
 
+/**
+ * Static page tool schema. Blocks are required — a title-only page is not valid.
+ * id / preset / mode stay code-owned.
+ */
+export const GenPageSchema = GenPageBase.extend({
+  blocks: z.array(BlockSchema).min(1),
+  steps: z.array(StepSchema).optional(),
+  controls: z.array(ControlSchema).optional(),
+});
+
+/** Guided pages must ship the step list the player already requires. */
+export const GuidedGenPageSchema = GenPageBase.extend({
+  blocks: z.array(BlockSchema).min(1),
+  steps: z.array(StepSchema).min(12).max(20),
+  controls: z.array(ControlSchema).optional(),
+});
+
+/** Sections grammar pages: main blocks + explain; no steps. */
+export const SectionsGenPageSchema = GenPageBase.extend({
+  blocks: z.array(BlockSchema).min(1),
+  explain: RtSchema,
+  steps: z.array(StepSchema).optional(),
+  controls: z.array(ControlSchema).optional(),
+  check: z.array(z.string()).optional(),
+});
+
+/** Explore pages must ship at least one control. */
+export const ExploreGenPageSchema = GenPageBase.extend({
+  blocks: z.array(BlockSchema).min(1),
+  steps: z.array(StepSchema).optional(),
+  controls: z.array(ControlSchema).min(1),
+});
+
+/** Intro story pointer: blocks may be empty. The story lives in v2_stories. */
+const StoryGenPageSchema = GenPageBase.extend({
+  blocks: z.array(BlockSchema).default([]),
+  steps: z.array(StepSchema).optional(),
+  controls: z.array(ControlSchema).optional(),
+});
+
 export const PageJobSchema = z.object({
   page: GenPageSchema,
   taught_eg: z.string().optional(),
 });
+
+export function pageJobSchemaFor(
+  mode: Mode,
+  opts?: { storyPointer?: boolean },
+): z.ZodType {
+  const page = opts?.storyPointer
+    ? StoryGenPageSchema
+    : mode === 'sections'
+      ? SectionsGenPageSchema
+      : mode === 'guided'
+        ? GuidedGenPageSchema
+        : mode === 'explore'
+          ? ExploreGenPageSchema
+          : GenPageSchema;
+  return z.object({
+    page,
+    taught_eg: z.string().optional(),
+  });
+}
 
 function titleFromEntry(entry: OutlinePagePlan): z.infer<typeof RtSchema> {
   const t = entry.title;
@@ -108,10 +169,21 @@ export function finalizeGenPage(
   entry: OutlinePagePlan,
   mode: Mode,
 ): Page {
+  const isIntro =
+    entry.role === 'intro' ||
+    (entry.index === 0 && entry.preset === 'story');
   return {
     ...page,
     id: entry.page_id,
     preset: entry.preset as Page['preset'],
     mode,
+    ...(isIntro
+      ? {
+          role: 'intro' as const,
+          steps: undefined,
+          cover: undefined,
+          quiz: undefined,
+        }
+      : {}),
   };
 }

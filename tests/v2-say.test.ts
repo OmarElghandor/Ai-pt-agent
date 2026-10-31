@@ -12,6 +12,7 @@ describe('transliteratePtToSay · goldens (Day 2 v8)', () => {
     assert.equal(transliteratePtToSay('obrigado'), 'أوبريجادو');
     assert.equal(transliteratePtToSay('água'), 'آجوا');
     assert.equal(transliteratePtToSay('leite'), 'لايت');
+    assert.equal(transliteratePtToSay('queijo'), 'كايچو');
     assert.equal(transliteratePtToSay('gosto'), 'جوشتو');
   });
 

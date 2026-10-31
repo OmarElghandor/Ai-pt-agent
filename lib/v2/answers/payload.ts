@@ -35,6 +35,8 @@ export type OpenAnswerPayload = {
   question_id?: string;
   question_type?: string;
   accepted?: string[];
+  /** Grammar-breaking near forms (e.g. Chamome) with Egyptian feedback. */
+  near_miss?: { tl: string; feedback_eg?: string }[];
   tool_id?: string;
 };
 
@@ -150,6 +152,18 @@ export function parseAnswerPayload(body: unknown): AnswerPayload | null {
     const accepted = Array.isArray(body.accepted)
       ? body.accepted.filter((a): a is string => typeof a === 'string')
       : undefined;
+    const near_miss = Array.isArray(body.near_miss)
+      ? body.near_miss
+          .filter(
+            (n): n is { tl: string; feedback_eg?: string } =>
+              isRecord(n) && typeof n.tl === 'string',
+          )
+          .map((n) => ({
+            tl: n.tl,
+            feedback_eg:
+              typeof n.feedback_eg === 'string' ? n.feedback_eg : undefined,
+          }))
+      : undefined;
     return {
       kind: 'open',
       answer_id,
@@ -162,6 +176,7 @@ export function parseAnswerPayload(body: unknown): AnswerPayload | null {
       question_type:
         typeof body.question_type === 'string' ? body.question_type : undefined,
       accepted,
+      near_miss,
       tool_id: typeof body.tool_id === 'string' ? body.tool_id : undefined,
     };
   }

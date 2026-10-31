@@ -1,7 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { DayMap, type DayMapStep } from '@/components/v2/player/DayMap';
-import { getPublishedLesson } from '@/lib/v2/content/getPublishedLesson';
+import {
+  getLatestLessonPack,
+  getPublishedLesson,
+} from '@/lib/v2/content/getPublishedLesson';
 import { getPublishedPack } from '@/lib/v2/generation/pack/save';
 import { minutesForMode, PRACTICE_MINUTES } from '@/lib/v2/render/dayMinutes';
 import { plainRt } from '@/lib/v2/render/speechTarget';
@@ -18,7 +21,9 @@ export default async function DayMapPage({
   const day = Number(raw);
   if (!Number.isInteger(day) || day < 1) notFound();
 
-  const published = await getPublishedLesson(day);
+  const dev = sp.dev === '1';
+  const published =
+    (await getPublishedLesson(day)) ?? (await getLatestLessonPack(day));
   if (!published) {
     return (
       <main className="px-4 py-8">
@@ -33,18 +38,66 @@ export default async function DayMapPage({
   }
 
   const pack = await getPublishedPack(day);
-  const pageIds = published.pack.pages.map((p) => p.id);
-  const lastPageId = pageIds[pageIds.length - 1] ?? null;
-  const devUnlock = sp.dev === '1';
+  const pages = published.pack.pages.filter((p) => p.role !== 'test');
+  const storyIntro =
+    pages.find((p) => p.preset === 'story' && p.role !== 'test') ??
+    pages.find((p) => p.preset === 'story') ??
+    pages[0];
+  const detailPages = pages.filter((p) => p.id !== storyIntro?.id);
+  const lastDetailId = detailPages[detailPages.length - 1]?.id ?? null;
+  const storyTestStepId = storyIntro ? `${storyIntro.id}__test` : null;
+  const questionsId = 'day_questions';
+  const unlockAfter = questionsId;
+  const devUnlock = dev;
+  const withDev = (href: string) => {
+    if (!dev) return href;
+    return href.includes('?') ? `${href}&dev=1` : `${href}?dev=1`;
+  };
 
-  const steps: DayMapStep[] = published.pack.pages.map((page) => ({
-    id: page.id,
-    kind: 'page',
-    title: plainRt(page.title),
-    subtitle: page.pill,
-    minutes: minutesForMode(page.mode),
-    href: `/day/${day}/page/${page.id}`,
-  }));
+  const steps: DayMapStep[] = [];
+
+  if (storyIntro) {
+    steps.push({
+      id: storyIntro.id,
+      kind: 'page',
+      title: 'القصة',
+      subtitle: plainRt(storyIntro.title),
+      minutes: minutesForMode(storyIntro.mode),
+      href: withDev(`/day/${day}/page/${storyIntro.id}`),
+    });
+  }
+
+  for (const page of detailPages) {
+    steps.push({
+      id: page.id,
+      kind: 'page',
+      title: plainRt(page.title),
+      subtitle: page.pill,
+      minutes: minutesForMode(page.mode),
+      href: withDev(`/day/${day}/page/${page.id}`),
+    });
+  }
+
+  if (storyIntro && storyTestStepId) {
+    steps.push({
+      id: storyTestStepId,
+      kind: 'story_test',
+      title: 'القصة تاني: من غير ترجمة',
+      subtitle: 'اسمعها تاني وبعدين أسئلة',
+      minutes: 3,
+      href: withDev(`/day/${day}/page/${storyIntro.id}?mode=test`),
+    });
+  }
+
+  steps.push({
+    id: questionsId,
+    kind: 'questions',
+    title: 'أسئلة اليوم',
+    subtitle: 'اختبرني',
+    minutes: 3,
+    href: withDev(`/day/${day}/questions`),
+  });
+
   steps.push({
     id: 'practice',
     kind: 'practice',
@@ -59,9 +112,11 @@ export default async function DayMapPage({
       day={published.day}
       situation={published.pack.lesson.situation}
       steps={steps}
-      lastPageId={lastPageId}
+      lastPageId={unlockAfter}
       practiceDevUnlock={devUnlock}
       hasPublishedPack={Boolean(pack)}
+      storyTestAfterId={lastDetailId}
+      questionsAfterId={storyTestStepId}
     />
   );
 }

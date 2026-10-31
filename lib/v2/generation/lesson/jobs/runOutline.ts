@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { modeForPreset, PresetSchema } from '@/lib/v2/content/page';
 import type { LessonBrief } from '../brief';
 import type { KnownIdTl } from '../hash';
+import type { StoryHandoff } from '../handoffs';
 import { getDayPlan } from '../plan';
 import { buildOutlineSystemPrompt } from '../prompts';
 import type { OutlineResult } from '../stages/types';
@@ -13,6 +14,7 @@ import {
   warning,
   type TierIssue,
 } from '../tiers';
+import { fillEmptyDetailAssumes } from '../pageAllow';
 import { callJobTool } from './call';
 
 /** Slim outline tool — code fills page_id + mode. */
@@ -59,7 +61,27 @@ function normTl(s: string): string {
     .trim();
 }
 
-/** Code-owned outline fixes: recycle strip, unique presets, story ending, early_chunks. */
+/** Order detail pages by first appearance of their introduces in the story. */
+function orderPagesByStory(
+  pages: OutlineResult['pages'],
+  story: StoryHandoff | undefined,
+): OutlineResult['pages'] {
+  if (!story?.item_first_index?.length) return pages;
+  const firstLine = new Map(
+    story.item_first_index.map((e) => [e.id, e.line]),
+  );
+  const score = (p: OutlineResult['pages'][number]) => {
+    if (p.preset === 'story' || p.role === 'intro') return -1;
+    const lines = (p.introduces ?? [])
+      .map((id) => firstLine.get(id))
+      .filter((n): n is number => n != null);
+    if (!lines.length) return 999;
+    return Math.min(...lines);
+  };
+  return [...pages].sort((a, b) => score(a) - score(b));
+}
+
+/** Code-owned outline fixes: recycle strip, unique presets, story pointer, early_chunks. */
 function postProcessOutline(
   outline: OutlineResult,
   opts: {
@@ -67,6 +89,7 @@ function postProcessOutline(
     earlyChunks: string[];
     isStory: boolean;
     items: KnownIdTl[];
+    story?: StoryHandoff;
   },
 ): { outline: OutlineResult; fixes: TierIssue[] } {
   const fixes: TierIssue[] = [];
@@ -88,6 +111,15 @@ function postProcessOutline(
     return { ...p, introduces: kept };
   });
 
+  // Drop model-emitted story pages — code owns the intro story pointer.
+  pages = pages.filter((p) => {
+    if (p.preset === 'story') {
+      fixes.push(fix(`pages[${p.index}]`, 'story_owned', 'dropped model story page'));
+      return false;
+    }
+    return true;
+  });
+
   // Unique presets — keep first occurrence of each.
   const seen = new Set<string>();
   const deduped: typeof pages = [];
@@ -101,30 +133,44 @@ function postProcessOutline(
     seen.add(p.preset);
     deduped.push(p);
   }
-  pages = deduped.map((p, i) => ({
+  pages = deduped;
+
+  // Order detail pages by story item appearance, then prepend intro story.
+  // Weekly story days: story pointer only (no detail pages from model story preset).
+  if (!opts.isStory) {
+    pages = orderPagesByStory(pages, opts.story);
+  } else {
+    pages = [];
+  }
+  pages = [
+    {
+      index: 0,
+      page_id: 'p0_story',
+      preset: 'story',
+      mode: modeForPreset('story'),
+      role: 'intro' as const,
+      title: 'القصة',
+      purpose: opts.isStory
+        ? 'قصة الأسبوع'
+        : 'شوف الموقف قبل التفصيل',
+      introduces: [],
+      assumes: [...opts.recycleIds],
+      handoff: opts.story?.story_id
+        ? `story_id:${opts.story.story_id}`
+        : '',
+    },
+    ...pages,
+  ];
+  fixes.push(fix('pages', 'story_pointer', 'prepended intro story pointer page'));
+
+  pages = pages.map((p, i) => ({
     ...p,
     index: i,
     page_id: `p${i}_${p.preset}`,
+    ...(i === 0 && p.preset === 'story'
+      ? { role: 'intro' as const, introduces: [] as string[] }
+      : {}),
   }));
-
-  if (!opts.isStory) {
-    const last = pages[pages.length - 1];
-    if (!last || last.preset !== 'story') {
-      const idx = pages.length;
-      pages.push({
-        index: idx,
-        page_id: `p${idx}_story`,
-        preset: 'story',
-        mode: modeForPreset('story'),
-        title: 'اختبر نفسك في الحوار',
-        purpose: 'حوار قصير مع اللي اتعلمته النهارده',
-        introduces: [],
-        assumes: pages.flatMap((p) => p.introduces),
-        handoff: '',
-      });
-      fixes.push(fix('pages', 'story_ending', 'appended story self-test page'));
-    }
-  }
 
   // early_chunks → phrases page introduces
   if (opts.earlyChunks.length) {
@@ -154,12 +200,56 @@ function postProcessOutline(
     }
   }
 
+  // Dictionary introduces = every word.* from today's bank (never a subset)
+  {
+    const dictPage = pages.find((p) => p.preset === 'dictionary');
+    if (dictPage) {
+      const wordIds = opts.items
+        .filter((it) => it.type === 'word')
+        .map((it) => it.id);
+      if (wordIds.length) {
+        const merged = [...new Set([...wordIds, ...dictPage.introduces])];
+        // Prefer core word order first, then any non-word introduces already there
+        const ordered = [
+          ...wordIds,
+          ...merged.filter((id) => !wordIds.includes(id)),
+        ];
+        if (
+          ordered.length !== dictPage.introduces.length ||
+          ordered.some((id, i) => id !== dictPage.introduces[i])
+        ) {
+          fixes.push(
+            fix(
+              `pages[${dictPage.index}].introduces`,
+              'dictionary_all_words',
+              `set ${wordIds.length} word ids`,
+            ),
+          );
+        }
+        dictPage.introduces = ordered;
+      }
+    }
+  }
+
+  const assumed = fillEmptyDetailAssumes(pages);
+  for (const row of assumed.filled) {
+    fixes.push(
+      fix(
+        `pages[${row.index}].assumes`,
+        'assume_prior',
+        `assumes ${row.assumes.join(', ')}`,
+      ),
+    );
+  }
+  pages = assumed.pages;
+
   return { outline: { ...outline, pages }, fixes };
 }
 
 export async function runOutlineJob(opts: {
   brief: LessonBrief;
   items: KnownIdTl[];
+  story?: StoryHandoff;
 }): Promise<{
   outline: OutlineResult;
   issues: string[];
@@ -195,11 +285,27 @@ export async function runOutlineJob(opts: {
     .map((i) => `${i.id} (${i.type}): ${i.tl}`)
     .join('\n');
 
+  const storyBlock = opts.story
+    ? `STORY (already written — detail pages follow item order; quote real line indexes in tips/examples)
+story_id: ${opts.story.story_id}
+setting: ${opts.story.setting}
+lines:
+${opts.story.lines.map((l) => `  [${l.index}] ${l.speaker}: ${l.tl}  ids=[${l.ids.join(',')}]`).join('\n')}
+item_first_index: ${opts.story.item_first_index.map((e) => `${e.id}@${e.line}`).join(', ')}
+`
+    : '(no story handoff)';
+
   const user = `STAGE: OUTLINE ONLY
 Return { "pages": [...] } via submit_outline.
 Each page: index, preset, title_eg, introduces[], purpose_eg (≤15 words).
 Use only ITEM_DIGEST ids in introduces — do not invent new ids.
 Code sets page_id and mode.
+Do NOT emit a story preset — code prepends the intro story pointer from STORY.
+Order detail pages so items appear in the same order as STORY item_first_index.
+Tips/examples on later pages must quote real story line indexes only.
+
+STORY
+${storyBlock}
 
 PAGE_PLAN
 ${pagePlan}
@@ -255,6 +361,7 @@ ${itemLines || '(none)'}
       earlyChunks: opts.brief.early_chunks_tl,
       isStory: Boolean(dayPlan.is_story),
       items: opts.items,
+      story: opts.story,
     });
     fixes.push(...processed.fixes);
     const outline = processed.outline;

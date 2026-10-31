@@ -6,6 +6,7 @@ import { LangCheckSchema } from '../jobs/runLangCheck';
 import { MicroJobSchema } from '../jobs/runMicro';
 import { OutlineToolSchema } from '../jobs/runOutline';
 import { QuestionsSchema } from '../jobs/runQuestions';
+import { StoryToolSchema } from '../jobs/runStory';
 import { ItemsJobSchema } from './items';
 import { PageJobSchema } from './page';
 
@@ -16,6 +17,7 @@ export { PageJobSchema, GenPageSchema } from './page';
 /** Per-job tool schemas (zod → JSON Schema via zodToolSchema). No passthrough. */
 export const JOB_SCHEMAS = {
   items: ItemsJobSchema,
+  story: StoryToolSchema,
   outline: OutlineToolSchema,
   page: PageJobSchema,
   critic: CriticSchema,

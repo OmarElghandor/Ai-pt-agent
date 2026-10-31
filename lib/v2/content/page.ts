@@ -12,7 +12,7 @@ export const PresetSchema = z.enum([
   'story',
 ]);
 
-export const ModeSchema = z.enum(['guided', 'explore', 'static']);
+export const ModeSchema = z.enum(['sections', 'guided', 'explore', 'static']);
 
 export const CoverSchema = z.enum(['meaning', 'tl', 'endings']);
 
@@ -23,10 +23,9 @@ export function modeForPreset(
   switch (preset) {
     case 'compare':
     case 'pattern':
-    case 'story':
-      return 'guided';
     case 'conjugation':
-      return 'explore';
+      return 'sections';
+    case 'story':
     case 'phrases':
     case 'dictionary':
     case 'scene':
@@ -100,15 +99,20 @@ const LockedUntilSchema = z.object({
   blocks: z.array(z.string()),
 });
 
-export const PageSchema = z.object({
+/** Base shape — GenPageSchema uses .omit on this (refines block .omit). */
+export const PageObjectSchema = z.object({
   id: z.string(),
   preset: PresetSchema,
   mode: ModeSchema,
+  /** Intro (page 0) or test replay pointer: no steps/questions. */
+  role: z.enum(['intro', 'test']).optional(),
+  /** Points at v2_stories; lesson does not copy story lines. */
+  story_id: z.string().optional(),
   tool_id: z.string().optional(),
   pill: z.string().optional(),
   title: RtSchema,
   subtitle: RtSchema.optional(),
-  blocks: z.array(BlockSchema).min(1),
+  blocks: z.array(BlockSchema).default([]),
   steps: z.array(StepSchema).optional(),
   controls: z.array(ControlSchema).optional(),
   locked_until: z.array(LockedUntilSchema).optional(),
@@ -116,6 +120,35 @@ export const PageSchema = z.object({
   quiz: z.array(z.string()).optional(),
   library: z.boolean().optional(),
   preset_reason: z.string().optional(),
+  /** Sections mode: Egyptian explanation (2–4 sentences as rt). */
+  explain: RtSchema.optional(),
+  /** Sections mode: 2–3 question ids from the day's bank that test the rule. */
+  check: z.array(z.string()).optional(),
+  /** Parsed from explain — wrong→right pairs registered as near_miss. */
+  common_mistakes: z
+    .array(
+      z.object({
+        wrong: z.string(),
+        right: z.string(),
+        why_eg: z.string(),
+      }),
+    )
+    .optional(),
+});
+
+export const PageSchema = PageObjectSchema.superRefine((page, ctx) => {
+  const isStoryPointer =
+    Boolean(page.story_id) &&
+    (page.preset === 'story' ||
+      page.role === 'intro' ||
+      page.role === 'test');
+  if (!isStoryPointer && page.blocks.length < 1) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['blocks'],
+      message: 'page needs ≥1 block (or story_id for story pages)',
+    });
+  }
 });
 
 export type Page = z.infer<typeof PageSchema>;

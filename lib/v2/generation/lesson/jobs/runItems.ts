@@ -85,10 +85,59 @@ function asPlainArabicString(value: unknown): unknown {
   return segs.map((s) => s.text).join('') || text;
 }
 
+/** Collapse repeated clauses in Egyptian context strings. */
+export function dedupeContextEg(text: string): string {
+  const parts = text
+    .split(/[.،!؟]+/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  if (parts.length < 2) return text.trim();
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const p of parts) {
+    const key = p.replace(/\s+/g, ' ').toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(p);
+  }
+  return out.join('. ').trim();
+}
+
+/**
+ * Split slash TL ("Adeus! / Tchau!") into primary + variants.
+ * Never leave "/" in item.tl.
+ */
+export function splitSlashTl(tl: string): { tl: string; variants: string[] } {
+  if (!tl.includes('/')) return { tl: tl.trim(), variants: [] };
+  const parts = tl
+    .split(/\s*\/\s*/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  if (parts.length < 2) return { tl: tl.replace(/\//g, '').trim(), variants: [] };
+  return { tl: parts[0]!, variants: parts.slice(1) };
+}
+
 function coerceItemMixedFields(item: Item): Item {
   const row = { ...(item as Record<string, unknown>) };
   for (const key of ['ar', 'ar_f', 'eg', 'context_eg', 'tip', 'note'] as const) {
-    if (key in row) row[key] = asPlainArabicString(row[key]);
+    if (key in row) {
+      let v = asPlainArabicString(row[key]);
+      if (key === 'context_eg' && typeof v === 'string') {
+        v = dedupeContextEg(v);
+      }
+      row[key] = v;
+    }
+  }
+  if (typeof row.tl === 'string' && row.tl.includes('/')) {
+    const split = splitSlashTl(row.tl);
+    row.tl = split.tl;
+    const existing = Array.isArray(row.variant_tl)
+      ? (row.variant_tl as string[])
+      : Array.isArray(row.variants)
+        ? (row.variants as string[])
+        : [];
+    row.variant_tl = [...new Set([...existing, ...split.variants])];
+    delete row.variants;
   }
   if (item.type === 'pattern' && Array.isArray(row.slots)) {
     row.slots = (row.slots as unknown[]).map((slot) => {
@@ -194,13 +243,13 @@ function coreItemStub(core: CoreItem, _bank: Item[]): Item | null {
         examples: [`${core.id}.ex.1`],
       } as Item;
     }
+    // Unknown pattern — head + word hole only (never invent article_um_uma)
     const head = core.tl.split(/\s+/)[0] ?? '…';
     return {
       type: 'pattern',
       id: core.id,
       slots: [
         { tl: head },
-        { name_eg: 'أداة', kind: 'article_um_uma' },
         { name_eg: 'كلمة', kind: 'word' },
       ],
       examples: [`${core.id}.ex.1`],
@@ -650,6 +699,42 @@ ${knownLines}
     items = fillPatternsInBank(items, coreOpts);
     items = ensurePluralPairItems(items).bank;
     items = applyPhraseRolesFromCore(items, opts.brief.core_items);
+    // Core phrase tl / variants / meaning hints win over model
+    const coreById = new Map(
+      opts.brief.core_items.map((c) => [c.id, c] as const),
+    );
+    items = items.map((it) => {
+      const core = coreById.get(it.id);
+      if (!core || (it.type !== 'phrase' && it.type !== 'word')) return it;
+      const row = { ...(it as Record<string, unknown>) };
+      if (core.tl) {
+        const split = splitSlashTl(core.tl);
+        row.tl = split.tl;
+        const variants = [
+          ...(core.variant_tl ?? []),
+          ...((core.variants as string[] | undefined) ?? []),
+          ...split.variants,
+        ];
+        if (variants.length) {
+          row.variant_tl = [...new Set(variants)];
+        }
+      }
+      if (core.variant_group) row.variant_group = core.variant_group;
+      if (it.type === 'phrase' && core.tl_f) row.tl_f = core.tl_f;
+      // eg is generator hint; when ar is placeholder, seed from eg for unique meanings
+      if (
+        it.type === 'phrase' &&
+        core.eg &&
+        (!row.ar || row.ar === '…')
+      ) {
+        row.ar = core.eg;
+      }
+      // Always prefer core eg for night greeting uniqueness when id matches
+      if (it.id === 'phrase.good_night' && core.eg) {
+        row.ar = core.eg;
+      }
+      return row as Item;
+    });
     // Copy replies_to from core when present
     const repliesById = new Map(
       opts.brief.core_items
@@ -660,6 +745,25 @@ ${knownLines}
       if (it.type !== 'phrase') return it;
       const rt = repliesById.get(it.id);
       return rt ? ({ ...it, replies_to: rt } as Item) : it;
+    });
+    // plural_tl from core wins (including explicit null = no plural examples)
+    const pluralById = new Map(
+      opts.brief.core_items
+        .filter((c) => c.kind === 'word' && 'plural_tl' in c)
+        .map((c) => [c.id, c.plural_tl] as const),
+    );
+    items = items.map((it) => {
+      if (it.type !== 'word') return it;
+      if (!pluralById.has(it.id)) return it;
+      const plural_tl = pluralById.get(it.id);
+      if (plural_tl === null) {
+        const { plural_tl: _drop, plural: _drop2, ...rest } = it as Item & {
+          plural_tl?: string;
+          plural?: string;
+        };
+        return rest as Item;
+      }
+      return { ...it, plural_tl: plural_tl as string } as Item;
     });
     const heard = ensureHeardReplies(items, {
       known: [...knownFull.values()],

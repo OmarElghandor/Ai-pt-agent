@@ -185,6 +185,64 @@ Image generation uses the same ratios: 1024×1024 for 1:1, 1536×1152 for 4:3, 1
 - **PrimaryButton** (coral pill) and **SecondaryButton** (outlined pill). **HeroCard**: a deep-teal card with a coral button (the "١٥ كارت · ٣ دقايق" card).
 - **TimelineStep:** a numbered marker, a title (Arabic + Portuguese italic), minutes and a status. It's used on the day map and the path.
 - **TabBar:** المسار · الكروت · المكتبة · أنا. White bar, teal active icon, coral dot for "today".
+- **ItemViewer** (added 2026-10-30; replaces the CardCarousel on static pages; reference `design/stitch-html/05d-item-viewer.html`). Every static page with `cards` blocks (dictionary, phrases) shows **one word or phrase per screen**, full screen, without the tab bar.
+  - **Top ~55% (hero):** the item's picture as a cover image (an ImageSlot until images exist), with a dark gradient at the top and bottom. Overlaid on it:
+    - a back button;
+    - a pill with "DIA N · title_tl" and the page title;
+    - a "نمط الحفظ" toggle (memory mode: hides meanings and example translations);
+    - a location chip (`situation_eg`);
+    - prev/next round arrows on the sides, with "٣ من ٨ · <category>" between them;
+    - a floating context card at the bottom of the hero: for phrases, "امتى تقولها" + `context_eg`; for words, the category and the article rule ("اسم مذكر · بتقول o قبلها"), with a coral play button.
+  - **Bottom sheet** (white, rounded top, overlapping the hero by 16px, with a grab handle):
+    - the target text in big serif, article colored, with a slow-audio button;
+    - the code `say` line plus the gender word;
+    - the "المعنى" card with إخفاء/إظهار, and a veil "المس عشان تشوف المعنى" when hidden;
+    - the example card. It prefers the **story line** that uses the item ("من القصة" + the speaker), then a bank phrase that contains it. Its translation hides in memory mode;
+    - dots;
+    - the bottom nav: السابق · "الصفحة n من N" · coral التالي.
+  - **Navigation:** swipe on the hero, the arrows, or the dots. التالي on the last item goes to the next page (after the last detail page, to "القصة تاني").
+  - **The page's tip blocks** become one closing slide (a NoteCard) after the last item.
+  - Memory mode defaults to on when the page's `cover` is `meaning`.
+  - **Don't copy from the Stitch file:**
+    - the IPA line;
+    - "CAPÍTULO 1 · LIÇÃO 2" (use DIA N);
+    - "Pág. 3 de 6" (use Arabic);
+    - "Café Nicola" (use `situation_eg`);
+    - the bookmark (no feature behind it yet);
+    - the emoji;
+    - the FALOU footer.
+- **CardCarousel:** retired with guided mode (2026-10-31). Cards blocks open the ItemViewer.
+- **SectionsPage** (2026-10-31), for grammar pages:
+  - **Explain:** the main block (a FormulaStrip, compare table or conjugation table), then a NoteCard with the Egyptian explanation and a small speaker/pause chip. TTS plays once on open.
+  - **Examples toggle:** a full-width outline pill "الأمثلة" with a chevron. It expands in place, with a 200ms height ease, to the examples list. Each example is a row with a speaker button and the TL line in its group colors. The Arabic sits under it in grey.
+  - **Check:** a small header "فهمت؟" and 2–3 compact MCQ cards with chips. Right is a teal check; wrong is a coral underline plus the why line. Spacing uses the s-6 gap between parts.
+- **StoryPlayer** (added 2026-10-29; reference `design/stitch-html/14b-story-player.html`). It renders every `story` page with a `dialogue` block. This is the interactive part of the day.
+  - **Layout:** full screen, no tab bar.
+    - **Top ~70%:** the scene (a 16:9 ImageSlot stretched as a cover image, with a dark gradient at the top and bottom).
+    - **Overlaid top bar:** glass round buttons for back, meaning on/off and the transcript, plus "Dia N · title".
+    - **Location chip:** shows `situation_eg`.
+    - **Speech bubbles:** the current line and the previous one. Bubbles are white with a tail. The character's bubble sits on the left (RTL end) with a teal ring; the learner's sits on the right with a coral ring. The older bubble is faded.
+  - **Controller** (bottom, cream, rounded top):
+    - **Speaker row:** "ريتا بتتكلم" / "إنت بتقول" and "إعادة الجملة".
+    - **Focus sentence:** big serif. The word being spoken is highlighted in coral (karaoke from TTS word timings, or an even split when there are none), and the item words are underlined.
+    - **Under the sentence:** the code `say` line, the meaning, and the step's tip as a NoteCard ("coach").
+    - **Progress:** "جملة n من N" with a teal→coral bar.
+    - **Controls:** speed (0.75 / 1 / 1.25), previous, a big coral play/pause, next, repeat-one, and the transcript sheet.
+  - **Interaction (changed 2026-10-31):** the story **never stops to ask anything**, in either mode.
+    - Every line plays by itself, the learner's included, one after another. The controls only pause, step or repeat.
+    - **Intro mode:** a tap on a line shows its meaning.
+    - **Test mode:** the meaning is off, there is no per-line reveal, and the transcript shows only the lines already played.
+    - The coach NoteCard is not shown in either mode.
+  - **End:**
+    - **Intro:** "خلّصت القصة · فتحت معنى n جمل", plus next page and "من الأول".
+    - **Test:** 3–4 question cards about the story, one at a time, as answer chips. Then "فهمت n من N", plus next and "اسمعها تاني".
+  - **Don't copy from the Stitch file:**
+    - the IPA line;
+    - "تم النطق";
+    - "Áudio Completo · Fala Natural";
+    - the English level labels;
+    - the name "ياسين" (the learner is "أنت");
+    - a 10-second seek (lines are the unit, not seconds).
 
 The 14 content blocks (`02`) are built from these components.
 

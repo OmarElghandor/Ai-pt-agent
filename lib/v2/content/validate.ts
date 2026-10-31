@@ -369,6 +369,87 @@ function checkBlockLimits(block: Block, path: string, issues: Issue[]): void {
   }
 }
 
+function rtPlain(rt: Rt | undefined): string {
+  if (!rt) return '';
+  return rt.map((s) => s.text).join('');
+}
+
+function countEgSentences(rt: Rt | undefined): number {
+  const text = rtPlain(rt).trim();
+  if (!text) return 0;
+  const parts = text.split(/[.!?؟…]+/).map((p) => p.trim()).filter(Boolean);
+  return parts.length || 1;
+}
+
+function countWrongTlInExplain(explain: Page['explain']): number {
+  if (!explain?.length) return 0;
+  return explain.filter((s) => s.lang === 'tl' && s.wrong).length;
+}
+
+function checkSectionsPage(page: Page, path: string, issues: Issue[]): void {
+  if (page.steps?.length) {
+    issues.push(
+      issue(`${path}.steps`, 'mode_steps', 'sections pages must not have steps'),
+    );
+  }
+  const explainN = countEgSentences(page.explain);
+  if (!page.explain?.length || explainN < 1) {
+    issues.push(
+      issue(`${path}.explain`, 'sections_explain_missing', 'sections page needs explain (2–4 sentences)'),
+    );
+  } else if (explainN > 4) {
+    issues.push(
+      issue(
+        `${path}.explain`,
+        'sections_explain_long',
+        `explain has ${explainN} sentences, max 4`,
+      ),
+    );
+  }
+  const wrongN = countWrongTlInExplain(page.explain);
+  if (wrongN < 1) {
+    issues.push(
+      issue(
+        `${path}.explain`,
+        'sections_mistakes_missing',
+        'sections explain needs 1–2 common-mistake pairs (wrong:true TL segments)',
+      ),
+    );
+  } else if (wrongN > 2) {
+    issues.push(
+      issue(
+        `${path}.explain`,
+        'sections_mistakes_many',
+        `sections explain has ${wrongN} wrong TL segments, max 2`,
+      ),
+    );
+  }
+  const checkIds = page.check ?? [];
+  if (checkIds.length < 2) {
+    issues.push(
+      issue(
+        `${path}.check`,
+        'sections_check_short',
+        `sections page needs ≥2 check questions, got ${checkIds.length}`,
+      ),
+    );
+  }
+  if (page.preset === 'pattern') {
+    const examplesBlock = page.blocks.find((b) => b.type === 'examples');
+    const n =
+      examplesBlock?.type === 'examples' ? examplesBlock.items?.length ?? 0 : 0;
+    if (n < 3) {
+      issues.push(
+        issue(
+          `${path}.blocks`,
+          'sections_examples_short',
+          `pattern sections page needs ≥3 examples, got ${n}`,
+        ),
+      );
+    }
+  }
+}
+
 function checkGuidedSteps(page: Page, path: string, issues: Issue[]): void {
   const steps = page.steps ?? [];
   if (steps.length < 12 || steps.length > 20) {
@@ -499,6 +580,13 @@ export function validateLessonPack(
     if (item.type !== 'pattern') continue;
     const path = `items[${i}]`;
     for (const [si, slot] of item.slots.entries()) {
+      // name slots hold literal names, not item ids
+      if (
+        'kind' in slot &&
+        (slot as { kind?: string }).kind === 'name'
+      ) {
+        continue;
+      }
       if ('fills' in slot && Array.isArray(slot.fills)) {
         for (const fid of slot.fills) {
           if (!itemIds.has(fid) && !lookup(fid)) {
@@ -629,8 +717,24 @@ export function validateLessonPack(
         issues.push(issue(`${base}.quiz`, 'bad_ref', `unknown question id ${qid}`));
       }
     }
+    for (const qid of page.check ?? []) {
+      if (!questionIds.has(qid)) {
+        issues.push(issue(`${base}.check`, 'bad_ref', `unknown question id ${qid}`));
+      }
+    }
 
-    if (page.mode === 'guided') {
+    if (page.mode === 'sections') {
+      checkSectionsPage(page, base, issues);
+      for (const [ci, control] of (page.controls ?? []).entries()) {
+        if (control.type === 'unlock') continue;
+        resolveTarget(
+          control.target,
+          page,
+          `${base}.controls[${ci}].target`,
+          issues,
+        );
+      }
+    } else if (page.mode === 'guided') {
       if (page.controls?.length) {
         issues.push(issue(`${base}.controls`, 'mode_controls', 'guided pages must not have controls'));
       }
@@ -786,16 +890,19 @@ export function checkIntroductionOrder(pack: LessonPack, issues: Issue[]): void 
     }
     const seenOnPage = new Set(refs.filter((r) => !isVerbFormId(r)));
 
-    for (const ref of seenOnPage) {
-      const intro = introById.get(ref);
-      if (intro != null && pi < intro) {
-        issues.push(
-          issue(
-            `pages[${pi}]`,
-            'item_before_intro',
-            `page references ${ref} before it is introduced on page ${intro}`,
-          ),
-        );
+    // Intro story (role=intro) may preview today's items before detail pages introduce them.
+    if (page.role !== 'intro') {
+      for (const ref of seenOnPage) {
+        const intro = introById.get(ref);
+        if (intro != null && pi < intro) {
+          issues.push(
+            issue(
+              `pages[${pi}]`,
+              'item_before_intro',
+              `page references ${ref} before it is introduced on page ${intro}`,
+            ),
+          );
+        }
       }
     }
 
@@ -816,6 +923,16 @@ export function checkIntroductionOrder(pack: LessonPack, issues: Issue[]): void 
   for (const [qi, q] of pack.questions.entries()) {
     const pageIndex = q.page_index;
     if (typeof pageIndex !== 'number') continue;
+    if (pageIndex === 0 && pack.pages[0]?.role === 'intro') {
+      issues.push(
+        issue(
+          `questions[${qi}].page_index`,
+          'question_on_intro',
+          'questions must not target the intro story page',
+        ),
+      );
+      continue;
+    }
     for (const ref of q.tests ?? []) {
       if (isVerbFormId(ref)) continue;
       const intro = introById.get(ref);

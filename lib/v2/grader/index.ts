@@ -2,6 +2,7 @@ import { generateText } from 'ai';
 import { extractJson } from '@/lib/generation/claudeClient';
 import { getClassifierModel } from '@/lib/model';
 import type { Skill } from '@/lib/v2/content/lesson';
+import { formatKnownNearMissForGrader } from '@/lib/v2/answers/knownNearMiss';
 import { z } from 'zod';
 
 export type GradeVerdict =
@@ -105,7 +106,7 @@ WHAT COUNTS AS CORRECT
 
 VERDICT
 - correct: it works.
-- near_miss: it works but has one small slip (one wrong ending, o/a, one letter, a Brazilian word).
+- near_miss: it works but has one small slip (one wrong ending, o/a, one letter, a Brazilian word), OR it matches a KNOWN_NEAR_MISS wrong form exactly — then use that pair's why line in feedback_ar and corrected_tl = the right form.
 - wrong: it does not do what PROMPT asks, or has a mistake that changes the meaning.
 - off_topic: Portuguese that ignores the prompt.
 - arabic_only: no Portuguese at all.
@@ -122,6 +123,7 @@ FEEDBACK_AR: one short Egyptian line about MAIN_ERROR only, with the Portuguese 
 Return JSON only with keys: verdict, items_used_correctly, errors, main_error, corrected_tl, feedback_ar, skill.`;
 
 function buildUserMessage(req: GradeRequest): string {
+  const knownNm = formatKnownNearMissForGrader();
   return [
     `MODE: ${req.mode ?? 'practice'}`,
     `LEVEL: ${req.level ?? 'A0'}`,
@@ -134,6 +136,7 @@ function buildUserMessage(req: GradeRequest): string {
     `TOOL_ID: ${req.tool_id || '(none)'}`,
     `WEAK_AREAS: ${(req.weak_areas || []).join(', ') || '(none)'}`,
     `KNOWN_ITEMS: ${(req.known_items || []).join(', ') || '(none)'}`,
+    knownNm ? `KNOWN_NEAR_MISS:\n${knownNm}` : 'KNOWN_NEAR_MISS: (none)',
     `ANSWER_SOURCE: ${req.answer_source ?? 'typed'}`,
     `ANSWER: ${req.answer}`,
   ].join('\n');

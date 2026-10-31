@@ -69,6 +69,10 @@
         "recycle": [],
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "phrases",
             "focus": "greetings and name"
           },
@@ -79,10 +83,6 @@
           {
             "preset": "scene",
             "focus": "first day at work"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ]
       }
@@ -162,6 +162,10 @@
         ],
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "dictionary",
             "focus": "café drinks and food"
           },
@@ -172,10 +176,6 @@
           {
             "preset": "pattern",
             "focus": "Queria + um/uma"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ]
       }
@@ -259,6 +259,10 @@
         ],
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "dictionary",
             "focus": "food nouns with o/a"
           },
@@ -269,10 +273,6 @@
           {
             "preset": "compare",
             "focus": "o vs a gender"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ]
       }
@@ -296,16 +296,16 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "phrases",
             "focus": "numbers and paying"
           },
           {
             "preset": "pattern",
             "focus": "numbers 0–100"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -341,6 +341,10 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "phrases",
             "focus": "neighbors and greetings"
           },
@@ -351,10 +355,6 @@
           {
             "preset": "pattern",
             "focus": "negation não / nunca"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -385,6 +385,10 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "dictionary",
             "focus": "work and home"
           },
@@ -395,10 +399,6 @@
           {
             "preset": "phrases",
             "focus": "where you work and live"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -470,6 +470,10 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "dictionary",
             "focus": "food and drinks"
           },
@@ -480,10 +484,6 @@
           {
             "preset": "phrases",
             "focus": "at the restaurant"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -512,16 +512,16 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "dictionary",
             "focus": "home routine"
           },
           {
             "preset": "conjugation",
             "focus": "-ir present endings + durmo"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -551,16 +551,16 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "conjugation",
             "focus": "SER present"
           },
           {
             "preset": "phrases",
             "focus": "origin and job"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -594,16 +594,16 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "compare",
             "focus": "SER vs ESTAR"
           },
           {
             "preset": "conjugation",
             "focus": "ESTAR present"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -633,16 +633,16 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "phrases",
             "focus": "phone calls"
           },
           {
             "preset": "pattern",
             "focus": "estar a + infinitive"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -670,16 +670,16 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "phrases",
             "focus": "likes and dislikes"
           },
           {
             "preset": "pattern",
             "focus": "gostar de"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -741,16 +741,16 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "conjugation",
             "focus": "ter ir fazer querer poder present"
           },
           {
             "preset": "phrases",
             "focus": "making plans"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -778,16 +778,16 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "phrases",
             "focus": "question words"
           },
           {
             "preset": "pattern",
             "focus": "question words + Qual?"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -815,16 +815,16 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "phrases",
             "focus": "transport"
           },
           {
             "preset": "compare",
             "focus": "contractions do/da no/na ao/à"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -856,16 +856,16 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "phrases",
             "focus": "directions"
           },
           {
             "preset": "pattern",
             "focus": "ficar for places"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -892,16 +892,16 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "phrases",
             "focus": "days and parts of day"
           },
           {
             "preset": "pattern",
             "focus": "de manhã / à tarde / à noite"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -930,16 +930,16 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "phrases",
             "focus": "telling time"
           },
           {
             "preset": "pattern",
             "focus": "às + hour"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -1000,16 +1000,16 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "phrases",
             "focus": "weekend plans"
           },
           {
             "preset": "pattern",
             "focus": "ir + infinitive near future"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -1036,16 +1036,16 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "phrases",
             "focus": "pharmacy"
           },
           {
             "preset": "pattern",
             "focus": "modal + infinitive and para"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -1073,16 +1073,16 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "dictionary",
             "focus": "family"
           },
           {
             "preset": "compare",
             "focus": "o meu / a minha"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -1114,16 +1114,16 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "dictionary",
             "focus": "colors and clothes"
           },
           {
             "preset": "pattern",
             "focus": "adjective agreement"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -1154,16 +1154,16 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "phrases",
             "focus": "choosing in a shop"
           },
           {
             "preset": "compare",
             "focus": "isto/isso/aquilo and este/esse/aquele"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -1191,6 +1191,10 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "conjugation",
             "focus": "pôr present"
           },
@@ -1201,10 +1205,6 @@
           {
             "preset": "pattern",
             "focus": "vestir-se reflexive"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -1264,16 +1264,16 @@
       "generation": {
         "page_plan": [
           {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
             "preset": "phrases",
             "focus": "yesterday activities"
           },
           {
             "preset": "conjugation",
             "focus": "preterite of 5 verbs"
-          },
-          {
-            "preset": "story",
-            "focus": "dialogue self-test"
           }
         ],
         "new_items": {
@@ -1300,12 +1300,12 @@
       "generation": {
         "page_plan": [
           {
-            "preset": "phrases",
-            "focus": "phase 1 / A1 test"
+            "preset": "story",
+            "focus": "situation dialogue"
           },
           {
-            "preset": "story",
-            "focus": "dialogue self-test"
+            "preset": "phrases",
+            "focus": "phase 1 / A1 test"
           }
         ],
         "new_items": {

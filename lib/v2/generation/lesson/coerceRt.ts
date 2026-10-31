@@ -157,3 +157,29 @@ export function stripAccentsPunct(tl: string): string {
     .replace(/\s+/g, ' ')
     .trim();
 }
+
+/**
+ * Accent-fold for writing accepted[] — keeps hyphens (clitics like Chamo-me).
+ * Hyphen-less forms must go to near_miss, never accepted.
+ */
+export function stripAccentsKeepHyphen(tl: string): string {
+  return tl
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .replace(/[^\p{L}\p{N}\s\-]/gu, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** Grammar-breaking hyphenless form of a clitic (Chamo-me → Chamome). */
+export function hyphenlessNearMiss(tl: string): string | null {
+  if (!tl.includes('-')) return null;
+  const stripped = stripAccentsPunct(tl);
+  const kept = stripAccentsKeepHyphen(tl);
+  if (stripped && stripped !== kept.replace(/-/g, '')) {
+    // still useful as candidate
+  }
+  const noHyphen = kept.replace(/-/g, '');
+  if (!noHyphen || noHyphen === kept) return null;
+  return noHyphen;
+}

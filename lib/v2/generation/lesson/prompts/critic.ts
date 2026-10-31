@@ -45,9 +45,10 @@ CHECKLIST
 2. Natural Lisbon usage — no Brazilian forms, no textbook filler.
 3. Introduced items appear and are used as the plan intended.
 4. Tips are concrete Lisbon usage/culture, not generic study advice ("تدرب أكتر").
-5. Targets (if guided) address blocks (bN/…), not item ids.
-6. practice.questions should be empty.
+5. Targets (if guided/explore) address blocks (bN/…), not item ids.
+6. practice.questions / check ids may be empty — code fills them.
 7. Do not invent pronunciation or target-address violations that contradict the rules above.
+8. SECTIONS pages: no steps/asks. Require explain (Egyptian, 2–4 sentences). Do NOT flag missing step order, ask spacing, or step count.
 
 Empty issues [] means the page is fine. Prefer few high-severity issues; do not nitpick style.
 `.trim();
