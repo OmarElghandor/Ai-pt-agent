@@ -1,0 +1,648 @@
+{
+  "day": 1,
+  "version": 3,
+  "status": "draft",
+  "items": [
+    {
+      "type": "phrase",
+      "id": "phrase.good_night",
+      "tl": "Boa noite!",
+      "ar": "تصبح على خير",
+      "context_eg": "بتحية بالليل وبرضو لما تودّع بالليل",
+      "cloze": "noite",
+      "role": "said",
+      "replies_to": "phrase.good_night",
+      "extra": false,
+      "say": "بوا نويت!",
+      "variant_group": "greeting.time_of_day",
+      "has_card": true,
+      "introduced_on_page": 1
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.nice_to_meet",
+      "tl": "Muito prazer!",
+      "ar": "تشرفنا!",
+      "context_eg": "لما تتعرف على حد أول مرة",
+      "cloze": "prazer",
+      "role": "heard",
+      "extra": false,
+      "say": "مويتو پرازير!",
+      "has_card": true,
+      "introduced_on_page": 1
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.likewise",
+      "tl": "Igualmente.",
+      "ar": "وأنا كذلك.",
+      "context_eg": "رد على مويتو پرازير! مويتو پرازير!",
+      "cloze": "Igualmente",
+      "role": "said",
+      "replies_to": "phrase.nice_to_meet",
+      "extra": false,
+      "say": "أيجوالمينت.",
+      "has_card": true,
+      "introduced_on_page": 1
+    },
+    {
+      "type": "pattern",
+      "id": "pattern.chamo_me",
+      "kind": "chamo_me",
+      "slots": [
+        {
+          "tl": "Chamo-me"
+        },
+        {
+          "name_eg": "اسم",
+          "kind": "name",
+          "fills": [
+            "Omar",
+            "Inês",
+            "Rita",
+            "Manuel"
+          ]
+        }
+      ],
+      "examples": [
+        "pattern.chamo_me.ex.1",
+        "pattern.chamo_me.ex.2",
+        "pattern.chamo_me.ex.3",
+        "pattern.chamo_me.ex.4"
+      ],
+      "has_card": false,
+      "introduced_on_page": 2,
+      "ar": "الضمير بعد الفعل بشرطة"
+    }
+  ],
+  "questions": [
+    {
+      "id": "q.day.0",
+      "type": "build_sentence",
+      "skill": "grammar",
+      "use": "lesson",
+      "page_index": 2,
+      "page_id": "p2_pattern",
+      "tests": [
+        "pattern.chamo_me.ex.2"
+      ],
+      "prompt": [
+        {
+          "text": "زميلتك الجديدة إيناس عايزة تعرّف نفسها بالبرتغالي. ركّب الجملة الصح.",
+          "lang": "eg"
+        }
+      ],
+      "feedback_eg": null,
+      "tiles": [
+        "Inês",
+        "Me",
+        "Chamo",
+        "-me"
+      ],
+      "answer": [
+        2,
+        3,
+        0
+      ],
+      "options": [
+        [
+          {
+            "text": "Inês",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "Me",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "Chamo",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "-me",
+            "lang": "tl"
+          }
+        ]
+      ],
+      "near_miss": [
+        {
+          "tl": "Me chamo Omar",
+          "feedback_eg": "الضمير بعد الفعل بشرطة"
+        },
+        {
+          "tl": "Chamo me Omar",
+          "feedback_eg": "الشرطة لازمة"
+        }
+      ]
+    },
+    {
+      "id": "q.day.1",
+      "type": "fill_blank_choice",
+      "skill": "grammar",
+      "use": "lesson",
+      "page_index": 2,
+      "page_id": "p2_pattern",
+      "tests": [
+        "pattern.chamo_me.ex.1"
+      ],
+      "prompt": [
+        {
+          "text": "أول يوم في الشغل وعايز تقول اسمك. اختار الكلمة الناقصة.",
+          "lang": "eg"
+        },
+        {
+          "text": " ",
+          "lang": "eg"
+        },
+        {
+          "text": "____ Omar.",
+          "lang": "tl"
+        }
+      ],
+      "feedback_eg": null,
+      "options": [
+        [
+          {
+            "text": "Chamo-me",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "Olá",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "Chamo me",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "Me chamo",
+            "lang": "tl"
+          }
+        ]
+      ],
+      "answer": 0,
+      "cloze": "Chamo-me",
+      "near_miss": [
+        {
+          "tl": "Me chamo Omar",
+          "feedback_eg": "الضمير بعد الفعل بشرطة"
+        },
+        {
+          "tl": "Chamo me Omar",
+          "feedback_eg": "الشرطة لازمة"
+        }
+      ]
+    },
+    {
+      "id": "q.day.2",
+      "type": "listen_meaning",
+      "skill": "listening",
+      "use": "both",
+      "page_index": 1,
+      "page_id": "p1_phrases",
+      "tests": [
+        "phrase.hello"
+      ],
+      "prompt": {
+        "audio_ref": "phrase.hello"
+      },
+      "feedback_eg": null,
+      "options": [
+        [
+          {
+            "text": "مرحبًا!",
+            "lang": "ar"
+          }
+        ],
+        [
+          {
+            "text": "تصبح على خير",
+            "lang": "ar"
+          }
+        ],
+        [
+          {
+            "text": "مساء الخير!",
+            "lang": "ar"
+          }
+        ],
+        [
+          {
+            "text": "صباح الخير!",
+            "lang": "ar"
+          }
+        ]
+      ],
+      "answer": 0
+    },
+    {
+      "id": "q.day.3",
+      "type": "translate_write",
+      "skill": "writing",
+      "use": "both",
+      "page_index": 1,
+      "page_id": "p1_phrases",
+      "tests": [
+        "phrase.good_morning"
+      ],
+      "prompt": [
+        {
+          "text": "الساعة ٩ الصبح وداخل الشغل، عايز تحيي زمايلك. اكتبها بالبرتغالي.",
+          "lang": "eg"
+        }
+      ],
+      "feedback_eg": [
+        {
+          "text": "افتكر إن التحية الصباحية كلمتين، والأولى معناها حلو/كويس.",
+          "lang": "eg"
+        }
+      ],
+      "accepted": [
+        "Bom dia!",
+        "Bom dia"
+      ],
+      "rubric": {
+        "eg": "افتكر إن التحية الصباحية كلمتين، والأولى معناها حلو/كويس.",
+        "must_include": [
+          "phrase.good_morning"
+        ]
+      }
+    },
+    {
+      "id": "q.day.4",
+      "type": "say_it",
+      "skill": "speaking",
+      "use": "both",
+      "page_index": 1,
+      "page_id": "p1_phrases",
+      "tests": [
+        "phrase.good_afternoon"
+      ],
+      "prompt": [
+        {
+          "text": "الساعة ٢ الظهر ورجعت من الفطار، حيي زمايلك. قولها بصوتك.",
+          "lang": "eg"
+        }
+      ],
+      "feedback_eg": null,
+      "accepted": [
+        "Boa tarde!",
+        "Boa tarde"
+      ]
+    },
+    {
+      "id": "q.day.5",
+      "type": "listen_pick_tl",
+      "skill": "listening",
+      "use": "both",
+      "page_index": 1,
+      "page_id": "p1_phrases",
+      "tests": [
+        "phrase.good_night"
+      ],
+      "prompt": {
+        "audio_ref": "phrase.good_night"
+      },
+      "feedback_eg": null,
+      "options": [
+        [
+          {
+            "text": "Boa tarde!",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "Boa noite!",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "Olá!",
+            "lang": "tl"
+          }
+        ],
+        [
+          {
+            "text": "Bom dia!",
+            "lang": "tl"
+          }
+        ]
+      ],
+      "answer": 1
+    },
+    {
+      "id": "q.day.6",
+      "type": "fill_blank_write",
+      "skill": "writing",
+      "use": "both",
+      "page_index": 1,
+      "page_id": "p1_phrases",
+      "tests": [
+        "phrase.whats_your_name"
+      ],
+      "prompt": [
+        {
+          "text": "عايز تسأل زميلك الجديد عن اسمه بأدب. كمّل السؤال بالكلمة الناقصة.",
+          "lang": "eg"
+        },
+        {
+          "text": " ",
+          "lang": "eg"
+        },
+        {
+          "text": "Como se ____?",
+          "lang": "tl"
+        }
+      ],
+      "cloze": "chama",
+      "hint": "المعنى: ما اسمك؟ · بتبدأ بـ c",
+      "accepted": [
+        "chama"
+      ]
+    },
+    {
+      "id": "q.day.7",
+      "type": "dictation",
+      "skill": "listening",
+      "use": "both",
+      "page_index": 1,
+      "page_id": "p1_phrases",
+      "tests": [
+        "phrase.nice_to_meet"
+      ],
+      "prompt": {
+        "audio_ref": "phrase.nice_to_meet",
+        "eg": "اتعرفت على زميل جديد وقالك جملة لطيفة. اسمع واكتب اللي سمعته."
+      },
+      "feedback_eg": [
+        {
+          "text": "كلمتين بس، معناها متشرف بمعرفتك.",
+          "lang": "eg"
+        }
+      ],
+      "accepted": [
+        "Muito prazer!",
+        "Muito prazer"
+      ],
+      "rubric": {
+        "eg": "كلمتين بس، معناها متشرف بمعرفتك.",
+        "must_include": [
+          "phrase.nice_to_meet"
+        ]
+      }
+    },
+    {
+      "id": "q.day.8",
+      "type": "dictation",
+      "skill": "listening",
+      "use": "both",
+      "page_index": 1,
+      "page_id": "p1_phrases",
+      "tests": [
+        "phrase.likewise"
+      ],
+      "prompt": {
+        "audio_ref": "phrase.likewise",
+        "eg": "رديت على زميلك بكلمة قصيرة معناها وأنا كمان. اسمع واكتبها."
+      },
+      "feedback_eg": [
+        {
+          "text": "كلمة واحدة بتنتهي بـ -",
+          "lang": "eg"
+        },
+        {
+          "text": "mente.",
+          "lang": "tl"
+        }
+      ],
+      "accepted": [
+        "Igualmente.",
+        "Igualmente"
+      ],
+      "rubric": {
+        "eg": "كلمة واحدة بتنتهي بـ -mente.",
+        "must_include": [
+          "phrase.likewise"
+        ]
+      }
+    },
+    {
+      "id": "q.day.9",
+      "type": "translate_write",
+      "skill": "writing",
+      "use": "both",
+      "page_index": 1,
+      "page_id": "p1_phrases",
+      "tests": [
+        "phrase.hello"
+      ],
+      "prompt": [
+        {
+          "text": "قابلت جارك في السلم وعايز تسلم عليه بتحية عامة تنفع أي وقت. اكتبها بالبرتغالي.",
+          "lang": "eg"
+        }
+      ],
+      "feedback_eg": [
+        {
+          "text": "كلمة واحدة قصيرة، أشهر تحية.",
+          "lang": "eg"
+        }
+      ],
+      "accepted": [
+        "Olá!",
+        "Ola",
+        "Olá"
+      ],
+      "rubric": {
+        "eg": "كلمة واحدة قصيرة، أشهر تحية.",
+        "must_include": [
+          "phrase.hello"
+        ]
+      }
+    },
+    {
+      "id": "q.day.10",
+      "type": "say_it",
+      "skill": "speaking",
+      "use": "both",
+      "page_index": 1,
+      "page_id": "p1_phrases",
+      "tests": [
+        "phrase.good_morning"
+      ],
+      "prompt": [
+        {
+          "text": "الساعة ٨ الصبح وواقف قدام مديرك، حييه. قولها بصوتك.",
+          "lang": "eg"
+        }
+      ],
+      "feedback_eg": null,
+      "accepted": [
+        "Bom dia!",
+        "Bom dia"
+      ]
+    },
+    {
+      "id": "q.day.11",
+      "type": "reply_speak",
+      "skill": "speaking",
+      "use": "both",
+      "page_index": 1,
+      "page_id": "p1_phrases",
+      "tests": [
+        "phrase.good_afternoon"
+      ],
+      "prompt": {
+        "audio_ref": "phrase.good_afternoon",
+        "eg": "الساعة ٣ الظهر وزميلتك حييتك الأول. رد عليها بنفس التحية بصوتك."
+      },
+      "feedback_eg": [
+        {
+          "text": "رد بنفس التحية اللي سمعتها، مش لازم تضيف حاجة.",
+          "lang": "eg"
+        }
+      ],
+      "accepted": [
+        "Boa tarde!",
+        "Boa tarde"
+      ],
+      "rubric": {
+        "eg": "رد بنفس التحية اللي سمعتها، مش لازم تضيف حاجة.",
+        "must_include": [
+          "phrase.good_afternoon"
+        ]
+      }
+    }
+  ],
+  "story": {
+    "id": "pt-PT.day-01",
+    "version": 3,
+    "setting": "First day at a new office in Lisbon, early evening shift",
+    "cast": [
+      {
+        "id": "learner",
+        "name": "Omar",
+        "role": "learner"
+      },
+      {
+        "id": "ines",
+        "name": "Inês",
+        "role": "character"
+      }
+    ],
+    "lines": [
+      {
+        "speaker": "ines",
+        "tl": "Olá!",
+        "ids": [
+          "phrase.hello"
+        ],
+        "ar": "مرحبًا!",
+        "side": "right"
+      },
+      {
+        "speaker": "ines",
+        "tl": "Boa noite!",
+        "ids": [
+          "phrase.good_night"
+        ],
+        "ar": "تصبح على خير!",
+        "side": "right"
+      },
+      {
+        "speaker": "ines",
+        "tl": "Como se chama?",
+        "ids": [
+          "phrase.whats_your_name"
+        ],
+        "ar": "ما اسمك؟",
+        "side": "right"
+      },
+      {
+        "speaker": "learner",
+        "tl": "Chamo-me Omar.",
+        "ids": [
+          "phrase.my_name_is",
+          "pattern.chamo_me"
+        ],
+        "ar": "اسمي عمر۔",
+        "replies_to": 2,
+        "side": "left"
+      },
+      {
+        "speaker": "learner",
+        "tl": "E como se chama?",
+        "ids": [
+          "phrase.whats_your_name"
+        ],
+        "ar": "ما اسمك؟",
+        "extra": [
+          {
+            "tl": "E",
+            "ar": "و"
+          }
+        ],
+        "replies_to": 2,
+        "side": "left"
+      },
+      {
+        "speaker": "ines",
+        "tl": "Chamo-me Inês.",
+        "ids": [
+          "pattern.chamo_me"
+        ],
+        "ar": "اسمي إينيس۔",
+        "replies_to": 4,
+        "side": "right"
+      },
+      {
+        "speaker": "ines",
+        "tl": "Muito prazer!",
+        "ids": [
+          "phrase.nice_to_meet"
+        ],
+        "ar": "تشرفنا!",
+        "side": "right"
+      },
+      {
+        "speaker": "learner",
+        "tl": "Igualmente.",
+        "ids": [
+          "phrase.likewise"
+        ],
+        "ar": "وأنا كذلك۔",
+        "replies_to": 6,
+        "side": "left"
+      },
+      {
+        "speaker": "ines",
+        "tl": "Tudo bem?",
+        "ids": [],
+        "ar": "بخير، شكرًا؟",
+        "side": "right"
+      },
+      {
+        "speaker": "learner",
+        "tl": "Tudo bem, obrigado.",
+        "ids": [],
+        "ar": "بخير، شكرًا۔",
+        "replies_to": 8,
+        "side": "left"
+      }
+    ]
+  }
+}

@@ -2,12 +2,14 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ItemViewer } from '@/components/v2/player/ItemViewer';
 import { PagePlayer } from '@/components/v2/player/PagePlayer';
+import { RealWorldPlayer } from '@/components/v2/player/RealWorldPlayer';
 import { SectionsPage } from '@/components/v2/player/SectionsPage';
 import { StoryPlayer } from '@/components/v2/player/StoryPlayer';
 import {
   getLatestLessonPack,
   getPublishedLesson,
 } from '@/lib/v2/content/getPublishedLesson';
+import { findImageStepVisible } from '@/lib/v2/findImage/buildRounds';
 import { getStoryById } from '@/lib/v2/generation/lesson/storySave';
 import { buildPlayerLesson } from '@/lib/v2/render/forms';
 
@@ -16,7 +18,7 @@ export default async function LessonPlayerPage({
   searchParams,
 }: {
   params: Promise<{ day: string; pageId: string }>;
-  searchParams: Promise<{ mode?: string; dev?: string }>;
+  searchParams: Promise<{ dev?: string }>;
 }) {
   const { day: raw, pageId } = await params;
   const sp = await searchParams;
@@ -57,30 +59,18 @@ export default async function LessonPlayerPage({
   const isStory =
     page.preset === 'story' &&
     (Boolean(storyId) || page.blocks.some((b) => b.type === 'dialogue'));
-  // Test reuses page 0 via ?mode=test (no separate pack page).
-  const storyMode = sp.mode === 'test' ? 'test' : 'intro';
 
   const withDev = (href: string) => {
     if (!dev) return href;
     return href.includes('?') ? `${href}&dev=1` : `${href}?dev=1`;
   };
 
-  const storyTestHref = storyPage
-    ? withDev(`/day/${day}/page/${storyPage.id}?mode=test`)
-    : null;
-
-  // After intro → first detail; after last detail → story test (?mode=test); after test → questions
+  // After intro → first detail; after last detail → find-image (if shown) → questions
   let nextHref: string | null = null;
-  if (isStory && storyMode === 'intro') {
-    nextHref = nextPage
-      ? withDev(`/day/${day}/page/${nextPage.id}`)
-      : withDev(`/day/${day}/questions`);
-  } else if (isStory && storyMode === 'test') {
-    nextHref = withDev(`/day/${day}/questions`);
-  } else if (nextPage && nextPage.role !== 'test') {
+  if (nextPage && nextPage.role !== 'test') {
     nextHref = withDev(`/day/${day}/page/${nextPage.id}`);
-  } else if (storyTestHref && storyPage && page.id !== storyPage.id) {
-    nextHref = storyTestHref;
+  } else if (findImageStepVisible(view.items)) {
+    nextHref = withDev(`/day/${day}/find-image`);
   } else {
     nextHref = withDev(`/day/${day}/questions`);
   }
@@ -94,12 +84,24 @@ export default async function LessonPlayerPage({
         day={view.day}
         page={page}
         items={view.items}
-        mode={storyMode}
         situationEg={situationEg}
         titleTl={titleTl}
         nextHref={nextHref}
         story={storyDoc}
         storyId={storyId}
+      />
+    );
+  }
+
+  if (page.preset === 'real_world') {
+    return (
+      <RealWorldPlayer
+        day={view.day}
+        page={page}
+        items={view.items}
+        situationEg={situationEg}
+        titleTl={titleTl}
+        nextHref={nextHref}
       />
     );
   }
@@ -110,22 +112,6 @@ export default async function LessonPlayerPage({
     page.blocks.some((b) => b.type === 'cards');
 
   if (useItemViewer) {
-    const embedded =
-      storyPage?.blocks.find((b) => b.type === 'dialogue')?.type === 'dialogue'
-        ? (
-            storyPage.blocks.find((b) => b.type === 'dialogue') as Extract<
-              (typeof storyPage.blocks)[number],
-              { type: 'dialogue' }
-            >
-          ).lines
-        : [];
-    const storyLines =
-      storyDoc?.lines.map((l) => ({
-        speaker: l.speaker,
-        tl: l.tl,
-        ar: l.ar,
-        ids: l.ids,
-      })) ?? embedded;
     return (
       <ItemViewer
         day={view.day}
@@ -134,7 +120,6 @@ export default async function LessonPlayerPage({
         situationEg={situationEg}
         titleTl={titleTl}
         nextHref={nextHref}
-        storyLines={storyLines || []}
       />
     );
   }
@@ -161,7 +146,6 @@ export default async function LessonPlayerPage({
       questions={view.questions}
       forms={view.forms}
       nextHref={nextHref}
-      isLastPage={isLastPage}
     />
   );
 }

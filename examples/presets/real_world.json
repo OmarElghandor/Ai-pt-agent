@@ -1,0 +1,87 @@
+{
+  "preset": "real_world",
+  "mode": "static",
+  "cover": "meaning",
+  "source_day": 3,
+  "title_eg": "بيقولوها كده",
+  "situation_eg": "في الكافيه",
+  "pill": "NO CAFÉ · في الكافيه",
+  "items": [
+    {
+      "type": "phrase",
+      "id": "phrase.rw.bica_pastel",
+      "tl": "Uma bica e um pastel de nata.",
+      "ar": "قهوة إسبريسو وباستيل دي ناتا.",
+      "say": "وما بيكا إي أون پاستيل دي ناتا",
+      "context_eg": "الطلب الكلاسيكي في أي كافيه في لشبونة",
+      "cloze": "bica",
+      "tag": "نصيحة لشبونية",
+      "category": "order",
+      "has_card": false,
+      "real_world": true
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.rw.copo_agua",
+      "tl": "Pode trazer um copo de água?",
+      "ar": "ممكن تجيب كوباية مية؟",
+      "say": "پودي ترازير أون كوپو دي آغوا",
+      "context_eg": "لما تطلب مية مع القهوة بأدب",
+      "cloze": "água",
+      "tag": "أسلوب مهذب",
+      "category": "polite",
+      "has_card": false,
+      "real_world": true
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.rw.a_conta",
+      "tl": "A conta, se faz favor.",
+      "ar": "الحساب، من فضلك.",
+      "say": "آ كونتا، سي فاز فاڤور",
+      "context_eg": "لما تخلّص وتطلب الحساب",
+      "cloze": "conta",
+      "tag": "الحساب",
+      "category": "pay",
+      "has_card": false,
+      "real_world": true
+    },
+    {
+      "type": "phrase",
+      "id": "phrase.rw.leite_sem_lactose",
+      "tl": "Tem leite sem lactose?",
+      "ar": "في لبن من غير لاكتوز؟",
+      "say": "تينغ ليتي سيم لاكتوزي",
+      "context_eg": "لما يكون عندك حساسية من اللبن العادي",
+      "cloze": "leite",
+      "tag": "سؤال",
+      "category": "order",
+      "has_card": false,
+      "real_world": true
+    }
+  ],
+  "tip": {
+    "kind": "culture",
+    "title": [{ "text": "نصيحة في الكافيه", "lang": "eg" }],
+    "body": [
+      { "text": "متقولش ", "lang": "eg" },
+      { "text": "Quero", "lang": "tl", "bold": true },
+      { "text": " — قول ", "lang": "eg" },
+      { "text": "Queria", "lang": "tl", "bold": true },
+      { "text": "، دي المهذبة.", "lang": "eg" }
+    ]
+  },
+  "real_world": {
+    "phrase_ids": [
+      "phrase.rw.bica_pastel",
+      "phrase.rw.copo_agua",
+      "phrase.rw.a_conta",
+      "phrase.rw.leite_sem_lactose"
+    ],
+    "categories": [
+      { "id": "order", "label_eg": "الطلب" },
+      { "id": "pay", "label_eg": "الدفع والحساب" },
+      { "id": "polite", "label_eg": "السؤال والطلب اللطيف" }
+    ]
+  }
+}

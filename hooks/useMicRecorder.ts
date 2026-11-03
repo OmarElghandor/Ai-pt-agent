@@ -70,7 +70,7 @@ export function useMicRecorder(opts?: { language?: string }) {
     }
   }, [cleanupStream]);
 
-  const stopAndTranscribe = useCallback(async (): Promise<string | null> => {
+  const stopAndGetBlob = useCallback(async (): Promise<Blob | null> => {
     const recorder = mediaRef.current;
     if (!recorder || recorder.state === 'inactive') {
       setRecording(false);
@@ -78,10 +78,9 @@ export function useMicRecorder(opts?: { language?: string }) {
     }
 
     setRecording(false);
-    setTranscribing(true);
     setError(null);
 
-    const blob = await new Promise<Blob | null>((resolve) => {
+    return new Promise<Blob | null>((resolve) => {
       recorder.onstop = () => {
         const type = recorder.mimeType || 'audio/webm';
         const data = new Blob(chunksRef.current, { type });
@@ -95,6 +94,11 @@ export function useMicRecorder(opts?: { language?: string }) {
         resolve(null);
       }
     });
+  }, [cleanupStream]);
+
+  const stopAndTranscribe = useCallback(async (): Promise<string | null> => {
+    setTranscribing(true);
+    const blob = await stopAndGetBlob();
 
     if (!blob) {
       setTranscribing(false);
@@ -132,7 +136,7 @@ export function useMicRecorder(opts?: { language?: string }) {
       setTranscribing(false);
       return null;
     }
-  }, [cleanupStream, language]);
+  }, [language, stopAndGetBlob]);
 
   const toggle = useCallback(async (): Promise<string | null> => {
     if (recording) {
@@ -149,6 +153,7 @@ export function useMicRecorder(opts?: { language?: string }) {
     error,
     setError,
     start,
+    stopAndGetBlob,
     stopAndTranscribe,
     toggle,
     cancel,

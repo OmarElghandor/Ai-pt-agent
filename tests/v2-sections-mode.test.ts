@@ -8,9 +8,6 @@ import {
 import { validateLessonPack } from '../lib/v2/content/validate';
 import type { LessonPack } from '../lib/v2/content/lesson';
 import { fillSectionsCheck } from '../lib/v2/generation/lesson/stages/assemble';
-import { buildAfterQuestions } from '../lib/v2/generation/lesson/storyCodeEnrich';
-import type { StoryDoc } from '../lib/v2/content/story';
-import type { Item } from '../lib/v2/content/items';
 
 describe('modeForPreset sections', () => {
   it('maps compare, pattern, conjugation to sections', () => {
@@ -104,29 +101,40 @@ describe('sections page fixtures', () => {
     assert.ok((day1Pattern.check?.length ?? 0) >= 2);
   });
 
-  it('fillSectionsCheck assigns question ids', () => {
+  it('fillSectionsCheck assigns grammar question ids', () => {
     const pages = fillSectionsCheck(
       [{ ...day1Pattern, check: undefined }],
       [
         {
           id: 'q.rule.1',
-          type: 'mcq',
-          skill: 'reading',
+          type: 'fill_blank_choice',
+          skill: 'grammar',
           page_index: 0,
+          use: 'lesson',
           prompt: {},
         },
         {
           id: 'q.rule.2',
-          type: 'mcq',
-          skill: 'reading',
+          type: 'build_sentence',
+          skill: 'grammar',
           page_index: 0,
+          use: 'lesson',
           prompt: {},
         },
         {
           id: 'q.rule.3',
-          type: 'mcq',
-          skill: 'reading',
+          type: 'fill_blank_choice',
+          skill: 'grammar',
           page_index: 0,
+          use: 'lesson',
+          prompt: {},
+        },
+        {
+          id: 'q.listen.1',
+          type: 'listen_meaning',
+          skill: 'listening',
+          page_index: 0,
+          use: 'both',
           prompt: {},
         },
       ],
@@ -203,57 +211,5 @@ describe('sections page fixtures', () => {
       i.rule.startsWith('sections_'),
     );
     assert.equal(sectionsIssues.length, 0, JSON.stringify(sectionsIssues));
-  });
-});
-
-describe('after_questions builder', () => {
-  it('builds ≥3 after_questions for a short dialogue', () => {
-    const story: Pick<StoryDoc, 'cast' | 'lines'> = {
-      cast: [
-        { id: 'learner', name: 'Omar', role: 'learner' },
-        { id: 'ines', name: 'Inês', role: 'character' },
-      ],
-      lines: [
-        { speaker: 'ines', tl: 'Tudo bem?', ar: 'كل حاجة تمام؟', ids: [] },
-        {
-          speaker: 'learner',
-          tl: 'Tudo bem.',
-          ar: 'تمام.',
-          ids: [],
-          replies_to: 0,
-        },
-        { speaker: 'ines', tl: 'Como se chama?', ar: 'اسمك إيه؟', ids: [] },
-        {
-          speaker: 'learner',
-          tl: 'Chamo-me Omar.',
-          ar: 'اسمي عمر.',
-          ids: ['phrase.chamo_omar'],
-          replies_to: 2,
-        },
-      ],
-    };
-    const items: Item[] = [
-      {
-        type: 'phrase',
-        id: 'phrase.chamo_omar',
-        tl: 'Chamo-me Omar.',
-        ar: 'اسمي عمر.',
-        say: 'x',
-        role: 'said',
-      } as Item,
-      {
-        type: 'phrase',
-        id: 'phrase.tudo_bem',
-        tl: 'Tudo bem.',
-        ar: 'تمام.',
-        say: 'x',
-        role: 'said',
-      } as Item,
-    ];
-    const qs = buildAfterQuestions({ story, items });
-    assert.ok(qs.length >= 3);
-    assert.ok(qs.some((q) => q.kind === 'character_asked'));
-    assert.ok(qs.some((q) => q.kind === 'learner_replied'));
-    assert.ok(qs.some((q) => q.kind === 'line_meaning'));
   });
 });

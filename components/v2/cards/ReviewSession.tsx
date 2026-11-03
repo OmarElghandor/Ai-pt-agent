@@ -4,8 +4,10 @@ import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AudioButton } from '@/components/v2/AudioButton';
 import { Icon } from '@/components/v2/Icon';
+import { DemoImageGenerate } from '@/components/v2/DemoImageGenerate';
 import { ImageSlot } from '@/components/v2/ImageSlot';
 import { PrimaryButton } from '@/components/v2/PrimaryButton';
+import { cloudinaryDisplayUrl } from '@/lib/v2/images/cloudinaryUrl';
 import { ProgressBar } from '@/components/v2/ProgressBar';
 import { ReportErrorButton } from '@/components/v2/ReportErrorButton';
 import { TargetWord } from '@/components/v2/cards/TargetWord';
@@ -420,6 +422,10 @@ function BackFace({
   hintUsed: boolean;
   day: number;
 }) {
+  const [imgSrc, setImgSrc] = useState<string | null>(null);
+  useEffect(() => {
+    setImgSrc(null);
+  }, [face?.item_id]);
   if (!face) return null;
 
   const showWordBlock =
@@ -451,7 +457,18 @@ function BackFace({
         ) : null}
       </div>
 
-      <ImageSlot variant="flashcard" />
+      <div className="relative">
+        <ImageSlot variant="flashcard" src={imgSrc} />
+        <DemoImageGenerate
+          body={{ kind: 'item', day, item_id: face.item_id }}
+          label={imgSrc ? 'Regenerate' : 'Generate'}
+          onReady={(url) =>
+            setImgSrc(
+              cloudinaryDisplayUrl(url, { aspect: '4:3', width: 600 }),
+            )
+          }
+        />
+      </div>
 
       {face.kind === 'verb' && face.conjugation ? (
         <VerbPoster

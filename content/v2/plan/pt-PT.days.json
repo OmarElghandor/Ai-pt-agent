@@ -41,8 +41,8 @@
           "today": "Chamo-me + name"
         },
         "tomorrow": {
-          "tl": "No café",
-          "eg": "في الكافيه"
+          "tl": "Tudo Bem?",
+          "eg": "إزيك؟ والوداع"
         },
         "core_items_tl": [
           "o prazer",
@@ -51,19 +51,16 @@
           "a manhã"
         ],
         "new_items": {
-          "words": [
-            "o prazer",
-            "o nome",
-            "o trabalho",
-            "a manhã"
-          ],
+          "words": [],
           "phrases": [
             "Olá!",
             "Bom dia!",
-            "Chamo-me …",
-            "Muito prazer!",
+            "Boa tarde!",
+            "Boa noite!",
+            "Chamo-me Omar.",
             "Como se chama?",
-            "Tudo bem?"
+            "Muito prazer!",
+            "Igualmente."
           ]
         },
         "recycle": [],
@@ -89,6 +86,85 @@
     },
     {
       "day": 2,
+      "week": 1,
+      "title_tl": "Tudo Bem?",
+      "title_ar": "إزيك؟ والوداع",
+      "situation_eg": "أول يوم في الشغل",
+      "example_tl": "Tudo bem?",
+      "rule_eg": "إزيك وعامل إيه، وإزاي تودّع",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [
+        "21",
+        "30",
+        "69"
+      ],
+      "is_story": false,
+      "generation": {
+        "situation_tl": "O primeiro dia no trabalho",
+        "can_do": [
+          "تعرّف بنفسك",
+          "تقول اسمك وتقول متشكر",
+          "ترد على التحية"
+        ],
+        "grammar_focus": {
+          "id": "pronouns.clitic_after",
+          "description": "Object/reflexive pronoun after the verb with hyphen (Chamo-me)",
+          "layout": "formula"
+        },
+        "chat_character": "ines",
+        "dictionary_category": "greetings",
+        "micro_step": {
+          "series": "introduce_yourself",
+          "step": 1,
+          "of": 4,
+          "previous": null,
+          "today": "تمرين: Chamo-me + name"
+        },
+        "tomorrow": {
+          "tl": "Conversação Básica",
+          "eg": "كلام أساسي"
+        },
+        "core_items_tl": [
+          "o prazer",
+          "o nome",
+          "o trabalho",
+          "a manhã"
+        ],
+        "new_items": {
+          "words": [],
+          "phrases": [
+            "Tudo bem?",
+            "Tudo bem, obrigado.",
+            "Até amanhã!",
+            "Adeus!",
+            "Como está?",
+            "Estou bem, obrigado."
+          ]
+        },
+        "recycle": [],
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "phrases",
+            "focus": "greetings and name"
+          },
+          {
+            "preset": "pattern",
+            "focus": "Chamo-me + name"
+          },
+          {
+            "preset": "scene",
+            "focus": "first day at work"
+          }
+        ]
+      }
+    },
+    {
+      "day": 3,
       "week": 1,
       "title_tl": "Conversação Básica",
       "title_ar": "كلام أساسي",
@@ -127,8 +203,8 @@
           "today": "Queria + thing"
         },
         "tomorrow": {
-          "tl": "No supermercado",
-          "eg": "في السوبرماركت"
+          "tl": "Mais Alguma Coisa?",
+          "eg": "حاجة تانية في الكافيه"
         },
         "core_items_tl": [
           "o café",
@@ -141,19 +217,17 @@
         "new_items": {
           "words": [
             "o café",
-            "o chá",
+            "o galão",
             "a água",
-            "o pastel",
-            "a conta",
-            "o leite"
+            "o leite",
+            "o chá",
+            "o pastel de nata"
           ],
           "phrases": [
             "Queria um café, por favor.",
-            "Queria uma água, por favor.",
             "Com leite?",
-            "Só isto, obrigado.",
-            "A conta, por favor.",
-            "Obrigado!"
+            "Mais alguma coisa?",
+            "Só isto, obrigado."
           ]
         },
         "recycle": [
@@ -181,7 +255,95 @@
       }
     },
     {
-      "day": 3,
+      "day": 4,
+      "week": 1,
+      "title_tl": "Mais Alguma Coisa?",
+      "title_ar": "حاجة تانية في الكافيه",
+      "situation_eg": "في الكافيه",
+      "example_tl": "Quanto é?",
+      "rule_eg": "تكمّل طلبك وتدفع",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [
+        "17",
+        "20",
+        "110"
+      ],
+      "is_story": false,
+      "generation": {
+        "situation_tl": "No café",
+        "can_do": [
+          "تطلب قهوة بأدب",
+          "تقول من فضلك وشكراً",
+          "تطلب حاجة بـ um/uma"
+        ],
+        "grammar_focus": {
+          "id": "polite.queria",
+          "description": "Polite request with Queria + um/uma",
+          "layout": "formula"
+        },
+        "chat_character": "manuel",
+        "dictionary_category": "cafe",
+        "micro_step": {
+          "series": "order_anything",
+          "step": 1,
+          "of": 5,
+          "previous": null,
+          "today": "تمرين: Queria + thing"
+        },
+        "tomorrow": {
+          "tl": "Gramática Básica",
+          "eg": "قواعد أساسية"
+        },
+        "core_items_tl": [
+          "o café",
+          "o chá",
+          "a água",
+          "o pastel",
+          "a conta",
+          "o leite"
+        ],
+        "new_items": {
+          "words": [
+            "a torrada",
+            "o açúcar",
+            "o sumo",
+            "o bolo",
+            "o copo"
+          ],
+          "phrases": [
+            "Quanto é?",
+            "Gosto de café.",
+            "De nada.",
+            "Com licença."
+          ]
+        },
+        "recycle": [
+          "phrase.greet_morning",
+          "phrase.hello"
+        ],
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "dictionary",
+            "focus": "café drinks and food"
+          },
+          {
+            "preset": "phrases",
+            "focus": "ordering politely"
+          },
+          {
+            "preset": "pattern",
+            "focus": "Queria + um/uma"
+          }
+        ]
+      }
+    },
+    {
+      "day": 5,
       "week": 1,
       "title_tl": "Gramática Básica",
       "title_ar": "قواعد أساسية",
@@ -221,35 +383,25 @@
           "step": 2,
           "of": 5,
           "previous": "Queria + thing",
-          "today": "Queria + um/uma + today's noun (numbers wait until day 4)"
+          "today": "Queria + um/uma + today's noun (numbers wait until day 8)"
         },
         "tomorrow": {
-          "tl": "Os números",
-          "eg": "الأرقام"
+          "tl": "Plurais",
+          "eg": "الجمع"
         },
         "new_items": {
           "words": [
+            "o supermercado",
             "o pão",
-            "o leite",
             "o queijo",
             "a maçã",
-            "a água",
-            "a banana",
-            "o peixe",
-            "o frango",
+            "o ovo",
             "o arroz",
-            "o café",
-            "o açúcar",
-            "a carne"
+            "o saco"
           ],
           "phrases": [
-            "Quanto custa?",
-            "Quanto é?",
-            "Aceita cartão?",
-            "Queria um saco, por favor.",
-            "Mais alguma coisa?",
-            "Só isto, obrigado.",
-            "Onde fica o leite?"
+            "Onde fica o leite?",
+            "O que é isto?"
           ]
         },
         "recycle": [
@@ -278,8 +430,124 @@
       }
     },
     {
-      "day": 4,
+      "day": 6,
       "week": 1,
+      "title_tl": "Plurais",
+      "title_ar": "الجمع",
+      "situation_eg": "في السوبر ماركت",
+      "example_tl": "Quanto custa isso?",
+      "rule_eg": "os / as + اسم + s",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [
+        "15",
+        "66",
+        "72",
+        "108–112"
+      ],
+      "is_story": false,
+      "generation": {
+        "situation_tl": "No supermercado",
+        "can_do": [
+          "تشتري أكل وتسأل على المكان",
+          "تسأل على السعر",
+          "تدفع"
+        ],
+        "grammar_focus": {
+          "id": "articles.definite.2",
+          "description": "الجمع",
+          "layout": "two_columns"
+        },
+        "chat_character": "rita",
+        "dictionary_category": "food",
+        "micro_step": {
+          "series": "order_anything",
+          "step": 2,
+          "of": 5,
+          "previous": "Queria + thing",
+          "today": "تمرين: Queria + um/uma + today's noun (numbers wait until day 8)"
+        },
+        "tomorrow": {
+          "tl": "O Primeiro Dia",
+          "eg": "قصة ١"
+        },
+        "new_items": {
+          "words": [
+            "a banana",
+            "a laranja",
+            "o tomate",
+            "a batata",
+            "a fruta"
+          ],
+          "phrases": [
+            "Quanto custa isso?",
+            "Precisa de saco?"
+          ]
+        },
+        "recycle": [
+          "phrase.order_coffee",
+          "phrase.thanks",
+          "phrase.greet_morning"
+        ],
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "dictionary",
+            "focus": "food nouns with o/a"
+          },
+          {
+            "preset": "phrases",
+            "focus": "supermarket phrases"
+          },
+          {
+            "preset": "compare",
+            "focus": "o vs a gender"
+          }
+        ]
+      }
+    },
+    {
+      "day": 7,
+      "week": 1,
+      "title_tl": "O Primeiro Dia",
+      "title_ar": "قصة ١",
+      "situation_eg": "",
+      "example_tl": "O Primeiro Dia",
+      "rule_eg": "مراجعة الأسبوع",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [],
+      "is_story": true,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "O Primeiro Dia"
+          }
+        ],
+        "new_items": {
+          "words": [],
+          "phrases": []
+        },
+        "recycle": [],
+        "story_outline": [
+          "Omar arrives at work and greets Inês.",
+          "They introduce themselves and say goodbye.",
+          "Next morning he orders a coffee from Manuel."
+        ],
+        "max_new_words": 3,
+        "tomorrow": {
+          "tl": "Números 1",
+          "eg": "الأرقام 1"
+        }
+      }
+    },
+    {
+      "day": 8,
+      "week": 2,
       "title_tl": "Números 1",
       "title_ar": "الأرقام 1",
       "situation_eg": "بكام؟ والدفع",
@@ -309,15 +577,79 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "zero, um, dois, três … dez",
+            "onze, doze, treze … vinte",
+            "trinta, quarenta … cem",
+            "o euro",
+            "o cêntimo",
+            "o preço"
+          ],
+          "phrases": [
+            "São doze euros.",
+            "Não, obrigado."
+          ]
         },
-        "recycle": []
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Pagar e a Idade",
+          "eg": "الدفع والسن"
+        }
       }
     },
     {
-      "day": 5,
-      "week": 1,
+      "day": 9,
+      "week": 2,
+      "title_tl": "Pagar e a Idade",
+      "title_ar": "الدفع والسن",
+      "situation_eg": "بكام؟ والدفع",
+      "example_tl": "Aceita cartão?",
+      "rule_eg": "Tenho + رقم + anos (السن بـ ter)",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [
+        "25"
+      ],
+      "is_story": false,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "phrases",
+            "focus": "numbers and paying"
+          },
+          {
+            "preset": "pattern",
+            "focus": "numbers 0–100"
+          }
+        ],
+        "new_items": {
+          "words": [
+            "o cartão",
+            "o dinheiro",
+            "o troco"
+          ],
+          "phrases": [
+            "Aceita cartão?",
+            "Em dinheiro.",
+            "Contribuinte?",
+            "Quantos anos tem?",
+            "Tenho trinta e dois anos."
+          ]
+        },
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Introdução aos Verbos",
+          "eg": "مقدمة الأفعال"
+        }
+      }
+    },
+    {
+      "day": 10,
+      "week": 2,
       "title_tl": "Introdução aos Verbos",
       "title_ar": "مقدمة الأفعال",
       "situation_eg": "الجيران والسلام",
@@ -358,15 +690,85 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "nunca"
+          ],
+          "phrases": [
+            "Desculpe.",
+            "Pode repetir?",
+            "Mais devagar, por favor.",
+            "Não percebo.",
+            "Fala português?",
+            "Falo um pouco."
+          ]
         },
-        "recycle": []
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Os Vizinhos",
+          "eg": "الجيران وtu وvocê"
+        }
       }
     },
     {
-      "day": 6,
-      "week": 1,
+      "day": 11,
+      "week": 2,
+      "title_tl": "Os Vizinhos",
+      "title_ar": "الجيران وtu وvocê",
+      "situation_eg": "الجيران والسلام",
+      "example_tl": "Até logo!",
+      "rule_eg": "tu / você / o senhor + المصدر",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [
+        "18",
+        "63",
+        "65",
+        "113"
+      ],
+      "is_story": false,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "phrases",
+            "focus": "neighbors and greetings"
+          },
+          {
+            "preset": "compare",
+            "focus": "tu / você / o senhor"
+          },
+          {
+            "preset": "pattern",
+            "focus": "negation não / nunca"
+          }
+        ],
+        "new_items": {
+          "words": [
+            "o vizinho",
+            "a vizinha",
+            "tu",
+            "você",
+            "o senhor / a senhora"
+          ],
+          "phrases": [
+            "Até logo!",
+            "Bem-vindo!",
+            "Não faz mal."
+          ]
+        },
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Verbos -AR 1",
+          "eg": "أفعال -AR"
+        }
+      }
+    },
+    {
+      "day": 12,
+      "week": 2,
       "title_tl": "Verbos -AR 1",
       "title_ar": "أفعال -AR",
       "situation_eg": "بتشتغل فين وساكن فين",
@@ -402,35 +804,97 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "eu",
+            "ele / ela",
+            "nós",
+            "eles / elas / vocês",
+            "o escritório"
+          ],
+          "phrases": [
+            "Trabalho num café.",
+            "Onde trabalha?"
+          ]
         },
-        "recycle": []
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Onde Mora?",
+          "eg": "ساكن فين وبتدرس إيه"
+        }
       }
     },
     {
-      "day": 7,
-      "week": 1,
-      "title_tl": "O Primeiro Dia",
-      "title_ar": "قصة ١",
-      "situation_eg": "",
-      "example_tl": "O Primeiro Dia",
-      "rule_eg": "مراجعة الأسبوع",
+      "day": 13,
+      "week": 2,
+      "title_tl": "Onde Mora?",
+      "title_ar": "ساكن فين وبتدرس إيه",
+      "situation_eg": "بتشتغل فين وساكن فين",
+      "example_tl": "Moro em Lisboa.",
+      "rule_eg": "تمرين على نهايات -ar",
       "extra_units_tl": [],
       "early_chunks_tl": [],
       "book_pages": [
-        "390–392"
+        "67",
+        "95–98",
+        "114–119"
       ],
+      "is_story": false,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "dictionary",
+            "focus": "work and home"
+          },
+          {
+            "preset": "conjugation",
+            "focus": "-ar present endings"
+          },
+          {
+            "preset": "phrases",
+            "focus": "where you work and live"
+          }
+        ],
+        "new_items": {
+          "words": [
+            "o trabalho",
+            "a escola",
+            "a cidade",
+            "o país",
+            "a empresa"
+          ],
+          "phrases": [
+            "Moro em Lisboa.",
+            "Onde mora?"
+          ]
+        },
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Uma Tarde no Mercado",
+          "eg": "قصة ٢"
+        }
+      }
+    },
+    {
+      "day": 14,
+      "week": 2,
+      "title_tl": "Uma Tarde no Mercado",
+      "title_ar": "قصة ٢",
+      "situation_eg": "",
+      "example_tl": "Uma Tarde no Mercado",
+      "rule_eg": "مراجعة الأسبوع",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [],
       "is_story": true,
       "generation": {
         "page_plan": [
           {
             "preset": "story",
-            "focus": "O Primeiro Dia"
-          },
-          {
-            "preset": "phrases",
-            "focus": "week 1 review"
+            "focus": "Uma Tarde no Mercado"
           }
         ],
         "new_items": {
@@ -439,16 +903,20 @@
         },
         "recycle": [],
         "story_outline": [
-          "Yassin arrives at work and greets Inês.",
-          "They get coffee and introduce themselves.",
-          "At the supermarket he asks where the milk is."
+          "Omar shops for fruit and bread.",
+          "He pays and gives his age at the counter.",
+          "A new neighbour welcomes him."
         ],
-        "max_new_words": 3
+        "max_new_words": 3,
+        "tomorrow": {
+          "tl": "Verbos -ER",
+          "eg": "أفعال -ER"
+        }
       }
     },
     {
-      "day": 8,
-      "week": 2,
+      "day": 15,
+      "week": 3,
       "title_tl": "Verbos -ER",
       "title_ar": "أفعال -ER",
       "situation_eg": "في المطعم",
@@ -487,15 +955,85 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "o restaurante",
+            "a ementa",
+            "a sopa",
+            "o peixe",
+            "a carne",
+            "o prato do dia"
+          ],
+          "phrases": [
+            "Uma mesa para dois, por favor.",
+            "Para mim, o prato do dia."
+          ]
         },
-        "recycle": []
+        "recycle": [],
+        "tomorrow": {
+          "tl": "A Conta, por Favor",
+          "eg": "الحلو والحساب"
+        }
       }
     },
     {
-      "day": 9,
-      "week": 2,
+      "day": 16,
+      "week": 3,
+      "title_tl": "A Conta, por Favor",
+      "title_ar": "الحلو والحساب",
+      "situation_eg": "في المطعم",
+      "example_tl": "A conta, por favor.",
+      "rule_eg": "تمرين على نهايات -er",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [
+        "17",
+        "27",
+        "37",
+        "121–123"
+      ],
+      "is_story": false,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "dictionary",
+            "focus": "food and drinks"
+          },
+          {
+            "preset": "conjugation",
+            "focus": "-er present endings"
+          },
+          {
+            "preset": "phrases",
+            "focus": "at the restaurant"
+          }
+        ],
+        "new_items": {
+          "words": [
+            "o frango",
+            "a salada",
+            "a sobremesa",
+            "o vinho",
+            "a mesa"
+          ],
+          "phrases": [
+            "A conta, por favor.",
+            "Bom apetite!"
+          ]
+        },
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Verbos -IR",
+          "eg": "أفعال -IR"
+        }
+      }
+    },
+    {
+      "day": 17,
+      "week": 3,
       "title_tl": "Verbos -IR",
       "title_ar": "أفعال -IR",
       "situation_eg": "البيت والروتين",
@@ -525,15 +1063,77 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "a casa",
+            "o quarto",
+            "a janela",
+            "a porta"
+          ],
+          "phrases": [
+            "Abro a janela.",
+            "Durmo pouco."
+          ]
         },
-        "recycle": []
+        "recycle": [],
+        "tomorrow": {
+          "tl": "A Casa",
+          "eg": "أوض البيت"
+        }
       }
     },
     {
-      "day": 10,
-      "week": 2,
+      "day": 18,
+      "week": 3,
+      "title_tl": "A Casa",
+      "title_ar": "أوض البيت",
+      "situation_eg": "البيت والروتين",
+      "example_tl": "Acordo cedo.",
+      "rule_eg": "تمرين على نهايات -ir",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [
+        "4",
+        "5",
+        "124–127"
+      ],
+      "is_story": false,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "dictionary",
+            "focus": "home routine"
+          },
+          {
+            "preset": "conjugation",
+            "focus": "-ir present endings + durmo"
+          }
+        ],
+        "new_items": {
+          "words": [
+            "a cozinha",
+            "a casa de banho",
+            "a sala",
+            "a cama",
+            "o sofá"
+          ],
+          "phrases": [
+            "Acordo cedo."
+          ]
+        },
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Verbos Ser e Estar 1",
+          "eg": "SER"
+        }
+      }
+    },
+    {
+      "day": 19,
+      "week": 3,
       "title_tl": "Verbos Ser e Estar 1",
       "title_ar": "SER",
       "situation_eg": "إنت منين وبتشتغل إيه",
@@ -564,15 +1164,114 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "egípcio / egípcia",
+            "português / portuguesa",
+            "engenheiro / engenheira",
+            "o Egito"
+          ],
+          "phrases": [
+            "De onde é?",
+            "Sou do Cairo.",
+            "Sou egípcio."
+          ]
         },
-        "recycle": []
+        "recycle": [],
+        "tomorrow": {
+          "tl": "O Que Faz?",
+          "eg": "بتشتغل إيه"
+        }
       }
     },
     {
-      "day": 11,
-      "week": 2,
+      "day": 20,
+      "week": 3,
+      "title_tl": "O Que Faz?",
+      "title_ar": "بتشتغل إيه",
+      "situation_eg": "إنت منين وبتشتغل إيه",
+      "example_tl": "O que faz?",
+      "rule_eg": "O senhor é… (الفعل بتاع هو)",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [
+        "62",
+        "83–85",
+        "113",
+        "175"
+      ],
+      "is_story": false,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "conjugation",
+            "focus": "SER present"
+          },
+          {
+            "preset": "phrases",
+            "focus": "origin and job"
+          }
+        ],
+        "new_items": {
+          "words": [
+            "professor / professora",
+            "médico / médica",
+            "estudante"
+          ],
+          "phrases": [
+            "O que faz?",
+            "Sou engenheiro."
+          ]
+        },
+        "recycle": [],
+        "tomorrow": {
+          "tl": "A Aula de Português",
+          "eg": "قصة ٣"
+        }
+      }
+    },
+    {
+      "day": 21,
+      "week": 3,
+      "title_tl": "A Aula de Português",
+      "title_ar": "قصة ٣",
+      "situation_eg": "",
+      "example_tl": "A Aula de Português",
+      "rule_eg": "مراجعة الأسبوع",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [],
+      "is_story": true,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "A Aula de Português"
+          }
+        ],
+        "new_items": {
+          "words": [],
+          "phrases": []
+        },
+        "recycle": [],
+        "story_outline": [
+          "Omar tells a classmate where he works and lives.",
+          "They talk about lunch at a restaurant.",
+          "He shows his flat."
+        ],
+        "max_new_words": 3,
+        "tomorrow": {
+          "tl": "Verbos Ser e Estar 2",
+          "eg": "ESTAR والفرق"
+        }
+      }
+    },
+    {
+      "day": 22,
+      "week": 4,
       "title_tl": "Verbos Ser e Estar 2",
       "title_ar": "ESTAR والفرق",
       "situation_eg": "حاسس بإيه",
@@ -607,15 +1306,79 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "cansado / cansada",
+            "doente",
+            "contente",
+            "nervoso / nervosa"
+          ],
+          "phrases": [
+            "Estou cansado.",
+            "Tenho fome.",
+            "Tenho sede."
+          ]
         },
-        "recycle": []
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Ser ou Estar?",
+          "eg": "SER ولا ESTAR"
+        }
       }
     },
     {
-      "day": 12,
-      "week": 2,
+      "day": 23,
+      "week": 4,
+      "title_tl": "Ser ou Estar?",
+      "title_ar": "SER ولا ESTAR",
+      "situation_eg": "حاسس بإيه",
+      "example_tl": "Dói-me a cabeça.",
+      "rule_eg": "ser = ثابت · estar = حالة",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [
+        "3",
+        "13",
+        "62",
+        "74",
+        "178"
+      ],
+      "is_story": false,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "compare",
+            "focus": "SER vs ESTAR"
+          },
+          {
+            "preset": "conjugation",
+            "focus": "ESTAR present"
+          }
+        ],
+        "new_items": {
+          "words": [
+            "feliz",
+            "triste",
+            "ocupado / ocupada"
+          ],
+          "phrases": [
+            "Dói-me a cabeça.",
+            "Está bem?"
+          ]
+        },
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Presente Contínuo",
+          "eg": "estar a + فعل"
+        }
+      }
+    },
+    {
+      "day": 24,
+      "week": 4,
       "title_tl": "Presente Contínuo",
       "title_ar": "estar a + فعل",
       "situation_eg": "مكالمة تليفون",
@@ -646,15 +1409,33 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "o telemóvel",
+            "a chamada",
+            "a mensagem",
+            "o número"
+          ],
+          "phrases": [
+            "Estou? / Sim?",
+            "Posso falar com a Rita?",
+            "Um momento.",
+            "Estou a trabalhar.",
+            "Posso ligar depois?",
+            "O que estás a fazer?",
+            "Pode soletrar, por favor?",
+            "Como se escreve?"
+          ]
         },
-        "recycle": []
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Gostos e Desgostos",
+          "eg": "بحب ومبحبش"
+        }
       }
     },
     {
-      "day": 13,
-      "week": 2,
+      "day": 25,
+      "week": 4,
       "title_tl": "Gostos e Desgostos",
       "title_ar": "بحب ومبحبش",
       "situation_eg": "خروجة مع صاحب",
@@ -683,48 +1464,81 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "o cinema",
+            "a praia",
+            "o futebol",
+            "a música",
+            "o parque"
+          ],
+          "phrases": [
+            "Gosto de música.",
+            "Não gosto de chá.",
+            "Gostas de futebol?",
+            "Eu também.",
+            "Eu também não."
+          ]
         },
-        "recycle": []
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Prefiro e o Tempo",
+          "eg": "بفضّل والجو"
+        }
       }
     },
     {
-      "day": 14,
-      "week": 2,
-      "title_tl": "Uma Tarde no Mercado",
-      "title_ar": "قصة ٢",
-      "situation_eg": "",
-      "example_tl": "Uma Tarde no Mercado",
-      "rule_eg": "مراجعة الأسبوع",
+      "day": 26,
+      "week": 4,
+      "title_tl": "Prefiro e o Tempo",
+      "title_ar": "بفضّل والجو",
+      "situation_eg": "خروجة مع صاحب",
+      "example_tl": "Adoro a praia!",
+      "rule_eg": "تمرين على gostar de + الطقس كجمل جاهزة",
       "extra_units_tl": [],
       "early_chunks_tl": [],
       "book_pages": [
-        "393–395"
+        "224",
+        "348"
       ],
-      "is_story": true,
+      "is_story": false,
       "generation": {
         "page_plan": [
           {
             "preset": "story",
-            "focus": "Uma Tarde no Mercado"
+            "focus": "situation dialogue"
           },
           {
             "preset": "phrases",
-            "focus": "week 2 review"
+            "focus": "likes and dislikes"
+          },
+          {
+            "preset": "pattern",
+            "focus": "gostar de"
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "o livro",
+            "a televisão"
+          ],
+          "phrases": [
+            "Adoro a praia!",
+            "Prefiro chá.",
+            "Está calor.",
+            "Está frio.",
+            "Está a chover."
+          ]
         },
         "recycle": [],
-        "max_new_words": 3
+        "tomorrow": {
+          "tl": "Verbos Comuns e Irregulares",
+          "eg": "الأفعال الشاذة الأساسية"
+        }
       }
     },
     {
-      "day": 15,
-      "week": 3,
+      "day": 27,
+      "week": 4,
       "title_tl": "Verbos Comuns e Irregulares",
       "title_ar": "الأفعال الشاذة الأساسية",
       "situation_eg": "ترتيب خروجة",
@@ -754,15 +1568,110 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "o tempo",
+            "o jantar"
+          ],
+          "phrases": [
+            "Tenho tempo.",
+            "Vamos ao cinema?",
+            "Fixe!"
+          ]
         },
-        "recycle": []
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Queres Vir?",
+          "eg": "عايز تيجي؟"
+        }
       }
     },
     {
-      "day": 16,
-      "week": 3,
+      "day": 28,
+      "week": 4,
+      "title_tl": "Queres Vir?",
+      "title_ar": "عايز تيجي؟",
+      "situation_eg": "ترتيب خروجة",
+      "example_tl": "Queres vir?",
+      "rule_eg": "querer / poder في المضارع",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [
+        "14",
+        "183",
+        "185"
+      ],
+      "is_story": false,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "conjugation",
+            "focus": "ter ir fazer querer poder present"
+          },
+          {
+            "preset": "phrases",
+            "focus": "making plans"
+          }
+        ],
+        "new_items": {
+          "words": [
+            "o museu",
+            "o filme"
+          ],
+          "phrases": [
+            "Queres vir?",
+            "Não posso, desculpa."
+          ]
+        },
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Uma Noite de Tempestade",
+          "eg": "قصة ٤"
+        }
+      }
+    },
+    {
+      "day": 29,
+      "week": 4,
+      "title_tl": "Uma Noite de Tempestade",
+      "title_ar": "قصة ٤",
+      "situation_eg": "",
+      "example_tl": "Uma Noite de Tempestade",
+      "rule_eg": "مراجعة الأسبوع",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [],
+      "is_story": true,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "Uma Noite de Tempestade"
+          }
+        ],
+        "new_items": {
+          "words": [],
+          "phrases": []
+        },
+        "recycle": [],
+        "story_outline": [
+          "Rain all evening; Omar is tired and hungry.",
+          "A friend calls; he is busy working.",
+          "They talk about what they like."
+        ],
+        "max_new_words": 3,
+        "tomorrow": {
+          "tl": "Perguntas",
+          "eg": "الأسئلة"
+        }
+      }
+    },
+    {
+      "day": 30,
+      "week": 5,
       "title_tl": "Perguntas",
       "title_ar": "الأسئلة",
       "situation_eg": "تسأل في الشارع",
@@ -791,15 +1700,31 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "Onde?",
+            "Quando?",
+            "Porquê? / porque",
+            "Quem?",
+            "Qual?",
+            "Como?",
+            "Quanto? / Quantos?"
+          ],
+          "phrases": [
+            "Pode ajudar-me?",
+            "Qual é o seu número?",
+            "Como se diz … em português?"
+          ]
         },
-        "recycle": []
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Preposições 1",
+          "eg": "حروف الجر والدمج"
+        }
       }
     },
     {
-      "day": 17,
-      "week": 3,
+      "day": 31,
+      "week": 5,
       "title_tl": "Preposições 1",
       "title_ar": "حروف الجر والدمج",
       "situation_eg": "المواصلات",
@@ -828,15 +1753,77 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "o centro",
+            "o metro",
+            "o autocarro",
+            "o comboio",
+            "o bilhete"
+          ],
+          "phrases": [
+            "Vou ao centro de metro.",
+            "Vou a pé."
+          ]
         },
-        "recycle": []
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Bilhetes e Paragens",
+          "eg": "التذاكر والمحطات"
+        }
       }
     },
     {
-      "day": 18,
-      "week": 3,
+      "day": 32,
+      "week": 5,
+      "title_tl": "Bilhetes e Paragens",
+      "title_ar": "التذاكر والمحطات",
+      "situation_eg": "المواصلات",
+      "example_tl": "Estou na paragem.",
+      "rule_eg": "de + وسيلة (de metro) · a pé",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [
+        "28",
+        "89–91"
+      ],
+      "is_story": false,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "phrases",
+            "focus": "transport"
+          },
+          {
+            "preset": "compare",
+            "focus": "contractions do/da no/na ao/à"
+          }
+        ],
+        "new_items": {
+          "words": [
+            "a paragem",
+            "o táxi",
+            "o aeroporto",
+            "a bicicleta"
+          ],
+          "phrases": [
+            "Estou na paragem.",
+            "Um bilhete para Sintra, por favor."
+          ]
+        },
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Primeira Viagem a Portugal",
+          "eg": "الاتجاهات"
+        }
+      }
+    },
+    {
+      "day": 33,
+      "week": 5,
       "title_tl": "Primeira Viagem a Portugal",
       "title_ar": "الاتجاهات",
       "situation_eg": "في الطريق",
@@ -869,15 +1856,80 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "a estação",
+            "a rua",
+            "a farmácia",
+            "à esquerda",
+            "à direita"
+          ],
+          "phrases": [
+            "Onde fica a estação?",
+            "É perto?",
+            "É longe."
+          ]
         },
-        "recycle": []
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Vire à Esquerda",
+          "eg": "يمين وشمال"
+        }
       }
     },
     {
-      "day": 19,
-      "week": 3,
+      "day": 34,
+      "week": 5,
+      "title_tl": "Vire à Esquerda",
+      "title_ar": "يمين وشمال",
+      "situation_eg": "في الطريق",
+      "example_tl": "Vire à esquerda.",
+      "rule_eg": "تمرين على Onde fica + الاتجاهات",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [
+        "16",
+        "24",
+        "32"
+      ],
+      "is_story": false,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "phrases",
+            "focus": "directions"
+          },
+          {
+            "preset": "pattern",
+            "focus": "ficar for places"
+          }
+        ],
+        "new_items": {
+          "words": [
+            "o banco",
+            "o hospital",
+            "a esquina",
+            "a praça"
+          ],
+          "phrases": [
+            "Vire à esquerda.",
+            "Siga em frente.",
+            "Fica ao lado do banco."
+          ]
+        },
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Que Dia É Hoje?",
+          "eg": "الأيام وفترات اليوم"
+        }
+      }
+    },
+    {
+      "day": 35,
+      "week": 5,
       "title_tl": "Que Dia É Hoje?",
       "title_ar": "الأيام وفترات اليوم",
       "situation_eg": "حجز ميعاد",
@@ -905,15 +1957,112 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "segunda-feira",
+            "terça-feira",
+            "quarta-feira",
+            "quinta-feira",
+            "sexta-feira",
+            "sábado",
+            "domingo",
+            "de manhã · à tarde · à noite"
+          ],
+          "phrases": [
+            "Que dia é hoje?",
+            "Hoje é segunda."
+          ]
         },
-        "recycle": []
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Datas e Consultas",
+          "eg": "التاريخ والمواعيد"
+        }
       }
     },
     {
-      "day": 20,
-      "week": 3,
+      "day": 36,
+      "week": 5,
+      "title_tl": "Datas e Consultas",
+      "title_ar": "التاريخ والمواعيد",
+      "situation_eg": "حجز ميعاد",
+      "example_tl": "Pode ser na terça?",
+      "rule_eg": "dia + رقم + de + شهر",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [],
+      "is_story": false,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "phrases",
+            "focus": "days and parts of day"
+          },
+          {
+            "preset": "pattern",
+            "focus": "de manhã / à tarde / à noite"
+          }
+        ],
+        "new_items": {
+          "words": [
+            "hoje · amanhã · ontem",
+            "janeiro, fevereiro, março … dezembro"
+          ],
+          "phrases": [
+            "Pode ser na terça?",
+            "Queria marcar uma consulta.",
+            "Que dia é hoje? — É dia cinco de março."
+          ]
+        },
+        "recycle": [],
+        "tomorrow": {
+          "tl": "O Fim de Semana",
+          "eg": "قصة ٥"
+        }
+      }
+    },
+    {
+      "day": 37,
+      "week": 5,
+      "title_tl": "O Fim de Semana",
+      "title_ar": "قصة ٥",
+      "situation_eg": "",
+      "example_tl": "O Fim de Semana",
+      "rule_eg": "مراجعة الأسبوع",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [],
+      "is_story": true,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "O Fim de Semana"
+          }
+        ],
+        "new_items": {
+          "words": [],
+          "phrases": []
+        },
+        "recycle": [],
+        "story_outline": [
+          "Friends plan a Saturday outing and ask each other questions.",
+          "They take the metro to the centre and ask for directions.",
+          "They fix a date for the next trip."
+        ],
+        "max_new_words": 3,
+        "tomorrow": {
+          "tl": "Que Horas São?",
+          "eg": "الساعة"
+        }
+      }
+    },
+    {
+      "day": 38,
+      "week": 6,
       "title_tl": "Que Horas São?",
       "title_ar": "الساعة",
       "situation_eg": "مواعيد الفتح",
@@ -943,48 +2092,30 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
-        },
-        "recycle": []
-      }
-    },
-    {
-      "day": 21,
-      "week": 3,
-      "title_tl": "A Aula de Português",
-      "title_ar": "قصة ٣",
-      "situation_eg": "",
-      "example_tl": "A Aula de Português",
-      "rule_eg": "مراجعة الأسبوع",
-      "extra_units_tl": [],
-      "early_chunks_tl": [],
-      "book_pages": [
-        "399–401"
-      ],
-      "is_story": true,
-      "generation": {
-        "page_plan": [
-          {
-            "preset": "story",
-            "focus": "A Aula de Português"
-          },
-          {
-            "preset": "phrases",
-            "focus": "week 3 review"
-          }
-        ],
-        "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "cem · cento e … · duzentos · mil",
+            "e meia · e um quarto · menos um quarto",
+            "meio-dia · meia-noite"
+          ],
+          "phrases": [
+            "Que horas são?",
+            "É uma hora.",
+            "São nove e meia.",
+            "A que horas abre?",
+            "Às nove.",
+            "Está fechado."
+          ]
         },
         "recycle": [],
-        "max_new_words": 3
+        "tomorrow": {
+          "tl": "Futuro Informal",
+          "eg": "المستقبل القريب"
+        }
       }
     },
     {
-      "day": 22,
-      "week": 4,
+      "day": 39,
+      "week": 6,
       "title_tl": "Futuro Informal",
       "title_ar": "المستقبل القريب",
       "situation_eg": "خطة الويك إند",
@@ -1013,15 +2144,30 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "o fim de semana",
+            "a próxima semana",
+            "os amigos",
+            "a festa",
+            "a viagem"
+          ],
+          "phrases": [
+            "O que vais fazer no fim de semana?",
+            "Amanhã vou trabalhar.",
+            "Vou visitar amigos.",
+            "Vou ficar em casa."
+          ]
         },
-        "recycle": []
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Verbos no Infinitivo 1",
+          "eg": "فعل + مصدر"
+        }
       }
     },
     {
-      "day": 23,
-      "week": 4,
+      "day": 40,
+      "week": 6,
       "title_tl": "Verbos no Infinitivo 1",
       "title_ar": "فعل + مصدر",
       "situation_eg": "في الصيدلية",
@@ -1049,15 +2195,32 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "a tosse",
+            "a febre",
+            "o comprimido",
+            "a receita",
+            "a dor",
+            "a gripe",
+            "o xarope"
+          ],
+          "phrases": [
+            "Queria algo para a tosse.",
+            "Preciso de descansar.",
+            "Precisa de receita?",
+            "Três vezes por dia."
+          ]
         },
-        "recycle": []
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Possessivos",
+          "eg": "الملكية"
+        }
       }
     },
     {
-      "day": 24,
-      "week": 4,
+      "day": 41,
+      "week": 6,
       "title_tl": "Possessivos",
       "title_ar": "الملكية",
       "situation_eg": "العيلة",
@@ -1086,15 +2249,33 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "a mãe",
+            "o pai",
+            "o irmão",
+            "a irmã",
+            "os filhos",
+            "o marido · a mulher",
+            "o avô · a avó",
+            "o tio · a tia",
+            "o primo · a prima"
+          ],
+          "phrases": [
+            "Tenho dois irmãos.",
+            "A minha mãe mora no Cairo.",
+            "Tem filhos?"
+          ]
         },
-        "recycle": []
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Adjetivos 1",
+          "eg": "الصفات والألوان"
+        }
       }
     },
     {
-      "day": 25,
-      "week": 4,
+      "day": 42,
+      "week": 6,
       "title_tl": "Adjetivos 1",
       "title_ar": "الصفات والألوان",
       "situation_eg": "محل الهدوم",
@@ -1127,15 +2308,114 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "a camisola",
+            "as calças",
+            "a camisa",
+            "os sapatos",
+            "o casaco",
+            "azul · vermelho · preto · branco · verde",
+            "grande · pequeno"
+          ],
+          "phrases": [
+            "A camisola azul é grande."
+          ]
         },
-        "recycle": []
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Noutro Tamanho",
+          "eg": "مقاس ولون تاني"
+        }
       }
     },
     {
-      "day": 26,
-      "week": 4,
+      "day": 43,
+      "week": 6,
+      "title_tl": "Noutro Tamanho",
+      "title_ar": "مقاس ولون تاني",
+      "situation_eg": "محل الهدوم",
+      "example_tl": "Tem noutro tamanho?",
+      "rule_eg": "-ão→-ões · -l→-is",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [
+        "68",
+        "76",
+        "80–82"
+      ],
+      "is_story": false,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "dictionary",
+            "focus": "colors and clothes"
+          },
+          {
+            "preset": "pattern",
+            "focus": "adjective agreement"
+          }
+        ],
+        "new_items": {
+          "words": [
+            "a saia",
+            "o vestido",
+            "o chapéu"
+          ],
+          "phrases": [
+            "Tem noutro tamanho?",
+            "Tem noutra cor?"
+          ]
+        },
+        "recycle": [],
+        "tomorrow": {
+          "tl": "A Visita da Família",
+          "eg": "قصة ٦"
+        }
+      }
+    },
+    {
+      "day": 44,
+      "week": 6,
+      "title_tl": "A Visita da Família",
+      "title_ar": "قصة ٦",
+      "situation_eg": "",
+      "example_tl": "A Visita da Família",
+      "rule_eg": "مراجعة الأسبوع",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [],
+      "is_story": true,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "A Visita da Família"
+          }
+        ],
+        "new_items": {
+          "words": [],
+          "phrases": []
+        },
+        "recycle": [],
+        "story_outline": [
+          "Omar’s family is coming; he plans what they will do at what time.",
+          "He buys cough syrup at the pharmacy for his mother.",
+          "They shop for clothes together."
+        ],
+        "max_new_words": 3,
+        "tomorrow": {
+          "tl": "Isto e Aquilo",
+          "eg": "ده وده"
+        }
+      }
+    },
+    {
+      "day": 45,
+      "week": 7,
       "title_tl": "Isto e Aquilo",
       "title_ar": "ده وده",
       "situation_eg": "تختار حاجة في المحل",
@@ -1167,15 +2447,30 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "isto · isso · aquilo",
+            "este · esta",
+            "esse · essa",
+            "aquele · aquela",
+            "o provador"
+          ],
+          "phrases": [
+            "Posso experimentar este?",
+            "O que é aquilo?",
+            "Quanto custa esta?",
+            "Levo este."
+          ]
         },
-        "recycle": []
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Verbo Pôr",
+          "eg": "فعل pôr"
+        }
       }
     },
     {
-      "day": 27,
-      "week": 4,
+      "day": 46,
+      "week": 7,
       "title_tl": "Verbo Pôr",
       "title_ar": "فعل pôr",
       "situation_eg": "الصبح قبل الشغل",
@@ -1208,48 +2503,30 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
-        },
-        "recycle": []
-      }
-    },
-    {
-      "day": 28,
-      "week": 4,
-      "title_tl": "Uma Noite de Tempestade",
-      "title_ar": "قصة ٤",
-      "situation_eg": "",
-      "example_tl": "Uma Noite de Tempestade",
-      "rule_eg": "مراجعة الأسبوع",
-      "extra_units_tl": [],
-      "early_chunks_tl": [],
-      "book_pages": [
-        "402–404"
-      ],
-      "is_story": true,
-      "generation": {
-        "page_plan": [
-          {
-            "preset": "story",
-            "focus": "Uma Noite de Tempestade"
-          },
-          {
-            "preset": "phrases",
-            "focus": "week 4 review"
-          }
-        ],
-        "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "o pequeno-almoço",
+            "a chave",
+            "o duche",
+            "a escova de dentes",
+            "o relógio"
+          ],
+          "phrases": [
+            "Ponho o casaco.",
+            "Visto-me às sete.",
+            "Tomo o pequeno-almoço.",
+            "Onde pus a chave?"
+          ]
         },
         "recycle": [],
-        "max_new_words": 3
+        "tomorrow": {
+          "tl": "O Que Fizeste Ontem?",
+          "eg": "مقدمة الماضي"
+        }
       }
     },
     {
-      "day": 29,
-      "week": 4,
+      "day": 47,
+      "week": 7,
       "title_tl": "O Que Fizeste Ontem?",
       "title_ar": "مقدمة الماضي",
       "situation_eg": "امبارح عملت إيه",
@@ -1277,15 +2554,64 @@
           }
         ],
         "new_items": {
-          "words": [],
-          "phrases": []
+          "words": [
+            "o mercado"
+          ],
+          "phrases": [
+            "O que fizeste ontem?",
+            "Fui ao supermercado.",
+            "Comprei pão.",
+            "Comi fora.",
+            "Estive em casa.",
+            "Não fiz nada."
+          ]
         },
-        "recycle": []
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Um Dia Normal",
+          "eg": "قصة ٧"
+        }
       }
     },
     {
-      "day": 30,
-      "week": 4,
+      "day": 48,
+      "week": 7,
+      "title_tl": "Um Dia Normal",
+      "title_ar": "قصة ٧",
+      "situation_eg": "",
+      "example_tl": "Um Dia Normal",
+      "rule_eg": "مراجعة الأسبوع",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [],
+      "is_story": true,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "Um Dia Normal"
+          }
+        ],
+        "new_items": {
+          "words": [],
+          "phrases": []
+        },
+        "recycle": [],
+        "story_outline": [
+          "Omar’s morning routine before work.",
+          "He chooses between this and that at a shop.",
+          "He tells a friend what he did yesterday."
+        ],
+        "max_new_words": 3,
+        "tomorrow": {
+          "tl": "Teste A1",
+          "eg": "اختبار المرحلة ١"
+        }
+      }
+    },
+    {
+      "day": 49,
+      "week": 7,
       "title_tl": "Teste A1",
       "title_ar": "اختبار المرحلة ١",
       "situation_eg": "",
@@ -1313,7 +2639,8 @@
           "phrases": []
         },
         "recycle": []
-      }
+      },
+      "is_test": true
     }
   ]
 }

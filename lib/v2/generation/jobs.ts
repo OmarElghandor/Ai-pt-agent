@@ -8,13 +8,17 @@ import { buildLessonBrief } from './lesson/brief';
 import {
   claimReadyJobs,
   enqueueLessonDag,
+  enqueueQuestionsRegen,
+  enqueueStoryRegen,
   expandPageJobs,
+  linkStoryIntoLesson,
   hashAssembleJob,
   hashContinuityJob,
   hashDailyUseJob,
   hashMicroJob,
   hashOutlineJob,
   hashQuestionsJob,
+  hashRealWorldJob,
   hashStoryJob,
   itemsAsKnown,
   lessonIdFor,
@@ -22,8 +26,13 @@ import {
   loadDraftData,
   requeueJob,
   requeueStale,
+  type ClaimJobsFilter,
   type JobView,
 } from './lesson/graph';
+import {
+  processImageJob,
+  processImageSpecsJob,
+} from './runImageJobs';
 import {
   buildDayDigest,
   buildItemDigest,
@@ -63,12 +72,18 @@ import { runMicroJob } from './lesson/jobs/runMicro';
 import { runOutlineJob } from './lesson/jobs/runOutline';
 import { runPageJob } from './lesson/jobs/runPage';
 import { runQuestionsJob } from './lesson/jobs/runQuestions';
+import { runRealWorldJob } from './lesson/jobs/runRealWorld';
 import { runStoryJob } from './lesson/jobs/runStory';
+import {
+  realWorldPhrasesToItems,
+  type RealWorldHandoff,
+} from './lesson/realWorldBuild';
 import { fixDialoguePage } from './lesson/dialogueChecks';
 import { storyIdFor } from '@/lib/v2/content/story';
 import { modeForPreset } from '@/lib/v2/content/page';
 import {
   finishJobFailed,
+  finishJobSkipped,
   finishJobSuccess,
   markJobStarted,
 } from './lesson/jobs/persist';
@@ -221,27 +236,36 @@ async function loadPrevMicroHandoff(
 
 export async function runWorkerBatch(
   workerId: string,
-  filter?: { day?: number; version?: number; targetLang?: string },
+  filter?: ClaimJobsFilter,
+  opts?: { concurrency?: number },
 ): Promise<number> {
+  const concurrency = opts?.concurrency ?? jobConcurrency();
   let processed = 0;
   console.info(
-    `[v2-gen:batch] start worker=${workerId} concurrency=${jobConcurrency()}${
+    `[v2-gen:batch] start worker=${workerId} concurrency=${concurrency}${
       filter?.day != null ? ` day=${filter.day} v=${filter.version ?? '*'}` : ''
-    }`,
+    }${filter?.kinds?.length ? ` kinds=${filter.kinds.join(',')}` : ''}`,
   );
   for (let round = 0; round < 40; round++) {
-    const batch = await claimReadyJobs(workerId, jobConcurrency(), filter);
+    const batch = await claimReadyJobs(workerId, concurrency, filter);
     console.info(
       `[v2-gen:batch] round=${round} claimed=${batch.length} processed_so_far=${processed}`,
     );
     if (batch.length === 0) break;
-    // Sequential: one job at a time so admin step indicator stays clear.
-    for (const job of batch) {
-      try {
-        await processLessonJob(job, workerId);
+    // Parallel within the claimed batch (text default concurrency=1 stays serial).
+    const settled = await Promise.allSettled(
+      batch.map((job) => processLessonJob(job, workerId)),
+    );
+    for (let i = 0; i < settled.length; i++) {
+      const result = settled[i]!;
+      if (result.status === 'fulfilled') {
         processed += 1;
-      } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
+      } else {
+        const job = batch[i]!;
+        const message =
+          result.reason instanceof Error
+            ? result.reason.message
+            : String(result.reason);
         console.error('[v2-gen] job failed', job.id, job.kind, message);
       }
     }
@@ -257,7 +281,13 @@ export async function runWorkerBatch(
  */
 export async function runWorkerUntilIdle(
   workerId: string,
-  opts?: { maxEmptyRounds?: number; idleMs?: number; deadlineMs?: number },
+  opts?: {
+    maxEmptyRounds?: number;
+    idleMs?: number;
+    deadlineMs?: number;
+    concurrency?: number;
+    filter?: ClaimJobsFilter;
+  },
 ): Promise<number> {
   const maxEmpty = opts?.maxEmptyRounds ?? 3;
   const idleMs = opts?.idleMs ?? 2000;
@@ -271,7 +301,9 @@ export async function runWorkerUntilIdle(
       console.info(`[v2-gen:drain] deadline hit worker=${workerId} total=${total}`);
       break;
     }
-    const n = await runWorkerBatch(workerId);
+    const n = await runWorkerBatch(workerId, opts?.filter, {
+      concurrency: opts?.concurrency,
+    });
     total += n;
     if (n === 0) {
       empty += 1;
@@ -284,6 +316,38 @@ export async function runWorkerUntilIdle(
   }
   console.info(`[v2-gen:drain] end worker=${workerId} total=${total}`);
   return total;
+}
+
+const IMAGE_DRAIN_KINDS = ['image_specs', 'image'] as const;
+
+export async function enqueueAndStartLessonImages(opts: {
+  day: number;
+  targetLang?: string;
+  keys?: string[];
+  force?: boolean;
+}): Promise<import('@/lib/v2/images').EnqueueLessonImagesResult> {
+  const { enqueueLessonImages } = await import('@/lib/v2/images');
+  const enqueued = await enqueueLessonImages(opts);
+  if (enqueued.jobIds.length === 0) return enqueued;
+
+  const workerId = `admin-img-${process.pid}-${Date.now().toString(36)}`;
+  void runWorkerUntilIdle(workerId, {
+    maxEmptyRounds: 3,
+    idleMs: 2000,
+    deadlineMs: 280_000,
+    concurrency: 2,
+    filter: {
+      day: enqueued.day,
+      targetLang: enqueued.target_lang,
+      kinds: [...IMAGE_DRAIN_KINDS],
+    },
+  }).catch((err) => {
+    console.error(
+      '[v2-gen] image worker failed',
+      err instanceof Error ? err.message : err,
+    );
+  });
+  return enqueued;
 }
 
 export async function processLessonJob(
@@ -300,6 +364,25 @@ export async function processLessonJob(
     }, 60_000);
     try {
       await processPackJob(job, workerId);
+    } finally {
+      clearInterval(heartbeatTimer);
+    }
+    return;
+  }
+
+  if (job.kind === 'image_specs' || job.kind === 'image') {
+    console.info(
+      `[v2-gen:job] start id=${job.id} kind=${job.kind} day=${job.day} v=${job.version} (image)`,
+    );
+    const heartbeatTimer = setInterval(() => {
+      void heartbeat(job.id, workerId);
+    }, 60_000);
+    try {
+      if (job.kind === 'image_specs') {
+        await processImageSpecsJob(job);
+      } else {
+        await processImageJob(job);
+      }
     } finally {
       clearInterval(heartbeatTimer);
     }
@@ -444,6 +527,20 @@ async function processLessonJobBody(
           },
           { $set: { input_hash: storyHash } },
         );
+        const rwHash = hashRealWorldJob(
+          brief,
+          itemsAsKnown(result.items),
+          brief.authored_real_world,
+        );
+        await V2JobModel().updateOne(
+          {
+            day: job.day,
+            target_lang: job.target_lang,
+            version: job.version,
+            kind: 'real_world',
+          },
+          { $set: { input_hash: rwHash } },
+        );
         await finishJobSuccess({
           jobId: job.id,
           provider: result.provider,
@@ -504,12 +601,107 @@ async function processLessonJobBody(
           version: job.version,
           targetLang: job.target_lang,
         });
-        if (result.fatals?.length) {
-          throw new Error(
-            result.fatals.map((f) => `${f.rule}: ${f.message}`).join('; '),
+        const extras = progressFromExtras({
+          fatals: result.fatals ?? [],
+          fixes: result.fixes ?? [],
+          warnings: result.warnings ?? [],
+          flagged: result.flagged ?? false,
+          retries: result.retries ?? 0,
+          auto_fix_count: result.auto_fix_count ?? 0,
+        });
+        const inputMeta = buildInputMeta({
+          brief,
+          userBody: result.userBody,
+          systemModules: result.systemModules,
+        });
+
+        if (result.skipped || !result.story) {
+          // Soft skip: day continues without a story (00 §4).
+          await updateDraft({
+            day: job.day,
+            targetLang: job.target_lang,
+            version: job.version,
+            meta: { story_missing: true, flagged: true },
+            mergeMeta: true,
+          });
+          await setDraftHandoff({
+            day: job.day,
+            targetLang: job.target_lang,
+            version: job.version,
+            key: 'story',
+            value: null,
+          });
+          const outlineHash = hashOutlineJob(
+            brief,
+            itemsAsKnown(items),
+            gen.page_plan ?? [],
+            undefined,
           );
+          await V2JobModel().updateOne(
+            {
+              day: job.day,
+              target_lang: job.target_lang,
+              version: job.version,
+              kind: 'outline',
+            },
+            { $set: { input_hash: outlineHash } },
+          );
+          await finishJobSkipped({
+            jobId: job.id,
+            provider: result.provider,
+            model: result.model,
+            timing: result.timing,
+            tokens: result.tokens,
+            over_budget: result.over_budget,
+            input: inputMeta,
+            output: {
+              skipped: true,
+              story_missing: true,
+              fatals: result.fatals,
+            },
+            issues: result.issues,
+            attempts: [
+              {
+                attempt: result.retries + 1,
+                finished_at: new Date(),
+                output: { skipped: true },
+                tokens: result.tokens,
+                over_budget: result.over_budget,
+                provider: result.provider,
+                model: result.model,
+                usd_estimate: result.timing.usd_estimate,
+              },
+            ],
+            extraProgress: extras,
+            reason:
+              result.fatals.map((f) => `${f.rule}: ${f.message}`).join('; ') ||
+              'story structure failed after retry',
+          });
+          break;
         }
-        const storyHandoff = buildStoryHandoff(result.story);
+
+        const storyHandoff = buildStoryHandoff({
+          id: result.story.id,
+          setting: result.story.setting,
+          cast: result.story.cast.map((c) => ({
+            id: c.id,
+            name: c.name,
+            role: c.role,
+          })),
+          lines: result.story.lines.map((l) => ({
+            speaker: l.speaker,
+            tl: l.tl,
+            ids: l.ids ?? [],
+            ar: l.ar ?? undefined,
+          })),
+        });
+        await updateDraft({
+          day: job.day,
+          targetLang: job.target_lang,
+          version: job.version,
+          meta: { story_missing: false },
+          mergeMeta: true,
+        });
         await setDraftHandoff({
           day: job.day,
           targetLang: job.target_lang,
@@ -523,15 +715,26 @@ async function processLessonJobBody(
           gen.page_plan ?? [],
           storyHandoff,
         );
-        await V2JobModel().updateOne(
-          {
+        const outlineJob = await V2JobModel().findOne({
+          day: job.day,
+          target_lang: job.target_lang,
+          version: job.version,
+          kind: 'outline',
+        });
+        // Admin story regen: outline already done — re-link page 0 without re-running deps.
+        if (outlineJob?.status === 'done') {
+          await linkStoryIntoLesson({
             day: job.day,
-            target_lang: job.target_lang,
             version: job.version,
-            kind: 'outline',
-          },
-          { $set: { input_hash: outlineHash } },
-        );
+            targetLang: job.target_lang,
+            storyHandoff,
+          });
+        } else {
+          await V2JobModel().updateOne(
+            { _id: outlineJob?._id },
+            { $set: { input_hash: outlineHash } },
+          );
+        }
         await finishJobSuccess({
           jobId: job.id,
           provider: result.provider,
@@ -539,11 +742,7 @@ async function processLessonJobBody(
           timing: result.timing,
           tokens: result.tokens,
           over_budget: result.over_budget,
-          input: buildInputMeta({
-            brief,
-            userBody: result.userBody,
-            systemModules: result.systemModules,
-          }),
+          input: inputMeta,
           output: { story_id: result.story.id, lines: result.story.lines.length },
           handoff: storyHandoff,
           issues: result.issues,
@@ -559,14 +758,7 @@ async function processLessonJobBody(
               usd_estimate: result.timing.usd_estimate,
             },
           ],
-          extraProgress: progressFromExtras({
-            fatals: result.fatals ?? [],
-            fixes: result.fixes ?? [],
-            warnings: result.warnings ?? [],
-            flagged: result.flagged ?? false,
-            retries: result.retries ?? 0,
-            auto_fix_count: result.auto_fix_count ?? 0,
-          }),
+          extraProgress: extras,
         });
         break;
       }
@@ -577,7 +769,13 @@ async function processLessonJobBody(
         const itemDigest =
           (handoffs?.items as { id: string; type: string; tl: string }[]) ??
           itemsAsKnown(items);
-        const storyHandoff = handoffs?.story as StoryHandoff | undefined;
+        const storyHandoff = handoffs?.story as StoryHandoff | undefined | null;
+        const storyReady =
+          storyHandoff &&
+          typeof storyHandoff === 'object' &&
+          Boolean((storyHandoff as StoryHandoff).story_id)
+            ? (storyHandoff as StoryHandoff)
+            : undefined;
         const result = await runOutlineJob({
           brief,
           items: itemDigest.map((i) => ({
@@ -585,15 +783,14 @@ async function processLessonJobBody(
             type: i.type,
             tl: i.tl,
           })),
-          story: storyHandoff,
+          story: storyReady,
         });
         if (result.fatals?.length) {
           throw new Error(
             result.fatals.map((f) => `${f.rule}: ${f.message}`).join('; '),
           );
         }
-        const story_id =
-          storyHandoff?.story_id ?? storyIdFor(job.day, job.target_lang);
+        const story_id = storyReady?.story_id;
         const outline: OutlineResult = {
           ...result.outline,
           items,
@@ -602,7 +799,7 @@ async function processLessonJobBody(
         const stubPages = outline.pages.map((p, i) => {
           const isIntro =
             p.role === 'intro' || (i === 0 && p.preset === 'story');
-          if (!isIntro) return null;
+          if (!isIntro || !story_id) return null;
           return {
             id: p.page_id,
             preset: 'story' as const,
@@ -625,7 +822,7 @@ async function processLessonJobBody(
               target_lang: job.target_lang,
               day: job.day,
               kind: dayPlan.is_story ? 'story' : 'lesson',
-              story_id,
+              ...(story_id ? { story_id } : {}),
               pages: outline.pages.map((p) => p.page_id),
               situation: outline.lesson?.situation,
               can_do: outline.lesson?.can_do,
@@ -634,7 +831,11 @@ async function processLessonJobBody(
             },
             pages: stubPages,
           },
-          meta: { outline, regen_round: 0 },
+          meta: {
+            outline,
+            regen_round: 0,
+            ...(story_id ? {} : { story_missing: true }),
+          },
           mergeMeta: true,
         });
         await setDraftHandoff({
@@ -1011,9 +1212,6 @@ async function processLessonJobBody(
         const outline = draft.outline as OutlineResult;
         const items = (draft.items ?? []) as Item[];
         if (!outline) throw new Error('Missing outline');
-        if (job.page_index == null) {
-          throw new Error('questions job missing page_index');
-        }
         const handoffs = (draft.meta as { handoffs?: Record<string, unknown> })
           ?.handoffs;
         const outlineHandoff = handoffs?.outline as
@@ -1022,42 +1220,44 @@ async function processLessonJobBody(
         const itemDigest = handoffs?.items as
           | { id: string; type: string; tl: string; role?: string }[]
           | undefined;
-        const pageId =
-          job.page_id ??
-          outline.pages.find((p) => p.index === job.page_index)?.page_id ??
-          `p${job.page_index}`;
+        const storyHandoff = handoffs?.story as
+          | {
+              item_first_index?: { id: string; line: number }[];
+              item_order?: string[];
+              ids?: string[];
+            }
+          | undefined;
+        const storyItemOrder =
+          storyHandoff?.item_first_index?.map((e) => e.id) ??
+          storyHandoff?.item_order ??
+          storyHandoff?.ids ??
+          undefined;
+        const coreItemIds = brief.core_items.map((c) => c.id);
+        const realWorldHandoff = handoffs?.real_world as
+          | RealWorldHandoff
+          | null
+          | undefined;
         const result = await runQuestionsJob({
           brief,
           outline: { ...outline, items },
           items,
-          pageIndex: job.page_index,
-          pageId,
           planSummary: outlineHandoff?.plan_summary,
           itemDigest,
+          storyItemOrder,
+          coreItemIds,
+          realWorld: realWorldHandoff ?? null,
         });
         if (result.fatals?.length) {
           throw new Error(
             result.fatals.map((f) => `${f.rule}: ${f.message}`).join('; '),
           );
         }
-        // Merge this page's questions into draft
-        const prevQs = ((draft.questions as Question[]) ?? []).filter(
-          (q) => q.page_index !== job.page_index,
-        );
-        const mergedQs = [...prevQs, ...result.questions];
-        const qDigest = buildQuestionDigest(mergedQs);
+        const qDigest = buildQuestionDigest(result.questions);
         await updateDraftFields({
           day: job.day,
           targetLang: job.target_lang,
           version: job.version,
-          fields: { questions: mergedQs },
-        });
-        await setDraftHandoff({
-          day: job.day,
-          targetLang: job.target_lang,
-          version: job.version,
-          key: handoffKey('questions', job.page_index),
-          value: buildQuestionDigest(result.questions),
+          fields: { questions: result.questions },
         });
         await setDraftHandoff({
           day: job.day,
@@ -1066,6 +1266,12 @@ async function processLessonJobBody(
           key: 'questions',
           value: qDigest,
         });
+        const rwIdsForHash =
+          realWorldHandoff &&
+          !realWorldHandoff.hide &&
+          realWorldHandoff.phrases.length >= 3
+            ? realWorldHandoff.phrases.map((p) => p.id)
+            : [];
         await V2JobModel().updateOne(
           { _id: job.id },
           {
@@ -1073,7 +1279,8 @@ async function processLessonJobBody(
               input_hash: hashQuestionsJob(
                 brief,
                 itemsAsKnown(items),
-                outline.pages.filter((p) => p.index === job.page_index),
+                outline.pages,
+                rwIdsForHash,
               ),
             },
           },
@@ -1184,6 +1391,115 @@ async function processLessonJobBody(
           handoff: mHandoff,
           issues: result.issues,
         });
+        break;
+      }
+      case 'real_world': {
+        const items = (draft.items ?? []) as Item[];
+        let result: Awaited<ReturnType<typeof runRealWorldJob>>;
+        try {
+          result = await runRealWorldJob({ brief, items });
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : String(err);
+          result = {
+            handoff: {
+              phrases: [],
+              tip: {
+                title_eg: 'نصيحة',
+                wrong_tl: 'Quero',
+                right_tl: 'Queria',
+                body_eg: 'دي المهذبة في البرتغال.',
+              },
+              hide: true,
+              issues: [`throw: ${msg}`],
+              authored: false,
+            },
+            skipped: true,
+            issues: [`throw: ${msg}`],
+            timing: null,
+            tokens: null,
+            over_budget: false,
+            model: 'error',
+            provider: null,
+            userBody: '',
+            systemModules: [
+              { name: 'core', version: '1' },
+              { name: 'realWorld', version: '1' },
+            ],
+          };
+        }
+        const handoff = result.handoff as RealWorldHandoff;
+        // Merge surviving rw phrases into the item bank (has_card:false).
+        if (handoff.phrases.length) {
+          const rwItems = realWorldPhrasesToItems(handoff.phrases);
+          const existingIds = new Set(items.map((i) => i.id));
+          const merged = [
+            ...items,
+            ...rwItems.filter((i) => !existingIds.has(i.id)),
+          ];
+          await updateDraftFields({
+            day: job.day,
+            targetLang: job.target_lang,
+            version: job.version,
+            fields: { items: merged },
+          });
+        }
+        await setDraftHandoff({
+          day: job.day,
+          targetLang: job.target_lang,
+          version: job.version,
+          key: 'real_world',
+          value: handoff,
+        });
+        await V2JobModel().updateOne(
+          { _id: job.id },
+          {
+            $set: {
+              input_hash: hashRealWorldJob(
+                brief,
+                itemsAsKnown(items),
+                brief.authored_real_world,
+              ),
+            },
+          },
+        );
+        const emptyTiming = {
+          label: 'real_world',
+          duration_ms: 0,
+          input_tokens: 0,
+          output_tokens: 0,
+          usd_estimate: 0,
+        };
+        const emptyTokens = { system: 0, input: 0, output: 0 };
+        const baseFinish = {
+          jobId: job.id,
+          provider: result.provider ?? 'none',
+          model: result.model,
+          timing: result.timing ?? emptyTiming,
+          tokens: result.tokens ?? emptyTokens,
+          over_budget: result.over_budget,
+          input: buildInputMeta({
+            brief,
+            userBody: result.userBody || '(real_world)',
+            systemModules: result.systemModules,
+          }),
+          output: {
+            hide: handoff.hide,
+            phrase_count: handoff.phrases.length,
+            phrases: handoff.phrases,
+            tip: handoff.tip,
+          },
+          issues: result.issues,
+        };
+        if (result.skipped || handoff.hide) {
+          await finishJobSkipped({
+            ...baseFinish,
+            reason: handoff.hide
+              ? 'real_world hidden (<3 phrases or story day)'
+              : 'real_world skipped',
+          });
+        } else {
+          await finishJobSuccess({ ...baseFinish, handoff });
+        }
         break;
       }
       case 'daily_use': {
@@ -1384,9 +1700,19 @@ async function processLessonJobBody(
         const assembleHandoffs = (
           draft.meta as { handoffs?: Record<string, unknown> } | undefined
         )?.handoffs;
-        const storyHandoff = assembleHandoffs?.story as
+        const rawStoryHandoff = assembleHandoffs?.story as
           | StoryHandoff
+          | null
           | undefined;
+        const storyHandoff =
+          rawStoryHandoff &&
+          typeof rawStoryHandoff === 'object' &&
+          Boolean(rawStoryHandoff.story_id)
+            ? rawStoryHandoff
+            : undefined;
+        const storyMissing = Boolean(
+          (draft.meta as { story_missing?: boolean } | undefined)?.story_missing,
+        );
         const result = runAssembleJob({
           day: job.day,
           targetLang: job.target_lang,
@@ -1401,10 +1727,17 @@ async function processLessonJobBody(
           allowedIds,
           recycleIds: brief.recycle_ids,
           chatCharacter: brief.chat_character,
-          storyId:
-            storyHandoff?.story_id ??
-            (draft.lesson as { story_id?: string } | undefined)?.story_id,
+          storyId: storyMissing
+            ? undefined
+            : storyHandoff?.story_id ??
+              (draft.lesson as { story_id?: string } | undefined)?.story_id,
           storyLineIds: storyHandoff?.lines.map((l) => l.ids) ?? undefined,
+          realWorld: assembleHandoffs?.real_world as
+            | RealWorldHandoff
+            | null
+            | undefined,
+          situationEg: brief.situation_eg,
+          situationTl: dayPlan.generation?.situation_tl,
         });
         // Persist fixed pages from assemble dialogue fix
         if (result.pack.pages?.length) {
@@ -1838,6 +2171,8 @@ export {
   listJobsForVersion,
   requeueJob,
   requeueStale,
+  enqueueQuestionsRegen,
+  enqueueStoryRegen,
   printTimingTable,
   claimReadyJobs,
 };

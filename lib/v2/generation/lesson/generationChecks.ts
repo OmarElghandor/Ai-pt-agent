@@ -40,8 +40,8 @@ const EG_IN_AR = [
 ];
 
 /**
- * Pedagogical checks. arabic_register is an error (blocks publish / flags assemble).
- * Brazilian / sentence_length stay warnings.
+ * Pedagogical checks. Content issues are warnings (00 soft principle).
+ * Structure/lang mismatches on rt segments stay as errors for the pack validator.
  */
 export function runGenerationChecks(pack: LessonPack, phase = 1): Issue[] {
   const issues: Issue[] = [];
@@ -151,7 +151,7 @@ function checkString(
           path,
           rule: 'arabic_register',
           message: `MSA marker "${m}" in Egyptian field`,
-          severity: 'error',
+          severity: 'warning',
         });
       }
     }
@@ -163,7 +163,7 @@ function checkString(
           path,
           rule: 'arabic_register',
           message: `Egyptian marker "${e}" in MSA meaning field`,
-          severity: 'error',
+          severity: 'warning',
         });
       }
     }

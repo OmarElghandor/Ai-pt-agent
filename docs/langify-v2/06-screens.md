@@ -46,6 +46,17 @@ All screens are routes under `app/(v2)/` in `ai-agent-talk`. Each screen lists i
 - **Story pages** (`preset: story` with a `dialogue` block) open the **StoryPlayer** (see 05), full screen and without the guided caption bar. **The story never stops to ask the learner anything** (2026-10-31). Learner lines play like the others.
   - **Intro mode (page 0):** passive. Every line plays by itself, the learner's included. The meaning is hidden and is shown per line on tap. There are no turns, asks or tips. The end screen shows "خلّصت القصة" and how many meanings were opened.
   - **Test mode (after the detail pages):** the story plays again from start to end without stopping. The meaning is hidden, with no per-line reveal, no hint, no tips and no asks. When it ends, the end screen shows 3–4 short questions about the story (what the character asked, what you replied, one line meaning), then "فهمت n من N".
+- **"لاقي الصورة" step** (2026-11-03; reference `18-find-image-step.png`), shown after the grammar page with no tab bar:
+  - **Header:** back, the title, "Dia N" and a round counter (٤/٦), plus a segmented progress bar (done = coral, current = teal, next = sand).
+  - **Word card:** a big teal speaker that autoplays once per round, the `tl` with its article in group color, the `say` line, a small tag (اسم مذكر / جملة), and "دوس عشان تسمع تاني".
+  - **Answers:** a 2×2 grid of image cards. The right one gets a teal border with "صح!" and `tl` · meaning; a wrong one gets a coral border with "مش دي" and the struck-through `tl` · meaning.
+  - **Below:** the mustard note card when there's a note, then the coral "السؤال التالي" with "Dia N · round / total".
+  - **End:** "لقيت n من N" and "كمّل".
+- **"بيقولوها كده" page** (2026-11-02; reference `17-real-world-phrases.png`):
+  - The header has the situation pill, a title, one subtitle line and a small situation image.
+  - Under it: "٥ عبارات" and the "غطّي المعنى" toggle, then the category chips (only when there are 2 or more categories).
+  - Each phrase is a numbered card with a tag, a speaker button, the `tl` in serif, the `say` line in grey, the meaning, and a small "+ للكروت" action.
+  - At the end: the mustard tip card, then the coral "التالي". The page has no quiz of its own.
 - **Cover (غطّي):** hides `meaning`, `tl` or `endings`, as the page's `cover` says. Tap to peek.
 - **Quiz (اختبرني):** 3 questions from the page's `quiz` ids, then return.
 - Data: the page object from the lesson JSON. Answers go to POST `/api/v2/answers`.

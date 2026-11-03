@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { ReportErrorButton } from '@/components/v2';
+import { LessonImagesAdmin } from '@/components/v2/admin/LessonImagesAdmin';
 
 type JobRow = {
   id: string;
@@ -274,6 +275,25 @@ export default function V2AdminLessonPage() {
     }
   }
 
+  async function regenerateStory() {
+    setBusy(true);
+    setMessage(null);
+    setError(null);
+    try {
+      const res = await fetch(`/api/v2/admin/generate/story/${day}`, {
+        method: 'POST',
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? res.statusText);
+      setMessage(json.message ?? `Story regenerating v${json.version}`);
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function generatePack() {
     setBusy(true);
     setMessage(null);
@@ -414,6 +434,13 @@ export default function V2AdminLessonPage() {
           <button type="button" disabled={busy} onClick={() => void generate()}>
             Generate from scratch
           </button>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => void regenerateStory()}
+          >
+            Regenerate story
+          </button>
           <button type="button" disabled={busy} onClick={() => void rerunStale()}>
             Rerun stale
           </button>
@@ -507,6 +534,8 @@ export default function V2AdminLessonPage() {
           </ol>
         </section>
       ) : null}
+
+      {Number.isFinite(day) && day > 0 ? <LessonImagesAdmin day={day} /> : null}
 
       {/* Job graph */}
       <section style={{ marginBottom: 20 }}>

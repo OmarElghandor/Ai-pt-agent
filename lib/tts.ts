@@ -146,15 +146,19 @@ function escapeXml(s: string) {
     .replace(/"/g, '&quot;');
 }
 
-export async function speakPortuguese(text: string): Promise<TtsResult> {
+export async function speakPortuguese(
+  text: string,
+  opts?: { voice?: string },
+): Promise<TtsResult> {
   if (!AZURE_KEY || !AZURE_REGION) {
     throw new TTSNotConfiguredError(
       'AZURE_SPEECH_KEY / AZURE_SPEECH_REGION not configured — add them to .env.local to enable PT TTS',
     );
   }
 
+  const voice = opts?.voice?.trim() || AZURE_PT_VOICE;
   const ssml = `<speak version="1.0" xml:lang="pt-PT">
-    <voice name="${AZURE_PT_VOICE}">${escapeXml(text)}</voice>
+    <voice name="${escapeXml(voice)}">${escapeXml(text)}</voice>
   </speak>`;
 
   const res = await fetch(
@@ -184,6 +188,9 @@ export async function speakPortuguese(text: string): Promise<TtsResult> {
 export async function speakSegment(seg: {
   lang: 'pt' | 'ar';
   text: string;
+  voice?: string;
 }): Promise<TtsResult> {
-  return seg.lang === 'ar' ? speakArabic(seg.text) : speakPortuguese(seg.text);
+  return seg.lang === 'ar'
+    ? speakArabic(seg.text)
+    : speakPortuguese(seg.text, { voice: seg.voice });
 }

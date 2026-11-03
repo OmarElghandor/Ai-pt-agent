@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 /**
  * Validate examples/day06-example.json (strict) and publish via publishLesson.
- * Day 11 (ESTAR gold pack; filename kept from the old day-6 order).
+ * Day 22 (ESTAR gold pack; filename kept from the old day-6 order).
  * Also seeds v2_conjugations from content/v2/conjugations/pt-PT.json.
  */
 import { existsSync, readFileSync } from 'node:fs';

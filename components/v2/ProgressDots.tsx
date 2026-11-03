@@ -5,6 +5,7 @@ const SKILL_DOT: Record<Skill, string> = {
   reading: 'bg-v2-skill-reading',
   speaking: 'bg-v2-skill-speaking',
   writing: 'bg-v2-skill-writing',
+  grammar: 'bg-v2-skill-reading',
 };
 
 type Dot = {

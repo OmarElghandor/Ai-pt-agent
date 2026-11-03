@@ -143,3 +143,53 @@ export async function finishJobFailed(
     },
   );
 }
+
+/**
+ * Soft skip: job produced nothing usable, but dependents may still run
+ * (e.g. story never blocks the day).
+ */
+export async function finishJobSkipped(opts: {
+  jobId: string;
+  provider?: string;
+  model?: string;
+  timing?: CallTiming;
+  tokens?: TokenBreakdown;
+  over_budget?: boolean;
+  input?: JobCallInputMeta;
+  output?: unknown;
+  issues?: unknown;
+  attempts?: JobAttemptRecord[];
+  extraProgress?: Record<string, unknown>;
+  reason?: string;
+}): Promise<void> {
+  const finished_at = new Date();
+  const usd = opts.timing?.usd_estimate ?? 0;
+  await V2JobModel().updateOne(
+    { _id: opts.jobId },
+    {
+      $set: {
+        status: 'skipped',
+        finished_at,
+        provider: opts.provider,
+        model: opts.model,
+        input: opts.input,
+        output: opts.output ?? { skipped: true, reason: opts.reason },
+        tokens: opts.tokens,
+        over_budget: opts.over_budget ?? false,
+        usd_estimate: usd,
+        issues: opts.issues,
+        attempts: opts.attempts ?? [],
+        error: opts.reason,
+        progress: {
+          timing: opts.timing,
+          tokens: opts.tokens,
+          over_budget: opts.over_budget,
+          usd_estimate: usd,
+          skipped: true,
+          ...(opts.extraProgress ?? {}),
+        },
+      },
+      $unset: { worker_id: 1, lease_expires_at: 1, handoff: 1 },
+    },
+  );
+}

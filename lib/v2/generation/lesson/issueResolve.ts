@@ -87,9 +87,11 @@ const FATAL_ASSEMBLE_RULES = new Set([
   'core_id_missing',
   'duplicate_ar',
   'duplicate_options',
-  'ar_sentence_gap',
+  'ar_missing',
   'greeting_hello_collision',
   'slash_in_tl',
+  'slash_in_ar',
+  'options_rebuilt',
   'variant_group_uncovered',
   'phrase_not_on_phrases_page',
 ]);

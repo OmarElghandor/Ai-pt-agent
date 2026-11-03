@@ -81,7 +81,16 @@ type GenerationProgress = {
   cost: { total_usd_estimate?: number } | null;
 };
 
-type BusyKind = 'generate' | 'warm' | 'status' | 'rerun' | 'item' | null;
+type BusyKind =
+  | 'generate'
+  | 'questions'
+  | 'story'
+  | 'images'
+  | 'warm'
+  | 'status'
+  | 'rerun'
+  | 'item'
+  | null;
 
 function jobStatusMark(s: string | undefined): string {
   if (s === 'done') return '✓';
@@ -239,6 +248,175 @@ export default function V2AdminPage() {
       setMessage(`Day ${day} v${body.version} · DAG generating…`);
       // Unlock Rerun immediately; poll continues in background.
       void pollGeneration(day, body.jobId);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusyDay(null);
+      setBusyKind(null);
+    }
+  }
+
+  async function generateQuestions(day: number) {
+    setBusyDay(day);
+    setBusyKind('questions');
+    setMessage(null);
+    setError(null);
+    setProgress(null);
+    try {
+      const res = await fetch(`/api/v2/admin/generate/questions/${day}`, {
+        method: 'POST',
+      });
+      const body = (await res.json()) as {
+        error?: string;
+        jobId?: string;
+        version?: number;
+        message?: string;
+      };
+      if (!res.ok) {
+        setError(body.error ?? `Generate questions failed (${res.status})`);
+        return;
+      }
+      if (!body.jobId) {
+        setError('Generate questions returned no jobId');
+        return;
+      }
+      setMessage(
+        body.message ??
+          `Day ${day} v${body.version} · questions regenerating…`,
+      );
+      void pollGeneration(day, body.jobId);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusyDay(null);
+      setBusyKind(null);
+    }
+  }
+
+  async function generateStory(day: number) {
+    setBusyDay(day);
+    setBusyKind('story');
+    setMessage(null);
+    setError(null);
+    setProgress(null);
+    try {
+      const res = await fetch(`/api/v2/admin/generate/story/${day}`, {
+        method: 'POST',
+      });
+      const body = (await res.json()) as {
+        error?: string;
+        jobId?: string;
+        version?: number;
+        message?: string;
+      };
+      if (!res.ok) {
+        setError(body.error ?? `Regenerate story failed (${res.status})`);
+        return;
+      }
+      if (!body.jobId) {
+        setError('Regenerate story returned no jobId');
+        return;
+      }
+      setMessage(
+        body.message ?? `Day ${day} v${body.version} · story regenerating…`,
+      );
+      void pollGeneration(day, body.jobId);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusyDay(null);
+      setBusyKind(null);
+    }
+  }
+
+  async function pollImages(day: number) {
+    pollAbort.current = false;
+    setPollingDay(day);
+    const deadline = Date.now() + 45 * 60 * 1000;
+    try {
+      while (!pollAbort.current && Date.now() < deadline) {
+        const res = await fetch(`/api/v2/admin/images?day=${day}`);
+        const body = (await res.json()) as {
+          error?: string;
+          queued?: number;
+          generating?: number;
+          ready?: number;
+          blocked?: number;
+          failed?: number;
+          flagged?: number;
+          missing?: number;
+          sample_reason?: string | null;
+        };
+        if (!res.ok) {
+          setError(body.error ?? `Image poll failed (${res.status})`);
+          return;
+        }
+        const queued = body.queued ?? 0;
+        const generating = body.generating ?? 0;
+        if (queued + generating === 0) {
+          const blocked = body.blocked ?? 0;
+          const failed = body.failed ?? 0;
+          const flagged = body.flagged ?? 0;
+          const ready = body.ready ?? 0;
+          const parts: string[] = [`Day ${day} images`];
+          if (ready > 0) parts.push(`${ready} ready`);
+          if (blocked > 0) parts.push(`${blocked} blocked`);
+          if (failed > 0) parts.push(`${failed} failed`);
+          if (flagged > 0) parts.push(`${flagged} flagged`);
+          if (body.sample_reason) parts.push(`(${body.sample_reason})`);
+          if (ready === 0 && blocked + failed + flagged === 0) {
+            parts.push('none ready');
+          }
+          setMessage(parts.join(' · '));
+          return;
+        }
+        setMessage(
+          `Day ${day} images · ${queued} queued · ${generating} generating…`,
+        );
+        await new Promise((r) => setTimeout(r, 1500));
+      }
+      if (!pollAbort.current) {
+        setError(`Timed out waiting for day ${day} images.`);
+      }
+    } finally {
+      setPollingDay(null);
+    }
+  }
+
+  async function generateImages(day: number) {
+    setBusyDay(day);
+    setBusyKind('images');
+    setMessage(null);
+    setError(null);
+    try {
+      const res = await fetch('/api/v2/admin/images/generate-missing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ day, force: true }),
+      });
+      const body = (await res.json()) as {
+        error?: string;
+        missing?: number;
+        estimate_usd?: number;
+        message?: string;
+      };
+      if (!res.ok) {
+        setError(body.error ?? `Generate images failed (${res.status})`);
+        return;
+      }
+      if ((body.missing ?? 0) === 0) {
+        setMessage(body.message ?? `Day ${day} · no missing images`);
+        return;
+      }
+      const est =
+        body.estimate_usd != null ? ` (~$${body.estimate_usd.toFixed(2)})` : '';
+      setMessage(
+        `Day ${day} · generating ${body.missing} images${est}…`,
+      );
+      // Unlock the button; poll continues in background.
+      setBusyDay(null);
+      setBusyKind(null);
+      await pollImages(day);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
@@ -432,6 +610,8 @@ export default function V2AdminPage() {
           {' · '}
           <Link href="/v2-admin/reports">Reports</Link>
           {' · '}
+          <Link href="/v2-admin/characters">الشخصيات</Link>
+          {' · '}
           open a day for the full job graph / timeline
         </p>
         <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
@@ -560,6 +740,37 @@ export default function V2AdminPage() {
                   </button>
                   {row.status ? (
                     <>
+                      <button
+                        type="button"
+                        disabled={anyBusy}
+                        onClick={() => void generateQuestions(row.day)}
+                        className="rounded-v2-chip border border-v2-rule px-2 py-1 text-xs disabled:opacity-40"
+                      >
+                        {rowBusy && busyKind === 'questions'
+                          ? 'Questions…'
+                          : 'Generate questions'}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={anyBusy}
+                        onClick={() => void generateStory(row.day)}
+                        className="rounded-v2-chip border border-v2-rule px-2 py-1 text-xs disabled:opacity-40"
+                      >
+                        {rowBusy && busyKind === 'story'
+                          ? 'Story…'
+                          : 'Regenerate story'}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={anyBusy || pollingDay === row.day}
+                        onClick={() => void generateImages(row.day)}
+                        className="rounded-v2-chip border border-v2-rule px-2 py-1 text-xs disabled:opacity-40"
+                      >
+                        {(rowBusy && busyKind === 'images') ||
+                        pollingDay === row.day
+                          ? 'Images…'
+                          : 'Generate images'}
+                      </button>
                       <button
                         type="button"
                         disabled={anyBusy}

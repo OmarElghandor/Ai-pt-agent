@@ -24,12 +24,13 @@ import { runGenerationChecks } from '../lib/v2/generation/lesson/generationCheck
 import { MicroSchema, SpeakPromptSchema } from '../lib/v2/content/lesson';
 
 describe('v2 generation · plan', () => {
-  it('loads days 1–30 from pt-PT.days.json', () => {
+  it('loads days 1–49 from pt-PT.days.json', () => {
     const plan = loadPlan();
     assert.equal(plan.target_lang, 'pt-PT');
-    assert.equal(plan.days.length, 30);
+    assert.equal(plan.days.length, 49);
     assert.equal(plan.days[0]!.day, 1);
-    assert.equal(plan.days[29]!.day, 30);
+    assert.equal(plan.days[48]!.day, 49);
+    assert.equal(plan.days[48]!.is_test, true);
   });
 
   it('day 1 has grammar-first title fields', () => {
@@ -41,12 +42,12 @@ describe('v2 generation · plan', () => {
     assert.ok(plan.early_chunks_tl.includes('Muito prazer'));
   });
 
-  it('day 11 is ESTAR (gold pack day)', () => {
-    const plan = getDayPlan(11);
+  it('day 22 is ESTAR (gold pack day)', () => {
+    const plan = getDayPlan(22);
     assert.equal(plan.title_tl, 'Verbos Ser e Estar 2');
     assert.equal(plan.situation_eg, 'حاسس بإيه');
     assert.ok(plan.rule_eg.includes('ESTAR'));
-    assert.equal(plan.week, 2);
+    assert.equal(plan.week, 4);
   });
 
   it('days 1–3 are ready to generate', () => {
@@ -59,8 +60,9 @@ describe('v2 generation · plan', () => {
     }
   });
 
-  it('day 4 is ready (core items from pt-PT.core-items.json)', () => {
-    const plan = getDayPlan(4);
+  it('day 8 (numbers) is ready (core items from pt-PT.core-items.json)', () => {
+    const plan = getDayPlan(8);
+    assert.equal(plan.title_tl, 'Números 1');
     const ready = canGenerate(plan);
     assert.equal(ready.ok, true, JSON.stringify(ready));
   });
@@ -116,8 +118,8 @@ describe('v2 generation · lists', () => {
 });
 
 describe('v2 generation · buildRequest', () => {
-  it('day 3 request includes VERB_TABLE (verified only), PAGE_PLAN, no conjugated surface forms table', () => {
-    const dayPlan = getDayPlan(3);
+  it('day 5 (Gramática Básica) request includes VERB_TABLE, PAGE_PLAN, early chunks', () => {
+    const dayPlan = getDayPlan(5);
     const verified = verifiedLemmas();
     assert.ok(verified.includes('ser'));
     assert.ok(verified.includes('ficar'));
@@ -126,6 +128,7 @@ describe('v2 generation · buildRequest', () => {
     const req = buildDayRequest({ dayPlan, knownItems: [], existingImageKeys: [] });
     assert.ok(req.includes('VERB_TABLE'));
     assert.ok(req.includes('PAGE_PLAN'));
+    assert.ok(req.includes('Write day 5 of 109'));
     assert.ok(req.includes('title: Gramática Básica'));
     assert.ok(req.includes('early_chunks_tl:'));
     assert.ok(req.includes('O que é isto?'));
@@ -157,9 +160,9 @@ describe('v2 generation · buildRequest', () => {
   });
 
   it('compact DAY header has the required fields', () => {
-    const header = formatCompactDayHeader(getDayPlan(2));
+    const header = formatCompactDayHeader(getDayPlan(3));
     assert.ok(header.startsWith('DAY\n'));
-    assert.ok(header.includes('day: 2'));
+    assert.ok(header.includes('day: 3'));
     assert.ok(header.includes('title_tl: Conversação Básica'));
     assert.ok(header.includes('title_ar:'));
     assert.ok(header.includes('situation_eg:'));
@@ -219,7 +222,7 @@ describe('v2 generation · gold example still loads', () => {
       readFileSync(resolve(process.cwd(), 'examples/day06-example.json'), 'utf8'),
     );
     const parsed = LessonPackSchema.parse(raw);
-    assert.equal(parsed.lesson.day, 11);
+    assert.equal(parsed.lesson.day, 22);
   });
 
   it('day03-generated micro and speak_prompts match schemas', () => {
@@ -232,8 +235,17 @@ describe('v2 generation · gold example still loads', () => {
     assert.ok(speak.length >= 3);
   });
 
+  /** Gold packs still use retired guided mode; ignore sections-migration rules. */
+  const GOLD_SECTIONS_MIGRATION = new Set([
+    'mode_preset',
+    'mode_steps',
+    'sections_explain_missing',
+    'sections_mistakes_missing',
+    'sections_check_short',
+  ]);
+
   for (const day of [1, 2, 3]) {
-    it(`day${String(day).padStart(2, '0')} gold passes strict validation`, () => {
+    it(`day${String(day).padStart(2, '0')} gold passes strict validation (aside from sections migration)`, () => {
       const raw = JSON.parse(
         readFileSync(
           resolve(process.cwd(), `examples/day${String(day).padStart(2, '0')}-example.json`),
@@ -242,7 +254,11 @@ describe('v2 generation · gold example still loads', () => {
       );
       const parsed = LessonPackSchema.parse(raw);
       const result = validateLessonPack(parsed, { mode: 'strict' });
-      assert.equal(hasErrors(result), false, JSON.stringify(result.issues));
+      const unexpected = result.issues.filter(
+        (i) =>
+          i.severity === 'error' && !GOLD_SECTIONS_MIGRATION.has(i.rule),
+      );
+      assert.deepEqual(unexpected, [], JSON.stringify(unexpected));
     });
   }
 });
@@ -304,7 +320,7 @@ function minimalDayPack(day: number): LessonPack {
     ],
     pages: [
       staticPage('p1', 'phrases', 'phrase.hello', 'phrase.my_name'),
-      guidedPage('p2', 'pattern', 'phrase.my_name', 'sentence.pleasure'),
+      sectionsPatternPage('p2', 'phrase.my_name', 'sentence.pleasure'),
       staticPage('p3', 'dictionary', 'word.nome'),
       staticPage('p4', 'phrases', 'phrase.hello'),
     ],
@@ -320,86 +336,74 @@ function minimalDayPack(day: number): LessonPack {
           { label: [{ text: 'وداعا', lang: 'ar' }], correct: false },
         ],
       },
+      {
+        id: 'q.check1',
+        type: 'mcq',
+        skill: 'grammar',
+        tests: ['phrase.my_name'],
+        prompt: [{ text: 'اختار الصح', lang: 'eg' }],
+        options: [
+          { label: [{ text: 'Chamo-me', lang: 'tl' }], correct: true },
+          { label: [{ text: 'Me chamo', lang: 'tl' }], correct: false },
+        ],
+      },
+      {
+        id: 'q.check2',
+        type: 'mcq',
+        skill: 'grammar',
+        tests: ['phrase.my_name'],
+        prompt: [{ text: 'معناها إيه؟', lang: 'eg' }],
+        options: [
+          { label: [{ text: 'اسمي', lang: 'ar' }], correct: true },
+          { label: [{ text: 'شكرا', lang: 'ar' }], correct: false },
+        ],
+      },
     ],
   };
 }
 
-function guidedPage(
+function sectionsPatternPage(
   id: string,
-  preset: 'phrases' | 'pattern',
   refA: string,
   refB: string,
 ): LessonPack['pages'][number] {
-  const blocks = [
-    {
-      id: 'b1',
-      type: 'heading' as const,
-      text: [{ text: 'جمل', lang: 'eg' as const }],
-    },
-    {
-      id: 'b2',
-      type: 'cards' as const,
-      items: [refA, refB],
-    },
-    {
-      id: 'b3',
-      type: 'tip' as const,
-      kind: 'rule' as const,
-      title: [{ text: 'ملاحظة', lang: 'eg' as const }],
-      body: [{ text: 'الضمير بعد الفعل', lang: 'eg' as const }],
-    },
-  ];
-  const steps = [
-    { target: 'b1', kind: 'reveal' as const, tip: [{ text: 'شوف العنوان', lang: 'eg' as const }] },
-    { target: 'b2', kind: 'reveal' as const, tip: [{ text: 'الجمل', lang: 'eg' as const }] },
-    { target: 'b3', kind: 'reveal' as const, tip: [{ text: 'الملاحظة', lang: 'eg' as const }] },
-    {
-      target: 'b2',
-      kind: 'ask' as const,
-      ask: {
-        question: [{ text: 'إيه أول جملة؟', lang: 'eg' as const }],
-        options: [
-          { label: [{ text: 'Olá!', lang: 'tl' as const }], correct: true },
-          { label: [{ text: 'Adeus!', lang: 'tl' as const }], correct: false },
-        ],
-      },
-    },
-    { target: 'b2', kind: 'reveal' as const, tip: [{ text: 'كمل', lang: 'eg' as const }] },
-    { target: 'b2', kind: 'reveal' as const, tip: [{ text: 'كمل تاني', lang: 'eg' as const }] },
-    { target: 'b2', kind: 'reveal' as const, tip: [{ text: 'كمل تالت', lang: 'eg' as const }] },
-    {
-      target: 'b2',
-      kind: 'ask' as const,
-      ask: {
-        question: [{ text: 'Chamo-me معناها إيه؟', lang: 'eg' as const }],
-        options: [
-          { label: [{ text: 'اسمي', lang: 'ar' as const }], correct: true },
-          { label: [{ text: 'شكرا', lang: 'ar' as const }], correct: false },
-        ],
-      },
-    },
-    { target: 'b3', kind: 'reveal' as const, tip: [{ text: 'راجع', lang: 'eg' as const }] },
-    { target: 'b1', kind: 'reveal' as const, tip: [{ text: 'راجع تاني', lang: 'eg' as const }] },
-    { target: 'b2', kind: 'reveal' as const, tip: [{ text: 'آخر جملة', lang: 'eg' as const }] },
-    {
-      target: 'b2',
-      kind: 'ask' as const,
-      ask: {
-        question: [{ text: 'الحمد لله خلصنا؟', lang: 'eg' as const }],
-        options: [
-          { label: [{ text: 'أيوه', lang: 'eg' as const }], correct: true },
-          { label: [{ text: 'لأ', lang: 'eg' as const }], correct: false },
-        ],
-      },
-    },
-  ];
   return {
     id,
-    preset,
-    mode: 'guided' as const,
+    preset: 'pattern',
+    mode: 'sections',
     title: [{ text: id, lang: 'tl' }],
-    blocks,
-    steps,
+    explain: [
+      { text: 'الضماير بتيجي بعد الفعل. ', lang: 'eg' },
+      { text: 'Me chamo', lang: 'tl', wrong: true },
+      { text: ' غلط، الصح ', lang: 'eg' },
+      { text: 'Chamo-me', lang: 'tl' },
+      { text: '. كمان ', lang: 'eg' },
+      { text: 'Omar', lang: 'tl' },
+      { text: ' بيجي بعد الفعل.', lang: 'eg' },
+    ],
+    check: ['q.check1', 'q.check2'],
+    blocks: [
+      {
+        id: 'b1',
+        type: 'heading' as const,
+        text: [{ text: 'القاعدة', lang: 'eg' as const }],
+      },
+      {
+        id: 'b2',
+        type: 'tip' as const,
+        kind: 'rule' as const,
+        title: [{ text: 'الصيغة', lang: 'eg' as const }],
+        body: [
+          { text: 'Chamo-me', lang: 'tl' as const },
+          { text: ' وبعدين الاسم', lang: 'eg' as const },
+        ],
+      },
+      {
+        id: 'b3',
+        type: 'examples' as const,
+        items: [{ ref: refA }, { ref: refB }, { ref: 'phrase.hello' }],
+      },
+    ],
   };
 }
 

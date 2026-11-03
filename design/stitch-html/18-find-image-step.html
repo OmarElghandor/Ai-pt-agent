@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "on-error": "#ffffff",
+        "on-background": "#201b11",
+        "primary-fixed-dim": "#97d0d7",
+        "surface": "#FFFFFF",
+        "primary": "#003c41",
+        "teal-dark": "#14545a",
+        "teal-deep": "#003c41",
+        "coral": "#F56D4E",
+        "coral-dark": "#a9361d",
+        "coral-light": "#feece7",
+        "on-tertiary-fixed-variant": "#534600",
+        "surface-tint": "#2c676d",
+        "surface-container-high": "#f2e7d6",
+        "on-tertiary-container": "#4b3f00",
+        "inverse-surface": "#363024",
+        "muted": "#8C8C86",
+        "inverse-on-surface": "#fbefde",
+        "on-tertiary-fixed": "#221b00",
+        "on-primary-container": "#8dc6cd",
+        "on-error-container": "#93000a",
+        "tertiary": "#6e5e00",
+        "surface-variant": "#ece1d0",
+        "text": "#242424",
+        "canvas": "#EEF2F2",
+        "tertiary-container": "#c4aa30",
+        "on-primary": "#ffffff",
+        "surface-container": "#f8ecdb",
+        "outline": "#70797a",
+        "primary-container": "#14545a",
+        "on-secondary-fixed-variant": "#881f06",
+        "on-primary-fixed": "#002023",
+        "surface-container-highest": "#ece1d0",
+        "error-container": "#ffdad6",
+        "tertiary-fixed": "#fee263",
+        "surface-dim": "#e4d9c8",
+        "secondary-fixed-dim": "#ffb4a3",
+        "error": "#ba1a1a",
+        "outline-variant": "#bfc8c9",
+        "on-secondary": "#ffffff",
+        "on-secondary-fixed": "#3d0600",
+        "on-surface": "#201b11",
+        "secondary": "#F56D4E",
+        "secondary-container": "#fe7354",
+        "inverse-primary": "#97d0d7",
+        "surface-container-low": "#fef2e1",
+        "on-secondary-container": "#6b1100",
+        "on-tertiary": "#ffffff",
+        "surface-bright": "#fff8f2",
+        "surface-container-lowest": "#ffffff",
+        "on-primary-fixed-variant": "#0a4f54",
+        "secondary-fixed": "#ffdad2",
+        "teal-700": "#1E6670",
+        "on-surface-variant": "#404849",
+        "tertiary-fixed-dim": "#e1c64a",
+        "primary-fixed": "#b2edf3",
+        "background": "#FFF8F2"
+      },
+      borderRadius: {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "2xl": "1rem",
+        "full": "9999px"
+      },
+      fontFamily: {
+        "body-sm": ["Inter", "sans-serif"],
+        "headline-lg": ["Newsreader", "serif"],
+        "headline-sm": ["Newsreader", "serif"],
+        "label-lg": ["Inter", "sans-serif"],
+        "body-md": ["Inter", "sans-serif"],
+        "body-lg": ["Inter", "sans-serif"],
+        "label-md": ["Inter", "sans-serif"],
+        "headline-md": ["Newsreader", "serif"],
+        "label-sm": ["Inter", "sans-serif"],
+        "newsreader": ["Newsreader", "Georgia", "serif"]
+      }
+    }
+  }
+};</script><style>
+@layer base {
+  html, body {
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    overscroll-behavior: none;
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  main > :first-child {
+    margin-top: 0 !important;
+  }
+  main > :last-child {
+    margin-bottom: 0 !important;
+  }
+}
+::-webkit-scrollbar {
+  display: none;
+}
+body {
+  min-height: max(884px, 100dvh);
+}
+</style>
+</head><body class="bg-[#FFF8F2] font-body-md text-[#201b11] min-h-screen flex flex-col antialiased selection:bg-[#F56D4E]/20">
+<!-- Header Navigation Bar -->
+<header class="fixed top-0 inset-x-0 z-50 bg-[#FFF8F2]/90 backdrop-blur-md border-b border-[#f0e3d2] pt-safe"><div class="h-14 px-4 flex items-center justify-between"><div class="flex items-center gap-2.5"><button aria-label="رجوع" class="w-10 h-10 rounded-full flex items-center justify-center text-[#14545a] hover:bg-[#14545a]/10 transition-colors" onclick="history.back()"><span class="material-symbols-outlined text-[24px]">arrow_forward</span></button><h1 class="font-bold text-[20px] text-[#14545a] tracking-tight">لاقي الصورة</h1></div></div></header>
+<!-- Main Container -->
+<main class="flex-1 w-full bg-[#FFF8F2] px-4 pt-16 pb-safe"><div class="flex flex-col w-full pb-6 space-y-3.5 select-none max-w-md mx-auto">
+<!-- Progress Tracker & Metadata Header Section -->
+<div class="flex flex-col bg-[#FFF3E2] border border-[#f0dfc8] rounded-2xl p-3.5 shadow-sm space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-2.5 space-x-reverse">
+<span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#14545a] text-white text-[12px] font-bold shadow-sm">
+          ٤/٦
+        </span>
+<div class="flex flex-col">
+<span class="text-[#14545a] font-bold text-[17px] tracking-tight leading-snug">لاقي الصورة</span>
+<span class="text-[#404849] text-[12px] font-normal">تمرّن على مفردات المائدة</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#14545a]/10 text-[#14545a] border border-[#14545a]/15">
+<span class="w-2 h-2 rounded-full bg-[#F56D4E]"></span>
+<span class="text-[12px] font-semibold tracking-wide">Dia 3 · الأكل</span>
+</div>
+</div>
+<!-- Segmented Bookmarker Progress Bar -->
+<div class="grid grid-cols-6 gap-1.5 pt-0.5">
+<div class="h-2 rounded-full bg-[#F56D4E]"></div>
+<div class="h-2 rounded-full bg-[#F56D4E]"></div>
+<div class="h-2 rounded-full bg-[#F56D4E]"></div>
+<div class="h-2 rounded-full bg-[#14545a] ring-2 ring-[#14545a]/20"></div>
+<div class="h-2 rounded-full bg-[#e3d7c5]"></div>
+<div class="h-2 rounded-full bg-[#e3d7c5]"></div>
+</div>
+</div>
+<!-- Target Word & Audio Linguistic Leaf -->
+<div class="relative bg-white rounded-2xl p-5 border border-[#eee4d4] shadow-[0_4px_16px_rgba(20,84,90,0.06)] flex flex-col items-center justify-center text-center space-y-2.5 overflow-hidden">
+<!-- Subtle notebook ruled lines backdrop -->
+<div class="absolute inset-0 pointer-events-none opacity-20 flex flex-col justify-between py-3 px-4">
+<div class="w-full h-px bg-[#bfc8c9]"></div>
+<div class="w-full h-px bg-[#bfc8c9]"></div>
+<div class="w-full h-px bg-[#bfc8c9]"></div>
+</div>
+<!-- Tactile Audio Trigger -->
+<button aria-label="استمع لنطق الكلمة" class="relative z-10 w-14 h-14 rounded-full bg-[#14545a] text-white flex items-center justify-center active:scale-95 transition-all shadow-[0_4px_12px_rgba(20,84,90,0.3)] hover:bg-[#003c41] group focus:outline-none" id="audio-prompt-btn">
+<span class="material-symbols-outlined text-[28px] transition-transform group-hover:scale-105">volume_up</span>
+<span class="absolute -top-0.5 -left-0.5 flex h-3.5 w-3.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F56D4E] opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#F56D4E]"></span>
+</span>
+</button>
+<!-- Target Word & Phonetics (Editorial Serif for Latin, clean sans for Arabic) -->
+<div class="relative z-10 flex flex-col items-center">
+<div class="flex items-baseline gap-2 justify-center" dir="ltr">
+<span class="font-['Newsreader'] text-[34px] italic text-[#F56D4E] font-medium leading-none">o</span>
+<span class="font-['Newsreader'] text-[36px] font-bold text-[#14545a] tracking-tight leading-none">queijo</span>
+</div>
+<div class="flex items-center gap-2 mt-1.5">
+<span class="text-[#242424] text-[18px] font-semibold tracking-wide">كايچو</span>
+<span class="w-1.5 h-1.5 rounded-full bg-[#14545a]/30"></span>
+<span class="text-[#F56D4E] text-[13px] font-medium">اسم مذكر</span>
+</div>
+</div>
+<!-- Interaction Micro-chip -->
+<div class="relative z-10 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFF8F2] text-[#404849] text-[12px] border border-[#f0dfc8]">
+<span class="material-symbols-outlined text-[14px] text-[#F56D4E]">replay</span>
+<span>دوس عشان تسمع تاني</span>
+</div>
+</div>
+<!-- Instruction Banner -->
+<div class="flex items-center justify-between px-1 text-[#404849]">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[#F56D4E] text-[20px]">touch_app</span>
+<p class="text-[15px] font-semibold text-[#14545a]">اسمع الكلمة واضغط على الصورة الصح</p>
+</div>
+<span class="text-[11px] font-semibold bg-[#F5D95B]/40 text-[#4b3f00] border border-[#F5D95B] px-2 py-0.5 rounded-full shadow-xs">
+      سؤال معجمي
+    </span>
+</div>
+<!-- 2x2 Tactile Card Grid (Clean White Backgrounds, 16px Rounded) -->
+<div class="grid grid-cols-2 gap-3 w-full">
+<!-- Option 1: Cheese (O queijo) - CORRECT STATE -->
+<div class="relative bg-white rounded-2xl p-2.5 flex flex-col items-center justify-between ring-2 ring-[#14545a] shadow-[0_4px_16px_rgba(20,84,90,0.12)] transition-transform active:scale-[0.98] group focus:outline-none overflow-hidden" role="button" tabindex="0">
+<!-- Editorial Success Badge -->
+<div class="absolute top-2.5 right-2.5 z-20 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#14545a] text-white text-[11px] font-bold shadow-sm">
+<span class="material-symbols-outlined text-[13px] text-[#97d0d7]">check_circle</span>
+<span>صح!</span>
+</div>
+<!-- Food Illustration Container -->
+<div class="w-full aspect-square rounded-xl bg-[#FFF8F2] flex items-center justify-center p-2.5 border border-[#f5ede0] overflow-hidden">
+<img alt="O queijo" class="w-full h-full object-contain drop-shadow-sm transition-transform group-hover:scale-105 duration-200" data-alt="An artisanal Portuguese Serra da Estrela cured cheese wheel with a rustic knife cutting a rich creamy slice, traditional editorial gouache textbook illustration, warm creamy ochre and muted navy tones, pure clean studio backdrop, zero text zero typography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnz4B_asx3KCkubNIoHeayo61cBuI6_3o2q2AtWRSZ3bOaUDzEm-5ytRrljeoJx2WOGHwdx4JwST74urry3tDMCQ7uMULbaq7467fqUkSD5Pk9bGx-xGnCOq8zwNbi31ekmBH970DIqp48vGW1kCCBmfrwlKlGSBMeU3txvaQZt1kg0iseB-JekGm31TTjfH8NcsYuTP-wIQTsSXmmUrKdfGOWOllvCR7GYqOUU0ZXcyvQ_ZUczVjFEA"/>
+</div>
+<div class="w-full mt-2 pt-1 flex items-center justify-between">
+<div class="w-full flex items-center justify-center gap-2 text-center">
+<span class="font-['Newsreader'] text-[15px] italic text-[#F56D4E] font-semibold dir-ltr">o queijo</span>
+<span class="text-[#bfc8c9] text-[13px]">·</span>
+<span class="font-bold text-[14px] text-[#14545a]">الجبنة</span>
+</div>
+</div>
+</div>
+<!-- Option 2: Bread (O pão) - WRONG ATTEMPT STATE -->
+<div class="relative bg-white rounded-2xl p-2.5 flex flex-col items-center justify-between opacity-85 ring-1 ring-[#F56D4E]/50 shadow-sm transition-all group focus:outline-none overflow-hidden" role="button" tabindex="0">
+<!-- Editorial Error Badge -->
+<div class="absolute top-2.5 right-2.5 z-20 flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-[#feece7] text-[#a9361d] border border-[#F56D4E]/40 text-[11px] font-bold shadow-xs">
+<span class="material-symbols-outlined text-[13px] text-[#a9361d]">close</span>
+<span>مش دي</span>
+</div>
+<!-- Food Illustration Container -->
+<div class="w-full aspect-square rounded-xl bg-[#FFF8F2] flex items-center justify-center p-2.5 grayscale-[20%] border border-[#f5ede0]">
+<img alt="O pão" class="w-full h-full object-contain" data-alt="A traditional crusty rustic Portuguese bread roll, pão alentejano with golden baked scored crust and dusting of white flour, classical academic kitchen still life painting, warm tones, zero text no captions." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCaosGnEYxc9QVx4ubBiDFzFohfA2TR2r2LI17Brt3_ROuGLnouVaNMdSmDu16s_KqEnYkRx0wZLTDRnIDT7dcS1vxSxMLVGxWoWNvxS7q-BMzY2Si42HiT8anZ8w6bVHsAEEPjcizBtwJqUpSelvtNmq5FqG8umxmxwEVTnDgQFZd3mpEwaqBSSt-Fx1XwwCZnAl_DnUs3hbBfqqdZN_tqZXBFapl-mJybdNPU5fuS3Nm5Jxd4yCTLw"/>
+</div>
+<div class="w-full mt-2 pt-1 flex items-center justify-between">
+<div class="w-full flex items-center justify-center gap-2 text-center text-[#70797a] line-through decoration-[#a9361d]">
+<span class="font-['Newsreader'] text-[15px] italic dir-ltr">o pão</span>
+<span class="text-[#bfc8c9] text-[13px]">·</span>
+<span class="text-[14px]">العيش</span>
+</div>
+</div>
+</div>
+<!-- Option 3: Apple (A maçã) - DEFAULT STATE -->
+<div class="relative bg-white rounded-2xl p-2.5 flex flex-col items-center justify-between border border-[#eee4d4] shadow-sm hover:border-[#14545a]/30 transition-transform active:scale-[0.98] group focus:outline-none overflow-hidden" role="button" tabindex="0">
+<!-- Food Illustration Container -->
+<div class="w-full aspect-square rounded-xl bg-[#FFF8F2] flex items-center justify-center p-2.5 border border-[#f5ede0]">
+<img alt="A maçã" class="w-full h-full object-contain transition-transform group-hover:scale-105 duration-200" data-alt="A polished fresh red Portuguese Gala apple with an attached crisp green leaf and subtle wood-block print texture, editorial culinary lexicon illustration style on off-white paper, no words, clean artistic presentation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGuBOCBoZRkjLVRqv45FMHUjZ05HNT2rF7CU_sZb-kvMqRdKnbNLprqrcmXG1VO3Dkf0H_krKgQikPp-bA5GU7e48wtMRNQs3aA-AUqbMJOGYr_47OoSCQMTqySVjF_gxvcGbUTjM0XmoPAarrh9A3Px14Q_USIJriJL9_6eklYOTnIxoKDy80jXuPEp8ybnx4SNxrygSMgpo89c6zxku7TF4BT2-OQZTw6o2LEr_clL5y3GAf5H6Y9g"/>
+</div>
+<div class="w-full mt-2 pt-1 flex items-center justify-center">
+<span class="text-[13px] text-[#70797a]">اختيار</span>
+</div>
+</div>
+<!-- Option 4: Fish (O peixe) - DEFAULT STATE -->
+<div class="relative bg-white rounded-2xl p-2.5 flex flex-col items-center justify-between border border-[#eee4d4] shadow-sm hover:border-[#14545a]/30 transition-transform active:scale-[0.98] group focus:outline-none overflow-hidden" role="button" tabindex="0">
+<!-- Food Illustration Container -->
+<div class="w-full aspect-square rounded-xl bg-[#FFF8F2] flex items-center justify-center p-2.5 border border-[#f5ede0]">
+<img alt="O peixe" class="w-full h-full object-contain transition-transform group-hover:scale-105 duration-200" data-alt="Fresh Lisbon style silver and cobalt blue sardine fish on an off-white ceramic dish, vintage hand-drawn natural history book plate aesthetic, delicate linework, no captions, authentic Portuguese kitchen aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJglBi2J0IJBtVzep9cMoBxQqzgOdRBafWuYrxlGAI7Cf_xV4Bj0D_ZVCEPAWqJTlANnV6IFe4kFnOuKKpEPOGWyOxwiZLYHhu0aud6Rnz8zQgpghnxsIO7obarmgCYEsX0kpW274NFYVd_pmGb7Bpzt5d3cqvsTB9vYhTcD6nTwrunS_K1qJsrAoxoJAX12hRRvphbe5x6UrK4a59AtwTp7B1mZzNWHtL3zSOyqR3_ND5nHHuIiAXhg"/>
+</div>
+<div class="w-full mt-2 pt-1 flex items-center justify-center">
+<span class="text-[13px] text-[#70797a]">اختيار</span>
+</div>
+</div>
+</div>
+<!-- Editorial Sticky Note: Grammar Tip (Soft warm golden yellow with notebook clip) -->
+<div class="relative bg-[#FEF7D6] border border-[#F5D95B] rounded-2xl p-3.5 shadow-[0_2px_8px_rgba(245,217,91,0.25)] flex items-start space-x-3 space-x-reverse overflow-hidden">
+<!-- Notebook pin / clip detail -->
+<div class="absolute top-2 left-3 w-5 h-2 rounded-full bg-[#e1c64a]/60 border border-[#c4aa30]"></div>
+<div class="w-7 h-7 rounded-full bg-[#F5D95B] flex items-center justify-center text-[#4b3f00] shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[17px]">menu_book</span>
+</div>
+<div class="flex flex-col text-[#4b3f00]">
+<span class="text-[14px] leading-tight font-bold">ملاحظة سريعة في البرتغالي</span>
+<p class="text-[12.5px] leading-relaxed mt-1 text-[#4b3f00]/90">
+        أداة التعريف <span class="font-['Newsreader'] font-bold text-[#F56D4E] text-[15px] italic">o</span> بتيجي دايمًا مع المفرد المذكر، زي <span class="dir-ltr inline-block font-['Newsreader'] font-bold text-[14px] text-[#14545a]">o queijo</span> و <span class="dir-ltr inline-block font-['Newsreader'] font-bold text-[14px] text-[#14545a]">o pão</span>.
+      </p>
+</div>
+</div>
+<!-- Bottom Navigation Action: Wide prominent Coral Orange CTA -->
+<div class="pt-2">
+<button class="w-full h-13 py-3.5 rounded-xl bg-[#F56D4E] text-white flex items-center justify-between px-5 font-bold text-[16px] shadow-[0_4px_14px_rgba(245,109,78,0.35)] active:translate-y-0.5 hover:bg-[#e45a3a] transition-all focus:outline-none" id="next-question-btn">
+<span class="flex items-center gap-2">
+<span>السؤال التالي</span>
+<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+</span>
+<span class="text-white text-[12px] font-semibold px-2.5 py-1 rounded-lg bg-black/15">
+        Dia 3 · ٤ / ٦
+      </span>
+</button>
+</div>
+</div>
+<script>
+  // Simple interactive audio button micro-interaction
+  document.getElementById('audio-prompt-btn')?.addEventListener('click', function() {
+    this.classList.add('scale-95');
+    setTimeout(() => {
+      this.classList.remove('scale-95');
+    }, 150);
+  });
+</script></main>
+</body></html>

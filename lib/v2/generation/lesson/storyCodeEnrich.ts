@@ -1,3 +1,4 @@
+import { CHARACTER_IDS } from '@/lib/v2/characters/registry';
 import type { Item } from '@/lib/v2/content/items';
 import type {
   StoryAfterQuestion,
@@ -18,12 +19,6 @@ function itemAr(item: Item): string {
   return 'ar' in item && typeof item.ar === 'string' ? item.ar : '';
 }
 
-function isSaidPhrase(item: Item): boolean {
-  if (item.type !== 'phrase') return false;
-  if ((item as { derived?: boolean }).derived) return false;
-  return (item as { role?: string }).role !== 'heard';
-}
-
 function castRoleForSpeaker(
   cast: StoryCastEntry[],
   speaker: string,
@@ -35,14 +30,7 @@ function castRoleForSpeaker(
   return hit?.role ?? (CAST_FALLBACK.has(sp) ? 'character' : null);
 }
 
-const CAST_FALLBACK = new Set([
-  'yassin',
-  'ines',
-  'rita',
-  'manuel',
-  'sofia',
-  'carlos',
-]);
+const CAST_FALLBACK = new Set(CHARACTER_IDS);
 
 /** Proper-name TL → Arabic (story AR must cover names). */
 export const NAME_AR: Record<string, string> = {
@@ -54,6 +42,12 @@ export const NAME_AR: Record<string, string> = {
   sofia: 'صوفيا',
   carlos: 'كارلوس',
   yassin: 'ياسين',
+  tiago: 'تياغو',
+  graca: 'غراسا',
+  graça: 'غراسا',
+  nour: 'نور',
+  'dona graça': 'دونيا غراسا',
+  'dona graca': 'دونيا غراسا',
 };
 
 export function transliterateNameAr(name: string): string {
@@ -87,16 +81,79 @@ export function sideForSpeaker(
   return 'right';
 }
 
+/** Trailing `.!?…` on a TL sentence (for mirroring onto AR). */
+function trailingTerminator(sentence: string): string {
+  const m = sentence.trim().match(/[.!?…]+$/);
+  return m?.[0] ?? '.';
+}
+
+/** Map Latin terminator → Arabic punctuation where appropriate. */
+function arabicTerminator(terminator: string): string {
+  if (terminator.includes('?')) return '؟';
+  if (terminator.includes('!')) return '!';
+  if (terminator.includes('…')) return '…';
+  return '۔';
+}
+
+/**
+ * Strip AR/Latin trailing punct then append the Arabic terminator.
+ * Keep vocatives inside the sentence (no split before يا).
+ */
+function withTerminator(ar: string, terminator: string): string {
+  const stripped = ar.trim().replace(/[.!?…؟۔]+$/u, '');
+  if (!stripped) return stripped;
+  return `${stripped}${arabicTerminator(terminator)}`;
+}
+
+/** Prefer full known-item AR when TL matches (never word-by-word fragments). */
+function matchKnownItemAr(
+  sentence: string,
+  pool: Item[],
+): string | null {
+  const norm = normalizeOptionText(sentence);
+  if (!norm) return null;
+  let best: { ar: string; len: number } | null = null;
+  for (const item of pool) {
+    if (item.type !== 'phrase' && item.type !== 'word' && item.type !== 'sentence') {
+      continue;
+    }
+    const tl = itemTl(item);
+    const ar = itemAr(item);
+    if (!tl || !ar) continue;
+    const ntl = normalizeOptionText(tl);
+    if (!ntl) continue;
+    if (ntl === norm || norm.includes(ntl) || ntl.includes(norm)) {
+      if (!best || ntl.length > best.len) {
+        best = { ar, len: ntl.length };
+      }
+    }
+  }
+  return best?.ar ?? null;
+}
+
 /**
  * Build Arabic for a full line: item AR + name transliteration so every
  * TL sentence has an AR counterpart (incl. Chamo-me Inês → اسمي إينيس).
+ * Empty-id lines that match known items (other days) get that item's full ar —
+ * never word-by-word fragments.
  */
 export function buildLineArabic(
   line: StoryLine,
   items: Item[],
+  knownItems?: Item[],
 ): string {
-  if (line.ar?.trim()) return line.ar.trim();
+  const existing = line.ar?.trim();
+  // Reject fragmented/placeholder AR so we can rebuild from known items
+  const looksFragment =
+    existing &&
+    existing.length <= 6 &&
+    !/[؟!۔]/.test(existing) &&
+    !(line.ids?.length);
+  if (existing && !looksFragment) {
+    return existing.replace(/\?/g, '؟');
+  }
 
+  const pool = [...items, ...(knownItems ?? [])];
   const hydrated = hydrateDialogueLine(line.ids ?? [], items);
   const extras = (line.extra ?? [])
     .map((e) => e.ar?.trim())
@@ -108,18 +165,25 @@ export function buildLineArabic(
     const arParts: string[] = [];
     for (const sent of sentences) {
       const fromIds = matchSentenceAr(sent, line.ids ?? [], items);
-      if (fromIds) {
-        arParts.push(fromIds);
-        continue;
-      }
-      // Fallback: known phrase fragments + names
-      arParts.push(translateSentenceHeuristic(sent, items));
+      const fromKnown = matchKnownItemAr(sent, pool);
+      // Prefer id-aligned or full known-item gloss — never word-by-word first
+      const raw =
+        fromIds ?? fromKnown ?? translateSentenceHeuristic(sent, pool);
+      arParts.push(raw);
     }
-    if (arParts.every(Boolean)) return arParts.join(' ');
+    if (arParts.every(Boolean)) {
+      return arParts
+        .map((ar, i) => withTerminator(ar, trailingTerminator(sentences[i]!)))
+        .join(' ');
+    }
+    // Incomplete per-sentence AR on multi-sentence TL: do not collapse to one
+    // hydrated blob (that triggers ar_sentence_mismatch). Leave empty so
+    // ar_missing fires clearly; autofix should have split lines already.
+    if (sentences.length > 1) return '';
   }
 
   const parts = [hydrated.ar, ...extras].filter(Boolean);
-  return parts.join(' ').trim();
+  return parts.join(' ').trim().replace(/\?/g, '؟');
 }
 
 function matchSentenceAr(
@@ -147,16 +211,18 @@ function injectNamesIntoAr(sentence: string, itemTl: string, itemAr: string): st
   const itemNames = new Set(
     [...itemTl.matchAll(nameRe)].map((m) => m[1]!.toLowerCase()),
   );
-  let ar = itemAr;
+  let ar = itemAr.replace(/[.!?…؟۔]+$/u, '').trim();
   for (const m of sentence.matchAll(nameRe)) {
     const name = m[1]!;
     if (itemNames.has(name.toLowerCase())) continue;
     // Item may be "Chamo-me Omar." while sentence is "Chamo-me Inês."
     const itemName = [...itemNames][0];
+    const nameAr = transliterateNameAr(name);
     if (itemName && ar.includes(transliterateNameAr(itemName))) {
-      ar = ar.replace(transliterateNameAr(itemName), transliterateNameAr(name));
-    } else if (!ar.includes(transliterateNameAr(name))) {
-      ar = `${ar} ${transliterateNameAr(name)}`.trim();
+      ar = ar.replace(transliterateNameAr(itemName), nameAr);
+    } else if (!ar.includes(nameAr)) {
+      // Keep vocative inside the sentence: تشرفنا يا عمر!
+      ar = `${ar} يا ${nameAr}`.trim();
     }
   }
   return ar;
@@ -193,10 +259,20 @@ function translateSentenceHeuristic(sentence: string, items: Item[]): string {
 }
 
 /** Arabic from item bank ids + names; keep explicit ar if present. */
-export function enrichLineArabic(line: StoryLine, items: Item[]): StoryLine {
-  const ar = buildLineArabic(line, items);
+export function enrichLineArabic(
+  line: StoryLine,
+  items: Item[],
+  knownItems?: Item[],
+): StoryLine {
+  const ar = buildLineArabic(line, items, knownItems);
   if (!ar) return line;
   return { ...line, ar };
+}
+
+function isSaidPhrase(item: Item): boolean {
+  if (item.type !== 'phrase') return false;
+  if ((item as { derived?: boolean }).derived) return false;
+  return (item as { role?: string }).role !== 'heard';
 }
 
 function characterNameEg(cast: StoryCastEntry[]): string {
@@ -266,7 +342,6 @@ export function buildAfterQuestions(opts: {
   recycleIds?: string[];
 }): StoryAfterQuestion[] {
   void opts.recycleIds;
-  // `items` is today's bank (+ recycle already merged by the caller).
   const saidBank = opts.items
     .filter(isSaidPhrase)
     .map((i) => ({ id: i.id, label: itemTl(i) }))
@@ -278,7 +353,6 @@ export function buildAfterQuestions(opts: {
   const questions: StoryAfterQuestion[] = [];
   const usedLines = new Set<number>();
 
-  // 1) Character asked (prefer a question-marked line)
   const askCandidates = [
     ...charIdx.filter((i) => opts.story.lines[i]!.tl.includes('?')),
     ...charIdx,
@@ -305,7 +379,6 @@ export function buildAfterQuestions(opts: {
     });
   }
 
-  // 2) Learner replied (prefer a line with replies_to)
   const replyCandidates = [
     ...learnerIdx.filter((i) => opts.story.lines[i]!.replies_to != null),
     ...learnerIdx,
@@ -341,7 +414,6 @@ export function buildAfterQuestions(opts: {
     });
   }
 
-  // 3) Line meaning (prefer character line with ar)
   const meaningCandidates = [
     ...[...charIdx, ...learnerIdx].filter(
       (i) => !usedLines.has(i) && Boolean(opts.story.lines[i]!.ar?.trim()),
@@ -373,7 +445,6 @@ export function buildAfterQuestions(opts: {
     });
   }
 
-  // 4) Optional second ask/reply if we still have room and unused lines
   if (questions.length < 4) {
     const extraAsk = askCandidates.find((i) => !usedLines.has(i));
     if (extraAsk != null) {
@@ -399,20 +470,6 @@ export function buildAfterQuestions(opts: {
   }
 
   return questions.slice(0, 4);
-}
-
-/** @deprecated Prefer buildAfterQuestions; kept for call-site migration. */
-export function buildTestOptions(opts: {
-  story: Pick<StoryDoc, 'cast' | 'lines'>;
-  items: Item[];
-  recycleIds?: string[];
-  onDuplicate?: (lineIndex: number, labels: string[]) => void;
-}): StoryLine[] {
-  void opts.onDuplicate;
-  void opts.recycleIds;
-  void opts.items;
-  // Strip legacy options; after_questions live on the story doc.
-  return opts.story.lines.map(({ options: _drop, ...rest }) => rest);
 }
 
 export function enrichStorySides(story: StoryDoc): StoryDoc {
@@ -459,14 +516,19 @@ export function enrichStoryDocument(
   story: StoryDoc,
   items: Item[],
   recycleIds?: string[],
-  opts?: { onDuplicateOptions?: (lineIndex: number, labels: string[]) => void },
+  opts?: {
+    onDuplicateOptions?: (lineIndex: number, labels: string[]) => void;
+    /** Prior-day / registry items for empty-id TL → AR lookup. */
+    knownItems?: Item[];
+  },
 ): StoryDoc {
   void opts?.onDuplicateOptions;
+  const knownItems = opts?.knownItems ?? [];
   let next: StoryDoc = {
     ...story,
     lines: story.lines.map((line) => {
       const { options: _drop, ...rest } = line;
-      return enrichLineArabic(rest, items);
+      return enrichLineArabic(rest, items, knownItems);
     }),
   };
   next = enrichStorySides(next);

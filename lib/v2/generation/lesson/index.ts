@@ -5,6 +5,9 @@ export {
   loadExistingImageKeys,
   formatCompactDayHeader,
   mergePhrasesWithEarlyChunks,
+  phaseForDay,
+  COURSE_DAYS,
+  NUMBERS_INTRO_DAY,
 } from './buildRequest';
 export { buildSystemPrompt, systemPromptContainsPages } from './systemPrompt';
 export { generateLessonDraft, type GenerateResult, type RunGenerateOptions } from './run';
@@ -24,6 +27,7 @@ export {
 } from './coreItems';
 export {
   saveDraft,
+  resetDraftForRegen,
   updateDraft,
   setLessonStatus,
   getLatestLesson,
@@ -57,7 +61,10 @@ export {
 } from './brief';
 export {
   enqueueLessonDag,
+  enqueueQuestionsRegen,
+  enqueueStoryRegen,
   expandPageJobs,
+  linkStoryIntoLesson,
   rehashAfterItemEdit,
   listJobsForVersion,
   requeueJob,

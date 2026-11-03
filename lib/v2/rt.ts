@@ -21,4 +21,9 @@ export type RtSegment = {
   wrong?: boolean;
 };
 
-export type Skill = 'listening' | 'reading' | 'speaking' | 'writing';
+export type Skill =
+  | 'listening'
+  | 'reading'
+  | 'speaking'
+  | 'writing'
+  | 'grammar';

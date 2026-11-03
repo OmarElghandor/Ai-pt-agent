@@ -44,7 +44,7 @@ export type ClosedSkillPayload = {
   kind: 'closed';
   answer_id: string;
   day: number;
-  skill: 'listening' | 'reading';
+  skill: 'listening' | 'reading' | 'grammar' | 'writing';
   option_index: number;
   correct_index: number;
   item_id?: string;
@@ -84,7 +84,19 @@ function intField(value: unknown): number | null {
   return typeof value === 'number' && Number.isInteger(value) ? value : null;
 }
 
-const SKILLS = new Set(['listening', 'reading', 'speaking', 'writing']);
+const SKILLS = new Set([
+  'listening',
+  'reading',
+  'speaking',
+  'writing',
+  'grammar',
+]);
+const CLOSED_SKILLS = new Set([
+  'listening',
+  'reading',
+  'grammar',
+  'writing',
+]);
 
 export function parseAnswerPayload(body: unknown): AnswerPayload | null {
   if (!isRecord(body)) return null;
@@ -129,12 +141,14 @@ export function parseAnswerPayload(body: unknown): AnswerPayload | null {
     const correctIndex = intField(body.correct_index);
     if (optionIndex === null || optionIndex < 0) return null;
     if (correctIndex === null || correctIndex < 0) return null;
-    if (body.skill !== 'listening' && body.skill !== 'reading') return null;
+    if (typeof body.skill !== 'string' || !CLOSED_SKILLS.has(body.skill)) {
+      return null;
+    }
     return {
       kind: 'closed',
       answer_id,
       day,
-      skill: body.skill,
+      skill: body.skill as ClosedSkillPayload['skill'],
       option_index: optionIndex,
       correct_index: correctIndex,
       item_id: typeof body.item_id === 'string' ? body.item_id : undefined,

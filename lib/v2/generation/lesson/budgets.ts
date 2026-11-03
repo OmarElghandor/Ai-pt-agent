@@ -10,6 +10,7 @@ export const BUDGETS = {
   questions: { system: 500, input: 800, output: 1500 },
   micro: { system: 400, input: 600, output: 1200 },
   daily_use: { system: 400, input: 600, output: 1200 },
+  real_world: { system: 400, input: 800, output: 1500 },
   continuity: { system: 300, input: 800, output: 100 },
   lang_check: { system: 400, input: 2500, output: 800 },
 } as const;

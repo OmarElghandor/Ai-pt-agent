@@ -709,21 +709,21 @@ food.coffee, food.pastel_de_nata, scene.cafe.counter, emotion.happy, ...
 ### الستايل (نهائي)
 
 ```text
-Friendly educational cartoon illustration for adult learners, clean bold dark-navy outlines of even weight, flat colors with soft subtle shading, warm cheerful palette (sunny yellow, sky blue, leaf green, coral, soft orange), plain warm cream background, centered subject with generous empty space around it, modern language-learning textbook style. Adult realistic body proportions, small natural eyes, subtle expressions, not cute, not childish, no chibi, no big heads. No text, no letters, no numbers, no watermark.
+Hand-drawn editorial illustration in ink and soft watercolour: loose, confident pen linework with visible sketchy hatching, light watercolour washes that leave some paper showing, subtle paper grain. Detailed, lived-in but generic setting with no recognisable landmarks, no country-specific details and no readable signs, drawn slightly softer and less saturated than the people, so they stay the focus. Adult realistic proportions, expressive natural faces, candid storytelling moment, the two main people look at each other and interact. Like a modern sketchbook or graphic-novel panel. No text, no letters, no numbers, no logos, no flags, no speech bubbles, no watermark. Not cartoonish, not childish, not 3D, not photorealistic.
 ```
 
 ### الشخصيات
 
-أي شخصية محتاجة صفحة مرجع (reference sheet) معتمدة قبل ما تظهر في أي صورة. الوصف بيتحط في البرومبت، وصورة المرجع بتتبعت معاه. ياسين وإنِس اتثبتوا خلاص. الباقي لسه اقتراح.
+أي شخصية محتاجة صفحة مرجع (reference sheet) معتمدة قبل ما تظهر في أي صورة. الوصف بيتحط في البرومبت، وصورة المرجع بتتبعت معاه. الأوصاف شكل فقط (من غير جنسية) عشان الصور تتنقل بين اللغات. ياسين وإنِس اتثبتوا خلاص. الباقي لسه اقتراح.
 
 | id | الدور | الوصف في البرومبت |
 | --- | --- | --- |
-| yassin | المتعلم | Egyptian man in his late 20s, warm light-brown skin, short dark curly hair, neat short beard, olive-green jacket over a plain white t-shirt, dark blue jeans, white sneakers, brown backpack |
-| ines | صديقة وزميلة شغل | Portuguese woman in her late 20s, fair skin with light freckles, shoulder-length wavy chestnut hair, mustard-yellow cardigan over a navy-and-white striped top, dark grey trousers, brown ankle boots, small gold earrings |
-| rita | كاشير السوبرماركت | Portuguese woman about 45, short dark-brown bob, reading glasses on a cord, navy polo shirt uniform with a blank name badge |
-| manuel | صاحب الكافيه | Portuguese man about 60, short grey hair, grey moustache, white shirt with rolled sleeves, dark brown apron |
-| sofia | الصيدلانية | Portuguese woman about 35, black hair in a low bun, white coat over a light blue blouse |
-| carlos | صاحب الشقة | Portuguese man about 50, stocky, short salt-and-pepper hair, beige knitted sweater, dark trousers |
+| yassin | المتعلم | Man in his late 20s, warm light-brown skin, short dark curly hair, neat short beard, olive-green jacket over a plain white t-shirt, dark blue jeans, white sneakers, brown backpack |
+| ines | صديقة وزميلة شغل | Woman in her late 20s, fair skin with light freckles, shoulder-length wavy chestnut hair, mustard-yellow cardigan over a navy-and-white striped top, dark grey trousers, brown ankle boots, small gold earrings |
+| rita | كاشير السوبرماركت | Woman about 45, short dark-brown bob, reading glasses on a cord, navy polo shirt uniform with a blank name badge |
+| manuel | صاحب الكافيه | Man about 60, short grey hair, grey moustache, white shirt with rolled sleeves, dark brown apron |
+| sofia | الصيدلانية | Woman about 35, black hair in a low bun, white coat over a light blue blouse |
+| carlos | صاحب الشقة | Man about 50, stocky, short salt-and-pepper hair, beige knitted sweater over a light blue shirt collar, dark trousers, glasses pushed up on his head |
 
 أي حد في الخلفية بيترسم بشكل بسيط وملوش اسم. ولو حد ظهر في أكتر من يوم، زي الدكتور أو موظف Finanças، بيتضاف للجدول ده وتتعمله صفحة مرجع.
 
@@ -776,7 +776,7 @@ Use the attached image only as a style reference: same line weight, colors and s
 | object | 1024×1024 | Subject: a single {subject}, three-quarter view from slightly above. Isolated, nothing else in the frame, no hands, no people, no plate or table unless part of the subject. |
 | action | 1024×1024 | Subject: {characters} {subject}, {pose}, {framing}, {expression}. Setting: {setting}, kept simple and in the background. The action must be instantly clear without any words. |
 | emotion | 1024×1024 | Subject: {characters} showing {subject}, {expression}, {pose}, upper body, front view. No background objects. |
-| place | 1536×1024 | Subject: the outside of {subject} in Lisbon, {setting}, {light}. All signs are blank shapes with no letters. |
+| place | 1536×1024 | Subject: the outside of {subject}, {setting}, {light}. All signs are blank shapes with no letters. |
 | scene | 1536×1024 | Wide view of {subject}, {setting}. {characters} {pose}. {light}. Background people are simple and unnamed. All signs, labels, price tags and screens are blank. |
 | story\_panel | 1536×1024 | Comic panel. {characters} {subject}, {pose}, {expression}. Setting: {setting}. {framing}, {light}. Cinematic composition, no speech bubbles, no captions, no sound effects. |
 
@@ -793,9 +793,9 @@ Must show: {must_show}. Avoid: {must_avoid}.
 ```text
 Use the attached reference images for the exact look of these characters: Yassin. Same face, hair, skin tone, outfit and colors. Draw each named character exactly once.
 
-Friendly educational cartoon illustration for adult learners, clean bold dark-navy outlines of even weight, flat colors with soft subtle shading, warm cheerful palette (sunny yellow, sky blue, leaf green, coral, soft orange), plain warm cream background, centered subject with generous empty space around it, modern language-learning textbook style. Adult realistic body proportions, small natural eyes, subtle expressions, not cute, not childish, no chibi, no big heads. No text, no letters, no numbers, no watermark.
+Hand-drawn editorial illustration in ink and soft watercolour: loose, confident pen linework with visible sketchy hatching, light watercolour washes that leave some paper showing, subtle paper grain. Detailed, lived-in but generic setting with no recognisable landmarks, no country-specific details and no readable signs, drawn slightly softer and less saturated than the people, so they stay the focus. Adult realistic proportions, expressive natural faces, candid storytelling moment, the two main people look at each other and interact. Like a modern sketchbook or graphic-novel panel. No text, no letters, no numbers, no logos, no flags, no speech bubbles, no watermark. Not cartoonish, not childish, not 3D, not photorealistic.
 
-Subject: Yassin (Egyptian man in his late 20s, warm light-brown skin, short dark curly hair, neat short beard, olive-green jacket over a plain white t-shirt, dark blue jeans, white sneakers, brown backpack) walking toward a tram stop, mid-stride, side view, full body, calm and determined. Setting: Lisbon sidewalk with a small yellow tram far behind, kept simple and in the background. The action must be instantly clear without any words.
+Subject: Yassin (Man in his late 20s, warm light-brown skin, short dark curly hair, neat short beard, olive-green jacket over a plain white t-shirt, dark blue jeans, white sneakers, brown backpack) walking toward a bus stop, mid-stride, side view, full body, calm and determined. Setting: sidewalk with a small bus far behind, kept simple and in the background. The action must be instantly clear without any words.
 
 Must show: his legs clearly in motion. Avoid: running, other people.
 ```

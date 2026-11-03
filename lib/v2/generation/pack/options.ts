@@ -1,40 +1,33 @@
 import type { Item } from '@/lib/v2/content/items';
 import type { ListeningOption } from '@/lib/v2/content/pack';
 
-function arOf(item: Item): string {
-  if ('ar' in item && typeof item.ar === 'string' && item.ar.trim()) {
-    return item.ar;
-  }
-  return '';
-}
-
 function tlOf(item: Item): string {
-  if ('tl' in item && typeof item.tl === 'string') return item.tl;
+  if ('tl' in item && typeof item.tl === 'string') return item.tl.trim();
   return '';
 }
 
 /**
- * Build closed options for listening/reading from the bank.
- * Direction: Arabic meaning options (stimulus is audio_tl / artifact).
+ * Build closed options for practice listening from the bank.
+ * Direction: Portuguese (tl) lines — stimulus is audio_tl.
  */
-export function buildMeaningOptions(
+export function buildTlOptions(
   correctId: string,
   bank: Item[],
   count = 3,
 ): ListeningOption[] {
   const byId = new Map(bank.map((i) => [i.id, i]));
   const correct = byId.get(correctId);
-  const correctLabel = correct ? arOf(correct) || tlOf(correct) : '';
+  const correctLabel = correct ? tlOf(correct) : '';
   const distractors = bank
     .filter((i) => i.id !== correctId)
-    .map((i) => ({ id: i.id, label: arOf(i) || tlOf(i) }))
+    .map((i) => ({ id: i.id, label: tlOf(i) }))
     .filter((d) => d.label && d.label !== correctLabel);
 
   const picked: ListeningOption[] = [
     {
       id: 'opt.correct',
       label: correctLabel || '…',
-      lang: correct && arOf(correct) ? 'ar' : 'tl',
+      lang: 'tl',
       correct: true,
     },
   ];
@@ -44,16 +37,21 @@ export function buildMeaningOptions(
     picked.push({
       id: `opt.${d.id}`,
       label: d.label,
-      lang: 'ar',
+      lang: 'tl',
       correct: false,
     });
   }
-  // Pad if bank thin
+  // Pad if bank thin — unused TL from bank, then generic PT placeholders
+  let padIdx = 0;
   while (picked.length < 2) {
+    const spare = distractors.find(
+      (d) => !picked.some((p) => p.label === d.label),
+    );
+    const label = spare?.label ?? `opção ${++padIdx}`;
     picked.push({
       id: `opt.pad.${picked.length}`,
-      label: `خيار ${picked.length}`,
-      lang: 'ar',
+      label,
+      lang: 'tl',
       correct: false,
     });
   }

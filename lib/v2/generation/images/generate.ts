@@ -134,12 +134,13 @@ export async function generatePackImages(
     const size = sizeForType(spec.type);
 
     try {
-      let buffer = await editImage({ prompt, referencePaths: refPaths, size });
+      const references = refPaths.map((p) => ({ path: p }));
+      let buffer = await editImage({ prompt, references, size });
       let outPath = saveGeneratedImage(key, buffer);
       let qa = await visionQa(outPath, spec);
 
       if (!qa.ok) {
-        buffer = await editImage({ prompt, referencePaths: refPaths, size });
+        buffer = await editImage({ prompt, references, size });
         outPath = saveGeneratedImage(key, buffer);
         qa = await visionQa(outPath, spec);
       }

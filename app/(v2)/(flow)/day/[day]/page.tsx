@@ -5,8 +5,14 @@ import {
   getLatestLessonPack,
   getPublishedLesson,
 } from '@/lib/v2/content/getPublishedLesson';
+import { findImageStepVisible } from '@/lib/v2/findImage/buildRounds';
 import { getPublishedPack } from '@/lib/v2/generation/pack/save';
-import { minutesForMode, PRACTICE_MINUTES } from '@/lib/v2/render/dayMinutes';
+import { rehydrateLessonImages } from '@/lib/v2/images/rehydrate';
+import {
+  FIND_IMAGE_MINUTES,
+  minutesForMode,
+  PRACTICE_MINUTES,
+} from '@/lib/v2/render/dayMinutes';
 import { plainRt } from '@/lib/v2/render/speechTarget';
 
 export default async function DayMapPage({
@@ -38,16 +44,26 @@ export default async function DayMapPage({
   }
 
   const pack = await getPublishedPack(day);
-  const pages = published.pack.pages.filter((p) => p.role !== 'test');
+  const lessonPack = await rehydrateLessonImages({
+    day: published.day,
+    targetLang: published.target_lang,
+    version: published.version,
+    pack: published.pack,
+  });
+  const pages = lessonPack.pages.filter((p) => p.role !== 'test');
   const storyIntro =
     pages.find((p) => p.preset === 'story' && p.role !== 'test') ??
     pages.find((p) => p.preset === 'story') ??
     pages[0];
   const detailPages = pages.filter((p) => p.id !== storyIntro?.id);
   const lastDetailId = detailPages[detailPages.length - 1]?.id ?? null;
-  const storyTestStepId = storyIntro ? `${storyIntro.id}__test` : null;
   const questionsId = 'day_questions';
+  const findImageId = 'find_image';
+  const showFindImage = findImageStepVisible(lessonPack.items ?? []);
   const unlockAfter = questionsId;
+  const questionsAfterId = showFindImage
+    ? findImageId
+    : (lastDetailId ?? storyIntro?.id ?? null);
   const devUnlock = dev;
   const withDev = (href: string) => {
     if (!dev) return href;
@@ -78,14 +94,14 @@ export default async function DayMapPage({
     });
   }
 
-  if (storyIntro && storyTestStepId) {
+  if (showFindImage) {
     steps.push({
-      id: storyTestStepId,
-      kind: 'story_test',
-      title: 'القصة تاني: من غير ترجمة',
-      subtitle: 'اسمعها تاني وبعدين أسئلة',
-      minutes: 3,
-      href: withDev(`/day/${day}/page/${storyIntro.id}?mode=test`),
+      id: findImageId,
+      kind: 'find_image',
+      title: 'لاقي الصورة',
+      subtitle: 'اسمع واختار',
+      minutes: FIND_IMAGE_MINUTES,
+      href: withDev(`/day/${day}/find-image`),
     });
   }
 
@@ -110,13 +126,12 @@ export default async function DayMapPage({
   return (
     <DayMap
       day={published.day}
-      situation={published.pack.lesson.situation}
+      situation={lessonPack.lesson.situation}
       steps={steps}
       lastPageId={unlockAfter}
       practiceDevUnlock={devUnlock}
       hasPublishedPack={Boolean(pack)}
-      storyTestAfterId={lastDetailId}
-      questionsAfterId={storyTestStepId}
+      questionsAfterId={questionsAfterId}
     />
   );
 }

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { 'colors': { 'surface-container-highest': '#ece1d0', 'secondary-fixed-dim': '#ffb4a3', 'surface-container': '#f8ecdb', 'on-secondary': '#ffffff', 'primary-container': '#14545a', 'background': '#fff8f2', 'on-primary': '#ffffff', 'on-secondary-fixed': '#3d0600', 'on-tertiary-container': '#4b3f00', 'on-tertiary': '#ffffff', 'on-surface-variant': '#404849', 'muted': '#8C8C86', 'tertiary-fixed-dim': '#e1c64a', 'tertiary-fixed': '#fee263', 'surface-container-low': '#fef2e1', 'surface-dim': '#e4d9c8', 'on-tertiary-fixed-variant': '#534600', 'error': '#ba1a1a', 'inverse-surface': '#363024', 'primary-fixed': '#b2edf3', 'teal-700': '#1E6670', 'surface-variant': '#ece1d0', 'error-container': '#ffdad6', 'on-primary-fixed': '#002023', 'surface': '#FFFFFF', 'inverse-on-surface': '#fbefde', 'tertiary-container': '#c4aa30', 'on-secondary-fixed-variant': '#881f06', 'on-primary-fixed-variant': '#0a4f54', 'outline': '#70797a', 'primary': '#003c41', 'primary-fixed-dim': '#97d0d7', 'on-surface': '#201b11', 'surface-container-high': '#f2e7d6', 'text': '#242424', 'on-background': '#201b11', 'on-secondary-container': '#6b1100', 'surface-bright': '#fff8f2', 'surface-tint': '#2c676d', 'outline-variant': '#bfc8c9', 'secondary': '#a9361d', 'on-primary-container': '#8dc6cd', 'on-error-container': '#93000a', 'canvas': '#EEF2F2', 'on-tertiary-fixed': '#221b00', 'secondary-fixed': '#ffdad2', 'on-error': '#ffffff', 'inverse-primary': '#97d0d7', 'tertiary': '#6e5e00', 'secondary-container': '#fe7354', 'surface-container-lowest': '#ffffff' }, 'borderRadius': { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, 'spacing': { 'space-xl': '32px', 'space-sm': '8px', 'margin': '24px', 'gutter': '16px', 'space-xs': '4px', 'space-md': '16px', 'space-lg': '24px' }, 'fontFamily': { 'label-sm': ['Inter'], 'body-sm': ['Inter'], 'label-md': ['Inter'], 'body-md': ['Inter'], 'label-lg': ['Inter'], 'headline-md': ['Newsreader'], 'body-lg': ['Inter'], 'headline-lg': ['Newsreader'], 'headline-sm': ['Newsreader'] }, 'fontSize': { 'label-sm': ['10px', { 'lineHeight': '14px', 'fontWeight': '500' }], 'body-sm': ['12px', { 'lineHeight': '16px', 'fontWeight': '400' }], 'label-md': ['12px', { 'lineHeight': '16px', 'fontWeight': '500' }], 'body-md': ['14px', { 'lineHeight': '20px', 'fontWeight': '400' }], 'label-lg': ['14px', { 'lineHeight': '18px', 'fontWeight': '600' }], 'headline-md': ['24px', { 'lineHeight': '32px', 'fontWeight': '600' }], 'body-lg': ['15px', { 'lineHeight': '22px', 'fontWeight': '400' }], 'headline-lg': ['32px', { 'lineHeight': '40px', 'fontWeight': '700' }], 'headline-sm': ['18px', { 'lineHeight': '24px', 'fontWeight': '600' }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-background font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 inset-x-0 z-50 bg-background/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-space-md flex items-center justify-between"><div class="flex items-center gap-space-sm"><button aria-label="رجوع" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface hover:bg-surface-container-high transition-colors" onclick="history.back()"><span class="material-symbols-outlined text-[24px]">arrow_forward</span></button><h1 class="font-headline-sm text-headline-sm text-primary font-semibold">Lesson Active</h1></div><div class="flex items-center gap-space-sm"><div class="flex items-center gap-space-xs bg-surface-container-high px-space-sm py-1 rounded-full"><span class="material-symbols-outlined text-[18px] text-secondary">local_fire_department</span><span class="font-label-md text-label-md text-on-surface font-semibold">14 يوم</span></div><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1WN9A2g0bbljpYae-bnI_Pn9JyNGIZmkK42Pc7TY_N9BPXGY_QNb7F03RDR3e0zqDjEZWLbnlNfyD6Q8W_Mrx7ZJq4OBBKzNT1mGLQqf109tNIrQhK7PTVambZphFU9AymgoLFzwREZO6r8QzSW6sFwcryLPwVCPBej-TKFkIhDc6hNy0Bv-3sB4pja72FK31D2nTx7qMhUikWyoGjLGVQL3lyvYC2qpTv6jYEkNoZv"/></div></div></header><main class="flex flex-col relative w-full pt-16 pb-safe bg-background"><div class="flex flex-col w-full pb-28">
+<!-- Overview Header Card -->
+<section class="px-space-md pt-space-md">
+<div class="bg-surface-container-low rounded-xl p-space-md shadow-sm relative overflow-hidden">
+<!-- Decorative Backdrop Graphic Pattern -->
+<div class="absolute -left-6 -top-6 w-24 h-24 rounded-full bg-primary-fixed/30 pointer-events-none blur-xl"></div>
+<div class="absolute -right-6 -bottom-6 w-28 h-28 rounded-full bg-secondary-container/20 pointer-events-none blur-xl"></div>
+<div class="relative z-10 flex flex-col gap-space-xs">
+<div class="flex items-center justify-between gap-space-sm flex-wrap">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-container text-on-primary font-label-md text-label-md shadow-sm">
+<span class="material-symbols-outlined text-[14px]">map</span>
+<span>اليوم ٣ من ٧ · خطة تفاعلية</span>
+</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[15px] text-primary">schedule</span>
+<span>⏱ ١٢ دقيقة إجمالية</span>
+</span>
+</div>
+<div class="mt-space-xs">
+<h2 class="font-headline-md text-headline-md text-primary font-bold tracking-tight">السوبرماركت والمشتريات</h2>
+<p class="font-label-lg text-label-lg text-secondary font-medium tracking-wide dir-ltr text-right inline-block">No Supermercado · Dia 3</p>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mt-1">
+          ٦ محطات متسلسلة بتنقلك من سماع الكلمات وحفظها، لفهم القاعدة، لحد ما تدير حوار كامل مع الكاشير في لشبونة بثقة تامة!
+        </p>
+<!-- Progress Mini Bar -->
+<div class="mt-space-sm pt-space-xs flex items-center gap-3">
+<div class="flex-1 bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-secondary-container h-full rounded-full transition-all duration-500" style="width: 45%;"></div>
+</div>
+<span class="font-label-md text-label-md text-on-surface font-semibold shrink-0">محطتان مكتملتان (٢/٦)</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive Stepper Journey (Roadmap Style) -->
+<section class="px-space-md mt-space-md">
+<div class="relative">
+<!-- Vertical Continuous Curving SVG Pathway Background (RTL: right side) -->
+<div class="absolute right-[21px] top-6 bottom-8 w-4 pointer-events-none flex justify-center">
+<div class="w-1 h-full bg-surface-container-highest rounded-full relative">
+<!-- Filled Progress Segment (Steps 1 & 2 completed, reaching step 3) -->
+<div class="w-full bg-teal-700 rounded-full h-[42%] transition-all"></div>
+</div>
+</div>
+<div class="flex flex-col gap-space-md relative z-10">
+<!-- STEP 01 (Completed) -->
+<div class="flex items-start gap-3">
+<!-- Step Pin -->
+<div class="shrink-0 w-11 h-11 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-sm z-10">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<!-- Step Content Card -->
+<div class="flex-1 bg-surface rounded-xl p-space-md shadow-sm">
+<div class="flex items-center justify-between gap-2 mb-1.5">
+<span class="font-label-sm text-label-sm text-muted font-bold">المحطة ٠١</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-semibold">
+<span>مكتملة ✓</span>
+</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary font-bold">سماع وحفظ الكلمات</h3>
+<p class="font-label-sm text-label-sm text-muted mb-2 font-medium">Vocabulário Essencial</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-normal">
+              ١٢ كلمة غذائية (حليب، خبز، جبنة، تفاح...) مصحوبة بنطق لشبونة الأصلي.
+            </p>
+<!-- Preview Pills -->
+<div class="flex flex-wrap gap-1.5 mt-space-xs dir-ltr justify-end">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface text-label-sm font-label-sm">o leite</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface text-label-sm font-label-sm">o pão</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface text-label-sm font-label-sm">a maçã</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface text-label-sm font-label-sm">+٩ كلمات</span>
+</div>
+</div>
+</div>
+<!-- STEP 02 (Completed) -->
+<div class="flex items-start gap-3">
+<!-- Step Pin -->
+<div class="shrink-0 w-11 h-11 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-sm z-10">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<!-- Step Content Card -->
+<div class="flex-1 bg-surface rounded-xl p-space-md shadow-sm">
+<div class="flex items-center justify-between gap-2 mb-1.5">
+<span class="font-label-sm text-label-sm text-muted font-bold">المحطة ٠٢</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-semibold">
+<span>مكتملة ✓</span>
+</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary font-bold">فهم القاعدة بالاستكشاف</h3>
+<p class="font-label-sm text-label-sm text-muted mb-2 font-medium">Aprender a Regra</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-normal">
+              قاعدة أداة التعريف (o ولا a؟ مذكر ولا مؤنث).
+            </p>
+<div class="mt-2 p-2 rounded-lg bg-surface-container-low flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">lightbulb</span>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">استنتجت القاعدة وراجعت الاستثناءات بنجاح.</span>
+</div>
+</div>
+</div>
+<!-- STEP 03 (Active / In Progress Hero Card) -->
+<div class="flex items-start gap-3">
+<!-- Active Pulsing Step Pin -->
+<div class="relative shrink-0 w-11 h-11 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary shadow-md z-10 animate-pulse">
+<span class="font-label-lg text-label-lg font-bold">03</span>
+<span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-secondary rounded-full ring-2 ring-background"></span>
+</div>
+<!-- Active Step Content Card with warm teal frame and coral CTA -->
+<div class="flex-1 bg-surface-container rounded-xl p-space-md shadow-md relative overflow-hidden">
+<div class="flex items-center justify-between gap-2 mb-1.5">
+<span class="font-label-sm text-label-sm text-secondary font-bold">المحطة الحالية 🎯</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary font-label-sm text-label-sm font-bold shadow-sm">
+                قيد التنفيذ
+              </span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary font-bold">القاموس المصور وتمرين الصورة</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-2 font-medium">Jogo das Imagens</p>
+<p class="font-body-sm text-body-sm text-on-surface leading-normal">
+              اختبار تفاعلي سريع للربط المباشر بين المشهد والنطق مع تصحيح ذكي فوري.
+            </p>
+<!-- Visual Progress Mini Badge -->
+<div class="mt-2.5 flex items-center justify-between bg-surface/80 rounded-lg p-2">
+<div class="flex items-center gap-1.5 text-primary">
+<span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+<span class="font-label-md text-label-md font-semibold">مستوى الإتقان: ٤ من ٦ كروت</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-bold">٦٦٪</span>
+</div>
+<!-- Card Interactive Button -->
+<button class="mt-space-sm w-full py-2.5 px-space-md rounded-full bg-secondary-container text-on-secondary font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 shadow-sm hover:brightness-105 active:scale-[0.98] transition-transform">
+<span>كمّل الخطوة دي (دقيقة ونصف)</span>
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+</button>
+</div>
+</div>
+<!-- STEP 04 (Locked Next) -->
+<div class="flex items-start gap-3 opacity-90">
+<!-- Step Pin -->
+<div class="shrink-0 w-11 h-11 rounded-full bg-surface-container-high flex items-center justify-center text-muted shadow-sm z-10">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+</div>
+<!-- Step Content Card -->
+<div class="flex-1 bg-surface-container-low rounded-xl p-space-md shadow-sm">
+<div class="flex items-center justify-between gap-2 mb-1.5">
+<span class="font-label-sm text-label-sm text-muted font-bold">المحطة ٠٤</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">
+<span>مقفل مؤقتاً 🔒</span>
+</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary font-bold">تكوين الجمل والأسعار</h3>
+<p class="font-label-sm text-label-sm text-muted mb-2 font-medium">Formar Frases</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-normal">
+              معادلة السؤال عن الأسعار وتحديد الكميات باللتر والكيلوغرام.
+            </p>
+<div class="mt-2 py-1 px-2.5 rounded bg-surface text-on-surface-variant text-label-sm font-label-sm font-mono dir-ltr inline-block">
+              "Quanto custa isto, por favor?"
+            </div>
+</div>
+</div>
+<!-- STEP 05 (Locked Simulation) -->
+<div class="flex items-start gap-3 opacity-80">
+<!-- Step Pin -->
+<div class="shrink-0 w-11 h-11 rounded-full bg-surface-container-high flex items-center justify-center text-muted shadow-sm z-10">
+<span class="material-symbols-outlined text-[20px]">record_voice_over</span>
+</div>
+<!-- Step Content Card -->
+<div class="flex-1 bg-surface-container-low rounded-xl p-space-md shadow-sm">
+<div class="flex items-center justify-between gap-2 mb-1.5">
+<span class="font-label-sm text-label-sm text-muted font-bold">المحطة ٠٥</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold">
+                محطة التحدث 🗣
+              </span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary font-bold">المحادثة الحية مع ريتا</h3>
+<p class="font-label-sm text-label-sm text-muted mb-2 font-medium">Simulação com a Caixa</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-normal">
+              محاكاة واقعية مع كاشير لشبونة: الرد صوتياً، طلب الفاتورة، وخيار الدفع بالبطاقة.
+            </p>
+</div>
+</div>
+<!-- STEP 06 (Finale Review) -->
+<div class="flex items-start gap-3 opacity-70">
+<!-- Step Pin -->
+<div class="shrink-0 w-11 h-11 rounded-full bg-surface-container-high flex items-center justify-center text-muted shadow-sm z-10">
+<span class="material-symbols-outlined text-[20px]">flag</span>
+</div>
+<!-- Step Content Card -->
+<div class="flex-1 bg-surface-container-low rounded-xl p-space-md shadow-sm">
+<div class="flex items-center justify-between gap-2 mb-1.5">
+<span class="font-label-sm text-label-sm text-muted font-bold">المحطة ٠٦</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">
+                ختام الحصة 🏁
+              </span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary font-bold">مراجعة اليوم وتثبيت الكروت</h3>
+<p class="font-label-sm text-label-sm text-muted mb-2 font-medium">Revisão e Cartões</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-normal">
+              نقل الكلمات والعبارات الجديدة لدفتر كروت المراجعة التكرارية للغد.
+            </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Sticky Bottom Quick CTA Dock -->
+<div class="fixed bottom-0 inset-x-0 bg-surface/95 backdrop-blur-md p-space-md shadow-[0_-4px_20px_rgba(0,0,0,0.06)] z-40 max-w-[480px] mx-auto pb-safe">
+<div class="flex items-center justify-between gap-3">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-muted font-medium">الوقت المتبقي</span>
+<span class="font-label-md text-label-md text-secondary font-bold">باقيلك ٧ دقايق على إنهاء اليوم</span>
+</div>
+<button class="flex-1 py-3 px-space-md rounded-full bg-secondary-container text-on-secondary font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 shadow-md active:scale-95 transition-all">
+<span>كمّل من المحطة ٣</span>
+<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+</button>
+</div>
+</div>
+</div></main></body></html>

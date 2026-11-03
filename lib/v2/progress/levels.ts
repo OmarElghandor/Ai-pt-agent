@@ -18,7 +18,7 @@ export function bumpLevelsForSkill(
   if (!correct) return state;
   const levels = { ...state.levels };
   if (skill === 'listening') levels.heard += 1;
-  else if (skill === 'reading') levels.understood += 1;
+  else if (skill === 'reading' || skill === 'grammar') levels.understood += 1;
   else if (skill === 'speaking' || skill === 'writing') levels.said += 1;
   return { ...state, levels };
 }

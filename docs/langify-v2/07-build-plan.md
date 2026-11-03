@@ -139,15 +139,10 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
    - The model returns the cast, the setting and the lines. Every line has an explicit speaker, and may carry `ids` and `extra`.
    - Code adds the Arabic, the test-mode options, the bubble sides and the scene image prompt.
 3. **Story checks.**
-   - **Fatal** (then one rerun of the story job only):
-     - every core item covered;
-     - the grammar focus used twice or more;
-     - extras at 15% of tokens or less, each one glossed;
-     - every speaker valid, with 2 speakers;
-     - replies after the line they answer;
-     - no bare nouns;
-     - 6–10 lines.
-   - **Auto-fix:** drop ids whose words aren't in the line, and normalize punctuation.
+   - **Changed 2026-11-01:** see 00 §4 "The story never blocks the day".
+     - Fatal is structure only: parse, at least 4 lines, an empty tl, an unknown speaker.
+     - Content checks are warnings.
+     - If the one retry fails, the day continues without a story.
 4. **Outline from the story.**
    - Page 0 is the story in intro mode. After the detail pages comes a replay in test mode with the same `story_id`.
    - Detail pages follow the order in which items first appear in the story.
@@ -201,6 +196,107 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
 - Day 1 and Day 3 regenerate with no guided pages.
 - The story plays start to end in both modes without a single stop.
 - Grammar pages show explain → examples → check, and the only autoplay is the one-time explanation TTS.
+
+### Phase 3 add-on · Day question set (2026-11-01)
+
+**Read:** 00 §7 "The day's question set".
+
+**Tasks**
+1. Replace the per-page questions jobs with one day-level `questions` job.
+   - **Code plans the slots:** 10–15 questions, the skill quotas, coverage and order.
+   - **The model fills only:** the Egyptian prompts, and the rubrics for open answers.
+   - **Code builds:** options, blanks (from the item's `cloze`), tiles, accepted answers, near misses (from the grammar page's `common_mistakes`) and image refs.
+2. **New types** in the schema and validator:
+   - listen_pick_tl, listen_pick_image, dictation;
+   - translate_write, fill_blank_write, describe_image_write, reply_write;
+   - say_it, reply_speak, describe_image_speak, read_aloud;
+   - fill_blank_choice, build_sentence.
+   - Each question also gets `use: lesson | practice | both`.
+3. **Images:** picture types only when the image is ready. Otherwise code swaps in a same-skill fallback.
+4. **No content fatals** (changed 2026-11-01):
+   - The planner owns the quotas and the coverage: 12 slots (14 on big days), every phrase and pattern, words only in the remaining slots, and grammar slots on the pattern. It is checked by unit tests.
+   - Each slot has a code template prompt. An invalid or missing model fill falls back to the template, and a warning is logged.
+   - The answer-in-prompt rule depends on the type (00 §7).
+   - The job fails only on unparseable output. After one retry it ships with template prompts.
+5. **Player:**
+   - a QuestionSession screen for "أسئلة اليوم" after the story test, with all types;
+   - the grammar page `check` reuses 2–3 grammar questions;
+   - the speaking fallback ("سجّل واسمع نفسك") until STT is live.
+6. **Answers:** answers go to `/api/v2/answers` with skill and type. SRS updates item × skill (speaking only when graded by STT).
+
+**Done when**
+- Day 1 has 12–15 questions with 3+ listening, 3+ writing, 3+ speaking and 2+ grammar (at least 1 build_sentence with Chamo-me), every core item tested, and no duplicate options.
+
+### Phase 3 add-on · Image pipeline per lesson (2026-11-02)
+
+**Read:** 00 §10 "Image pipeline", and 03 (the style block, the image templates and the vision QA). Reuse `lib/v2/generation/images/*` (templates, openaiEdit, visionQa). Replace the pack walker and the runtime writes to the assets index.
+
+**Tasks**
+1. **Storage and model:**
+   - a Cloudinary storage adapter (signed server upload, `public_id` = key, overwrite + invalidate), with a local-disk adapter for dev;
+   - the `v2_images` collection;
+   - When an image is ready, write `{ key, url }` onto `items[].image` (and the story scene) in every lesson and story listed in `used_by`. The player uses that url with a ratio transformation. GET `/api/v2/images/[key]` stays only as a fallback lookup.
+2. **Manifest builder** (code) from a lesson and its story document: words with cards, the story scene(s), the scene page, and question image_refs (at most 3). Global keys; ready keys are reused.
+3. **The `image_specs` job** (Kimi, one call per lesson), only for keys that have no spec. Its output is validated, and code fills defaults for missing fields. A failure leaves that key "missing spec", which is not fatal.
+4. **Image jobs:**
+   - one job per key, on the existing job queue with kind `image` and concurrency 2;
+   - edits with reference sheets, or the style anchor when there are no people;
+   - vision QA, one retry, then `flagged`;
+   - "blocked" when a character has no sheet.
+5. **Admin:**
+   - the lesson "الصور" tab, as in 00;
+   - the "الشخصيات" page for reference sheets at high quality, which unblocks the blocked images when a sheet is uploaded;
+   - the cost estimate before a run, and the actual cost after.
+6. **Player:**
+   - ItemViewer, StoryPlayer, the scene page and picture questions read `/api/v2/images/[key]`;
+   - when an image is missing, they show the fixed-ratio placeholder, and questions switch to their `fallback_type`.
+
+**Done when**
+- After uploading the yassin and ines sheets, Day 1's "ولّد الصور الناقصة" produces the story scene, passes QA, and the story player shows it.
+- Day 3 (café) generates its word images, and Day 5 reuses any key it shares.
+- Nothing in lesson text generation calls the image code.
+
+### Phase 3 add-on · Real-world phrases page (2026-11-02)
+
+**Read:** 00 §4 "بيقولوها كده", 06 S3, and the reference `17-real-world-phrases`.
+
+**Tasks**
+1. **`real_world` job:** one call per lesson, after items and in parallel with the pages. It is non-fatal, and a day with an authored `real_world` in core-items skips it. Code adds `say`, the audio keys and the categories.
+2. **Checks as in 00:** a failing phrase is dropped, and the page is hidden when fewer than 3 phrases remain.
+3. **Outline:** the page is inserted right after the dictionary page, or after the phrases page when there is no dictionary (preset `real_world`, mode static).
+4. **Player:** the page as in 06, with the cover toggle, the chips and "+ للكروت" (it creates a card for that phrase for this user only).
+5. **Questions (changed 2026-11-03):**
+   - The questions job runs after `real_world`. The dependency is soft: if `real_world` failed, there are no extra slots.
+   - The planner adds 2–3 real-world slots on top of the 12 core slots: `listen_meaning`, the new `situation_choice` type (an Egyptian situation plus 3 TL lines, with distractors from today's core and real-world phrases), and at most one `say_it`. Each phrase is tested at most once.
+   - Answers update SRS for item × skill. A wrong answer shows "ضيفها للكروت".
+
+**Done when**
+- Day 3 (café) shows 4–5 natural phrases, with one tip and no slashes, and the day is unaffected if the job fails.
+- Day 3's questions include 2–3 real-world slots, with at least one `situation_choice`.
+
+### Phase 3 add-on · "لاقي الصورة" step (2026-11-03)
+
+**Read:** 00 §4 "لاقي الصورة", 06 S3, and the reference `18-find-image-step`.
+
+**Tasks**
+1. **Builder (code only):**
+   - up to 6 rounds from today's carded words or phrases (image-intended, same as the image manifest);
+   - 3 distractors from today plus recycle;
+   - shuffled positions, with no item used twice as the answer;
+   - an optional note from item data (the article's gender for nouns);
+   - cards may have a null `url` → ImageSlot placeholder until ready.
+
+   It is built at request time from the lesson pack (rehydrated from ready `v2_images`). It never calls or queues image generation.
+2. **Day map and outline:** the step comes after the grammar page and before the story replay. It is hidden only when fewer than 4 carded words/phrases exist — not when urls are still missing.
+3. **Player:** a FindImageStep component as in 06, with autoplay once per round, retries allowed, and only the first try scored. Missing urls use ImageSlot placeholders.
+4. **Answers:** POST `/api/v2/answers`, skill listening, type `find_image`.
+5. **Question planner:** no `listen_pick_image` slot for items already played in this step.
+
+**Done when**
+- Day 1, with its greeting images ready, plays 6 rounds (Olá, Bom dia, Boa tarde, Boa noite…).
+- Day 3 plays its food words with the article notes.
+- A day with carded items but no ready urls still shows the step with placeholders.
+- A day with fewer than 4 carded words/phrases hides the step.
 
 ---
 

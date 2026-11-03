@@ -1,10 +1,10 @@
 {
   "lesson": {
-    "id": "pt-PT.d11",
+    "id": "pt-PT.d22",
     "target_lang": "pt-PT",
-    "day": 11,
+    "day": 22,
     "phase": 1,
-    "week": 2,
+    "week": 4,
     "kind": "lesson",
     "situation": { "tl": "Como te sentes?", "eg": "حاسس بإيه" },
     "can_do": [

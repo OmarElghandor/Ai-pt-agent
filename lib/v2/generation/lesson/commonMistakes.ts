@@ -61,21 +61,45 @@ export function countWrongTlSegments(explain: Rt | undefined): number {
 
 /**
  * Persist common_mistakes on sections pages, register known near_misses,
- * and attach pairs to every writing/speaking question for the day
- * (grammar pages often only have closed reading/listening checks).
+ * and attach pairs only to questions whose tests include the pattern
+ * (or an item that contains the right TL form) — never unrelated items.
  */
 export function applyCommonMistakesToQuestions(
   pages: Page[],
   questions: Question[],
+  opts?: { items?: Array<{ id: string; tl?: string; type?: string }> },
 ): { pages: Page[]; questions: Question[] } {
   const allKnown: KnownNearMiss[] = [];
-  const allPairs: CommonMistakePair[] = [];
+  /** Pairs keyed by the pattern / page that produced them. */
+  const pairsBySource: Array<{
+    pageId: string;
+    introduces: string[];
+    pairs: CommonMistakePair[];
+  }> = [];
 
   const nextPages = pages.map((page) => {
     if (page.mode !== 'sections') return page;
     const pairs = extractCommonMistakes(page.explain);
     if (!pairs.length) return page;
-    allPairs.push(...pairs);
+    const introduces = Array.isArray(
+      (page as { introduces?: string[] }).introduces,
+    )
+      ? ((page as { introduces: string[] }).introduces ?? [])
+      : [];
+    // Also look at formula / examples block item refs
+    const blockIds: string[] = [];
+    for (const b of page.blocks ?? []) {
+      if (!b || typeof b !== 'object') continue;
+      const items = (b as { items?: string[] }).items;
+      if (Array.isArray(items)) blockIds.push(...items.map(String));
+      const formula = (b as { formula?: { pattern?: string } }).formula;
+      if (formula?.pattern) blockIds.push(formula.pattern);
+    }
+    pairsBySource.push({
+      pageId: page.id,
+      introduces: [...introduces, ...blockIds],
+      pairs,
+    });
     for (const p of pairs) {
       allKnown.push({
         wrong: p.wrong,
@@ -88,10 +112,46 @@ export function applyCommonMistakesToQuestions(
   });
 
   if (allKnown.length) registerKnownNearMisses(allKnown);
-  if (!allPairs.length) return { pages: nextPages, questions };
+  if (!pairsBySource.length) return { pages: nextPages, questions };
+
+  const items = opts?.items ?? [];
+  const itemTl = (id: string) => {
+    const it = items.find((i) => i.id === id);
+    return it && typeof it.tl === 'string' ? it.tl : '';
+  };
+
+  const questionMatchesPairs = (
+    q: Question,
+    source: (typeof pairsBySource)[number],
+  ): boolean => {
+    const tests = Array.isArray(q.tests) ? q.tests.map(String) : [];
+    for (const t of tests) {
+      for (const intro of source.introduces) {
+        if (!intro) continue;
+        if (t === intro) return true;
+        if (t.startsWith(`${intro}.`) || intro.startsWith(`${t}.`)) return true;
+        if (t.replace(/\.ex\.\d+$/, '') === intro) return true;
+      }
+      const tl = itemTl(t).toLowerCase();
+      if (!tl) continue;
+      for (const p of source.pairs) {
+        const right = p.right.toLowerCase();
+        if (right && (tl.includes(right) || right.includes(tl.split(/\s+/)[0]!))) {
+          return true;
+        }
+      }
+    }
+    // Grammar skill + pattern page → attach
+    if (q.skill === 'grammar') {
+      return source.introduces.some((id) => id.startsWith('pattern.'));
+    }
+    return false;
+  };
 
   const nextQuestions = questions.map((q) => {
-    if (q.skill !== 'writing' && q.skill !== 'speaking') return q;
+    if (q.skill !== 'writing' && q.skill !== 'speaking' && q.skill !== 'grammar') {
+      return q;
+    }
     const existing =
       Array.isArray((q as { near_miss?: { tl: string; feedback_eg: string }[] })
         .near_miss)
@@ -102,13 +162,18 @@ export function applyCommonMistakesToQuestions(
           ]
         : [];
     const seen = new Set(existing.map((n) => n.tl.toLowerCase()));
-    for (const p of allPairs) {
-      const key = p.wrong.toLowerCase();
-      if (seen.has(key)) continue;
-      seen.add(key);
-      existing.push({ tl: p.wrong, feedback_eg: p.why_eg });
+    let changed = false;
+    for (const source of pairsBySource) {
+      if (!questionMatchesPairs(q, source)) continue;
+      for (const p of source.pairs) {
+        const key = p.wrong.toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        existing.push({ tl: p.wrong, feedback_eg: p.why_eg });
+        changed = true;
+      }
     }
-    return { ...q, near_miss: existing };
+    return changed ? { ...q, near_miss: existing } : q;
   });
 
   return { pages: nextPages, questions: nextQuestions };

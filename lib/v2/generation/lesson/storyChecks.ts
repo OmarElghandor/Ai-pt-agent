@@ -11,6 +11,7 @@ import {
 import { resolvePatternKind, type PatternKind } from './patternTemplates';
 import { castNameTokens } from './storyAllowed';
 import { normToken, tokenizeTl } from './storyTokens';
+import type { MustCoverEntry } from './mustCover';
 import { fatal, fix, warning, type TierIssue } from './tiers';
 
 const CAST_IDS = new Set(
@@ -172,27 +173,82 @@ function patternSurfaceCovers(
   return speak.some((t) => tokens.has(t) || hay.includes(t));
 }
 
+/** Ids whose TL tokens appear in this sentence (surface match). */
+function idsForSentence(
+  sentence: string,
+  ids: string[],
+  itemsById: Map<string, Item>,
+): string[] {
+  const sentTokens = new Set(tokenizeTl(sentence).map(normToken));
+  const kept: string[] = [];
+  const seen = new Set<string>();
+  for (const id of ids) {
+    if (seen.has(id)) continue;
+    const item = itemsById.get(id);
+    const tokens = tokenizeTl(itemTl(item)).map(normToken);
+    if (!tokens.length) {
+      // Patterns / unknown: keep on every piece that already had them only if
+      // id starts with pattern. — attach to first sentence via caller.
+      if (id.startsWith('pattern.')) continue;
+      kept.push(id);
+      seen.add(id);
+      continue;
+    }
+    const hit = tokens.some(
+      (t) =>
+        sentTokens.has(t) ||
+        [...sentTokens].some((lt) => lt.includes(t) || t.includes(lt)),
+    );
+    if (hit) {
+      kept.push(id);
+      seen.add(id);
+    }
+  }
+  return kept;
+}
+
 /**
- * Drop ids whose tokens are not present in the line tl.
- * Promote pattern.*.ex.N → parent; auto-tag covered core patterns.
+ * Drop unknown / unmatched ids; strip "/"; normalize punct; split multi-sentence;
+ * drop invalid replies_to. Promote pattern.*.ex.N → parent; auto-tag covered patterns.
  */
 export function autoFixStoryLines(
   lines: StoryLine[],
   itemsById: Map<string, Item>,
-  opts?: { allowedTokens?: Set<string>; coreItems?: CoreItem[] },
+  opts?: {
+    allowedTokens?: Set<string>;
+    coreItems?: CoreItem[];
+    /** Extra ids treated as known (core ids not yet in the bank). */
+    knownIds?: Set<string>;
+  },
 ): { lines: StoryLine[]; fixes: TierIssue[] } {
   const fixes: TierIssue[] = [];
   const allowed = opts?.allowedTokens;
   const coreItems = opts?.coreItems ?? [];
   const patternCores = coreItems.filter((c) => c.kind === 'pattern');
+  const knownIds = opts?.knownIds ?? new Set<string>();
 
-  const out = lines.map((line, i) => {
+  const normalized: StoryLine[] = [];
+  for (const [i, line] of lines.entries()) {
     let tl = line.tl
       .replace(/\s+/g, ' ')
       .replace(/\s+([,.!?…])/g, '$1')
       .trim();
     if (tl !== line.tl) {
       fixes.push(fix(`lines[${i}].tl`, 'normalize_punct', 'normalized whitespace/punct'));
+    }
+    // Strip slash alternatives ("Adeus! / Tchau!" → "Adeus!")
+    if (tl.includes('/')) {
+      const parts = tl
+        .split(/\s*\/\s*/)
+        .map((p) => p.trim())
+        .filter(Boolean);
+      const stripped = (parts[0] ?? tl.replace(/\//g, ' ')).replace(/\s+/g, ' ').trim();
+      if (stripped && stripped !== tl) {
+        fixes.push(
+          fix(`lines[${i}].tl`, 'strip_slash', `stripped "/" → "${stripped}"`),
+        );
+        tl = stripped;
+      }
     }
     const lineTokens = new Set(tokenizeTl(tl).map(normToken));
     const keptIds: string[] = [];
@@ -212,6 +268,10 @@ export function autoFixStoryLines(
       }
       if (seen.has(id)) continue;
       const item = itemsById.get(id);
+      if (!item && !knownIds.has(id) && !coreItems.some((c) => c.id === id)) {
+        fixes.push(fix(`lines[${i}].ids`, 'unknown_id', `dropped unknown ${id}`));
+        continue;
+      }
       const tokens = tokenizeTl(itemTl(item)).map(normToken);
       if (!tokens.length) {
         keptIds.push(id);
@@ -285,9 +345,110 @@ export function autoFixStoryLines(
       extra = keptExtra.length ? keptExtra : undefined;
     }
 
-    return { ...line, tl, ids: keptIds, ...(extra ? { extra } : { extra: undefined }) };
+    const fixed: StoryLine = {
+      ...line,
+      tl,
+      ids: keptIds,
+      ...(extra ? { extra } : { extra: undefined }),
+    };
+    normalized.push(fixed);
+  }
+
+  // Split multi-sentence lines (prompt + enrich expect one sentence per line)
+  const out: StoryLine[] = [];
+  /** old normalized index → index of first piece in `out` */
+  const firstPieceIndex: number[] = [];
+  for (const [i, line] of normalized.entries()) {
+    firstPieceIndex[i] = out.length;
+    const parts = splitSentences(line.tl);
+    if (parts.length <= 1) {
+      out.push(line);
+      continue;
+    }
+    fixes.push(
+      fix(
+        `lines[${i}].tl`,
+        'split_multi_sentence',
+        `split into ${parts.length} lines`,
+      ),
+    );
+    const patternIds = (line.ids ?? []).filter((id) => id.startsWith('pattern.'));
+    for (const [pi, sent] of parts.entries()) {
+      const sentIds = idsForSentence(sent, line.ids ?? [], itemsById);
+      // Patterns stay on pieces that cover them; else first piece
+      for (const pid of patternIds) {
+        if (sentIds.includes(pid)) continue;
+        const item = itemsById.get(pid);
+        const core = coreItems.find((c) => c.id === pid) ?? {
+          id: pid,
+          kind: 'pattern' as const,
+          tl: itemTl(item),
+          eg: '',
+        };
+        const draft: StoryLine = { ...line, tl: sent, ids: sentIds };
+        if (lineCoversItem(draft, core, itemsById, coreItems)) {
+          sentIds.push(pid);
+        } else if (pi === 0) {
+          sentIds.push(pid);
+        }
+      }
+      out.push({
+        speaker: line.speaker,
+        tl: sent,
+        ids: sentIds,
+        // replies_to remapped below after all splits
+        ...(pi === 0 && line.replies_to != null
+          ? { replies_to: line.replies_to }
+          : {}),
+        ...(pi === 0 && line.extra?.length ? { extra: line.extra } : {}),
+      });
+    }
+  }
+
+  // Remap replies_to from pre-split indexes → first piece in `out`, then drop invalids.
+  const remapped = out.map((line, i) => {
+    if (line.replies_to == null) return line;
+    const mapped = firstPieceIndex[line.replies_to];
+    if (mapped == null || mapped >= i) {
+      fixes.push(
+        fix(
+          `lines[${i}].replies_to`,
+          'replies_to_invalid',
+          `dropped replies_to ${line.replies_to}`,
+        ),
+      );
+      const { replies_to: _drop, ...rest } = line;
+      return rest;
+    }
+    const targetLine = out[mapped];
+    if (!targetLine) {
+      fixes.push(
+        fix(
+          `lines[${i}].replies_to`,
+          'replies_to_invalid',
+          `dropped replies_to ${line.replies_to}`,
+        ),
+      );
+      const { replies_to: _drop, ...rest } = line;
+      return rest;
+    }
+    const sp = line.speaker.trim().toLowerCase();
+    const tsp = targetLine.speaker.trim().toLowerCase();
+    if (sp === tsp) {
+      fixes.push(
+        fix(
+          `lines[${i}].replies_to`,
+          'replies_to_invalid',
+          `dropped replies_to ${mapped} (same speaker)`,
+        ),
+      );
+      const { replies_to: _drop, ...rest } = line;
+      return rest;
+    }
+    return { ...line, replies_to: mapped };
   });
-  return { lines: out, fixes };
+
+  return { lines: remapped, fixes };
 }
 
 export type StoryCheckContext = {
@@ -300,7 +461,21 @@ export type StoryCheckContext = {
   chatCharacter?: string;
   maxLineWords?: number;
   targetLang?: string;
+  /** Code-built MUST_COVER list; coverage warnings check against this only. */
+  mustCover?: MustCoverEntry[];
 };
+
+/** Structure-only fatals that trigger one retry (00 §4). */
+export const STORY_STRUCTURE_FATAL_RULES = new Set([
+  'unparseable',
+  'line_count_min',
+  'empty_tl',
+  'invalid_speaker',
+]);
+
+export function isStoryStructureFatal(issue: TierIssue): boolean {
+  return issue.tier === 'fatal' && STORY_STRUCTURE_FATAL_RULES.has(issue.rule);
+}
 
 export type StoryExtrasScan = {
   contentTokenCount: number;
@@ -350,10 +525,10 @@ function maxLinesForDay(opts: {
   return { min: 6, max: opts.coreWordCount > 8 ? 12 : 10 };
 }
 
-/** Split TL/AR into sentence-like units on .!? (keep non-empty). */
+/** Split TL/AR into sentence-like units on Latin or Arabic terminators. */
 export function splitSentences(text: string): string[] {
   return text
-    .split(/(?<=[.!?…])\s+/)
+    .split(/(?<=[.!?…؟۔])\s+/u)
     .map((s) => s.trim())
     .filter(Boolean);
 }
@@ -361,7 +536,7 @@ export function splitSentences(text: string): string[] {
 const TOD_GREETING_GROUP = 'greeting.time_of_day';
 
 /**
- * Fatal: two different time-of-day greetings as hellos in the same scene.
+ * Warning: two different time-of-day greetings as hellos in the same scene.
  * A greeting in the last two lines (farewell) is allowed and ignored.
  */
 export function checkGreetingHelloCollision(
@@ -383,7 +558,7 @@ export function checkGreetingHelloCollision(
       if (helloIds.has(m.id)) continue;
       if (helloIds.size > 0 && ![...helloIds].includes(m.id)) {
         issues.push(
-          fatal(
+          warning(
             `lines[${i}]`,
             'greeting_hello_collision',
             `two time-of-day greetings as hellos: ${[...helloIds].join(', ')} and ${m.id}`,
@@ -432,7 +607,9 @@ export function checkInfoAlreadyGiven(
 }
 
 /**
- * Fatal story checks. Call after auto-fix.
+ * Story checks after autofix.
+ * Structure fatals (retry once): <4 lines, empty tl, unknown speaker.
+ * Everything else is a warning in the review report (00 §4).
  */
 export function checkStory(ctx: StoryCheckContext): TierIssue[] {
   const issues: TierIssue[] = [];
@@ -446,12 +623,21 @@ export function checkStory(ctx: StoryCheckContext): TierIssue[] {
     coreWordCount,
   });
 
-  if (lines.length < minLines || lines.length > maxLines) {
+  // Structure fatal: fewer than 4 lines (hard floor). Soft band is 6–10 / weekly 12–20.
+  if (lines.length < 4) {
     issues.push(
       fatal(
         'lines',
+        'line_count_min',
+        `need ≥4 lines, got ${lines.length}`,
+      ),
+    );
+  } else if (lines.length < minLines || lines.length > maxLines) {
+    issues.push(
+      warning(
+        'lines',
         'line_count',
-        `need ${minLines}–${maxLines} lines, got ${lines.length}`,
+        `aim ${minLines}–${maxLines} lines, got ${lines.length}`,
       ),
     );
   }
@@ -467,7 +653,7 @@ export function checkStory(ctx: StoryCheckContext): TierIssue[] {
     const characters = story.cast.filter((c) => c.role === 'character');
     if (learners.length !== 1 || characters.length !== 1) {
       issues.push(
-        fatal(
+        warning(
           'cast',
           'cast_shape',
           'normal days need exactly one learner and one character',
@@ -477,39 +663,34 @@ export function checkStory(ctx: StoryCheckContext): TierIssue[] {
     const people = story.cast.filter((c) => c.role !== 'narrator');
     if (people.length !== 2) {
       issues.push(
-        fatal('cast', 'speaker_count', 'need exactly 2 speakers (plus optional narrator)'),
-      );
-    }
-  }
-
-  for (const [i, line] of lines.entries()) {
-    const sp = line.speaker.trim().toLowerCase();
-    if (!speakerSet.has(sp) && !castIds.has(sp)) {
-      issues.push(
-        fatal(`lines[${i}].speaker`, 'invalid_speaker', `unknown speaker ${line.speaker}`),
-      );
-    }
-  }
-
-  for (const [i, line] of lines.entries()) {
-    const sp = line.speaker.trim().toLowerCase();
-    const isLearner =
-      sp === 'learner' ||
-      story.cast.some((c) => c.id.toLowerCase() === sp && c.role === 'learner');
-    if (!isLearner) continue;
-    if (line.replies_to == null) continue;
-    if (line.replies_to >= i) {
-      issues.push(
-        fatal(
-          `lines[${i}].replies_to`,
-          'replies_to_order',
-          `replies_to ${line.replies_to} must be before line ${i}`,
+        warning(
+          'cast',
+          'speaker_count',
+          'need exactly 2 speakers (plus optional narrator)',
         ),
       );
     }
   }
 
-  // No bare nouns
+  for (const [i, line] of lines.entries()) {
+    if (!line.tl?.trim()) {
+      issues.push(
+        fatal(`lines[${i}].tl`, 'empty_tl', `line ${i} has empty tl`),
+      );
+    }
+    const sp = line.speaker.trim().toLowerCase();
+    if (!speakerSet.has(sp) && !castIds.has(sp)) {
+      issues.push(
+        fatal(
+          `lines[${i}].speaker`,
+          'invalid_speaker',
+          `unknown speaker ${line.speaker}`,
+        ),
+      );
+    }
+  }
+
+  // Bare nouns — warning
   const fw = functionWordSets(ctx.targetLang ?? 'pt-PT');
   const wordTls = new Set(
     items
@@ -521,7 +702,7 @@ export function checkStory(ctx: StoryCheckContext): TierIssue[] {
     const tokens = contentTokensFromTl(line.tl, fw);
     if (tokens.length === 1 && wordTls.has(tokens[0]!)) {
       issues.push(
-        fatal(
+        warning(
           `lines[${i}].tl`,
           'bare_noun',
           `"${line.tl}" is a bare noun — need a phrase or sentence`,
@@ -530,7 +711,6 @@ export function checkStory(ctx: StoryCheckContext): TierIssue[] {
     }
   }
 
-  // Soft: line max words (prompt-enforced); warn for retry hints
   const maxWords = ctx.maxLineWords;
   if (maxWords != null) {
     for (const [i, line] of lines.entries()) {
@@ -547,28 +727,28 @@ export function checkStory(ctx: StoryCheckContext): TierIssue[] {
     }
   }
 
-  // Slash hygiene — never show "Adeus! / Tchau!" style TL
+  // Slash should already be autofixed; leftover is a warning
   for (const [i, line] of lines.entries()) {
-    if (/\s\/\s|\//.test(line.tl) && line.tl.includes('/')) {
+    if (line.tl.includes('/')) {
       issues.push(
-        fatal(
+        warning(
           `lines[${i}].tl`,
           'slash_in_tl',
-          `story line must not contain "/" — split into tl + variant`,
+          `story line still contains "/"`,
         ),
       );
     }
   }
 
-  // AR covers every TL sentence (incl. names)
+  // AR: code owns it — missing / mismatch are warnings
   for (const [i, line] of lines.entries()) {
     const tlSentences = splitSentences(line.tl);
     const ar = (line.ar ?? '').trim();
     if (!ar) {
       issues.push(
-        fatal(
+        warning(
           `lines[${i}].ar`,
-          'ar_sentence_gap',
+          'ar_missing',
           `line ${i} missing Arabic for "${line.tl}"`,
         ),
       );
@@ -577,67 +757,89 @@ export function checkStory(ctx: StoryCheckContext): TierIssue[] {
     const arSentences = splitSentences(ar);
     if (arSentences.length < tlSentences.length) {
       issues.push(
-        fatal(
+        warning(
           `lines[${i}].ar`,
-          'ar_sentence_gap',
+          'ar_sentence_mismatch',
           `line ${i}: tl has ${tlSentences.length} sentence(s) but ar has ${arSentences.length}`,
         ),
       );
     }
   }
 
-  // Time-of-day greetings: no two different members as hellos in the same scene
-  issues.push(
-    ...checkGreetingHelloCollision(lines, coreItems, itemsById),
-  );
-
-  // Character must not re-ask info the learner already gave (high → review report)
+  issues.push(...checkGreetingHelloCollision(lines, coreItems, itemsById));
   issues.push(...checkInfoAlreadyGiven(lines, story));
 
-  // Core coverage (variant_group: ≥1 member suffices)
+  // MUST_COVER coverage — warnings only
+  const mustCover = ctx.mustCover;
   const missingIds: string[] = [];
-  const coveredGroups = new Set<string>();
-  for (const core of coreItems) {
-    if (core.kind !== 'phrase' || !core.variant_group) continue;
-    const hit = lines.some((line) =>
-      lineCoversItem(line, core, itemsById, coreItems),
-    );
-    if (hit) coveredGroups.add(core.variant_group);
-  }
-  for (const core of coreItems) {
-    if (core.kind !== 'word' && core.kind !== 'phrase' && core.kind !== 'pattern') {
-      continue;
-    }
-    if (core.kind === 'phrase' && core.variant_group) {
-      if (coveredGroups.has(core.variant_group)) continue;
-      // Only report once per group
-      if (missingIds.includes(`group:${core.variant_group}`)) continue;
-      missingIds.push(`group:${core.variant_group}`);
-      issues.push(
-        fatal(
-          `coverage.${core.variant_group}`,
-          'core_not_in_story',
-          `missing variant_group ${core.variant_group} (need ≥1 member)`,
-        ),
+  if (mustCover?.length) {
+    for (const entry of mustCover) {
+      const core =
+        coreItems.find((c) => c.id === entry.id) ??
+        ({
+          id: entry.id,
+          kind: entry.kind,
+          tl: entry.tl,
+          eg: '',
+        } as CoreItem);
+      const hit = lines.some((line) =>
+        lineCoversItem(line, core, itemsById, coreItems),
       );
-      continue;
+      if (!hit) {
+        missingIds.push(entry.id);
+        issues.push(
+          warning(
+            `coverage.${entry.id}`,
+            'must_cover_missing',
+            `missing must-cover: ${entry.id}`,
+          ),
+        );
+      }
     }
-    const hit = lines.some((line) =>
-      lineCoversItem(line, core, itemsById, coreItems),
-    );
-    if (!hit) {
-      missingIds.push(core.id);
-      issues.push(
-        fatal(
-          `coverage.${core.id}`,
-          'core_not_in_story',
-          `missing: ${core.id}`,
-        ),
+  } else {
+    // Fallback when caller didn't pass mustCover: phrases/patterns as warnings
+    const coveredGroups = new Set<string>();
+    for (const core of coreItems) {
+      if (core.kind !== 'phrase' || !core.variant_group) continue;
+      const hit = lines.some((line) =>
+        lineCoversItem(line, core, itemsById, coreItems),
       );
+      if (hit) coveredGroups.add(core.variant_group);
+    }
+    for (const core of coreItems) {
+      if (core.kind !== 'word' && core.kind !== 'phrase' && core.kind !== 'pattern') {
+        continue;
+      }
+      if (core.kind === 'phrase' && core.variant_group) {
+        if (coveredGroups.has(core.variant_group)) continue;
+        if (missingIds.includes(`group:${core.variant_group}`)) continue;
+        missingIds.push(`group:${core.variant_group}`);
+        issues.push(
+          warning(
+            `coverage.${core.variant_group}`,
+            'must_cover_missing',
+            `missing variant_group ${core.variant_group} (need ≥1 member)`,
+          ),
+        );
+        continue;
+      }
+      const hit = lines.some((line) =>
+        lineCoversItem(line, core, itemsById, coreItems),
+      );
+      if (!hit) {
+        missingIds.push(core.id);
+        issues.push(
+          warning(
+            `coverage.${core.id}`,
+            core.kind === 'word' ? 'core_word_not_in_story' : 'must_cover_missing',
+            core.kind === 'word' ? `missing word: ${core.id}` : `missing: ${core.id}`,
+          ),
+        );
+      }
     }
   }
 
-  // Grammar focus ≥ 2 lines (pedagogical id → pattern ids)
+  // Grammar focus ≥ 2 lines — warning
   if (ctx.grammarFocusId) {
     const focus = ctx.grammarFocusId;
     const focusPatterns = resolveGrammarFocusPatternIds(focus, coreItems);
@@ -665,21 +867,20 @@ export function checkStory(ctx: StoryCheckContext): TierIssue[] {
 
     if (hits < 2) {
       issues.push(
-        fatal(
+        warning(
           'grammar_focus',
           'grammar_focus_twice',
-          `grammar focus ${focus} must be used in ≥2 lines (got ${hits})`,
+          `grammar focus ${focus} used in ${hits} line(s), aim ≥2`,
         ),
       );
     }
   }
 
-  // Declared extras must be glossed
   for (const [i, line] of lines.entries()) {
     for (const [j, ex] of (line.extra ?? []).entries()) {
       if (!ex.ar?.trim()) {
         issues.push(
-          fatal(
+          warning(
             `lines[${i}].extra[${j}]`,
             'extra_unglossed',
             `extra "${ex.tl}" needs an Arabic gloss`,
@@ -689,7 +890,6 @@ export function checkStory(ctx: StoryCheckContext): TierIssue[] {
     }
   }
 
-  // Extras ≤ 15% of content tokens (function words excluded both sides)
   const castNames = castNameTokens(story.cast);
   const scan = scanStoryExtras({
     lines,
@@ -701,10 +901,10 @@ export function checkStory(ctx: StoryCheckContext): TierIssue[] {
   if (scan.contentTokenCount > 0 && scan.extraPercent > 0.15) {
     const listed = scan.extraTokens.slice(0, 20).join(', ');
     issues.push(
-      fatal(
+      warning(
         'extra',
         'extra_over_budget',
-        `extra tokens: ${listed}${scan.extraTokens.length > 20 ? ', …' : ''} — replace with allowed words or drop (${(scan.extraPercent * 100).toFixed(0)}% of content tokens, max 15%)${
+        `extra tokens: ${listed}${scan.extraTokens.length > 20 ? ', …' : ''} (${(scan.extraPercent * 100).toFixed(0)}% of content tokens, max 15%)${
           missingIds.length ? `; missing: ${missingIds.join(', ')}` : ''
         }`,
       ),
@@ -715,7 +915,7 @@ export function checkStory(ctx: StoryCheckContext): TierIssue[] {
     const scenes = story.scenes ?? [];
     if (scenes.length < 2 || scenes.length > 3) {
       issues.push(
-        fatal('scenes', 'scene_count', 'weekly stories need 2–3 scenes'),
+        warning('scenes', 'scene_count', 'weekly stories need 2–3 scenes'),
       );
     }
   }
@@ -737,22 +937,13 @@ export function learnerLineIndexes(story: Pick<StoryDoc, 'cast' | 'lines'>): num
   return out;
 }
 
-/** Build a rich retry block listing extras + missing coverage. */
+/** Retry hints for structure fatals only (content never retries). */
 export function formatStoryRetryHints(issues: TierIssue[]): string {
-  const extras = issues.filter((i) => i.rule === 'extra_over_budget');
-  const missing = issues.filter((i) => i.rule === 'core_not_in_story');
-  const other = issues.filter(
-    (i) => i.rule !== 'extra_over_budget' && i.rule !== 'core_not_in_story',
-  );
-  const lines: string[] = ['FIX:'];
-  for (const e of extras) lines.push(e.message);
-  if (missing.length) {
-    lines.push(
-      `missing: ${missing.map((m) => m.message.replace(/^missing:\s*/, '')).join(', ')}`,
-    );
-  }
-  for (const o of other.slice(0, 4)) {
+  const structure = issues.filter(isStoryStructureFatal);
+  if (!structure.length) return '';
+  const lines: string[] = ['FIX (structure only):'];
+  for (const o of structure.slice(0, 5)) {
     lines.push(`${o.path}: ${o.message}`);
   }
-  return lines.length > 1 ? lines.join('\n') : '';
+  return lines.join('\n');
 }

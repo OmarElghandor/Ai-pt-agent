@@ -550,17 +550,17 @@ describe('questions direction + writing', () => {
     },
   ];
 
-  it('type-owned: listen/read_meaning/recall_tl + writing', () => {
+  it('type-owned: listen_meaning/read_meaning/listen_pick_tl + translate_write', () => {
     const listen = assembleQuestionFromDraft(
       {
-        type: 'listen',
+        type: 'listen_meaning',
         tests: 'phrase.order_coffee',
         prompt: 'إيه اللي سمعته؟',
       },
       { pageIndex: 0, pageId: 'p1', index: 0, bank },
     );
     assert.ok(listen.question);
-    assert.equal(listen.question!.type, 'listen');
+    assert.equal(listen.question!.type, 'listen_meaning');
     assert.equal(listen.question!.skill, 'listening');
     assert.ok(
       listen.question!.prompt &&
@@ -582,22 +582,22 @@ describe('questions direction + writing', () => {
     assert.match(JSON.stringify(reading.question!.prompt), /Queria um café/);
     assert.match(JSON.stringify(reading.question!.options), /أريد|قهوة|هذا/);
 
-    const recall = assembleQuestionFromDraft(
+    const pickTl = assembleQuestionFromDraft(
       {
-        type: 'recall_tl',
+        type: 'listen_pick_tl',
         tests: 'phrase.order_coffee',
-        prompt: 'بالبرتغالي؟',
+        prompt: 'إيه الجملة؟',
       },
       { pageIndex: 0, pageId: 'p1', index: 2, bank },
     );
-    assert.ok(recall.question);
-    assert.equal(recall.question!.type, 'recall_tl');
-    assert.match(JSON.stringify(recall.question!.prompt), /أريد قهوة/);
-    assert.match(JSON.stringify(recall.question!.options), /Queria|Só|café/);
+    assert.ok(pickTl.question);
+    assert.equal(pickTl.question!.type, 'listen_pick_tl');
+    assert.equal(pickTl.question!.skill, 'listening');
+    assert.match(JSON.stringify(pickTl.question!.options), /Queria|Só|café/);
 
     const writing = assembleQuestionFromDraft(
       {
-        type: 'writing',
+        type: 'translate_write',
         tests: 'phrase.order_coffee',
         prompt: 'اكتب الطلب',
         answer_tl: 'Queria um café, por favor.',
@@ -610,7 +610,7 @@ describe('questions direction + writing', () => {
   it('rejects writing prompt that leaks say', () => {
     const bad = assembleQuestionFromDraft(
       {
-        type: 'writing',
+        type: 'translate_write',
         tests: 'phrase.order_coffee',
         prompt: 'اكتب: كْرِيا أوم كَفيه',
         answer_tl: 'Queria um café',

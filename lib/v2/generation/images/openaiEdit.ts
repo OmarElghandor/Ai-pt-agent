@@ -1,14 +1,9 @@
 import { readFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import type { ImageSize } from './templates';
+import { imageModelId } from '@/lib/v2/images/pricing';
 
 const OUT_DIR = path.join(process.cwd(), 'data', 'v2-images');
-
-function getImageModel(): string {
-  return (
-    process.env.OPENAI_IMAGE_MODEL?.trim() || 'gpt-image-2.5-flare-2026-09-08'
-  );
-}
 
 function getApiKey(): string {
   const key = process.env.OPENAI_API_KEY?.trim();
@@ -16,18 +11,56 @@ function getApiKey(): string {
   return key;
 }
 
+export type ImageRefInput =
+  | { path: string }
+  | { buffer: Buffer; filename?: string }
+  | { url: string };
+
+async function materializeRef(
+  ref: ImageRefInput,
+): Promise<{ blob: Blob; filename: string }> {
+  if ('path' in ref) {
+    if (!existsSync(ref.path)) {
+      throw new Error(`Reference image missing: ${ref.path}`);
+    }
+    const buf = readFileSync(ref.path);
+    return {
+      blob: new Blob([new Uint8Array(buf)], { type: 'image/png' }),
+      filename: path.basename(ref.path),
+    };
+  }
+  if ('buffer' in ref) {
+    return {
+      blob: new Blob([new Uint8Array(ref.buffer)], { type: 'image/png' }),
+      filename: ref.filename ?? 'ref.png',
+    };
+  }
+  const res = await fetch(ref.url);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch reference image (${res.status}): ${ref.url}`);
+  }
+  const buf = Buffer.from(await res.arrayBuffer());
+  const nameFromUrl = ref.url.split('/').pop()?.split('?')[0] || 'ref.png';
+  return {
+    blob: new Blob([new Uint8Array(buf)], { type: 'image/png' }),
+    filename: nameFromUrl.endsWith('.png') ? nameFromUrl : `${nameFromUrl}.png`,
+  };
+}
+
 /**
  * Call OpenAI images edits endpoint with one or more reference images.
- * Uses multipart form via fetch (no openai SDK dependency).
  */
 export async function editImage(opts: {
   prompt: string;
-  referencePaths: string[];
+  references: ImageRefInput[];
   size: ImageSize;
-  quality?: 'medium' | 'high';
+  quality?: 'medium' | 'high' | 'low';
 }): Promise<Buffer> {
+  if (!opts.references.length) {
+    throw new Error('editImage requires at least one reference');
+  }
   const apiKey = getApiKey();
-  const model = getImageModel();
+  const model = imageModelId();
   const form = new FormData();
   form.append('model', model);
   form.append('prompt', opts.prompt);
@@ -35,14 +68,11 @@ export async function editImage(opts: {
   form.append('quality', opts.quality ?? 'medium');
   form.append('n', '1');
 
-  for (const refPath of opts.referencePaths) {
-    if (!existsSync(refPath)) {
-      throw new Error(`Reference image missing: ${refPath}`);
-    }
-    const buf = readFileSync(refPath);
-    const blob = new Blob([new Uint8Array(buf)], { type: 'image/png' });
-    // OpenAI edits: repeat `image` for multiple reference files
-    form.append('image', blob, path.basename(refPath));
+  // Multi-ref edits require image[] (repeating `image` returns duplicate_parameter).
+  const imageField = opts.references.length > 1 ? 'image[]' : 'image';
+  for (const ref of opts.references) {
+    const { blob, filename } = await materializeRef(ref);
+    form.append(imageField, blob, filename);
   }
 
   const res = await fetch('https://api.openai.com/v1/images/edits', {
@@ -58,10 +88,50 @@ export async function editImage(opts: {
     throw new Error(`OpenAI image edits failed (${res.status}): ${text.slice(0, 500)}`);
   }
 
-  const json = (await res.json()) as {
+  return parseImageResponse(await res.json());
+}
+
+/**
+ * OpenAI images generations — used to bootstrap character sheets / style anchor
+ * when no reference exists yet.
+ */
+export async function generateImage(opts: {
+  prompt: string;
+  size: ImageSize;
+  quality?: 'medium' | 'high' | 'low';
+}): Promise<Buffer> {
+  const apiKey = getApiKey();
+  const model = imageModelId();
+  const res = await fetch('https://api.openai.com/v1/images/generations', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model,
+      prompt: opts.prompt,
+      size: opts.size,
+      quality: opts.quality ?? 'high',
+      n: 1,
+    }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(
+      `OpenAI image generations failed (${res.status}): ${text.slice(0, 500)}`,
+    );
+  }
+
+  return parseImageResponse(await res.json());
+}
+
+async function parseImageResponse(json: unknown): Promise<Buffer> {
+  const data = json as {
     data?: { b64_json?: string; url?: string }[];
   };
-  const first = json.data?.[0];
+  const first = data.data?.[0];
   if (first?.b64_json) {
     return Buffer.from(first.b64_json, 'base64');
   }
@@ -70,9 +140,10 @@ export async function editImage(opts: {
     if (!imgRes.ok) throw new Error('Failed to download generated image URL');
     return Buffer.from(await imgRes.arrayBuffer());
   }
-  throw new Error('OpenAI image edits returned no image data');
+  throw new Error('OpenAI image API returned no image data');
 }
 
+/** @deprecated Prefer Cloudinary/local storage adapter. Kept for legacy pack path. */
 export function saveGeneratedImage(key: string, buffer: Buffer): string {
   mkdirSync(OUT_DIR, { recursive: true });
   const safe = key.replace(/[^a-z0-9._-]/gi, '_');

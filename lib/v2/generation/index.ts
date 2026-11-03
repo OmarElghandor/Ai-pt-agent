@@ -5,6 +5,7 @@ export { generateLessonFull } from './generateFull';
 export {
   enqueueGenerateLesson,
   enqueueAndStartGenerateLesson,
+  enqueueAndStartLessonImages,
   getJob,
   getLatestJobForDay,
   getLatestJobsForDay,
@@ -19,9 +20,12 @@ export {
   reclaimExpiredLeases,
   requeueJob,
   requeueStale,
+  enqueueQuestionsRegen,
+  enqueueStoryRegen,
   summarizeJobGraph,
   listJobsForVersion,
 } from './jobs';
+export { drainLessonImageJobs } from './drainImages';
 export { rehashAfterItemEdit } from './lesson/graph';
 export {
   loadKnownItems,

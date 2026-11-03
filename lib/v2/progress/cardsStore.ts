@@ -61,6 +61,7 @@ function docToState(doc: Record<string, unknown>): ItemState {
     weakToolIds: Array.isArray(doc.weakToolIds)
       ? (doc.weakToolIds as string[])
       : [],
+    opt_in_card: Boolean(doc.opt_in_card),
   };
 }
 
@@ -86,6 +87,7 @@ async function saveState(state: ItemState): Promise<void> {
         },
         lastImplicitReviewLocalDate: state.lastImplicitReviewLocalDate,
         weakToolIds: state.weakToolIds,
+        ...(state.opt_in_card ? { opt_in_card: true } : {}),
       },
     },
     { upsert: true },
@@ -225,7 +227,9 @@ async function loadCardCandidates(opts: {
   );
 
   for (const item of opts.items ?? []) {
-    if (!isFlashcardItem(item)) continue;
+    const existing = stateById.get(item.id);
+    const opted = Boolean(existing?.opt_in_card);
+    if (!isFlashcardItem(item) && !opted) continue;
     if (stateById.has(item.id)) continue;
     stateById.set(
       item.id,
@@ -244,7 +248,9 @@ async function loadCardCandidates(opts: {
   const candidates: CardCandidate[] = [];
   for (const [itemId, state] of stateById) {
     const item = opts.items?.find((i) => i.id === itemId);
-    const eligible = item ? isFlashcardItem(item) : true;
+    const eligible = item
+      ? isFlashcardItem(item) || Boolean(state.opt_in_card)
+      : Boolean(state.opt_in_card);
     candidates.push({
       item_id: itemId,
       introducedDay: state.introducedDay,
@@ -255,6 +261,50 @@ async function loadCardCandidates(opts: {
     });
   }
   return candidates;
+}
+
+/**
+ * Per-user «+ للكروت» — opt a real-world (or any) phrase into this user's deck.
+ * Idempotent.
+ */
+export async function addUserCard(opts: {
+  user_id: string;
+  item_id: string;
+  introducedDay: number;
+  target_lang?: string;
+  now?: Date;
+}): Promise<{ state: ItemState; created: boolean } | { error: string }> {
+  if (!mongoConfigured()) return { error: 'MongoDB not configured' };
+  await connectMongo();
+  const now = opts.now ?? new Date();
+  const existing = await V2ItemStateModel()
+    .findOne({ user_id: opts.user_id, item_id: opts.item_id })
+    .lean();
+  if (existing && Boolean((existing as { opt_in_card?: boolean }).opt_in_card)) {
+    return {
+      state: docToState(existing as unknown as Record<string, unknown>),
+      created: false,
+    };
+  }
+  const base = existing
+    ? docToState(existing as unknown as Record<string, unknown>)
+    : createItemState({
+        user_id: opts.user_id,
+        item_id: opts.item_id,
+        introducedDay: opts.introducedDay,
+        target_lang: opts.target_lang,
+      });
+  const state: ItemState = {
+    ...base,
+    opt_in_card: true,
+    card: {
+      ...base.card,
+      dueAt: base.card.dueAt ?? now.toISOString(),
+      masteryLevel: 'learning',
+    },
+  };
+  await saveState(state);
+  return { state, created: !existing };
 }
 
 export async function reviewCard(opts: {

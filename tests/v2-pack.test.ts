@@ -6,6 +6,7 @@ import {
   validatePracticePack,
 } from '@/lib/v2/content/validatePack';
 import { buildPackFromLesson } from '@/lib/v2/generation/pack/buildFromLesson';
+import { buildTlOptions } from '@/lib/v2/generation/pack/options';
 import {
   buildReadingQuestion,
   distractorsAbsentFromArtifact,
@@ -95,6 +96,28 @@ describe('v2 practice pack', () => {
     assert.ok(skills.has('reading'));
     assert.ok(skills.has('speaking'));
     assert.ok(skills.has('writing'));
+  });
+
+  it('listening options are Portuguese (tl), not Arabic', () => {
+    const arabic = /[\u0600-\u06FF]/;
+    const opts = buildTlOptions('phrase.here', items, 3);
+    assert.ok(opts.length >= 2);
+    assert.ok(opts.every((o) => o.lang === 'tl'));
+    assert.ok(opts.every((o) => !arabic.test(o.label)));
+    assert.ok(opts.some((o) => o.correct && o.label === 'Aqui.'));
+
+    const pack = buildPackFromLesson({
+      day: 3,
+      lesson: fakeLesson(),
+      chatCharacter: 'rita',
+    });
+    const listening = pack.beats.filter((b) => b.skill === 'listening');
+    assert.ok(listening.length >= 1);
+    for (const beat of listening) {
+      assert.ok(beat.options?.length);
+      assert.ok(beat.options!.every((o) => o.lang === 'tl'));
+      assert.ok(beat.options!.every((o) => !arabic.test(o.label)));
+    }
   });
 
   it('rejects said id in prompt_ids', () => {

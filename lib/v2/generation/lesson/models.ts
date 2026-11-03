@@ -34,6 +34,7 @@ export const MODEL_JOB_KINDS = [
   'questions',
   'micro',
   'daily_use',
+  'real_world',
   'continuity',
   'lang_check',
 ] as const;
@@ -48,6 +49,7 @@ const ENV_KEYS: Record<ModelJobKind, string> = {
   questions: 'V2_MODEL_QUESTIONS',
   micro: 'V2_MODEL_MICRO',
   daily_use: 'V2_MODEL_DAILY_USE',
+  real_world: 'V2_MODEL_REAL_WORLD',
   continuity: 'V2_MODEL_CONTINUITY',
   lang_check: 'V2_LANG_CHECK_MODEL',
 };
@@ -148,6 +150,7 @@ export function setModelProfile(profile: ModelProfile | null): void {
     questions: qwen,
     micro: qwen,
     daily_use: qwen,
+    real_world: qwen,
     critic: qwen,
     continuity: qwen,
   };

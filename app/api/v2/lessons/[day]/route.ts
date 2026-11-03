@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
-import { getPublishedLesson } from '@/lib/v2/content/getPublishedLesson';
+import {
+  getLatestLessonPack,
+  getPublishedLesson,
+} from '@/lib/v2/content/getPublishedLesson';
 import { resolvePackForms } from '@/lib/v2/content/resolvePack';
 import { mongoConfigured } from '@/lib/mongo';
 
@@ -19,16 +22,18 @@ export async function GET(
     return NextResponse.json({ error: 'MongoDB not configured' }, { status: 503 });
   }
 
-  const published = await getPublishedLesson(day);
-  if (!published) {
+  // Prefer published; fall back to latest draft (same as day map / content pages).
+  const lesson =
+    (await getPublishedLesson(day)) ?? (await getLatestLessonPack(day));
+  if (!lesson) {
     return NextResponse.json({ error: 'not found' }, { status: 404 });
   }
 
   return NextResponse.json({
-    day: published.day,
-    target_lang: published.target_lang,
-    version: published.version,
-    status: published.status,
-    lesson: resolvePackForms(published.pack),
+    day: lesson.day,
+    target_lang: lesson.target_lang,
+    version: lesson.version,
+    status: lesson.status,
+    lesson: resolvePackForms(lesson.pack),
   });
 }

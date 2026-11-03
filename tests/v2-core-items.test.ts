@@ -13,23 +13,26 @@ import {
 import { getDayPlan } from '../lib/v2/generation/lesson/plan';
 
 describe('core-items file', () => {
-  it('loads day 1 and day 2 with stable ids', () => {
+  it('loads day 1 and day 3 with stable ids', () => {
     const d1 = getCoreItemsDay(1);
     assert.ok(d1.core_items.some((c) => c.id === 'phrase.hello'));
     assert.deepEqual(d1.recycle_ids, []);
     const d2 = getCoreItemsDay(2);
-    assert.ok(d2.core_items.some((c) => c.id === 'word.coffee'));
+    assert.ok(d2.core_items.some((c) => c.id === 'phrase.how_are_you'));
     assert.ok(d2.recycle_ids.includes('phrase.hello'));
+    const d3 = getCoreItemsDay(3);
+    assert.ok(d3.core_items.some((c) => c.id === 'word.coffee'));
   });
 
-  it('story day 7 and day 30 have no new items', () => {
+  it('story day 7 and A1 test day 49 have no new items', () => {
     assert.equal(getCoreItemsDay(7).core_items.length, 0);
-    assert.equal(getCoreItemsDay(30).core_items.length, 0);
+    assert.equal(getCoreItemsDay(49).core_items.length, 0);
+    assert.equal(getCoreItemsDay(49).is_test, true);
     assert.equal(buildLessonBrief(getDayPlan(7)).no_new_items, true);
-    assert.equal(buildLessonBrief(getDayPlan(30)).no_new_items, true);
+    assert.equal(buildLessonBrief(getDayPlan(49)).no_new_items, true);
   });
 
-  it('passes validateCoreItemsFile (unique ids, ≤20/day, plural_tl on article nouns)', () => {
+  it('passes validateCoreItemsFile (unique ids, ≤14/day, plural_tl on article nouns)', () => {
     resetCoreItemsCache();
     const file = loadCoreItemsFile();
     const issues = validateCoreItemsFile(file);

@@ -4,7 +4,7 @@ import type { PackBeat, PracticePackData } from '@/lib/v2/content/pack';
 import { skillMixCounts } from '@/lib/v2/content/validatePack';
 import { buildAcceptedVariants, expectedTlFromIds } from './accepted';
 import { pickCharacterTl } from './characterTl';
-import { buildMeaningOptions } from './options';
+import { buildTlOptions } from './options';
 import { buildReadingQuestion } from './reading';
 
 const CHARACTERS: Record<
@@ -97,7 +97,7 @@ export function buildPackFromLesson(opts: {
         expected_ids: [],
         audio_tl: tl,
         question_eg: 'سمعت إيه؟',
-        options: buildMeaningOptions(h.id, items, 3),
+        options: buildTlOptions(h.id, items, 3),
         coach_fallback_eg: 'اسمع تاني وجرّب.',
         next_character_tl: nextHeardTl(i),
       });

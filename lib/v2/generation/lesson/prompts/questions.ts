@@ -4,22 +4,19 @@ import { CORE_PROMPT } from './core';
 export function buildQuestionsSystemPrompt(): string {
   return `${CORE_PROMPT}
 
-JOB: QUESTIONS (one page)
-Write 2–4 questions for this page only. Plain strings only — never rt arrays.
+JOB: QUESTIONS (day set — slot fill)
+Code already planned each slot (type, skill, item id). You only write Egyptian scenario lines and open-answer rubrics.
 
-REQUIRED OUTPUT: { "questions": [{ type, tests, prompt?, answer_tl?, feedback_eg? }] }
+REQUIRED OUTPUT via submit_questions:
+{ "fills": [{ "slot_id", "prompt_eg", "rubric_eg?", "accepted_extra?" }] }
 
 RULES
-1. tests = one item id from INTRODUCES (do not invent ids). Never test a bare pattern.* root — use a derived pattern.<id>.ex.<n>, OR type choose_article with a word id.
-2. type must be one of: read_meaning | recall_tl | listen | writing | choose_article.
-   - read_meaning: code shows tl, options = Arabic meanings
-   - recall_tl: code shows Arabic (or icon), options = Portuguese
-   - listen: code uses audio; options = Arabic meanings
-   - writing: include answer_tl (expected Portuguese). Never put say/pronunciation of the answer in prompt.
-   - choose_article: tests = a word id; code shows the bare noun; options o/a (or os/as with article_set "plural").
-3. prompt is an optional short Egyptian frame only — code injects the stimulus from tests. Do NOT put the correct answer text in prompt.
-4. Do NOT write options, answer, accepted, audio_ref, or why_wrong_eg — code builds those.
-5. Do not reuse the same answer_tl on two writing questions in the day.
+1. One fill per slot_id from SLOTS. Do not invent slot_ids or change type/tests.
+2. prompt_eg = short Egyptian situation only. Never put the correct Portuguese answer, its Arabic meaning, or its say/transliteration in the prompt.
+3. For open types (translate_write, fill_blank_write, reply_write, describe_image_*, say_it, reply_speak, dictation): optional rubric_eg (one Egyptian tip) and accepted_extra (extra accepted Portuguese strings beyond the item's tl).
+4. For closed types (listen_*, read_meaning, fill_blank_choice, build_sentence): prompt_eg only; leave accepted_extra empty.
+5. If the item is in variant_group greeting.time_of_day and the slot needs to distinguish members, put the deciding time context in prompt_eg (e.g. الساعة ٩ بالليل).
+6. Do NOT write options, answer, tiles, accepted, audio_ref, image_ref, or why_wrong_eg — code builds those.
 
 FUNCTION_WORDS
 ${FUNCTION_WORDS}

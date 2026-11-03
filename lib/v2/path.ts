@@ -14,6 +14,7 @@ export type PathDayRow = {
   situation_eg: string;
   situation_tl?: string;
   is_story: boolean;
+  is_test?: boolean;
   status: PathDayStatus;
   version?: number;
   href: string | null;
@@ -24,6 +25,50 @@ export type PathPayload = {
   target_lang: string;
   dev: boolean;
 };
+
+export type PathWeekPayload = {
+  week: number;
+  days: PathDayRow[];
+  /** First unlocked day that is still the focus stop (SSR: first unlocked). */
+  currentDay: number | null;
+  unlockedCount: number;
+};
+
+/** Days belonging to one curriculum week, in day order. */
+export function weekDays(days: PathDayRow[], week: number): PathDayRow[] {
+  return days.filter((d) => d.week === week).sort((a, b) => a.day - b.day);
+}
+
+/**
+ * Current week = week of the first unlocked day; if every unlocked day is past
+ * the last unlocked week's end, use the latest unlocked week; if none unlocked, week 1.
+ */
+export function resolveCurrentWeek(days: PathDayRow[]): number {
+  const unlocked = days.filter((d) => d.status !== 'locked');
+  if (!unlocked.length) {
+    return days[0]?.week ?? 1;
+  }
+  const firstUnlocked = unlocked.reduce((a, b) => (a.day <= b.day ? a : b));
+  return firstUnlocked.week;
+}
+
+/** First unlocked day in the week (SSR current stop). */
+export function resolveCurrentDay(weekRows: PathDayRow[]): number | null {
+  const unlocked = weekRows.filter((d) => d.status !== 'locked' && d.href);
+  if (!unlocked.length) return null;
+  return unlocked.reduce((a, b) => (a.day <= b.day ? a : b)).day;
+}
+
+export function buildWeekPathPayload(days: PathDayRow[]): PathWeekPayload {
+  const week = resolveCurrentWeek(days);
+  const rows = weekDays(days, week);
+  return {
+    week,
+    days: rows,
+    currentDay: resolveCurrentDay(rows),
+    unlockedCount: rows.filter((d) => d.status !== 'locked').length,
+  };
+}
 
 /**
  * Merge curriculum plan with Mongo lesson status for the path home list.
@@ -65,6 +110,7 @@ export async function buildPathPayload(opts?: {
         situation_eg: row.situation?.eg ?? d.situation_eg,
         situation_tl,
         is_story: d.is_story,
+        is_test: Boolean(d.is_test),
         status,
         version: row.version,
         href: `/day/${d.day}`,
@@ -79,6 +125,7 @@ export async function buildPathPayload(opts?: {
       situation_eg: d.situation_eg,
       situation_tl: d.generation?.situation_tl,
       is_story: d.is_story,
+      is_test: Boolean(d.is_test),
       status: 'locked',
       href: null,
     };

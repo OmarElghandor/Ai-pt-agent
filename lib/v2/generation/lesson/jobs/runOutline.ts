@@ -135,33 +135,42 @@ function postProcessOutline(
   }
   pages = deduped;
 
-  // Order detail pages by story item appearance, then prepend intro story.
+  // Order detail pages by story item appearance when story exists.
   // Weekly story days: story pointer only (no detail pages from model story preset).
+  // Soft story: if story is missing, skip page 0 / replay and order by core items.
   if (!opts.isStory) {
     pages = orderPagesByStory(pages, opts.story);
   } else {
     pages = [];
   }
-  pages = [
-    {
-      index: 0,
-      page_id: 'p0_story',
-      preset: 'story',
-      mode: modeForPreset('story'),
-      role: 'intro' as const,
-      title: 'القصة',
-      purpose: opts.isStory
-        ? 'قصة الأسبوع'
-        : 'شوف الموقف قبل التفصيل',
-      introduces: [],
-      assumes: [...opts.recycleIds],
-      handoff: opts.story?.story_id
-        ? `story_id:${opts.story.story_id}`
-        : '',
-    },
-    ...pages,
-  ];
-  fixes.push(fix('pages', 'story_pointer', 'prepended intro story pointer page'));
+  if (opts.story?.story_id) {
+    pages = [
+      {
+        index: 0,
+        page_id: 'p0_story',
+        preset: 'story',
+        mode: modeForPreset('story'),
+        role: 'intro' as const,
+        title: 'القصة',
+        purpose: opts.isStory
+          ? 'قصة الأسبوع'
+          : 'شوف الموقف قبل التفصيل',
+        introduces: [],
+        assumes: [...opts.recycleIds],
+        handoff: `story_id:${opts.story.story_id}`,
+      },
+      ...pages,
+    ];
+    fixes.push(fix('pages', 'story_pointer', 'prepended intro story pointer page'));
+  } else {
+    fixes.push(
+      fix(
+        'pages',
+        'story_missing',
+        'no story handoff — skipped page 0 / replay; pages ordered by core items',
+      ),
+    );
+  }
 
   pages = pages.map((p, i) => ({
     ...p,
@@ -229,6 +238,64 @@ function postProcessOutline(
         dictPage.introduces = ordered;
       }
     }
+  }
+
+  // «بيقولوها كده»: after dictionary when present, else after phrases.
+  // Skip on weekly story days (pages already emptied above).
+  if (!opts.isStory) {
+    pages = pages.filter((p) => {
+      if (p.preset === 'real_world') {
+        fixes.push(
+          fix(
+            `pages[${p.index}]`,
+            'real_world_owned',
+            'dropped model real_world page',
+          ),
+        );
+        return false;
+      }
+      return true;
+    });
+    const rwEntry = {
+      index: 0,
+      page_id: 'p_real_world',
+      preset: 'real_world' as const,
+      mode: modeForPreset('real_world'),
+      title: 'بيقولوها كده',
+      purpose: 'عبارات الناس فعلاً بتقولها',
+      introduces: [] as string[],
+      assumes: [] as string[],
+      handoff: '',
+    };
+    const dictIdx = pages.findIndex((p) => p.preset === 'dictionary');
+    const phrasesIdx = pages.findIndex((p) => p.preset === 'phrases');
+    let insertAfter = -1;
+    let insertNote = 'appended real_world as last detail';
+    if (dictIdx >= 0) {
+      insertAfter = dictIdx;
+      insertNote = 'inserted real_world after dictionary';
+    } else if (phrasesIdx >= 0) {
+      insertAfter = phrasesIdx;
+      insertNote = 'inserted real_world after phrases';
+    }
+    if (insertAfter >= 0) {
+      pages = [
+        ...pages.slice(0, insertAfter + 1),
+        rwEntry,
+        ...pages.slice(insertAfter + 1),
+      ];
+    } else {
+      pages = [...pages, rwEntry];
+    }
+    fixes.push(fix('pages', 'real_world_insert', insertNote));
+    pages = pages.map((p, i) => ({
+      ...p,
+      index: i,
+      page_id: `p${i}_${p.preset}`,
+      ...(i === 0 && p.preset === 'story'
+        ? { role: 'intro' as const, introduces: [] as string[] }
+        : {}),
+    }));
   }
 
   const assumed = fillEmptyDetailAssumes(pages);

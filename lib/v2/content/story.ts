@@ -15,6 +15,8 @@ export const StoryCastEntrySchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   role: StoryCastRoleSchema,
+  gender: nullishField(z.enum(['m', 'f'])),
+  voice: nullishField(z.string().min(1)),
 });
 
 export const StoryExtraSchema = z.object({
@@ -54,6 +56,8 @@ export const StoryLineSchema = z.object({
   speaker: z.string().min(1),
   tl: z.string().min(1),
   ar: nullishField(z.string()),
+  /** Plain-English gloss of tl; UI still shows ar until native-lang switch. */
+  en: nullishField(z.string()),
   ids: z.array(z.string()).nullable().optional(),
   extra: nullishField(z.array(StoryExtraSchema)),
   /** Index of the line this learner reply answers. */
@@ -131,6 +135,13 @@ export const StoryDocSchema = z.object({
   setting: z.string().min(1),
   lines: z.array(StoryLineSchema).min(1),
   image_spec: nullishField(StoryImageSpecSchema),
+  /** Denormalized ready scene image link (from v2_images). */
+  image: nullishField(
+    z.object({
+      key: z.string().min(1),
+      url: z.string().min(1),
+    }),
+  ),
   scenes: nullishField(z.array(StorySceneSchema)),
   /** Weekly story days only. */
   is_weekly: nullishField(z.boolean()),
@@ -163,6 +174,7 @@ export function normalizeStoryForSave(story: StoryDoc): StoryDoc {
   return {
     ...story,
     image_spec: story.image_spec ?? undefined,
+    image: story.image ?? undefined,
     scenes: story.scenes ?? undefined,
     is_weekly: story.is_weekly ?? undefined,
     after_questions: story.after_questions?.length

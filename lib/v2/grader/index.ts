@@ -70,7 +70,7 @@ const GradeResponseSchema = z.object({
   main_error: z.number().int().nullable().default(null),
   corrected_tl: z.string().default(''),
   feedback_ar: z.string().default(''),
-  skill: z.enum(['listening', 'reading', 'speaking', 'writing']),
+  skill: z.enum(['listening', 'reading', 'speaking', 'writing', 'grammar']),
 });
 
 /** Test hook — closed/accent paths must never increment this. */

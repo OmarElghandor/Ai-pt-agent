@@ -2,6 +2,7 @@
 
 import { ImageSlot } from '@/components/v2/ImageSlot';
 import type { Block } from '@/lib/v2/content/blocks';
+import { cloudinaryDisplayUrl } from '@/lib/v2/images/cloudinaryUrl';
 import { itemTargetText } from '@/lib/v2/render/speechTarget';
 import { useBlockChrome } from './chrome';
 import { partClass } from './visibility';
@@ -13,12 +14,17 @@ function pct(value: number): string {
 export function SceneBlock({ block }: { block: Extract<Block, { type: 'scene' }> }) {
   const chrome = useBlockChrome();
   const state = chrome.partState(block.id, null);
+  const src =
+    typeof block.image === 'string' &&
+    (block.image.startsWith('http') || block.image.startsWith('/'))
+      ? cloudinaryDisplayUrl(block.image, { aspect: '16:9', width: 1200 })
+      : null;
   return (
     <div
       data-target={block.id}
       className={['relative overflow-hidden', partClass(state)].join(' ')}
     >
-      <ImageSlot variant="cover" />
+      <ImageSlot variant="cover" src={src} />
       {block.image ? <span className="sr-only">{block.image}</span> : null}
       {block.hotspots.map((spot, index) => {
         const spotState = chrome.partState(block.id, `item:${index}`);

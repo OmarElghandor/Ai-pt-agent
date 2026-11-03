@@ -180,7 +180,7 @@ export async function setPackStatus(opts: {
   const doc = await Model.findOneAndUpdate(
     { day: opts.day, target_lang, version: opts.version },
     { $set: { status: opts.status } },
-    { new: true },
+    { returnDocument: 'after' },
   ).lean();
   if (!doc) return null;
   return {
@@ -193,31 +193,35 @@ export async function setPackStatus(opts: {
   };
 }
 
-/** Mark published/draft packs stale when lesson version advances. */
+/** Mark published/draft packs stale when lesson version advances or is regenerated. */
 export async function markPacksStaleForLesson(opts: {
   day: number;
   targetLang?: string;
   lessonVersion: number;
+  /** When true, stale all packs for the day even if lesson_version matches. */
+  force?: boolean;
+  reason?: string;
 }): Promise<number> {
   if (!mongoConfigured()) return 0;
   await connectMongo();
   const target_lang = opts.targetLang ?? 'pt-PT';
-  const res = await V2PackModel().updateMany(
-    {
-      day: opts.day,
-      target_lang,
-      status: { $in: ['draft', 'reviewed', 'published'] },
-      $or: [
-        { 'meta.lesson_version': { $ne: opts.lessonVersion } },
-        { 'meta.lesson_version': { $exists: false } },
-      ],
+  const filter: Record<string, unknown> = {
+    day: opts.day,
+    target_lang,
+    status: { $in: ['draft', 'reviewed', 'published'] },
+  };
+  if (!opts.force) {
+    filter.$or = [
+      { 'meta.lesson_version': { $ne: opts.lessonVersion } },
+      { 'meta.lesson_version': { $exists: false } },
+    ];
+  }
+  const res = await V2PackModel().updateMany(filter, {
+    $set: {
+      'meta.stale': true,
+      'meta.stale_reason':
+        opts.reason ?? `lesson republished as v${opts.lessonVersion}`,
     },
-    {
-      $set: {
-        'meta.stale': true,
-        'meta.stale_reason': `lesson republished as v${opts.lessonVersion}`,
-      },
-    },
-  );
+  });
   return res.modifiedCount ?? 0;
 }

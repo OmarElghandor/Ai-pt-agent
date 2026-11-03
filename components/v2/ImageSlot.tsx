@@ -17,6 +17,13 @@ type Props = {
   className?: string;
   /** Overlay content (e.g. lock icon) instead of the default image glyph. */
   placeholderIcon?: string;
+  /**
+   * Fill the positioned parent (hero / carousel). Skips aspect ratio and
+   * card radius so object-cover can cover the full box.
+   */
+  fill?: boolean;
+  /** How the image sits in the box. Default cover. */
+  fit?: 'cover' | 'contain';
 };
 
 const VARIANT: Record<
@@ -56,7 +63,10 @@ export function ImageSlot({
   size = 40,
   className,
   placeholderIcon = 'image',
+  fill = false,
+  fit = 'cover',
 }: Props) {
+  const objectFit = fit === 'contain' ? 'object-contain' : 'object-cover';
   if (variant === 'avatar') {
     const box =
       size === 32 ? 'h-8 w-8' : size === 56 ? 'h-14 w-14' : 'h-10 w-10';
@@ -72,7 +82,7 @@ export function ImageSlot({
       >
         {src ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={src} alt={alt} className="h-full w-full object-cover" />
+          <img src={src} alt={alt} className={`h-full w-full ${objectFit}`} />
         ) : (
           <span className="flex h-full w-full items-center justify-center text-v2-ink-muted">
             <Icon name={placeholderIcon} size={20} />
@@ -86,9 +96,10 @@ export function ImageSlot({
   return (
     <div
       className={[
-        'relative overflow-hidden bg-v2-paper-deep text-v2-ink-muted',
-        conf.box,
-        conf.radius,
+        'overflow-hidden bg-v2-paper-deep text-v2-ink-muted',
+        fill
+          ? 'absolute inset-0 h-full w-full'
+          : ['relative', conf.box, conf.radius].join(' '),
         className,
       ]
         .filter(Boolean)
@@ -97,7 +108,7 @@ export function ImageSlot({
     >
       {src ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={src} alt={alt} className="h-full w-full object-cover" />
+        <img src={src} alt={alt} className={`h-full w-full ${objectFit}`} />
       ) : (
         <span className="flex h-full w-full items-center justify-center">
           <Icon name={placeholderIcon} size={24} />

@@ -1,2816 +1,3271 @@
 {
- "version": 1,
- "lang": "pt-PT",
- "note": "core_items_tl per day. id namespaced; verb.* ids match v2_conjugations lemma. eg = hint for the generator, not final copy. plural_tl: os/as plural for countable nouns (null = mass/uncountable, no plural examples). singular_tl on plural-only entries. variant_group: alternatives of each other (story needs one; rest on phrases page). variant_tl: accepted alternatives, never shown with slashes.",
- "days": [
-  {
-   "day": 1,
-   "title_tl": "Apresentar-se",
-   "is_story": false,
-   "core_items": [
+  "version": 1,
+  "lang": "pt-PT",
+  "note": "core_items_tl per day. id namespaced; verb.* ids match v2_conjugations lemma. eg = hint for the generator, not final copy. plural_tl: os/as plural for countable nouns (null = mass/uncountable, no plural examples). singular_tl on plural-only entries. variant_group: alternatives of each other (story needs one; rest on phrases page). variant_tl: accepted alternatives, never shown with slashes. Max 14 core items per lesson (split 2026-11-01). is_test marks the phase test day. image: hand-authored image prompt per item {ratio, characters, prompt} — scene description only; code adds the style block and character reference sheets. story_image on a day = the story scene prompt.",
+  "days": [
     {
-     "id": "phrase.hello",
-     "kind": "phrase",
-     "tl": "Olá!",
-     "eg": "أهلاً"
+      "day": 1,
+      "title_tl": "Apresentar-se",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "phrase.hello",
+          "kind": "phrase",
+          "tl": "Olá!",
+          "eg": "أهلاً",
+          "image": {
+            "ratio": "4:3",
+            "characters": [
+              "tiago",
+              "ines"
+            ],
+            "prompt": "Midday on a sunny café terrace. Inês, sitting at a small round table with a galão, looks up with happy surprise as Tiago arrives with his earbuds around his neck; both raise a hand in a quick, casual 'hi'. Medium shot, eye-level, bright warm daylight, relaxed young-friends mood."
+          }
+        },
+        {
+          "id": "phrase.good_morning",
+          "kind": "phrase",
+          "tl": "Bom dia!",
+          "eg": "صباح الخير",
+          "variant_group": "greeting.time_of_day",
+          "image": {
+            "ratio": "4:3",
+            "characters": [
+              "yassin",
+              "ines"
+            ],
+            "prompt": "Early morning, 8:30, at the office coffee machine. Inês holds two paper cups and offers one to Yassin, who has just arrived with his backpack still on his shoulder, a bit sleepy but grateful. Soft low golden sunlight through the window, long shadows. Close two-shot, waist-up, faces large, warm start of the day."
+          }
+        },
+        {
+          "id": "phrase.good_afternoon",
+          "kind": "phrase",
+          "tl": "Boa tarde!",
+          "eg": "مساء الخير (بعد الضهر)",
+          "variant_group": "greeting.time_of_day",
+          "image": {
+            "ratio": "4:3",
+            "characters": [
+              "yassin",
+              "carlos"
+            ],
+            "prompt": "About 3 pm, lift doors opening: Carlos, the manager, steps out holding a folder and a coffee; Yassin waits inside, holding the door with one hand and greeting him with a respectful nod and smile. Bright neutral afternoon light. Over-the-shoulder shot from behind Yassin toward Carlos, polite workplace mood."
+          }
+        },
+        {
+          "id": "phrase.good_night",
+          "kind": "phrase",
+          "tl": "Boa noite!",
+          "eg": "تصبح على خير",
+          "context_eg": "بتحية بالليل وبرضو لما تودّع بالليل",
+          "variant_group": "greeting.time_of_day",
+          "image": {
+            "ratio": "4:3",
+            "characters": [
+              "yassin",
+              "graca"
+            ],
+            "prompt": "Night, about 9 pm, at the entrance of Yassin's old apartment building and a warm lamp over the door. Yassin arrives home with a grocery bag; Dona Graça, his elderly neighbour, stands in the doorway in her cardigan and greets him with a gentle smile and a small wave. Medium shot, cool blue night with warm lamp light, cosy neighbourly mood. Nobody is sleeping."
+          }
+        },
+        {
+          "id": "phrase.my_name_is",
+          "kind": "phrase",
+          "tl": "Chamo-me Omar.",
+          "eg": "اسمي عمر",
+          "image": {
+            "ratio": "4:3",
+            "characters": [
+              "yassin",
+              "ines"
+            ],
+            "prompt": "At a desk on Yassin's first day: Yassin, slightly shy, places one hand on his chest as he introduces himself; Inês sits at the desk opposite, turned toward him, listening with a welcoming smile. A blank visitor badge clipped to his jacket. Close two-shot, waist-up, eye contact, warm morning office light."
+          }
+        },
+        {
+          "id": "phrase.whats_your_name",
+          "kind": "phrase",
+          "tl": "Como se chama?",
+          "eg": "اسم حضرتك إيه؟",
+          "image": {
+            "ratio": "4:3",
+            "characters": [
+              "yassin",
+              "carlos"
+            ],
+            "prompt": "In Carlos's small glass-walled office, Carlos leans back in his chair with an open-palm questioning gesture and a curious, kind expression, asking the new employee something; Yassin stands holding his laptop bag, about to answer. Over-the-shoulder shot from behind Yassin, Carlos's face clearly visible, morning light."
+          }
+        },
+        {
+          "id": "phrase.nice_to_meet",
+          "kind": "phrase",
+          "tl": "Muito prazer!",
+          "eg": "اتشرفنا",
+          "role": "heard",
+          "image": {
+            "ratio": "4:3",
+            "characters": [
+              "yassin",
+              "tiago"
+            ],
+            "prompt": "Yassin and Tiago shake hands firmly next to the office plants, both smiling broadly at their first introduction; Tiago's other hand pats Yassin's arm warmly. Close-up on the handshake in the foreground with both faces visible above it, warm light, happy first-meeting mood."
+          }
+        },
+        {
+          "id": "phrase.likewise",
+          "kind": "phrase",
+          "tl": "Igualmente.",
+          "eg": "وأنا كمان",
+          "role": "said",
+          "replies_to": "phrase.nice_to_meet",
+          "image": {
+            "ratio": "4:3",
+            "characters": [
+              "tiago",
+              "ines"
+            ],
+            "prompt": "Right after a handshake, Inês laughs warmly and gives a small nod to Tiago, who grins back, both still turned toward each other by a window with soft city rooftops blurred behind them. Close two-shot, faces large, cheerful daytime light."
+          }
+        },
+        {
+          "id": "pattern.chamo_me",
+          "kind": "pattern",
+          "tl": "Chamo-me + اسم",
+          "eg": "الضمير بعد الفعل بشرطة"
+        }
+      ],
+      "recycle_ids": [],
+      "story_image": {
+        "ratio": "16:9",
+        "characters": [
+          "yassin",
+          "ines"
+        ],
+        "prompt": "Wide but intimate scene inside the entrance hall of a modern office on Yassin's first day: Yassin, on the left, just arrived with his backpack and a visitor badge, offers his hand; Inês, on the right, steps toward him from the reception area with a big welcoming smile, mid-introduction. Morning sun through tall windows, a few colleagues of different ages blurred in the background, warm hopeful first-day mood."
+      }
     },
     {
-     "id": "phrase.good_morning",
-     "kind": "phrase",
-     "tl": "Bom dia!",
-     "eg": "صباح الخير",
-     "variant_group": "greeting.time_of_day"
+      "day": 2,
+      "title_tl": "Tudo Bem?",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "phrase.how_are_you",
+          "kind": "phrase",
+          "tl": "Tudo bem?",
+          "eg": "عامل إيه؟",
+          "image": {
+            "ratio": "4:3",
+            "characters": [
+              "yassin",
+              "tiago"
+            ],
+            "prompt": "Morning at the office kitchenette: Tiago, leaning on the counter with a banana in his hand, casually asks Yassin something with raised eyebrows and a friendly grin while Yassin pours water into a glass. Medium shot, relaxed colleague-to-colleague mood, soft daylight."
+          }
+        },
+        {
+          "id": "phrase.fine_thanks",
+          "kind": "phrase",
+          "tl": "Tudo bem, obrigado.",
+          "eg": "تمام، شكراً (obrigada للست)",
+          "image": {
+            "ratio": "4:3",
+            "characters": [
+              "yassin",
+              "tiago"
+            ],
+            "prompt": "Yassin gives a thumbs-up with a relaxed smile in answer to Tiago, who nods back happily; both holding coffee cups by the office window. Close two-shot, waist-up, bright daylight, easy-going mood."
+          }
+        },
+        {
+          "id": "phrase.see_you_tomorrow",
+          "kind": "phrase",
+          "tl": "Até amanhã!",
+          "eg": "أشوفك بكرة",
+          "image": {
+            "ratio": "4:3",
+            "characters": [
+              "yassin",
+              "ines"
+            ],
+            "prompt": "End of the workday, about 6 pm: Inês, putting on her jacket with her bag on her shoulder, points cheerfully forward with one finger raised as she says goodbye to Yassin, who is still at his desk closing his laptop. Medium shot, warm orange sunset light through the windows, cosy end-of-day mood."
+          }
+        },
+        {
+          "id": "phrase.bye",
+          "kind": "phrase",
+          "tl": "Adeus!",
+          "eg": "مع السلامة",
+          "variant_tl": [
+            "Tchau!"
+          ],
+          "image": {
+            "ratio": "4:3",
+            "characters": [
+              "yassin",
+              "manuel"
+            ],
+            "prompt": "Early evening at a small neighbourhood café: Manuel, in his apron, stands at the door flipping the sign to closed and waves goodbye with a big smile; Yassin walks away down the quiet street, turning back to wave. Wide street shot with plain shopfronts, golden hour light, friendly parting mood."
+          }
+        },
+        {
+          "id": "phrase.how_are_you_formal",
+          "kind": "phrase",
+          "tl": "Como está?",
+          "eg": "إزي حضرتك؟ (بأدب)",
+          "image": {
+            "ratio": "4:3",
+            "characters": [
+              "yassin",
+              "graca"
+            ],
+            "prompt": "On the worn stone stairs of an old apartment building, Yassin meets Dona Graça coming down with her woven shopping basket; he stops, steps aside respectfully and greets her politely with a slight bow of the head. Medium shot on the stairs, soft morning light from a small window, respectful neighbourly mood."
+          }
+        },
+        {
+          "id": "phrase.im_fine",
+          "kind": "phrase",
+          "tl": "Estou bem, obrigado.",
+          "eg": "أنا كويس، شكراً (obrigada للست)",
+          "image": {
+            "ratio": "4:3",
+            "characters": [
+              "yassin",
+              "graca"
+            ],
+            "prompt": "Dona Graça answers Yassin with a warm, composed smile, one hand resting on her chest and the other holding the stair rail; Yassin listens attentively a step below her. Close shot on Dona Graça's face with Yassin in soft focus in the foreground, kind and polite mood."
+          }
+        }
+      ],
+      "recycle_ids": [
+        "pattern.chamo_me",
+        "phrase.hello",
+        "phrase.good_morning"
+      ]
     },
     {
-     "id": "phrase.good_afternoon",
-     "kind": "phrase",
-     "tl": "Boa tarde!",
-     "eg": "مساء الخير (بعد الضهر)",
-     "variant_group": "greeting.time_of_day"
+      "day": 3,
+      "title_tl": "Conversação Básica",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.coffee",
+          "kind": "word",
+          "tl": "o café",
+          "eg": "القهوة (إسبريسو صغير)",
+          "plural_tl": "os cafés"
+        },
+        {
+          "id": "word.galao",
+          "kind": "word",
+          "tl": "o galão",
+          "eg": "قهوة بلبن في كوباية",
+          "plural_tl": "os galões"
+        },
+        {
+          "id": "word.water",
+          "kind": "word",
+          "tl": "a água",
+          "eg": "المية",
+          "plural_tl": null
+        },
+        {
+          "id": "word.milk",
+          "kind": "word",
+          "tl": "o leite",
+          "eg": "اللبن",
+          "plural_tl": null
+        },
+        {
+          "id": "word.tea",
+          "kind": "word",
+          "tl": "o chá",
+          "eg": "الشاي",
+          "plural_tl": "os chás"
+        },
+        {
+          "id": "word.pastel_de_nata",
+          "kind": "word",
+          "tl": "o pastel de nata",
+          "eg": "تارت الكريمة البرتغالي",
+          "plural_tl": "os pastéis de nata"
+        },
+        {
+          "id": "phrase.order_coffee",
+          "kind": "phrase",
+          "tl": "Queria um café, por favor.",
+          "eg": "عايز قهوة لو سمحت",
+          "role": "said"
+        },
+        {
+          "id": "phrase.with_milk",
+          "kind": "phrase",
+          "tl": "Com leite?",
+          "eg": "بلبن؟",
+          "role": "heard"
+        },
+        {
+          "id": "phrase.anything_else",
+          "kind": "phrase",
+          "tl": "Mais alguma coisa?",
+          "eg": "حاجة تانية؟",
+          "role": "heard"
+        },
+        {
+          "id": "phrase.thats_all",
+          "kind": "phrase",
+          "tl": "Só isto, obrigado.",
+          "eg": "بس كده، شكراً",
+          "role": "said",
+          "replies_to": "phrase.anything_else"
+        },
+        {
+          "id": "pattern.queria_um_uma",
+          "kind": "pattern",
+          "pattern_kind": "polite_request",
+          "tl": "Queria + um/uma + حاجة, por favor.",
+          "eg": "الطلب بأدب",
+          "fills": [
+            "word.coffee",
+            "word.galao",
+            "word.water",
+            "word.tea",
+            "word.pastel_de_nata",
+            "word.toast",
+            "word.milk"
+          ]
+        }
+      ],
+      "recycle_ids": [
+        "phrase.hello",
+        "phrase.good_morning",
+        "phrase.fine_thanks"
+      ],
+      "real_world": [
+        {
+          "tl": "Uma bica e um pastel de nata.",
+          "ar": "إسبريسو وباستيل دي ناتا.",
+          "eg_note": "الطلب الكلاسيكي في كافيهات لشبونة — بيكا يعني إسبريسو صغير",
+          "tag": "نصيحة لشبونية"
+        },
+        {
+          "tl": "Uma água, se faz favor.",
+          "ar": "مية، من فضلك.",
+          "eg_note": "طلب مية بسيط في الكافيه",
+          "tag": "أسلوب مهذب"
+        },
+        {
+          "tl": "A conta, se faz favor.",
+          "ar": "الحساب، من فضلك.",
+          "eg_note": "لما تخلّص وتطلب الحساب",
+          "tag": "الحساب"
+        },
+        {
+          "tl": "Tem leite sem lactose?",
+          "ar": "في لبن من غير لاكتوز؟",
+          "eg_note": "لما يكون عندك حساسية من اللبن العادي",
+          "tag": "سؤال"
+        },
+        {
+          "tl": "Queria um galão, por favor.",
+          "ar": "عايز جالون، من فضلك.",
+          "eg_note": "جالون = قهوة بلبن في كوباية زجاج",
+          "tag": "الطلب"
+        }
+      ]
     },
     {
-     "id": "phrase.good_night",
-     "kind": "phrase",
-     "tl": "Boa noite!",
-     "eg": "مساء الخير / تصبح على خير",
-     "variant_group": "greeting.time_of_day"
+      "day": 4,
+      "title_tl": "Mais Alguma Coisa?",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.toast",
+          "kind": "word",
+          "tl": "a torrada",
+          "eg": "التوست",
+          "plural_tl": "as torradas"
+        },
+        {
+          "id": "word.sugar",
+          "kind": "word",
+          "tl": "o açúcar",
+          "eg": "السكر",
+          "plural_tl": null
+        },
+        {
+          "id": "word.juice",
+          "kind": "word",
+          "tl": "o sumo",
+          "eg": "العصير",
+          "plural_tl": "os sumos"
+        },
+        {
+          "id": "word.cake",
+          "kind": "word",
+          "tl": "o bolo",
+          "eg": "الكيكة",
+          "plural_tl": "os bolos"
+        },
+        {
+          "id": "word.glass",
+          "kind": "word",
+          "tl": "o copo",
+          "eg": "الكوباية",
+          "plural_tl": "os copos"
+        },
+        {
+          "id": "phrase.how_much_is_it",
+          "kind": "phrase",
+          "tl": "Quanto é?",
+          "eg": "حسابه كام؟",
+          "role": "said"
+        },
+        {
+          "id": "phrase.i_like_coffee",
+          "kind": "phrase",
+          "tl": "Gosto de café.",
+          "eg": "بحب القهوة (جملة جاهزة، القاعدة يوم 13)",
+          "role": "said"
+        },
+        {
+          "id": "phrase.youre_welcome",
+          "kind": "phrase",
+          "tl": "De nada.",
+          "eg": "العفو"
+        },
+        {
+          "id": "phrase.excuse_me_pass",
+          "kind": "phrase",
+          "tl": "Com licença.",
+          "eg": "لو سمحت (عايز أعدّي أو أقاطع)"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.queria_um_uma",
+        "phrase.order_coffee",
+        "phrase.with_milk",
+        "phrase.hello",
+        "phrase.good_morning",
+        "phrase.fine_thanks"
+      ]
     },
     {
-     "id": "phrase.my_name_is",
-     "kind": "phrase",
-     "tl": "Chamo-me Omar.",
-     "eg": "اسمي عمر"
+      "day": 5,
+      "title_tl": "Gramática Básica",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.supermarket",
+          "kind": "word",
+          "tl": "o supermercado",
+          "eg": "السوبر ماركت",
+          "plural_tl": "os supermercados"
+        },
+        {
+          "id": "word.bread",
+          "kind": "word",
+          "tl": "o pão",
+          "eg": "العيش",
+          "plural_tl": "os pães"
+        },
+        {
+          "id": "word.cheese",
+          "kind": "word",
+          "tl": "o queijo",
+          "eg": "الجبنة",
+          "plural_tl": "os queijos"
+        },
+        {
+          "id": "word.apple",
+          "kind": "word",
+          "tl": "a maçã",
+          "eg": "التفاحة",
+          "plural_tl": "as maçãs"
+        },
+        {
+          "id": "word.egg",
+          "kind": "word",
+          "tl": "o ovo",
+          "eg": "البيضة",
+          "plural_tl": "os ovos"
+        },
+        {
+          "id": "word.rice",
+          "kind": "word",
+          "tl": "o arroz",
+          "eg": "الرز",
+          "plural_tl": null
+        },
+        {
+          "id": "word.bag",
+          "kind": "word",
+          "tl": "o saco",
+          "eg": "الكيس",
+          "plural_tl": "os sacos"
+        },
+        {
+          "id": "phrase.where_is_x",
+          "kind": "phrase",
+          "tl": "Onde fica o leite?",
+          "eg": "اللبن فين؟"
+        },
+        {
+          "id": "phrase.what_is_this",
+          "kind": "phrase",
+          "tl": "O que é isto?",
+          "eg": "ده إيه؟"
+        },
+        {
+          "id": "pattern.article_gender",
+          "kind": "pattern",
+          "pattern_kind": "article_def",
+          "tl": "o + مذكر · a + مؤنث",
+          "eg": "الأداة مع الاسم"
+        }
+      ],
+      "recycle_ids": [
+        "word.milk",
+        "word.water",
+        "phrase.order_coffee"
+      ]
     },
     {
-     "id": "phrase.whats_your_name",
-     "kind": "phrase",
-     "tl": "Como se chama?",
-     "eg": "اسم حضرتك إيه؟"
+      "day": 6,
+      "title_tl": "Plurais",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.banana",
+          "kind": "word",
+          "tl": "a banana",
+          "eg": "الموز",
+          "plural_tl": "as bananas"
+        },
+        {
+          "id": "word.orange",
+          "kind": "word",
+          "tl": "a laranja",
+          "eg": "البرتقانة",
+          "plural_tl": "as laranjas"
+        },
+        {
+          "id": "word.tomato",
+          "kind": "word",
+          "tl": "o tomate",
+          "eg": "الطماطم",
+          "plural_tl": "os tomates"
+        },
+        {
+          "id": "word.potato",
+          "kind": "word",
+          "tl": "a batata",
+          "eg": "البطاطس",
+          "plural_tl": "as batatas"
+        },
+        {
+          "id": "word.fruit",
+          "kind": "word",
+          "tl": "a fruta",
+          "eg": "الفاكهة",
+          "plural_tl": "as frutas"
+        },
+        {
+          "id": "phrase.how_much_does_it_cost",
+          "kind": "phrase",
+          "tl": "Quanto custa isso?",
+          "eg": "ده بكام؟"
+        },
+        {
+          "id": "phrase.need_a_bag",
+          "kind": "phrase",
+          "tl": "Precisa de saco?",
+          "eg": "محتاج كيس؟ (هتسمعها عند الكاشير)"
+        },
+        {
+          "id": "pattern.plural_s",
+          "kind": "pattern",
+          "pattern_kind": "plural_def",
+          "tl": "os/as + اسم + s",
+          "eg": "الجمع",
+          "fills": [
+            "word.apple",
+            "word.egg",
+            "word.bag",
+            "word.bread"
+          ]
+        }
+      ],
+      "recycle_ids": [
+        "pattern.article_gender",
+        "phrase.where_is_x",
+        "phrase.what_is_this",
+        "word.milk",
+        "word.water",
+        "phrase.order_coffee"
+      ]
     },
     {
-     "id": "phrase.nice_to_meet",
-     "kind": "phrase",
-     "tl": "Muito prazer!",
-     "eg": "اتشرفنا"
+      "day": 7,
+      "title_tl": "O Primeiro Dia",
+      "is_story": true,
+      "core_items": [],
+      "recycle_ids": [
+        "phrase.hello",
+        "phrase.my_name_is",
+        "phrase.how_are_you",
+        "phrase.how_are_you_formal",
+        "phrase.anything_else",
+        "phrase.youre_welcome",
+        "pattern.chamo_me",
+        "pattern.article_gender"
+      ]
     },
     {
-     "id": "phrase.how_are_you",
-     "kind": "phrase",
-     "tl": "Tudo bem?",
-     "eg": "عامل إيه؟"
+      "day": 8,
+      "title_tl": "Números 1",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.numbers_0_10",
+          "kind": "word",
+          "tl": "zero, um, dois, três … dez",
+          "eg": "الأرقام 0–10"
+        },
+        {
+          "id": "word.numbers_11_20",
+          "kind": "word",
+          "tl": "onze, doze, treze … vinte",
+          "eg": "الأرقام 11–20"
+        },
+        {
+          "id": "word.numbers_tens",
+          "kind": "word",
+          "tl": "trinta, quarenta … cem",
+          "eg": "العشرات لحد 100"
+        },
+        {
+          "id": "word.euro",
+          "kind": "word",
+          "tl": "o euro",
+          "eg": "اليورو",
+          "plural_tl": "os euros"
+        },
+        {
+          "id": "word.cent",
+          "kind": "word",
+          "tl": "o cêntimo",
+          "eg": "السنت",
+          "plural_tl": "os cêntimos"
+        },
+        {
+          "id": "word.price",
+          "kind": "word",
+          "tl": "o preço",
+          "eg": "السعر",
+          "plural_tl": "os preços"
+        },
+        {
+          "id": "phrase.its_x_euros",
+          "kind": "phrase",
+          "tl": "São doze euros.",
+          "eg": "12 يورو"
+        },
+        {
+          "id": "phrase.no_thanks",
+          "kind": "phrase",
+          "tl": "Não, obrigado.",
+          "eg": "لا شكراً"
+        },
+        {
+          "id": "pattern.sao_x_euros",
+          "kind": "pattern",
+          "tl": "São + رقم + euros",
+          "eg": "السعر"
+        },
+        {
+          "id": "pattern.number_compose",
+          "kind": "pattern",
+          "tl": "vinte e um = 20 + e + 1",
+          "eg": "تركيب الأرقام"
+        }
+      ],
+      "recycle_ids": [
+        "phrase.how_much_does_it_cost",
+        "phrase.how_much_is_it",
+        "phrase.thats_all"
+      ]
     },
     {
-     "id": "phrase.fine_thanks",
-     "kind": "phrase",
-     "tl": "Tudo bem, obrigado.",
-     "eg": "تمام، شكراً (obrigada للست)"
+      "day": 9,
+      "title_tl": "Pagar e a Idade",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.card",
+          "kind": "word",
+          "tl": "o cartão",
+          "eg": "الكارت",
+          "plural_tl": "os cartões"
+        },
+        {
+          "id": "word.money",
+          "kind": "word",
+          "tl": "o dinheiro",
+          "eg": "الفلوس",
+          "plural_tl": null
+        },
+        {
+          "id": "word.change",
+          "kind": "word",
+          "tl": "o troco",
+          "eg": "الباقي",
+          "plural_tl": null
+        },
+        {
+          "id": "phrase.card_ok",
+          "kind": "phrase",
+          "tl": "Aceita cartão?",
+          "eg": "بتاخدوا كارت؟"
+        },
+        {
+          "id": "phrase.cash",
+          "kind": "phrase",
+          "tl": "Em dinheiro.",
+          "eg": "كاش"
+        },
+        {
+          "id": "phrase.receipt_nif",
+          "kind": "phrase",
+          "tl": "Contribuinte?",
+          "eg": "رقم الضرايب؟ (هتسمعها في كل محل)"
+        },
+        {
+          "id": "phrase.how_old",
+          "kind": "phrase",
+          "tl": "Quantos anos tem?",
+          "eg": "عندك كام سنة؟ (بأدب)"
+        },
+        {
+          "id": "phrase.i_am_x_years",
+          "kind": "phrase",
+          "tl": "Tenho trinta e dois anos.",
+          "eg": "عندي ٣٢ سنة"
+        },
+        {
+          "id": "pattern.tenho_x_anos",
+          "kind": "pattern",
+          "tl": "Tenho + رقم + anos",
+          "eg": "السن بـ ter مش بـ ser"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.sao_x_euros",
+        "pattern.number_compose",
+        "phrase.its_x_euros",
+        "phrase.no_thanks",
+        "phrase.how_much_does_it_cost",
+        "phrase.how_much_is_it",
+        "phrase.thats_all"
+      ]
     },
     {
-     "id": "phrase.see_you_tomorrow",
-     "kind": "phrase",
-     "tl": "Até amanhã!",
-     "eg": "أشوفك بكرة"
+      "day": 10,
+      "title_tl": "Introdução aos Verbos",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "phrase.excuse_me",
+          "kind": "phrase",
+          "tl": "Desculpe.",
+          "eg": "لو سمحت / آسف"
+        },
+        {
+          "id": "phrase.can_you_repeat",
+          "kind": "phrase",
+          "tl": "Pode repetir?",
+          "eg": "ممكن تعيد؟"
+        },
+        {
+          "id": "phrase.slower",
+          "kind": "phrase",
+          "tl": "Mais devagar, por favor.",
+          "eg": "براحة شوية لو سمحت"
+        },
+        {
+          "id": "phrase.i_dont_understand",
+          "kind": "phrase",
+          "tl": "Não percebo.",
+          "eg": "مش فاهم"
+        },
+        {
+          "id": "phrase.do_you_speak_pt",
+          "kind": "phrase",
+          "tl": "Fala português?",
+          "eg": "بتتكلم برتغالي؟"
+        },
+        {
+          "id": "phrase.a_little",
+          "kind": "phrase",
+          "tl": "Falo um pouco.",
+          "eg": "بتكلم شوية"
+        },
+        {
+          "id": "word.never",
+          "kind": "word",
+          "tl": "nunca",
+          "eg": "أبداً"
+        },
+        {
+          "id": "pattern.nao_verb",
+          "kind": "pattern",
+          "tl": "Não + فعل",
+          "eg": "النفي"
+        }
+      ],
+      "recycle_ids": [
+        "phrase.good_morning",
+        "phrase.how_are_you",
+        "phrase.bye"
+      ]
     },
     {
-     "id": "phrase.bye",
-     "kind": "phrase",
-     "tl": "Adeus!",
-     "eg": "مع السلامة",
-     "variant_tl": [
-      "Tchau!"
-     ]
+      "day": 11,
+      "title_tl": "Os Vizinhos",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.neighbour_m",
+          "kind": "word",
+          "tl": "o vizinho",
+          "eg": "الجار",
+          "plural_tl": "os vizinhos"
+        },
+        {
+          "id": "word.neighbour_f",
+          "kind": "word",
+          "tl": "a vizinha",
+          "eg": "الجارة",
+          "plural_tl": "as vizinhas"
+        },
+        {
+          "id": "word.you_tu",
+          "kind": "word",
+          "tl": "tu",
+          "eg": "إنت (للصحاب والعيلة)"
+        },
+        {
+          "id": "word.you_voce",
+          "kind": "word",
+          "tl": "você",
+          "eg": "إنت (رسمي شوية)"
+        },
+        {
+          "id": "word.you_o_senhor",
+          "kind": "word",
+          "tl": "o senhor / a senhora",
+          "eg": "حضرتك",
+          "plural_tl": null
+        },
+        {
+          "id": "phrase.see_you_later",
+          "kind": "phrase",
+          "tl": "Até logo!",
+          "eg": "أشوفك بعدين"
+        },
+        {
+          "id": "phrase.welcome",
+          "kind": "phrase",
+          "tl": "Bem-vindo!",
+          "eg": "أهلاً بيك (Bem-vinda للست)",
+          "tl_f": "Bem-vinda!"
+        },
+        {
+          "id": "phrase.no_problem",
+          "kind": "phrase",
+          "tl": "Não faz mal.",
+          "eg": "مش مشكلة"
+        },
+        {
+          "id": "pattern.infinitive",
+          "kind": "pattern",
+          "tl": "falar = الفعل في المصدر",
+          "eg": "يعني إيه فعل ومصدر"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.nao_verb",
+        "phrase.excuse_me",
+        "phrase.can_you_repeat",
+        "phrase.good_morning",
+        "phrase.how_are_you",
+        "phrase.bye"
+      ]
     },
     {
-     "id": "phrase.likewise",
-     "kind": "phrase",
-     "tl": "Igualmente.",
-     "eg": "وأنا كمان (رد على Muito prazer)"
+      "day": 12,
+      "title_tl": "Verbos -AR 1",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.pron_eu",
+          "kind": "word",
+          "tl": "eu",
+          "eg": "أنا"
+        },
+        {
+          "id": "word.pron_ele_ela",
+          "kind": "word",
+          "tl": "ele / ela",
+          "eg": "هو / هي"
+        },
+        {
+          "id": "word.pron_nos",
+          "kind": "word",
+          "tl": "nós",
+          "eg": "إحنا"
+        },
+        {
+          "id": "word.pron_eles_elas",
+          "kind": "word",
+          "tl": "eles / elas / vocês",
+          "eg": "هم / إنتو"
+        },
+        {
+          "id": "verb.falar",
+          "kind": "verb",
+          "tl": "falar",
+          "eg": "يتكلم"
+        },
+        {
+          "id": "verb.trabalhar",
+          "kind": "verb",
+          "tl": "trabalhar",
+          "eg": "يشتغل"
+        },
+        {
+          "id": "word.office",
+          "kind": "word",
+          "tl": "o escritório",
+          "eg": "المكتب",
+          "plural_tl": "os escritórios"
+        },
+        {
+          "id": "phrase.i_work_in_a_cafe",
+          "kind": "phrase",
+          "tl": "Trabalho num café.",
+          "eg": "بشتغل في كافيه"
+        },
+        {
+          "id": "phrase.where_do_you_work",
+          "kind": "phrase",
+          "tl": "Onde trabalha?",
+          "eg": "بتشتغل فين؟"
+        },
+        {
+          "id": "pattern.ar_endings",
+          "kind": "pattern",
+          "tl": "-o · -as · -a · -amos · -am",
+          "eg": "نهايات -ar"
+        }
+      ],
+      "recycle_ids": [
+        "word.you_tu",
+        "word.you_voce",
+        "word.coffee",
+        "pattern.nao_verb"
+      ]
     },
     {
-     "id": "phrase.how_are_you_formal",
-     "kind": "phrase",
-     "tl": "Como está?",
-     "eg": "إزي حضرتك؟ (بأدب)"
+      "day": 13,
+      "title_tl": "Onde Mora?",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "verb.morar",
+          "kind": "verb",
+          "tl": "morar",
+          "eg": "يسكن"
+        },
+        {
+          "id": "verb.estudar",
+          "kind": "verb",
+          "tl": "estudar",
+          "eg": "يذاكر / يدرس"
+        },
+        {
+          "id": "word.work",
+          "kind": "word",
+          "tl": "o trabalho",
+          "eg": "الشغل",
+          "plural_tl": "os trabalhos"
+        },
+        {
+          "id": "word.school",
+          "kind": "word",
+          "tl": "a escola",
+          "eg": "المدرسة",
+          "plural_tl": "as escolas"
+        },
+        {
+          "id": "word.city",
+          "kind": "word",
+          "tl": "a cidade",
+          "eg": "المدينة",
+          "plural_tl": "as cidades"
+        },
+        {
+          "id": "word.country",
+          "kind": "word",
+          "tl": "o país",
+          "eg": "البلد",
+          "plural_tl": "os países"
+        },
+        {
+          "id": "word.company",
+          "kind": "word",
+          "tl": "a empresa",
+          "eg": "الشركة",
+          "plural_tl": "as empresas"
+        },
+        {
+          "id": "phrase.i_live_in_lisbon",
+          "kind": "phrase",
+          "tl": "Moro em Lisboa.",
+          "eg": "ساكن في لشبونة"
+        },
+        {
+          "id": "phrase.where_do_you_live",
+          "kind": "phrase",
+          "tl": "Onde mora?",
+          "eg": "ساكن فين؟"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.ar_endings",
+        "phrase.i_work_in_a_cafe",
+        "phrase.where_do_you_work",
+        "word.you_tu",
+        "word.you_voce",
+        "word.coffee",
+        "pattern.nao_verb"
+      ]
     },
     {
-     "id": "phrase.im_fine",
-     "kind": "phrase",
-     "tl": "Estou bem, obrigado.",
-     "eg": "أنا كويس، شكراً (obrigada للست)"
+      "day": 14,
+      "title_tl": "Uma Tarde no Mercado",
+      "is_story": true,
+      "core_items": [],
+      "recycle_ids": [
+        "phrase.its_x_euros",
+        "phrase.cash",
+        "phrase.i_am_x_years",
+        "phrase.slower",
+        "phrase.a_little",
+        "phrase.no_problem",
+        "pattern.sao_x_euros",
+        "pattern.nao_verb"
+      ]
     },
     {
-     "id": "pattern.chamo_me",
-     "kind": "pattern",
-     "tl": "Chamo-me + اسم",
-     "eg": "الضمير بعد الفعل بشرطة"
+      "day": 15,
+      "title_tl": "Verbos -ER",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "verb.comer",
+          "kind": "verb",
+          "tl": "comer",
+          "eg": "ياكل"
+        },
+        {
+          "id": "verb.beber",
+          "kind": "verb",
+          "tl": "beber",
+          "eg": "يشرب"
+        },
+        {
+          "id": "word.restaurant",
+          "kind": "word",
+          "tl": "o restaurante",
+          "eg": "المطعم",
+          "plural_tl": "os restaurantes"
+        },
+        {
+          "id": "word.menu",
+          "kind": "word",
+          "tl": "a ementa",
+          "eg": "المنيو",
+          "plural_tl": "as ementas"
+        },
+        {
+          "id": "word.soup",
+          "kind": "word",
+          "tl": "a sopa",
+          "eg": "الشوربة",
+          "plural_tl": "as sopas"
+        },
+        {
+          "id": "word.fish",
+          "kind": "word",
+          "tl": "o peixe",
+          "eg": "السمك",
+          "plural_tl": "os peixes"
+        },
+        {
+          "id": "word.meat",
+          "kind": "word",
+          "tl": "a carne",
+          "eg": "اللحمة",
+          "plural_tl": "as carnes"
+        },
+        {
+          "id": "word.dish_of_day",
+          "kind": "word",
+          "tl": "o prato do dia",
+          "eg": "طبق اليوم",
+          "plural_tl": "os pratos do dia"
+        },
+        {
+          "id": "phrase.table_for_two",
+          "kind": "phrase",
+          "tl": "Uma mesa para dois, por favor.",
+          "eg": "ترابيزة لاتنين لو سمحت"
+        },
+        {
+          "id": "phrase.for_me",
+          "kind": "phrase",
+          "tl": "Para mim, o prato do dia.",
+          "eg": "ليا أنا، طبق اليوم"
+        },
+        {
+          "id": "pattern.er_endings",
+          "kind": "pattern",
+          "tl": "-o · -es · -e · -emos · -em",
+          "eg": "نهايات -er"
+        }
+      ],
+      "recycle_ids": [
+        "word.water",
+        "pattern.queria_um_uma",
+        "pattern.ar_endings",
+        "phrase.card_ok"
+      ]
+    },
+    {
+      "day": 16,
+      "title_tl": "A Conta, por Favor",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "verb.aprender",
+          "kind": "verb",
+          "tl": "aprender",
+          "eg": "يتعلم"
+        },
+        {
+          "id": "word.chicken",
+          "kind": "word",
+          "tl": "o frango",
+          "eg": "الفراخ",
+          "plural_tl": "os frangos"
+        },
+        {
+          "id": "word.salad",
+          "kind": "word",
+          "tl": "a salada",
+          "eg": "السلطة",
+          "plural_tl": "as saladas"
+        },
+        {
+          "id": "word.dessert",
+          "kind": "word",
+          "tl": "a sobremesa",
+          "eg": "الحلو",
+          "plural_tl": "as sobremesas"
+        },
+        {
+          "id": "word.wine",
+          "kind": "word",
+          "tl": "o vinho",
+          "eg": "النبيذ",
+          "plural_tl": "os vinhos"
+        },
+        {
+          "id": "word.table",
+          "kind": "word",
+          "tl": "a mesa",
+          "eg": "الترابيزة",
+          "plural_tl": "as mesas"
+        },
+        {
+          "id": "phrase.the_bill",
+          "kind": "phrase",
+          "tl": "A conta, por favor.",
+          "eg": "الحساب لو سمحت"
+        },
+        {
+          "id": "phrase.enjoy_meal",
+          "kind": "phrase",
+          "tl": "Bom apetite!",
+          "eg": "بالهنا والشفا"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.er_endings",
+        "phrase.table_for_two",
+        "phrase.for_me",
+        "word.water",
+        "pattern.queria_um_uma",
+        "pattern.ar_endings",
+        "phrase.card_ok"
+      ]
+    },
+    {
+      "day": 17,
+      "title_tl": "Verbos -IR",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "verb.abrir",
+          "kind": "verb",
+          "tl": "abrir",
+          "eg": "يفتح"
+        },
+        {
+          "id": "verb.dormir",
+          "kind": "verb",
+          "tl": "dormir",
+          "eg": "ينام (eu durmo)"
+        },
+        {
+          "id": "word.house",
+          "kind": "word",
+          "tl": "a casa",
+          "eg": "البيت",
+          "plural_tl": "as casas"
+        },
+        {
+          "id": "word.bedroom",
+          "kind": "word",
+          "tl": "o quarto",
+          "eg": "أوضة النوم",
+          "plural_tl": "os quartos"
+        },
+        {
+          "id": "word.window",
+          "kind": "word",
+          "tl": "a janela",
+          "eg": "الشباك",
+          "plural_tl": "as janelas"
+        },
+        {
+          "id": "word.door",
+          "kind": "word",
+          "tl": "a porta",
+          "eg": "الباب",
+          "plural_tl": "as portas"
+        },
+        {
+          "id": "phrase.i_open_window",
+          "kind": "phrase",
+          "tl": "Abro a janela.",
+          "eg": "بفتح الشباك"
+        },
+        {
+          "id": "phrase.i_sleep_little",
+          "kind": "phrase",
+          "tl": "Durmo pouco.",
+          "eg": "بنام قليل"
+        },
+        {
+          "id": "pattern.ir_endings",
+          "kind": "pattern",
+          "tl": "-o · -es · -e · -imos · -em",
+          "eg": "نهايات -ir"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.er_endings",
+        "pattern.ar_endings",
+        "verb.trabalhar"
+      ]
+    },
+    {
+      "day": 18,
+      "title_tl": "A Casa",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "verb.decidir",
+          "kind": "verb",
+          "tl": "decidir",
+          "eg": "يقرر"
+        },
+        {
+          "id": "verb.acordar",
+          "kind": "verb",
+          "tl": "acordar",
+          "eg": "يصحى (-ar للمقارنة)"
+        },
+        {
+          "id": "word.kitchen",
+          "kind": "word",
+          "tl": "a cozinha",
+          "eg": "المطبخ",
+          "plural_tl": "as cozinhas"
+        },
+        {
+          "id": "word.bathroom",
+          "kind": "word",
+          "tl": "a casa de banho",
+          "eg": "الحمام",
+          "plural_tl": "as casas de banho"
+        },
+        {
+          "id": "word.living_room",
+          "kind": "word",
+          "tl": "a sala",
+          "eg": "الصالة",
+          "plural_tl": "as salas"
+        },
+        {
+          "id": "word.bed",
+          "kind": "word",
+          "tl": "a cama",
+          "eg": "السرير",
+          "plural_tl": "as camas"
+        },
+        {
+          "id": "word.sofa",
+          "kind": "word",
+          "tl": "o sofá",
+          "eg": "الكنبة",
+          "plural_tl": "os sofás"
+        },
+        {
+          "id": "phrase.i_wake_early",
+          "kind": "phrase",
+          "tl": "Acordo cedo.",
+          "eg": "بصحى بدري"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.ir_endings",
+        "phrase.i_open_window",
+        "phrase.i_sleep_little",
+        "pattern.er_endings",
+        "pattern.ar_endings",
+        "verb.trabalhar"
+      ]
+    },
+    {
+      "day": 19,
+      "title_tl": "Verbos Ser e Estar 1",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "verb.ser",
+          "kind": "verb",
+          "tl": "ser",
+          "eg": "يكون (ثابت)"
+        },
+        {
+          "id": "word.egyptian",
+          "kind": "word",
+          "tl": "egípcio / egípcia",
+          "eg": "مصري / مصرية"
+        },
+        {
+          "id": "word.portuguese",
+          "kind": "word",
+          "tl": "português / portuguesa",
+          "eg": "برتغالي / برتغالية"
+        },
+        {
+          "id": "word.engineer",
+          "kind": "word",
+          "tl": "engenheiro / engenheira",
+          "eg": "مهندس / مهندسة"
+        },
+        {
+          "id": "word.egypt",
+          "kind": "word",
+          "tl": "o Egito",
+          "eg": "مصر",
+          "plural_tl": null
+        },
+        {
+          "id": "phrase.where_are_you_from",
+          "kind": "phrase",
+          "tl": "De onde é?",
+          "eg": "حضرتك منين؟"
+        },
+        {
+          "id": "phrase.im_from_cairo",
+          "kind": "phrase",
+          "tl": "Sou do Cairo.",
+          "eg": "أنا من القاهرة"
+        },
+        {
+          "id": "phrase.im_egyptian",
+          "kind": "phrase",
+          "tl": "Sou egípcio.",
+          "eg": "أنا مصري"
+        },
+        {
+          "id": "pattern.ser_conj",
+          "kind": "pattern",
+          "tl": "sou · és · é · somos · são",
+          "eg": "تصريف ser"
+        }
+      ],
+      "recycle_ids": [
+        "word.you_o_senhor",
+        "phrase.my_name_is",
+        "verb.morar"
+      ]
+    },
+    {
+      "day": 20,
+      "title_tl": "O Que Faz?",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.teacher",
+          "kind": "word",
+          "tl": "professor / professora",
+          "eg": "مدرس / مدرسة"
+        },
+        {
+          "id": "word.doctor",
+          "kind": "word",
+          "tl": "médico / médica",
+          "eg": "دكتور / دكتورة"
+        },
+        {
+          "id": "word.student",
+          "kind": "word",
+          "tl": "estudante",
+          "eg": "طالب / طالبة"
+        },
+        {
+          "id": "phrase.what_do_you_do",
+          "kind": "phrase",
+          "tl": "O que faz?",
+          "eg": "بتشتغل إيه؟"
+        },
+        {
+          "id": "phrase.im_engineer",
+          "kind": "phrase",
+          "tl": "Sou engenheiro.",
+          "eg": "أنا مهندس"
+        },
+        {
+          "id": "pattern.o_senhor_e",
+          "kind": "pattern",
+          "tl": "O senhor é… (فعل هو)",
+          "eg": "حضرتك = فعل الغايب"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.ser_conj",
+        "phrase.where_are_you_from",
+        "phrase.im_from_cairo",
+        "word.you_o_senhor",
+        "phrase.my_name_is",
+        "verb.morar"
+      ]
+    },
+    {
+      "day": 21,
+      "title_tl": "A Aula de Português",
+      "is_story": true,
+      "core_items": [],
+      "recycle_ids": [
+        "phrase.table_for_two",
+        "phrase.the_bill",
+        "phrase.i_open_window",
+        "phrase.i_wake_early",
+        "phrase.im_from_cairo",
+        "phrase.what_do_you_do",
+        "pattern.er_endings",
+        "pattern.ser_conj"
+      ]
+    },
+    {
+      "day": 22,
+      "title_tl": "Verbos Ser e Estar 2",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "verb.estar",
+          "kind": "verb",
+          "tl": "estar",
+          "eg": "يكون (حالة دلوقتي)"
+        },
+        {
+          "id": "word.tired",
+          "kind": "word",
+          "tl": "cansado / cansada",
+          "eg": "تعبان"
+        },
+        {
+          "id": "word.sick",
+          "kind": "word",
+          "tl": "doente",
+          "eg": "عيان"
+        },
+        {
+          "id": "word.happy",
+          "kind": "word",
+          "tl": "contente",
+          "eg": "مبسوط"
+        },
+        {
+          "id": "word.nervous",
+          "kind": "word",
+          "tl": "nervoso / nervosa",
+          "eg": "متوتر"
+        },
+        {
+          "id": "phrase.im_tired",
+          "kind": "phrase",
+          "tl": "Estou cansado.",
+          "eg": "أنا تعبان"
+        },
+        {
+          "id": "phrase.im_hungry",
+          "kind": "phrase",
+          "tl": "Tenho fome.",
+          "eg": "أنا جعان"
+        },
+        {
+          "id": "phrase.im_thirsty",
+          "kind": "phrase",
+          "tl": "Tenho sede.",
+          "eg": "أنا عطشان"
+        },
+        {
+          "id": "pattern.estar_conj",
+          "kind": "pattern",
+          "tl": "estou · estás · está · estamos · estão",
+          "eg": "تصريف estar"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.ser_conj",
+        "phrase.im_egyptian",
+        "phrase.how_are_you"
+      ]
+    },
+    {
+      "day": 23,
+      "title_tl": "Ser ou Estar?",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.glad",
+          "kind": "word",
+          "tl": "feliz",
+          "eg": "فرحان"
+        },
+        {
+          "id": "word.sad",
+          "kind": "word",
+          "tl": "triste",
+          "eg": "زعلان"
+        },
+        {
+          "id": "word.busy",
+          "kind": "word",
+          "tl": "ocupado / ocupada",
+          "eg": "مشغول / مشغولة"
+        },
+        {
+          "id": "phrase.my_head_hurts",
+          "kind": "phrase",
+          "tl": "Dói-me a cabeça.",
+          "eg": "راسي بتوجعني"
+        },
+        {
+          "id": "phrase.are_you_ok",
+          "kind": "phrase",
+          "tl": "Está bem?",
+          "eg": "إنت كويس؟"
+        },
+        {
+          "id": "pattern.ser_vs_estar",
+          "kind": "pattern",
+          "tl": "ser = ثابت · estar = حالة",
+          "eg": "الفرق"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.estar_conj",
+        "phrase.im_tired",
+        "phrase.im_hungry",
+        "pattern.ser_conj",
+        "phrase.im_egyptian",
+        "phrase.how_are_you"
+      ]
+    },
+    {
+      "day": 24,
+      "title_tl": "Presente Contínuo",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.mobile",
+          "kind": "word",
+          "tl": "o telemóvel",
+          "eg": "الموبايل",
+          "plural_tl": "os telemóveis"
+        },
+        {
+          "id": "word.call",
+          "kind": "word",
+          "tl": "a chamada",
+          "eg": "المكالمة",
+          "plural_tl": "as chamadas"
+        },
+        {
+          "id": "word.message",
+          "kind": "word",
+          "tl": "a mensagem",
+          "eg": "الرسالة",
+          "plural_tl": "as mensagens"
+        },
+        {
+          "id": "word.number",
+          "kind": "word",
+          "tl": "o número",
+          "eg": "الرقم",
+          "plural_tl": "os números"
+        },
+        {
+          "id": "phrase.phone_hello",
+          "kind": "phrase",
+          "tl": "Estou? / Sim?",
+          "eg": "ألو"
+        },
+        {
+          "id": "phrase.can_i_speak_with",
+          "kind": "phrase",
+          "tl": "Posso falar com a Rita?",
+          "eg": "ممكن أكلم ريتا؟"
+        },
+        {
+          "id": "phrase.one_moment",
+          "kind": "phrase",
+          "tl": "Um momento.",
+          "eg": "لحظة"
+        },
+        {
+          "id": "phrase.im_working",
+          "kind": "phrase",
+          "tl": "Estou a trabalhar.",
+          "eg": "أنا بشتغل دلوقتي"
+        },
+        {
+          "id": "phrase.call_later",
+          "kind": "phrase",
+          "tl": "Posso ligar depois?",
+          "eg": "ممكن أكلمك بعدين؟"
+        },
+        {
+          "id": "phrase.what_are_you_doing",
+          "kind": "phrase",
+          "tl": "O que estás a fazer?",
+          "eg": "بتعمل إيه دلوقتي؟"
+        },
+        {
+          "id": "phrase.can_you_spell",
+          "kind": "phrase",
+          "tl": "Pode soletrar, por favor?",
+          "eg": "ممكن تتهجّاها؟"
+        },
+        {
+          "id": "phrase.how_is_it_written",
+          "kind": "phrase",
+          "tl": "Como se escreve?",
+          "eg": "بتتكتب إزاي؟"
+        },
+        {
+          "id": "pattern.estar_a_inf",
+          "kind": "pattern",
+          "tl": "estar + a + مصدر",
+          "eg": "بيحصل دلوقتي"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.estar_conj",
+        "verb.comer",
+        "verb.estudar"
+      ]
+    },
+    {
+      "day": 25,
+      "title_tl": "Gostos e Desgostos",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "verb.gostar",
+          "kind": "verb",
+          "tl": "gostar de",
+          "eg": "يحب"
+        },
+        {
+          "id": "word.cinema",
+          "kind": "word",
+          "tl": "o cinema",
+          "eg": "السينما",
+          "plural_tl": "os cinemas"
+        },
+        {
+          "id": "word.beach",
+          "kind": "word",
+          "tl": "a praia",
+          "eg": "البحر / الشط",
+          "plural_tl": "as praias"
+        },
+        {
+          "id": "word.football",
+          "kind": "word",
+          "tl": "o futebol",
+          "eg": "الكورة",
+          "plural_tl": null
+        },
+        {
+          "id": "word.music",
+          "kind": "word",
+          "tl": "a música",
+          "eg": "المزيكا",
+          "plural_tl": "as músicas"
+        },
+        {
+          "id": "word.park",
+          "kind": "word",
+          "tl": "o parque",
+          "eg": "الجنينة",
+          "plural_tl": "os parques"
+        },
+        {
+          "id": "phrase.i_like_x",
+          "kind": "phrase",
+          "tl": "Gosto de música.",
+          "eg": "بحب المزيكا"
+        },
+        {
+          "id": "phrase.i_dont_like_x",
+          "kind": "phrase",
+          "tl": "Não gosto de chá.",
+          "eg": "مبحبش الشاي"
+        },
+        {
+          "id": "phrase.do_you_like",
+          "kind": "phrase",
+          "tl": "Gostas de futebol?",
+          "eg": "بتحب الكورة؟"
+        },
+        {
+          "id": "phrase.me_too",
+          "kind": "phrase",
+          "tl": "Eu também.",
+          "eg": "وأنا كمان"
+        },
+        {
+          "id": "phrase.me_neither",
+          "kind": "phrase",
+          "tl": "Eu também não.",
+          "eg": "ولا أنا"
+        },
+        {
+          "id": "pattern.gostar_de",
+          "kind": "pattern",
+          "tl": "gostar + de/do/da + حاجة",
+          "eg": "بحب ومبحبش"
+        }
+      ],
+      "recycle_ids": [
+        "phrase.i_like_coffee",
+        "word.tea",
+        "pattern.nao_verb",
+        "pattern.ar_endings"
+      ]
+    },
+    {
+      "day": 26,
+      "title_tl": "Prefiro e o Tempo",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.book",
+          "kind": "word",
+          "tl": "o livro",
+          "eg": "الكتاب",
+          "plural_tl": "os livros"
+        },
+        {
+          "id": "word.tv",
+          "kind": "word",
+          "tl": "a televisão",
+          "eg": "التليفزيون",
+          "plural_tl": "as televisões"
+        },
+        {
+          "id": "phrase.i_love",
+          "kind": "phrase",
+          "tl": "Adoro a praia!",
+          "eg": "بموت في البحر"
+        },
+        {
+          "id": "phrase.i_prefer",
+          "kind": "phrase",
+          "tl": "Prefiro chá.",
+          "eg": "أنا بفضّل الشاي"
+        },
+        {
+          "id": "phrase.its_hot",
+          "kind": "phrase",
+          "tl": "Está calor.",
+          "eg": "الجو حر"
+        },
+        {
+          "id": "phrase.its_cold",
+          "kind": "phrase",
+          "tl": "Está frio.",
+          "eg": "الجو برد"
+        },
+        {
+          "id": "phrase.its_raining",
+          "kind": "phrase",
+          "tl": "Está a chover.",
+          "eg": "بتمطر"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.gostar_de",
+        "phrase.i_like_x",
+        "phrase.i_dont_like_x",
+        "phrase.i_like_coffee",
+        "word.tea",
+        "pattern.nao_verb",
+        "pattern.ar_endings"
+      ]
+    },
+    {
+      "day": 27,
+      "title_tl": "Verbos Comuns e Irregulares",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "verb.ter",
+          "kind": "verb",
+          "tl": "ter",
+          "eg": "عنده"
+        },
+        {
+          "id": "verb.ir",
+          "kind": "verb",
+          "tl": "ir",
+          "eg": "يروح"
+        },
+        {
+          "id": "verb.fazer",
+          "kind": "verb",
+          "tl": "fazer",
+          "eg": "يعمل"
+        },
+        {
+          "id": "word.time",
+          "kind": "word",
+          "tl": "o tempo",
+          "eg": "الوقت",
+          "plural_tl": null
+        },
+        {
+          "id": "word.dinner",
+          "kind": "word",
+          "tl": "o jantar",
+          "eg": "العشا",
+          "plural_tl": "os jantares"
+        },
+        {
+          "id": "phrase.i_have_time",
+          "kind": "phrase",
+          "tl": "Tenho tempo.",
+          "eg": "عندي وقت"
+        },
+        {
+          "id": "phrase.shall_we_go",
+          "kind": "phrase",
+          "tl": "Vamos ao cinema?",
+          "eg": "نروح السينما؟"
+        },
+        {
+          "id": "phrase.great",
+          "kind": "phrase",
+          "tl": "Fixe!",
+          "eg": "حلو! / جامد"
+        },
+        {
+          "id": "pattern.irregular_core",
+          "kind": "pattern",
+          "tl": "tenho · vou · faço · quero · posso",
+          "eg": "مضارع الشواذ (eu)"
+        }
+      ],
+      "recycle_ids": [
+        "word.cinema",
+        "phrase.do_you_like",
+        "pattern.ar_endings"
+      ]
+    },
+    {
+      "day": 28,
+      "title_tl": "Queres Vir?",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "verb.querer",
+          "kind": "verb",
+          "tl": "querer",
+          "eg": "عايز"
+        },
+        {
+          "id": "verb.poder",
+          "kind": "verb",
+          "tl": "poder",
+          "eg": "يقدر"
+        },
+        {
+          "id": "word.museum",
+          "kind": "word",
+          "tl": "o museu",
+          "eg": "المتحف",
+          "plural_tl": "os museus"
+        },
+        {
+          "id": "word.film",
+          "kind": "word",
+          "tl": "o filme",
+          "eg": "الفيلم",
+          "plural_tl": "os filmes"
+        },
+        {
+          "id": "phrase.do_you_want_to_come",
+          "kind": "phrase",
+          "tl": "Queres vir?",
+          "eg": "تيجي؟"
+        },
+        {
+          "id": "phrase.i_cant",
+          "kind": "phrase",
+          "tl": "Não posso, desculpa.",
+          "eg": "مش هقدر، معلش"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.irregular_core",
+        "phrase.i_have_time",
+        "phrase.shall_we_go",
+        "word.cinema",
+        "phrase.do_you_like",
+        "pattern.ar_endings"
+      ]
+    },
+    {
+      "day": 29,
+      "title_tl": "Uma Noite de Tempestade",
+      "is_story": true,
+      "core_items": [],
+      "recycle_ids": [
+        "phrase.im_tired",
+        "phrase.are_you_ok",
+        "phrase.im_working",
+        "phrase.how_is_it_written",
+        "phrase.me_too",
+        "phrase.its_hot",
+        "pattern.estar_conj",
+        "pattern.estar_a_inf"
+      ]
+    },
+    {
+      "day": 30,
+      "title_tl": "Perguntas",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.q_where",
+          "kind": "word",
+          "tl": "Onde?",
+          "eg": "فين؟"
+        },
+        {
+          "id": "word.q_when",
+          "kind": "word",
+          "tl": "Quando?",
+          "eg": "إمتى؟"
+        },
+        {
+          "id": "word.q_why",
+          "kind": "word",
+          "tl": "Porquê? / porque",
+          "eg": "ليه؟ / عشان"
+        },
+        {
+          "id": "word.q_who",
+          "kind": "word",
+          "tl": "Quem?",
+          "eg": "مين؟"
+        },
+        {
+          "id": "word.q_which",
+          "kind": "word",
+          "tl": "Qual?",
+          "eg": "أنهي؟"
+        },
+        {
+          "id": "word.q_how",
+          "kind": "word",
+          "tl": "Como?",
+          "eg": "إزاي؟"
+        },
+        {
+          "id": "word.q_how_much",
+          "kind": "word",
+          "tl": "Quanto? / Quantos?",
+          "eg": "كام؟"
+        },
+        {
+          "id": "phrase.can_you_help_me",
+          "kind": "phrase",
+          "tl": "Pode ajudar-me?",
+          "eg": "ممكن تساعدني؟"
+        },
+        {
+          "id": "phrase.whats_your_number",
+          "kind": "phrase",
+          "tl": "Qual é o seu número?",
+          "eg": "رقمك كام؟"
+        },
+        {
+          "id": "phrase.how_do_you_say",
+          "kind": "phrase",
+          "tl": "Como se diz … em português?",
+          "eg": "تتقال إزاي بالبرتغالي؟"
+        },
+        {
+          "id": "pattern.question_word",
+          "kind": "pattern",
+          "tl": "أداة + فعل + ?",
+          "eg": "السؤال"
+        }
+      ],
+      "recycle_ids": [
+        "phrase.excuse_me",
+        "phrase.where_is_x",
+        "phrase.whats_your_name",
+        "phrase.can_you_repeat"
+      ]
+    },
+    {
+      "day": 31,
+      "title_tl": "Preposições 1",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.centre",
+          "kind": "word",
+          "tl": "o centro",
+          "eg": "وسط البلد",
+          "plural_tl": "os centros"
+        },
+        {
+          "id": "word.metro",
+          "kind": "word",
+          "tl": "o metro",
+          "eg": "المترو",
+          "plural_tl": null
+        },
+        {
+          "id": "word.bus",
+          "kind": "word",
+          "tl": "o autocarro",
+          "eg": "الأتوبيس",
+          "plural_tl": "os autocarros"
+        },
+        {
+          "id": "word.train",
+          "kind": "word",
+          "tl": "o comboio",
+          "eg": "القطر",
+          "plural_tl": "os comboios"
+        },
+        {
+          "id": "word.ticket",
+          "kind": "word",
+          "tl": "o bilhete",
+          "eg": "التذكرة",
+          "plural_tl": "os bilhetes"
+        },
+        {
+          "id": "phrase.go_to_centre",
+          "kind": "phrase",
+          "tl": "Vou ao centro de metro.",
+          "eg": "رايح وسط البلد بالمترو"
+        },
+        {
+          "id": "phrase.on_foot",
+          "kind": "phrase",
+          "tl": "Vou a pé.",
+          "eg": "رايح مشي"
+        },
+        {
+          "id": "pattern.contractions",
+          "kind": "pattern",
+          "tl": "de+o=do · em+a=na · a+o=ao · a+a=à",
+          "eg": "دمج حروف الجر"
+        }
+      ],
+      "recycle_ids": [
+        "verb.ir",
+        "phrase.shall_we_go",
+        "word.q_where",
+        "word.q_when"
+      ]
+    },
+    {
+      "day": 32,
+      "title_tl": "Bilhetes e Paragens",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.bus_stop",
+          "kind": "word",
+          "tl": "a paragem",
+          "eg": "المحطة (أتوبيس)",
+          "plural_tl": "as paragens"
+        },
+        {
+          "id": "word.taxi",
+          "kind": "word",
+          "tl": "o táxi",
+          "eg": "التاكسي",
+          "plural_tl": "os táxis"
+        },
+        {
+          "id": "word.airport",
+          "kind": "word",
+          "tl": "o aeroporto",
+          "eg": "المطار",
+          "plural_tl": "os aeroportos"
+        },
+        {
+          "id": "word.bike",
+          "kind": "word",
+          "tl": "a bicicleta",
+          "eg": "العجلة",
+          "plural_tl": "as bicicletas"
+        },
+        {
+          "id": "phrase.at_the_stop",
+          "kind": "phrase",
+          "tl": "Estou na paragem.",
+          "eg": "أنا في المحطة"
+        },
+        {
+          "id": "phrase.ticket_to",
+          "kind": "phrase",
+          "tl": "Um bilhete para Sintra, por favor.",
+          "eg": "تذكرة لسينترا لو سمحت"
+        },
+        {
+          "id": "pattern.de_transport",
+          "kind": "pattern",
+          "tl": "de + وسيلة (de metro) · a pé",
+          "eg": "بالمواصلات"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.contractions",
+        "phrase.go_to_centre",
+        "phrase.on_foot",
+        "verb.ir",
+        "phrase.shall_we_go",
+        "word.q_where",
+        "word.q_when"
+      ]
+    },
+    {
+      "day": 33,
+      "title_tl": "Primeira Viagem a Portugal",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.station",
+          "kind": "word",
+          "tl": "a estação",
+          "eg": "المحطة (قطر/مترو)",
+          "plural_tl": "as estações"
+        },
+        {
+          "id": "word.street",
+          "kind": "word",
+          "tl": "a rua",
+          "eg": "الشارع",
+          "plural_tl": "as ruas"
+        },
+        {
+          "id": "word.pharmacy",
+          "kind": "word",
+          "tl": "a farmácia",
+          "eg": "الصيدلية",
+          "plural_tl": "as farmácias"
+        },
+        {
+          "id": "word.left",
+          "kind": "word",
+          "tl": "à esquerda",
+          "eg": "شمال"
+        },
+        {
+          "id": "word.right",
+          "kind": "word",
+          "tl": "à direita",
+          "eg": "يمين"
+        },
+        {
+          "id": "phrase.where_is_station",
+          "kind": "phrase",
+          "tl": "Onde fica a estação?",
+          "eg": "المحطة فين؟"
+        },
+        {
+          "id": "phrase.is_it_near",
+          "kind": "phrase",
+          "tl": "É perto?",
+          "eg": "قريب؟"
+        },
+        {
+          "id": "phrase.its_far",
+          "kind": "phrase",
+          "tl": "É longe.",
+          "eg": "بعيد"
+        },
+        {
+          "id": "pattern.onde_fica",
+          "kind": "pattern",
+          "tl": "Onde fica + o/a + مكان?",
+          "eg": "فين المكان"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.contractions",
+        "phrase.excuse_me",
+        "phrase.can_you_help_me",
+        "phrase.slower"
+      ]
+    },
+    {
+      "day": 34,
+      "title_tl": "Vire à Esquerda",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.bank",
+          "kind": "word",
+          "tl": "o banco",
+          "eg": "البنك",
+          "plural_tl": "os bancos"
+        },
+        {
+          "id": "word.hospital",
+          "kind": "word",
+          "tl": "o hospital",
+          "eg": "المستشفى",
+          "plural_tl": "os hospitais"
+        },
+        {
+          "id": "word.corner",
+          "kind": "word",
+          "tl": "a esquina",
+          "eg": "الناصية",
+          "plural_tl": "as esquinas"
+        },
+        {
+          "id": "word.square",
+          "kind": "word",
+          "tl": "a praça",
+          "eg": "الميدان",
+          "plural_tl": "as praças"
+        },
+        {
+          "id": "phrase.turn_left",
+          "kind": "phrase",
+          "tl": "Vire à esquerda.",
+          "eg": "لف شمال"
+        },
+        {
+          "id": "phrase.go_straight",
+          "kind": "phrase",
+          "tl": "Siga em frente.",
+          "eg": "امشي على طول"
+        },
+        {
+          "id": "phrase.next_to",
+          "kind": "phrase",
+          "tl": "Fica ao lado do banco.",
+          "eg": "جنب البنك"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.onde_fica",
+        "phrase.where_is_station",
+        "phrase.is_it_near",
+        "pattern.contractions",
+        "phrase.excuse_me",
+        "phrase.can_you_help_me",
+        "phrase.slower"
+      ]
+    },
+    {
+      "day": 35,
+      "title_tl": "Que Dia É Hoje?",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.monday",
+          "kind": "word",
+          "tl": "segunda-feira",
+          "eg": "الاتنين"
+        },
+        {
+          "id": "word.tuesday",
+          "kind": "word",
+          "tl": "terça-feira",
+          "eg": "التلات"
+        },
+        {
+          "id": "word.wednesday",
+          "kind": "word",
+          "tl": "quarta-feira",
+          "eg": "الأربع"
+        },
+        {
+          "id": "word.thursday",
+          "kind": "word",
+          "tl": "quinta-feira",
+          "eg": "الخميس"
+        },
+        {
+          "id": "word.friday",
+          "kind": "word",
+          "tl": "sexta-feira",
+          "eg": "الجمعة"
+        },
+        {
+          "id": "word.saturday",
+          "kind": "word",
+          "tl": "sábado",
+          "eg": "السبت"
+        },
+        {
+          "id": "word.sunday",
+          "kind": "word",
+          "tl": "domingo",
+          "eg": "الحد"
+        },
+        {
+          "id": "word.day_periods",
+          "kind": "word",
+          "tl": "de manhã · à tarde · à noite",
+          "eg": "الصبح · بعد الضهر · بالليل"
+        },
+        {
+          "id": "phrase.what_day",
+          "kind": "phrase",
+          "tl": "Que dia é hoje?",
+          "eg": "النهارده إيه؟"
+        },
+        {
+          "id": "phrase.today_is_monday",
+          "kind": "phrase",
+          "tl": "Hoje é segunda.",
+          "eg": "النهارده الاتنين"
+        },
+        {
+          "id": "pattern.days_periods",
+          "kind": "pattern",
+          "tl": "na + يوم · de manhã / à tarde",
+          "eg": "إمتى في الأسبوع"
+        }
+      ],
+      "recycle_ids": [
+        "phrase.see_you_tomorrow",
+        "pattern.queria_um_uma",
+        "word.q_when"
+      ]
+    },
+    {
+      "day": 36,
+      "title_tl": "Datas e Consultas",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.today_tomorrow",
+          "kind": "word",
+          "tl": "hoje · amanhã · ontem",
+          "eg": "النهارده · بكرة · امبارح"
+        },
+        {
+          "id": "phrase.can_it_be_tuesday",
+          "kind": "phrase",
+          "tl": "Pode ser na terça?",
+          "eg": "ينفع يوم التلات؟"
+        },
+        {
+          "id": "phrase.appointment",
+          "kind": "phrase",
+          "tl": "Queria marcar uma consulta.",
+          "eg": "عايز أحجز ميعاد"
+        },
+        {
+          "id": "word.months",
+          "kind": "word",
+          "tl": "janeiro, fevereiro, março … dezembro",
+          "eg": "شهور السنة (بحروف صغيرة)"
+        },
+        {
+          "id": "phrase.whats_the_date",
+          "kind": "phrase",
+          "tl": "Que dia é hoje? — É dia cinco de março.",
+          "eg": "النهارده كام في الشهر؟"
+        },
+        {
+          "id": "pattern.date",
+          "kind": "pattern",
+          "tl": "dia + رقم + de + شهر",
+          "eg": "التاريخ: dia 5 de março"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.days_periods",
+        "phrase.what_day",
+        "phrase.today_is_monday",
+        "phrase.see_you_tomorrow",
+        "pattern.queria_um_uma",
+        "word.q_when"
+      ]
+    },
+    {
+      "day": 37,
+      "title_tl": "O Fim de Semana",
+      "is_story": true,
+      "core_items": [],
+      "recycle_ids": [
+        "phrase.can_you_help_me",
+        "phrase.go_to_centre",
+        "phrase.ticket_to",
+        "phrase.its_far",
+        "phrase.next_to",
+        "phrase.can_it_be_tuesday",
+        "pattern.question_word",
+        "pattern.onde_fica"
+      ]
+    },
+    {
+      "day": 38,
+      "title_tl": "Que Horas São?",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.numbers_100_plus",
+          "kind": "word",
+          "tl": "cem · cento e … · duzentos · mil",
+          "eg": "الأرقام فوق 100"
+        },
+        {
+          "id": "word.half_quarter",
+          "kind": "word",
+          "tl": "e meia · e um quarto · menos um quarto",
+          "eg": "ونص · وربع · إلا ربع"
+        },
+        {
+          "id": "word.noon_midnight",
+          "kind": "word",
+          "tl": "meio-dia · meia-noite",
+          "eg": "الضهر · نص الليل"
+        },
+        {
+          "id": "phrase.what_time",
+          "kind": "phrase",
+          "tl": "Que horas são?",
+          "eg": "الساعة كام؟"
+        },
+        {
+          "id": "phrase.its_one",
+          "kind": "phrase",
+          "tl": "É uma hora.",
+          "eg": "الساعة واحدة"
+        },
+        {
+          "id": "phrase.its_nine_thirty",
+          "kind": "phrase",
+          "tl": "São nove e meia.",
+          "eg": "الساعة تسعة ونص"
+        },
+        {
+          "id": "phrase.what_time_open",
+          "kind": "phrase",
+          "tl": "A que horas abre?",
+          "eg": "بيفتح الساعة كام؟"
+        },
+        {
+          "id": "phrase.at_nine",
+          "kind": "phrase",
+          "tl": "Às nove.",
+          "eg": "الساعة تسعة"
+        },
+        {
+          "id": "phrase.closed",
+          "kind": "phrase",
+          "tl": "Está fechado.",
+          "eg": "مقفول"
+        },
+        {
+          "id": "pattern.horas",
+          "kind": "pattern",
+          "tl": "São + رقم (+ e meia) · É uma",
+          "eg": "الساعة"
+        }
+      ],
+      "recycle_ids": [
+        "word.numbers_tens",
+        "word.day_periods",
+        "verb.abrir",
+        "word.q_when"
+      ]
+    },
+    {
+      "day": 39,
+      "title_tl": "Futuro Informal",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "verb.visitar",
+          "kind": "verb",
+          "tl": "visitar",
+          "eg": "يزور"
+        },
+        {
+          "id": "verb.ficar",
+          "kind": "verb",
+          "tl": "ficar",
+          "eg": "يفضل / يقعد"
+        },
+        {
+          "id": "word.weekend",
+          "kind": "word",
+          "tl": "o fim de semana",
+          "eg": "الويك إند",
+          "plural_tl": "os fins de semana"
+        },
+        {
+          "id": "word.next_week",
+          "kind": "word",
+          "tl": "a próxima semana",
+          "eg": "الأسبوع الجاي",
+          "plural_tl": null
+        },
+        {
+          "id": "word.friends",
+          "kind": "word",
+          "tl": "os amigos",
+          "eg": "الصحاب",
+          "singular_tl": "o amigo",
+          "plural_tl": null
+        },
+        {
+          "id": "word.party",
+          "kind": "word",
+          "tl": "a festa",
+          "eg": "الحفلة",
+          "plural_tl": "as festas"
+        },
+        {
+          "id": "word.trip",
+          "kind": "word",
+          "tl": "a viagem",
+          "eg": "الرحلة",
+          "plural_tl": "as viagens"
+        },
+        {
+          "id": "phrase.what_will_you_do",
+          "kind": "phrase",
+          "tl": "O que vais fazer no fim de semana?",
+          "eg": "هتعمل إيه في الويك إند؟"
+        },
+        {
+          "id": "phrase.ill_work_tomorrow",
+          "kind": "phrase",
+          "tl": "Amanhã vou trabalhar.",
+          "eg": "بكرة هشتغل"
+        },
+        {
+          "id": "phrase.ill_visit_friends",
+          "kind": "phrase",
+          "tl": "Vou visitar amigos.",
+          "eg": "هزور صحابي"
+        },
+        {
+          "id": "phrase.ill_stay_home",
+          "kind": "phrase",
+          "tl": "Vou ficar em casa.",
+          "eg": "هقعد في البيت"
+        },
+        {
+          "id": "pattern.ir_inf",
+          "kind": "pattern",
+          "tl": "ir + مصدر",
+          "eg": "المستقبل القريب"
+        }
+      ],
+      "recycle_ids": [
+        "verb.ir",
+        "word.today_tomorrow",
+        "word.beach",
+        "phrase.shall_we_go"
+      ]
+    },
+    {
+      "day": 40,
+      "title_tl": "Verbos no Infinitivo 1",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "verb.precisar",
+          "kind": "verb",
+          "tl": "precisar de",
+          "eg": "محتاج"
+        },
+        {
+          "id": "word.cough",
+          "kind": "word",
+          "tl": "a tosse",
+          "eg": "الكحة",
+          "plural_tl": null
+        },
+        {
+          "id": "word.fever",
+          "kind": "word",
+          "tl": "a febre",
+          "eg": "السخونية",
+          "plural_tl": null
+        },
+        {
+          "id": "word.pill",
+          "kind": "word",
+          "tl": "o comprimido",
+          "eg": "البرشامة",
+          "plural_tl": "os comprimidos"
+        },
+        {
+          "id": "word.prescription",
+          "kind": "word",
+          "tl": "a receita",
+          "eg": "الروشتة",
+          "plural_tl": "as receitas"
+        },
+        {
+          "id": "word.pain",
+          "kind": "word",
+          "tl": "a dor",
+          "eg": "الوجع",
+          "plural_tl": "as dores"
+        },
+        {
+          "id": "word.flu",
+          "kind": "word",
+          "tl": "a gripe",
+          "eg": "الإنفلونزا",
+          "plural_tl": null
+        },
+        {
+          "id": "word.syrup",
+          "kind": "word",
+          "tl": "o xarope",
+          "eg": "الشراب (دوا الكحة)",
+          "plural_tl": "os xaropes"
+        },
+        {
+          "id": "phrase.something_for_cough",
+          "kind": "phrase",
+          "tl": "Queria algo para a tosse.",
+          "eg": "عايز حاجة للكحة"
+        },
+        {
+          "id": "phrase.i_need_rest",
+          "kind": "phrase",
+          "tl": "Preciso de descansar.",
+          "eg": "محتاج أرتاح"
+        },
+        {
+          "id": "phrase.need_prescription",
+          "kind": "phrase",
+          "tl": "Precisa de receita?",
+          "eg": "محتاج روشتة؟"
+        },
+        {
+          "id": "phrase.three_times_a_day",
+          "kind": "phrase",
+          "tl": "Três vezes por dia.",
+          "eg": "تلات مرات في اليوم"
+        },
+        {
+          "id": "pattern.verb_inf",
+          "kind": "pattern",
+          "tl": "posso / quero / preciso de + مصدر",
+          "eg": "فعل + مصدر"
+        },
+        {
+          "id": "pattern.para",
+          "kind": "pattern",
+          "tl": "para = عشان / لـ",
+          "eg": "para"
+        }
+      ],
+      "recycle_ids": [
+        "word.pharmacy",
+        "phrase.my_head_hurts",
+        "phrase.im_tired",
+        "pattern.queria_um_uma"
+      ]
+    },
+    {
+      "day": 41,
+      "title_tl": "Possessivos",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.mother",
+          "kind": "word",
+          "tl": "a mãe",
+          "eg": "الأم",
+          "plural_tl": "as mães"
+        },
+        {
+          "id": "word.father",
+          "kind": "word",
+          "tl": "o pai",
+          "eg": "الأب",
+          "plural_tl": "os pais"
+        },
+        {
+          "id": "word.brother",
+          "kind": "word",
+          "tl": "o irmão",
+          "eg": "الأخ",
+          "plural_tl": "os irmãos"
+        },
+        {
+          "id": "word.sister",
+          "kind": "word",
+          "tl": "a irmã",
+          "eg": "الأخت",
+          "plural_tl": "as irmãs"
+        },
+        {
+          "id": "word.children",
+          "kind": "word",
+          "tl": "os filhos",
+          "eg": "الولاد",
+          "singular_tl": "o filho",
+          "plural_tl": null
+        },
+        {
+          "id": "word.husband_wife",
+          "kind": "word",
+          "tl": "o marido · a mulher",
+          "eg": "الجوز · المراة",
+          "plural_tl": null
+        },
+        {
+          "id": "word.grandparents",
+          "kind": "word",
+          "tl": "o avô · a avó",
+          "eg": "الجد · الجدة",
+          "plural_tl": null
+        },
+        {
+          "id": "word.uncle_aunt",
+          "kind": "word",
+          "tl": "o tio · a tia",
+          "eg": "العم/الخال · العمة/الخالة",
+          "plural_tl": null
+        },
+        {
+          "id": "word.cousin",
+          "kind": "word",
+          "tl": "o primo · a prima",
+          "eg": "ابن العم · بنت العم",
+          "plural_tl": null
+        },
+        {
+          "id": "phrase.i_have_two_brothers",
+          "kind": "phrase",
+          "tl": "Tenho dois irmãos.",
+          "eg": "عندي اتنين إخوات"
+        },
+        {
+          "id": "phrase.my_mother_lives",
+          "kind": "phrase",
+          "tl": "A minha mãe mora no Cairo.",
+          "eg": "أمي ساكنة في القاهرة"
+        },
+        {
+          "id": "phrase.do_you_have_kids",
+          "kind": "phrase",
+          "tl": "Tem filhos?",
+          "eg": "عندك ولاد؟"
+        },
+        {
+          "id": "pattern.possessive",
+          "kind": "pattern",
+          "tl": "o meu · a minha · os meus · as minhas",
+          "eg": "بتاعي"
+        },
+        {
+          "id": "pattern.possessive_seu",
+          "kind": "pattern",
+          "tl": "o teu / o seu · a tua / a sua",
+          "eg": "بتاعك"
+        }
+      ],
+      "recycle_ids": [
+        "verb.ter",
+        "verb.morar",
+        "phrase.im_from_cairo",
+        "word.numbers_0_10"
+      ]
+    },
+    {
+      "day": 42,
+      "title_tl": "Adjetivos 1",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.sweater",
+          "kind": "word",
+          "tl": "a camisola",
+          "eg": "البلوفر",
+          "plural_tl": "as camisolas"
+        },
+        {
+          "id": "word.trousers",
+          "kind": "word",
+          "tl": "as calças",
+          "eg": "البنطلون",
+          "plural_tl": null
+        },
+        {
+          "id": "word.shirt",
+          "kind": "word",
+          "tl": "a camisa",
+          "eg": "القميص",
+          "plural_tl": "as camisas"
+        },
+        {
+          "id": "word.shoes",
+          "kind": "word",
+          "tl": "os sapatos",
+          "eg": "الجزمة",
+          "singular_tl": "o sapato",
+          "plural_tl": null
+        },
+        {
+          "id": "word.jacket",
+          "kind": "word",
+          "tl": "o casaco",
+          "eg": "الجاكت",
+          "plural_tl": "os casacos"
+        },
+        {
+          "id": "word.colours",
+          "kind": "word",
+          "tl": "azul · vermelho · preto · branco · verde",
+          "eg": "الألوان"
+        },
+        {
+          "id": "word.big_small",
+          "kind": "word",
+          "tl": "grande · pequeno",
+          "eg": "كبير · صغير"
+        },
+        {
+          "id": "phrase.blue_sweater_big",
+          "kind": "phrase",
+          "tl": "A camisola azul é grande.",
+          "eg": "البلوفر الأزرق كبير"
+        },
+        {
+          "id": "pattern.adj_agreement",
+          "kind": "pattern",
+          "tl": "اسم + صفة (-o/-a/-os/-as)",
+          "eg": "الصفة بتتغير"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.plural_s",
+        "pattern.article_gender",
+        "phrase.how_much_does_it_cost"
+      ]
+    },
+    {
+      "day": 43,
+      "title_tl": "Noutro Tamanho",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.skirt",
+          "kind": "word",
+          "tl": "a saia",
+          "eg": "الجيبة",
+          "plural_tl": "as saias"
+        },
+        {
+          "id": "word.dress",
+          "kind": "word",
+          "tl": "o vestido",
+          "eg": "الفستان",
+          "plural_tl": "os vestidos"
+        },
+        {
+          "id": "word.hat",
+          "kind": "word",
+          "tl": "o chapéu",
+          "eg": "البرنيطة",
+          "plural_tl": "os chapéus"
+        },
+        {
+          "id": "phrase.other_size",
+          "kind": "phrase",
+          "tl": "Tem noutro tamanho?",
+          "eg": "فيه مقاس تاني؟"
+        },
+        {
+          "id": "phrase.other_colour",
+          "kind": "phrase",
+          "tl": "Tem noutra cor?",
+          "eg": "فيه لون تاني؟"
+        },
+        {
+          "id": "pattern.plural_ao_l",
+          "kind": "pattern",
+          "tl": "-ão→-ões · -l→-is",
+          "eg": "جمع -ão و-l"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.adj_agreement",
+        "phrase.blue_sweater_big",
+        "pattern.plural_s",
+        "pattern.article_gender",
+        "phrase.how_much_does_it_cost"
+      ]
+    },
+    {
+      "day": 44,
+      "title_tl": "A Visita da Família",
+      "is_story": true,
+      "core_items": [],
+      "recycle_ids": [
+        "phrase.what_time",
+        "phrase.what_time_open",
+        "phrase.what_will_you_do",
+        "phrase.ill_stay_home",
+        "phrase.need_prescription",
+        "phrase.my_mother_lives",
+        "pattern.horas",
+        "pattern.possessive"
+      ]
+    },
+    {
+      "day": 45,
+      "title_tl": "Isto e Aquilo",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.this_that_neutral",
+          "kind": "word",
+          "tl": "isto · isso · aquilo",
+          "eg": "ده · ده (جنبك) · ده (بعيد)"
+        },
+        {
+          "id": "word.this_m_f",
+          "kind": "word",
+          "tl": "este · esta",
+          "eg": "ده / دي (جنبي)"
+        },
+        {
+          "id": "word.that_m_f",
+          "kind": "word",
+          "tl": "esse · essa",
+          "eg": "ده / دي (جنبك)"
+        },
+        {
+          "id": "word.that_far_m_f",
+          "kind": "word",
+          "tl": "aquele · aquela",
+          "eg": "ده / دي (بعيد)"
+        },
+        {
+          "id": "word.fitting_room",
+          "kind": "word",
+          "tl": "o provador",
+          "eg": "البروفة",
+          "plural_tl": "os provadores"
+        },
+        {
+          "id": "phrase.can_i_try",
+          "kind": "phrase",
+          "tl": "Posso experimentar este?",
+          "eg": "ممكن أقيس ده؟"
+        },
+        {
+          "id": "phrase.what_is_that",
+          "kind": "phrase",
+          "tl": "O que é aquilo?",
+          "eg": "إيه ده اللي هناك؟"
+        },
+        {
+          "id": "phrase.how_much_this_one",
+          "kind": "phrase",
+          "tl": "Quanto custa esta?",
+          "eg": "دي بكام؟"
+        },
+        {
+          "id": "phrase.ill_take_it",
+          "kind": "phrase",
+          "tl": "Levo este.",
+          "eg": "هاخد ده"
+        },
+        {
+          "id": "pattern.demonstratives",
+          "kind": "pattern",
+          "tl": "este (هنا) · esse (عندك) · aquele (هناك)",
+          "eg": "الإشارة"
+        }
+      ],
+      "recycle_ids": [
+        "phrase.what_is_this",
+        "word.q_which",
+        "word.sweater",
+        "pattern.adj_agreement"
+      ]
+    },
+    {
+      "day": 46,
+      "title_tl": "Verbo Pôr",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "verb.por",
+          "kind": "verb",
+          "tl": "pôr",
+          "eg": "يحط / يلبس"
+        },
+        {
+          "id": "verb.vestir_se",
+          "kind": "verb",
+          "tl": "vestir-se",
+          "eg": "يلبس (نفسه)"
+        },
+        {
+          "id": "word.breakfast",
+          "kind": "word",
+          "tl": "o pequeno-almoço",
+          "eg": "الفطار",
+          "plural_tl": null
+        },
+        {
+          "id": "word.key",
+          "kind": "word",
+          "tl": "a chave",
+          "eg": "المفتاح",
+          "plural_tl": "as chaves"
+        },
+        {
+          "id": "word.shower",
+          "kind": "word",
+          "tl": "o duche",
+          "eg": "الدُش",
+          "plural_tl": "os duches"
+        },
+        {
+          "id": "word.toothbrush",
+          "kind": "word",
+          "tl": "a escova de dentes",
+          "eg": "فرشة السنان",
+          "plural_tl": "as escovas de dentes"
+        },
+        {
+          "id": "word.watch",
+          "kind": "word",
+          "tl": "o relógio",
+          "eg": "الساعة (اللي في الإيد)",
+          "plural_tl": "os relógios"
+        },
+        {
+          "id": "phrase.i_put_on_jacket",
+          "kind": "phrase",
+          "tl": "Ponho o casaco.",
+          "eg": "بلبس الجاكت"
+        },
+        {
+          "id": "phrase.i_get_dressed",
+          "kind": "phrase",
+          "tl": "Visto-me às sete.",
+          "eg": "بلبس الساعة سبعة"
+        },
+        {
+          "id": "phrase.i_have_breakfast",
+          "kind": "phrase",
+          "tl": "Tomo o pequeno-almoço.",
+          "eg": "بفطر"
+        },
+        {
+          "id": "phrase.where_did_i_put",
+          "kind": "phrase",
+          "tl": "Onde pus a chave?",
+          "eg": "حطيت المفتاح فين؟ (جملة جاهزة)"
+        },
+        {
+          "id": "pattern.por_conj",
+          "kind": "pattern",
+          "tl": "ponho · pões · põe · pomos · põem",
+          "eg": "تصريف pôr"
+        },
+        {
+          "id": "pattern.reflexive_me",
+          "kind": "pattern",
+          "tl": "فعل + -me (visto-me)",
+          "eg": "الفعل الانعكاسي"
+        }
+      ],
+      "recycle_ids": [
+        "phrase.i_wake_early",
+        "phrase.at_nine",
+        "word.jacket",
+        "pattern.chamo_me"
+      ]
+    },
+    {
+      "day": 47,
+      "title_tl": "O Que Fizeste Ontem?",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.market",
+          "kind": "word",
+          "tl": "o mercado",
+          "eg": "السوق",
+          "plural_tl": "os mercados"
+        },
+        {
+          "id": "verb.comprar",
+          "kind": "verb",
+          "tl": "comprar",
+          "eg": "يشتري"
+        },
+        {
+          "id": "phrase.what_did_you_do",
+          "kind": "phrase",
+          "tl": "O que fizeste ontem?",
+          "eg": "عملت إيه امبارح؟"
+        },
+        {
+          "id": "phrase.i_went_to_supermarket",
+          "kind": "phrase",
+          "tl": "Fui ao supermercado.",
+          "eg": "رحت السوبر ماركت"
+        },
+        {
+          "id": "phrase.i_bought_bread",
+          "kind": "phrase",
+          "tl": "Comprei pão.",
+          "eg": "اشتريت عيش"
+        },
+        {
+          "id": "phrase.i_ate_out",
+          "kind": "phrase",
+          "tl": "Comi fora.",
+          "eg": "أكلت برة"
+        },
+        {
+          "id": "phrase.i_was_home",
+          "kind": "phrase",
+          "tl": "Estive em casa.",
+          "eg": "كنت في البيت"
+        },
+        {
+          "id": "phrase.i_did_nothing",
+          "kind": "phrase",
+          "tl": "Não fiz nada.",
+          "eg": "معملتش حاجة"
+        },
+        {
+          "id": "pattern.past_five",
+          "kind": "pattern",
+          "tl": "fui · fiz · estive · comprei · comi",
+          "eg": "الماضي لـ 5 أفعال"
+        }
+      ],
+      "recycle_ids": [
+        "word.today_tomorrow",
+        "word.supermarket",
+        "word.bread",
+        "pattern.contractions"
+      ]
+    },
+    {
+      "day": 48,
+      "title_tl": "Um Dia Normal",
+      "is_story": true,
+      "core_items": [],
+      "recycle_ids": [
+        "phrase.can_i_try",
+        "phrase.how_much_this_one",
+        "phrase.i_put_on_jacket",
+        "phrase.i_have_breakfast",
+        "phrase.what_did_you_do",
+        "phrase.i_bought_bread",
+        "pattern.demonstratives",
+        "pattern.reflexive_me"
+      ]
+    },
+    {
+      "day": 49,
+      "title_tl": "Teste A1",
+      "is_story": false,
+      "core_items": [],
+      "recycle_ids": [
+        "pattern.ar_endings",
+        "pattern.er_endings",
+        "pattern.ir_endings",
+        "pattern.ser_vs_estar",
+        "pattern.estar_a_inf",
+        "pattern.gostar_de",
+        "pattern.contractions",
+        "pattern.ir_inf",
+        "pattern.possessive",
+        "pattern.adj_agreement",
+        "pattern.demonstratives",
+        "pattern.past_five"
+      ],
+      "note": "اختبار: recycle بس، يغطي كل القواعد",
+      "is_test": true
     }
-   ],
-   "recycle_ids": []
-  },
-  {
-   "day": 2,
-   "title_tl": "Conversação Básica",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "word.coffee",
-     "kind": "word",
-     "tl": "o café",
-     "eg": "القهوة (إسبريسو صغير)",
-     "plural_tl": "os cafés"
-    },
-    {
-     "id": "word.galao",
-     "kind": "word",
-     "tl": "o galão",
-     "eg": "قهوة بلبن في كوباية",
-     "plural_tl": "os galões"
-    },
-    {
-     "id": "word.water",
-     "kind": "word",
-     "tl": "a água",
-     "eg": "المية",
-     "plural_tl": null
-    },
-    {
-     "id": "word.milk",
-     "kind": "word",
-     "tl": "o leite",
-     "eg": "اللبن",
-     "plural_tl": null
-    },
-    {
-     "id": "word.tea",
-     "kind": "word",
-     "tl": "o chá",
-     "eg": "الشاي",
-     "plural_tl": "os chás"
-    },
-    {
-     "id": "word.pastel_de_nata",
-     "kind": "word",
-     "tl": "o pastel de nata",
-     "eg": "تارت الكريمة البرتغالي",
-     "plural_tl": "os pastéis de nata"
-    },
-    {
-     "id": "word.toast",
-     "kind": "word",
-     "tl": "a torrada",
-     "eg": "التوست",
-     "plural_tl": "as torradas"
-    },
-    {
-     "id": "word.sugar",
-     "kind": "word",
-     "tl": "o açúcar",
-     "eg": "السكر",
-     "plural_tl": null
-    },
-    {
-     "id": "word.juice",
-     "kind": "word",
-     "tl": "o sumo",
-     "eg": "العصير",
-     "plural_tl": "os sumos"
-    },
-    {
-     "id": "word.cake",
-     "kind": "word",
-     "tl": "o bolo",
-     "eg": "الكيكة",
-     "plural_tl": "os bolos"
-    },
-    {
-     "id": "word.glass",
-     "kind": "word",
-     "tl": "o copo",
-     "eg": "الكوباية",
-     "plural_tl": "os copos"
-    },
-    {
-     "id": "phrase.order_coffee",
-     "kind": "phrase",
-     "tl": "Queria um café, por favor.",
-     "eg": "عايز قهوة لو سمحت",
-     "role": "said"
-    },
-    {
-     "id": "phrase.with_milk",
-     "kind": "phrase",
-     "tl": "Com leite?",
-     "eg": "بلبن؟",
-     "role": "heard"
-    },
-    {
-     "id": "phrase.anything_else",
-     "kind": "phrase",
-     "tl": "Mais alguma coisa?",
-     "eg": "حاجة تانية؟",
-     "role": "heard"
-    },
-    {
-     "id": "phrase.thats_all",
-     "kind": "phrase",
-     "tl": "Só isto, obrigado.",
-     "eg": "بس كده، شكراً",
-     "role": "said",
-     "replies_to": "phrase.anything_else"
-    },
-    {
-     "id": "phrase.how_much_is_it",
-     "kind": "phrase",
-     "tl": "Quanto é?",
-     "eg": "حسابه كام؟",
-     "role": "said"
-    },
-    {
-     "id": "phrase.i_like_coffee",
-     "kind": "phrase",
-     "tl": "Gosto de café.",
-     "eg": "بحب القهوة (جملة جاهزة، القاعدة يوم 13)",
-     "role": "said"
-    },
-    {
-     "id": "phrase.youre_welcome",
-     "kind": "phrase",
-     "tl": "De nada.",
-     "eg": "العفو"
-    },
-    {
-     "id": "phrase.excuse_me_pass",
-     "kind": "phrase",
-     "tl": "Com licença.",
-     "eg": "لو سمحت (عايز أعدّي أو أقاطع)"
-    },
-    {
-     "id": "pattern.queria_um_uma",
-     "kind": "pattern",
-     "pattern_kind": "polite_request",
-     "tl": "Queria + um/uma + حاجة, por favor.",
-     "eg": "الطلب بأدب",
-     "fills": [
-      "word.coffee",
-      "word.galao",
-      "word.water",
-      "word.tea",
-      "word.pastel_de_nata",
-      "word.toast",
-      "word.milk"
-     ]
-    }
-   ],
-   "recycle_ids": [
-    "phrase.hello",
-    "phrase.good_morning",
-    "phrase.fine_thanks"
-   ]
-  },
-  {
-   "day": 3,
-   "title_tl": "Gramática Básica",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "word.supermarket",
-     "kind": "word",
-     "tl": "o supermercado",
-     "eg": "السوبر ماركت",
-     "plural_tl": "os supermercados"
-    },
-    {
-     "id": "word.bread",
-     "kind": "word",
-     "tl": "o pão",
-     "eg": "العيش",
-     "plural_tl": "os pães"
-    },
-    {
-     "id": "word.cheese",
-     "kind": "word",
-     "tl": "o queijo",
-     "eg": "الجبنة",
-     "plural_tl": "os queijos"
-    },
-    {
-     "id": "word.apple",
-     "kind": "word",
-     "tl": "a maçã",
-     "eg": "التفاحة",
-     "plural_tl": "as maçãs"
-    },
-    {
-     "id": "word.egg",
-     "kind": "word",
-     "tl": "o ovo",
-     "eg": "البيضة",
-     "plural_tl": "os ovos"
-    },
-    {
-     "id": "word.rice",
-     "kind": "word",
-     "tl": "o arroz",
-     "eg": "الرز",
-     "plural_tl": null
-    },
-    {
-     "id": "word.bag",
-     "kind": "word",
-     "tl": "o saco",
-     "eg": "الكيس",
-     "plural_tl": "os sacos"
-    },
-    {
-     "id": "word.banana",
-     "kind": "word",
-     "tl": "a banana",
-     "eg": "الموز",
-     "plural_tl": "as bananas"
-    },
-    {
-     "id": "word.orange",
-     "kind": "word",
-     "tl": "a laranja",
-     "eg": "البرتقانة",
-     "plural_tl": "as laranjas"
-    },
-    {
-     "id": "word.tomato",
-     "kind": "word",
-     "tl": "o tomate",
-     "eg": "الطماطم",
-     "plural_tl": "os tomates"
-    },
-    {
-     "id": "word.potato",
-     "kind": "word",
-     "tl": "a batata",
-     "eg": "البطاطس",
-     "plural_tl": "as batatas"
-    },
-    {
-     "id": "word.fruit",
-     "kind": "word",
-     "tl": "a fruta",
-     "eg": "الفاكهة",
-     "plural_tl": "as frutas"
-    },
-    {
-     "id": "phrase.where_is_x",
-     "kind": "phrase",
-     "tl": "Onde fica o leite?",
-     "eg": "اللبن فين؟"
-    },
-    {
-     "id": "phrase.what_is_this",
-     "kind": "phrase",
-     "tl": "O que é isto?",
-     "eg": "ده إيه؟"
-    },
-    {
-     "id": "phrase.how_much_does_it_cost",
-     "kind": "phrase",
-     "tl": "Quanto custa isso?",
-     "eg": "ده بكام؟"
-    },
-    {
-     "id": "phrase.need_a_bag",
-     "kind": "phrase",
-     "tl": "Precisa de saco?",
-     "eg": "محتاج كيس؟ (هتسمعها عند الكاشير)"
-    },
-    {
-     "id": "pattern.article_gender",
-     "kind": "pattern",
-     "pattern_kind": "article_def",
-     "tl": "o + مذكر · a + مؤنث",
-     "eg": "الأداة مع الاسم"
-    },
-    {
-     "id": "pattern.plural_s",
-     "kind": "pattern",
-     "pattern_kind": "plural_def",
-     "tl": "os/as + اسم + s",
-     "eg": "الجمع",
-     "fills": [
-      "word.apple",
-      "word.egg",
-      "word.bag",
-      "word.bread"
-     ]
-    }
-   ],
-   "recycle_ids": [
-    "word.milk",
-    "word.water",
-    "phrase.order_coffee"
-   ]
-  },
-  {
-   "day": 4,
-   "title_tl": "Números 1",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "word.numbers_0_10",
-     "kind": "word",
-     "tl": "zero, um, dois, três … dez",
-     "eg": "الأرقام 0–10"
-    },
-    {
-     "id": "word.numbers_11_20",
-     "kind": "word",
-     "tl": "onze, doze, treze … vinte",
-     "eg": "الأرقام 11–20"
-    },
-    {
-     "id": "word.numbers_tens",
-     "kind": "word",
-     "tl": "trinta, quarenta … cem",
-     "eg": "العشرات لحد 100"
-    },
-    {
-     "id": "word.euro",
-     "kind": "word",
-     "tl": "o euro",
-     "eg": "اليورو",
-     "plural_tl": "os euros"
-    },
-    {
-     "id": "word.cent",
-     "kind": "word",
-     "tl": "o cêntimo",
-     "eg": "السنت",
-     "plural_tl": "os cêntimos"
-    },
-    {
-     "id": "word.price",
-     "kind": "word",
-     "tl": "o preço",
-     "eg": "السعر",
-     "plural_tl": "os preços"
-    },
-    {
-     "id": "word.card",
-     "kind": "word",
-     "tl": "o cartão",
-     "eg": "الكارت",
-     "plural_tl": "os cartões"
-    },
-    {
-     "id": "word.money",
-     "kind": "word",
-     "tl": "o dinheiro",
-     "eg": "الفلوس",
-     "plural_tl": null
-    },
-    {
-     "id": "word.change",
-     "kind": "word",
-     "tl": "o troco",
-     "eg": "الباقي",
-     "plural_tl": null
-    },
-    {
-     "id": "phrase.its_x_euros",
-     "kind": "phrase",
-     "tl": "São doze euros.",
-     "eg": "12 يورو"
-    },
-    {
-     "id": "phrase.card_ok",
-     "kind": "phrase",
-     "tl": "Aceita cartão?",
-     "eg": "بتاخدوا كارت؟"
-    },
-    {
-     "id": "phrase.cash",
-     "kind": "phrase",
-     "tl": "Em dinheiro.",
-     "eg": "كاش"
-    },
-    {
-     "id": "phrase.receipt_nif",
-     "kind": "phrase",
-     "tl": "Contribuinte?",
-     "eg": "رقم الضرايب؟ (هتسمعها في كل محل)"
-    },
-    {
-     "id": "phrase.no_thanks",
-     "kind": "phrase",
-     "tl": "Não, obrigado.",
-     "eg": "لا شكراً"
-    },
-    {
-     "id": "phrase.how_old",
-     "kind": "phrase",
-     "tl": "Quantos anos tem?",
-     "eg": "عندك كام سنة؟ (بأدب)"
-    },
-    {
-     "id": "phrase.i_am_x_years",
-     "kind": "phrase",
-     "tl": "Tenho trinta e dois anos.",
-     "eg": "عندي ٣٢ سنة"
-    },
-    {
-     "id": "pattern.sao_x_euros",
-     "kind": "pattern",
-     "tl": "São + رقم + euros",
-     "eg": "السعر"
-    },
-    {
-     "id": "pattern.number_compose",
-     "kind": "pattern",
-     "tl": "vinte e um = 20 + e + 1",
-     "eg": "تركيب الأرقام"
-    },
-    {
-     "id": "pattern.tenho_x_anos",
-     "kind": "pattern",
-     "tl": "Tenho + رقم + anos",
-     "eg": "السن بـ ter مش بـ ser"
-    }
-   ],
-   "recycle_ids": [
-    "phrase.how_much_does_it_cost",
-    "phrase.how_much_is_it",
-    "phrase.thats_all"
-   ]
-  },
-  {
-   "day": 5,
-   "title_tl": "Introdução aos Verbos",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "phrase.excuse_me",
-     "kind": "phrase",
-     "tl": "Desculpe.",
-     "eg": "لو سمحت / آسف"
-    },
-    {
-     "id": "phrase.can_you_repeat",
-     "kind": "phrase",
-     "tl": "Pode repetir?",
-     "eg": "ممكن تعيد؟"
-    },
-    {
-     "id": "phrase.slower",
-     "kind": "phrase",
-     "tl": "Mais devagar, por favor.",
-     "eg": "براحة شوية لو سمحت"
-    },
-    {
-     "id": "phrase.i_dont_understand",
-     "kind": "phrase",
-     "tl": "Não percebo.",
-     "eg": "مش فاهم"
-    },
-    {
-     "id": "phrase.do_you_speak_pt",
-     "kind": "phrase",
-     "tl": "Fala português?",
-     "eg": "بتتكلم برتغالي؟"
-    },
-    {
-     "id": "phrase.a_little",
-     "kind": "phrase",
-     "tl": "Falo um pouco.",
-     "eg": "بتكلم شوية"
-    },
-    {
-     "id": "word.neighbour_m",
-     "kind": "word",
-     "tl": "o vizinho",
-     "eg": "الجار",
-     "plural_tl": "os vizinhos"
-    },
-    {
-     "id": "word.neighbour_f",
-     "kind": "word",
-     "tl": "a vizinha",
-     "eg": "الجارة",
-     "plural_tl": "as vizinhas"
-    },
-    {
-     "id": "word.you_tu",
-     "kind": "word",
-     "tl": "tu",
-     "eg": "إنت (للصحاب والعيلة)"
-    },
-    {
-     "id": "word.you_voce",
-     "kind": "word",
-     "tl": "você",
-     "eg": "إنت (رسمي شوية)"
-    },
-    {
-     "id": "word.you_o_senhor",
-     "kind": "word",
-     "tl": "o senhor / a senhora",
-     "eg": "حضرتك"
-    },
-    {
-     "id": "word.never",
-     "kind": "word",
-     "tl": "nunca",
-     "eg": "أبداً"
-    },
-    {
-     "id": "phrase.see_you_later",
-     "kind": "phrase",
-     "tl": "Até logo!",
-     "eg": "أشوفك بعدين"
-    },
-    {
-     "id": "phrase.welcome",
-     "kind": "phrase",
-     "tl": "Bem-vindo!",
-     "eg": "أهلاً بيك (Bem-vinda للست)",
-     "tl_f": "Bem-vinda!"
-    },
-    {
-     "id": "phrase.no_problem",
-     "kind": "phrase",
-     "tl": "Não faz mal.",
-     "eg": "مش مشكلة"
-    },
-    {
-     "id": "pattern.nao_verb",
-     "kind": "pattern",
-     "tl": "Não + فعل",
-     "eg": "النفي"
-    },
-    {
-     "id": "pattern.infinitive",
-     "kind": "pattern",
-     "tl": "falar = الفعل في المصدر",
-     "eg": "يعني إيه فعل ومصدر"
-    }
-   ],
-   "recycle_ids": [
-    "phrase.good_morning",
-    "phrase.how_are_you",
-    "phrase.bye"
-   ]
-  },
-  {
-   "day": 6,
-   "title_tl": "Verbos -AR 1",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "word.pron_eu",
-     "kind": "word",
-     "tl": "eu",
-     "eg": "أنا"
-    },
-    {
-     "id": "word.pron_ele_ela",
-     "kind": "word",
-     "tl": "ele / ela",
-     "eg": "هو / هي"
-    },
-    {
-     "id": "word.pron_nos",
-     "kind": "word",
-     "tl": "nós",
-     "eg": "إحنا"
-    },
-    {
-     "id": "word.pron_eles_elas",
-     "kind": "word",
-     "tl": "eles / elas / vocês",
-     "eg": "هم / إنتو"
-    },
-    {
-     "id": "verb.falar",
-     "kind": "verb",
-     "tl": "falar",
-     "eg": "يتكلم"
-    },
-    {
-     "id": "verb.trabalhar",
-     "kind": "verb",
-     "tl": "trabalhar",
-     "eg": "يشتغل"
-    },
-    {
-     "id": "verb.morar",
-     "kind": "verb",
-     "tl": "morar",
-     "eg": "يسكن"
-    },
-    {
-     "id": "verb.estudar",
-     "kind": "verb",
-     "tl": "estudar",
-     "eg": "يذاكر / يدرس"
-    },
-    {
-     "id": "word.office",
-     "kind": "word",
-     "tl": "o escritório",
-     "eg": "المكتب",
-     "plural_tl": "os escritórios"
-    },
-    {
-     "id": "word.work",
-     "kind": "word",
-     "tl": "o trabalho",
-     "eg": "الشغل",
-     "plural_tl": "os trabalhos"
-    },
-    {
-     "id": "word.school",
-     "kind": "word",
-     "tl": "a escola",
-     "eg": "المدرسة",
-     "plural_tl": "as escolas"
-    },
-    {
-     "id": "word.city",
-     "kind": "word",
-     "tl": "a cidade",
-     "eg": "المدينة",
-     "plural_tl": "as cidades"
-    },
-    {
-     "id": "word.country",
-     "kind": "word",
-     "tl": "o país",
-     "eg": "البلد",
-     "plural_tl": "os países"
-    },
-    {
-     "id": "word.company",
-     "kind": "word",
-     "tl": "a empresa",
-     "eg": "الشركة",
-     "plural_tl": "as empresas"
-    },
-    {
-     "id": "phrase.i_work_in_a_cafe",
-     "kind": "phrase",
-     "tl": "Trabalho num café.",
-     "eg": "بشتغل في كافيه"
-    },
-    {
-     "id": "phrase.i_live_in_lisbon",
-     "kind": "phrase",
-     "tl": "Moro em Lisboa.",
-     "eg": "ساكن في لشبونة"
-    },
-    {
-     "id": "phrase.where_do_you_work",
-     "kind": "phrase",
-     "tl": "Onde trabalha?",
-     "eg": "بتشتغل فين؟"
-    },
-    {
-     "id": "phrase.where_do_you_live",
-     "kind": "phrase",
-     "tl": "Onde mora?",
-     "eg": "ساكن فين؟"
-    },
-    {
-     "id": "pattern.ar_endings",
-     "kind": "pattern",
-     "tl": "-o · -as · -a · -amos · -am",
-     "eg": "نهايات -ar"
-    }
-   ],
-   "recycle_ids": [
-    "word.you_tu",
-    "word.you_voce",
-    "word.coffee",
-    "pattern.nao_verb"
-   ]
-  },
-  {
-   "day": 7,
-   "title_tl": "O Primeiro Dia",
-   "is_story": true,
-   "core_items": [],
-   "recycle_ids": [
-    "phrase.my_name_is",
-    "phrase.nice_to_meet",
-    "phrase.order_coffee",
-    "phrase.i_live_in_lisbon",
-    "phrase.i_dont_understand",
-    "phrase.its_x_euros",
-    "pattern.ar_endings"
-   ],
-   "note": "قصة: مفيش items جديدة، بس recycle"
-  },
-  {
-   "day": 8,
-   "title_tl": "Verbos -ER",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "verb.comer",
-     "kind": "verb",
-     "tl": "comer",
-     "eg": "ياكل"
-    },
-    {
-     "id": "verb.beber",
-     "kind": "verb",
-     "tl": "beber",
-     "eg": "يشرب"
-    },
-    {
-     "id": "verb.aprender",
-     "kind": "verb",
-     "tl": "aprender",
-     "eg": "يتعلم"
-    },
-    {
-     "id": "word.restaurant",
-     "kind": "word",
-     "tl": "o restaurante",
-     "eg": "المطعم",
-     "plural_tl": "os restaurantes"
-    },
-    {
-     "id": "word.menu",
-     "kind": "word",
-     "tl": "a ementa",
-     "eg": "المنيو",
-     "plural_tl": "as ementas"
-    },
-    {
-     "id": "word.soup",
-     "kind": "word",
-     "tl": "a sopa",
-     "eg": "الشوربة",
-     "plural_tl": "as sopas"
-    },
-    {
-     "id": "word.fish",
-     "kind": "word",
-     "tl": "o peixe",
-     "eg": "السمك",
-     "plural_tl": "os peixes"
-    },
-    {
-     "id": "word.meat",
-     "kind": "word",
-     "tl": "a carne",
-     "eg": "اللحمة",
-     "plural_tl": "as carnes"
-    },
-    {
-     "id": "word.dish_of_day",
-     "kind": "word",
-     "tl": "o prato do dia",
-     "eg": "طبق اليوم",
-     "plural_tl": "os pratos do dia"
-    },
-    {
-     "id": "word.chicken",
-     "kind": "word",
-     "tl": "o frango",
-     "eg": "الفراخ",
-     "plural_tl": "os frangos"
-    },
-    {
-     "id": "word.salad",
-     "kind": "word",
-     "tl": "a salada",
-     "eg": "السلطة",
-     "plural_tl": "as saladas"
-    },
-    {
-     "id": "word.dessert",
-     "kind": "word",
-     "tl": "a sobremesa",
-     "eg": "الحلو",
-     "plural_tl": "as sobremesas"
-    },
-    {
-     "id": "word.wine",
-     "kind": "word",
-     "tl": "o vinho",
-     "eg": "النبيذ",
-     "plural_tl": "os vinhos"
-    },
-    {
-     "id": "word.table",
-     "kind": "word",
-     "tl": "a mesa",
-     "eg": "الترابيزة",
-     "plural_tl": "as mesas"
-    },
-    {
-     "id": "phrase.table_for_two",
-     "kind": "phrase",
-     "tl": "Uma mesa para dois, por favor.",
-     "eg": "ترابيزة لاتنين لو سمحت"
-    },
-    {
-     "id": "phrase.for_me",
-     "kind": "phrase",
-     "tl": "Para mim, o prato do dia.",
-     "eg": "ليا أنا، طبق اليوم"
-    },
-    {
-     "id": "phrase.the_bill",
-     "kind": "phrase",
-     "tl": "A conta, por favor.",
-     "eg": "الحساب لو سمحت"
-    },
-    {
-     "id": "phrase.enjoy_meal",
-     "kind": "phrase",
-     "tl": "Bom apetite!",
-     "eg": "بالهنا والشفا"
-    },
-    {
-     "id": "pattern.er_endings",
-     "kind": "pattern",
-     "tl": "-o · -es · -e · -emos · -em",
-     "eg": "نهايات -er"
-    }
-   ],
-   "recycle_ids": [
-    "word.water",
-    "pattern.queria_um_uma",
-    "pattern.ar_endings",
-    "phrase.card_ok"
-   ]
-  },
-  {
-   "day": 9,
-   "title_tl": "Verbos -IR",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "verb.abrir",
-     "kind": "verb",
-     "tl": "abrir",
-     "eg": "يفتح"
-    },
-    {
-     "id": "verb.dormir",
-     "kind": "verb",
-     "tl": "dormir",
-     "eg": "ينام (eu durmo)"
-    },
-    {
-     "id": "verb.decidir",
-     "kind": "verb",
-     "tl": "decidir",
-     "eg": "يقرر"
-    },
-    {
-     "id": "verb.acordar",
-     "kind": "verb",
-     "tl": "acordar",
-     "eg": "يصحى (-ar للمقارنة)"
-    },
-    {
-     "id": "word.house",
-     "kind": "word",
-     "tl": "a casa",
-     "eg": "البيت",
-     "plural_tl": "as casas"
-    },
-    {
-     "id": "word.bedroom",
-     "kind": "word",
-     "tl": "o quarto",
-     "eg": "أوضة النوم",
-     "plural_tl": "os quartos"
-    },
-    {
-     "id": "word.window",
-     "kind": "word",
-     "tl": "a janela",
-     "eg": "الشباك",
-     "plural_tl": "as janelas"
-    },
-    {
-     "id": "word.door",
-     "kind": "word",
-     "tl": "a porta",
-     "eg": "الباب",
-     "plural_tl": "as portas"
-    },
-    {
-     "id": "word.kitchen",
-     "kind": "word",
-     "tl": "a cozinha",
-     "eg": "المطبخ",
-     "plural_tl": "as cozinhas"
-    },
-    {
-     "id": "word.bathroom",
-     "kind": "word",
-     "tl": "a casa de banho",
-     "eg": "الحمام",
-     "plural_tl": "as casas de banho"
-    },
-    {
-     "id": "word.living_room",
-     "kind": "word",
-     "tl": "a sala",
-     "eg": "الصالة",
-     "plural_tl": "as salas"
-    },
-    {
-     "id": "word.bed",
-     "kind": "word",
-     "tl": "a cama",
-     "eg": "السرير",
-     "plural_tl": "as camas"
-    },
-    {
-     "id": "word.sofa",
-     "kind": "word",
-     "tl": "o sofá",
-     "eg": "الكنبة",
-     "plural_tl": "os sofás"
-    },
-    {
-     "id": "phrase.i_open_window",
-     "kind": "phrase",
-     "tl": "Abro a janela.",
-     "eg": "بفتح الشباك"
-    },
-    {
-     "id": "phrase.i_sleep_little",
-     "kind": "phrase",
-     "tl": "Durmo pouco.",
-     "eg": "بنام قليل"
-    },
-    {
-     "id": "phrase.i_wake_early",
-     "kind": "phrase",
-     "tl": "Acordo cedo.",
-     "eg": "بصحى بدري"
-    },
-    {
-     "id": "pattern.ir_endings",
-     "kind": "pattern",
-     "tl": "-o · -es · -e · -imos · -em",
-     "eg": "نهايات -ir"
-    }
-   ],
-   "recycle_ids": [
-    "pattern.er_endings",
-    "pattern.ar_endings",
-    "verb.trabalhar"
-   ]
-  },
-  {
-   "day": 10,
-   "title_tl": "Verbos Ser e Estar 1",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "verb.ser",
-     "kind": "verb",
-     "tl": "ser",
-     "eg": "يكون (ثابت)"
-    },
-    {
-     "id": "word.egyptian",
-     "kind": "word",
-     "tl": "egípcio / egípcia",
-     "eg": "مصري / مصرية"
-    },
-    {
-     "id": "word.portuguese",
-     "kind": "word",
-     "tl": "português / portuguesa",
-     "eg": "برتغالي / برتغالية"
-    },
-    {
-     "id": "word.engineer",
-     "kind": "word",
-     "tl": "engenheiro / engenheira",
-     "eg": "مهندس / مهندسة"
-    },
-    {
-     "id": "word.egypt",
-     "kind": "word",
-     "tl": "o Egito",
-     "eg": "مصر",
-     "plural_tl": null
-    },
-    {
-     "id": "word.teacher",
-     "kind": "word",
-     "tl": "professor / professora",
-     "eg": "مدرس / مدرسة"
-    },
-    {
-     "id": "word.doctor",
-     "kind": "word",
-     "tl": "médico / médica",
-     "eg": "دكتور / دكتورة"
-    },
-    {
-     "id": "word.student",
-     "kind": "word",
-     "tl": "estudante",
-     "eg": "طالب / طالبة"
-    },
-    {
-     "id": "phrase.where_are_you_from",
-     "kind": "phrase",
-     "tl": "De onde é?",
-     "eg": "حضرتك منين؟"
-    },
-    {
-     "id": "phrase.im_from_cairo",
-     "kind": "phrase",
-     "tl": "Sou do Cairo.",
-     "eg": "أنا من القاهرة"
-    },
-    {
-     "id": "phrase.im_egyptian",
-     "kind": "phrase",
-     "tl": "Sou egípcio.",
-     "eg": "أنا مصري"
-    },
-    {
-     "id": "phrase.what_do_you_do",
-     "kind": "phrase",
-     "tl": "O que faz?",
-     "eg": "بتشتغل إيه؟"
-    },
-    {
-     "id": "phrase.im_engineer",
-     "kind": "phrase",
-     "tl": "Sou engenheiro.",
-     "eg": "أنا مهندس"
-    },
-    {
-     "id": "pattern.ser_conj",
-     "kind": "pattern",
-     "tl": "sou · és · é · somos · são",
-     "eg": "تصريف ser"
-    },
-    {
-     "id": "pattern.o_senhor_e",
-     "kind": "pattern",
-     "tl": "O senhor é… (فعل هو)",
-     "eg": "حضرتك = فعل الغايب"
-    }
-   ],
-   "recycle_ids": [
-    "word.you_o_senhor",
-    "phrase.my_name_is",
-    "verb.morar"
-   ]
-  },
-  {
-   "day": 11,
-   "title_tl": "Verbos Ser e Estar 2",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "verb.estar",
-     "kind": "verb",
-     "tl": "estar",
-     "eg": "يكون (حالة دلوقتي)"
-    },
-    {
-     "id": "word.tired",
-     "kind": "word",
-     "tl": "cansado / cansada",
-     "eg": "تعبان"
-    },
-    {
-     "id": "word.sick",
-     "kind": "word",
-     "tl": "doente",
-     "eg": "عيان"
-    },
-    {
-     "id": "word.happy",
-     "kind": "word",
-     "tl": "contente",
-     "eg": "مبسوط"
-    },
-    {
-     "id": "word.nervous",
-     "kind": "word",
-     "tl": "nervoso / nervosa",
-     "eg": "متوتر"
-    },
-    {
-     "id": "word.glad",
-     "kind": "word",
-     "tl": "feliz",
-     "eg": "فرحان"
-    },
-    {
-     "id": "word.sad",
-     "kind": "word",
-     "tl": "triste",
-     "eg": "زعلان"
-    },
-    {
-     "id": "word.busy",
-     "kind": "word",
-     "tl": "ocupado / ocupada",
-     "eg": "مشغول / مشغولة"
-    },
-    {
-     "id": "phrase.im_tired",
-     "kind": "phrase",
-     "tl": "Estou cansado.",
-     "eg": "أنا تعبان"
-    },
-    {
-     "id": "phrase.im_hungry",
-     "kind": "phrase",
-     "tl": "Tenho fome.",
-     "eg": "أنا جعان"
-    },
-    {
-     "id": "phrase.im_thirsty",
-     "kind": "phrase",
-     "tl": "Tenho sede.",
-     "eg": "أنا عطشان"
-    },
-    {
-     "id": "phrase.my_head_hurts",
-     "kind": "phrase",
-     "tl": "Dói-me a cabeça.",
-     "eg": "راسي بتوجعني"
-    },
-    {
-     "id": "phrase.are_you_ok",
-     "kind": "phrase",
-     "tl": "Está bem?",
-     "eg": "إنت كويس؟"
-    },
-    {
-     "id": "pattern.estar_conj",
-     "kind": "pattern",
-     "tl": "estou · estás · está · estamos · estão",
-     "eg": "تصريف estar"
-    },
-    {
-     "id": "pattern.ser_vs_estar",
-     "kind": "pattern",
-     "tl": "ser = ثابت · estar = حالة",
-     "eg": "الفرق"
-    }
-   ],
-   "recycle_ids": [
-    "pattern.ser_conj",
-    "phrase.im_egyptian",
-    "phrase.how_are_you"
-   ]
-  },
-  {
-   "day": 12,
-   "title_tl": "Presente Contínuo",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "word.mobile",
-     "kind": "word",
-     "tl": "o telemóvel",
-     "eg": "الموبايل",
-     "plural_tl": "os telemóveis"
-    },
-    {
-     "id": "word.call",
-     "kind": "word",
-     "tl": "a chamada",
-     "eg": "المكالمة",
-     "plural_tl": "as chamadas"
-    },
-    {
-     "id": "word.message",
-     "kind": "word",
-     "tl": "a mensagem",
-     "eg": "الرسالة",
-     "plural_tl": "as mensagens"
-    },
-    {
-     "id": "word.number",
-     "kind": "word",
-     "tl": "o número",
-     "eg": "الرقم",
-     "plural_tl": "os números"
-    },
-    {
-     "id": "phrase.phone_hello",
-     "kind": "phrase",
-     "tl": "Estou? / Sim?",
-     "eg": "ألو"
-    },
-    {
-     "id": "phrase.can_i_speak_with",
-     "kind": "phrase",
-     "tl": "Posso falar com a Rita?",
-     "eg": "ممكن أكلم ريتا؟"
-    },
-    {
-     "id": "phrase.one_moment",
-     "kind": "phrase",
-     "tl": "Um momento.",
-     "eg": "لحظة"
-    },
-    {
-     "id": "phrase.im_working",
-     "kind": "phrase",
-     "tl": "Estou a trabalhar.",
-     "eg": "أنا بشتغل دلوقتي"
-    },
-    {
-     "id": "phrase.call_later",
-     "kind": "phrase",
-     "tl": "Posso ligar depois?",
-     "eg": "ممكن أكلمك بعدين؟"
-    },
-    {
-     "id": "phrase.what_are_you_doing",
-     "kind": "phrase",
-     "tl": "O que estás a fazer?",
-     "eg": "بتعمل إيه دلوقتي؟"
-    },
-    {
-     "id": "phrase.can_you_spell",
-     "kind": "phrase",
-     "tl": "Pode soletrar, por favor?",
-     "eg": "ممكن تتهجّاها؟"
-    },
-    {
-     "id": "phrase.how_is_it_written",
-     "kind": "phrase",
-     "tl": "Como se escreve?",
-     "eg": "بتتكتب إزاي؟"
-    },
-    {
-     "id": "pattern.estar_a_inf",
-     "kind": "pattern",
-     "tl": "estar + a + مصدر",
-     "eg": "بيحصل دلوقتي"
-    }
-   ],
-   "recycle_ids": [
-    "pattern.estar_conj",
-    "verb.comer",
-    "verb.estudar"
-   ]
-  },
-  {
-   "day": 13,
-   "title_tl": "Gostos e Desgostos",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "verb.gostar",
-     "kind": "verb",
-     "tl": "gostar de",
-     "eg": "يحب"
-    },
-    {
-     "id": "word.cinema",
-     "kind": "word",
-     "tl": "o cinema",
-     "eg": "السينما",
-     "plural_tl": "os cinemas"
-    },
-    {
-     "id": "word.beach",
-     "kind": "word",
-     "tl": "a praia",
-     "eg": "البحر / الشط",
-     "plural_tl": "as praias"
-    },
-    {
-     "id": "word.football",
-     "kind": "word",
-     "tl": "o futebol",
-     "eg": "الكورة",
-     "plural_tl": null
-    },
-    {
-     "id": "word.music",
-     "kind": "word",
-     "tl": "a música",
-     "eg": "المزيكا",
-     "plural_tl": "as músicas"
-    },
-    {
-     "id": "word.park",
-     "kind": "word",
-     "tl": "o parque",
-     "eg": "الجنينة",
-     "plural_tl": "os parques"
-    },
-    {
-     "id": "word.book",
-     "kind": "word",
-     "tl": "o livro",
-     "eg": "الكتاب",
-     "plural_tl": "os livros"
-    },
-    {
-     "id": "word.tv",
-     "kind": "word",
-     "tl": "a televisão",
-     "eg": "التليفزيون",
-     "plural_tl": "as televisões"
-    },
-    {
-     "id": "phrase.i_like_x",
-     "kind": "phrase",
-     "tl": "Gosto de música.",
-     "eg": "بحب المزيكا"
-    },
-    {
-     "id": "phrase.i_dont_like_x",
-     "kind": "phrase",
-     "tl": "Não gosto de chá.",
-     "eg": "مبحبش الشاي"
-    },
-    {
-     "id": "phrase.do_you_like",
-     "kind": "phrase",
-     "tl": "Gostas de futebol?",
-     "eg": "بتحب الكورة؟"
-    },
-    {
-     "id": "phrase.me_too",
-     "kind": "phrase",
-     "tl": "Eu também.",
-     "eg": "وأنا كمان"
-    },
-    {
-     "id": "phrase.me_neither",
-     "kind": "phrase",
-     "tl": "Eu também não.",
-     "eg": "ولا أنا"
-    },
-    {
-     "id": "phrase.i_love",
-     "kind": "phrase",
-     "tl": "Adoro a praia!",
-     "eg": "بموت في البحر"
-    },
-    {
-     "id": "phrase.i_prefer",
-     "kind": "phrase",
-     "tl": "Prefiro chá.",
-     "eg": "أنا بفضّل الشاي"
-    },
-    {
-     "id": "phrase.its_hot",
-     "kind": "phrase",
-     "tl": "Está calor.",
-     "eg": "الجو حر"
-    },
-    {
-     "id": "phrase.its_cold",
-     "kind": "phrase",
-     "tl": "Está frio.",
-     "eg": "الجو برد"
-    },
-    {
-     "id": "phrase.its_raining",
-     "kind": "phrase",
-     "tl": "Está a chover.",
-     "eg": "بتمطر"
-    },
-    {
-     "id": "pattern.gostar_de",
-     "kind": "pattern",
-     "tl": "gostar + de/do/da + حاجة",
-     "eg": "بحب ومبحبش"
-    }
-   ],
-   "recycle_ids": [
-    "phrase.i_like_coffee",
-    "word.tea",
-    "pattern.nao_verb",
-    "pattern.ar_endings"
-   ]
-  },
-  {
-   "day": 14,
-   "title_tl": "Uma Tarde no Mercado",
-   "is_story": true,
-   "core_items": [],
-   "recycle_ids": [
-    "word.apple",
-    "phrase.how_much_does_it_cost",
-    "phrase.its_x_euros",
-    "phrase.i_like_x",
-    "phrase.im_tired",
-    "pattern.estar_a_inf",
-    "pattern.ser_vs_estar"
-   ],
-   "note": "قصة: مفيش items جديدة"
-  },
-  {
-   "day": 15,
-   "title_tl": "Verbos Comuns e Irregulares",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "verb.ter",
-     "kind": "verb",
-     "tl": "ter",
-     "eg": "عنده"
-    },
-    {
-     "id": "verb.ir",
-     "kind": "verb",
-     "tl": "ir",
-     "eg": "يروح"
-    },
-    {
-     "id": "verb.fazer",
-     "kind": "verb",
-     "tl": "fazer",
-     "eg": "يعمل"
-    },
-    {
-     "id": "verb.querer",
-     "kind": "verb",
-     "tl": "querer",
-     "eg": "عايز"
-    },
-    {
-     "id": "verb.poder",
-     "kind": "verb",
-     "tl": "poder",
-     "eg": "يقدر"
-    },
-    {
-     "id": "word.time",
-     "kind": "word",
-     "tl": "o tempo",
-     "eg": "الوقت",
-     "plural_tl": null
-    },
-    {
-     "id": "word.dinner",
-     "kind": "word",
-     "tl": "o jantar",
-     "eg": "العشا",
-     "plural_tl": "os jantares"
-    },
-    {
-     "id": "word.museum",
-     "kind": "word",
-     "tl": "o museu",
-     "eg": "المتحف",
-     "plural_tl": "os museus"
-    },
-    {
-     "id": "word.film",
-     "kind": "word",
-     "tl": "o filme",
-     "eg": "الفيلم",
-     "plural_tl": "os filmes"
-    },
-    {
-     "id": "phrase.i_have_time",
-     "kind": "phrase",
-     "tl": "Tenho tempo.",
-     "eg": "عندي وقت"
-    },
-    {
-     "id": "phrase.shall_we_go",
-     "kind": "phrase",
-     "tl": "Vamos ao cinema?",
-     "eg": "نروح السينما؟"
-    },
-    {
-     "id": "phrase.do_you_want_to_come",
-     "kind": "phrase",
-     "tl": "Queres vir?",
-     "eg": "تيجي؟"
-    },
-    {
-     "id": "phrase.i_cant",
-     "kind": "phrase",
-     "tl": "Não posso, desculpa.",
-     "eg": "مش هقدر، معلش"
-    },
-    {
-     "id": "phrase.great",
-     "kind": "phrase",
-     "tl": "Fixe!",
-     "eg": "حلو! / جامد"
-    },
-    {
-     "id": "pattern.irregular_core",
-     "kind": "pattern",
-     "tl": "tenho · vou · faço · quero · posso",
-     "eg": "مضارع الشواذ (eu)"
-    }
-   ],
-   "recycle_ids": [
-    "word.cinema",
-    "phrase.do_you_like",
-    "pattern.ar_endings"
-   ]
-  },
-  {
-   "day": 16,
-   "title_tl": "Perguntas",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "word.q_where",
-     "kind": "word",
-     "tl": "Onde?",
-     "eg": "فين؟"
-    },
-    {
-     "id": "word.q_when",
-     "kind": "word",
-     "tl": "Quando?",
-     "eg": "إمتى؟"
-    },
-    {
-     "id": "word.q_why",
-     "kind": "word",
-     "tl": "Porquê? / porque",
-     "eg": "ليه؟ / عشان"
-    },
-    {
-     "id": "word.q_who",
-     "kind": "word",
-     "tl": "Quem?",
-     "eg": "مين؟"
-    },
-    {
-     "id": "word.q_which",
-     "kind": "word",
-     "tl": "Qual?",
-     "eg": "أنهي؟"
-    },
-    {
-     "id": "word.q_how",
-     "kind": "word",
-     "tl": "Como?",
-     "eg": "إزاي؟"
-    },
-    {
-     "id": "word.q_how_much",
-     "kind": "word",
-     "tl": "Quanto? / Quantos?",
-     "eg": "كام؟"
-    },
-    {
-     "id": "phrase.can_you_help_me",
-     "kind": "phrase",
-     "tl": "Pode ajudar-me?",
-     "eg": "ممكن تساعدني؟"
-    },
-    {
-     "id": "phrase.whats_your_number",
-     "kind": "phrase",
-     "tl": "Qual é o seu número?",
-     "eg": "رقمك كام؟"
-    },
-    {
-     "id": "phrase.how_do_you_say",
-     "kind": "phrase",
-     "tl": "Como se diz … em português?",
-     "eg": "تتقال إزاي بالبرتغالي؟"
-    },
-    {
-     "id": "pattern.question_word",
-     "kind": "pattern",
-     "tl": "أداة + فعل + ?",
-     "eg": "السؤال"
-    }
-   ],
-   "recycle_ids": [
-    "phrase.excuse_me",
-    "phrase.where_is_x",
-    "phrase.whats_your_name",
-    "phrase.can_you_repeat"
-   ]
-  },
-  {
-   "day": 17,
-   "title_tl": "Preposições 1",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "word.centre",
-     "kind": "word",
-     "tl": "o centro",
-     "eg": "وسط البلد",
-     "plural_tl": "os centros"
-    },
-    {
-     "id": "word.metro",
-     "kind": "word",
-     "tl": "o metro",
-     "eg": "المترو",
-     "plural_tl": null
-    },
-    {
-     "id": "word.bus",
-     "kind": "word",
-     "tl": "o autocarro",
-     "eg": "الأتوبيس",
-     "plural_tl": "os autocarros"
-    },
-    {
-     "id": "word.train",
-     "kind": "word",
-     "tl": "o comboio",
-     "eg": "القطر",
-     "plural_tl": "os comboios"
-    },
-    {
-     "id": "word.ticket",
-     "kind": "word",
-     "tl": "o bilhete",
-     "eg": "التذكرة",
-     "plural_tl": "os bilhetes"
-    },
-    {
-     "id": "word.bus_stop",
-     "kind": "word",
-     "tl": "a paragem",
-     "eg": "المحطة (أتوبيس)",
-     "plural_tl": "as paragens"
-    },
-    {
-     "id": "word.taxi",
-     "kind": "word",
-     "tl": "o táxi",
-     "eg": "التاكسي",
-     "plural_tl": "os táxis"
-    },
-    {
-     "id": "word.airport",
-     "kind": "word",
-     "tl": "o aeroporto",
-     "eg": "المطار",
-     "plural_tl": "os aeroportos"
-    },
-    {
-     "id": "word.bike",
-     "kind": "word",
-     "tl": "a bicicleta",
-     "eg": "العجلة",
-     "plural_tl": "as bicicletas"
-    },
-    {
-     "id": "phrase.go_to_centre",
-     "kind": "phrase",
-     "tl": "Vou ao centro de metro.",
-     "eg": "رايح وسط البلد بالمترو"
-    },
-    {
-     "id": "phrase.on_foot",
-     "kind": "phrase",
-     "tl": "Vou a pé.",
-     "eg": "رايح مشي"
-    },
-    {
-     "id": "phrase.at_the_stop",
-     "kind": "phrase",
-     "tl": "Estou na paragem.",
-     "eg": "أنا في المحطة"
-    },
-    {
-     "id": "phrase.ticket_to",
-     "kind": "phrase",
-     "tl": "Um bilhete para Sintra, por favor.",
-     "eg": "تذكرة لسينترا لو سمحت"
-    },
-    {
-     "id": "pattern.contractions",
-     "kind": "pattern",
-     "tl": "de+o=do · em+a=na · a+o=ao · a+a=à",
-     "eg": "دمج حروف الجر"
-    },
-    {
-     "id": "pattern.de_transport",
-     "kind": "pattern",
-     "tl": "de + وسيلة (de metro) · a pé",
-     "eg": "بالمواصلات"
-    }
-   ],
-   "recycle_ids": [
-    "verb.ir",
-    "phrase.shall_we_go",
-    "word.q_where",
-    "word.q_when"
-   ]
-  },
-  {
-   "day": 18,
-   "title_tl": "Primeira Viagem a Portugal",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "word.station",
-     "kind": "word",
-     "tl": "a estação",
-     "eg": "المحطة (قطر/مترو)",
-     "plural_tl": "as estações"
-    },
-    {
-     "id": "word.street",
-     "kind": "word",
-     "tl": "a rua",
-     "eg": "الشارع",
-     "plural_tl": "as ruas"
-    },
-    {
-     "id": "word.pharmacy",
-     "kind": "word",
-     "tl": "a farmácia",
-     "eg": "الصيدلية",
-     "plural_tl": "as farmácias"
-    },
-    {
-     "id": "word.left",
-     "kind": "word",
-     "tl": "à esquerda",
-     "eg": "شمال"
-    },
-    {
-     "id": "word.right",
-     "kind": "word",
-     "tl": "à direita",
-     "eg": "يمين"
-    },
-    {
-     "id": "word.bank",
-     "kind": "word",
-     "tl": "o banco",
-     "eg": "البنك",
-     "plural_tl": "os bancos"
-    },
-    {
-     "id": "word.hospital",
-     "kind": "word",
-     "tl": "o hospital",
-     "eg": "المستشفى",
-     "plural_tl": "os hospitais"
-    },
-    {
-     "id": "word.corner",
-     "kind": "word",
-     "tl": "a esquina",
-     "eg": "الناصية",
-     "plural_tl": "as esquinas"
-    },
-    {
-     "id": "word.square",
-     "kind": "word",
-     "tl": "a praça",
-     "eg": "الميدان",
-     "plural_tl": "as praças"
-    },
-    {
-     "id": "phrase.where_is_station",
-     "kind": "phrase",
-     "tl": "Onde fica a estação?",
-     "eg": "المحطة فين؟"
-    },
-    {
-     "id": "phrase.is_it_near",
-     "kind": "phrase",
-     "tl": "É perto?",
-     "eg": "قريب؟"
-    },
-    {
-     "id": "phrase.its_far",
-     "kind": "phrase",
-     "tl": "É longe.",
-     "eg": "بعيد"
-    },
-    {
-     "id": "phrase.turn_left",
-     "kind": "phrase",
-     "tl": "Vire à esquerda.",
-     "eg": "لف شمال"
-    },
-    {
-     "id": "phrase.go_straight",
-     "kind": "phrase",
-     "tl": "Siga em frente.",
-     "eg": "امشي على طول"
-    },
-    {
-     "id": "phrase.next_to",
-     "kind": "phrase",
-     "tl": "Fica ao lado do banco.",
-     "eg": "جنب البنك"
-    },
-    {
-     "id": "pattern.onde_fica",
-     "kind": "pattern",
-     "tl": "Onde fica + o/a + مكان?",
-     "eg": "فين المكان"
-    }
-   ],
-   "recycle_ids": [
-    "pattern.contractions",
-    "phrase.excuse_me",
-    "phrase.can_you_help_me",
-    "phrase.slower"
-   ]
-  },
-  {
-   "day": 19,
-   "title_tl": "Que Dia É Hoje?",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "word.monday",
-     "kind": "word",
-     "tl": "segunda-feira",
-     "eg": "الاتنين"
-    },
-    {
-     "id": "word.tuesday",
-     "kind": "word",
-     "tl": "terça-feira",
-     "eg": "التلات"
-    },
-    {
-     "id": "word.wednesday",
-     "kind": "word",
-     "tl": "quarta-feira",
-     "eg": "الأربع"
-    },
-    {
-     "id": "word.thursday",
-     "kind": "word",
-     "tl": "quinta-feira",
-     "eg": "الخميس"
-    },
-    {
-     "id": "word.friday",
-     "kind": "word",
-     "tl": "sexta-feira",
-     "eg": "الجمعة"
-    },
-    {
-     "id": "word.saturday",
-     "kind": "word",
-     "tl": "sábado",
-     "eg": "السبت"
-    },
-    {
-     "id": "word.sunday",
-     "kind": "word",
-     "tl": "domingo",
-     "eg": "الحد"
-    },
-    {
-     "id": "word.today_tomorrow",
-     "kind": "word",
-     "tl": "hoje · amanhã · ontem",
-     "eg": "النهارده · بكرة · امبارح"
-    },
-    {
-     "id": "word.day_periods",
-     "kind": "word",
-     "tl": "de manhã · à tarde · à noite",
-     "eg": "الصبح · بعد الضهر · بالليل"
-    },
-    {
-     "id": "phrase.what_day",
-     "kind": "phrase",
-     "tl": "Que dia é hoje?",
-     "eg": "النهارده إيه؟"
-    },
-    {
-     "id": "phrase.today_is_monday",
-     "kind": "phrase",
-     "tl": "Hoje é segunda.",
-     "eg": "النهارده الاتنين"
-    },
-    {
-     "id": "phrase.can_it_be_tuesday",
-     "kind": "phrase",
-     "tl": "Pode ser na terça?",
-     "eg": "ينفع يوم التلات؟"
-    },
-    {
-     "id": "phrase.appointment",
-     "kind": "phrase",
-     "tl": "Queria marcar uma consulta.",
-     "eg": "عايز أحجز ميعاد"
-    },
-    {
-     "id": "word.months",
-     "kind": "word",
-     "tl": "janeiro, fevereiro, março … dezembro",
-     "eg": "شهور السنة (بحروف صغيرة)"
-    },
-    {
-     "id": "phrase.whats_the_date",
-     "kind": "phrase",
-     "tl": "Que dia é hoje? — É dia cinco de março.",
-     "eg": "النهارده كام في الشهر؟"
-    },
-    {
-     "id": "pattern.days_periods",
-     "kind": "pattern",
-     "tl": "na + يوم · de manhã / à tarde",
-     "eg": "إمتى في الأسبوع"
-    },
-    {
-     "id": "pattern.date",
-     "kind": "pattern",
-     "tl": "dia + رقم + de + شهر",
-     "eg": "التاريخ: dia 5 de março"
-    }
-   ],
-   "recycle_ids": [
-    "phrase.see_you_tomorrow",
-    "pattern.queria_um_uma",
-    "word.q_when"
-   ]
-  },
-  {
-   "day": 20,
-   "title_tl": "Que Horas São?",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "word.numbers_100_plus",
-     "kind": "word",
-     "tl": "cem · cento e … · duzentos · mil",
-     "eg": "الأرقام فوق 100"
-    },
-    {
-     "id": "word.half_quarter",
-     "kind": "word",
-     "tl": "e meia · e um quarto · menos um quarto",
-     "eg": "ونص · وربع · إلا ربع"
-    },
-    {
-     "id": "word.noon_midnight",
-     "kind": "word",
-     "tl": "meio-dia · meia-noite",
-     "eg": "الضهر · نص الليل"
-    },
-    {
-     "id": "phrase.what_time",
-     "kind": "phrase",
-     "tl": "Que horas são?",
-     "eg": "الساعة كام؟"
-    },
-    {
-     "id": "phrase.its_one",
-     "kind": "phrase",
-     "tl": "É uma hora.",
-     "eg": "الساعة واحدة"
-    },
-    {
-     "id": "phrase.its_nine_thirty",
-     "kind": "phrase",
-     "tl": "São nove e meia.",
-     "eg": "الساعة تسعة ونص"
-    },
-    {
-     "id": "phrase.what_time_open",
-     "kind": "phrase",
-     "tl": "A que horas abre?",
-     "eg": "بيفتح الساعة كام؟"
-    },
-    {
-     "id": "phrase.at_nine",
-     "kind": "phrase",
-     "tl": "Às nove.",
-     "eg": "الساعة تسعة"
-    },
-    {
-     "id": "phrase.closed",
-     "kind": "phrase",
-     "tl": "Está fechado.",
-     "eg": "مقفول"
-    },
-    {
-     "id": "pattern.horas",
-     "kind": "pattern",
-     "tl": "São + رقم (+ e meia) · É uma",
-     "eg": "الساعة"
-    }
-   ],
-   "recycle_ids": [
-    "word.numbers_tens",
-    "word.day_periods",
-    "verb.abrir",
-    "word.q_when"
-   ]
-  },
-  {
-   "day": 21,
-   "title_tl": "A Aula de Português",
-   "is_story": true,
-   "core_items": [],
-   "recycle_ids": [
-    "phrase.do_you_speak_pt",
-    "phrase.how_do_you_say",
-    "phrase.what_time",
-    "phrase.go_to_centre",
-    "pattern.irregular_core",
-    "pattern.question_word"
-   ],
-   "note": "قصة: مفيش items جديدة"
-  },
-  {
-   "day": 22,
-   "title_tl": "Futuro Informal",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "verb.visitar",
-     "kind": "verb",
-     "tl": "visitar",
-     "eg": "يزور"
-    },
-    {
-     "id": "verb.ficar",
-     "kind": "verb",
-     "tl": "ficar",
-     "eg": "يفضل / يقعد"
-    },
-    {
-     "id": "word.weekend",
-     "kind": "word",
-     "tl": "o fim de semana",
-     "eg": "الويك إند",
-     "plural_tl": "os fins de semana"
-    },
-    {
-     "id": "word.next_week",
-     "kind": "word",
-     "tl": "a próxima semana",
-     "eg": "الأسبوع الجاي",
-     "plural_tl": null
-    },
-    {
-     "id": "word.friends",
-     "kind": "word",
-     "tl": "os amigos",
-     "eg": "الصحاب",
-     "singular_tl": "o amigo"
-    },
-    {
-     "id": "word.party",
-     "kind": "word",
-     "tl": "a festa",
-     "eg": "الحفلة",
-     "plural_tl": "as festas"
-    },
-    {
-     "id": "word.trip",
-     "kind": "word",
-     "tl": "a viagem",
-     "eg": "الرحلة",
-     "plural_tl": "as viagens"
-    },
-    {
-     "id": "phrase.what_will_you_do",
-     "kind": "phrase",
-     "tl": "O que vais fazer no fim de semana?",
-     "eg": "هتعمل إيه في الويك إند؟"
-    },
-    {
-     "id": "phrase.ill_work_tomorrow",
-     "kind": "phrase",
-     "tl": "Amanhã vou trabalhar.",
-     "eg": "بكرة هشتغل"
-    },
-    {
-     "id": "phrase.ill_visit_friends",
-     "kind": "phrase",
-     "tl": "Vou visitar amigos.",
-     "eg": "هزور صحابي"
-    },
-    {
-     "id": "phrase.ill_stay_home",
-     "kind": "phrase",
-     "tl": "Vou ficar em casa.",
-     "eg": "هقعد في البيت"
-    },
-    {
-     "id": "pattern.ir_inf",
-     "kind": "pattern",
-     "tl": "ir + مصدر",
-     "eg": "المستقبل القريب"
-    }
-   ],
-   "recycle_ids": [
-    "verb.ir",
-    "word.today_tomorrow",
-    "word.beach",
-    "phrase.shall_we_go"
-   ]
-  },
-  {
-   "day": 23,
-   "title_tl": "Verbos no Infinitivo 1",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "verb.precisar",
-     "kind": "verb",
-     "tl": "precisar de",
-     "eg": "محتاج"
-    },
-    {
-     "id": "word.cough",
-     "kind": "word",
-     "tl": "a tosse",
-     "eg": "الكحة",
-     "plural_tl": null
-    },
-    {
-     "id": "word.fever",
-     "kind": "word",
-     "tl": "a febre",
-     "eg": "السخونية",
-     "plural_tl": null
-    },
-    {
-     "id": "word.pill",
-     "kind": "word",
-     "tl": "o comprimido",
-     "eg": "البرشامة",
-     "plural_tl": "os comprimidos"
-    },
-    {
-     "id": "word.prescription",
-     "kind": "word",
-     "tl": "a receita",
-     "eg": "الروشتة",
-     "plural_tl": "as receitas"
-    },
-    {
-     "id": "word.pain",
-     "kind": "word",
-     "tl": "a dor",
-     "eg": "الوجع",
-     "plural_tl": "as dores"
-    },
-    {
-     "id": "word.flu",
-     "kind": "word",
-     "tl": "a gripe",
-     "eg": "الإنفلونزا",
-     "plural_tl": null
-    },
-    {
-     "id": "word.syrup",
-     "kind": "word",
-     "tl": "o xarope",
-     "eg": "الشراب (دوا الكحة)",
-     "plural_tl": "os xaropes"
-    },
-    {
-     "id": "phrase.something_for_cough",
-     "kind": "phrase",
-     "tl": "Queria algo para a tosse.",
-     "eg": "عايز حاجة للكحة"
-    },
-    {
-     "id": "phrase.i_need_rest",
-     "kind": "phrase",
-     "tl": "Preciso de descansar.",
-     "eg": "محتاج أرتاح"
-    },
-    {
-     "id": "phrase.need_prescription",
-     "kind": "phrase",
-     "tl": "Precisa de receita?",
-     "eg": "محتاج روشتة؟"
-    },
-    {
-     "id": "phrase.three_times_a_day",
-     "kind": "phrase",
-     "tl": "Três vezes por dia.",
-     "eg": "تلات مرات في اليوم"
-    },
-    {
-     "id": "pattern.verb_inf",
-     "kind": "pattern",
-     "tl": "posso / quero / preciso de + مصدر",
-     "eg": "فعل + مصدر"
-    },
-    {
-     "id": "pattern.para",
-     "kind": "pattern",
-     "tl": "para = عشان / لـ",
-     "eg": "para"
-    }
-   ],
-   "recycle_ids": [
-    "word.pharmacy",
-    "phrase.my_head_hurts",
-    "phrase.im_tired",
-    "pattern.queria_um_uma"
-   ]
-  },
-  {
-   "day": 24,
-   "title_tl": "Possessivos",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "word.mother",
-     "kind": "word",
-     "tl": "a mãe",
-     "eg": "الأم",
-     "plural_tl": "as mães"
-    },
-    {
-     "id": "word.father",
-     "kind": "word",
-     "tl": "o pai",
-     "eg": "الأب",
-     "plural_tl": "os pais"
-    },
-    {
-     "id": "word.brother",
-     "kind": "word",
-     "tl": "o irmão",
-     "eg": "الأخ",
-     "plural_tl": "os irmãos"
-    },
-    {
-     "id": "word.sister",
-     "kind": "word",
-     "tl": "a irmã",
-     "eg": "الأخت",
-     "plural_tl": "as irmãs"
-    },
-    {
-     "id": "word.children",
-     "kind": "word",
-     "tl": "os filhos",
-     "eg": "الولاد",
-     "singular_tl": "o filho"
-    },
-    {
-     "id": "word.husband_wife",
-     "kind": "word",
-     "tl": "o marido · a mulher",
-     "eg": "الجوز · المراة"
-    },
-    {
-     "id": "word.grandparents",
-     "kind": "word",
-     "tl": "o avô · a avó",
-     "eg": "الجد · الجدة",
-     "plural_tl": null
-    },
-    {
-     "id": "word.uncle_aunt",
-     "kind": "word",
-     "tl": "o tio · a tia",
-     "eg": "العم/الخال · العمة/الخالة",
-     "plural_tl": null
-    },
-    {
-     "id": "word.cousin",
-     "kind": "word",
-     "tl": "o primo · a prima",
-     "eg": "ابن العم · بنت العم",
-     "plural_tl": null
-    },
-    {
-     "id": "phrase.i_have_two_brothers",
-     "kind": "phrase",
-     "tl": "Tenho dois irmãos.",
-     "eg": "عندي اتنين إخوات"
-    },
-    {
-     "id": "phrase.my_mother_lives",
-     "kind": "phrase",
-     "tl": "A minha mãe mora no Cairo.",
-     "eg": "أمي ساكنة في القاهرة"
-    },
-    {
-     "id": "phrase.do_you_have_kids",
-     "kind": "phrase",
-     "tl": "Tem filhos?",
-     "eg": "عندك ولاد؟"
-    },
-    {
-     "id": "pattern.possessive",
-     "kind": "pattern",
-     "tl": "o meu · a minha · os meus · as minhas",
-     "eg": "بتاعي"
-    },
-    {
-     "id": "pattern.possessive_seu",
-     "kind": "pattern",
-     "tl": "o teu / o seu · a tua / a sua",
-     "eg": "بتاعك"
-    }
-   ],
-   "recycle_ids": [
-    "verb.ter",
-    "verb.morar",
-    "phrase.im_from_cairo",
-    "word.numbers_0_10"
-   ]
-  },
-  {
-   "day": 25,
-   "title_tl": "Adjetivos 1",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "word.sweater",
-     "kind": "word",
-     "tl": "a camisola",
-     "eg": "البلوفر",
-     "plural_tl": "as camisolas"
-    },
-    {
-     "id": "word.trousers",
-     "kind": "word",
-     "tl": "as calças",
-     "eg": "البنطلون"
-    },
-    {
-     "id": "word.shirt",
-     "kind": "word",
-     "tl": "a camisa",
-     "eg": "القميص",
-     "plural_tl": "as camisas"
-    },
-    {
-     "id": "word.shoes",
-     "kind": "word",
-     "tl": "os sapatos",
-     "eg": "الجزمة",
-     "singular_tl": "o sapato"
-    },
-    {
-     "id": "word.jacket",
-     "kind": "word",
-     "tl": "o casaco",
-     "eg": "الجاكت",
-     "plural_tl": "os casacos"
-    },
-    {
-     "id": "word.colours",
-     "kind": "word",
-     "tl": "azul · vermelho · preto · branco · verde",
-     "eg": "الألوان"
-    },
-    {
-     "id": "word.big_small",
-     "kind": "word",
-     "tl": "grande · pequeno",
-     "eg": "كبير · صغير"
-    },
-    {
-     "id": "word.skirt",
-     "kind": "word",
-     "tl": "a saia",
-     "eg": "الجيبة",
-     "plural_tl": "as saias"
-    },
-    {
-     "id": "word.dress",
-     "kind": "word",
-     "tl": "o vestido",
-     "eg": "الفستان",
-     "plural_tl": "os vestidos"
-    },
-    {
-     "id": "word.hat",
-     "kind": "word",
-     "tl": "o chapéu",
-     "eg": "البرنيطة",
-     "plural_tl": "os chapéus"
-    },
-    {
-     "id": "phrase.blue_sweater_big",
-     "kind": "phrase",
-     "tl": "A camisola azul é grande.",
-     "eg": "البلوفر الأزرق كبير"
-    },
-    {
-     "id": "phrase.other_size",
-     "kind": "phrase",
-     "tl": "Tem noutro tamanho?",
-     "eg": "فيه مقاس تاني؟"
-    },
-    {
-     "id": "phrase.other_colour",
-     "kind": "phrase",
-     "tl": "Tem noutra cor?",
-     "eg": "فيه لون تاني؟"
-    },
-    {
-     "id": "pattern.adj_agreement",
-     "kind": "pattern",
-     "tl": "اسم + صفة (-o/-a/-os/-as)",
-     "eg": "الصفة بتتغير"
-    },
-    {
-     "id": "pattern.plural_ao_l",
-     "kind": "pattern",
-     "tl": "-ão→-ões · -l→-is",
-     "eg": "جمع -ão و-l"
-    }
-   ],
-   "recycle_ids": [
-    "pattern.plural_s",
-    "pattern.article_gender",
-    "phrase.how_much_does_it_cost"
-   ]
-  },
-  {
-   "day": 26,
-   "title_tl": "Isto e Aquilo",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "word.this_that_neutral",
-     "kind": "word",
-     "tl": "isto · isso · aquilo",
-     "eg": "ده · ده (جنبك) · ده (بعيد)"
-    },
-    {
-     "id": "word.this_m_f",
-     "kind": "word",
-     "tl": "este · esta",
-     "eg": "ده / دي (جنبي)"
-    },
-    {
-     "id": "word.that_m_f",
-     "kind": "word",
-     "tl": "esse · essa",
-     "eg": "ده / دي (جنبك)"
-    },
-    {
-     "id": "word.that_far_m_f",
-     "kind": "word",
-     "tl": "aquele · aquela",
-     "eg": "ده / دي (بعيد)"
-    },
-    {
-     "id": "word.fitting_room",
-     "kind": "word",
-     "tl": "o provador",
-     "eg": "البروفة",
-     "plural_tl": "os provadores"
-    },
-    {
-     "id": "phrase.can_i_try",
-     "kind": "phrase",
-     "tl": "Posso experimentar este?",
-     "eg": "ممكن أقيس ده؟"
-    },
-    {
-     "id": "phrase.what_is_that",
-     "kind": "phrase",
-     "tl": "O que é aquilo?",
-     "eg": "إيه ده اللي هناك؟"
-    },
-    {
-     "id": "phrase.how_much_this_one",
-     "kind": "phrase",
-     "tl": "Quanto custa esta?",
-     "eg": "دي بكام؟"
-    },
-    {
-     "id": "phrase.ill_take_it",
-     "kind": "phrase",
-     "tl": "Levo este.",
-     "eg": "هاخد ده"
-    },
-    {
-     "id": "pattern.demonstratives",
-     "kind": "pattern",
-     "tl": "este (هنا) · esse (عندك) · aquele (هناك)",
-     "eg": "الإشارة"
-    }
-   ],
-   "recycle_ids": [
-    "phrase.what_is_this",
-    "word.q_which",
-    "word.sweater",
-    "pattern.adj_agreement"
-   ]
-  },
-  {
-   "day": 27,
-   "title_tl": "Verbo Pôr",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "verb.por",
-     "kind": "verb",
-     "tl": "pôr",
-     "eg": "يحط / يلبس"
-    },
-    {
-     "id": "verb.vestir_se",
-     "kind": "verb",
-     "tl": "vestir-se",
-     "eg": "يلبس (نفسه)"
-    },
-    {
-     "id": "word.breakfast",
-     "kind": "word",
-     "tl": "o pequeno-almoço",
-     "eg": "الفطار",
-     "plural_tl": null
-    },
-    {
-     "id": "word.key",
-     "kind": "word",
-     "tl": "a chave",
-     "eg": "المفتاح",
-     "plural_tl": "as chaves"
-    },
-    {
-     "id": "word.shower",
-     "kind": "word",
-     "tl": "o duche",
-     "eg": "الدُش",
-     "plural_tl": "os duches"
-    },
-    {
-     "id": "word.toothbrush",
-     "kind": "word",
-     "tl": "a escova de dentes",
-     "eg": "فرشة السنان",
-     "plural_tl": "as escovas de dentes"
-    },
-    {
-     "id": "word.watch",
-     "kind": "word",
-     "tl": "o relógio",
-     "eg": "الساعة (اللي في الإيد)",
-     "plural_tl": "os relógios"
-    },
-    {
-     "id": "phrase.i_put_on_jacket",
-     "kind": "phrase",
-     "tl": "Ponho o casaco.",
-     "eg": "بلبس الجاكت"
-    },
-    {
-     "id": "phrase.i_get_dressed",
-     "kind": "phrase",
-     "tl": "Visto-me às sete.",
-     "eg": "بلبس الساعة سبعة"
-    },
-    {
-     "id": "phrase.i_have_breakfast",
-     "kind": "phrase",
-     "tl": "Tomo o pequeno-almoço.",
-     "eg": "بفطر"
-    },
-    {
-     "id": "phrase.where_did_i_put",
-     "kind": "phrase",
-     "tl": "Onde pus a chave?",
-     "eg": "حطيت المفتاح فين؟ (جملة جاهزة)"
-    },
-    {
-     "id": "pattern.por_conj",
-     "kind": "pattern",
-     "tl": "ponho · pões · põe · pomos · põem",
-     "eg": "تصريف pôr"
-    },
-    {
-     "id": "pattern.reflexive_me",
-     "kind": "pattern",
-     "tl": "فعل + -me (visto-me)",
-     "eg": "الفعل الانعكاسي"
-    }
-   ],
-   "recycle_ids": [
-    "phrase.i_wake_early",
-    "phrase.at_nine",
-    "word.jacket",
-    "pattern.chamo_me"
-   ]
-  },
-  {
-   "day": 28,
-   "title_tl": "Uma Noite de Tempestade",
-   "is_story": true,
-   "core_items": [],
-   "recycle_ids": [
-    "phrase.ill_stay_home",
-    "phrase.im_hungry",
-    "word.house",
-    "phrase.phone_hello",
-    "pattern.ir_inf",
-    "pattern.possessive"
-   ],
-   "note": "قصة: مفيش items جديدة"
-  },
-  {
-   "day": 29,
-   "title_tl": "O Que Fizeste Ontem?",
-   "is_story": false,
-   "core_items": [
-    {
-     "id": "word.market",
-     "kind": "word",
-     "tl": "o mercado",
-     "eg": "السوق",
-     "plural_tl": "os mercados"
-    },
-    {
-     "id": "verb.comprar",
-     "kind": "verb",
-     "tl": "comprar",
-     "eg": "يشتري"
-    },
-    {
-     "id": "phrase.what_did_you_do",
-     "kind": "phrase",
-     "tl": "O que fizeste ontem?",
-     "eg": "عملت إيه امبارح؟"
-    },
-    {
-     "id": "phrase.i_went_to_supermarket",
-     "kind": "phrase",
-     "tl": "Fui ao supermercado.",
-     "eg": "رحت السوبر ماركت"
-    },
-    {
-     "id": "phrase.i_bought_bread",
-     "kind": "phrase",
-     "tl": "Comprei pão.",
-     "eg": "اشتريت عيش"
-    },
-    {
-     "id": "phrase.i_ate_out",
-     "kind": "phrase",
-     "tl": "Comi fora.",
-     "eg": "أكلت برة"
-    },
-    {
-     "id": "phrase.i_was_home",
-     "kind": "phrase",
-     "tl": "Estive em casa.",
-     "eg": "كنت في البيت"
-    },
-    {
-     "id": "phrase.i_did_nothing",
-     "kind": "phrase",
-     "tl": "Não fiz nada.",
-     "eg": "معملتش حاجة"
-    },
-    {
-     "id": "pattern.past_five",
-     "kind": "pattern",
-     "tl": "fui · fiz · estive · comprei · comi",
-     "eg": "الماضي لـ 5 أفعال"
-    }
-   ],
-   "recycle_ids": [
-    "word.today_tomorrow",
-    "word.supermarket",
-    "word.bread",
-    "pattern.contractions"
-   ]
-  },
-  {
-   "day": 30,
-   "title_tl": "Teste A1",
-   "is_story": false,
-   "core_items": [],
-   "recycle_ids": [
-    "pattern.ar_endings",
-    "pattern.er_endings",
-    "pattern.ir_endings",
-    "pattern.ser_vs_estar",
-    "pattern.estar_a_inf",
-    "pattern.gostar_de",
-    "pattern.contractions",
-    "pattern.ir_inf",
-    "pattern.possessive",
-    "pattern.adj_agreement",
-    "pattern.demonstratives",
-    "pattern.past_five"
-   ],
-   "note": "اختبار: recycle بس، يغطي كل القواعد"
-  }
- ]
+  ]
 }

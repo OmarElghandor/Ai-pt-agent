@@ -1,9 +1,27 @@
 import { connectMongo, mongoConfigured } from '@/lib/mongo';
 import type { LessonPack } from '@/lib/v2/content/lesson';
 import type { Issue } from '@/lib/v2/content/validate';
+import { rehydrateLessonImages } from '@/lib/v2/images/rehydrate';
 import { V2LessonModel } from '@/lib/v2/mongo/models';
 import type { CallTiming, DayCost } from './cost';
 import type { GenerationStages, OutlineResult, PartialLessonData } from './stages/types';
+
+async function maybeRehydratePack(
+  day: number,
+  targetLang: string,
+  version: number,
+  pack: LessonPack | PartialLessonData,
+): Promise<LessonPack | PartialLessonData> {
+  if (!pack || typeof pack !== 'object' || !('items' in pack) || !Array.isArray(pack.items)) {
+    return pack;
+  }
+  return rehydrateLessonImages({
+    day,
+    targetLang,
+    version,
+    pack: pack as LessonPack,
+  });
+}
 
 /** Structured critic issue on draft meta (may be resolved_by lang_check). */
 export type CriticIssueRecord = {
@@ -28,6 +46,8 @@ export type GenerationMeta = {
   regen_round?: number;
   job_graph?: boolean;
   text_ready?: boolean;
+  /** Soft story job failed — day continued without page 0 / replay. */
+  story_missing?: boolean;
   /** Per-block critic: keys `${pageIndex}:${blockKey}`, at most one regen each. */
   critic_regen?: Record<string, number>;
   critic_notes?: Record<string, string[]>;
@@ -66,13 +86,14 @@ export async function saveDraft(opts: {
     .select({ version: 1 })
     .lean();
   const version = (latest?.version ?? 0) + 1;
+  const pack = await maybeRehydratePack(opts.day, target_lang, version, opts.pack);
 
   const doc = await Model.create({
     day: opts.day,
     target_lang,
     version,
     status: 'draft',
-    data: opts.pack,
+    data: pack,
     meta: {
       ...opts.meta,
       generated_at: new Date().toISOString(),
@@ -84,6 +105,84 @@ export async function saveDraft(opts: {
     target_lang: doc.target_lang,
     version: doc.version,
     status: doc.status as 'draft',
+    data: doc.data as LessonPack,
+    meta: doc.meta as GenerationMeta | undefined,
+  };
+}
+
+/**
+ * Full regenerate: reuse the latest day×lang version in place (no bump).
+ * Creates v1 when none exists; deletes older version docs for that day.
+ */
+export async function resetDraftForRegen(opts: {
+  day: number;
+  targetLang?: string;
+  pack: LessonPack | PartialLessonData;
+  meta?: GenerationMeta;
+}): Promise<SavedLesson> {
+  if (!mongoConfigured()) {
+    throw new Error('MongoDB not configured');
+  }
+  await connectMongo();
+  const target_lang = opts.targetLang ?? 'pt-PT';
+  const Model = V2LessonModel();
+  const latest = await Model.findOne({ day: opts.day, target_lang })
+    .sort({ version: -1 })
+    .lean();
+
+  const meta: GenerationMeta = {
+    ...opts.meta,
+    generated_at: new Date().toISOString(),
+  };
+
+  if (!latest) {
+    const pack = await maybeRehydratePack(opts.day, target_lang, 1, opts.pack);
+    const doc = await Model.create({
+      day: opts.day,
+      target_lang,
+      version: 1,
+      status: 'draft',
+      data: pack,
+      meta,
+    });
+    return {
+      day: doc.day,
+      target_lang: doc.target_lang,
+      version: doc.version,
+      status: 'draft',
+      data: doc.data as LessonPack,
+      meta: doc.meta as GenerationMeta | undefined,
+    };
+  }
+
+  const version = latest.version as number;
+  const pack = await maybeRehydratePack(opts.day, target_lang, version, opts.pack);
+  const doc = await Model.findOneAndUpdate(
+    { day: opts.day, target_lang, version },
+    {
+      $set: {
+        status: 'draft',
+        data: pack,
+        meta,
+      },
+    },
+    { returnDocument: 'after' },
+  );
+  if (!doc) {
+    throw new Error(`Failed to reset draft day=${opts.day} v${version}`);
+  }
+
+  await Model.deleteMany({
+    day: opts.day,
+    target_lang,
+    version: { $ne: version },
+  });
+
+  return {
+    day: doc.day,
+    target_lang: doc.target_lang,
+    version: doc.version,
+    status: 'draft',
     data: doc.data as LessonPack,
     meta: doc.meta as GenerationMeta | undefined,
   };
@@ -114,7 +213,12 @@ export async function updateDraft(opts: {
   }
 
   if (opts.pack != null) {
-    doc.data = opts.pack;
+    doc.data = await maybeRehydratePack(
+      opts.day,
+      target_lang,
+      opts.version,
+      opts.pack,
+    );
   }
   if (opts.meta != null) {
     const prev = (doc.meta ?? {}) as GenerationMeta;

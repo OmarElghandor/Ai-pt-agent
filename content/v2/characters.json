@@ -1,0 +1,113 @@
+{
+ "note": "Recurring cast. Images and TTS read gender/voice/description from here. A lesson picks 2–4 of them by place; images rotate pairs (see 00 §10). Voices are assigned in code per character, fixed for life. Descriptions are appearance only (no nationality) so images are reusable across target languages.",
+ "characters": {
+  "yassin": {
+   "name": "Yassin",
+   "role": "learner",
+   "gender": "m",
+   "age": "late 20s",
+   "home": [
+    "everywhere"
+   ],
+   "description": "Man in his late 20s, warm light-brown skin, short dark curly hair, neat short beard, olive-green jacket over a plain white t-shirt, dark blue jeans, white sneakers, brown backpack"
+  },
+  "ines": {
+   "name": "Inês",
+   "role": "colleague",
+   "gender": "f",
+   "age": "late 20s",
+   "home": [
+    "office",
+    "café",
+    "street"
+   ],
+   "description": "Woman in her late 20s, fair skin with light freckles, shoulder-length wavy chestnut hair, mustard-yellow cardigan over a navy-and-white striped top, dark grey trousers, brown ankle boots, small gold earrings"
+  },
+  "tiago": {
+   "name": "Tiago",
+   "role": "colleague / friend",
+   "gender": "m",
+   "age": "about 24",
+   "home": [
+    "office",
+    "café",
+    "football",
+    "transport"
+   ],
+   "description": "Man about 24, dark brown skin, short twisted hair, big easy smile, bright red hoodie over a grey t-shirt, black joggers, colourful running shoes, wireless earbuds around his neck"
+  },
+  "rita": {
+   "name": "Rita",
+   "role": "receptionist / clerk",
+   "gender": "f",
+   "age": "about 45",
+   "home": [
+    "office reception",
+    "bank",
+    "Finanças",
+    "clinic desk"
+   ],
+   "description": "Woman about 45, short dark-brown bob, reading glasses on a cord, navy polo shirt uniform with a blank name badge"
+  },
+  "carlos": {
+   "name": "Carlos",
+   "role": "manager / landlord",
+   "gender": "m",
+   "age": "about 50",
+   "home": [
+    "office",
+    "flat"
+   ],
+   "description": "Man about 50, stocky, short salt-and-pepper hair, beige knitted sweater over a light blue shirt collar, dark trousers, glasses pushed up on his head"
+  },
+  "manuel": {
+   "name": "Manuel",
+   "role": "café owner / waiter",
+   "gender": "m",
+   "age": "about 60",
+   "home": [
+    "café",
+    "restaurant",
+    "market"
+   ],
+   "description": "Man about 60, short grey hair, grey moustache, white shirt with rolled sleeves, dark brown apron"
+  },
+  "sofia": {
+   "name": "Sofia",
+   "role": "pharmacist / doctor",
+   "gender": "f",
+   "age": "about 35",
+   "home": [
+    "pharmacy",
+    "clinic"
+   ],
+   "description": "Woman about 35, black hair in a low bun, white coat over a light blue blouse"
+  },
+  "graca": {
+   "name": "Dona Graça",
+   "role": "elderly neighbour",
+   "gender": "f",
+   "age": "about 72",
+   "home": [
+    "building stairs",
+    "street",
+    "market",
+    "flat"
+   ],
+   "description": "Woman about 72, short white curly hair, warm wrinkled face, small round glasses, dark green cardigan over a floral blouse, black skirt, carrying a woven shopping basket"
+  },
+  "nour": {
+   "name": "Nour",
+   "role": "Egyptian friend in Lisbon",
+   "gender": "f",
+   "age": "early 30s",
+   "home": [
+    "café",
+    "language class",
+    "street",
+    "shops"
+   ],
+   "description": "Woman in her early 30s, medium brown skin, dusty-rose hijab, cream trench coat over a teal top, light jeans, tan crossbody bag, friendly confident expression"
+  }
+ }
+}

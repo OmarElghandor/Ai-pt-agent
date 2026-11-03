@@ -1,4 +1,10 @@
 import { z } from 'zod';
+import {
+  charactersForPlace,
+  genderForCharacter,
+  getCharacter,
+  voiceForCharacter,
+} from '@/lib/v2/characters/registry';
 import type { Item } from '@/lib/v2/content/items';
 import {
   StoryCastEntrySchema,
@@ -11,6 +17,10 @@ import type { KnownIdTl } from '../hash';
 import { coreItemsForWeek } from '../coreItems';
 import { getDayPlan } from '../plan';
 import { resolveGrammarFocusPatternIds } from '../grammarFocus';
+import {
+  buildMustCover,
+  formatMustCoverBlock,
+} from '../mustCover';
 import { buildStorySystemPrompt } from '../prompts/story';
 import {
   buildAllowedPriorDigest,
@@ -22,10 +32,11 @@ import {
   autoFixStoryLines,
   checkStory,
   formatStoryRetryHints,
+  isStoryStructureFatal,
   learnerLineIndexes,
 } from '../storyChecks';
 import { saveStoryDoc } from '../storySave';
-import { fatal, type TierIssue } from '../tiers';
+import { warning, type TierIssue } from '../tiers';
 import { callJobTool } from './call';
 import { wordCount } from '../prompts/core';
 import type { StoryReading } from '@/lib/v2/content/story';
@@ -66,6 +77,7 @@ export const StoryToolSchema = z.object({
       z.object({
         speaker: z.string().min(1),
         tl: z.string().min(1),
+        en: z.string().min(1).nullable().optional(),
         ids: z.array(z.string()).nullable().optional(),
         extra: z.array(StoryExtraSchema).nullable().optional(),
         replies_to: z.number().int().nonnegative().nullable().optional(),
@@ -87,31 +99,66 @@ export const StoryToolSchema = z.object({
   reading: StoryReadingToolSchema.nullable().optional(),
 });
 
+type StoryCastRow = z.infer<typeof StoryToolSchema>['cast'][number] & {
+  gender?: 'm' | 'f';
+  voice?: string;
+};
+
 function ensureLearnerCast(
   cast: z.infer<typeof StoryToolSchema>['cast'],
-  chatCharacter?: string,
-): z.infer<typeof StoryToolSchema>['cast'] {
-  const hasLearner = cast.some((c) => c.role === 'learner' || c.id === 'learner');
-  const charId = (chatCharacter ?? 'ines').toLowerCase();
-  let next = [...cast];
+  opts: { chatCharacter?: string; place?: string },
+): StoryCastRow[] {
+  const prefer = (opts.chatCharacter ?? 'ines').toLowerCase();
+  const place = opts.place ?? '';
+  const placeFits = charactersForPlace(place).map((c) => c.id);
+  const partnerId =
+    (placeFits.includes(prefer) ? prefer : null) ||
+    placeFits.find((id) => id !== 'yassin') ||
+    prefer;
+
+  const stamp = (entry: StoryCastRow): StoryCastRow => {
+    const lookupId =
+      entry.role === 'learner' || entry.id === 'learner'
+        ? 'yassin'
+        : entry.id.toLowerCase();
+    const rec = getCharacter(lookupId);
+    return {
+      ...entry,
+      id:
+        entry.role === 'learner' || entry.id === 'learner'
+          ? entry.id
+          : (rec?.id ?? entry.id),
+      name: rec?.name ?? entry.name,
+      gender: genderForCharacter(lookupId),
+      voice: voiceForCharacter(lookupId),
+    };
+  };
+
+  const hasLearner = cast.some(
+    (c) => c.role === 'learner' || c.id === 'learner',
+  );
+  let next: StoryCastRow[] = cast.map(stamp);
   if (!hasLearner) {
     next = [
-      { id: 'learner', name: 'أنت', role: 'learner' as const },
+      stamp({ id: 'learner', name: 'أنت', role: 'learner' as const }),
       ...next,
     ];
   }
   const hasCharacter = next.some((c) => c.role === 'character');
   if (!hasCharacter) {
+    const rec = getCharacter(partnerId);
     next = [
       ...next,
-      {
-        id: charId,
-        name: charId.charAt(0).toUpperCase() + charId.slice(1),
+      stamp({
+        id: partnerId,
+        name:
+          rec?.name ??
+          partnerId.charAt(0).toUpperCase() + partnerId.slice(1),
         role: 'character' as const,
-      },
+      }),
     ];
   }
-  return next;
+  return next.map(stamp);
 }
 
 export async function runStoryJob(opts: {
@@ -123,7 +170,8 @@ export async function runStoryJob(opts: {
   version: number;
   targetLang?: string;
 }): Promise<{
-  story: StoryDoc;
+  story: StoryDoc | null;
+  skipped: boolean;
   issues: string[];
   fatals: TierIssue[];
   fixes: TierIssue[];
@@ -163,10 +211,10 @@ export async function runStoryJob(opts: {
   const minLines = weekly ? 12 : 6;
   const maxLineWords = opts.brief.max_words + 3;
 
+  const mustCover = buildMustCover({ coreItems, grammarFocusId });
+  const mustCoverBlock = formatMustCoverBlock(mustCover);
+
   const itemLines = buildStoryItemDigestLines(opts.items, coreItems).join('\n');
-  const coreLines = coreItems
-    .map((c) => `${c.id} (${c.kind}): ${c.tl}`)
-    .join('\n');
   const todayIds = new Set(opts.items.map((i) => i.id));
   for (const c of coreItems) todayIds.add(c.id);
   const priorLines = buildAllowedPriorDigest(knownById, {
@@ -176,14 +224,14 @@ export async function runStoryJob(opts: {
   }).join('\n');
 
   const lineCountHint = weekly
-    ? `WEEKLY STORY DAY: ${minLines}–${maxLines} lines in 2–3 scenes; recycle + prior only for extras budget. ALSO write reading (60–120 words + exactly 3 questions) from WEEK_ITEMS only.`
-    : `NORMAL DAY: ${minLines}–${maxLines} lines${coreWordCount > 8 ? ' (up to 12: more than 8 core words)' : ''}; learner speaks 2–4. Omit reading.`;
+    ? `WEEKLY STORY DAY: aim ${minLines}–${maxLines} lines in 2–3 scenes (code may split). ALSO write reading (60–120 words + exactly 3 questions) from WEEK_ITEMS only.`
+    : `NORMAL DAY: aim ${minLines}–${maxLines} lines (code may split); learner speaks 2–4. Omit reading.`;
 
   const focusPatternIds = grammarFocusId
     ? resolveGrammarFocusPatternIds(grammarFocusId, coreItems)
     : coreItems.filter((c) => c.kind === 'pattern').map((c) => c.id);
   const focusHint = focusPatternIds.length
-    ? `Tag these pattern ids on ≥2 lines (grammar focus): ${focusPatternIds.join(', ')}. Surfaces with o/a + noun or os/as + plural also count.`
+    ? `Prefer tagging these pattern ids on ≥2 lines (grammar focus): ${focusPatternIds.join(', ')}. Surfaces with o/a + noun or os/as + plural also count.`
     : '';
 
   const weekItems = weekly ? coreItemsForWeek(opts.brief.week) : [];
@@ -195,16 +243,20 @@ export async function runStoryJob(opts: {
 Return cast, setting, and lines via submit_story.
 ${lineCountHint}
 max_words per line: ${maxLineWords} (phase max ${opts.brief.max_words} + 3).
-Lists are natural ("Tem pão, queijo e ovos."). Plurals count for coverage.
-Extras ≤15% of content tokens — allowed = CORE + RECYCLE + ALLOWED_PRIOR. No MAX_NEW_WORDS.
+One sentence per line (one trailing .!? only). No "/" in tl.
+Cover every id in MUST_COVER. Words are optional — dictionary owns them. Prefer words in natural lists when easy.
+Extras OK up to 15% (list in extra[] with ar gloss). Allowed freely: MUST_COVER + RECYCLE + ALLOWED_PRIOR + ITEM_DIGEST.
 ${focusHint}
 
-CHAT_CHARACTER: ${chatCharacter}
+CHAT_CHARACTER: ${chatCharacter} (prefer when their home fits; otherwise any CHARACTERS id whose home matches the setting)
 SETTING_HINT: ${dayPlan.situation_eg}
+PLACE_CAST: ${charactersForPlace(`${dayPlan.situation_eg ?? ''} ${opts.brief.title_tl ?? ''}`)
+  .map((c) => c.id)
+  .join(', ') || chatCharacter}
 GRAMMAR_FOCUS: ${grammarFocusId ? `${grammarFocusId} — ${gen.grammar_focus?.description ?? ''}` : dayPlan.rule_eg}${focusPatternIds.length ? ` → patterns: ${focusPatternIds.join(', ')}` : ''}
 
-CORE_ITEMS
-${coreLines || '(none)'}
+MUST_COVER
+${mustCoverBlock}
 
 ITEM_DIGEST
 ${itemLines || '(none)'}
@@ -225,8 +277,13 @@ ${weekLines || '(none)'}
 
   const systemModules = [
     { name: 'core', version: '1' },
-    { name: 'story', version: '1' },
+    { name: 'story', version: '4' },
   ];
+
+  const knownIds = new Set<string>([
+    ...opts.items.map((i) => i.id),
+    ...coreItems.map((c) => c.id),
+  ]);
 
   const buildStory = (
     data: z.infer<typeof StoryToolSchema>,
@@ -237,17 +294,24 @@ ${weekLines || '(none)'}
     warnings: TierIssue[];
   } => {
     const fixes: TierIssue[] = [];
-    const cast = ensureLearnerCast(data.cast, chatCharacter);
+    const cast = ensureLearnerCast(data.cast, {
+      chatCharacter,
+      place: `${data.setting ?? ''} ${dayPlan.situation_eg ?? ''}`,
+    });
     const rawLines = data.lines.map((line) => ({
       speaker: line.speaker,
-      tl: line.tl,
+      tl: line.tl ?? '',
       ids: line.ids ?? [],
+      ...(line.en != null && line.en.trim()
+        ? { en: line.en.trim() }
+        : {}),
       ...(line.extra != null ? { extra: line.extra } : {}),
       ...(line.replies_to != null ? { replies_to: line.replies_to } : {}),
     }));
     const autofix = autoFixStoryLines(rawLines, itemsById, {
       allowedTokens,
       coreItems,
+      knownIds,
     });
     fixes.push(...autofix.fixes);
 
@@ -291,8 +355,10 @@ ${weekLines || '(none)'}
       ...(reading ? { reading } : {}),
     };
 
-    // Code owns Arabic, sides, after_questions — enrich before checks that need them.
-    story = enrichStoryDocument(story, opts.items, opts.brief.recycle_ids);
+    // Code owns Arabic and bubble sides — enrich before checks that need them.
+    story = enrichStoryDocument(story, opts.items, opts.brief.recycle_ids, {
+      knownItems: [...knownById.values()],
+    });
 
     const allIssues = checkStory({
       story,
@@ -303,6 +369,7 @@ ${weekLines || '(none)'}
       chatCharacter,
       maxLineWords,
       targetLang: target_lang,
+      mustCover,
     });
     const fatals = allIssues.filter((i) => i.tier === 'fatal');
     const warnings = allIssues.filter((i) => i.tier === 'warning');
@@ -310,33 +377,22 @@ ${weekLines || '(none)'}
     if (!weekly) {
       const learnerN = learnerLineIndexes(story).length;
       if (learnerN === 0) {
-        fatals.push(
-          fatal('lines', 'learner_lines', 'learner must speak at least once'),
+        warnings.push(
+          warning('lines', 'learner_lines', 'learner must speak at least once'),
         );
       }
     }
 
-    const aq = story.after_questions?.length ?? 0;
-    if (aq < 3) {
-      fatals.push(
-        fatal(
-          'after_questions',
-          'after_questions_short',
-          `need ≥3 after_questions, got ${aq}`,
-        ),
-      );
-    }
-
     if (weekly) {
       if (!story.reading?.tl) {
-        fatals.push(
-          fatal('reading', 'reading_missing', 'weekly story needs reading.tl'),
+        warnings.push(
+          warning('reading', 'reading_missing', 'weekly story needs reading.tl'),
         );
       } else {
         const wc = wordCount(story.reading.tl);
         if (wc < 60 || wc > 120) {
-          fatals.push(
-            fatal(
+          warnings.push(
+            warning(
               'reading.tl',
               'reading_word_count',
               `reading needs 60–120 words, got ${wc}`,
@@ -345,8 +401,8 @@ ${weekLines || '(none)'}
         }
         const qn = story.reading.questions?.length ?? 0;
         if (qn !== 3) {
-          fatals.push(
-            fatal(
+          warnings.push(
+            warning(
               'reading.questions',
               'reading_questions',
               `reading needs exactly 3 questions, got ${qn}`,
@@ -356,70 +412,134 @@ ${weekLines || '(none)'}
       }
     }
 
+    const structureFatals = fatals.filter(isStoryStructureFatal);
     story = {
       ...story,
-      status: fatals.length ? 'failed' : 'ready',
+      status: structureFatals.length ? 'failed' : 'ready',
     };
 
-    return { story, fixes, fatals, warnings };
+    return { story, fixes, fatals: structureFatals, warnings: [...warnings, ...fatals.filter((f) => !isStoryStructureFatal(f))] };
   };
 
-  let call = await callJobTool({
-    kind: 'story',
+  const emptyTiming = {
     label: 'story',
-    systemPrompt: buildStorySystemPrompt(),
-    brief: opts.brief,
-    userBody: user,
-    toolName: 'submit_story',
-    toolDescription: 'Submit the day story cast, setting and lines',
-    schema: StoryToolSchema,
-    systemModules,
-  });
+    duration_ms: 0,
+    input_tokens: 0,
+    output_tokens: 0,
+    usd_estimate: 0,
+  };
 
-  let built = buildStory(call.data as z.infer<typeof StoryToolSchema>);
+  let call: Awaited<ReturnType<typeof callJobTool>> | null = null;
+  let built: ReturnType<typeof buildStory> | null = null;
   let retries = 0;
-  let totalTokens = call.tokens;
-  let overBudget = call.over_budget;
+  let totalTokens = { system: 0, input: 0, output: 0 };
+  let overBudget = false;
+  let parseFatals: TierIssue[] = [];
 
-  if (built.fatals.length) {
-    retries = 1;
-    const hints = formatStoryRetryHints(built.fatals);
+  try {
     call = await callJobTool({
       kind: 'story',
-      label: 'story_retry',
+      label: 'story',
       systemPrompt: buildStorySystemPrompt(),
       brief: opts.brief,
-      userBody: `${user}\n\nRETRY — fix these fatals:\n${hints}`,
+      userBody: user,
       toolName: 'submit_story',
       toolDescription: 'Submit the day story cast, setting and lines',
       schema: StoryToolSchema,
       systemModules,
     });
     built = buildStory(call.data as z.infer<typeof StoryToolSchema>);
-    totalTokens = {
-      system: (totalTokens.system ?? 0) + (call.tokens.system ?? 0),
-      input: (totalTokens.input ?? 0) + (call.tokens.input ?? 0),
-      output: (totalTokens.output ?? 0) + (call.tokens.output ?? 0),
-    };
-    overBudget = overBudget || call.over_budget;
+    totalTokens = call.tokens;
+    overBudget = call.over_budget;
+  } catch (err) {
+    parseFatals = [
+      {
+        path: 'story',
+        rule: 'unparseable',
+        message: err instanceof Error ? err.message : String(err),
+        tier: 'fatal',
+      },
+    ];
   }
 
-  await saveStoryDoc(built.story);
+  const needsRetry =
+    parseFatals.length > 0 ||
+    (built?.fatals.some(isStoryStructureFatal) ?? false);
+
+  if (needsRetry) {
+    retries = 1;
+    const hints = formatStoryRetryHints([
+      ...parseFatals,
+      ...(built?.fatals ?? []),
+    ]);
+    try {
+      call = await callJobTool({
+        kind: 'story',
+        label: 'story_retry',
+        systemPrompt: buildStorySystemPrompt(),
+        brief: opts.brief,
+        userBody: `${user}\n\nRETRY — fix these structure fatals:\n${hints || 'output must parse with ≥4 lines, non-empty tl, speakers in cast'}`,
+        toolName: 'submit_story',
+        toolDescription: 'Submit the day story cast, setting and lines',
+        schema: StoryToolSchema,
+        systemModules,
+      });
+      built = buildStory(call.data as z.infer<typeof StoryToolSchema>);
+      parseFatals = [];
+      totalTokens = {
+        system: (totalTokens.system ?? 0) + (call.tokens.system ?? 0),
+        input: (totalTokens.input ?? 0) + (call.tokens.input ?? 0),
+        output: (totalTokens.output ?? 0) + (call.tokens.output ?? 0),
+      };
+      overBudget = overBudget || call.over_budget;
+    } catch (err) {
+      parseFatals = [
+        {
+          path: 'story',
+          rule: 'unparseable',
+          message: err instanceof Error ? err.message : String(err),
+          tier: 'fatal',
+        },
+      ];
+      built = null;
+    }
+  }
+
+  const structureFatals = [
+    ...parseFatals,
+    ...(built?.fatals.filter(isStoryStructureFatal) ?? []),
+  ];
+  const skipped = structureFatals.length > 0;
+
+  if (!skipped && built) {
+    await saveStoryDoc(built.story);
+  } else if (built) {
+    // Persist failed draft for admin inspection; day continues without it.
+    await saveStoryDoc({ ...built.story, status: 'failed' });
+  }
+
+  const warnings = built?.warnings ?? [];
+  const fixes = built?.fixes ?? [];
+  const allIssues = [
+    ...structureFatals.map((f) => `${f.rule}: ${f.message}`),
+    ...warnings.map((w) => `${w.rule}: ${w.message}`),
+  ];
 
   return {
-    story: built.story,
-    issues: built.fatals.map((f) => `${f.rule}: ${f.message}`),
-    fatals: built.fatals,
-    fixes: built.fixes,
-    warnings: built.warnings,
-    flagged: built.fatals.length > 0 || built.warnings.length > 0,
+    story: skipped ? null : built!.story,
+    skipped,
+    issues: allIssues,
+    fatals: structureFatals,
+    fixes,
+    warnings,
+    flagged: skipped || warnings.length > 0,
     retries,
-    auto_fix_count: built.fixes.length,
-    timing: call.timing,
+    auto_fix_count: fixes.length,
+    timing: call?.timing ?? emptyTiming,
     tokens: totalTokens,
     over_budget: overBudget,
-    model: call.model,
-    provider: call.provider,
+    model: call?.model ?? '',
+    provider: call?.provider ?? 'anthropic',
     userBody: user,
     systemModules,
   };

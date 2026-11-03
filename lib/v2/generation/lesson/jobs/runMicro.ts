@@ -9,9 +9,10 @@ import type { LessonBrief } from '../brief';
 import { getDayPlan } from '../plan';
 import { buildMicroSystemPrompt } from '../prompts';
 import { wordCount } from '../prompts/core';
+import { NUMBERS_INTRO_DAY } from '../buildRequest';
 import { callJobTool } from './call';
 
-/** Portuguese number words blocked before day 4 (plus digit tokens). */
+/** Portuguese number words blocked before NUMBERS_INTRO_DAY (plus digit tokens). */
 const NUMBER_WORDS = new Set([
   'zero',
   'um',
@@ -61,7 +62,7 @@ export function microStepNeedsUnknown(
   day: number,
 ): boolean {
   if (!today) return false;
-  if (day >= 4) return false;
+  if (day >= NUMBERS_INTRO_DAY) return false;
   return /quantit|number|dois|duas|três|numeral|\d/i.test(today);
 }
 
@@ -101,7 +102,7 @@ function collectMicroTl(micro: Micro, items: Item[]): string[] {
 }
 
 function hasForbiddenNumberToken(text: string, day: number): string | null {
-  if (day >= 4) return null;
+  if (day >= NUMBERS_INTRO_DAY) return null;
   for (const tok of tokenizeTl(text)) {
     if (/^\d+([.,]\d+)?$/.test(tok)) return tok;
     const lower = tok.toLowerCase();
@@ -301,7 +302,7 @@ ${tomorrow}
 PREV_MICRO_HANDOFF (same series): ${prev}
 PHRASE_DIGEST: ${JSON.stringify(phrases)}
 SAID_PHRASE_IDS (morning.phrase MUST be one of these): ${JSON.stringify(saidIds)}
-Day ${opts.brief.day}: ${opts.brief.day < 4 ? 'NO number words or digits in tool TL.' : 'numbers allowed.'}
+Day ${opts.brief.day}: ${opts.brief.day < NUMBERS_INTRO_DAY ? 'NO number words or digits in tool TL.' : 'numbers allowed.'}
 drills must be 2 full quiz objects (prompt + options), not question ids.
 `;
 
@@ -394,7 +395,7 @@ drills must be 2 full quiz objects (prompt + options), not question ids.
     const bad = hasForbiddenNumberToken(text, opts.brief.day);
     if (bad) {
       issues.push(
-        `micro tool TL has number token "${bad}" before day 4`,
+        `micro tool TL has number token "${bad}" before day ${NUMBERS_INTRO_DAY}`,
       );
     }
   }

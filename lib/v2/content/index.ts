@@ -13,6 +13,8 @@ export {
 export {
   LessonPackSchema,
   MicroSchema,
+  QuestionTypeSchema,
+  QuestionUseSchema,
   SkillSchema,
   SpeakPromptSchema,
   type LessonMeta,

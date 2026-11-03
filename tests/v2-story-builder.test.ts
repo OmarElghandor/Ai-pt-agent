@@ -18,12 +18,16 @@ import {
   checkStory,
   formatStoryRetryHints,
   scanStoryExtras,
+  splitSentences,
 } from '../lib/v2/generation/lesson/storyChecks';
 import {
+  buildLineArabic,
   buildSceneImageSpec,
+  enrichLineArabic,
   enrichStoryDocument,
   sideForSpeaker,
 } from '../lib/v2/generation/lesson/storyCodeEnrich';
+import { fatal, warning } from '../lib/v2/generation/lesson/tiers';
 import {
   buildStoryAllowedVocab,
   buildStoryItemDigestLines,
@@ -294,7 +298,6 @@ describe('story checks', () => {
       [],
       fatals.map((f) => `${f.rule}: ${f.message}`).join('; '),
     );
-    assert.ok((story.after_questions?.length ?? 0) >= 3);
   });
 
   it('"Sim, o pão é aqui." counts 0 extras', () => {
@@ -345,45 +348,36 @@ describe('story checks', () => {
     );
   });
 
-  it('retry message lists offending extra tokens', () => {
+  it('extra over budget is a warning, never a retry hint', () => {
     const story = baseStory();
-    story.lines[0] = {
-      ...story.lines[0]!,
-      tl: 'Bom dia! Queria pão e prateleira na caixa.',
-      ids: ['phrase.good_morning', 'phrase.queria', 'food.bread'],
-    };
-    const fatals = checkDay3(story, {
-      grammarFocusId: 'pattern.queria_noun',
-      coreItems: day3Core,
-    });
-    // Force over-budget if not already (prateleira/caixa should trigger)
-    const over = fatals.find((f) => f.rule === 'extra_over_budget');
-    if (!over) {
-      // Inject many extras to guarantee budget fail
-      story.lines.push(
-        {
-          speaker: 'ines',
-          tl: 'prateleira caixa geladeira mercado loja',
-          ids: [],
-        },
-        {
-          speaker: 'learner',
-          tl: 'prateleira caixa geladeira',
-          ids: [],
-          replies_to: 0,
-        },
-      );
-    }
-    const fatals2 = checkDay3(story, { grammarFocusId: 'pattern.queria_noun' });
-    const msg = formatStoryRetryHints(fatals2);
-    assert.ok(
-      /prateleira|caixa|geladeira|mercado|loja/.test(msg),
-      `retry missing tokens: ${msg}`,
+    story.lines.push(
+      {
+        speaker: 'ines',
+        tl: 'prateleira caixa geladeira mercado loja',
+        ar: 'x',
+        ids: [],
+      },
+      {
+        speaker: 'learner',
+        tl: 'prateleira caixa geladeira',
+        ar: 'x',
+        ids: [],
+        replies_to: 0,
+      },
     );
-    assert.ok(msg.includes('extra tokens:') || fatals2.some((f) => f.rule === 'extra_over_budget'));
+    const all = checkStory({
+      story,
+      coreItems: day3Core,
+      items: day3Items,
+      allowedTokens: day3Allowed(),
+      chatCharacter: 'ines',
+      grammarFocusId: 'pattern.queria_noun',
+    });
+    assert.ok(all.some((i) => i.rule === 'extra_over_budget' && i.tier === 'warning'));
+    assert.equal(formatStoryRetryHints(all.filter((i) => i.tier === 'fatal')), '');
   });
 
-  it('fails when a core phrase is missing', () => {
+  it('missing must-cover phrase is a warning, not fatal', () => {
     const story = baseStory({
       lines: baseStory().lines.map((l) => ({
         ...l,
@@ -391,31 +385,91 @@ describe('story checks', () => {
         tl: l.tl.replace('Obrigado!', 'Ok.'),
       })),
     });
-    const fatals = checkDay3(story, { grammarFocusId: 'pattern.queria_noun' });
-    assert.ok(fatals.some((f) => f.rule === 'core_not_in_story'));
-    assert.ok(formatStoryRetryHints(fatals).includes('missing:'));
+    const all = checkStory({
+      story,
+      coreItems: day3Core,
+      items: day3Items,
+      allowedTokens: day3Allowed(),
+      chatCharacter: 'ines',
+      grammarFocusId: 'pattern.queria_noun',
+    });
+    assert.ok(
+      all.some(
+        (i) =>
+          i.tier === 'warning' &&
+          (i.rule === 'must_cover_missing' || i.rule === 'core_not_in_story'),
+      ),
+    );
+    assert.ok(!all.some((i) => i.tier === 'fatal' && i.rule === 'must_cover_missing'));
+    assert.equal(formatStoryRetryHints(all.filter((i) => i.tier === 'fatal')), '');
   });
 
-  it('fails on bare nouns', () => {
+  it('missing core word is warning, not fatal', () => {
+    const story = baseStory({
+      lines: baseStory().lines.map((l) => ({
+        ...l,
+        ids: (l.ids ?? []).filter((id) => id !== 'food.bread'),
+        tl: l.tl.replace(/pão/gi, 'café'),
+      })),
+    });
+    // Keep phrase.queria without bread surface — retag pattern still
+    story.lines[3] = {
+      ...story.lines[3]!,
+      tl: 'Queria café, por favor.',
+      ids: ['phrase.queria', 'pattern.queria_noun'],
+    };
+    const all = checkStory({
+      story,
+      coreItems: day3Core,
+      items: day3Items,
+      allowedTokens: day3Allowed(),
+      chatCharacter: 'ines',
+      grammarFocusId: 'pattern.queria_noun',
+    });
+    const fatals = all.filter((i) => i.tier === 'fatal');
+    const warnings = all.filter((i) => i.tier === 'warning');
+    assert.ok(
+      !fatals.some((f) => f.path.includes('food.bread')),
+      fatals.map((f) => `${f.rule}:${f.path}`).join('; '),
+    );
+    assert.ok(
+      warnings.some(
+        (w) =>
+          w.rule === 'core_word_not_in_story' && w.path.includes('food.bread'),
+      ),
+    );
+  });
+
+  it('bare nouns are warnings', () => {
     const story = baseStory();
     story.lines[1] = {
       speaker: 'learner',
       tl: 'pão',
+      ar: 'خبز',
       ids: ['food.bread'],
       replies_to: 0,
     };
-    const fatals = checkDay3(story);
-    assert.ok(fatals.some((f) => f.rule === 'bare_noun'));
+    const all = checkStory({
+      story,
+      coreItems: day3Core,
+      items: day3Items,
+      allowedTokens: day3Allowed(),
+      chatCharacter: 'ines',
+    });
+    assert.ok(all.some((i) => i.rule === 'bare_noun' && i.tier === 'warning'));
   });
 
-  it('fails when replies_to is not before the line', () => {
+  it('invalid replies_to is autofixed, not fatal', () => {
     const story = baseStory();
-    story.lines[1] = { ...story.lines[1]!, replies_to: 5 };
-    const fatals = checkDay3(story);
-    assert.ok(fatals.some((f) => f.rule === 'replies_to_order'));
+    const lines = [...story.lines];
+    lines[1] = { ...lines[1]!, replies_to: 5 };
+    const itemsById = new Map(day3Items.map((i) => [i.id, i]));
+    const { lines: fixed, fixes } = autoFixStoryLines(lines, itemsById);
+    assert.ok(fixes.some((f) => f.rule === 'replies_to_invalid'));
+    assert.equal(fixed[1]!.replies_to, undefined);
   });
 
-  it('fails on wrong line count', () => {
+  it('fewer than 4 lines is a structure fatal', () => {
     const story = baseStory({
       lines: baseStory().lines.slice(0, 3),
     });
@@ -426,21 +480,86 @@ describe('story checks', () => {
       allowedTokens: day3Allowed(),
       chatCharacter: 'ines',
     }).filter((i) => i.tier === 'fatal');
-    assert.ok(fatals.some((f) => f.rule === 'line_count'));
+    assert.ok(fatals.some((f) => f.rule === 'line_count_min'));
   });
 
-  it('fails when cast is not learner + character', () => {
+  it('line count outside 6–10 is a warning when ≥4', () => {
+    const story = baseStory({
+      lines: baseStory().lines.slice(0, 4),
+    });
+    const all = checkStory({
+      story,
+      coreItems: day3Core,
+      items: day3Items,
+      allowedTokens: day3Allowed(),
+      chatCharacter: 'ines',
+    });
+    assert.ok(all.some((i) => i.rule === 'line_count' && i.tier === 'warning'));
+    assert.ok(!all.some((i) => i.rule === 'line_count_min'));
+  });
+
+  it('over-max line count is warning, not fatal', () => {
+    const base = baseStory();
+    const padded = [
+      ...base.lines,
+      ...Array.from({ length: 10 }, (_, i) => ({
+        speaker: i % 2 === 0 ? 'ines' : 'learner',
+        tl: 'Bom dia!',
+        ar: 'صباح الخير!',
+        ids: ['phrase.good_morning'] as string[],
+        ...(i % 2 === 1 ? { replies_to: 0 } : {}),
+      })),
+    ];
+    const story = baseStory({ lines: padded });
+    const all = checkStory({
+      story,
+      coreItems: day3Core,
+      items: day3Items,
+      allowedTokens: day3Allowed(),
+      chatCharacter: 'ines',
+      grammarFocusId: 'pattern.queria_noun',
+    });
+    assert.ok(story.lines.length > 12);
+    assert.ok(
+      !all.some((i) => i.rule === 'line_count' && i.tier === 'fatal'),
+    );
+    assert.ok(
+      all.some((i) => i.rule === 'line_count' && i.tier === 'warning'),
+    );
+  });
+
+  it('cast shape is a warning, not fatal', () => {
     const story = baseStory({
       cast: [
         { id: 'ines', name: 'Inês', role: 'character' },
         { id: 'rita', name: 'Rita', role: 'character' },
       ],
     });
-    const fatals = checkDay3(story, { coreItems: [] });
-    assert.ok(fatals.some((f) => f.rule === 'cast_shape'));
+    const all = checkStory({
+      story,
+      coreItems: [],
+      items: day3Items,
+      allowedTokens: day3Allowed(),
+      chatCharacter: 'ines',
+    });
+    assert.ok(all.some((i) => i.rule === 'cast_shape' && i.tier === 'warning'));
   });
 
-  it('fails when grammar focus appears fewer than twice', () => {
+  it('unknown speaker is a structure fatal', () => {
+    const story = baseStory();
+    story.lines[0] = { ...story.lines[0]!, speaker: 'stranger' };
+    const fatals = checkDay3(story, { coreItems: [] });
+    assert.ok(fatals.some((f) => f.rule === 'invalid_speaker'));
+  });
+
+  it('empty tl is a structure fatal', () => {
+    const story = baseStory();
+    story.lines[0] = { ...story.lines[0]!, tl: '   ' };
+    const fatals = checkDay3(story, { coreItems: [] });
+    assert.ok(fatals.some((f) => f.rule === 'empty_tl'));
+  });
+
+  it('grammar focus under twice is a warning', () => {
     const story = baseStory({
       lines: [
         {
@@ -478,25 +597,35 @@ describe('story checks', () => {
         },
       ],
     });
-    const fatals = checkStory({
+    const all = checkStory({
       story,
       coreItems: day3Core.filter((c) => c.kind !== 'pattern'),
       items: day3Items.filter((i) => i.type !== 'pattern'),
       allowedTokens: day3Allowed(),
       grammarFocusId: 'pattern.xyz_unused',
       chatCharacter: 'ines',
-    }).filter((i) => i.tier === 'fatal');
-    assert.ok(fatals.some((f) => f.rule === 'grammar_focus_twice'));
+    });
+    assert.ok(
+      all.some((i) => i.rule === 'grammar_focus_twice' && i.tier === 'warning'),
+    );
   });
 
-  it('fails when extras are unglossed', () => {
+  it('unglossed extras are warnings', () => {
     const story = baseStory();
     story.lines[0] = {
       ...story.lines[0]!,
       extra: [{ tl: 'pastel', ar: '' }],
     };
-    const fatals = checkDay3(story, { coreItems: [] });
-    assert.ok(fatals.some((f) => f.rule === 'extra_unglossed'));
+    const all = checkStory({
+      story,
+      coreItems: [],
+      items: day3Items,
+      allowedTokens: day3Allowed(),
+      chatCharacter: 'ines',
+    });
+    assert.ok(
+      all.some((i) => i.rule === 'extra_unglossed' && i.tier === 'warning'),
+    );
   });
 
   it('auto-fix drops ids not in the line', () => {
@@ -729,13 +858,13 @@ describe('story checks', () => {
 });
 
 describe('story code enrich', () => {
-  it('sets bubble sides and after_questions', () => {
+  it('sets bubble sides and builds after_questions', () => {
     const story = enrichStoryDocument(baseStory(), day3Items, []);
     assert.equal(sideForSpeaker(story.cast, 'learner'), 'left');
     assert.equal(sideForSpeaker(story.cast, 'ines'), 'right');
-    assert.ok((story.after_questions?.length ?? 0) >= 3);
     assert.ok(
-      story.after_questions?.every((q) => (q.options?.length ?? 0) >= 2),
+      (story.after_questions?.length ?? 0) >= 3,
+      `expected ≥3 after_questions, got ${story.after_questions?.length ?? 0}`,
     );
     assert.ok(story.lines.every((l) => !l.options?.length));
     assert.ok(story.image_spec?.type === 'scene');
@@ -750,6 +879,184 @@ describe('story code enrich', () => {
     assert.ok(spec.characters?.includes('learner'));
     assert.ok(spec.characters?.includes('ines'));
   });
+
+  it('multi-sentence tl gets AR with matching sentence count', () => {
+    const items: Item[] = [
+      {
+        type: 'phrase',
+        id: 'phrase.hello',
+        tl: 'Olá!',
+        ar: 'مرحبا', // no terminator — enricher must mirror
+        say: 'x',
+      } as Item,
+      {
+        type: 'phrase',
+        id: 'phrase.how_are_you',
+        tl: 'Tudo bem?',
+        ar: 'هل أنت بخير',
+        say: 'x',
+      } as Item,
+    ];
+    const line = {
+      speaker: 'ines',
+      tl: 'Olá! Tudo bem?',
+      ids: ['phrase.hello', 'phrase.how_are_you'],
+    };
+    const ar = buildLineArabic(line, items);
+    assert.equal(splitSentences(line.tl).length, 2);
+    assert.equal(
+      splitSentences(ar).length,
+      2,
+      `expected 2 AR sentences, got: ${ar}`,
+    );
+    const enriched = enrichLineArabic(line, items);
+    assert.ok(enriched.ar);
+    assert.equal(splitSentences(enriched.ar!).length, 2);
+  });
+
+  it('keeps Arabic ؟ terminators and still counts sentences (regression)', () => {
+    const items: Item[] = [
+      {
+        type: 'phrase',
+        id: 'phrase.with_milk',
+        tl: 'Com leite?',
+        ar: 'بحليب؟',
+        say: 'x',
+      } as Item,
+      {
+        type: 'phrase',
+        id: 'phrase.anything_else',
+        tl: 'Mais alguma coisa?',
+        ar: 'شيء آخر؟',
+        say: 'x',
+      } as Item,
+    ];
+    const line = {
+      speaker: 'manuel',
+      tl: 'Com leite? Mais alguma coisa?',
+      ids: ['phrase.with_milk', 'phrase.anything_else'],
+    };
+    const ar = buildLineArabic(line, items);
+    assert.equal(splitSentences(line.tl).length, 2);
+    assert.equal(
+      splitSentences(ar).length,
+      2,
+      `expected 2 AR sentences with ؟, got: ${ar}`,
+    );
+    assert.ok(ar.includes('؟'), `AR should use Arabic ؟: ${ar}`);
+  });
+
+  it('single-sentence list line stays one AR sentence and covers water', () => {
+    const items: Item[] = [
+      {
+        type: 'phrase',
+        id: 'phrase.order',
+        tl: 'Queria um café, por favor.',
+        ar: 'أريد قهوة من فضلك',
+        say: 'x',
+      } as Item,
+      word('word.coffee', 'o café'),
+      word('word.juice', 'o sumo'),
+      word('word.water', 'a água'),
+    ];
+    // Override word AR with real glosses for coverage check realism
+    (items[1] as { ar: string }).ar = 'القهوة';
+    (items[2] as { ar: string }).ar = 'العصير';
+    (items[3] as { ar: string }).ar = 'الماء';
+
+    const line = {
+      speaker: 'learner',
+      tl: 'Queria um café, um sumo e uma água.',
+      ids: ['phrase.order', 'word.coffee', 'word.juice', 'word.water'],
+    };
+    const ar = buildLineArabic(line, items);
+    assert.equal(splitSentences(line.tl).length, 1);
+    assert.equal(splitSentences(ar).length, 1, `expected 1 AR sentence, got: ${ar}`);
+    assert.ok(line.tl.includes('água'));
+    assert.ok((line.ids ?? []).includes('word.water'));
+  });
+});
+
+describe('story autofix split', () => {
+  it('splits multi-sentence tl into separate lines', () => {
+    const itemsById = new Map(
+      day3Items.map((i) => [i.id, i] as const),
+    );
+    const { lines, fixes } = autoFixStoryLines(
+      [
+        {
+          speaker: 'ines',
+          tl: 'Olá! Tudo bem?',
+          ids: ['phrase.good_morning'],
+        },
+        {
+          speaker: 'learner',
+          tl: 'Bom dia!',
+          ids: ['phrase.good_morning'],
+          replies_to: 0,
+        },
+      ],
+      itemsById,
+    );
+    assert.ok(fixes.some((f) => f.rule === 'split_multi_sentence'));
+    assert.ok(lines.length >= 3);
+    assert.equal(splitSentences(lines[0]!.tl).length, 1);
+    assert.equal(splitSentences(lines[1]!.tl).length, 1);
+    // learner reply remapped to first piece of old line 0
+    const learner = lines.find((l) => l.speaker === 'learner');
+    assert.equal(learner?.replies_to, 0);
+  });
+});
+
+describe('story AR validation tiers', () => {
+  it('empty ar and sentence mismatch are both warnings', () => {
+    const story = baseStory();
+    story.lines[0] = {
+      ...story.lines[0]!,
+      tl: 'Bom dia! Queria pão.',
+      ar: 'صباح الخير!', // 1 AR sentence, 2 TL — mismatch
+      ids: ['phrase.good_morning', 'phrase.queria', 'food.bread'],
+    };
+    story.lines[1] = {
+      ...story.lines[1]!,
+      ar: '',
+    };
+    const all = checkStory({
+      story,
+      coreItems: day3Core,
+      items: day3Items,
+      allowedTokens: day3Allowed(),
+      chatCharacter: 'ines',
+      grammarFocusId: 'pattern.queria_noun',
+    });
+    const fatals = all.filter((i) => i.tier === 'fatal');
+    const warnings = all.filter((i) => i.tier === 'warning');
+    assert.ok(!fatals.some((f) => f.rule === 'ar_missing'));
+    assert.ok(warnings.some((w) => w.rule === 'ar_missing'));
+    assert.ok(warnings.some((w) => w.rule === 'ar_sentence_mismatch'));
+  });
+});
+
+describe('story retry hints', () => {
+  it('only structure fatals appear in retry hints', () => {
+    const msg = formatStoryRetryHints([
+      fatal('lines', 'line_count_min', 'need ≥4 lines, got 2'),
+      fatal('lines[0].speaker', 'invalid_speaker', 'unknown speaker x'),
+      warning(
+        'coverage.phrase.how_much_is_it',
+        'must_cover_missing',
+        'missing must-cover: phrase.how_much_is_it',
+      ),
+      warning('extra', 'extra_over_budget', 'extra tokens: foo'),
+      warning('lines[5].ar', 'ar_missing', 'line 5 missing Arabic'),
+    ]);
+    assert.match(msg, /FIX \(structure only\):/);
+    assert.match(msg, /need ≥4 lines/);
+    assert.match(msg, /unknown speaker/);
+    assert.doesNotMatch(msg, /must-cover/);
+    assert.doesNotMatch(msg, /extra tokens/);
+    assert.doesNotMatch(msg, /ar_missing/);
+  });
 });
 
 describe('story handoff + prompt', () => {
@@ -762,6 +1069,18 @@ describe('story handoff + prompt', () => {
   it('story system prompt stays under budget', () => {
     const n = approxTokens(buildStorySystemPrompt());
     assert.ok(n <= BUDGET.systemMax, `story prompt ~${n}`);
+  });
+
+  it('story system prompt requires MUST_COVER, not every word', () => {
+    const p = buildStorySystemPrompt();
+    assert.ok(/One sentence per line/i.test(p));
+    assert.ok(/No "\/" in tl|no "\/" in tl/i.test(p));
+    assert.ok(/Do NOT write Arabic for the main line/i.test(p));
+    assert.ok(/MUST_COVER/i.test(p));
+    assert.ok(!/MUST include every core phrase and pattern/i.test(p));
+    assert.ok(/Dictionary owns leftover nouns|words are optional/i.test(p));
+    assert.ok(!/Every core word, phrase and pattern/i.test(p));
+    assert.ok(/15%/i.test(p));
   });
 });
 

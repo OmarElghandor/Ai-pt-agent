@@ -76,10 +76,12 @@ export const V2_JOB_KINDS = [
   'questions',
   'micro',
   'daily_use',
+  'real_world',
   'continuity',
   'assemble',
   'lang_check',
   'image_specs',
+  'image',
   'pack_outline',
   'pack_beats',
   'pack_critic',
@@ -95,6 +97,8 @@ const V2_JOB_STATUSES = [
   'done',
   'failed',
   'stale',
+  /** Soft job finished without a usable output; deps may still proceed. */
+  'skipped',
 ] as const;
 
 const v2JobAttemptSchema = new Schema(
@@ -181,9 +185,11 @@ export function V2JobModel(): Model<V2JobDoc> {
     const staleTypeEnum =
       Array.isArray(typePath?.enumValues) && typePath.enumValues.length > 0;
     const kindEnums = kindPath?.enumValues;
-    const missingStoryKind =
-      Array.isArray(kindEnums) && !kindEnums.includes('story');
-    if (staleTypeEnum || !kindPath || !hasNewFields || missingStoryKind) {
+    const staleKindEnum =
+      !Array.isArray(kindEnums) ||
+      kindEnums.length !== V2_JOB_KINDS.length ||
+      V2_JOB_KINDS.some((k) => !kindEnums.includes(k));
+    if (staleTypeEnum || !kindPath || !hasNewFields || staleKindEnum) {
       delete (mongoose.models as Record<string, unknown>).V2Job;
       delete (mongoose.connection.models as Record<string, unknown>).V2Job;
     } else {
@@ -318,6 +324,8 @@ const v2ItemStateSchema = new Schema(
     card: { type: cardSrsSchema, required: true },
     lastImplicitReviewLocalDate: { type: String, required: false },
     weakToolIds: { type: [String], default: [] },
+    /** Per-user flashcard opt-in (real-world «+ للكروت»). */
+    opt_in_card: { type: Boolean, required: false, default: false },
   },
   { timestamps: true, collection: 'v2_item_state' },
 );
@@ -542,6 +550,8 @@ const v2StorySchema = new Schema(
     setting: { type: String, required: true },
     lines: { type: Schema.Types.Mixed, required: true },
     image_spec: { type: Schema.Types.Mixed, required: false },
+    /** Denormalized ready scene image { key, url }. */
+    image: { type: Schema.Types.Mixed, required: false },
     scenes: { type: Schema.Types.Mixed, required: false },
     is_weekly: { type: Boolean, required: false },
     after_questions: { type: Schema.Types.Mixed, required: false },
@@ -562,6 +572,69 @@ export function V2StoryModel(): Model<V2StoryDoc> {
   return (
     (mongoose.models.V2Story as Model<V2StoryDoc>) ||
     mongoose.model<V2StoryDoc>('V2Story', v2StorySchema)
+  );
+}
+
+const V2_IMAGE_STATUSES = [
+  'missing',
+  'queued',
+  'generating',
+  'ready',
+  'flagged',
+  'failed',
+  'blocked',
+] as const;
+
+const v2ImageSchema = new Schema(
+  {
+    key: { type: String, required: true, unique: true, index: true },
+    kind: {
+      type: String,
+      required: false,
+      enum: ['character_ref', 'style_anchor', 'content'],
+      index: true,
+    },
+    type: { type: String, required: false },
+    spec: { type: Schema.Types.Mixed, required: false },
+    prompt: { type: String, required: false },
+    /** Admin-edited scene description; wins over core-items authored prompt. */
+    prompt_override: { type: String, required: false },
+    /** How the last generate assembled the scene description. */
+    prompt_source: {
+      type: String,
+      required: false,
+      enum: ['authored', 'generated', 'override'],
+    },
+    status: {
+      type: String,
+      required: true,
+      enum: V2_IMAGE_STATUSES,
+      default: 'missing',
+      index: true,
+    },
+    url: { type: String, required: false },
+    public_id: { type: String, required: false },
+    cloudinary_version: { type: Number, required: false },
+    qa: { type: Schema.Types.Mixed, required: false },
+    cost_usd: { type: Number, required: false, default: 0 },
+    version: { type: Number, required: false, default: 1 },
+    used_by: { type: [String], required: false, default: [] },
+    reason: { type: String, required: false },
+    generating_started_at: { type: Date, required: false },
+  },
+  { timestamps: true, collection: 'v2_images' },
+);
+
+v2ImageSchema.index({ status: 1, kind: 1 });
+
+export type V2ImageDoc = InferSchemaType<typeof v2ImageSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2ImageModel(): Model<V2ImageDoc> {
+  return (
+    (mongoose.models.V2Image as Model<V2ImageDoc>) ||
+    mongoose.model<V2ImageDoc>('V2Image', v2ImageSchema)
   );
 }
 

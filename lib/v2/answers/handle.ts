@@ -179,6 +179,9 @@ async function buildContext(
         ctx.pageQuizCorrect = chosen.correct;
       } else if (typeof q.answer === 'number') {
         ctx.pageQuizCorrect = q.answer === payload.option_index;
+      } else if (Array.isArray(q.answer)) {
+        // Tile / build_sentence: client sends 1 = correct order, 0 = wrong.
+        ctx.pageQuizCorrect = payload.option_index === 1;
       } else {
         ctx.pageQuizCorrect = false;
       }

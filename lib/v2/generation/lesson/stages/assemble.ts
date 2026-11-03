@@ -7,9 +7,17 @@ import type { OutlineResult } from './types';
 
 const PRACTICE_PER_BLOCK_MAX = 3;
 
+function questionUse(
+  q: Question,
+): 'lesson' | 'practice' | 'both' {
+  const u = (q as { use?: string }).use;
+  if (u === 'lesson' || u === 'practice' || u === 'both') return u;
+  return 'both';
+}
+
 /**
  * Fill practice.questions from the day's question bank by page_index.
- * Page jobs must not invent question ids.
+ * Prefers use=practice|both. Page jobs must not invent question ids.
  */
 export function fillPracticeQuestions(
   pages: Page[],
@@ -18,6 +26,10 @@ export function fillPracticeQuestions(
   return pages.map((page, pageIndex) => {
     const ids = questions
       .filter((q) => q.page_index === pageIndex)
+      .filter((q) => {
+        const u = questionUse(q);
+        return u === 'practice' || u === 'both';
+      })
       .map((q) => q.id);
     if (ids.length === 0) return page;
     let cursor = 0;
@@ -32,7 +44,7 @@ export function fillPracticeQuestions(
 }
 
 /**
- * Assign 2–3 rule questions into page.check for sections grammar pages.
+ * Assign 2–3 grammar rule questions into page.check for sections pages.
  */
 export function fillSectionsCheck(
   pages: Page[],
@@ -40,12 +52,34 @@ export function fillSectionsCheck(
 ): Page[] {
   return pages.map((page, pageIndex) => {
     if (page.mode !== 'sections') return page;
-    const ids = questions
+    const grammarIds = questions
+      .filter((q) => q.page_index === pageIndex)
+      .filter(
+        (q) =>
+          q.skill === 'grammar' ||
+          q.type === 'fill_blank_choice' ||
+          q.type === 'build_sentence',
+      )
+      .filter((q) => {
+        const u = questionUse(q);
+        return u === 'lesson' || u === 'both';
+      })
+      .map((q) => q.id);
+    const fallbackIds = questions
       .filter((q) => q.page_index === pageIndex)
       .map((q) => q.id);
+    const ids = grammarIds.length >= 2 ? grammarIds : fallbackIds;
     if (ids.length === 0) return page;
     const check = ids.slice(0, 3);
     return { ...page, check, steps: undefined };
+  });
+}
+
+/** Day session bank: use=lesson|both (excludes practice-only). */
+export function daySessionQuestions(questions: Question[]): Question[] {
+  return questions.filter((q) => {
+    const u = questionUse(q);
+    return u === 'lesson' || u === 'both';
   });
 }
 
@@ -137,6 +171,7 @@ export function assembleLessonPack(opts: {
   const { pages, questions } = applyCommonMistakesToQuestions(
     pagesChecked,
     opts.questions,
+    { items: opts.outline.items },
   );
 
   const recycleIds = new Set(opts.recycleIds ?? []);

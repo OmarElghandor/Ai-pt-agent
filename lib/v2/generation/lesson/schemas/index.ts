@@ -6,6 +6,7 @@ import { LangCheckSchema } from '../jobs/runLangCheck';
 import { MicroJobSchema } from '../jobs/runMicro';
 import { OutlineToolSchema } from '../jobs/runOutline';
 import { QuestionsSchema } from '../jobs/runQuestions';
+import { RealWorldToolSchema } from '../jobs/runRealWorld';
 import { StoryToolSchema } from '../jobs/runStory';
 import { ItemsJobSchema } from './items';
 import { PageJobSchema } from './page';
@@ -24,6 +25,7 @@ export const JOB_SCHEMAS = {
   questions: QuestionsSchema,
   micro: MicroJobSchema,
   daily_use: DailyUseSchema,
+  real_world: RealWorldToolSchema,
   continuity: ContinuityToolSchema,
   lang_check: LangCheckSchema,
 } as const satisfies Record<string, z.ZodType>;

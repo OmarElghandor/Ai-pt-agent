@@ -1,4 +1,5 @@
 export const PRACTICE_MINUTES = 3;
+export const FIND_IMAGE_MINUTES = 2;
 
 /** "Dia 6" from the lesson day number. Portuguese, no accent. */
 export function formatDayLabel(day: number): string {

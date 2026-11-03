@@ -4,6 +4,7 @@ import {
   storyIdFor,
   type StoryDoc,
 } from '@/lib/v2/content/story';
+import { rehydrateStoryImages } from '@/lib/v2/images/rehydrate';
 import { V2StoryModel } from '@/lib/v2/mongo/models';
 
 function leanToStory(doc: {
@@ -16,6 +17,7 @@ function leanToStory(doc: {
   setting: string;
   lines: unknown;
   image_spec?: unknown;
+  image?: unknown;
   scenes?: unknown;
   is_weekly?: unknown;
   after_questions?: unknown;
@@ -31,6 +33,7 @@ function leanToStory(doc: {
     setting: doc.setting,
     lines: doc.lines,
     image_spec: doc.image_spec,
+    image: doc.image,
     scenes: doc.scenes,
     is_weekly: doc.is_weekly,
     after_questions: doc.after_questions,
@@ -43,7 +46,8 @@ export async function saveStoryDoc(story: StoryDoc): Promise<StoryDoc> {
     throw new Error('MongoDB not configured');
   }
   await connectMongo();
-  const parsed = parseStoryDoc(story);
+  let parsed = parseStoryDoc(story);
+  parsed = await rehydrateStoryImages(parsed);
   const Model = V2StoryModel();
   const $set: Record<string, unknown> = {
     id: parsed.id,
@@ -58,6 +62,8 @@ export async function saveStoryDoc(story: StoryDoc): Promise<StoryDoc> {
   const $unset: Record<string, 1> = {};
   if (parsed.image_spec != null) $set.image_spec = parsed.image_spec;
   else $unset.image_spec = 1;
+  if (parsed.image != null) $set.image = parsed.image;
+  else $unset.image = 1;
   if (parsed.scenes != null) $set.scenes = parsed.scenes;
   else $unset.scenes = 1;
   if (parsed.is_weekly != null) $set.is_weekly = parsed.is_weekly;
@@ -73,7 +79,7 @@ export async function saveStoryDoc(story: StoryDoc): Promise<StoryDoc> {
       $set,
       ...(Object.keys($unset).length ? { $unset } : {}),
     },
-    { upsert: true, new: true },
+    { upsert: true, returnDocument: 'after' },
   );
   return parsed;
 }
@@ -117,6 +123,22 @@ export async function getPublishedStory(opts: {
       target_lang,
       status: { $in: ['published', 'ready'] },
     })
+    .sort({ version: -1 })
+    .lean();
+  if (!doc) return null;
+  return leanToStory(doc as Parameters<typeof leanToStory>[0]);
+}
+
+/** Newest story for a day regardless of status (matches admin board latest lesson). */
+export async function getLatestStoryByDay(opts: {
+  day: number;
+  targetLang?: string;
+}): Promise<StoryDoc | null> {
+  if (!mongoConfigured()) return null;
+  await connectMongo();
+  const target_lang = opts.targetLang ?? 'pt-PT';
+  const doc = await V2StoryModel()
+    .findOne({ day: opts.day, target_lang })
     .sort({ version: -1 })
     .lean();
   if (!doc) return null;

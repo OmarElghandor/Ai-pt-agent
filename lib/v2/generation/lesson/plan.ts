@@ -45,6 +45,8 @@ export type DayPlan = {
   early_chunks_tl: string[];
   book_pages: string[];
   is_story: boolean;
+  /** Phase test day (A1 on day 49). */
+  is_test?: boolean;
   generation?: DayGeneration;
 };
 
@@ -80,7 +82,7 @@ export function canGenerate(day: DayPlan): { ok: true } | { ok: false; reason: s
   if (!gen) {
     return { ok: false, reason: 'missing generation block' };
   }
-  // Core items live in pt-PT.core-items.json; story / day 30 may have empty new_items.
+  // Core items live in pt-PT.core-items.json; story / is_test days may have empty new_items.
   if (!gen.page_plan?.length) {
     return { ok: false, reason: 'page_plan missing' };
   }

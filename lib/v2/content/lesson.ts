@@ -8,7 +8,30 @@ export const SkillSchema = z.enum([
   'reading',
   'speaking',
   'writing',
+  'grammar',
 ]);
+
+/** Closed set of day-bank question types (00 §7). */
+export const QuestionTypeSchema = z.enum([
+  'listen_meaning',
+  'listen_pick_tl',
+  'listen_pick_image',
+  'dictation',
+  'translate_write',
+  'fill_blank_write',
+  'describe_image_write',
+  'reply_write',
+  'say_it',
+  'reply_speak',
+  'describe_image_speak',
+  'read_aloud',
+  'fill_blank_choice',
+  'build_sentence',
+  'read_meaning',
+  'situation_choice',
+]);
+
+export const QuestionUseSchema = z.enum(['lesson', 'practice', 'both']);
 
 const LessonMetaSchema = z.object({
   id: z.string(),
@@ -39,10 +62,13 @@ const LessonMetaSchema = z.object({
 const QuestionSchema = z
   .object({
     id: z.string(),
-    type: z.string(),
+    type: QuestionTypeSchema.or(z.string()),
     skill: SkillSchema,
+    /** lesson = day/check only; practice = agent/SRS; both = all surfaces. */
+    use: QuestionUseSchema.optional(),
     /** 0-based page index this question belongs to (staged generation). */
     page_index: z.number().int().nonnegative().optional(),
+    page_id: z.string().optional(),
     tests: z.array(z.string()).optional(),
     tool_id: z.string().optional(),
     prompt: z.unknown(),

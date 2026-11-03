@@ -1,5 +1,6 @@
 import type { Item } from '@/lib/v2/content/items';
 import type { Page } from '@/lib/v2/content/page';
+import { NUMBERS_INTRO_DAY } from './buildRequest';
 import type { CriticIssue } from './jobs/runCritic';
 import { pickReplyId } from './heardReplies';
 import { wordCount } from './prompts/core';
@@ -248,11 +249,11 @@ export function checkDialoguePage(opts: {
         for (const tok of tokenizeTl(tl)) {
           const lower = tok.toLowerCase();
           if (/^\d+([.,]\d+)?$/.test(tok)) {
-            if (opts.day < 4) {
+            if (opts.day < NUMBERS_INTRO_DAY) {
               issues.push({
                 severity: 'high',
                 path: `${path}.tl`,
-                message: `number token "${tok}" not allowed before day 4`,
+                message: `number token "${tok}" not allowed before day ${NUMBERS_INTRO_DAY}`,
               });
             }
             continue;

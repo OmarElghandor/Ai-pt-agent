@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>بيقولوها كده · Day 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@600;700&family=Noto+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        background: '#fff8f2',
+        primary: '#003c41',
+        'on-primary': '#ffffff',
+        secondary: '#a9361d',
+        muted: '#8C8C86',
+        'surface-container': '#f8ecdb',
+        'surface-container-low': '#fef2e1',
+        'tertiary-fixed': '#fee263',
+        'on-surface': '#201b11',
+      },
+      fontFamily: {
+        serif: ['Newsreader', 'serif'],
+        arabic: ['Noto Sans Arabic', 'sans-serif'],
+      },
+    },
+  },
+};
+</script>
+<style>
+  body { font-family: 'Noto Sans Arabic', sans-serif; }
+  .font-serif { font-family: Newsreader, serif; }
+  .font-arabic { font-family: 'Noto Sans Arabic', sans-serif; }
+</style>
+</head>
+<body class="bg-background text-on-surface min-h-screen">
+<main class="mx-auto max-w-[390px] px-4 pb-24 pt-4 flex flex-col gap-3">
+  <header class="flex items-center gap-2 mb-1">
+    <span class="text-primary font-semibold font-arabic">بيقولوها كده</span>
+  </header>
+  <section class="rounded-xl bg-surface-container p-4 shadow-sm">
+    <span class="inline-block px-2.5 py-0.5 rounded-full bg-primary text-on-primary text-[10px] mb-2 tracking-wide">NO CAFÉ · في الكافيه</span>
+    <h1 class="text-xl font-bold text-primary font-arabic leading-tight">بيقولوها كده</h1>
+    <p class="mt-1 text-xs text-muted font-arabic">في الكافيه</p>
+  </section>
+  <div class="flex items-center justify-between gap-2">
+    <span class="text-[10px] text-muted font-arabic">٥ عبارات</span>
+    <button type="button" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-xs font-arabic">غطّي المعنى</button>
+  </div>
+  <div class="flex gap-1.5 overflow-x-auto pb-2">
+  <button type="button" class="shrink-0 px-3 py-1.5 rounded-full bg-primary text-on-primary text-xs">الكل (٥)</button>
+  <button type="button" class="shrink-0 px-3 py-1.5 rounded-full bg-surface-container text-xs font-arabic">نصيحة لشبونية (١)</button>
+  <button type="button" class="shrink-0 px-3 py-1.5 rounded-full bg-surface-container text-xs font-arabic">الطلب (٢)</button>
+  <button type="button" class="shrink-0 px-3 py-1.5 rounded-full bg-surface-container text-xs font-arabic">تاني (١)</button>
+  <button type="button" class="shrink-0 px-3 py-1.5 rounded-full bg-surface-container text-xs font-arabic">الدفع والحساب (١)</button>
+</div>
+  <div class="flex flex-col gap-2">
+<div class="phrase-card bg-white rounded-xl p-4 shadow-sm" data-cat="tip">
+  <div class="flex items-start justify-between gap-2 mb-2">
+    <div class="flex items-center gap-1.5">
+      <span class="w-6 h-6 rounded-full bg-surface-container text-primary flex items-center justify-center text-[10px] font-semibold">١</span>
+      <span class="px-2 py-0.5 rounded-full bg-surface-container text-primary text-[10px]">نصيحة لشبونية</span>
+    </div>
+    <button type="button" class="w-9 h-9 rounded-full bg-surface-container-low text-primary flex items-center justify-center" aria-label="استمع">🔊</button>
+  </div>
+  <div dir="ltr" class="text-left mb-1">
+    <p class="font-serif text-lg font-semibold text-primary">Uma bica, se faz favor.</p>
+    <p class="text-xs text-muted mt-0.5 font-arabic">أوما بيكا، سي فاش فاڤور.</p>
+  </div>
+  <div class="meaning-box">
+    <p class="text-sm font-medium font-arabic">قهوة صغيرة، من فضلك.</p>
+    <p class="text-xs text-muted mt-0.5 font-arabic">في لشبونة بيقولوا bica بدل café لما يطلبوا إسبريسو — كلمة محلية جداً.</p>
+  </div>
+  <div class="mt-3"><button type="button" class="rounded-full border border-secondary/40 px-3 py-1 text-xs font-semibold text-secondary font-arabic">+ للكروت</button></div>
+</div>
+<div class="phrase-card bg-white rounded-xl p-4 shadow-sm" data-cat="order">
+  <div class="flex items-start justify-between gap-2 mb-2">
+    <div class="flex items-center gap-1.5">
+      <span class="w-6 h-6 rounded-full bg-surface-container text-primary flex items-center justify-center text-[10px] font-semibold">٢</span>
+      <span class="px-2 py-0.5 rounded-full bg-surface-container text-primary text-[10px]">طلب كلاسيكي</span>
+    </div>
+    <button type="button" class="w-9 h-9 rounded-full bg-surface-container-low text-primary flex items-center justify-center" aria-label="استمع">🔊</button>
+  </div>
+  <div dir="ltr" class="text-left mb-1">
+    <p class="font-serif text-lg font-semibold text-primary">Queria um galão e um pastel de nata.</p>
+    <p class="text-xs text-muted mt-0.5 font-arabic">كِريا أون جالاون إي أون پاشتيل دي ناتا.</p>
+  </div>
+  <div class="meaning-box">
+    <p class="text-sm font-medium font-arabic">عايز قهوة بلبن وتارت كريمة.</p>
+    <p class="text-xs text-muted mt-0.5 font-arabic">أشهر كومبو في البرتغال — جرّبه الصبح مع Bom dia.</p>
+  </div>
+  <div class="mt-3"><button type="button" class="rounded-full border border-secondary/40 px-3 py-1 text-xs font-semibold text-secondary font-arabic">+ للكروت</button></div>
+</div>
+<div class="phrase-card bg-white rounded-xl p-4 shadow-sm" data-cat="other">
+  <div class="flex items-start justify-between gap-2 mb-2">
+    <div class="flex items-center gap-1.5">
+      <span class="w-6 h-6 rounded-full bg-surface-container text-primary flex items-center justify-center text-[10px] font-semibold">٣</span>
+      <span class="px-2 py-0.5 rounded-full bg-surface-container text-primary text-[10px]">تيك أواي</span>
+    </div>
+    <button type="button" class="w-9 h-9 rounded-full bg-surface-container-low text-primary flex items-center justify-center" aria-label="استمع">🔊</button>
+  </div>
+  <div dir="ltr" class="text-left mb-1">
+    <p class="font-serif text-lg font-semibold text-primary">É para levar.</p>
+    <p class="text-xs text-muted mt-0.5 font-arabic">إيه پارا ليڤار.</p>
+  </div>
+  <div class="meaning-box">
+    <p class="text-sm font-medium font-arabic">تيك أواي.</p>
+    <p class="text-xs text-muted mt-0.5 font-arabic">لو مش هتقعد، قول الجملة دي وهو بيحضّر — levar يعني ياخد.</p>
+  </div>
+  <div class="mt-3"><button type="button" class="rounded-full border border-secondary/40 px-3 py-1 text-xs font-semibold text-secondary font-arabic">+ للكروت</button></div>
+</div>
+<div class="phrase-card bg-white rounded-xl p-4 shadow-sm" data-cat="pay">
+  <div class="flex items-start justify-between gap-2 mb-2">
+    <div class="flex items-center gap-1.5">
+      <span class="w-6 h-6 rounded-full bg-surface-container text-primary flex items-center justify-center text-[10px] font-semibold">٤</span>
+      <span class="px-2 py-0.5 rounded-full bg-surface-container text-primary text-[10px]">الحساب</span>
+    </div>
+    <button type="button" class="w-9 h-9 rounded-full bg-surface-container-low text-primary flex items-center justify-center" aria-label="استمع">🔊</button>
+  </div>
+  <div dir="ltr" class="text-left mb-1">
+    <p class="font-serif text-lg font-semibold text-primary">A conta, por favor.</p>
+    <p class="text-xs text-muted mt-0.5 font-arabic">أ كونتا، پور فاڤور.</p>
+  </div>
+  <div class="meaning-box">
+    <p class="text-sm font-medium font-arabic">الحساب، لو سمحت.</p>
+    <p class="text-xs text-muted mt-0.5 font-arabic">لما تخلص وعايز تمشي — conta يعني فاتورة.</p>
+  </div>
+  <div class="mt-3"><button type="button" class="rounded-full border border-secondary/40 px-3 py-1 text-xs font-semibold text-secondary font-arabic">+ للكروت</button></div>
+</div>
+<div class="phrase-card bg-white rounded-xl p-4 shadow-sm" data-cat="order">
+  <div class="flex items-start justify-between gap-2 mb-2">
+    <div class="flex items-center gap-1.5">
+      <span class="w-6 h-6 rounded-full bg-surface-container text-primary flex items-center justify-center text-[10px] font-semibold">٥</span>
+      <span class="px-2 py-0.5 rounded-full bg-surface-container text-primary text-[10px]">تفصيلة في الطلب</span>
+    </div>
+    <button type="button" class="w-9 h-9 rounded-full bg-surface-container-low text-primary flex items-center justify-center" aria-label="استمع">🔊</button>
+  </div>
+  <div dir="ltr" class="text-left mb-1">
+    <p class="font-serif text-lg font-semibold text-primary">Sem açúcar, obrigado.</p>
+    <p class="text-xs text-muted mt-0.5 font-arabic">سين أسوكار، أوبريجادو.</p>
+  </div>
+  <div class="meaning-box">
+    <p class="text-sm font-medium font-arabic">من غير سكر، شكراً.</p>
+    <p class="text-xs text-muted mt-0.5 font-arabic">لو بتحب قهوتك سادة — açúcar يعني سكر.</p>
+  </div>
+  <div class="mt-3"><button type="button" class="rounded-full border border-secondary/40 px-3 py-1 text-xs font-semibold text-secondary font-arabic">+ للكروت</button></div>
+</div>
+  </div>
+  <aside class="rounded-xl border border-amber-200 bg-tertiary-fixed/40 p-4">
+    <p class="font-semibold text-sm font-arabic mb-1">Quero ولا Queria؟</p>
+    <p class="text-sm font-arabic leading-6">متقولش <strong dir="ltr" class="text-primary">Quero um café.</strong> — قول <strong dir="ltr" class="text-primary">Queria um café, por favor.</strong> — Quero يعني «أنا عايز» — صريحة أوي وممكن تبان جافة في الكافيه. اللشبونيين بيقولوا Queria زي ما إحنا بنقول «لو سمحت عايز» — أهدى وألطف، والناس بتحبها.</p>
+  </aside>
+  <button type="button" class="mt-2 w-full rounded-full bg-secondary text-white py-3 font-semibold font-arabic">التالي</button>
+</main>
+</body>
+</html>

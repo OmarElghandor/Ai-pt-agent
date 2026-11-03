@@ -580,7 +580,7 @@ Use the attached image only as a style reference: same line weight, colors and s
 Style block (`STYLE_PROMPT`):
 
 ```text
-Friendly educational cartoon illustration for adult learners, clean bold dark-navy outlines of even weight, flat colors with soft subtle shading, warm cheerful palette (sunny yellow, sky blue, leaf green, coral, soft orange), plain warm cream background, centered subject with generous empty space around it, modern language-learning textbook style. Adult realistic body proportions, small natural eyes, subtle expressions, not cute, not childish, no chibi, no big heads. No text, no letters, no numbers, no watermark.
+Hand-drawn editorial illustration in ink and soft watercolour: loose, confident pen linework with visible sketchy hatching, muted warm palette (ochre, faded terracotta, sage green, dusty blue, cream paper tones), light watercolour washes that leave some paper showing, subtle paper grain. Detailed, lived-in Lisbon background (cobblestone calçada, azulejo tiles, wrought-iron balconies, yellow tram, terracotta roofs, street lamps) drawn slightly softer and less saturated than the characters, so the people stay the focus. Adult realistic proportions, expressive natural faces, candid storytelling moment, the two main people look at each other and interact. Gentle natural light that matches the time of day. Like a modern travel-sketchbook or graphic-novel panel. No text, no letters, no readable signs, no numbers, no logos, no speech bubbles, no watermark. Not cartoonish, not childish, not 3D, not photorealistic.
 ```
 
 Character descriptions substituted for ids:

@@ -5,6 +5,7 @@ const SKILL_META: Record<Skill, { label: string; className: string }> = {
   reading: { label: 'قراية', className: 'bg-v2-skill-reading text-white' },
   speaking: { label: 'كلام', className: 'bg-v2-skill-speaking text-white' },
   writing: { label: 'كتابة', className: 'bg-v2-skill-writing text-white' },
+  grammar: { label: 'قواعد', className: 'bg-v2-skill-reading text-white' },
 };
 
 type Props = {

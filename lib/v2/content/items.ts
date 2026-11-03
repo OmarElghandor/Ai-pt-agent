@@ -14,6 +14,12 @@ const MediaSchema = z
   })
   .passthrough();
 
+/** Denormalized ready image link written from v2_images. */
+export const ItemImageLinkSchema = z.object({
+  key: z.string().min(1),
+  url: z.string().min(1),
+});
+
 export const TenseSchema = z.enum([
   'inf',
   'pres',
@@ -84,6 +90,7 @@ const WordItemSchema = z.object({
   pos: z.string().optional(),
   rank: z.number().optional(),
   media: MediaSchema.optional(),
+  image: ItemImageLinkSchema.optional(),
   /** Example sentence TL, or an item id that resolves to one. */
   example: z.string().optional(),
   /** Optional: item beyond the day's core list (max 2 per day). */
@@ -103,6 +110,7 @@ const PhraseItemSchema = z.object({
   ipa: z.string().optional(),
   marks: z.array(MarkSchema).optional(),
   media: MediaSchema.optional(),
+  image: ItemImageLinkSchema.optional(),
   /** When / where you say it — Egyptian. Required for every phrase. */
   context_eg: z.string().min(1),
   /** One key word from tl to hide in cloze practice. */
@@ -121,6 +129,12 @@ const PhraseItemSchema = z.object({
    * Does not count toward the day's extra-item cap.
    */
   derived: z.boolean().optional(),
+  /** Short Egyptian tag on real-world phrases (أسلوب مهذب، الحساب…). */
+  tag: z.string().optional(),
+  /** Category slug for real-world chips (order, pay, polite…). */
+  category: z.string().optional(),
+  /** Real-world exposure phrase — not core; cards only after per-user opt-in. */
+  real_world: z.boolean().optional(),
   extra: ExtraFlag,
   has_card: HasCardFlag,
   introduced_on_page: IntroducedOnPage,

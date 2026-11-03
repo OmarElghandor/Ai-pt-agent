@@ -38,6 +38,8 @@ export type ItemState = {
   card: CardSrs;
   lastImplicitReviewLocalDate: string | null;
   weakToolIds: string[];
+  /** Per-user card opt-in (real-world «+ للكروت»). */
+  opt_in_card?: boolean;
 };
 
 export type ProgressError = {

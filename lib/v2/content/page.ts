@@ -10,6 +10,7 @@ export const PresetSchema = z.enum([
   'dictionary',
   'scene',
   'story',
+  'real_world',
 ]);
 
 export const ModeSchema = z.enum(['sections', 'guided', 'explore', 'static']);
@@ -29,6 +30,7 @@ export function modeForPreset(
     case 'phrases':
     case 'dictionary':
     case 'scene':
+    case 'real_world':
     default:
       return 'static';
   }
@@ -133,6 +135,23 @@ export const PageObjectSchema = z.object({
         why_eg: z.string(),
       }),
     )
+    .optional(),
+  /**
+   * Real-world («بيقولوها كده») page payload — code-owned.
+   * Categories only when ≥2 distinct categories.
+   */
+  real_world: z
+    .object({
+      phrase_ids: z.array(z.string().min(1)).min(3).max(5),
+      categories: z
+        .array(
+          z.object({
+            id: z.string().min(1),
+            label_eg: z.string().min(1),
+          }),
+        )
+        .optional(),
+    })
     .optional(),
 });
 

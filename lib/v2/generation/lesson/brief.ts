@@ -2,6 +2,7 @@ import { phaseForDay } from './buildRequest';
 import {
   getCoreItemsDay,
   isNoNewItemsDay,
+  type AuthoredRealWorldPhrase,
   type CoreItem,
 } from './coreItems';
 import type { DayDigest } from './handoffs';
@@ -27,7 +28,7 @@ export type LessonBrief = {
   core_items_source: 'core_file';
   /** Recycle ids from the core-items file (resolved against KNOWN at items job). */
   recycle_ids: string[];
-  /** Story days / day 30 / empty core — no new items. */
+  /** Story days / is_test / empty core — no new items. */
   no_new_items: boolean;
   planned_presets: string[];
   /** Previous day's day_digest + new items, when available. */
@@ -35,6 +36,10 @@ export type LessonBrief = {
   /** day>1 but no previous assemble digest loaded. */
   yesterday_missing: boolean;
   micro_step: string;
+  /**
+   * Authored real-world phrases from core-items (when present, job is skipped).
+   */
+  authored_real_world: AuthoredRealWorldPhrase[] | null;
   /** Admin-visible non-blocking warnings. */
   warnings: string[];
 };
@@ -90,6 +95,10 @@ export function buildLessonBrief(
     yesterday,
     yesterday_missing,
     micro_step,
+    authored_real_world:
+      coreDay.real_world && coreDay.real_world.length > 0
+        ? [...coreDay.real_world]
+        : null,
     warnings,
   };
 }

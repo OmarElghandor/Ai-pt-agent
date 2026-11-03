@@ -2,12 +2,19 @@
 
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
-import { QuestionCard } from '@/components/v2/blocks/QuestionCard';
+import { useEffect, useState } from 'react';
 import { PrimaryButton } from '@/components/v2/PrimaryButton';
+import { QuestionSession } from '@/components/v2/questions/QuestionSession';
 import { markPageDone } from '@/components/v2/player/session';
 import type { Item } from '@/lib/v2/content/items';
 import type { Question } from '@/lib/v2/content/lesson';
+
+function forDaySession(questions: Question[]): Question[] {
+  return questions.filter((q) => {
+    const u = (q as { use?: string }).use;
+    return u !== 'practice';
+  });
+}
 
 type PackPayload = {
   day: number;
@@ -15,50 +22,52 @@ type PackPayload = {
   questions: Question[];
 };
 
+type LoadState =
+  | { status: 'loading' }
+  | { status: 'missing' }
+  | { status: 'ready'; data: PackPayload };
+
 export default function DayQuestionsPage() {
   const params = useParams<{ day: string }>();
   const day = Number(params.day);
-  const [data, setData] = useState<PackPayload | null>(null);
-  const [index, setIndex] = useState(0);
-  const [finished, setFinished] = useState(false);
+  const [state, setState] = useState<LoadState>({ status: 'loading' });
 
   useEffect(() => {
     if (!Number.isInteger(day) || day < 1) return;
+    setState({ status: 'loading' });
     void fetch(`/api/v2/lessons/${day}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((j) => {
+      .then(async (r) => {
+        if (!r.ok) {
+          setState({ status: 'missing' });
+          return;
+        }
+        const j = await r.json();
         const lesson = j?.lesson ?? j?.pack;
-        if (!lesson) return;
-        setData({
-          day: j.day ?? day,
-          items: lesson.items ?? [],
-          questions: (lesson.questions ?? []).filter(
-            (q: Question) => typeof q.page_index !== 'number' || q.page_index > 0,
-          ),
+        if (!lesson) {
+          setState({ status: 'missing' });
+          return;
+        }
+        const all = (lesson.questions ?? []) as Question[];
+        setState({
+          status: 'ready',
+          data: {
+            day: j.day ?? day,
+            items: lesson.items ?? [],
+            questions: forDaySession(all),
+          },
         });
       })
-      .catch(() => setData(null));
+      .catch(() => setState({ status: 'missing' }));
   }, [day]);
-
-  useEffect(() => {
-    if (finished && Number.isInteger(day)) {
-      markPageDone(day, 'day_questions');
-    }
-  }, [finished, day]);
-
-  const itemMap = useMemo(
-    () => new Map((data?.items ?? []).map((i) => [i.id, i])),
-    [data],
-  );
 
   if (!Number.isInteger(day) || day < 1) {
     return <p className="p-4">يوم غلط</p>;
   }
 
-  if (!data) {
+  if (state.status === 'loading') {
     return (
-      <main className="px-4 py-8">
-        <Link href={`/day/${day}`} className="text-sm">
+      <main className="mx-auto max-w-[390px] px-4 py-8">
+        <Link href={`/day/${day}`} className="text-sm text-v2-ink">
           رجوع
         </Link>
         <p className="mt-4 font-[family-name:var(--font-v2-arabic)]">…</p>
@@ -66,29 +75,18 @@ export default function DayQuestionsPage() {
     );
   }
 
-  const qs = data.questions;
-
-  if (!qs.length) {
+  if (state.status === 'missing') {
     return (
-      <main className="px-4 py-8">
-        <h1 className="font-[family-name:var(--font-v2-arabic)] text-xl">أسئلة اليوم</h1>
-        <p className="mt-2 text-v2-ink-muted">مفيش أسئلة جاهزة.</p>
-        <PrimaryButton
-          className="mt-6"
-          href={`/day/${day}`}
-        >
-          خريطة اليوم
-        </PrimaryButton>
-      </main>
-    );
-  }
-
-  if (finished) {
-    return (
-      <main className="px-4 py-8">
-        <h1 className="font-[family-name:var(--font-v2-arabic)] text-2xl text-v2-primary">
-          خلّصت الأسئلة
+      <main className="mx-auto max-w-[390px] px-4 py-8">
+        <Link href={`/day/${day}`} className="text-sm text-v2-ink">
+          رجوع
+        </Link>
+        <h1 className="mt-4 font-[family-name:var(--font-v2-arabic)] text-xl text-v2-primary">
+          أسئلة اليوم
         </h1>
+        <p className="mt-2 font-[family-name:var(--font-v2-arabic)] text-v2-ink-muted">
+          الدرس مش متاح دلوقتي.
+        </p>
         <PrimaryButton className="mt-6" href={`/day/${day}`}>
           خريطة اليوم
         </PrimaryButton>
@@ -96,26 +94,28 @@ export default function DayQuestionsPage() {
     );
   }
 
-  const q = qs[index]!;
+  const { data } = state;
+
+  if (!data.questions.length) {
+    return (
+      <main className="mx-auto max-w-[390px] px-4 py-8">
+        <h1 className="font-[family-name:var(--font-v2-arabic)] text-xl text-v2-primary">
+          أسئلة اليوم
+        </h1>
+        <p className="mt-2 text-v2-ink-muted">مفيش أسئلة جاهزة.</p>
+        <PrimaryButton className="mt-6" href={`/day/${day}`}>
+          خريطة اليوم
+        </PrimaryButton>
+      </main>
+    );
+  }
 
   return (
-    <main className="flex min-h-dvh flex-col px-4 py-4">
-      <Link href={`/day/${day}`} className="text-sm text-v2-ink">
-        رجوع
-      </Link>
-      <p className="mt-2 font-[family-name:var(--font-v2-ui)] text-xs text-v2-ink-muted">
-        سؤال {index + 1} من {qs.length}
-      </p>
-      <div className="mt-4 flex-1">
-        <QuestionCard
-          question={q}
-          items={itemMap}
-          onAnswer={() => {
-            if (index + 1 >= qs.length) setFinished(true);
-            else setIndex((i) => i + 1);
-          }}
-        />
-      </div>
-    </main>
+    <QuestionSession
+      day={day}
+      questions={data.questions}
+      items={data.items}
+      onComplete={() => markPageDone(day, 'day_questions')}
+    />
   );
 }

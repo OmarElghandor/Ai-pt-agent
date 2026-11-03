@@ -1,22 +1,39 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { DemoImageGenerate } from '@/components/v2/DemoImageGenerate';
 import { ImageSlot } from '@/components/v2/ImageSlot';
-import { PrimaryButton } from '@/components/v2/PrimaryButton';
 import type { Item } from '@/lib/v2/content/items';
 import type { Page } from '@/lib/v2/content/page';
-import type {
-  StoryAfterQuestion,
-  StoryDoc,
-  StoryLine,
-} from '@/lib/v2/content/story';
+import type { StoryDoc, StoryLine } from '@/lib/v2/content/story';
+import { isCloudinaryUrl } from '@/lib/v2/images/cloudinaryUrl';
 import { markPageDone } from './session';
+
+/** Width-only Cloudinary URL so object-cover can fill the tall hero. */
+function storyHeroDisplayUrl(
+  url: string | null | undefined,
+  width = 1200,
+): string | null {
+  if (!url) return null;
+  if (!isCloudinaryUrl(url)) return url;
+  const transform = [
+    'c_fill',
+    'f_auto',
+    'q_auto',
+    `w_${Math.max(1, Math.round(width))}`,
+  ].join(',');
+  const version = url.match(/\/upload\/(v\d+)\//)?.[1];
+  const after = version ? `${transform}/${version}/` : `${transform}/`;
+  return url.replace(/\/upload\/(?:v\d+\/)?/, `/upload/${after}`);
+}
 
 type DialogueLine = {
   speaker: string;
   tl: string;
   ar?: string;
+  en?: string;
   ids?: string[];
   side?: 'left' | 'right' | 'center';
 };
@@ -25,8 +42,6 @@ type Props = {
   day: number;
   page: Page;
   items: Item[];
-  /** intro = watch-only; test = uninterrupted replay + after_questions */
-  mode: 'intro' | 'test';
   situationEg?: string;
   titleTl?: string;
   nextHref?: string | null;
@@ -49,11 +64,17 @@ function isLearner(speaker: string, cast?: StoryDoc['cast']): boolean {
   );
 }
 
+/** Native-language meaning; Arabic for now, English later. */
+function lineMeaning(line: DialogueLine): string | undefined {
+  return line.ar || undefined;
+}
+
 function linesFromStory(story: StoryDoc): DialogueLine[] {
   return story.lines.map((l: StoryLine) => ({
     speaker: l.speaker,
     tl: l.tl,
     ar: l.ar,
+    en: l.en,
     ids: l.ids,
     side: l.side,
   }));
@@ -68,47 +89,6 @@ function linesFromPage(page: Page): DialogueLine[] {
     ar: l.ar,
     ids: l.ids,
   }));
-}
-
-function newAnswerId(): string {
-  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
-    return crypto.randomUUID();
-  }
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0;
-    const v = c === 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-}
-
-function postStoryAnswer(opts: {
-  day: number;
-  questionId: string;
-  lineIndex: number;
-  optionIndex: number;
-  correctIndex: number;
-}): void {
-  void opts.lineIndex;
-  void fetch('/api/v2/answers', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-timezone':
-        typeof Intl !== 'undefined'
-          ? Intl.DateTimeFormat().resolvedOptions().timeZone
-          : 'UTC',
-    },
-    body: JSON.stringify({
-      kind: 'closed',
-      answer_id: newAnswerId(),
-      day: opts.day,
-      skill: 'listening',
-      option_index: opts.optionIndex,
-      correct_index: opts.correctIndex,
-      question_id: opts.questionId,
-      tool_id: 'story',
-    }),
-  }).catch(() => {});
 }
 
 async function fetchLineBlob(opts: {
@@ -159,13 +139,14 @@ export function StoryPlayer({
   day,
   page,
   items,
-  mode,
   situationEg,
   titleTl,
   nextHref = null,
   story: storyProp = null,
   storyId: storyIdProp = null,
 }: Props) {
+  void items;
+  const router = useRouter();
   const resolvedStoryId =
     storyIdProp ?? storyProp?.id ?? page.story_id ?? null;
 
@@ -204,24 +185,13 @@ export function StoryPlayer({
     return linesFromPage(page);
   }, [story, page]);
 
-  const afterQuestions: StoryAfterQuestion[] = useMemo(
-    () => story?.after_questions ?? [],
-    [story],
-  );
-
   const [index, setIndex] = useState(0);
   /** User wants continuous autoplay; starts true. */
   const [wantPlay, setWantPlay] = useState(true);
   const [audioBusy, setAudioBusy] = useState(false);
   const [speed, setSpeed] = useState<StorySpeed>(1);
-  const [showMeaning, setShowMeaning] = useState(false);
-  const [meaningsOpened, setMeaningsOpened] = useState(0);
-  const [done, setDone] = useState(false);
-  const [askPhase, setAskPhase] = useState(false);
-  const [askIndex, setAskIndex] = useState(0);
-  const [askCorrect, setAskCorrect] = useState(0);
-  const [askWrongId, setAskWrongId] = useState<string | null>(null);
-  const [askAnswered, setAskAnswered] = useState(false);
+  /** Last line finished — highlight next-step arrow; stay on player. */
+  const [atEnd, setAtEnd] = useState(false);
 
   const blobCacheRef = useRef<Map<number, Blob>>(new Map());
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -241,39 +211,37 @@ export function StoryPlayer({
   const line = lines[index];
   const total = lines.length;
   const cast = story?.cast;
+  const lineIsLearner = line ? isLearner(line.speaker, cast) : false;
+  const meaning = line ? lineMeaning(line) : undefined;
 
   const characterLabel = useMemo(() => {
     if (!line || isLearner(line.speaker, cast)) return 'إنت بتقول';
     return `${line.speaker} بتتكلم`;
   }, [line, cast]);
 
-  function finishStory() {
-    if (mode === 'test' && afterQuestions.length > 0) {
-      setAskPhase(true);
-      setAskIndex(0);
-      setAskCorrect(0);
-      setAskWrongId(null);
-      setAskAnswered(false);
-      setWantPlay(false);
-      return;
-    }
-    setDone(true);
+  function reachEnd() {
+    setAtEnd(true);
     setWantPlay(false);
-    markPageDone(day, mode === 'test' ? `${page.id}__test` : page.id);
+    markPageDone(day, page.id);
   }
 
   function advanceOrFinish(fromIndex: number) {
     if (fromIndex + 1 >= total) {
-      finishStory();
+      reachEnd();
     } else {
-      setShowMeaning(false);
       setIndex(fromIndex + 1);
     }
   }
 
+  function goNextPage() {
+    if (!atEnd) return;
+    markPageDone(day, page.id);
+    router.push(nextHref ?? `/day/${day}`);
+  }
+
   // Prefetch next line while current plays / whenever index changes.
   useEffect(() => {
-    if (!resolvedStoryId || done || askPhase) return;
+    if (!resolvedStoryId || atEnd) return;
     const next = index + 1;
     if (next >= lines.length) return;
     if (blobCacheRef.current.has(next)) return;
@@ -289,11 +257,11 @@ export function StoryPlayer({
       if (blob && !ac.signal.aborted) blobCacheRef.current.set(next, blob);
     });
     return () => ac.abort();
-  }, [index, resolvedStoryId, lines, done, askPhase]);
+  }, [index, resolvedStoryId, lines, atEnd]);
 
   // Playback loop: plays current line when wantPlay; advances when audio ends.
   useEffect(() => {
-    if (done || askPhase || !line || !wantPlay) {
+    if (atEnd || !line || !wantPlay) {
       setAudioBusy(false);
       return;
     }
@@ -304,7 +272,6 @@ export function StoryPlayer({
 
     const run = async () => {
       setAudioBusy(true);
-      if (mode === 'intro') setShowMeaning(false);
 
       // No story id (embedded dialogue): brief beat then advance.
       if (!resolvedStoryId) {
@@ -379,7 +346,7 @@ export function StoryPlayer({
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- advance uses stable index snapshot
-  }, [index, wantPlay, done, askPhase, line, resolvedStoryId, mode, total, day, page.id, afterQuestions.length]);
+  }, [index, wantPlay, atEnd, line, resolvedStoryId, total, day, page.id]);
 
   function togglePlay() {
     if (wantPlay) {
@@ -390,6 +357,7 @@ export function StoryPlayer({
       setAudioBusy(false);
       return;
     }
+    if (atEnd) return;
     setWantPlay(true);
   }
 
@@ -400,76 +368,16 @@ export function StoryPlayer({
     });
   }
 
-  function openMeaning() {
-    if (mode !== 'intro') return;
-    if (!showMeaning) setMeaningsOpened((n) => n + 1);
-    setShowMeaning(true);
-  }
-
-  function restart() {
-    playGenRef.current += 1;
-    audioRef.current?.pause();
-    audioRef.current = null;
-    blobCacheRef.current.clear();
-    setIndex(0);
-    setDone(false);
-    setAskPhase(false);
-    setAskIndex(0);
-    setAskCorrect(0);
-    setAskWrongId(null);
-    setAskAnswered(false);
-    setMeaningsOpened(0);
-    setShowMeaning(false);
-    setWantPlay(true);
-  }
-
-  function finishAskPhase() {
-    setAskPhase(false);
-    setDone(true);
-    markPageDone(day, `${page.id}__test`);
-  }
-
-  function pickAfterOption(
-    q: StoryAfterQuestion,
-    opt: { id: string; label: string; correct: boolean },
-    optionIndex: number,
-  ) {
-    if (askAnswered) return;
-    const correctIndex = q.options.findIndex((o) => o.correct);
-    postStoryAnswer({
-      day,
-      questionId: q.id,
-      lineIndex: q.line_index,
-      optionIndex,
-      correctIndex: correctIndex >= 0 ? correctIndex : 0,
-    });
-    if (opt.correct) {
-      setAskCorrect((n) => n + 1);
-      setAskWrongId(null);
-      setAskAnswered(true);
-      window.setTimeout(() => {
-        if (askIndex + 1 >= afterQuestions.length) {
-          finishAskPhase();
-        } else {
-          setAskIndex((i) => i + 1);
-          setAskAnswered(false);
-          setAskWrongId(null);
-        }
-      }, 450);
-      return;
-    }
-    setAskWrongId(opt.id);
-    setAskAnswered(true);
-    window.setTimeout(() => {
-      if (askIndex + 1 >= afterQuestions.length) {
-        finishAskPhase();
-      } else {
-        setAskIndex((i) => i + 1);
-        setAskAnswered(false);
-        setAskWrongId(null);
-      }
-    }, 700);
-  }
+  const storyImageUrl =
+    story && 'image' in story && story.image && typeof story.image === 'object'
+      ? (story.image as { url?: string }).url
+      : undefined;
+  const [sceneSrc, setSceneSrc] = useState<string | null>(
+    storyHeroDisplayUrl(storyImageUrl),
+  );
+  useEffect(() => {
+    setSceneSrc(storyHeroDisplayUrl(storyImageUrl));
+  }, [storyImageUrl]);
 
   if (resolvedStoryId && !story && !loadError && !linesFromPage(page).length) {
     return (
@@ -495,112 +403,40 @@ export function StoryPlayer({
     );
   }
 
-  if (askPhase && mode === 'test') {
-    const q = afterQuestions[askIndex];
-    if (!q) {
-      finishAskPhase();
-      return null;
-    }
-    return (
-      <main className="flex min-h-dvh flex-col px-4 py-8">
-        <p className="font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
-          سؤال {askIndex + 1} من {afterQuestions.length}
-        </p>
-        <h1 className="mt-2 font-[family-name:var(--font-v2-arabic)] text-xl text-v2-primary">
-          {q.prompt_eg}
-        </h1>
-        <div className="mt-6 space-y-2">
-          {q.options.map((opt, oi) => (
-            <button
-              key={opt.id}
-              type="button"
-              dir={q.kind === 'line_meaning' ? 'rtl' : 'ltr'}
-              disabled={askAnswered}
-              onClick={() => pickAfterOption(q, opt, oi)}
-              className={[
-                'block w-full rounded-v2-card border px-3 py-3 text-start',
-                q.kind === 'line_meaning'
-                  ? 'font-[family-name:var(--font-v2-arabic)]'
-                  : 'font-[family-name:var(--font-v2-target)]',
-                askWrongId === opt.id
-                  ? 'border-amber-400 bg-amber-50 text-amber-900'
-                  : askAnswered && opt.correct
-                    ? 'border-v2-primary bg-v2-primary/10'
-                    : 'border-v2-line bg-v2-card',
-              ].join(' ')}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      </main>
-    );
-  }
-
-  if (done) {
-    if (mode === 'intro') {
-      return (
-        <main className="flex min-h-dvh flex-col px-4 py-8">
-          <h1 className="font-[family-name:var(--font-v2-arabic)] text-2xl text-v2-primary">
-            خلّصت القصة
-          </h1>
-          {meaningsOpened > 0 ? (
-            <p className="mt-2 font-[family-name:var(--font-v2-arabic)] text-v2-ink-muted">
-              فتحت المعنى {meaningsOpened} مرة
-            </p>
-          ) : null}
-          <div className="mt-8 flex flex-col gap-3">
-            {nextHref ? (
-              <PrimaryButton href={nextHref}>الصفحة الجاية</PrimaryButton>
-            ) : (
-              <PrimaryButton href={`/day/${day}`}>خريطة اليوم</PrimaryButton>
-            )}
-            <button
-              type="button"
-              className="min-h-11 rounded-v2-chip border border-v2-line bg-v2-card px-5 py-2.5 font-[family-name:var(--font-v2-arabic)] text-base text-v2-primary"
-              onClick={restart}
-            >
-              من الأول
-            </button>
-          </div>
-        </main>
-      );
-    }
-
-    const n = afterQuestions.length;
-    return (
-      <main className="flex min-h-dvh flex-col px-4 py-8">
-        <h1 className="font-[family-name:var(--font-v2-arabic)] text-2xl text-v2-primary">
-          فهمت {askCorrect} من {n || askCorrect}
-        </h1>
-        <div className="mt-8 flex flex-col gap-3">
-          {nextHref ? (
-            <PrimaryButton href={nextHref}>التالي</PrimaryButton>
-          ) : (
-            <PrimaryButton href={`/day/${day}`}>خريطة اليوم</PrimaryButton>
-          )}
-          <button
-            type="button"
-            className="min-h-11 rounded-v2-chip border border-v2-line bg-v2-card px-5 py-2.5 font-[family-name:var(--font-v2-arabic)] text-base text-v2-primary"
-            onClick={restart}
-          >
-            اسمعها تاني
-          </button>
-        </div>
-      </main>
-    );
-  }
-
   const prev = index > 0 ? lines[index - 1] : null;
   const learnerLeft = (l: DialogueLine) =>
     l.side === 'left' || (l.side == null && isLearner(l.speaker, cast));
   const speedLabel =
     speed === 1 ? '1×' : speed === 0.75 ? '0.75×' : '1.25×';
 
+  const speakerPanel = lineIsLearner
+    ? 'bg-v2-action-tint text-v2-action-strong'
+    : 'bg-v2-primary-tint text-v2-primary';
+  const speakerBubble = (l: DialogueLine, current: boolean) => {
+    const learner = isLearner(l.speaker, cast);
+    return [
+      'max-w-[90%] rounded-2xl px-4 py-3 text-start shadow',
+      learner
+        ? 'bg-v2-action-tint text-v2-action-strong'
+        : 'bg-v2-primary-tint text-v2-primary',
+      learnerLeft(l) ? 'ms-auto' : 'me-auto',
+      current
+        ? learner
+          ? 'ring-2 ring-v2-action'
+          : 'ring-2 ring-v2-primary'
+        : 'max-w-[85%] opacity-50',
+    ].join(' ');
+  };
+
   return (
     <main className="relative flex min-h-dvh flex-col bg-v2-paper">
       <div className="relative h-[70vh] min-h-[280px] w-full overflow-hidden">
-        <ImageSlot variant="cover" className="absolute inset-0 h-full w-full" />
+        <ImageSlot variant="cover" src={sceneSrc} fill fit="cover" />
+        <DemoImageGenerate
+          body={{ kind: 'story_scene', day }}
+          label={sceneSrc ? 'Regenerate' : 'Generate'}
+          onReady={(url) => setSceneSrc(storyHeroDisplayUrl(url))}
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/50" />
         <header className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-3 pt-3">
           <Link
@@ -616,17 +452,7 @@ export function StoryPlayer({
               {titleTl ? ` · ${titleTl}` : ''}
             </p>
           </div>
-          {mode === 'intro' ? (
-            <button
-              type="button"
-              onClick={openMeaning}
-              className="rounded-full bg-black/30 px-3 py-2 text-xs text-white backdrop-blur"
-            >
-              المعنى
-            </button>
-          ) : (
-            <span className="w-10" />
-          )}
+          <span className="h-10 w-10" aria-hidden />
         </header>
         {situationEg ? (
           <p className="absolute left-1/2 top-16 z-10 -translate-x-1/2 rounded-full bg-black/35 px-3 py-1 font-[family-name:var(--font-v2-arabic)] text-xs text-white">
@@ -635,12 +461,7 @@ export function StoryPlayer({
         ) : null}
         <div className="absolute inset-x-4 bottom-6 z-10 space-y-2">
           {prev ? (
-            <div
-              className={[
-                'max-w-[85%] rounded-2xl bg-white/80 px-3 py-2 opacity-50',
-                learnerLeft(prev) ? 'ms-auto' : 'me-auto',
-              ].join(' ')}
-            >
+            <div className={speakerBubble(prev, false)}>
               <p
                 dir="ltr"
                 className="font-[family-name:var(--font-v2-target)] text-sm"
@@ -650,68 +471,40 @@ export function StoryPlayer({
             </div>
           ) : null}
           {line ? (
-            <button
-              type="button"
-              onClick={mode === 'intro' ? openMeaning : undefined}
-              className={[
-                'max-w-[90%] rounded-2xl bg-white px-4 py-3 text-start shadow',
-                learnerLeft(line)
-                  ? 'ms-auto ring-2 ring-v2-action'
-                  : 'me-auto ring-2 ring-v2-primary',
-              ].join(' ')}
-            >
+            <div className={speakerBubble(line, true)}>
               <p
                 dir="ltr"
                 className="font-[family-name:var(--font-v2-target)] text-lg font-semibold"
               >
                 {line.tl}
               </p>
-            </button>
+            </div>
           ) : null}
         </div>
       </div>
 
       <section className="relative z-20 -mt-4 flex flex-1 flex-col rounded-t-3xl bg-v2-paper px-4 pb-8 pt-5">
-        <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-          {characterLabel}
-          {audioBusy && wantPlay ? ' · …' : ''}
-        </p>
-        {line ? (
-          <>
-            <p
-              dir="ltr"
-              className="mt-2 font-[family-name:var(--font-v2-target)] text-2xl font-semibold text-v2-ink"
-            >
-              {line.tl}
-            </p>
-            {(() => {
-              const say = line.ids
-                ?.map((id) => items.find((i) => i.id === id))
-                .map((i) => (i && 'say' in i ? i.say : null))
-                .filter(Boolean)
-                .join(' ');
-              return say ? (
-                <p className="mt-1 font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-                  {say}
-                </p>
-              ) : null;
-            })()}
-            {mode === 'intro' && showMeaning && line.ar ? (
-              <p className="mt-2 font-[family-name:var(--font-v2-arabic)] text-base text-v2-ink">
-                {line.ar}
-              </p>
-            ) : null}
-            {mode === 'intro' && !showMeaning && line.ar ? (
-              <button
-                type="button"
-                onClick={openMeaning}
-                className="mt-2 self-start font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted underline-offset-2 hover:underline"
+        <div className={`rounded-2xl px-4 py-3 ${speakerPanel}`}>
+          <p className="font-[family-name:var(--font-v2-arabic)] text-sm opacity-80">
+            {characterLabel}
+            {audioBusy && wantPlay ? ' · …' : ''}
+          </p>
+          {line ? (
+            <>
+              <p
+                dir="ltr"
+                className="mt-2 font-[family-name:var(--font-v2-target)] text-2xl font-semibold"
               >
-                المعنى؟
-              </button>
-            ) : null}
-          </>
-        ) : null}
+                {line.tl}
+              </p>
+              {meaning ? (
+                <p className="mt-2 font-[family-name:var(--font-v2-arabic)] text-base">
+                  {meaning}
+                </p>
+              ) : null}
+            </>
+          ) : null}
+        </div>
 
         <p className="mt-4 font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
           جملة {index + 1} من {total}
@@ -723,22 +516,40 @@ export function StoryPlayer({
           />
         </div>
 
-        <div className="mt-5 flex items-center justify-center gap-4">
+        <div className="mt-5 flex flex-col items-center gap-3">
+          <div className="flex items-center justify-center gap-4">
+            <button
+              type="button"
+              onClick={cycleSpeed}
+              className="min-h-11 min-w-14 rounded-v2-chip border border-v2-line bg-v2-card px-3 font-[family-name:var(--font-v2-ui)] text-sm font-semibold text-v2-primary"
+              aria-label="سرعة الصوت"
+            >
+              {speedLabel}
+            </button>
+            <button
+              type="button"
+              onClick={togglePlay}
+              disabled={atEnd}
+              className="flex h-14 w-14 items-center justify-center rounded-full bg-v2-action text-2xl text-white shadow-[var(--shadow-v2-soft)] disabled:opacity-50"
+              aria-label={wantPlay ? 'إيقاف' : 'تشغيل'}
+            >
+              {wantPlay ? '❚❚' : '▶'}
+            </button>
+          </div>
           <button
             type="button"
-            onClick={cycleSpeed}
-            className="min-h-11 min-w-14 rounded-v2-chip border border-v2-line bg-v2-card px-3 font-[family-name:var(--font-v2-ui)] text-sm font-semibold text-v2-primary"
-            aria-label="سرعة الصوت"
+            onClick={goNextPage}
+            disabled={!atEnd}
+            className={[
+              'inline-flex w-full min-h-11 items-center justify-center gap-2 rounded-v2-chip px-5 py-2.5 font-[family-name:var(--font-v2-arabic)] text-base font-semibold transition',
+              atEnd
+                ? 'bg-v2-action text-white shadow-[var(--shadow-v2-soft)]'
+                : 'border border-v2-line bg-v2-card text-v2-primary opacity-60',
+            ].join(' ')}
+            aria-label="الصفحة الجاية"
           >
-            {speedLabel}
-          </button>
-          <button
-            type="button"
-            onClick={togglePlay}
-            className="flex h-14 w-14 items-center justify-center rounded-full bg-v2-action text-2xl text-white shadow-[var(--shadow-v2-soft)]"
-            aria-label={wantPlay ? 'إيقاف' : 'تشغيل'}
-          >
-            {wantPlay ? '❚❚' : '▶'}
+            <span aria-hidden>↓</span>
+            الصفحة الجاية
           </button>
         </div>
       </section>

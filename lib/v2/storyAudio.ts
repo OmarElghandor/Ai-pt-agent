@@ -1,35 +1,59 @@
 import { createHash } from 'node:crypto';
 import { readCachedAudio, storeCachedAudio } from '@/lib/audioCache';
 import { speakSegment, TTSNotConfiguredError } from '@/lib/tts';
+import {
+  DEFAULT_PT_VOICE,
+  voiceForCharacter,
+} from '@/lib/v2/characters/registry';
 import type { StoryDoc } from '@/lib/v2/content/story';
 import { getStoryById, saveStoryDoc } from '@/lib/v2/generation/lesson/storySave';
 
 const locks = new Map<string, Promise<{ key: string; cached: boolean }>>();
 
-function audioKey(storyId: string, lineIndex: number, speed: 'normal' | 'slow'): string {
-  return `${storyId}:L${lineIndex}:${speed}`;
+function audioKey(
+  storyId: string,
+  lineIndex: number,
+  speed: 'normal' | 'slow',
+  voice: string,
+): string {
+  return `${storyId}:L${lineIndex}:${speed}:${voice}`;
 }
 
 function cacheLang(_speed: 'normal' | 'slow'): 'pt' {
   return 'pt';
 }
 
-/** Distinct cache text so slow ≠ normal in the disk cache. */
-function cacheText(tl: string, speed: 'normal' | 'slow'): string {
-  if (speed === 'slow') return `${tl.trim()}\0slow`;
-  return tl.trim();
+/** Distinct cache text so slow ≠ normal and voice changes bust the cache. */
+function cacheText(tl: string, speed: 'normal' | 'slow', voice: string): string {
+  const base = speed === 'slow' ? `${tl.trim()}\0slow` : tl.trim();
+  return `${base}\0voice:${voice}`;
+}
+
+function resolveVoice(story: StoryDoc, speaker?: string): string {
+  const sp = (speaker ?? '').trim().toLowerCase();
+  if (!sp) return DEFAULT_PT_VOICE;
+  if (sp === 'narrator') return voiceForCharacter('narrator');
+  const fromCast = story.cast?.find(
+    (c) =>
+      c.id.toLowerCase() === sp ||
+      (sp === 'learner' && c.role === 'learner'),
+  );
+  if (fromCast?.voice) return fromCast.voice;
+  if (fromCast?.id) return voiceForCharacter(fromCast.id);
+  if (sp === 'learner') return voiceForCharacter('yassin');
+  return voiceForCharacter(sp);
 }
 
 /**
  * Ensure line audio exists; write key back onto the story document.
- * One in-flight lock per storyId:lineIndex:speed.
+ * One in-flight lock per storyId:lineIndex:speed:voice.
  */
 export async function ensureStoryLineAudio(opts: {
   storyId: string;
   version?: number;
   lineIndex: number;
   speed?: 'normal' | 'slow';
-  /** Optional speaker id for future voice mapping. */
+  /** Speaker id for Azure voice mapping. */
   speaker?: string;
 }): Promise<{
   key: string;
@@ -39,7 +63,13 @@ export async function ensureStoryLineAudio(opts: {
   story: StoryDoc;
 }> {
   const speed = opts.speed ?? 'normal';
-  const lockKey = `${opts.storyId}:${opts.lineIndex}:${speed}`;
+
+  const storyForVoice = await getStoryById(opts.storyId, opts.version);
+  if (!storyForVoice) throw new Error('Story not found');
+  const line0 = storyForVoice.lines[opts.lineIndex];
+  const speaker = opts.speaker ?? line0?.speaker;
+  const voice = resolveVoice(storyForVoice, speaker);
+  const lockKey = `${opts.storyId}:${opts.lineIndex}:${speed}:${voice}`;
 
   const existing = locks.get(lockKey);
   if (existing) {
@@ -48,7 +78,9 @@ export async function ensureStoryLineAudio(opts: {
     if (!story) throw new Error('Story not found');
     const line = story.lines[opts.lineIndex];
     const tl = line?.tl?.trim() ?? '';
-    const cached = tl ? readCachedAudio(cacheLang(speed), cacheText(tl, speed)) : null;
+    const cached = tl
+      ? readCachedAudio(cacheLang(speed), cacheText(tl, speed, voice))
+      : null;
     return {
       key: r.key,
       cached: true,
@@ -66,12 +98,18 @@ export async function ensureStoryLineAudio(opts: {
     const tl = line.tl.trim();
     if (!tl) throw new Error('Empty line tl');
 
-    const key = audioKey(story.id, opts.lineIndex, speed);
+    const key = audioKey(story.id, opts.lineIndex, speed, voice);
     const already = line.audio?.[speed];
-    const disk = readCachedAudio(cacheLang(speed), cacheText(tl, speed));
+    const disk = readCachedAudio(cacheLang(speed), cacheText(tl, speed, voice));
 
     if (already && disk) {
-      return { key: already, cached: true as const, story, buffer: disk.buffer, contentType: disk.contentType };
+      return {
+        key: already,
+        cached: true as const,
+        story,
+        buffer: disk.buffer,
+        contentType: disk.contentType,
+      };
     }
 
     let buffer: Buffer;
@@ -80,14 +118,11 @@ export async function ensureStoryLineAudio(opts: {
       buffer = disk.buffer;
       contentType = disk.contentType;
     } else {
-      void opts.speaker; // reserved for per-speaker Azure voices
       try {
-        // Slow: generate then we still cache under the slow text key.
-        // Client may also use playbackRate; server stores a dedicated blob.
-        const spoken = await speakSegment({ lang: 'pt', text: tl });
+        const spoken = await speakSegment({ lang: 'pt', text: tl, voice });
         buffer = spoken.buffer;
         contentType = spoken.contentType;
-        storeCachedAudio(cacheLang(speed), cacheText(tl, speed), spoken);
+        storeCachedAudio(cacheLang(speed), cacheText(tl, speed, voice), spoken);
       } catch (err) {
         if (err instanceof TTSNotConfiguredError) throw err;
         throw err;
@@ -96,7 +131,6 @@ export async function ensureStoryLineAudio(opts: {
 
     const lines = [...story.lines];
     const prev = lines[opts.lineIndex]!;
-    // Clear stale audio if tl drifted (caller should clear on edit; belt-and-braces)
     const nextAudio = {
       ...prev.audio,
       [speed]: key,
@@ -136,9 +170,13 @@ export function clearLineAudioOnTlChange(
   return undefined;
 }
 
-export function storyAudioContentHash(tl: string, speed: 'normal' | 'slow'): string {
+export function storyAudioContentHash(
+  tl: string,
+  speed: 'normal' | 'slow',
+  voice = DEFAULT_PT_VOICE,
+): string {
   return createHash('sha256')
-    .update(`pt\0${cacheText(tl, speed)}`)
+    .update(`pt\0${cacheText(tl, speed, voice)}`)
     .digest('hex')
     .slice(0, 16);
 }

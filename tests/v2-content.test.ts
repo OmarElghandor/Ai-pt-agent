@@ -27,20 +27,28 @@ function clone<T>(v: T): T {
 }
 
 describe('v2 content · day06', () => {
-  it('gold ESTAR pack is day 11 (filename day06 kept)', () => {
+  it('gold ESTAR pack is day 22 (filename day06 kept)', () => {
     const pack = loadDay6();
-    assert.equal(pack.lesson.day, 11);
-    assert.equal(pack.lesson.week, 2);
-    assert.equal(pack.lesson.id, 'pt-PT.d11');
+    assert.equal(pack.lesson.day, 22);
+    assert.equal(pack.lesson.week, 4);
+    assert.equal(pack.lesson.id, 'pt-PT.d22');
   });
 
-  it('passes in normal mode with one pages_count warning', () => {
+  it('normal mode warns pages_count; mode_preset errors until sections migration', () => {
     const pack = loadDay6();
     const result = validateLessonPack(pack, { mode: 'normal' });
-    assert.equal(hasErrors(result), false);
-    const warnings = result.issues.filter((i) => i.severity === 'warning');
-    assert.equal(warnings.length, 1);
-    assert.equal(warnings[0]!.rule, 'pages_count');
+    assert.ok(
+      result.issues.some((i) => i.rule === 'pages_count' && i.severity === 'warning'),
+    );
+    assert.ok(
+      result.issues.every(
+        (i) =>
+          i.severity === 'warning' ||
+          i.rule === 'mode_preset' ||
+          i.rule.startsWith('sections_'),
+      ),
+      JSON.stringify(result.issues),
+    );
   });
 
   it('pages_count is an error in strict mode', () => {

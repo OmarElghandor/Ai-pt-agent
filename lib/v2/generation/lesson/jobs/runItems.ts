@@ -589,7 +589,7 @@ ${knownLines}
     };
   };
 
-  // Story / day 30: skip LLM — bank is recycle + nothing new.
+  // Story / is_test days: skip LLM — bank is recycle + nothing new.
   if (opts.brief.no_new_items) {
     const items = coerceBank(
       applySayToItems(
@@ -721,21 +721,34 @@ ${knownLines}
       }
       if (core.variant_group) row.variant_group = core.variant_group;
       if (it.type === 'phrase' && core.tl_f) row.tl_f = core.tl_f;
+      if (it.type === 'phrase' && core.context_eg) {
+        row.context_eg = core.context_eg;
+      }
       // eg is generator hint; when ar is placeholder, seed from eg for unique meanings
+      // Never copy a slash-joined eg into ar.
       if (
         it.type === 'phrase' &&
         core.eg &&
-        (!row.ar || row.ar === '…')
+        !core.eg.includes('/') &&
+        (!row.ar || row.ar === '…' || String(row.ar).includes('/'))
       ) {
         row.ar = core.eg;
       }
-      // Always prefer core eg for night greeting uniqueness when id matches
-      if (it.id === 'phrase.good_night' && core.eg) {
+      // Always prefer core eg for night greeting (single MSA meaning)
+      if (it.id === 'phrase.good_night' && core.eg && !core.eg.includes('/')) {
         row.ar = core.eg;
+      }
+      if (typeof row.ar === 'string' && row.ar.includes('/')) {
+        row.ar = row.ar.split('/')[0]!.trim();
       }
       return row as Item;
     });
-    // Copy replies_to from core when present
+    // Copy role + replies_to from core when present
+    const roleById = new Map(
+      opts.brief.core_items
+        .filter((c) => c.role)
+        .map((c) => [c.id, c.role!] as const),
+    );
     const repliesById = new Map(
       opts.brief.core_items
         .filter((c) => c.replies_to)
@@ -743,8 +756,23 @@ ${knownLines}
     );
     items = items.map((it) => {
       if (it.type !== 'phrase') return it;
+      const role = roleById.get(it.id);
       const rt = repliesById.get(it.id);
-      return rt ? ({ ...it, replies_to: rt } as Item) : it;
+      let next = it;
+      if (role) next = { ...next, role } as Item;
+      if (rt) next = { ...next, replies_to: rt } as Item;
+      // Clear wrong reverse replies_to (heard must not reply to its said reply)
+      if (
+        role === 'heard' &&
+        'replies_to' in next &&
+        (next as { replies_to?: string }).replies_to
+      ) {
+        const { replies_to: _drop, ...rest } = next as Item & {
+          replies_to?: string;
+        };
+        next = rest as Item;
+      }
+      return next;
     });
     // plural_tl from core wins (including explicit null = no plural examples)
     const pluralById = new Map(

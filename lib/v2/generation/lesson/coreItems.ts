@@ -1,10 +1,21 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
+import { loadPlan } from './plan';
 
 export type CoreItemKind = 'word' | 'phrase' | 'pattern' | 'verb';
 
-/** Hard cap per day — vocab-heavy days sit at 18–19. */
-export const MAX_CORE_ITEMS_PER_DAY = 20;
+/** Hard cap per day (00 §1 — split lessons larger than this). */
+export const MAX_CORE_ITEMS_PER_DAY = 14;
+
+/** Hand-authored image scene description on a core item or day story. */
+export type AuthoredImage = {
+  ratio: '1:1' | '4:3' | '16:9';
+  characters: string[];
+  /** Scene description only — code adds STYLE + ref line + must_avoid. */
+  prompt: string;
+  /** Human-approved reference; keep when iterating style. */
+  approved?: boolean;
+};
 
 export type CoreItem = {
   id: string;
@@ -38,17 +49,39 @@ export type CoreItem = {
   variant_tl?: string[];
   /** Feminine TL when the phrase changes with speaker gender. */
   tl_f?: string;
+  /** Egyptian context tip copied onto phrase items (not the MSA ar). */
+  context_eg?: string;
+  /** Hand-authored image prompt (scene description). */
+  image?: AuthoredImage;
   /** @deprecated Prefer variant_tl — accepted on load then normalized. */
   variants?: string[];
+};
+
+/** Authored real-world phrase — used verbatim; job is skipped (00 §4). */
+export type AuthoredRealWorldPhrase = {
+  tl: string;
+  tl_f?: string;
+  ar: string;
+  eg_note: string;
+  tag: string;
 };
 
 export type CoreItemsDay = {
   day: number;
   title_tl?: string;
   is_story: boolean;
+  /** Phase test day (A1 on day 49) — no new items. */
+  is_test?: boolean;
   core_items: CoreItem[];
   recycle_ids: string[];
   note?: string;
+  /** Hand-authored story scene image prompt. */
+  story_image?: AuthoredImage;
+  /**
+   * Authored «بيقولوها كده» phrases — when present, the real_world job
+   * is skipped and these are used verbatim (still checked/enriched by code).
+   */
+  real_world?: AuthoredRealWorldPhrase[];
 };
 
 export type CoreItemsFile = {
@@ -226,17 +259,61 @@ export function getCoreItemsDay(
     day: entry.day,
     title_tl: entry.title_tl,
     is_story: Boolean(entry.is_story),
+    is_test: Boolean(entry.is_test),
     core_items: [...(entry.core_items ?? [])],
     recycle_ids: [...(entry.recycle_ids ?? [])],
     note: entry.note,
+    story_image: entry.story_image,
+    ...(entry.real_world?.length
+      ? { real_world: [...entry.real_world] }
+      : {}),
   };
 }
 
-/** Story days and day 30 (or any day with empty core) introduce no new items. */
+function asAuthoredImage(value: unknown): AuthoredImage | null {
+  if (!value || typeof value !== 'object') return null;
+  const v = value as Partial<AuthoredImage>;
+  if (
+    (v.ratio !== '1:1' && v.ratio !== '4:3' && v.ratio !== '16:9') ||
+    typeof v.prompt !== 'string' ||
+    !v.prompt.trim() ||
+    !Array.isArray(v.characters)
+  ) {
+    return null;
+  }
+  return {
+    ratio: v.ratio,
+    characters: v.characters.map(String),
+    prompt: v.prompt.trim(),
+    ...(v.approved === true ? { approved: true } : {}),
+  };
+}
+
+/** Authored image on a core item for this day (by item id). */
+export function getAuthoredItemImage(
+  day: number,
+  itemId: string,
+  filePath?: string,
+): AuthoredImage | null {
+  const entry = getCoreItemsDay(day, filePath);
+  const item = entry.core_items.find((c) => c.id === itemId);
+  return asAuthoredImage(item?.image);
+}
+
+/** Authored story scene image for this day. */
+export function getAuthoredStoryImage(
+  day: number,
+  filePath?: string,
+): AuthoredImage | null {
+  const entry = getCoreItemsDay(day, filePath);
+  return asAuthoredImage(entry.story_image);
+}
+
+/** Story days, phase tests, and empty-core days introduce no new items. */
 export function isNoNewItemsDay(entry: CoreItemsDay): boolean {
   return (
     entry.is_story ||
-    entry.day === 30 ||
+    Boolean(entry.is_test) ||
     (entry.core_items?.length ?? 0) === 0
   );
 }
@@ -265,17 +342,22 @@ export function coreItemsThroughDay(
   return [...byId.values()];
 }
 
-/** Core items for one calendar week (days (week-1)*7+1 .. week*7). */
+/**
+ * Core items for one curriculum week (uses `week` from pt-PT.days.json,
+ * not fixed 7-day arithmetic — weeks 4/5 have 8 days, week 7 has 5).
+ */
 export function coreItemsForWeek(
   week: number,
   filePath?: string,
 ): CoreItem[] {
-  const start = (week - 1) * 7 + 1;
-  const end = week * 7;
+  const plan = loadPlan();
+  const dayNums = new Set(
+    plan.days.filter((d) => d.week === week).map((d) => d.day),
+  );
   const file = loadCoreItemsFile(filePath);
   const byId = new Map<string, CoreItem>();
   for (const d of file.days) {
-    if (d.day < start || d.day > end) continue;
+    if (!dayNums.has(d.day)) continue;
     for (const c of d.core_items ?? []) {
       if (!byId.has(c.id)) byId.set(c.id, c);
     }

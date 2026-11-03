@@ -228,14 +228,11 @@ Image generation uses the same ratios: 1024×1024 for 1:1, 1536×1152 for 4:3, 1
     - **Under the sentence:** the code `say` line, the meaning, and the step's tip as a NoteCard ("coach").
     - **Progress:** "جملة n من N" with a teal→coral bar.
     - **Controls:** speed (0.75 / 1 / 1.25), previous, a big coral play/pause, next, repeat-one, and the transcript sheet.
-  - **Interaction (changed 2026-10-31):** the story **never stops to ask anything**, in either mode.
+  - **Interaction (changed 2026-10-31; test mode removed 2026-11-01):** the story **never stops to ask anything**.
     - Every line plays by itself, the learner's included, one after another. The controls only pause, step or repeat.
-    - **Intro mode:** a tap on a line shows its meaning.
-    - **Test mode:** the meaning is off, there is no per-line reveal, and the transcript shows only the lines already played.
-    - The coach NoteCard is not shown in either mode.
-  - **End:**
-    - **Intro:** "خلّصت القصة · فتحت معنى n جمل", plus next page and "من الأول".
-    - **Test:** 3–4 question cards about the story, one at a time, as answer chips. Then "فهمت n من N", plus next and "اسمعها تاني".
+    - A tap on a line shows its meaning.
+    - The coach NoteCard is not shown.
+  - **End:** "خلّصت القصة · فتحت معنى n جمل", plus next page and "من الأول".
   - **Don't copy from the Stitch file:**
     - the IPA line;
     - "تم النطق";

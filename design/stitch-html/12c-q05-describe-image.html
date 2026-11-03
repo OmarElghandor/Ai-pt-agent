@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>أسئلة اليوم ١١: كتابة - صف الصورة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: { DEFAULT: '#FFF8F2', fill: '#FEF2E1', card: '#FFFFFF', hairline: '#ECE1D0' },
+            ink: { DEFAULT: '#201B11', secondary: '#8C8C86' },
+            teal: { DEFAULT: '#14545A', tint: '#E6F4F5' },
+            coral: { DEFAULT: '#F56D4E', text: '#A9361D', tint: '#FFDAD2' },
+            mustard: { DEFAULT: '#FEE263', border: '#E1C64A' },
+            amber: { DEFAULT: '#E8A13A' },
+            forest: { DEFAULT: '#1B5E20' },
+            purple: { DEFAULT: '#6B3FC0' }
+          },
+          fontFamily: {
+            serif: ['Newsreader', 'serif'],
+            sans: ['Noto Sans Arabic', 'sans-serif'],
+            inter: ['Inter', 'sans-serif']
+          },
+          boxShadow: {
+            warm: '0 4px 16px -2px rgba(32, 27, 17, 0.05)',
+            coralPill: '0 4px 14px rgba(245, 109, 78, 0.35)'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Noto Sans Arabic', sans-serif; background-color: #FFF8F2; color: #201B11; -webkit-tap-highlight-color: transparent; }
+    .pt-serif { font-family: 'Newsreader', serif; }
+    .font-num { font-family: 'Inter', sans-serif; }
+    .lined-paper {
+      background-image: repeating-linear-gradient(transparent, transparent 31px, #ECE1D0 31px, #ECE1D0 32px);
+      line-height: 32px;
+    }
+  </style>
+</head>
+<body class="flex justify-center items-center min-h-screen p-0 m-0 bg-stone-100">
+  <div class="w-[390px] h-[844px] bg-cream flex flex-col justify-between overflow-hidden relative shadow-2xl border border-cream-hairline">
+    
+    <!-- Top Bar -->
+    <header class="pt-4 px-5 pb-3">
+      <div class="flex items-center justify-between">
+        <button class="w-9 h-9 rounded-full bg-white flex items-center justify-center text-ink border border-cream-hairline hover:bg-cream-fill transition">
+          <span class="material-symbols-rounded text-[20px]">close</span>
+        </button>
+        <div class="flex flex-col items-center">
+          <span class="text-xs text-ink-secondary font-medium font-num">السؤال ٧ من ١٢</span>
+          <span class="text-xs font-semibold text-teal font-num">أسئلة اليوم</span>
+        </div>
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFF5CF] border border-mustard-border text-xs font-semibold text-[#805B00]">
+          <span class="material-symbols-rounded text-[18px]">edit_note</span>
+          <span>كتابة</span>
+        </div>
+      </div>
+      <!-- Progress Bar -->
+      <div class="w-full bg-[#EFE3D3] h-1.5 rounded-full mt-3 overflow-hidden">
+        <div class="bg-coral h-full rounded-full transition-all duration-300" style="width: 58%;"></div>
+      </div>
+    </header>
+
+    <!-- Content Area -->
+    <main class="flex-1 px-5 flex flex-col gap-3 overflow-y-auto pb-2">
+      <!-- Title Prompt -->
+      <div class="text-right">
+        <h1 class="text-[19px] font-bold text-teal leading-tight">اكتب جملة واحدة عن الصورة</h1>
+        <p class="text-xs text-ink-secondary mt-0.5">استخدم الكلمات المساعدة لو حبيت توصف اللي في السوبرماركت</p>
+      </div>
+
+      <!-- 4:3 Storybook Illustration Card -->
+      <div class="w-full rounded-[24px] overflow-hidden bg-white border border-cream-hairline shadow-warm flex-shrink-0">
+        <div class="relative w-full aspect-[4/3] bg-cream-fill">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8Ew0sVk6pV64jk8JIOFL-cMEoDxpwdvRXHuzq3-nvcD99IFErQeKkpKweMk-MOCbmj829v0bGchEGCTVCSoC0RO7ZGQcg7cZ4bR7PFa4dWLnWtq5P6Zv47N2Q4iPIhPJqe0AHnI-IcV8y1nOP5Pi4uQGccp-23IAyEjsSFpJHw7ExpruVU_4KGBv69OUkdw6PauPsFVoRHUspyt33mQUp6tVJtRzbY3ACNnhR3emj" alt="امرأة في السوبرماركت" class="w-full h-full object-cover">
+          <div class="absolute bottom-2.5 right-2.5 bg-white/90 backdrop-blur-sm px-2.5 py-0.5 rounded-full text-[11px] font-semibold text-teal border border-cream-hairline flex items-center gap-1">
+            <span class="material-symbols-rounded text-[14px]">storefront</span>
+            <span>No supermercado</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Helper Word Bank Chips -->
+      <div class="flex flex-col gap-1.5">
+        <div class="flex items-center justify-between text-[11px] text-ink-secondary">
+          <span>بنك الكلمات المساعدة:</span>
+          <span class="text-[10px] text-teal">اضغط للإضافة</span>
+        </div>
+        <div class="flex flex-wrap gap-2" dir="ltr">
+          <button class="px-3 py-1 rounded-full bg-white border border-cream-hairline text-xs font-semibold text-coral-text shadow-sm hover:bg-coral-tint hover:border-coral transition font-num pt-serif">
+            a maçã
+          </button>
+          <button class="px-3 py-1 rounded-full bg-white border border-cream-hairline text-xs font-semibold text-teal shadow-sm hover:bg-teal-tint hover:border-teal transition font-num pt-serif">
+            o saco
+          </button>
+          <button class="px-3 py-1 rounded-full bg-white border border-cream-hairline text-xs font-semibold text-purple shadow-sm hover:bg-purple-50 hover:border-purple transition font-num pt-serif">
+            ela tem
+          </button>
+          <button class="px-3 py-1 rounded-full bg-white border border-cream-hairline text-xs font-medium text-ink-secondary shadow-sm hover:bg-cream-fill transition font-num pt-serif">
+            Onde fica…?
+          </button>
+        </div>
+      </div>
+
+      <!-- Lined Notebook Text Input Card -->
+      <div class="w-full bg-white rounded-[20px] p-3.5 border border-cream-hairline shadow-warm relative">
+        <div class="flex items-center justify-between pb-1 border-b border-cream-hairline mb-1">
+          <span class="text-[11px] font-medium text-ink-secondary">الجملة بالبرتغالية:</span>
+          <button class="text-[11px] text-coral hover:underline font-medium">مسح</button>
+        </div>
+        <div class="lined-paper min-h-[56px] text-left pt-serif text-[17px] font-medium text-ink" dir="ltr">
+          Ela tem um saco de maçãs<span class="inline-block w-0.5 h-5 bg-coral align-middle animate-pulse ml-0.5"></span>
+        </div>
+        <div class="text-right text-[11px] text-ink-secondary mt-1 flex items-center justify-end gap-1">
+          <span>«هي معاها كيس تفاح»</span>
+          <span class="material-symbols-rounded text-[14px] text-forest">check_circle</span>
+        </div>
+      </div>
+    </main>
+
+    <!-- Bottom Keyboard & Action Area -->
+    <div class="w-full bg-cream-fill border-t border-cream-hairline px-4 pt-2 pb-5 flex flex-col gap-2">
+      <!-- Accent Key Row -->
+      <div class="flex items-center justify-between gap-1 px-1 overflow-x-auto" dir="ltr">
+        <button class="w-7 h-8 bg-white rounded-lg shadow-sm border border-cream-hairline font-num font-semibold text-xs text-ink flex items-center justify-center hover:bg-teal-tint">ã</button>
+        <button class="w-7 h-8 bg-white rounded-lg shadow-sm border border-cream-hairline font-num font-semibold text-xs text-ink flex items-center justify-center hover:bg-teal-tint">õ</button>
+        <button class="w-7 h-8 bg-white rounded-lg shadow-sm border border-cream-hairline font-num font-semibold text-xs text-ink flex items-center justify-center hover:bg-teal-tint">ç</button>
+        <button class="w-7 h-8 bg-white rounded-lg shadow-sm border border-cream-hairline font-num font-semibold text-xs text-ink flex items-center justify-center hover:bg-teal-tint">á</button>
+        <button class="w-7 h-8 bg-white rounded-lg shadow-sm border border-cream-hairline font-num font-semibold text-xs text-ink flex items-center justify-center hover:bg-teal-tint">é</button>
+        <button class="w-7 h-8 bg-white rounded-lg shadow-sm border border-cream-hairline font-num font-semibold text-xs text-ink flex items-center justify-center hover:bg-teal-tint">í</button>
+        <button class="w-7 h-8 bg-white rounded-lg shadow-sm border border-cream-hairline font-num font-semibold text-xs text-ink flex items-center justify-center hover:bg-teal-tint">ó</button>
+        <button class="w-7 h-8 bg-white rounded-lg shadow-sm border border-cream-hairline font-num font-semibold text-xs text-ink flex items-center justify-center hover:bg-teal-tint">ú</button>
+        <button class="w-7 h-8 bg-white rounded-lg shadow-sm border border-cream-hairline font-num font-semibold text-xs text-ink flex items-center justify-center hover:bg-teal-tint">â</button>
+        <button class="w-7 h-8 bg-white rounded-lg shadow-sm border border-cream-hairline font-num font-semibold text-xs text-ink flex items-center justify-center hover:bg-teal-tint">ê</button>
+        <button class="w-7 h-8 bg-white rounded-lg shadow-sm border border-cream-hairline font-num font-semibold text-xs text-ink flex items-center justify-center hover:bg-teal-tint">ô</button>
+        <button class="w-7 h-8 bg-white rounded-lg shadow-sm border border-cream-hairline font-num font-semibold text-xs text-ink flex items-center justify-center hover:bg-teal-tint">à</button>
+        <button class="w-7 h-8 bg-white rounded-lg shadow-sm border border-cream-hairline font-num font-bold text-xs text-teal flex items-center justify-center hover:bg-teal-tint">-</button>
+      </div>
+
+      <!-- Primary Action Button -->
+      <button class="w-full h-12 bg-coral hover:bg-[#e45a3b] text-white font-bold rounded-full shadow-coralPill flex items-center justify-center gap-2 transition active:scale-[0.98]">
+        <span class="text-[15px]">تأكيد الإجابة</span>
+        <span class="material-symbols-rounded text-[18px]">check</span>
+      </button>
+    </div>
+
+  </div>
+</body>
+</html>
