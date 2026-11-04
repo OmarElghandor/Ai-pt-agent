@@ -53,7 +53,10 @@ export function buildConvoPrompt(
     {
       index: 1,
       label: 'character_rules',
-      text: CONVO_CHARACTER_RULES,
+      // budgetTestSuffix is a test-only injection (T2.2 intentional fail).
+      text:
+        CONVO_CHARACTER_RULES +
+        (budgetTestExtra ? `\n${budgetTestExtra()}` : ''),
       cache: true,
     },
     {
@@ -98,4 +101,16 @@ export function buildConvoPrompt(
 /** Rough token estimate for budget tests (chars/4). */
 export function estimateConvoPromptTokens(assembled: string): number {
   return Math.ceil(assembled.length / 4);
+}
+
+/**
+ * Test-only hook for T2.2: append dynamic text to character rules.
+ * Must be cleared in after/finally so CI stays clean.
+ */
+let budgetTestExtra: (() => string) | null = null;
+
+export function setConvoPromptBudgetTestExtra(
+  extra: (() => string) | null,
+): void {
+  budgetTestExtra = extra;
 }

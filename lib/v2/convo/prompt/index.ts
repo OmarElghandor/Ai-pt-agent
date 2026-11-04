@@ -1,5 +1,9 @@
 export { CONVO_CHARACTER_RULES } from './characterRules';
-export { buildConvoPrompt, estimateConvoPromptTokens } from './build';
+export {
+  buildConvoPrompt,
+  estimateConvoPromptTokens,
+  setConvoPromptBudgetTestExtra,
+} from './build';
 export type {
   ConvoPromptPart,
   BuildConvoPromptInput,
