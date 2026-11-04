@@ -1,5 +1,7 @@
 # Batch 8 · Fix 1 · Free chat does not follow the plan
 
+> **Superseded by `batch-9-free-chat-v2.md` (on branch free-chat-v2-content). Do not run this file.**
+
 Run observed on /talk/free/home (2026-11-04). Code reviewed on branch `convo-impl` (commit 7705ddd). Each problem below lists its root cause in the code, then the fix. Only free chat (Module C) changes. The lesson conversation (Module A) stays as it is.
 
 ## Prompt to paste into Cursor
