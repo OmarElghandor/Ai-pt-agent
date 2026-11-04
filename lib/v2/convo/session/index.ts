@@ -21,6 +21,15 @@ export {
 export { buildReopening, pendingQuestionTl } from './reopen';
 
 export {
+  rungFromItemState,
+  rungsFromItemStates,
+  isReviewSeed,
+  initialCurrentGroup,
+} from './rungsFromProgress';
+
+export { loadItemStatesById } from './loadItemStates';
+
+export {
   MemoryConvoSessionStore,
   type ConvoSessionStore,
 } from './store';

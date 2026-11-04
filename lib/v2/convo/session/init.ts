@@ -1,4 +1,5 @@
 import type { ConvoPackData } from '@/lib/v2/convo/pack';
+import { initialCurrentGroup } from './rungsFromProgress';
 import type {
   ConvoOpeningBubbles,
   ConvoRung,
@@ -27,9 +28,24 @@ export function initialRungs(pack: ConvoPackData): Record<string, ConvoRung> {
   return rungs;
 }
 
-export function buildOpeningBubbles(pack: ConvoPackData): ConvoOpeningBubbles {
-  const group1 = pack.groups[0];
-  const card_ids = group1?.item_ids ?? [];
+/**
+ * Opening bubbles. Cards / coach intros only for items still at 📖 taught
+ * in the active group (T6.3: finished replay → empty cards).
+ */
+export function buildOpeningBubbles(
+  pack: ConvoPackData,
+  opts?: {
+    rungs?: Record<string, ConvoRung>;
+    currentGroup?: number;
+  },
+): ConvoOpeningBubbles {
+  const rungs = opts?.rungs;
+  const groupIndex = Math.max(1, opts?.currentGroup ?? 1);
+  const group = pack.groups[groupIndex - 1] ?? pack.groups[0];
+  const rawIds = group?.item_ids ?? [];
+  const card_ids = rungs
+    ? rawIds.filter((id) => (rungs[id] ?? 'taught') === 'taught')
+    : rawIds;
   const coach_intros = card_ids.map((item_id) => ({
     item_id,
     coach_intro_eg: pack.items[item_id]?.coach_intro_eg ?? '',
@@ -49,20 +65,30 @@ export function createConvoSessionDoc(opts: {
   userId: string;
   pack: ConvoPackData;
   now?: Date;
+  /** Seeded rungs from v2_item_state (review / replay). */
+  rungs?: Record<string, ConvoRung>;
 }): ConvoSession {
   const now = (opts.now ?? new Date()).toISOString();
+  const rungs = opts.rungs ?? initialRungs(opts.pack);
+  const current_group = opts.rungs
+    ? initialCurrentGroup(opts.pack, rungs)
+    : 1;
+  const said_once: Record<string, boolean> = {};
+  for (const [id, rung] of Object.entries(rungs)) {
+    if (rung === 'said') said_once[id] = true;
+  }
   return {
     id: opts.id,
     user_id: opts.userId,
     module: 'lesson',
     pack_id: opts.pack.pack_id,
-    rungs: initialRungs(opts.pack),
+    rungs,
     help_ladder: {
       question_id: null,
       step: 0,
       attempts: 0,
     },
-    current_group: 1,
+    current_group,
     candidate_history: [],
     last_exchanges: [],
     pending_question: null,
@@ -72,7 +98,7 @@ export function createConvoSessionDoc(opts: {
     phase: 'teaching',
     correct_streak: 0,
     struggled: {},
-    said_once: {},
+    said_once,
     coach_recent_ids: [],
     recap_done_ids: [],
     survival_used: 0,

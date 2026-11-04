@@ -175,6 +175,92 @@ describe('v2 convo session', () => {
     assert.deepEqual(resumed.opening.card_ids, []);
   });
 
+  it('T6.3 review: finished day-18 progress seeds said rungs and skips cards', async () => {
+    const itemIds = PACK.groups.flatMap((g) => g.item_ids);
+    const states = new Map(
+      itemIds.map((item_id) => [
+        item_id,
+        {
+          user_id: 'user-review',
+          item_id,
+          target_lang: 'pt-PT',
+          introducedDay: 18,
+          usedCorrectlyIn: [] as string[],
+          levels: { heard: 1, understood: 1, said: 1, used: 0 },
+          skills: {},
+          card: {
+            interval: 7,
+            dueAt: new Date(Date.now() + 86400000).toISOString(),
+            masteryLevel: 'learning' as const,
+            consecutiveCorrect: 1,
+            face: 'recognize',
+            knowCheckDueAt: null,
+          },
+          lastImplicitReviewLocalDate: null,
+          weakToolIds: [] as string[],
+        },
+      ]),
+    );
+
+    const result = await startConvoSession({
+      userId: 'user-review',
+      pack: PACK,
+      store,
+      newId: () => 'sess-review',
+      itemStatesById: states,
+    });
+
+    assert.equal(result.resumed, false);
+    assert.deepEqual(result.opening.card_ids, []);
+    assert.equal(result.opening.coach_intros.length, 0);
+    for (const id of itemIds) {
+      assert.equal(result.session.rungs[id], 'said', id);
+    }
+    assert.equal(result.session.current_group, PACK.groups.length);
+    assert.equal(result.session.phase, 'teaching');
+    assert.equal(result.session.status, 'open');
+  });
+
+  it('T6.3 review: understood-only progress starts at choice (heard rung), no card', async () => {
+    const states = new Map([
+      [
+        'word.station',
+        {
+          user_id: 'u',
+          item_id: 'word.station',
+          target_lang: 'pt-PT',
+          introducedDay: 18,
+          usedCorrectlyIn: [] as string[],
+          levels: { heard: 1, understood: 1, said: 0, used: 0 },
+          skills: {},
+          card: {
+            interval: 0,
+            dueAt: null,
+            masteryLevel: 'learning' as const,
+            consecutiveCorrect: 0,
+            face: 'recognize',
+            knowCheckDueAt: null,
+          },
+          lastImplicitReviewLocalDate: null,
+          weakToolIds: [] as string[],
+        },
+      ],
+    ]);
+
+    const result = await startConvoSession({
+      userId: 'user-understood',
+      pack: PACK,
+      store,
+      newId: () => 'sess-understood',
+      itemStatesById: states,
+    });
+
+    assert.equal(result.session.rungs['word.station'], 'heard');
+    assert.ok(!result.opening.card_ids.includes('word.station'));
+    // Other group-1 items still taught → still get cards
+    assert.ok(result.opening.card_ids.includes('word.street'));
+  });
+
   it('resume after simulated server restart (new store instance)', async () => {
     const first = await startConvoSession({
       userId: 'user-restart',

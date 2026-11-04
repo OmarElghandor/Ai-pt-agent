@@ -138,8 +138,20 @@ function collectEligible(
           rank: rankOf(itemId, rung, gIdx, currentGroup, 'open') + 50,
         });
       }
+    } else if (rung === 'said') {
+      // Review / recycle solid items as open (T6.3); lower priority than behind.
+      for (const q of bank.open_questions) {
+        if (recent.has(q.id)) continue;
+        if (!mapConsistent(q.map_step, unlocked)) continue;
+        out.push({
+          id: q.id,
+          tl: q.tl,
+          item_id: itemId,
+          qkind: 'open',
+          rank: rankOf(itemId, rung, gIdx, currentGroup, 'open') + 40,
+        });
+      }
     }
-    // said: solid — only recycled if nothing else (handled by empty fallback below)
   }
 
   // If nothing eligible but teaching remains, relax "last 2 turns" then map.
@@ -158,7 +170,11 @@ function collectEligible(
             rank: rankOf(itemId, rung, gIdx, currentGroup, 'choice') + 100,
           });
         }
-      } else if (rung === 'understood' || rung === 'assisted') {
+      } else if (
+        rung === 'understood' ||
+        rung === 'assisted' ||
+        rung === 'said'
+      ) {
         for (const q of bank.open_questions) {
           out.push({
             id: q.id,

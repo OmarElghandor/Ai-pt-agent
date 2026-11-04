@@ -72,8 +72,13 @@ function findMistake(
 function buildGroupAdvance(
   pack: ConvoPackData,
   group: number,
+  rungs?: Record<string, ConvoRung>,
 ): ConvoGroupAdvance {
-  const card_ids = groupItemIds(pack, group);
+  const rawIds = groupItemIds(pack, group);
+  // Review seed: only show cards for items still at taught (T6.3).
+  const card_ids = rungs
+    ? rawIds.filter((id) => (rungs[id] ?? 'taught') === 'taught')
+    : rawIds;
   return {
     group,
     card_ids,
@@ -231,7 +236,7 @@ export function applyConvoGrade(input: {
     moments.push('group_done');
     if (input.session.current_group < pack.groups.length) {
       next.current_group = input.session.current_group + 1;
-      group_advance = buildGroupAdvance(pack, next.current_group);
+      group_advance = buildGroupAdvance(pack, next.current_group, next.rungs);
     }
   }
 

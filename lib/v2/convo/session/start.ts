@@ -1,7 +1,13 @@
 import { randomUUID } from 'node:crypto';
 import type { ConvoPackData } from '@/lib/v2/convo/pack';
+import type { ItemState } from '@/lib/v2/progress/types';
 import { buildOpeningBubbles, createConvoSessionDoc } from './init';
+import { loadItemStatesById } from './loadItemStates';
 import { buildReopening } from './reopen';
+import {
+  isReviewSeed,
+  rungsFromItemStates,
+} from './rungsFromProgress';
 import type { ConvoSessionStore } from './store';
 import type { ConvoSession, StartConvoResult } from './types';
 
@@ -14,6 +20,11 @@ export type StartConvoSessionOpts = {
   /** Override id generator (tests). */
   newId?: () => string;
   now?: Date;
+  /**
+   * Optional progress map for review seeding (T6.3).
+   * When omitted, loads from v2_item_state for the pack's items.
+   */
+  itemStatesById?: ReadonlyMap<string, ItemState>;
 };
 
 function resumeResult(
@@ -30,10 +41,14 @@ function resumeResult(
       reopening: built.reopening,
     }));
   }
-  // Open session but no pending yet (left before first question) → fresh opening.
+  // Open session but no pending yet (left before first question) → opening
+  // filtered by current rungs (no re-teach cards for progressed items).
   return Promise.resolve({
     session: existing,
-    opening: buildOpeningBubbles(pack),
+    opening: buildOpeningBubbles(pack, {
+      rungs: existing.rungs,
+      currentGroup: existing.current_group,
+    }),
     resumed: true,
   });
 }
@@ -41,7 +56,7 @@ function resumeResult(
 /**
  * Create or load a conversation session for user × pack.
  * No model call. Fresh start → opening bubbles; resume mid-run → template
- * reopening + pending question (T4.1).
+ * reopening + pending question (T4.1). Replay seeds rungs from progress (T6.3).
  */
 export async function startConvoSession(
   opts: StartConvoSessionOpts,
@@ -62,17 +77,28 @@ export async function startConvoSession(
     return resumeResult(open, opts.pack, opts.store);
   }
 
+  const packItemIds = opts.pack.groups.flatMap((g) => g.item_ids);
+  const statesById =
+    opts.itemStatesById ??
+    (await loadItemStatesById(opts.userId, packItemIds));
+  const seeded = rungsFromItemStates(opts.pack, statesById);
+  const useSeed = isReviewSeed(seeded);
+
   const id = opts.newId?.() ?? randomUUID();
   const created = createConvoSessionDoc({
     id,
     userId: opts.userId,
     pack: opts.pack,
     now: opts.now,
+    ...(useSeed ? { rungs: seeded } : {}),
   });
   const session = await opts.store.create(created);
   return {
     session,
-    opening: buildOpeningBubbles(opts.pack),
+    opening: buildOpeningBubbles(opts.pack, {
+      rungs: session.rungs,
+      currentGroup: session.current_group,
+    }),
     resumed: false,
   };
 }

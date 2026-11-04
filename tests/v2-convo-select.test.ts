@@ -44,6 +44,22 @@ describe('v2 convo select', () => {
     }
   });
 
+  it('T6.3 review: said items get open questions (no cards path)', () => {
+    const allSaid = Object.fromEntries(
+      DAY18_PACK.groups
+        .flatMap((g) => g.item_ids)
+        .map((x) => [x, 'said' as const]),
+    );
+    const session = sessionWith({
+      current_group: 2,
+      rungs: allSaid,
+    });
+    const result = selectConvoCandidates({ session, pack: DAY18_PACK });
+    assert.equal(result.kind, 'candidates');
+    assert.ok(result.candidates.length >= 1);
+    assert.ok(result.candidates.every((c) => c.qkind === 'open'));
+  });
+
   it('offers open questions only for understood items', () => {
     // step_right is always unlocked (first map step).
     const id = 'word.right';
