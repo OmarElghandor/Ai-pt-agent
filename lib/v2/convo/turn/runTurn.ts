@@ -16,6 +16,10 @@ import {
   parseConvoReaction,
 } from '@/lib/v2/convo/output';
 import type { ConvoSession, ConvoSessionStore } from '@/lib/v2/convo/session';
+import {
+  mirrorConvoProgress,
+  type ConvoProgressWriter,
+} from '@/lib/v2/convo/progress';
 import { convoQuestionAudioKey } from './audioKey';
 import {
   findPackQuestion,
@@ -38,6 +42,8 @@ export type RunConvoTurnInput = {
   model: ConvoStreamModel;
   /** Emit NDJSON events as they become ready. */
   emit: (event: ConvoTurnStreamEvent) => void;
+  /** Optional progress mirror (T1.12). */
+  progressWriter?: ConvoProgressWriter;
 };
 
 function pushExchange(
@@ -173,8 +179,9 @@ export async function runConvoTurn(
   input: RunConvoTurnInput,
 ): Promise<{ session: ConvoSession; metrics: ConvoTurnMetrics }> {
   const started = Date.now();
-  const { pack, surfaces, store, model, emit } = input;
+  const { pack, surfaces, store, model, emit, progressWriter } = input;
   let session = structuredClone(input.session);
+  const beforeRungs = { ...session.rungs };
   const learnerText = input.learnerText ?? '';
 
   let metrics: ConvoTurnMetrics = {
@@ -201,6 +208,20 @@ export async function runConvoTurn(
       },
     });
     await store.save(session);
+    if (ok && progressWriter) {
+      try {
+        await mirrorConvoProgress({
+          session,
+          day: pack.day,
+          beforeRungs,
+          afterRungs: session.rungs,
+          write: progressWriter,
+        });
+      } catch (err) {
+        // Progress failures must not break the turn stream.
+        console.error('[convo] progress mirror failed', err);
+      }
+    }
     emit({ type: 'done', ok, ...(error ? { error } : {}) });
     return { session, metrics };
   };
@@ -358,6 +379,13 @@ export async function runConvoTurn(
     kind: resolved.kind,
     item_id: resolved.item_id,
   };
+  // Character used the item in a choice line → 🔈 heard (09 §3).
+  if (
+    resolved.kind === 'choice' &&
+    (session.rungs[resolved.item_id] ?? 'taught') === 'taught'
+  ) {
+    session.rungs[resolved.item_id] = 'heard';
+  }
   session.candidate_history = [
     ...session.candidate_history,
     resolved.id,

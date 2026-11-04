@@ -189,7 +189,9 @@ async function buildContext(
   }
 
   const itemId =
-    payload.kind === 'open' || payload.kind === 'closed'
+    payload.kind === 'open' ||
+    payload.kind === 'closed' ||
+    payload.kind === 'convo'
       ? payload.item_id
       : ctx.pageQuizItemIds?.[0] ?? ctx.pageAskItemId;
 

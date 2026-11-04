@@ -8,6 +8,7 @@ import {
   MongoConvoSessionStore,
   getConvoSession,
 } from '@/lib/v2/convo/session';
+import { createAnswersConvoProgressWriter } from '@/lib/v2/convo/progress';
 import {
   createLiveConvoStreamModel,
   encodeConvoTurnEvent,
@@ -72,6 +73,7 @@ export async function POST(req: Request) {
           store,
           model: createLiveConvoStreamModel(),
           emit,
+          progressWriter: createAnswersConvoProgressWriter(),
         });
         // Metrics event reserved for T2.1; still available on done path via session.
         void metrics;
