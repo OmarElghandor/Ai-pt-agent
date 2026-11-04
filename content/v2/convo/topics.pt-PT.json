@@ -1,0 +1,60 @@
+{
+  "target_lang": "pt-PT",
+  "themes": [
+    {
+      "id": "directions",
+      "title_tl": "Direções",
+      "title_ar": "الاتجاهات",
+      "topics": [
+        {
+          "id": "directions.day-18",
+          "title_tl": "Do metro a casa",
+          "title_ar": "من المترو للبيت",
+          "day": 18,
+          "pack_id": "pt-PT.day-18",
+          "character_id": "ines",
+          "item_ids": [
+            "word.station",
+            "word.street",
+            "word.pharmacy",
+            "word.right",
+            "word.left",
+            "phrase.go_straight"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cafe",
+      "title_tl": "Café",
+      "title_ar": "الكافيه",
+      "topics": [
+        {
+          "id": "cafe.day-3",
+          "title_tl": "Conversação Básica",
+          "title_ar": "كلام أساسي",
+          "day": 3,
+          "pack_id": "pt-PT.day-3",
+          "character_id": "manuel",
+          "item_ids": []
+        }
+      ]
+    },
+    {
+      "id": "feelings",
+      "title_tl": "Como estás?",
+      "title_ar": "حاسس بإيه",
+      "topics": [
+        {
+          "id": "feelings.day-22",
+          "title_tl": "Verbos Ser e Estar 2",
+          "title_ar": "ESTAR والفرق",
+          "day": 22,
+          "pack_id": "pt-PT.day-22",
+          "character_id": "ines",
+          "item_ids": []
+        }
+      ]
+    }
+  ]
+}
