@@ -176,6 +176,58 @@ export async function enqueueAndStartGeneratePack(opts: {
   return enqueued;
 }
 
+export async function enqueueGenerateConvoPack(opts: {
+  day: number;
+  targetLang?: string;
+}): Promise<{
+  jobId: string;
+  day: number;
+  version: number;
+  target_lang: string;
+  pack_id: string;
+  lesson_version: number;
+  jobIds: string[];
+}> {
+  const { enqueueConvoDag } = await import('./convo/graph');
+  const dag = await enqueueConvoDag(opts);
+  return {
+    jobId: dag.jobIds[0]!,
+    day: dag.day,
+    version: dag.version,
+    target_lang: dag.target_lang,
+    pack_id: dag.pack_id,
+    lesson_version: dag.lesson_version,
+    jobIds: dag.jobIds,
+  };
+}
+
+export async function enqueueAndStartGenerateConvoPack(opts: {
+  day: number;
+  targetLang?: string;
+}): Promise<{
+  jobId: string;
+  day: number;
+  version: number;
+  target_lang: string;
+  pack_id: string;
+  lesson_version: number;
+  jobIds: string[];
+}> {
+  const enqueued = await enqueueGenerateConvoPack(opts);
+  const workerId = `admin-convo-${process.pid}-${Date.now().toString(36)}`;
+  void runWorkerUntilIdle(workerId, {
+    maxEmptyRounds: 3,
+    idleMs: 1500,
+    deadlineMs: 180_000,
+  }).catch((err) => {
+    console.error(
+      '[v2-gen] convo worker failed',
+      err instanceof Error ? err.message : err,
+    );
+  });
+  return enqueued;
+}
+
 export function jobConcurrency(): number {
   const n = Number(process.env.V2_JOB_CONCURRENCY);
   // Default serial (1). Set V2_JOB_CONCURRENCY>1 only for deliberate parallel drains.
@@ -364,6 +416,22 @@ export async function processLessonJob(
     }, 60_000);
     try {
       await processPackJob(job, workerId);
+    } finally {
+      clearInterval(heartbeatTimer);
+    }
+    return;
+  }
+
+  if (String(job.kind).startsWith('convo_')) {
+    const { processConvoJob } = await import('./convo/process');
+    console.info(
+      `[v2-gen:job] start id=${job.id} kind=${job.kind} day=${job.day} v=${job.version} (convo)`,
+    );
+    const heartbeatTimer = setInterval(() => {
+      void heartbeat(job.id, workerId);
+    }, 60_000);
+    try {
+      await processConvoJob(job, workerId);
     } finally {
       clearInterval(heartbeatTimer);
     }

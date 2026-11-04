@@ -87,6 +87,11 @@ export const V2_JOB_KINDS = [
   'pack_critic',
   'pack_lang_check',
   'pack_assemble',
+  'convo_outline',
+  'convo_items',
+  'convo_critic',
+  'convo_lang_check',
+  'convo_assemble',
 ] as const;
 
 export type V2JobKind = (typeof V2_JOB_KINDS)[number];
@@ -529,6 +534,42 @@ export function V2PackModel(): Model<V2PackDoc> {
   return (
     (mongoose.models.V2Pack as Model<V2PackDoc>) ||
     mongoose.model<V2PackDoc>('V2Pack', v2PackSchema)
+  );
+}
+
+const V2_CONVO_PACK_STATUSES = ['draft', 'reviewed', 'published'] as const;
+
+const v2ConvoPackSchema = new Schema(
+  {
+    day: { type: Number, required: true, index: true },
+    target_lang: { type: String, required: true, index: true },
+    version: { type: Number, required: true, min: 1 },
+    status: {
+      type: String,
+      required: true,
+      enum: V2_CONVO_PACK_STATUSES,
+      index: true,
+    },
+    data: { type: Schema.Types.Mixed, required: true },
+    meta: { type: Schema.Types.Mixed, required: false },
+  },
+  { timestamps: true, collection: 'v2_convo_packs' },
+);
+
+v2ConvoPackSchema.index(
+  { day: 1, target_lang: 1, version: 1 },
+  { unique: true },
+);
+v2ConvoPackSchema.index({ day: 1, target_lang: 1, status: 1 });
+
+export type V2ConvoPackDoc = InferSchemaType<typeof v2ConvoPackSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2ConvoPackModel(): Model<V2ConvoPackDoc> {
+  return (
+    (mongoose.models.V2ConvoPack as Model<V2ConvoPackDoc>) ||
+    mongoose.model<V2ConvoPackDoc>('V2ConvoPack', v2ConvoPackSchema)
   );
 }
 
