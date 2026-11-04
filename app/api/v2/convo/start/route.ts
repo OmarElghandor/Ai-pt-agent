@@ -7,6 +7,7 @@ import {
 } from '@/lib/v2/convo/pack';
 import {
   freeTopicById,
+  freeTopicIdForPack,
   loadTopicAngles,
 } from '@/lib/v2/convo/topics';
 import {
@@ -142,6 +143,8 @@ export async function POST(req: Request) {
       visual: pack.visual,
       character_id: pack.scene.character_id,
       item_surfaces: surfaces,
+      bridge_tl: pack.bridge?.tl ?? '',
+      free_topic_id: freeTopicIdForPack(pack.pack_id),
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'start failed';

@@ -63,6 +63,9 @@ export function parseTopicsFile(raw: unknown): TopicsFile {
         ...(typeof topic.character_id === 'string'
           ? { character_id: topic.character_id }
           : {}),
+        ...(typeof topic.free_topic_id === 'string'
+          ? { free_topic_id: topic.free_topic_id }
+          : {}),
       })),
     })),
   };

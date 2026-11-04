@@ -13,6 +13,7 @@
           "day": 18,
           "pack_id": "pt-PT.day-18",
           "character_id": "ines",
+          "free_topic_id": "home",
           "item_ids": [
             "word.station",
             "word.street",

@@ -46,6 +46,8 @@ export function TalkSession({ packId }: Props) {
   const [day, setDay] = useState<number | null>(null);
   const [visual, setVisual] = useState<ConvoVisual | null>(null);
   const [surfaces, setSurfaces] = useState<ConvoItemSurface[]>([]);
+  const [bridgeTl, setBridgeTl] = useState('');
+  const [freeTopicId, setFreeTopicId] = useState<string | null>(null);
   const [bubbles, setBubbles] = useState<TalkBubble[]>([]);
   const [pending, setPending] = useState<TalkPendingQuestion | null>(null);
   const [snapshot, setSnapshot] = useState<TalkSessionSnapshot | null>(null);
@@ -338,6 +340,17 @@ export function TalkSession({ packId }: Props) {
         setDay(body.day);
         setVisual(body.visual);
         setSurfaces(body.item_surfaces ?? []);
+        setBridgeTl(
+          typeof (body as { bridge_tl?: string }).bridge_tl === 'string'
+            ? (body as { bridge_tl: string }).bridge_tl
+            : '',
+        );
+        setFreeTopicId(
+          typeof (body as { free_topic_id?: string | null }).free_topic_id ===
+            'string'
+            ? (body as { free_topic_id: string }).free_topic_id
+            : null,
+        );
         setSnapshot({
           id: body.session.id,
           rungs: body.session.rungs,
@@ -640,7 +653,12 @@ export function TalkSession({ packId }: Props) {
         })}
 
         {done && resultStats ? (
-          <ConvoResultCard day={day} stats={resultStats} />
+          <ConvoResultCard
+            day={day}
+            stats={resultStats}
+            bridgeTl={bridgeTl}
+            freeTopicId={freeTopicId}
+          />
         ) : null}
       </div>
 

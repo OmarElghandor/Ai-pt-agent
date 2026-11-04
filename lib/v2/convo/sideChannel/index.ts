@@ -22,3 +22,11 @@ export {
   type ConvoCoachCaller,
 } from './coachCall';
 export { handleLanguageQuestionCoachCall } from './handleCoachCall';
+export {
+  isTopicRequestText,
+  matchTopicRequest,
+  logUnmatchedTopicRequest,
+  logUnmatchedTopicRequestSync,
+  drainMemoryTopicRequests,
+  topicRequestCoachEg,
+} from './topicRequest';

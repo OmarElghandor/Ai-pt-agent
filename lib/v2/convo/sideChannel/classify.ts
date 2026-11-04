@@ -1,8 +1,10 @@
 import { needsSideChannel } from './detect';
+import { isTopicRequestText } from './topicRequest';
 
 export type SideChannelKind =
   | 'arabic_answer'
   | 'language_question'
+  | 'topic_request'
   | 'other'
   | null;
 
@@ -17,6 +19,10 @@ const LANGUAGE_QUESTION_RE =
 export function classifySideChannel(text: string): SideChannelKind {
   const t = text.trim();
   if (!t || !needsSideChannel(t)) return null;
+
+  if (isTopicRequestText(t)) {
+    return 'topic_request';
+  }
 
   if (LANGUAGE_QUESTION_RE.test(t)) {
     return 'language_question';

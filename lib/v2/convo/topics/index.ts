@@ -24,6 +24,11 @@ export {
   talkHrefForTopic,
 } from './suggestion';
 
+export {
+  freeTopicIdForPack,
+  freeTopicIdForLessonTopic,
+} from './lessonFreeBridge';
+
 export type {
   FreeTopic,
   FreeTopicsFile,

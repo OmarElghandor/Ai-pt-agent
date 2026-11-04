@@ -6,10 +6,18 @@ import type { ConvoResultStats } from '@/lib/v2/convo/result';
 type Props = {
   day: number | null;
   stats: ConvoResultStats;
+  /** Pack bridge line into free chat (09 §4.4 / T7.5). */
+  bridgeTl?: string;
+  freeTopicId?: string | null;
 };
 
 /** End-of-lesson result card (09 §4.4): بتقول / بتفهم / extra. */
-export function ConvoResultCard({ day, stats }: Props) {
+export function ConvoResultCard({
+  day,
+  stats,
+  bridgeTl,
+  freeTopicId,
+}: Props) {
   return (
     <div className="mt-4 rounded-2xl border border-v2-line bg-v2-card px-4 py-5 shadow-[var(--shadow-v2-soft)]">
       <p className="text-center font-[family-name:var(--font-v2-arabic)] text-base font-semibold text-v2-primary">
@@ -73,6 +81,27 @@ export function ConvoResultCard({ day, stats }: Props) {
               </li>
             ))}
           </ul>
+        </div>
+      ) : null}
+
+      {bridgeTl || freeTopicId ? (
+        <div className="mt-5 rounded-v2-row bg-v2-paper-deep/80 px-3 py-3 text-center">
+          {bridgeTl ? (
+            <p
+              dir="ltr"
+              className="font-[family-name:var(--font-v2-target)] text-sm text-v2-primary"
+            >
+              {bridgeTl}
+            </p>
+          ) : null}
+          {freeTopicId ? (
+            <Link
+              href={`/talk/free/${encodeURIComponent(freeTopicId)}`}
+              className="mt-2 inline-block font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-v2-action"
+            >
+              كمّل كلام حر
+            </Link>
+          ) : null}
         </div>
       ) : null}
 

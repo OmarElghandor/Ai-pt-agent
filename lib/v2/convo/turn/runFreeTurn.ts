@@ -16,7 +16,12 @@ import {
 } from '@/lib/v2/convo/topics';
 import type { ConvoSession, ConvoSessionStore } from '@/lib/v2/convo/session';
 import { freePackId } from '@/lib/v2/convo/session/freeInit';
-import { classifySideChannel } from '@/lib/v2/convo/sideChannel';
+import {
+  classifySideChannel,
+  logUnmatchedTopicRequestSync,
+  matchTopicRequest,
+  topicRequestCoachEg,
+} from '@/lib/v2/convo/sideChannel';
 import {
   extractFreeFact,
   isNonLearningRequest,
@@ -244,6 +249,58 @@ export async function runFreeConvoTurn(
   };
 
   const sideKind = classifySideChannel(input.learnerText);
+  if (sideKind === 'topic_request') {
+    const matched = matchTopicRequest(input.learnerText);
+    const coach = topicRequestCoachEg(matched);
+    if (matched) {
+      session.paused_for_pack_id = matched.pack_id;
+      emit({
+        type: 'coach',
+        id: 'free_topic_request',
+        eg: coach.eg,
+        moment: 'topic_request',
+      });
+      // Surface the lesson talk href via a synthetic question-less session note
+      emit({
+        type: 'session',
+        session: {
+          id: session.id,
+          rungs: session.rungs,
+          phase: session.phase,
+          status: session.status,
+          help_ladder: session.help_ladder,
+          current_group: session.current_group,
+          pending_question: session.pending_question,
+          correct_streak: session.correct_streak,
+          struggled: session.struggled,
+          said_once: session.said_once,
+          survival_used: session.survival_used,
+        },
+      });
+      // Client reads paused_for_pack_id from a dedicated coach id pattern / metrics.
+      // Encode pack + href in coach id for the FreeTalkSession CTA.
+      emit({
+        type: 'coach',
+        id: `open_pack:${matched.pack_id}`,
+        eg: coach.href
+          ? `${coach.eg}\n${coach.href}`
+          : coach.eg,
+        moment: 'topic_request_cta',
+      });
+    } else {
+      logUnmatchedTopicRequestSync({
+        userId: session.user_id,
+        queryEg: input.learnerText.trim(),
+      });
+      emit({
+        type: 'coach',
+        id: 'free_topic_request_unmatched',
+        eg: coach.eg,
+        moment: 'topic_request',
+      });
+    }
+    return finish(true);
+  }
   if (sideKind === 'arabic_answer' || sideKind === 'other') {
     emit({
       type: 'coach',

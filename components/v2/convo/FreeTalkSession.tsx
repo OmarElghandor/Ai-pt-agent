@@ -31,6 +31,7 @@ export function FreeTalkSession({ topicId }: Props) {
   const [skipBootstrap, setSkipBootstrap] = useState(false);
   const [metrics, setMetrics] = useState<TalkTurnMetrics | null>(null);
   const [turnCount, setTurnCount] = useState(0);
+  const [lessonHref, setLessonHref] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const streamBubbleId = useRef<string | null>(null);
 
@@ -45,12 +46,17 @@ export function FreeTalkSession({ topicId }: Props) {
 
   const applyEvent = useCallback((event: ConvoTurnStreamEvent) => {
     if (event.type === 'coach') {
+      if (event.id.startsWith('open_pack:')) {
+        const packId = event.id.slice('open_pack:'.length);
+        const hrefLine = event.eg.split('\n').find((l) => l.startsWith('/'));
+        setLessonHref(hrefLine ?? `/talk/${encodeURIComponent(packId)}`);
+      }
       setBubbles((prev) => [
         ...prev,
         {
           id: newId('coach'),
           role: 'coach',
-          eg: event.eg,
+          eg: event.eg.split('\n')[0] ?? event.eg,
           moment: event.moment,
         },
       ]);
@@ -277,6 +283,17 @@ export function FreeTalkSession({ topicId }: Props) {
           })}
         </div>
       </div>
+
+      {lessonHref ? (
+        <div className="px-3 pb-2">
+          <Link
+            href={lessonHref}
+            className="inline-flex min-h-11 items-center justify-center rounded-v2-chip bg-v2-action px-5 py-2.5 font-[family-name:var(--font-v2-arabic)] text-base font-semibold text-white"
+          >
+            افتح محادثة الدرس
+          </Link>
+        </div>
+      ) : null}
 
       {error ? (
         <p className="px-3 pb-2 font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">

@@ -42,8 +42,13 @@ async function resumeFree(
   angles: TopicAngle[],
   store: ConvoSessionStore,
 ): Promise<StartConvoResult> {
-  if (existing.pending_question) {
-    const built = buildFreeReopening(existing, topic, angles);
+  // Returning from a paused lesson conversation (T7.5).
+  const cleared =
+    existing.paused_for_pack_id != null
+      ? { ...existing, paused_for_pack_id: null }
+      : existing;
+  if (cleared.pending_question) {
+    const built = buildFreeReopening(cleared, topic, angles);
     const session = await store.save(built.session);
     return {
       session,
@@ -52,8 +57,10 @@ async function resumeFree(
       reopening: built.reopening,
     };
   }
+  const session =
+    cleared !== existing ? await store.save(cleared) : cleared;
   return {
-    session: existing,
+    session,
     opening: buildFreeOpeningBubbles(topic, angles[existing.angle_index] ?? null),
     resumed: true,
   };

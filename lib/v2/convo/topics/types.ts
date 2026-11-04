@@ -8,6 +8,8 @@ export type TopicsFileTopic = {
   pack_id: string;
   item_ids: string[];
   character_id?: string;
+  /** Free-chat topic to continue into after the lesson (T7.5). */
+  free_topic_id?: string;
 };
 
 export type TopicsFileTheme = {
