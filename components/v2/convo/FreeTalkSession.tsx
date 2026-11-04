@@ -31,6 +31,13 @@ export function FreeTalkSession({ topicId }: Props) {
   const [metrics, setMetrics] = useState<TalkTurnMetrics | null>(null);
   const [turnCount, setTurnCount] = useState(0);
   const [lessonHref, setLessonHref] = useState<string | null>(null);
+  const [frame, setFrame] = useState<{
+    tl: string;
+    eg: string;
+    chips: string[];
+  } | null>(null);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const [assisted, setAssisted] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const streamBubbleId = useRef<string | null>(null);
 
@@ -134,6 +141,14 @@ export function FreeTalkSession({ topicId }: Props) {
       }
       return;
     }
+    if (event.type === 'free_frame') {
+      setFrame({
+        tl: event.tl,
+        eg: event.eg,
+        chips: event.chips,
+      });
+      return;
+    }
     if (event.type === 'metrics') {
       setMetrics({
         input_tokens: event.input_tokens,
@@ -160,19 +175,25 @@ export function FreeTalkSession({ topicId }: Props) {
         const res = await fetch('/api/v2/convo/turn', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ session_id: sessionId, text: learnerText }),
+          body: JSON.stringify({
+            session_id: sessionId,
+            text: learnerText,
+            ...(assisted ? { assisted: true } : {}),
+          }),
         });
         if (!res.ok || !res.body) {
           throw new Error(`turn ${res.status}`);
         }
         await readConvoNdjson(res.body, applyEvent);
+        setAssisted(false);
+        setHelpOpen(false);
       } catch (e) {
         setError(e instanceof Error ? e.message : 'turn failed');
       } finally {
         setBusy(false);
       }
     },
-    [sessionId, busy, applyEvent],
+    [sessionId, busy, applyEvent, assisted],
   );
 
   useEffect(() => {
@@ -197,11 +218,26 @@ export function FreeTalkSession({ topicId }: Props) {
           reopening?: { character_tl: string; pending_tl: string | null };
           title_tl?: string;
           title_ar?: string;
+          current_frame?: {
+            tl: string;
+            eg: string;
+            chips: string[];
+          } | null;
+          warm_lines?: string[];
         };
         if (cancelled) return;
         setSessionId(data.session_id);
         setTitleTl(data.title_tl ?? '');
         setTitleAr(data.title_ar ?? '');
+        if (data.current_frame) setFrame(data.current_frame);
+        // Warm authored TTS in the background (fire-and-forget).
+        for (const line of (data.warm_lines ?? []).slice(0, 24)) {
+          void fetch('/api/tts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: line, lang: 'pt' }),
+          }).catch(() => {});
+        }
         const next: TalkBubble[] = [];
         if (data.resumed && data.reopening) {
           next.push({
@@ -320,6 +356,43 @@ export function FreeTalkSession({ topicId }: Props) {
       ) : null}
 
       <div className="border-t border-v2-line/40 px-3 py-3">
+        {helpOpen && frame ? (
+          <NoteCard className="mb-3 self-stretch">
+            <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink">
+              {frame.eg}
+            </p>
+            <p
+              className="mt-1 font-[family-name:var(--font-v2-target)] text-sm font-semibold text-v2-primary"
+              dir="ltr"
+            >
+              {frame.tl}
+            </p>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {frame.chips.map((chip) => (
+                <button
+                  key={chip}
+                  type="button"
+                  className="rounded-v2-chip bg-v2-card px-3 py-1.5 font-[family-name:var(--font-v2-target)] text-sm text-v2-primary shadow-[var(--shadow-v2-soft)]"
+                  dir="ltr"
+                  onClick={() => {
+                    setText(chip);
+                    setAssisted(true);
+                  }}
+                >
+                  {chip}
+                </button>
+              ))}
+            </div>
+          </NoteCard>
+        ) : null}
+        <button
+          type="button"
+          className="mb-2 w-full rounded-v2-row bg-v2-card px-3 py-2 text-center font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-v2-primary shadow-[var(--shadow-v2-soft)]"
+          onClick={() => setHelpOpen((v) => !v)}
+          disabled={!frame || busy || loading}
+        >
+          ساعدني أرد
+        </button>
         <div className="mb-2 flex flex-wrap gap-1">
           {ACCENTS.map((a) => (
             <button

@@ -37,6 +37,7 @@ export async function POST(req: Request) {
   const body = (await req.json().catch(() => null)) as {
     session_id?: string;
     text?: string;
+    assisted?: boolean;
     survival?: 'repeat' | 'slow' | 'nao_percebi';
   } | null;
   const sessionId = body?.session_id?.trim();
@@ -70,6 +71,7 @@ export async function POST(req: Request) {
             store,
             model: createLiveConvoStreamModel(),
             emit,
+            ...(body?.assisted ? { assisted: true } : {}),
           });
           void metrics;
         } else {

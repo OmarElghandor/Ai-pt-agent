@@ -23,6 +23,13 @@ export type ConvoTurnStreamEvent =
       type: 'help';
       help: ConvoSelectHelp;
     }
+  /** Free chat: current ask/follow-up answer frame for ساعدني أرد. */
+  | {
+      type: 'free_frame';
+      tl: string;
+      eg: string;
+      chips: string[];
+    }
   | {
       type: 'reaction_delta';
       text: string;

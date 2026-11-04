@@ -27,6 +27,7 @@ import {
   advanceAfterAnswer,
   currentNextLine,
   extractFreeFact,
+  handleFreeArabicSide,
   isNonLearningRequest,
   isOffTopic,
   nearestFreeTopic,
@@ -35,6 +36,7 @@ import {
   pushFreeFact,
   type FreeNextLine,
 } from '@/lib/v2/convo/free';
+import type { ConvoCoachCaller } from '@/lib/v2/convo/sideChannel/coachCall';
 import type {
   ConvoStreamModel,
   ConvoTurnMetrics,
@@ -48,6 +50,9 @@ export type RunFreeConvoTurnInput = {
   model: ConvoStreamModel;
   emit: (event: ConvoTurnStreamEvent) => void;
   topic?: FreeTopic;
+  /** When true, learner used ساعدني أرد chips this turn. */
+  assisted?: boolean;
+  coachCaller?: ConvoCoachCaller;
 };
 
 function pushExchange(
@@ -269,26 +274,32 @@ export async function runFreeConvoTurn(
     }
     return finish(true);
   }
-  if (sideKind === 'arabic_answer' || sideKind === 'other') {
-    emit({
-      type: 'coach',
-      id: 'free_ar_invite',
-      eg: 'قولها بالبرتغالي، جرّب 😊',
-      moment: 'arabic_answer',
-    });
-    return finish(true);
-  }
-  if (sideKind === 'language_question') {
-    emit({
-      type: 'coach',
-      id: 'free_lang_q',
-      eg: 'سؤال حلو — خلّينا نكمل بالبرتغالي، جرّب تقولها.',
-      moment: 'language_question',
+  const pendingLine = currentNextLine(
+    threadDoc,
+    session.thread_index,
+    session.free_step,
+    topic,
+  );
+
+  if (
+    sideKind === 'arabic_answer' ||
+    sideKind === 'other' ||
+    sideKind === 'language_question'
+  ) {
+    await handleFreeArabicSide({
+      kind: sideKind,
+      learnerText: input.learnerText.trim(),
+      frame: pendingLine.frame,
+      emit,
+      ...(input.coachCaller ? { coachCaller: input.coachCaller } : {}),
     });
     return finish(true);
   }
 
   const learnerText = input.learnerText.trim();
+  if (input.assisted) {
+    session.assisted = true;
+  }
 
   if (learnerText && isNonLearningRequest(learnerText)) {
     emit({
@@ -522,6 +533,15 @@ export async function runFreeConvoTurn(
       ? { unknown_words: modelOut.unknownWords }
       : {}),
   });
+
+  if (nextLine.frame) {
+    emit({
+      type: 'free_frame',
+      tl: nextLine.frame.tl,
+      eg: nextLine.frame.eg,
+      chips: nextLine.frame.chips,
+    });
+  }
 
   return finish(true);
 }
