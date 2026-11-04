@@ -116,6 +116,51 @@ function budgetOk(turn3: number, turn40: number): boolean {
 }
 
 describe('v2 convo · 40-turn budget (T2.2)', () => {
+  it('Arabic learner turns never enter the character prompt', async () => {
+    const store = new MemoryConvoSessionStore();
+    const started = await startConvoSession({
+      userId: 'budget-ar',
+      pack,
+      store,
+      newId: () => 'budget-ar-sess',
+    });
+    let session = started.session;
+    const model = createStubConvoStreamModel({
+      byCandidate: (ids) => `[${ids[0]}] Ok!`,
+    });
+    {
+      const events: ConvoTurnStreamEvent[] = [];
+      const out = await runConvoTurn({
+        session,
+        pack,
+        surfaces,
+        learnerText: '',
+        store,
+        model,
+        emit: (e) => events.push(e),
+      });
+      session = out.session;
+    }
+    assert.ok(session.pending_question);
+    const callsBefore = model.calls;
+    const events: ConvoTurnStreamEvent[] = [];
+    const out = await runConvoTurn({
+      session,
+      pack,
+      surfaces,
+      learnerText: 'يمين',
+      store,
+      model,
+      emit: (e) => events.push(e),
+    });
+    assert.equal(model.calls, callsBefore);
+    assert.ok(!String(model.lastPrompt ?? '').includes('يمين'));
+    for (const ex of out.session.last_exchanges) {
+      assert.doesNotMatch(ex.tl, /[\u0600-\u06FF]/);
+    }
+    assert.ok(events.some((e) => e.type === 'coach'));
+  });
+
   it('turn 40 input tokens stay within 10% of turn 3', async () => {
     setConvoPromptBudgetTestExtra(null);
     try {

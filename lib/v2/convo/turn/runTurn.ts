@@ -21,6 +21,10 @@ import {
   type ConvoProgressWriter,
 } from '@/lib/v2/convo/progress';
 import { deriveWrongWay } from '@/lib/v2/convo/visual';
+import {
+  classifySideChannel,
+  handleArabicAnswer,
+} from '@/lib/v2/convo/sideChannel';
 import { convoQuestionAudioKey } from './audioKey';
 import {
   findPackQuestion,
@@ -189,9 +193,9 @@ async function callModel(opts: {
 }
 
 /**
- * Run one conversation turn (09 §4.2 steps 3–9 without Arabic / progress).
+ * Run one conversation turn (09 §4.2).
+ * Side channel (Arabic) runs before grading; Arabic never enters exchanges.
  * Emits NDJSON events via `emit` in order: coach → reaction → question → session → done.
- * Metrics are emitted by the caller / T2.1 wrapper.
  */
 export async function runConvoTurn(
   input: RunConvoTurnInput,
@@ -329,6 +333,20 @@ export async function runConvoTurn(
         ...(say ? { say } : {}),
       });
     }
+    return finish(true);
+  }
+
+  // --- Arabic side channel (09 §6) before grading ---
+  const sideKind = classifySideChannel(learnerText);
+  if (sideKind === 'arabic_answer' || sideKind === 'other') {
+    // T3.1: answer-in-Arabic and other Arabic chit-chat → coach bank, wait.
+    // language_question is stubbed until T3.2 / T3.3.
+    session = handleArabicAnswer({ session, pack, surfaces, emit });
+    return finish(true);
+  }
+  if (sideKind === 'language_question') {
+    // T3.2 / T3.3 will handle; for now still avoid grading Arabic into exchanges.
+    session = handleArabicAnswer({ session, pack, surfaces, emit });
     return finish(true);
   }
 
