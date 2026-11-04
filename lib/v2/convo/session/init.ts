@@ -69,6 +69,12 @@ export function createConvoSessionDoc(opts: {
     facts: [],
     suggested_words: [],
     status: 'open',
+    phase: 'teaching',
+    correct_streak: 0,
+    struggled: {},
+    said_once: {},
+    coach_recent_ids: [],
+    recap_done_ids: [],
     created_at: now,
     updated_at: now,
   };

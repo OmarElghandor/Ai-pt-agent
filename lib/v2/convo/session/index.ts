@@ -2,6 +2,7 @@ export type {
   ConvoRung,
   ConvoModule,
   ConvoSessionStatus,
+  ConvoPhase,
   ConvoExchange,
   ConvoPendingQuestion,
   ConvoHelpLadderState,

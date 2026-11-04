@@ -10,6 +10,9 @@ export type ConvoModule = 'lesson' | 'free';
 
 export type ConvoSessionStatus = 'open' | 'done';
 
+/** Lesson-conversation phase (teaching → recap → closing). */
+export type ConvoPhase = 'teaching' | 'recap' | 'closing';
+
 export type ConvoExchange = {
   role: 'character' | 'learner';
   tl: string;
@@ -48,6 +51,18 @@ export type ConvoSession = {
   facts: string[];
   suggested_words: string[];
   status: ConvoSessionStatus;
+  /** teaching → recap (all produced) → closing (recap done). */
+  phase: ConvoPhase;
+  /** Consecutive correct / near_miss answers. */
+  correct_streak: number;
+  /** Items that hit the help ladder at least once. */
+  struggled: Record<string, boolean>;
+  /** Items that reached 🗣 (said) at least once without help. */
+  said_once: Record<string, boolean>;
+  /** Last ≤3 coach-bank line ids (T1.7). */
+  coach_recent_ids: string[];
+  /** Recap question ids already answered correctly. */
+  recap_done_ids: string[];
   created_at: string;
   updated_at: string;
 };
