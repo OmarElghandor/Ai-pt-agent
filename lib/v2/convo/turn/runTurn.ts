@@ -24,7 +24,9 @@ import { deriveWrongWay } from '@/lib/v2/convo/visual';
 import {
   classifySideChannel,
   handleArabicAnswer,
+  handleLanguageQuestionCoachCall,
   handleLanguageQuestionFromPack,
+  type ConvoCoachCaller,
 } from '@/lib/v2/convo/sideChannel';
 import { convoQuestionAudioKey } from './audioKey';
 import {
@@ -57,6 +59,8 @@ export type RunConvoTurnInput = {
    * No model call; counts as used on the session.
    */
   survival?: ConvoSurvivalAction;
+  /** Injectable Arabic coach caller (T3.3); defaults to live model. */
+  coachCaller?: ConvoCoachCaller;
 };
 
 function findOpenHelpReask(
@@ -355,9 +359,14 @@ export async function runConvoTurn(
       session = packHit.session;
       return finish(true);
     }
-    // T3.3: coach call for unmatched language questions.
-    // Until then, still do not grade Arabic into exchanges.
-    session = handleArabicAnswer({ session, pack, surfaces, emit });
+    session = await handleLanguageQuestionCoachCall({
+      session,
+      pack,
+      surfaces,
+      learnerText,
+      emit,
+      ...(input.coachCaller ? { coachCaller: input.coachCaller } : {}),
+    });
     return finish(true);
   }
 

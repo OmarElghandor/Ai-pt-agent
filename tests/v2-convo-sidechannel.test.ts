@@ -10,6 +10,8 @@ import {
 } from '@/lib/v2/convo/session';
 import {
   classifySideChannel,
+  COACH_CALL_FALLBACK_EG,
+  createStubConvoCoachCaller,
   hasArabicScript,
   isMixedScript,
   matchPackItemQuestion,
@@ -267,5 +269,64 @@ describe('v2 convo · pack-item language questions (T3.2)', () => {
         assert.doesNotMatch(ex.tl, /[\u0600-\u06FF]/);
       }
     }
+  });
+});
+
+describe('v2 convo · coach call for other questions (T3.3)', () => {
+  it('ازاي أقول مع رز؟ gets a short coach answer; character waits; no character model', async () => {
+    const { store, session: started, model } = await sessionWithPending();
+    let session = started;
+    const pendingBefore = structuredClone(session.pending_question);
+    const callsBefore = model.calls;
+    const coach = createStubConvoCoachCaller({
+      eg: 'قول مع أرز: com arroz — جرّب تقولها',
+    });
+
+    const { events, emit } = collectEvents();
+    const out = await runConvoTurn({
+      session,
+      pack,
+      surfaces,
+      learnerText: 'ازاي أقول مع رز؟',
+      store,
+      model,
+      emit,
+      coachCaller: coach,
+    });
+    session = out.session;
+
+    assert.equal(model.calls, callsBefore);
+    assert.equal(coach.calls, 1);
+    assert.ok(coach.lastInput?.learnerQuestion.includes('مع رز'));
+    const coachEv = events.find((e) => e.type === 'coach');
+    assert.ok(coachEv && coachEv.type === 'coach');
+    assert.match(coachEv.eg, /com arroz/i);
+    assert.match(coachEv.eg, /جرّب تقولها/);
+    assert.deepEqual(session.pending_question, pendingBefore);
+    for (const ex of session.last_exchanges) {
+      assert.doesNotMatch(ex.tl, /[\u0600-\u06FF]/);
+    }
+    // Character prompt must never see the Arabic question
+    assert.ok(!String(model.lastPrompt ?? '').includes('رز'));
+  });
+
+  it('timeout / error uses the bank fallback line', async () => {
+    const { store, session: started, model } = await sessionWithPending();
+    const coach = createStubConvoCoachCaller({ fail: 'timeout' });
+    const { events, emit } = collectEvents();
+    await runConvoTurn({
+      session: started,
+      pack,
+      surfaces,
+      learnerText: 'ازاي أقول مع رز؟',
+      store,
+      model,
+      emit,
+      coachCaller: coach,
+    });
+    const coachEv = events.find((e) => e.type === 'coach');
+    assert.ok(coachEv && coachEv.type === 'coach');
+    assert.equal(coachEv.eg, COACH_CALL_FALLBACK_EG);
+    assert.equal(coachEv.id, 'coach_call_fallback');
   });
 });
