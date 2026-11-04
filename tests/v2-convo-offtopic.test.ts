@@ -149,6 +149,6 @@ describe('v2 free chat · off-topic turn behaviour (T7.3)', () => {
     assert.ok(coach && coach.type === 'coach');
     assert.equal(coach.eg, NON_LEARNING_COACH_EG);
     assert.equal(out.session.topic_id, 'comida');
-    assert.equal(out.session.angle_index, started.session.angle_index);
+    assert.equal(out.session.thread_index, started.session.thread_index);
   });
 });

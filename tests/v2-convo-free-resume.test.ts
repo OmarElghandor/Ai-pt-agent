@@ -89,7 +89,7 @@ describe('v2 free chat · resume (T7.4)', () => {
     }
     const pendingId = session.pending_question?.id;
     assert.ok(pendingId);
-    const angleIndex = session.angle_index;
+    const threadIndex = session.thread_index;
 
     // Simulate leave + reopen (same store, like after browser return)
     const resumed = await startFreeConvoSession({
@@ -100,7 +100,7 @@ describe('v2 free chat · resume (T7.4)', () => {
     assert.equal(resumed.resumed, true);
     assert.ok(resumed.reopening);
     assert.equal(resumed.session.pending_question?.id, pendingId);
-    assert.equal(resumed.session.angle_index, angleIndex);
+    assert.equal(resumed.session.thread_index, threadIndex);
     assert.match(resumed.reopening!.character_tl, /Estávamos a falar|Falávamos|Sobre/);
     assert.match(resumed.reopening!.character_tl, /comida|Comida/i);
   });

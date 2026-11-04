@@ -1,3 +1,7 @@
+import type { FreeThreadStep } from '@/lib/v2/convo/free/nextLine';
+
+export type { FreeThreadStep };
+
 /** Item ladder rungs (09 §3). */
 export type ConvoRung =
   | 'taught'
@@ -42,10 +46,16 @@ export type ConvoSession = {
   topic_id: string | null;
   /** Character for free chat (from free-topics file). */
   character_id: string | null;
-  /** Index into the topic's angle bank. */
-  angle_index: number;
-  /** Angle ids already closed this session. */
-  angles_done: string[];
+  /** Index into the topic's thread list (Batch 9). */
+  thread_index: number;
+  /** Cursor within the current thread (or bridge). */
+  free_step: FreeThreadStep;
+  /** Thread ids already closed this session. */
+  threads_done: string[];
+  /** Last authored line id shown (ask / follow-up / bridge). */
+  last_line_id: string | null;
+  /** True when the learner used ساعدني أرد on the current question. */
+  assisted: boolean;
   /** Consecutive off-topic learner turns (T7.3). */
   off_topic_streak: number;
   /** Lesson pack opened mid free-chat (T7.5); free stays open. */

@@ -1,5 +1,6 @@
 import { connectMongo } from '@/lib/mongo';
 import { V2ConvoSessionModel } from '@/lib/v2/mongo/models';
+import { parseFreeThreadStep } from '@/lib/v2/convo/free/nextLine';
 import type { ConvoSessionStore } from './store';
 import type { ConvoSession } from './types';
 
@@ -10,6 +11,12 @@ type ConvoSessionDocLean = {
   pack_id: string;
   topic_id?: string | null;
   character_id?: string | null;
+  thread_index?: number;
+  free_step?: unknown;
+  threads_done?: string[];
+  last_line_id?: string | null;
+  assisted?: boolean;
+  /** Legacy angle fields (pre–Batch 9). */
   angle_index?: number;
   angles_done?: string[];
   off_topic_streak?: number;
@@ -39,8 +46,11 @@ function sessionFields(session: ConvoSession) {
     module: session.module,
     topic_id: session.topic_id,
     character_id: session.character_id,
-    angle_index: session.angle_index,
-    angles_done: session.angles_done,
+    thread_index: session.thread_index,
+    free_step: session.free_step,
+    threads_done: session.threads_done,
+    last_line_id: session.last_line_id,
+    assisted: session.assisted,
     off_topic_streak: session.off_topic_streak,
     paused_for_pack_id: session.paused_for_pack_id,
     rungs: session.rungs,
@@ -70,8 +80,11 @@ function fromDoc(doc: ConvoSessionDocLean): ConvoSession {
     pack_id: doc.pack_id,
     topic_id: doc.topic_id ?? null,
     character_id: doc.character_id ?? null,
-    angle_index: doc.angle_index ?? 0,
-    angles_done: doc.angles_done ?? [],
+    thread_index: doc.thread_index ?? doc.angle_index ?? 0,
+    free_step: parseFreeThreadStep(doc.free_step),
+    threads_done: doc.threads_done ?? doc.angles_done ?? [],
+    last_line_id: doc.last_line_id ?? null,
+    assisted: doc.assisted ?? false,
     off_topic_streak: doc.off_topic_streak ?? 0,
     paused_for_pack_id: doc.paused_for_pack_id ?? null,
     rungs: doc.rungs ?? {},

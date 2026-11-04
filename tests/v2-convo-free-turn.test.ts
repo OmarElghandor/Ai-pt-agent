@@ -17,7 +17,7 @@ import {
   runFreeConvoTurn,
   type ConvoTurnStreamEvent,
 } from '@/lib/v2/convo/turn';
-import { loadTopicAngles, loadFreeTopicsFile } from '@/lib/v2/convo/topics';
+import { loadFreeTopicsFile, loadThreadTopic } from '@/lib/v2/convo/topics';
 
 describe('v2 free chat · T7.2 prompt', () => {
   it('builds six parts with suggested words and facts inside 2/4 only', () => {
@@ -182,8 +182,8 @@ describe('v2 free chat · catalogue', () => {
   it('start seeds suggested words from the topic word set', async () => {
     const file = loadFreeTopicsFile();
     const comida = file.topics.find((t) => t.id === 'comida')!;
-    const angles = loadTopicAngles('comida');
-    assert.ok(angles.angles.length >= 5);
+    const threads = loadThreadTopic('comida');
+    assert.equal(threads.threads.length, 5);
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'u-sw',

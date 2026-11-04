@@ -1,5 +1,5 @@
 import { pickCoachLine } from '@/lib/v2/convo/encouragement';
-import type { FreeTopic, TopicAngle } from '@/lib/v2/convo/topics';
+import type { FreeTopic } from '@/lib/v2/convo/topics';
 import type {
   ConvoOpeningBubbles,
   ConvoReopeningPayload,
@@ -19,29 +19,21 @@ function pickTemplate(seed: string): string {
   return FREE_REOPEN_TEMPLATES[idx] ?? FREE_REOPEN_TEMPLATES[0]!;
 }
 
-export function freePendingAngleTl(
-  angles: TopicAngle[],
-  pendingId: string | null | undefined,
-): string {
-  if (!pendingId) return '';
-  return angles.find((a) => a.id === pendingId)?.tl ?? '';
-}
-
 /**
- * Free-chat reopening from template + pending angle (09 §9 / T7.4).
+ * Free-chat reopening from template + pending line (Batch 9).
  * No model call.
  */
 export function buildFreeReopening(
   session: ConvoSession,
   topic: FreeTopic,
-  angles: TopicAngle[],
+  pendingTl: string,
 ): {
   opening: ConvoOpeningBubbles;
   reopening: ConvoReopeningPayload;
   session: ConvoSession;
 } {
   const pending = session.pending_question;
-  const questionTl = freePendingAngleTl(angles, pending?.id);
+  const questionTl = pendingTl.trim();
   const template = pickTemplate(session.id + (pending?.id ?? ''));
   const characterTl = questionTl
     ? template

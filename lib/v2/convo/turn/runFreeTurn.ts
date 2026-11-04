@@ -4,15 +4,13 @@ import {
 } from '@/lib/v2/convo/prompt';
 import {
   dropFreeConvoReaction,
-  endsWithQuestionOrInvitation,
   parseFreeConvoReaction,
 } from '@/lib/v2/convo/output/parseFree';
 import {
   freeTopicById,
   loadFreeTopicsFile,
-  loadTopicAngles,
+  loadThreadTopic,
   type FreeTopic,
-  type TopicAngle,
 } from '@/lib/v2/convo/topics';
 import type { ConvoSession, ConvoSessionStore } from '@/lib/v2/convo/session';
 import { freePackId } from '@/lib/v2/convo/session/freeInit';
@@ -23,6 +21,8 @@ import {
   topicRequestCoachEg,
 } from '@/lib/v2/convo/sideChannel';
 import {
+  advanceAfterAnswer,
+  currentNextLine,
   extractFreeFact,
   isNonLearningRequest,
   isOffTopic,
@@ -30,6 +30,7 @@ import {
   NON_LEARNING_COACH_EG,
   offTopicGist,
   pushFreeFact,
+  type FreeNextLine,
 } from '@/lib/v2/convo/free';
 import type {
   ConvoStreamModel,
@@ -44,7 +45,6 @@ export type RunFreeConvoTurnInput = {
   model: ConvoStreamModel;
   emit: (event: ConvoTurnStreamEvent) => void;
   topic?: FreeTopic;
-  angles?: TopicAngle[];
 };
 
 function pushExchange(
@@ -59,77 +59,27 @@ function pushExchange(
   ].slice(-3);
 }
 
-function relatedBridgeTopic(topic: FreeTopic): string {
-  return topic.related_topic_ids[0] ?? topic.id;
-}
-
-function bridgeAngle(topic: FreeTopic): TopicAngle {
-  return {
-    id: `${topic.id}.bridge`,
-    tl: `E o ${relatedBridgeTopic(topic)}? Quer falar disso?`,
-    item_hints: [],
+function applyNextLine(session: ConvoSession, next: FreeNextLine): void {
+  session.last_line_id = next.line_id;
+  session.pending_question = {
+    id: next.line_id,
+    kind: 'open',
+    item_id: next.line_id,
   };
+  session.assisted = false;
 }
 
-function angleCandidates(
-  angles: TopicAngle[],
-  index: number,
-): Array<{ id: string; tl: string; item_id: string; qkind: 'open' }> {
-  const cur = angles[index];
-  const next = angles[index + 1];
-  const out: Array<{ id: string; tl: string; item_id: string; qkind: 'open' }> =
-    [];
-  if (cur)
-    out.push({ id: cur.id, tl: cur.tl, item_id: cur.id, qkind: 'open' });
-  if (next)
-    out.push({ id: next.id, tl: next.tl, item_id: next.id, qkind: 'open' });
-  return out;
-}
-
-function closeAngleWithFact(
+function closeWithFact(
   session: ConvoSession,
-  angle: TopicAngle | undefined,
+  line: FreeNextLine,
   learnerText: string,
 ): void {
-  if (!angle) return;
-  if (!session.angles_done.includes(angle.id)) {
-    session.angles_done = [...session.angles_done, angle.id];
-  }
   const hints = [
-    ...angle.item_hints,
+    ...(line.frame?.chips ?? []),
     ...session.suggested_words.slice(0, 8),
   ];
   const fact = extractFreeFact({ learnerText, hints });
   session.facts = pushFreeFact(session.facts, fact);
-}
-
-/** Move to next angle (or bridge). Returns the angle question to append. */
-function takeNextAngleQuestion(
-  session: ConvoSession,
-  angles: TopicAngle[],
-  topic: FreeTopic,
-  learnerText: string,
-): TopicAngle {
-  const current = angles[session.angle_index];
-  closeAngleWithFact(session, current, learnerText);
-  const nextIndex = session.angle_index + 1;
-  if (nextIndex >= angles.length) {
-    const bridge = bridgeAngle(topic);
-    session.pending_question = {
-      id: bridge.id,
-      kind: 'open',
-      item_id: bridge.id,
-    };
-    return bridge;
-  }
-  session.angle_index = nextIndex;
-  const next = angles[nextIndex]!;
-  session.pending_question = {
-    id: next.id,
-    kind: 'open',
-    item_id: next.id,
-  };
-  return next;
 }
 
 async function callFreeModel(opts: {
@@ -199,8 +149,9 @@ async function callFreeModel(opts: {
 }
 
 /**
- * One Module C free-chat turn (T7.2).
- * No pack grading. Reply must end with a question; else append next angle.
+ * One Module C free-chat turn (Batch 9 C2).
+ * Code owns the next authored line; the model only reacts (prompt still
+ * transitional until C4).
  */
 export async function runFreeConvoTurn(
   input: RunFreeConvoTurnInput,
@@ -212,7 +163,7 @@ export async function runFreeConvoTurn(
 
   let topic = input.topic ?? freeTopicById(topicId);
   if (!topic) throw new Error(`Unknown free topic: ${topicId}`);
-  let angles = input.angles ?? loadTopicAngles(topicId).angles;
+  let threadDoc = loadThreadTopic(topic.id);
 
   const emit = input.emit;
   let metrics: ConvoTurnMetrics = {
@@ -260,7 +211,6 @@ export async function runFreeConvoTurn(
         eg: coach.eg,
         moment: 'topic_request',
       });
-      // Surface the lesson talk href via a synthetic question-less session note
       emit({
         type: 'session',
         session: {
@@ -277,14 +227,10 @@ export async function runFreeConvoTurn(
           survival_used: session.survival_used,
         },
       });
-      // Client reads paused_for_pack_id from a dedicated coach id pattern / metrics.
-      // Encode pack + href in coach id for the FreeTalkSession CTA.
       emit({
         type: 'coach',
         id: `open_pack:${matched.pack_id}`,
-        eg: coach.href
-          ? `${coach.eg}\n${coach.href}`
-          : coach.eg,
+        eg: coach.href ? `${coach.eg}\n${coach.href}` : coach.eg,
         moment: 'topic_request_cta',
       });
     } else {
@@ -322,7 +268,6 @@ export async function runFreeConvoTurn(
 
   const learnerText = input.learnerText.trim();
 
-  // Non-learning English meta requests → coach decline only (09 §9).
   if (learnerText && isNonLearningRequest(learnerText)) {
     emit({
       type: 'coach',
@@ -333,7 +278,15 @@ export async function runFreeConvoTurn(
     return finish(true);
   }
 
+  let current = currentNextLine(
+    threadDoc,
+    session.thread_index,
+    session.free_step,
+    topic,
+  );
+
   let switchedTopic = false;
+  let bridgingBack = false;
   let eventLine = learnerText
     ? 'learner replied; continue the free chat'
     : 'conversation started; ask about the topic';
@@ -341,7 +294,9 @@ export async function runFreeConvoTurn(
   if (learnerText) {
     const extras = [
       ...session.suggested_words,
-      ...(angles[session.angle_index]?.item_hints ?? []),
+      ...(current.frame?.chips ?? []),
+      current.tl,
+      current.share_tl ?? '',
     ];
     if (isOffTopic(learnerText, topic, extras)) {
       session.off_topic_streak = (session.off_topic_streak ?? 0) + 1;
@@ -350,18 +305,22 @@ export async function runFreeConvoTurn(
         const all = loadFreeTopicsFile().topics;
         const nextTopic = nearestFreeTopic(topic, all, learnerText);
         topic = nextTopic;
-        angles = loadTopicAngles(nextTopic.id).angles;
+        threadDoc = loadThreadTopic(nextTopic.id);
         session.topic_id = nextTopic.id;
         session.pack_id = freePackId(nextTopic.id);
         session.character_id = nextTopic.character_id;
-        session.angle_index = 0;
-        session.angles_done = [];
+        session.thread_index = 0;
+        session.free_step = { kind: 'ask' };
+        session.threads_done = [];
         session.off_topic_streak = 0;
         session.suggested_words = nextTopic.word_set.slice(0, 15);
-        const first = angles[0];
-        session.pending_question = first
-          ? { id: first.id, kind: 'open', item_id: first.id }
-          : null;
+        current = currentNextLine(
+          threadDoc,
+          0,
+          { kind: 'ask' },
+          topic,
+        );
+        applyNextLine(session, current);
         switchedTopic = true;
         eventLine = `learner went off topic twice; switched to ${nextTopic.title_tl}`;
         emit({
@@ -372,15 +331,22 @@ export async function runFreeConvoTurn(
         });
       } else {
         eventLine = `learner went off topic: ${gist}`;
+        bridgingBack = true;
       }
-      // Keep exchanges Portuguese-only (09 §5.1 part 5); gist lives in event line.
     } else {
       session.off_topic_streak = 0;
       pushExchange(session, 'learner', learnerText);
     }
   }
 
-  const candidates = angleCandidates(angles, session.angle_index);
+  const candidates = [
+    {
+      id: current.line_id,
+      tl: current.tl,
+      item_id: current.line_id,
+      qkind: 'open' as const,
+    },
+  ];
 
   const promptBuilt = buildConvoPrompt({
     module: 'free',
@@ -419,77 +385,77 @@ export async function runFreeConvoTurn(
   });
   metrics = { ...metrics, ...modelOut.metricsPartial };
 
-  let questionTl = '';
-  let questionId = session.pending_question?.id ?? '';
-  const bridgingBack =
-    !switchedTopic &&
-    eventLine.startsWith('learner went off topic:') &&
-    !eventLine.includes('twice');
-
-  if (
-    modelOut.reaction &&
-    endsWithQuestionOrInvitation(modelOut.reaction) &&
-    !bridgingBack
-  ) {
+  if (modelOut.reaction) {
     pushExchange(session, 'character', modelOut.reaction);
-    questionTl = modelOut.reaction;
-    questionId = session.pending_question?.id ?? `free.${session.angle_index}`;
-    const current = angles[session.angle_index];
-    closeAngleWithFact(session, current, learnerText);
-    if (session.angle_index + 1 < angles.length) {
-      session.angle_index += 1;
-    }
-    const pendingAngle =
-      angles[session.angle_index] ?? bridgeAngle(topic);
-    session.pending_question = {
-      id: pendingAngle.id,
-      kind: 'open',
-      item_id: pendingAngle.id,
-    };
-  } else {
-    if (modelOut.reaction) {
-      pushExchange(session, 'character', modelOut.reaction);
-    }
-    // First off-topic (or forced bridge): re-ask current angle, do not advance.
-    const current =
-      angles[session.angle_index] ??
-      (session.pending_question
-        ? {
-            id: session.pending_question.id,
-            tl: '',
-            item_hints: [] as string[],
-          }
-        : null);
-    let appended: TopicAngle;
-    if (bridgingBack && current && current.tl) {
-      appended = current;
-      session.pending_question = {
-        id: current.id,
-        kind: 'open',
-        item_id: current.id,
-      };
-    } else if (switchedTopic && angles[0]) {
-      appended = angles[0];
-      session.pending_question = {
-        id: appended.id,
-        kind: 'open',
-        item_id: appended.id,
-      };
-    } else {
-      appended = takeNextAngleQuestion(session, angles, topic, learnerText);
-    }
-    pushExchange(session, 'character', appended.tl);
-    questionTl = appended.tl;
-    questionId = appended.id;
   }
+
+  let nextLine: FreeNextLine;
+  if (bridgingBack) {
+    nextLine = {
+      ...current,
+      bubble_tl: `Mas diz-me… ${current.tl}`,
+      tl: current.tl,
+    };
+    applyNextLine(session, current);
+  } else if (switchedTopic) {
+    nextLine = current;
+  } else if (learnerText) {
+    closeWithFact(session, current, learnerText);
+    const advanced = advanceAfterAnswer({
+      doc: threadDoc,
+      topic,
+      thread_index: session.thread_index,
+      step: session.free_step,
+      threads_done: session.threads_done,
+      learnerText,
+    });
+    if (advanced.switch_topic_id) {
+      const nextTopic = freeTopicById(advanced.switch_topic_id)!;
+      topic = nextTopic;
+      threadDoc = loadThreadTopic(nextTopic.id);
+      session.topic_id = nextTopic.id;
+      session.pack_id = freePackId(nextTopic.id);
+      session.character_id = nextTopic.character_id;
+      session.suggested_words = nextTopic.word_set.slice(0, 15);
+      // Opening of related topic: use opening + first thread (C3 will polish)
+      const openLine = currentNextLine(
+        threadDoc,
+        0,
+        { kind: 'ask' },
+        topic,
+      );
+      const withOpening: FreeNextLine = {
+        ...openLine,
+        bubble_tl: `${topic.opening_tl.replace(/\{name\}!?\,?\s*/g, '').trim()} ${openLine.bubble_tl}`.trim(),
+        bubble_ar: `${topic.opening_ar.replace(/\{name\}!?\,?\s*/g, '').trim()} ${openLine.bubble_ar}`.trim(),
+      };
+      session.thread_index = 0;
+      session.free_step = { kind: 'ask' };
+      session.threads_done = [];
+      nextLine = withOpening;
+      applyNextLine(session, openLine);
+    } else {
+      session.thread_index = advanced.thread_index;
+      session.free_step = advanced.step;
+      session.threads_done = advanced.threads_done;
+      nextLine = advanced.next;
+      applyNextLine(session, nextLine);
+    }
+  } else {
+    nextLine = current;
+    applyNextLine(session, nextLine);
+  }
+
+  const questionTl = nextLine.bubble_tl || nextLine.tl;
+  pushExchange(session, 'character', questionTl);
 
   emit({
     type: 'question',
-    id: questionId,
+    id: nextLine.line_id,
     tl: questionTl,
     kind: 'open',
-    item_id: questionId,
-    audio_key: `free:${topic.id}:${questionId}`,
+    item_id: nextLine.line_id,
+    audio_key: `free:${topic.id}:${nextLine.line_id}`,
     ...(modelOut.unknownWords.length
       ? { unknown_words: modelOut.unknownWords }
       : {}),

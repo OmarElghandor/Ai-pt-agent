@@ -8,8 +8,9 @@ import {
 import {
   freeTopicById,
   freeTopicIdForPack,
-  loadTopicAngles,
+  loadThreadTopic,
 } from '@/lib/v2/convo/topics';
+import { currentNextLine } from '@/lib/v2/convo/free';
 import {
   MongoConvoSessionStore,
   startConvoSession,
@@ -55,25 +56,28 @@ export async function POST(req: Request) {
           { status: 400 },
         );
       }
-      const angles = loadTopicAngles(topicId);
       const result = await startFreeConvoSession({
         userId,
         topicId,
         store,
         topic,
-        anglesDoc: angles,
         ...(body?.session_id ? { sessionId: body.session_id } : {}),
       });
+      const threadDoc = loadThreadTopic(topic.id);
+      const pendingLine = currentNextLine(
+        threadDoc,
+        result.session.thread_index,
+        result.session.free_step,
+        topic,
+      );
       const pendingTl =
-        result.reopening?.pending_tl ??
-        angles.angles.find(
-          (a) => a.id === result.session.pending_question?.id,
-        )?.tl ??
-        null;
+        result.reopening?.pending_tl ?? pendingLine.bubble_tl ?? null;
       return NextResponse.json({
         session_id: result.session.id,
         module: 'free',
         topic_id: topic.id,
+        title_tl: topic.title_tl,
+        title_ar: topic.title_ar,
         pack_id: result.session.pack_id,
         resumed: result.resumed,
         opening: result.opening,

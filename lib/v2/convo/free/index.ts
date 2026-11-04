@@ -12,3 +12,16 @@ export {
   extractFreeFact,
   pushFreeFact,
 } from './facts';
+
+export {
+  advanceAfterAnswer,
+  bridgeLine,
+  currentNextLine,
+  isBridgeYes,
+  isNegativeAnswer,
+  openingNextLine,
+  parseFreeThreadStep,
+  type AdvanceFreeCursorResult,
+  type FreeNextLine,
+  type FreeThreadStep,
+} from './nextLine';

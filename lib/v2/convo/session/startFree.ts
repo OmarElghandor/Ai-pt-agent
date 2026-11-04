@@ -1,11 +1,13 @@
 import { randomUUID } from 'node:crypto';
 import {
   freeTopicById,
-  loadTopicAngles,
+  loadThreadTopic,
   type FreeTopic,
-  type TopicAngle,
-  type TopicAnglesDoc,
 } from '@/lib/v2/convo/topics';
+import {
+  currentNextLine,
+  openingNextLine,
+} from '@/lib/v2/convo/free/nextLine';
 import {
   buildFreeOpeningBubbles,
   createFreeConvoSessionDoc,
@@ -22,33 +24,28 @@ export type StartFreeConvoSessionOpts = {
   sessionId?: string;
   newId?: () => string;
   now?: Date;
-  /** Inject angles (tests). */
-  anglesDoc?: TopicAnglesDoc;
   topic?: FreeTopic;
   suggestedWords?: string[];
 };
 
-function angleTl(
-  angles: TopicAngle[],
-  pendingId: string | undefined,
-): string {
-  if (!pendingId) return '';
-  return angles.find((a) => a.id === pendingId)?.tl ?? '';
-}
-
 async function resumeFree(
   existing: ConvoSession,
   topic: FreeTopic,
-  angles: TopicAngle[],
   store: ConvoSessionStore,
 ): Promise<StartConvoResult> {
-  // Returning from a paused lesson conversation (T7.5).
   const cleared =
     existing.paused_for_pack_id != null
       ? { ...existing, paused_for_pack_id: null }
       : existing;
   if (cleared.pending_question) {
-    const built = buildFreeReopening(cleared, topic, angles);
+    const doc = loadThreadTopic(topic.id);
+    const pending = currentNextLine(
+      doc,
+      cleared.thread_index,
+      cleared.free_step,
+      topic,
+    );
+    const built = buildFreeReopening(cleared, topic, pending.tl);
     const session = await store.save(built.session);
     return {
       session,
@@ -61,14 +58,14 @@ async function resumeFree(
     cleared !== existing ? await store.save(cleared) : cleared;
   return {
     session,
-    opening: buildFreeOpeningBubbles(topic, angles[existing.angle_index] ?? null),
+    opening: buildFreeOpeningBubbles(topic),
     resumed: true,
   };
 }
 
 /**
- * Create or resume a Module C free-chat session (T7.2).
- * No model call. Opening is a template + first angle as pending.
+ * Create or resume a Module C free-chat session (Batch 9).
+ * No model call. Opening is coach intro + share+ask (C3 polishes name).
  */
 export async function startFreeConvoSession(
   opts: StartFreeConvoSessionOpts,
@@ -76,9 +73,6 @@ export async function startFreeConvoSession(
   const topic = opts.topic ?? freeTopicById(opts.topicId);
   if (!topic) throw new Error(`Unknown free topic: ${opts.topicId}`);
 
-  const anglesDoc =
-    opts.anglesDoc ?? loadTopicAngles(topic.id);
-  const angles = anglesDoc.angles;
   const packId = freePackId(topic.id);
 
   if (opts.sessionId) {
@@ -89,13 +83,13 @@ export async function startFreeConvoSession(
       existing.module === 'free' &&
       existing.topic_id === topic.id
     ) {
-      return resumeFree(existing, topic, angles, opts.store);
+      return resumeFree(existing, topic, opts.store);
     }
   }
 
   const open = await opts.store.findOpen(opts.userId, packId);
   if (open && open.module === 'free') {
-    return resumeFree(open, topic, angles, opts.store);
+    return resumeFree(open, topic, opts.store);
   }
 
   const id = opts.newId?.() ?? randomUUID();
@@ -103,21 +97,16 @@ export async function startFreeConvoSession(
     id,
     userId: opts.userId,
     topic,
-    angles,
     now: opts.now,
     ...(opts.suggestedWords
       ? { suggestedWords: opts.suggestedWords }
       : {}),
   });
   const session = await opts.store.create(created);
-  const first = angles[0] ?? null;
-  const opening = buildFreeOpeningBubbles(topic, first);
-  // Surface the first angle as character follow-up text in opening.character
-  // when we already set pending; TalkSession shows pending from start payload.
-  void angleTl;
+  void openingNextLine;
   return {
     session,
-    opening,
+    opening: buildFreeOpeningBubbles(topic),
     resumed: false,
   };
 }
