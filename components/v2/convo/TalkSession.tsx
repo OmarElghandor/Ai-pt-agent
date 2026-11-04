@@ -50,6 +50,8 @@ export function TalkSession({ packId }: Props) {
   const [pending, setPending] = useState<TalkPendingQuestion | null>(null);
   const [snapshot, setSnapshot] = useState<TalkSessionSnapshot | null>(null);
   const [activeMapStep, setActiveMapStep] = useState<string | null>(null);
+  const [highlightNodeId, setHighlightNodeId] = useState<string | null>(null);
+  const [highlightItemId, setHighlightItemId] = useState<string | null>(null);
   const [wrongWay, setWrongWay] = useState<{
     from: string;
     toward: string;
@@ -144,6 +146,12 @@ export function TalkSession({ packId }: Props) {
       if (event.type === 'visual') {
         if (event.map_step) setActiveMapStep(event.map_step);
         if (event.wrong_way) flashWrongWay(event.wrong_way);
+        if (event.highlight_node_id) {
+          setHighlightNodeId(event.highlight_node_id);
+        }
+        if (event.highlight_item_id) {
+          setHighlightItemId(event.highlight_item_id);
+        }
         return;
       }
       if (event.type === 'reaction_delta') {
@@ -523,6 +531,7 @@ export function TalkSession({ packId }: Props) {
           characterNode={mapCharNode}
           activeStepId={activeMapStep ?? pending?.map_step ?? null}
           wrongWay={wrongWay}
+          highlightNodeId={highlightNodeId}
           hidden={hideVisual || done}
         />
       ) : null}
@@ -574,6 +583,7 @@ export function TalkSession({ packId }: Props) {
                       tl={s?.tl ?? id}
                       say={s?.say}
                       glyph={s?.glyph}
+                      highlighted={highlightItemId === id}
                     />
                   );
                 })}

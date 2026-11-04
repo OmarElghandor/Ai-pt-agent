@@ -24,6 +24,7 @@ import { deriveWrongWay } from '@/lib/v2/convo/visual';
 import {
   classifySideChannel,
   handleArabicAnswer,
+  handleLanguageQuestionFromPack,
 } from '@/lib/v2/convo/sideChannel';
 import { convoQuestionAudioKey } from './audioKey';
 import {
@@ -339,13 +340,23 @@ export async function runConvoTurn(
   // --- Arabic side channel (09 §6) before grading ---
   const sideKind = classifySideChannel(learnerText);
   if (sideKind === 'arabic_answer' || sideKind === 'other') {
-    // T3.1: answer-in-Arabic and other Arabic chit-chat → coach bank, wait.
-    // language_question is stubbed until T3.2 / T3.3.
     session = handleArabicAnswer({ session, pack, surfaces, emit });
     return finish(true);
   }
   if (sideKind === 'language_question') {
-    // T3.2 / T3.3 will handle; for now still avoid grading Arabic into exchanges.
+    const packHit = handleLanguageQuestionFromPack({
+      session,
+      pack,
+      surfaces,
+      learnerText,
+      emit,
+    });
+    if (packHit.handled) {
+      session = packHit.session;
+      return finish(true);
+    }
+    // T3.3: coach call for unmatched language questions.
+    // Until then, still do not grade Arabic into exchanges.
     session = handleArabicAnswer({ session, pack, surfaces, emit });
     return finish(true);
   }

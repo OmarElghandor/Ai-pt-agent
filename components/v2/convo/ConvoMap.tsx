@@ -10,6 +10,8 @@ type Props = {
   activeStepId: string | null;
   /** Brief wrong-way flash. */
   wrongWay: { from: string; toward: string } | null;
+  /** Side-channel: highlight a map node (T3.2). */
+  highlightNodeId?: string | null;
   hidden?: boolean;
 };
 
@@ -22,6 +24,7 @@ export function ConvoMap({
   characterNode,
   activeStepId,
   wrongWay,
+  highlightNodeId,
   hidden,
 }: Props) {
   if (hidden) return null;
@@ -44,6 +47,7 @@ export function ConvoMap({
           const onActiveEdge =
             activeStep &&
             (activeStep.from === node.id || activeStep.to === node.id);
+          const isSideHighlight = highlightNodeId === node.id;
           return (
             <div key={node.id} className="flex items-center gap-2">
               <div
@@ -51,9 +55,11 @@ export function ConvoMap({
                   'relative flex h-11 min-w-11 flex-col items-center justify-center rounded-full border px-2 transition-transform',
                   isChar
                     ? 'border-v2-action bg-v2-action text-white shadow-md scale-105'
-                    : onActiveEdge
-                      ? 'border-v2-primary bg-white text-v2-primary ring-2 ring-v2-primary/30'
-                      : 'border-v2-line bg-white text-v2-ink-muted',
+                    : isSideHighlight
+                      ? 'border-amber-500 bg-amber-50 text-v2-primary ring-2 ring-amber-400/60 scale-105'
+                      : onActiveEdge
+                        ? 'border-v2-primary bg-white text-v2-primary ring-2 ring-v2-primary/30'
+                        : 'border-v2-line bg-white text-v2-ink-muted',
                   isWrongFlash ? 'animate-pulse border-amber-500 ring-2 ring-amber-400/50' : '',
                 ]
                   .filter(Boolean)

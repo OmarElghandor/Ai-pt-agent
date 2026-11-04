@@ -8,6 +8,8 @@ type Props = {
   tl: string;
   say?: string;
   glyph?: ConvoItemGlyph;
+  /** Side-channel highlight (T3.2). */
+  highlighted?: boolean;
 };
 
 function GlyphArrow({ glyph }: { glyph: 'left' | 'right' | 'straight' }) {
@@ -28,9 +30,21 @@ function GlyphArrow({ glyph }: { glyph: 'left' | 'right' | 'straight' }) {
 }
 
 /** Inline item card when a group starts (09 §10): image/arrow, say, audio. */
-export function ItemCard({ tl, say, glyph = 'place' }: Props) {
+export function ItemCard({
+  tl,
+  say,
+  glyph = 'place',
+  highlighted = false,
+}: Props) {
   return (
-    <div className="flex w-full items-center gap-3 rounded-2xl border border-v2-line bg-v2-card px-3 py-2.5 shadow-[var(--shadow-v2-soft)]">
+    <div
+      className={[
+        'flex w-full items-center gap-3 rounded-2xl border bg-v2-card px-3 py-2.5 shadow-[var(--shadow-v2-soft)]',
+        highlighted
+          ? 'border-amber-500 ring-2 ring-amber-400/50'
+          : 'border-v2-line',
+      ].join(' ')}
+    >
       {glyph === 'place' ? (
         <ImageSlot variant="tile" placeholderIcon="place" />
       ) : (

@@ -33,6 +33,10 @@ export type ConvoTurnStreamEvent =
       map_step?: string;
       /** Brief wrong-way animation after a listed direction mistake. */
       wrong_way?: { from: string; toward: string };
+      /** Side-channel: highlight a pack item card (T3.2). */
+      highlight_item_id?: string;
+      /** Side-channel: highlight a map node by id (T3.2). */
+      highlight_node_id?: string;
     }
   | {
       type: 'question';
