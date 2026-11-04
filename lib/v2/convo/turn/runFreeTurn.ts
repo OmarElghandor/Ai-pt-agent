@@ -9,12 +9,21 @@ import {
 } from '@/lib/v2/convo/output/parseFree';
 import {
   freeTopicById,
+  loadFreeTopicsFile,
   loadTopicAngles,
   type FreeTopic,
   type TopicAngle,
 } from '@/lib/v2/convo/topics';
 import type { ConvoSession, ConvoSessionStore } from '@/lib/v2/convo/session';
+import { freePackId } from '@/lib/v2/convo/session/freeInit';
 import { classifySideChannel } from '@/lib/v2/convo/sideChannel';
+import {
+  isNonLearningRequest,
+  isOffTopic,
+  nearestFreeTopic,
+  NON_LEARNING_COACH_EG,
+  offTopicGist,
+} from '@/lib/v2/convo/free';
 import type {
   ConvoStreamModel,
   ConvoTurnMetrics,
@@ -178,9 +187,9 @@ export async function runFreeConvoTurn(
   const topicId = session.topic_id;
   if (!topicId) throw new Error('free session missing topic_id');
 
-  const topic = input.topic ?? freeTopicById(topicId);
+  let topic = input.topic ?? freeTopicById(topicId);
   if (!topic) throw new Error(`Unknown free topic: ${topicId}`);
-  const angles = input.angles ?? loadTopicAngles(topicId).angles;
+  let angles = input.angles ?? loadTopicAngles(topicId).angles;
 
   const emit = input.emit;
   let metrics: ConvoTurnMetrics = {
@@ -237,14 +246,66 @@ export async function runFreeConvoTurn(
   }
 
   const learnerText = input.learnerText.trim();
+
+  // Non-learning English meta requests → coach decline only (09 §9).
+  if (learnerText && isNonLearningRequest(learnerText)) {
+    emit({
+      type: 'coach',
+      id: 'free_non_learning',
+      eg: NON_LEARNING_COACH_EG,
+      moment: 'non_learning',
+    });
+    return finish(true);
+  }
+
+  let switchedTopic = false;
+  let eventLine = learnerText
+    ? 'learner replied; continue the free chat'
+    : 'conversation started; ask about the topic';
+
   if (learnerText) {
-    pushExchange(session, 'learner', learnerText);
+    const extras = [
+      ...session.suggested_words,
+      ...(angles[session.angle_index]?.item_hints ?? []),
+    ];
+    if (isOffTopic(learnerText, topic, extras)) {
+      session.off_topic_streak = (session.off_topic_streak ?? 0) + 1;
+      const gist = offTopicGist(learnerText);
+      if (session.off_topic_streak >= 2) {
+        const all = loadFreeTopicsFile().topics;
+        const nextTopic = nearestFreeTopic(topic, all, learnerText);
+        topic = nextTopic;
+        angles = loadTopicAngles(nextTopic.id).angles;
+        session.topic_id = nextTopic.id;
+        session.pack_id = freePackId(nextTopic.id);
+        session.character_id = nextTopic.character_id;
+        session.angle_index = 0;
+        session.angles_done = [];
+        session.off_topic_streak = 0;
+        session.suggested_words = nextTopic.word_set.slice(0, 15);
+        const first = angles[0];
+        session.pending_question = first
+          ? { id: first.id, kind: 'open', item_id: first.id }
+          : null;
+        switchedTopic = true;
+        eventLine = `learner went off topic twice; switched to ${nextTopic.title_tl}`;
+        emit({
+          type: 'coach',
+          id: 'free_topic_switch',
+          eg: `خلّينا نغيّر الموضوع لـ ${nextTopic.title_ar} 🙂`,
+          moment: 'topic_switch',
+        });
+      } else {
+        eventLine = `learner went off topic: ${gist}`;
+      }
+      // Keep exchanges Portuguese-only (09 §5.1 part 5); gist lives in event line.
+    } else {
+      session.off_topic_streak = 0;
+      pushExchange(session, 'learner', learnerText);
+    }
   }
 
   const candidates = angleCandidates(angles, session.angle_index);
-  const eventLine = learnerText
-    ? 'learner replied; continue the free chat'
-    : 'conversation started; ask about the topic';
 
   const promptBuilt = buildConvoPrompt({
     module: 'free',
@@ -285,10 +346,15 @@ export async function runFreeConvoTurn(
 
   let questionTl = '';
   let questionId = session.pending_question?.id ?? '';
+  const bridgingBack =
+    !switchedTopic &&
+    eventLine.startsWith('learner went off topic:') &&
+    !eventLine.includes('twice');
 
   if (
     modelOut.reaction &&
-    endsWithQuestionOrInvitation(modelOut.reaction)
+    endsWithQuestionOrInvitation(modelOut.reaction) &&
+    !bridgingBack
   ) {
     pushExchange(session, 'character', modelOut.reaction);
     questionTl = modelOut.reaction;
@@ -312,7 +378,34 @@ export async function runFreeConvoTurn(
     if (modelOut.reaction) {
       pushExchange(session, 'character', modelOut.reaction);
     }
-    const appended = takeNextAngleQuestion(session, angles, topic);
+    // First off-topic (or forced bridge): re-ask current angle, do not advance.
+    const current =
+      angles[session.angle_index] ??
+      (session.pending_question
+        ? {
+            id: session.pending_question.id,
+            tl: '',
+            item_hints: [] as string[],
+          }
+        : null);
+    let appended: TopicAngle;
+    if (bridgingBack && current && current.tl) {
+      appended = current;
+      session.pending_question = {
+        id: current.id,
+        kind: 'open',
+        item_id: current.id,
+      };
+    } else if (switchedTopic && angles[0]) {
+      appended = angles[0];
+      session.pending_question = {
+        id: appended.id,
+        kind: 'open',
+        item_id: appended.id,
+      };
+    } else {
+      appended = takeNextAngleQuestion(session, angles, topic);
+    }
     pushExchange(session, 'character', appended.tl);
     questionTl = appended.tl;
     questionId = appended.id;
