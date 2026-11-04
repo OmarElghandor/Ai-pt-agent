@@ -28,6 +28,8 @@ export type TopicRow = TopicsFileTopic & {
   status: TopicStatus;
   /** Display glyph matching 09 §8. */
   status_glyph: '🟢' | '🟡' | '⚪';
+  /** Display name for home suggestion copy (from characters.json). */
+  character_name?: string;
 };
 
 export type ThemeWithTopics = {

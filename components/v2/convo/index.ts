@@ -5,6 +5,8 @@ export { ItemCard } from './ItemCard';
 export { ConvoMap } from './ConvoMap';
 export { SceneCardVisual } from './SceneCardVisual';
 export { ConvoResultCard } from './ConvoResultCard';
+export { TopicsScreen } from './TopicsScreen';
+export { TopicsReviewCard } from './TopicsReviewCard';
 export { readConvoNdjson } from './readNdjson';
 export { TalkDevPanel, TALK_DEV_PANEL_KEY } from './TalkDevPanel';
 export type { TalkTurnMetrics } from './TalkDevPanel';

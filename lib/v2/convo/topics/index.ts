@@ -18,3 +18,8 @@ export {
 export { topicStatus, statusGlyph } from './status';
 
 export { buildTopicsList, listTopicsForUser } from './list';
+
+export {
+  topicReviewSuggestionEg,
+  talkHrefForTopic,
+} from './suggestion';

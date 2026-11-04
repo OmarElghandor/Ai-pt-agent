@@ -1,4 +1,5 @@
 import { connectMongo, mongoConfigured } from '@/lib/mongo';
+import { getCharacter } from '@/lib/v2/characters/registry';
 import { V2ItemStateModel } from '@/lib/v2/mongo/models';
 import { learnerCurrentDay } from '@/lib/v2/progress/learnerDay';
 import type { ItemState } from '@/lib/v2/progress/types';
@@ -91,12 +92,16 @@ export function buildTopicsList(opts: {
         opts.weakIds,
         now,
       );
+      const character_name = t.character_id
+        ? (getCharacter(t.character_id)?.name ?? undefined)
+        : undefined;
       const row: TopicRow = {
         ...t,
         unlocked,
         pack_available,
         status,
         status_glyph: statusGlyph(status),
+        ...(character_name ? { character_name } : {}),
       };
       if (!suggestion && unlocked && status === 'needs_review') {
         suggestion = row;

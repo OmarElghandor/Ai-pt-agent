@@ -6,6 +6,8 @@ import {
   parseTopicsFile,
   topicStatus,
   statusGlyph,
+  talkHrefForTopic,
+  topicReviewSuggestionEg,
 } from '@/lib/v2/convo/topics';
 import { createItemState, type ItemState } from '@/lib/v2/progress';
 
@@ -165,5 +167,16 @@ describe('v2 convo topics · list for a test user', () => {
       .find((t) => t.id === 'directions.day-18');
     assert.equal(d18!.status, 'solid');
     assert.equal(listing.suggestion, null);
+  });
+
+  it('builds home suggestion copy and talk href', () => {
+    assert.equal(
+      topicReviewSuggestionEg({
+        title_ar: 'الاتجاهات',
+        character_name: 'Inês',
+      }),
+      'الاتجاهات محتاجة مراجعة، تتكلم مع Inês؟',
+    );
+    assert.equal(talkHrefForTopic({ pack_id: 'pt-PT.day-18' }), '/talk/pt-PT.day-18');
   });
 });
