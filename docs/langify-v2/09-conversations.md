@@ -267,7 +267,7 @@ UI (follow `05` Warm Editorial, `design/stitch-html/11-practice-conversation.htm
 
 ## 11. Build order
 
-Each step ends in something Omar can play. Do them in order.
+Each step ends in something Omar can play. Do them in order. **For Cursor, use the small tasks in `09a-conversations-tasks.md`**, not these steps directly.
 
 0. **Decisions.** Add a section "§9b Conversations" to `00-decisions.md` summarising sections 2, 3, 5 and 7 of this document, and mark the Phase 6 beat-based practice as superseded for new work (kept until cut-over). Add this doc to `docs/langify-v2/README.md`.
 1. **Engine skeleton, hand-written pack.** Write the day 18 pack by hand as a JSON content file (no generation yet). Build the session document, code grading, ladder, candidate selection, the streamed turn with the fixed prompt, post-checks, the coach bank, and the conversation screen with the map. Done when the day 18 conversation plays end to end with streaming, the map, the help ladder and the result card.
