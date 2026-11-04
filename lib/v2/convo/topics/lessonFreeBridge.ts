@@ -1,9 +1,10 @@
 import { loadTopicsFile } from './load';
-import { loadFreeTopicsFile } from './freeLoad';
+import { loadFreeTopicsFile } from './threadLoad';
 
 /**
  * Map a lesson pack / topic to a free-chat topic id (T7.5).
  * Prefer explicit free_topic_id on the topics file; fall back to heuristics.
+ * Batch 9 topic ids: casa, comida, ontem, …
  */
 export function freeTopicIdForPack(packId: string): string | null {
   const file = loadTopicsFile();
@@ -12,9 +13,9 @@ export function freeTopicIdForPack(packId: string): string | null {
       if (topic.pack_id !== packId) continue;
       const explicit = (topic as { free_topic_id?: string }).free_topic_id;
       if (explicit) return explicit;
-      if (theme.id === 'directions') return 'home';
-      if (theme.id === 'cafe') return 'food';
-      if (theme.id === 'feelings') return 'day';
+      if (theme.id === 'directions') return 'casa';
+      if (theme.id === 'cafe') return 'comida';
+      if (theme.id === 'feelings') return 'ontem';
     }
   }
   const free = loadFreeTopicsFile();

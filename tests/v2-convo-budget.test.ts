@@ -210,7 +210,7 @@ describe('v2 convo · 30-turn free-chat budget (T7.2)', () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'budget-free',
-      topicId: 'food',
+      topicId: 'comida',
       store,
       newId: () => 'budget-free-sess',
     });

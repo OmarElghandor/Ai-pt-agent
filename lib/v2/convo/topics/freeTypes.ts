@@ -1,27 +1,28 @@
-/** Free-chat catalogue topic (09 §9 / T7.1). */
-export type FreeTopic = {
-  id: string;
-  title_tl: string;
-  title_ar: string;
-  character_id: string;
-  /** Content words used for off-topic detection (T7.3). */
-  word_set: string[];
-  /** Nearby catalogue topics for bridge / switch. */
-  related_topic_ids: string[];
-};
+/**
+ * Free-chat types. Catalogue + threads live in threadTypes;
+ * angle types remain for the T7.1 generation job until C10 retargets it.
+ */
 
-export type FreeTopicsFile = {
-  target_lang: string;
-  topics: FreeTopic[];
-};
+export type {
+  FreeTopic,
+  FreeTopicsFile,
+  ThreadTopicFile,
+  Thread,
+  ThreadAsk,
+  ThreadFollowUp,
+  ThreadFrame,
+  ThreadCheckIssue,
+  ValidateThreadsResult,
+} from './threadTypes';
 
-/** One angle in the free-topic bank (pt-PT question + item hints). */
+/** @deprecated Batch 9 — angle banks removed; kept for topic_angles job until C10. */
 export type TopicAngle = {
   id: string;
   tl: string;
   item_hints: string[];
 };
 
+/** @deprecated Batch 9 — kept for topic_angles job until C10. */
 export type TopicAnglesDoc = {
   target_lang: string;
   topic_id: string;
@@ -29,12 +30,14 @@ export type TopicAnglesDoc = {
   version?: number;
 };
 
+/** @deprecated Batch 9 — kept for topic_angles job until C10. */
 export type AngleCheckIssue = {
   path: string;
   rule: 'count' | 'brazilian' | 'english' | 'length' | 'shape' | 'id';
   message: string;
 };
 
+/** @deprecated Batch 9 — kept for topic_angles job until C10. */
 export type ValidateAnglesResult = {
   ok: boolean;
   issues: AngleCheckIssue[];

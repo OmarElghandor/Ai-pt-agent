@@ -36,20 +36,51 @@ export type {
   TopicAnglesDoc,
   AngleCheckIssue,
   ValidateAnglesResult,
+  ThreadTopicFile,
+  Thread,
+  ThreadAsk,
+  ThreadFollowUp,
+  ThreadFrame,
+  ThreadCheckIssue,
+  ValidateThreadsResult,
 } from './freeTypes';
 
+export type {
+  Persona,
+  PersonasFile,
+  PersonaExample,
+  ValidatePersonasResult,
+} from './personaTypes';
+
 export {
-  parseFreeTopicsFile,
-  loadFreeTopicsFile,
   clearFreeTopicsCache,
   freeTopicById,
-  anglesFilePath,
-  loadTopicAnglesFromFile,
-  loadTopicAnglesAsync,
+  freeTopicFromThreadFile,
+  listThreadTopicIdsFromFiles,
+  loadFreeTopicsFile,
+  loadThreadTopic,
+  loadThreadTopicFromFile,
   loadTopicAngles,
+  requireFreeTopic,
+  requireThreadTopic,
   requireTopicAngles,
-  listAngleTopicIdsFromFiles,
+  threadsFilePath,
+  topicAnglesFromThreads,
+  wordSetFromThreadFile,
 } from './freeLoad';
+
+export {
+  clearPersonasCache,
+  loadPersonasFile,
+  personaById,
+  requirePersona,
+  validatePersonasFile,
+} from './personaLoad';
+
+export {
+  FORMAL_OPENERS,
+  validateThreadTopicFile,
+} from './validateThreads';
 
 export {
   ANGLE_MAX_WORDS,

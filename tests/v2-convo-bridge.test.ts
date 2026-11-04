@@ -51,7 +51,7 @@ describe('v2 free chat · topic request (T7.5)', () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'br-1',
-      topicId: 'food',
+      topicId: 'comida',
       store,
       newId: () => 'br-sess-1',
     });
@@ -80,7 +80,7 @@ describe('v2 free chat · topic request (T7.5)', () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'br-2',
-      topicId: 'food',
+      topicId: 'comida',
       store,
       newId: () => 'br-sess-2',
     });
@@ -107,13 +107,13 @@ describe('v2 free chat · topic request (T7.5)', () => {
 });
 
 describe('v2 free chat · lesson→free bridge (T7.5)', () => {
-  it('maps day-18 pack to free topic home', () => {
-    assert.equal(freeTopicIdForPack('pt-PT.day-18'), 'home');
+  it('maps day-18 pack to free topic casa', () => {
+    assert.equal(freeTopicIdForPack('pt-PT.day-18'), 'casa');
     const file = loadTopicsFile();
     const topic = file.themes
       .flatMap((t) => t.topics)
       .find((t) => t.id === 'directions.day-18');
-    assert.equal(topic?.free_topic_id, 'home');
+    assert.equal(topic?.free_topic_id, 'casa');
     assert.ok(pack.bridge.tl.length > 0);
   });
 
@@ -123,7 +123,7 @@ describe('v2 free chat · lesson→free bridge (T7.5)', () => {
     // 1. Start free chat
     const freeStart = await startFreeConvoSession({
       userId: 'loop-u',
-      topicId: 'food',
+      topicId: 'comida',
       store,
       newId: () => 'loop-free',
     });
@@ -164,7 +164,7 @@ describe('v2 free chat · lesson→free bridge (T7.5)', () => {
     // 4. Resume free chat — same pending angle, pause cleared
     const resumed = await startFreeConvoSession({
       userId: 'loop-u',
-      topicId: 'food',
+      topicId: 'comida',
       store,
     });
     assert.equal(resumed.resumed, true);

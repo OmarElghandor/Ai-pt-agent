@@ -40,7 +40,7 @@ describe('v2 free chat · facts (T7.4)', () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'fact-u',
-      topicId: 'food',
+      topicId: 'comida',
       store,
       newId: () => 'fact-sess',
     });
@@ -51,7 +51,7 @@ describe('v2 free chat · facts (T7.4)', () => {
     const events: ConvoTurnStreamEvent[] = [];
     const out = await runFreeConvoTurn({
       session,
-      learnerText: 'Gosto de cozinhar em casa.',
+      learnerText: 'É frango com arroz.',
       store,
       model,
       emit: (e) => events.push(e),
@@ -68,7 +68,7 @@ describe('v2 free chat · resume (T7.4)', () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'resume-u',
-      topicId: 'food',
+      topicId: 'comida',
       store,
       newId: () => 'resume-sess',
     });
@@ -94,7 +94,7 @@ describe('v2 free chat · resume (T7.4)', () => {
     // Simulate leave + reopen (same store, like after browser return)
     const resumed = await startFreeConvoSession({
       userId: 'resume-u',
-      topicId: 'food',
+      topicId: 'comida',
       store,
     });
     assert.equal(resumed.resumed, true);

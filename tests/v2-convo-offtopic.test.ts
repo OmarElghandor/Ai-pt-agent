@@ -21,17 +21,17 @@ import {
 } from '@/lib/v2/convo/turn';
 
 describe('v2 free chat · off-topic helpers (T7.3)', () => {
-  const food = freeTopicById('food')!;
+  const comida = freeTopicById('comida')!;
 
-  it('detects football English as off-topic for food', () => {
+  it('detects football English as off-topic for comida', () => {
     assert.equal(
-      isOffTopic('I love watching football matches every Sunday', food),
+      isOffTopic('I love watching football matches every Sunday', comida),
       true,
     );
   });
 
   it('keeps food words on-topic', () => {
-    assert.equal(isOffTopic('Gosto de arroz e frango', food), false);
+    assert.equal(isOffTopic('Gosto de arroz e frango', comida), false);
   });
 
   it('detects non-learning requests', () => {
@@ -42,8 +42,8 @@ describe('v2 free chat · off-topic helpers (T7.3)', () => {
 
   it('picks a related nearest topic', () => {
     const all = loadFreeTopicsFile().topics;
-    const next = nearestFreeTopic(food, all, 'football stadium weekend');
-    assert.notEqual(next.id, food.id);
+    const next = nearestFreeTopic(comida, all, 'football stadium weekend');
+    assert.notEqual(next.id, comida.id);
   });
 });
 
@@ -52,7 +52,7 @@ describe('v2 free chat · off-topic turn behaviour (T7.3)', () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'ot-1',
-      topicId: 'food',
+      topicId: 'comida',
       store,
       newId: () => 'ot-sess-1',
     });
@@ -71,13 +71,13 @@ describe('v2 free chat · off-topic turn behaviour (T7.3)', () => {
     });
     session = out.session;
     assert.equal(session.off_topic_streak, 1);
-    assert.equal(session.topic_id, 'food');
+    assert.equal(session.topic_id, 'comida');
     const q = events.find((e) => e.type === 'question');
     assert.ok(q && q.type === 'question');
     assert.match(q.tl, /\?/);
     // Still on same topic / same or current angle
     assert.ok(session.pending_question);
-    assert.equal(session.topic_id, 'food');
+    assert.equal(session.topic_id, 'comida');
     void pendingBefore;
   });
 
@@ -85,7 +85,7 @@ describe('v2 free chat · off-topic turn behaviour (T7.3)', () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'ot-2',
-      topicId: 'food',
+      topicId: 'comida',
       store,
       newId: () => 'ot-sess-2',
     });
@@ -117,7 +117,7 @@ describe('v2 free chat · off-topic turn behaviour (T7.3)', () => {
         emit: (e) => events.push(e),
       });
       session = out.session;
-      assert.notEqual(session.topic_id, 'food');
+      assert.notEqual(session.topic_id, 'comida');
       assert.equal(session.off_topic_streak, 0);
       assert.ok(events.some((e) => e.type === 'coach'));
       assert.ok(events.some((e) => e.type === 'question'));
@@ -128,7 +128,7 @@ describe('v2 free chat · off-topic turn behaviour (T7.3)', () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'ot-3',
-      topicId: 'food',
+      topicId: 'comida',
       store,
       newId: () => 'ot-sess-3',
     });
@@ -148,7 +148,7 @@ describe('v2 free chat · off-topic turn behaviour (T7.3)', () => {
     const coach = events.find((e) => e.type === 'coach');
     assert.ok(coach && coach.type === 'coach');
     assert.equal(coach.eg, NON_LEARNING_COACH_EG);
-    assert.equal(out.session.topic_id, 'food');
+    assert.equal(out.session.topic_id, 'comida');
     assert.equal(out.session.angle_index, started.session.angle_index);
   });
 });

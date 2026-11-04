@@ -74,7 +74,7 @@ describe('v2 free chat · 30-turn never ends without a question', () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'free-u1',
-      topicId: 'food',
+      topicId: 'comida',
       store,
       newId: () => 'free-sess-1',
     });
@@ -115,7 +115,7 @@ describe('v2 free chat · budget (T7.2 / T2.2 free run)', () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'free-budget',
-      topicId: 'food',
+      topicId: 'comida',
       store,
       newId: () => 'free-budget-sess',
     });
@@ -181,20 +181,20 @@ describe('v2 free chat · budget (T7.2 / T2.2 free run)', () => {
 describe('v2 free chat · catalogue', () => {
   it('start seeds suggested words from the topic word set', async () => {
     const file = loadFreeTopicsFile();
-    const food = file.topics.find((t) => t.id === 'food')!;
-    const angles = loadTopicAngles('food');
-    assert.ok(angles.angles.length >= 8);
+    const comida = file.topics.find((t) => t.id === 'comida')!;
+    const angles = loadTopicAngles('comida');
+    assert.ok(angles.angles.length >= 5);
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'u-sw',
-      topicId: 'food',
+      topicId: 'comida',
       store,
       newId: () => 'sw-sess',
     });
     assert.ok(started.session.suggested_words.length <= 15);
     assert.ok(
       started.session.suggested_words.every((w) =>
-        food.word_set.includes(w),
+        comida.word_set.includes(w),
       ),
     );
   });
