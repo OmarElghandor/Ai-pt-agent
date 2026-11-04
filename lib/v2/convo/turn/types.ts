@@ -35,6 +35,8 @@ export type ConvoTurnStreamEvent =
       kind: NonNullable<ConvoPendingQuestion>['kind'];
       item_id: string;
       option_ids?: string[];
+      /** Choice chip labels (same order as option_ids). */
+      options?: Array<{ id: string; tl: string }>;
       audio_key: string;
       unknown_words?: string[];
     }

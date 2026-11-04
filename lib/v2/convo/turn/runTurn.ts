@@ -365,6 +365,10 @@ export async function runConvoTurn(
   session.updated_at = new Date().toISOString();
 
   const audio_key = convoQuestionAudioKey(pack.pack_id, resolved.id);
+  const options = resolved.option_ids?.map((id) => ({
+    id,
+    tl: surfaceTlFor(surfaces, id),
+  }));
   emit({
     type: 'question',
     id: resolved.id,
@@ -372,6 +376,7 @@ export async function runConvoTurn(
     kind: resolved.kind,
     item_id: resolved.item_id,
     ...(resolved.option_ids ? { option_ids: resolved.option_ids } : {}),
+    ...(options ? { options } : {}),
     ...(resolved.say ? { say: resolved.say } : {}),
     audio_key,
     ...(modelOut.unknownWords.length > 0
