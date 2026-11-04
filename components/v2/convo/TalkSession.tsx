@@ -8,6 +8,7 @@ import type { ConvoTurnStreamEvent } from '@/lib/v2/convo/turn';
 import { CharacterBubble } from './CharacterBubble';
 import { LearnerBubble } from './LearnerBubble';
 import { readConvoNdjson } from './readNdjson';
+import { TalkDevPanel, type TalkTurnMetrics } from './TalkDevPanel';
 import type {
   TalkBubble,
   TalkPendingQuestion,
@@ -34,6 +35,8 @@ export function TalkSession({ packId }: Props) {
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
   const [bootstrapped, setBootstrapped] = useState(false);
+  const [metrics, setMetrics] = useState<TalkTurnMetrics | null>(null);
+  const [turnCount, setTurnCount] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const streamBubbleId = useRef<string | null>(null);
 
@@ -144,6 +147,17 @@ export function TalkSession({ packId }: Props) {
       if (event.session.status === 'done') {
         setPending(null);
       }
+      return;
+    }
+    if (event.type === 'metrics') {
+      setMetrics({
+        input_tokens: event.input_tokens,
+        cached_input_tokens: event.cached_input_tokens,
+        output_tokens: event.output_tokens,
+        ttft_ms: event.ttft_ms,
+        total_ms: event.total_ms,
+      });
+      setTurnCount((n) => n + 1);
       return;
     }
     if (event.type === 'done' && !event.ok) {
@@ -342,6 +356,8 @@ export function TalkSession({ packId }: Props) {
           </div>
         ) : null}
       </div>
+
+      <TalkDevPanel metrics={metrics} turnCount={turnCount} />
 
       {!done && !loading ? (
         <section className="shrink-0 border-t border-v2-line/60 bg-v2-paper px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2">

@@ -222,6 +222,14 @@ export async function runConvoTurn(
         console.error('[convo] progress mirror failed', err);
       }
     }
+    emit({
+      type: 'metrics',
+      input_tokens: metrics.input_tokens,
+      cached_input_tokens: metrics.cached_input_tokens,
+      output_tokens: metrics.output_tokens,
+      ttft_ms: metrics.ttft_ms,
+      total_ms: metrics.total_ms,
+    });
     emit({ type: 'done', ok, ...(error ? { error } : {}) });
     return { session, metrics };
   };

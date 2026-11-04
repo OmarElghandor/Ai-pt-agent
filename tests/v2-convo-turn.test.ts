@@ -193,6 +193,37 @@ describe('v2 convo turn · streaming orchestration', () => {
     assert.ok(model.calls >= 10);
   });
 
+  it('emits metrics before done on every turn', async () => {
+    const store = new MemoryConvoSessionStore();
+    const { session } = await startConvoSession({
+      userId: 'u-metrics',
+      pack,
+      store,
+      newId: () => 'sess-metrics',
+    });
+    const model = createStubConvoStreamModel({});
+    const { events, emit } = collectEvents();
+    await runConvoTurn({
+      session,
+      pack,
+      surfaces,
+      learnerText: '',
+      store,
+      model,
+      emit,
+    });
+    const types = eventTypes(events);
+    const metricsIdx = types.indexOf('metrics');
+    const doneIdx = types.indexOf('done');
+    assert.ok(metricsIdx >= 0);
+    assert.ok(metricsIdx < doneIdx);
+    const m = events[metricsIdx];
+    assert.ok(m && m.type === 'metrics');
+    assert.ok(m.input_tokens > 0);
+    assert.ok(typeof m.ttft_ms === 'number');
+    assert.ok(m.total_ms >= 0);
+  });
+
   it('unclear answers still call the model (event path, not grader)', async () => {
     const store = new MemoryConvoSessionStore();
     const session = createConvoSessionDoc({
