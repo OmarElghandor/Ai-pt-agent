@@ -33,13 +33,27 @@ function placeFromLesson(lesson: LessonPack, dayPlanSituation: string): string {
   return dayPlanSituation || 'Lisboa';
 }
 
+/** Conversation packs use speakable word/phrase/verb items — not pattern cards. */
+function isConvoSpeakableId(id: string, kind?: string): boolean {
+  if (kind === 'pattern' || id.startsWith('pattern.')) return false;
+  return (
+    id.startsWith('word.') ||
+    id.startsWith('phrase.') ||
+    id.startsWith('verb.')
+  );
+}
+
 function allowedIdsForDay(day: number, lesson: LessonPack): string[] {
   const core = getCoreItemsDay(day);
   const fromCore = [
-    ...core.core_items.map((c) => c.id),
-    ...core.recycle_ids,
+    ...core.core_items
+      .filter((c) => isConvoSpeakableId(c.id, c.kind))
+      .map((c) => c.id),
+    ...core.recycle_ids.filter((id) => isConvoSpeakableId(id)),
   ];
-  const fromLesson = (lesson.items ?? []).map((i) => i.id);
+  const fromLesson = (lesson.items ?? [])
+    .filter((i) => isConvoSpeakableId(i.id, i.type))
+    .map((i) => i.id);
   return [...new Set([...fromCore, ...fromLesson])];
 }
 
@@ -47,14 +61,17 @@ function itemLines(day: number, lesson: LessonPack): string {
   const core = getCoreItemsDay(day);
   const lines: string[] = [];
   for (const c of core.core_items) {
+    if (!isConvoSpeakableId(c.id, c.kind)) continue;
     lines.push(`CORE ${c.id} (${c.kind}): ${c.tl}`);
   }
   for (const id of core.recycle_ids) {
+    if (!isConvoSpeakableId(id)) continue;
     const item = (lesson.items ?? []).find((i) => i.id === id);
     lines.push(`RECYCLE ${id}: ${item && 'tl' in item ? item.tl : id}`);
   }
   if (lines.length === 0) {
     for (const i of lesson.items ?? []) {
+      if (!isConvoSpeakableId(i.id, i.type)) continue;
       if ('tl' in i && typeof i.tl === 'string') {
         lines.push(`ITEM ${i.id} (${i.type}): ${i.tl}`);
       }
