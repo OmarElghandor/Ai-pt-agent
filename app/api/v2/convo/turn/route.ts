@@ -36,11 +36,18 @@ export async function POST(req: Request) {
   const body = (await req.json().catch(() => null)) as {
     session_id?: string;
     text?: string;
+    survival?: 'repeat' | 'slow' | 'nao_percebi';
   } | null;
   const sessionId = body?.session_id?.trim();
   if (!sessionId) {
     return Response.json({ error: 'session_id required' }, { status: 400 });
   }
+  const survival =
+    body?.survival === 'repeat' ||
+    body?.survival === 'slow' ||
+    body?.survival === 'nao_percebi'
+      ? body.survival
+      : undefined;
 
   const store = new MongoConvoSessionStore();
   const session = await getConvoSession(store, { sessionId, userId });
@@ -74,6 +81,7 @@ export async function POST(req: Request) {
           model: createLiveConvoStreamModel(),
           emit,
           progressWriter: createAnswersConvoProgressWriter(),
+          ...(survival ? { survival } : {}),
         });
         // Metrics event reserved for T2.1; still available on done path via session.
         void metrics;

@@ -34,6 +34,8 @@ import type {
   ResolvedConvoQuestion,
 } from './types';
 
+export type ConvoSurvivalAction = 'repeat' | 'slow' | 'nao_percebi';
+
 export type RunConvoTurnInput = {
   session: ConvoSession;
   pack: ConvoPackData;
@@ -45,7 +47,22 @@ export type RunConvoTurnInput = {
   emit: (event: ConvoTurnStreamEvent) => void;
   /** Optional progress mirror (T1.12). */
   progressWriter?: ConvoProgressWriter;
+  /**
+   * Survival buttons (09 §10): replay / slower / simpler re-ask.
+   * No model call; counts as used on the session.
+   */
+  survival?: ConvoSurvivalAction;
 };
+
+function findOpenHelpReask(
+  pack: ConvoPackData,
+  questionId: string,
+  itemId: string,
+): string | null {
+  const bank = pack.items[itemId];
+  const open = bank?.open_questions.find((q) => q.id === questionId);
+  return open?.help_ladder?.step1_reask_tl ?? null;
+}
 
 function pushExchange(
   session: ConvoSession,
@@ -182,6 +199,7 @@ export async function runConvoTurn(
   const started = Date.now();
   const { pack, surfaces, store, model, emit, progressWriter } = input;
   let session = structuredClone(input.session);
+  if (session.survival_used == null) session.survival_used = 0;
   const beforeRungs = { ...session.rungs };
   const learnerText = input.learnerText ?? '';
 
@@ -206,6 +224,9 @@ export async function runConvoTurn(
         current_group: session.current_group,
         pending_question: session.pending_question,
         correct_streak: session.correct_streak,
+        struggled: session.struggled,
+        said_once: session.said_once,
+        survival_used: session.survival_used ?? 0,
       },
     });
     await store.save(session);
@@ -234,6 +255,82 @@ export async function runConvoTurn(
     emit({ type: 'done', ok, ...(error ? { error } : {}) });
     return { session, metrics };
   };
+
+  // --- Survival (no model) ---
+  if (input.survival) {
+    const pending = session.pending_question;
+    if (!pending) {
+      return finish(false, 'no pending question for survival');
+    }
+    session.survival_used = (session.survival_used ?? 0) + 1;
+    session.updated_at = new Date().toISOString();
+
+    let tl = '';
+    let say: string | undefined;
+    const audio_key = convoQuestionAudioKey(pack.pack_id, pending.id);
+    const playback: 'normal' | 'slow' =
+      input.survival === 'slow' ? 'slow' : 'normal';
+
+    if (input.survival === 'nao_percebi') {
+      tl =
+        findOpenHelpReask(pack, pending.id, pending.item_id) ??
+        // Fall back to last character exchange or the pending id's pack line
+        session.last_exchanges.filter((e) => e.role === 'character').at(-1)
+          ?.tl ??
+        '';
+      if (!tl) {
+        const resolved = findPackQuestion(pack, pending.id);
+        if (resolved?.kind === 'open') {
+          const open = pack.items[pending.item_id]?.open_questions.find(
+            (q) => q.id === pending.id,
+          );
+          tl = open?.tl ?? '';
+        } else if (resolved?.kind === 'choice') {
+          const choice = pack.items[pending.item_id]?.choice_questions.find(
+            (q) => q.id === pending.id,
+          );
+          tl = choice?.tl ?? '';
+        }
+      }
+    } else {
+      // repeat / slow: re-emit the current pending character line
+      const lastChar = session.last_exchanges
+        .filter((e) => e.role === 'character')
+        .at(-1);
+      tl = lastChar?.tl ?? '';
+      if (!tl) {
+        const meta = findPackQuestion(pack, pending.id);
+        if (meta?.kind === 'choice') {
+          tl =
+            pack.items[pending.item_id]?.choice_questions.find(
+              (q) => q.id === pending.id,
+            )?.tl ?? '';
+        } else if (meta?.kind === 'open') {
+          tl =
+            pack.items[pending.item_id]?.open_questions.find(
+              (q) => q.id === pending.id,
+            )?.tl ?? '';
+        } else if (meta?.kind === 'recap') {
+          tl =
+            pack.recap.questions.find((q) => q.id === pending.id)?.tl ?? '';
+        }
+      }
+    }
+
+    if (tl) {
+      emit({
+        type: 'question',
+        id: pending.id,
+        tl,
+        kind: pending.kind,
+        item_id: pending.item_id,
+        audio_key,
+        playback,
+        ...(say ? { say } : {}),
+      });
+    }
+    return finish(true);
+  }
 
   // --- Grade / event ---
   let event: ConvoEventFacts;

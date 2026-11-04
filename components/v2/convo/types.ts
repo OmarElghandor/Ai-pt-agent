@@ -58,6 +58,9 @@ export type TalkSessionSnapshot = {
     item_id: string;
   } | null;
   correct_streak: number;
+  struggled?: Record<string, boolean>;
+  said_once?: Record<string, boolean>;
+  survival_used?: number;
 };
 
 export type TalkStartResponse = {
@@ -77,6 +80,9 @@ export type TalkStartResponse = {
     status: string;
     current_group: number;
     pending_question: TalkSessionSnapshot['pending_question'];
+    struggled?: Record<string, boolean>;
+    said_once?: Record<string, boolean>;
+    survival_used?: number;
   };
   visual: ConvoVisual;
   character_id: string;

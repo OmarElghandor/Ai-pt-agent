@@ -23,6 +23,7 @@ type ConvoSessionDocLean = {
   said_once?: ConvoSession['said_once'];
   coach_recent_ids?: string[];
   recap_done_ids?: string[];
+  survival_used?: number;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -44,6 +45,7 @@ function sessionFields(session: ConvoSession) {
     said_once: session.said_once,
     coach_recent_ids: session.coach_recent_ids,
     recap_done_ids: session.recap_done_ids,
+    survival_used: session.survival_used,
   };
 }
 
@@ -72,6 +74,7 @@ function fromDoc(doc: ConvoSessionDocLean): ConvoSession {
     said_once: doc.said_once ?? {},
     coach_recent_ids: doc.coach_recent_ids ?? [],
     recap_done_ids: doc.recap_done_ids ?? [],
+    survival_used: doc.survival_used ?? 0,
     created_at: (doc.createdAt ?? new Date()).toISOString(),
     updated_at: (doc.updatedAt ?? new Date()).toISOString(),
   };

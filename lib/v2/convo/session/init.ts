@@ -75,6 +75,7 @@ export function createConvoSessionDoc(opts: {
     said_once: {},
     coach_recent_ids: [],
     recap_done_ids: [],
+    survival_used: 0,
     created_at: now,
     updated_at: now,
   };

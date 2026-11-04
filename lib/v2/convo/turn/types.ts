@@ -47,6 +47,8 @@ export type ConvoTurnStreamEvent =
       /** Map step this open question needs (for highlight). */
       map_step?: string;
       audio_key: string;
+      /** Client should play TTS slower (survival Mais devagar). */
+      playback?: 'normal' | 'slow';
       unknown_words?: string[];
     }
   | {
@@ -61,6 +63,9 @@ export type ConvoTurnStreamEvent =
         | 'current_group'
         | 'pending_question'
         | 'correct_streak'
+        | 'struggled'
+        | 'said_once'
+        | 'survival_used'
       >;
     }
   | {

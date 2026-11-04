@@ -8,6 +8,7 @@ export {
   runConvoTurn,
   encodeConvoTurnEvent,
   type RunConvoTurnInput,
+  type ConvoSurvivalAction,
 } from './runTurn';
 export {
   createLiveConvoStreamModel,

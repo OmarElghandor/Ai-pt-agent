@@ -32,6 +32,7 @@ function cloneSession(session: ConvoSession): ConvoSession {
     said_once: { ...session.said_once },
     coach_recent_ids: [...session.coach_recent_ids],
     recap_done_ids: [...session.recap_done_ids],
+    survival_used: session.survival_used ?? 0,
   };
 }
 

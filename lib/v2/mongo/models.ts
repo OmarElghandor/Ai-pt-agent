@@ -680,6 +680,7 @@ const v2ConvoSessionSchema = new Schema(
     said_once: { type: Schema.Types.Mixed, required: true, default: {} },
     coach_recent_ids: { type: [String], required: true, default: [] },
     recap_done_ids: { type: [String], required: true, default: [] },
+    survival_used: { type: Number, required: true, default: 0 },
   },
   { timestamps: true, collection: 'v2_convo_sessions', _id: false },
 );

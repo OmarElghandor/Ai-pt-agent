@@ -4,15 +4,21 @@ import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { NoteCard } from '@/components/v2/NoteCard';
 import { PrimaryButton } from '@/components/v2/PrimaryButton';
+import { useMicRecorder } from '@/hooks/useMicRecorder';
 import type { ConvoItemSurface, ConvoVisual } from '@/lib/v2/convo/pack';
-import type { ConvoTurnStreamEvent } from '@/lib/v2/convo/turn';
+import { buildConvoResultStats } from '@/lib/v2/convo/result';
+import type { ConvoRung } from '@/lib/v2/convo/session';
+import type {
+  ConvoSurvivalAction,
+  ConvoTurnStreamEvent,
+} from '@/lib/v2/convo/turn';
 import {
   mapCharacterNode,
   mapHiddenForPhase,
 } from '@/lib/v2/convo/visual';
-import type { ConvoRung } from '@/lib/v2/convo/session';
 import { CharacterBubble } from './CharacterBubble';
 import { ConvoMap } from './ConvoMap';
+import { ConvoResultCard } from './ConvoResultCard';
 import { ItemCard } from './ItemCard';
 import { LearnerBubble } from './LearnerBubble';
 import { readConvoNdjson } from './readNdjson';
@@ -53,9 +59,12 @@ export function TalkSession({ packId }: Props) {
   const [bootstrapped, setBootstrapped] = useState(false);
   const [metrics, setMetrics] = useState<TalkTurnMetrics | null>(null);
   const [turnCount, setTurnCount] = useState(0);
+  const [voiceMode, setVoiceMode] = useState(true);
+  const mic = useMicRecorder({ language: 'pt-PT' });
   const scrollRef = useRef<HTMLDivElement>(null);
   const streamBubbleId = useRef<string | null>(null);
   const wrongWayTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingPlayRef = useRef<{ tl: string; slow: boolean } | null>(null);
 
   const scrollToEnd = useCallback(() => {
     const el = scrollRef.current;
@@ -192,6 +201,9 @@ export function TalkSession({ packId }: Props) {
               say: event.say,
             },
           ]);
+          if (event.playback === 'slow') {
+            pendingPlayRef.current = { tl: event.tl, slow: true };
+          }
         }
         if (event.map_step) setActiveMapStep(event.map_step);
         setPending({
@@ -234,7 +246,10 @@ export function TalkSession({ packId }: Props) {
   );
 
   const runTurn = useCallback(
-    async (learnerText: string) => {
+    async (
+      learnerText: string,
+      opts?: { survival?: ConvoSurvivalAction },
+    ) => {
       if (!sessionId || busy) return;
       setBusy(true);
       setError(null);
@@ -243,7 +258,11 @@ export function TalkSession({ packId }: Props) {
         const res = await fetch('/api/v2/convo/turn', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ session_id: sessionId, text: learnerText }),
+          body: JSON.stringify({
+            session_id: sessionId,
+            text: learnerText,
+            ...(opts?.survival ? { survival: opts.survival } : {}),
+          }),
         });
         if (!res.ok || !res.body) {
           const body = (await res.json().catch(() => null)) as {
@@ -262,6 +281,32 @@ export function TalkSession({ packId }: Props) {
     },
     [sessionId, busy, applyEvent],
   );
+
+  // Auto-play slow survival lines via TTS playbackRate
+  useEffect(() => {
+    const pendingPlay = pendingPlayRef.current;
+    if (!pendingPlay) return;
+    pendingPlayRef.current = null;
+    void (async () => {
+      try {
+        const res = await fetch('/api/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: pendingPlay.tl, lang: 'pt' }),
+        });
+        if (!res.ok) return;
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        audio.preservesPitch = true;
+        audio.playbackRate = pendingPlay.slow ? 0.75 : 1;
+        audio.onended = () => URL.revokeObjectURL(url);
+        await audio.play();
+      } catch {
+        // ignore TTS errors
+      }
+    })();
+  }, [pending, bubbles]);
 
   useEffect(() => {
     let cancelled = false;
@@ -296,6 +341,9 @@ export function TalkSession({ packId }: Props) {
           current_group: body.session.current_group,
           pending_question: body.session.pending_question,
           correct_streak: 0,
+          struggled: body.session.struggled ?? {},
+          said_once: body.session.said_once ?? {},
+          survival_used: body.session.survival_used ?? 0,
         });
         const openingBubbles: TalkBubble[] = [
           {
@@ -362,6 +410,29 @@ export function TalkSession({ packId }: Props) {
     void runTurn(optionTl);
   };
 
+  const runSurvival = (action: ConvoSurvivalAction) => {
+    if (busy || !pending) return;
+    void runTurn('', { survival: action });
+  };
+
+  const toggleMic = async () => {
+    if (busy || !pending || !voiceMode) return;
+    if (mic.recording) {
+      const spoken = await mic.stopAndTranscribe();
+      if (!spoken) {
+        if (mic.error) setError(mic.error);
+        return;
+      }
+      setBubbles((prev) => [
+        ...prev,
+        { id: newId('you'), role: 'learner', tl: spoken },
+      ]);
+      void runTurn(spoken);
+      return;
+    }
+    await mic.start();
+  };
+
   const surfaceById = useMemo(() => {
     const m = new Map<string, ConvoItemSurface>();
     for (const s of surfaces) m.set(s.id, s);
@@ -396,6 +467,33 @@ export function TalkSession({ packId }: Props) {
 
   const done = snapshot?.status === 'done' || snapshot?.phase === 'closing';
   const hideVisual = mapHiddenForPhase(snapshot?.phase ?? 'teaching');
+
+  const resultStats = useMemo(() => {
+    if (!done || !snapshot) return null;
+    const itemIds = Object.keys(snapshot.rungs);
+    return buildConvoResultStats({
+      session: {
+        rungs: snapshot.rungs as Record<string, ConvoRung>,
+        struggled: snapshot.struggled ?? {},
+        said_once: snapshot.said_once ?? {},
+        survival_used: snapshot.survival_used ?? 0,
+      },
+      pack: {
+        visual: visual ?? { type: 'map', nodes: [], route: [] },
+        groups: [{ id: 'all', item_ids: itemIds }],
+        items: {},
+        pack_id: packId,
+        day: day ?? 0,
+        target_lang: 'pt-PT',
+        scene: { character_id: '', place: '', information_gap: '' },
+        recap: { questions: [] },
+        opening: { tl: '' },
+        closing: { tl: '' },
+        bridge: { tl: '' },
+      },
+      surfaceTl: (id) => surfaceById.get(id)?.tl ?? id,
+    });
+  }, [done, snapshot, visual, packId, day, surfaceById]);
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-[390px] flex-col bg-v2-paper">
@@ -489,23 +587,8 @@ export function TalkSession({ packId }: Props) {
           );
         })}
 
-        {done ? (
-          <div className="mt-4 rounded-2xl border border-v2-line bg-v2-card px-4 py-5 text-center shadow-[var(--shadow-v2-soft)]">
-            <p className="font-[family-name:var(--font-v2-arabic)] text-base font-semibold text-v2-primary">
-              خلّصت المحادثة 👏
-            </p>
-            <p className="mt-1 font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-              كرت النتيجة والنطق جايين في خطوة لاحقة.
-            </p>
-            {day ? (
-              <Link
-                href={`/day/${day}`}
-                className="mt-3 inline-block font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-v2-action"
-              >
-                رجوع لليوم
-              </Link>
-            ) : null}
-          </div>
+        {done && resultStats ? (
+          <ConvoResultCard day={day} stats={resultStats} />
         ) : null}
       </div>
 
@@ -513,6 +596,27 @@ export function TalkSession({ packId }: Props) {
 
       {!done && !loading ? (
         <section className="shrink-0 border-t border-v2-line/60 bg-v2-paper px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2">
+          <div className="mb-2 flex flex-wrap justify-end gap-1.5">
+            {(
+              [
+                ['repeat', 'Pode repetir?'],
+                ['slow', 'Mais devagar'],
+                ['nao_percebi', 'Não percebi'],
+              ] as const
+            ).map(([action, label]) => (
+              <button
+                key={action}
+                type="button"
+                disabled={busy || !pending}
+                onClick={() => runSurvival(action)}
+                dir="ltr"
+                className="rounded-v2-pill border border-v2-line bg-white px-2.5 py-1.5 font-[family-name:var(--font-v2-target)] text-[11px] font-semibold text-v2-primary disabled:opacity-50"
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
           {showChips ? (
             <div className="mb-2 flex flex-wrap justify-end gap-2">
               {pending!.options!.map((opt) => (
@@ -530,45 +634,86 @@ export function TalkSession({ packId }: Props) {
             </div>
           ) : null}
 
-          <div className="flex items-end gap-2">
-            <div className="flex flex-1 flex-col gap-1">
-              <div className="flex flex-wrap justify-end gap-1">
-                {ACCENTS.map((a) => (
-                  <button
-                    key={a}
-                    type="button"
-                    disabled={busy}
-                    onClick={() => setText((t) => t + a)}
-                    className="h-7 min-w-7 rounded-md bg-v2-paper-deep px-1.5 font-[family-name:var(--font-v2-target)] text-xs text-v2-primary"
-                  >
-                    {a}
-                  </button>
-                ))}
-              </div>
-              <input
-                dir="ltr"
-                value={text}
-                disabled={busy || !pending}
-                onChange={(e) => setText(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    submitText();
-                  }
+          {voiceMode ? (
+            <div className="flex flex-col items-stretch gap-2">
+              <button
+                type="button"
+                disabled={busy || !pending || mic.transcribing}
+                onClick={() => void toggleMic()}
+                className={[
+                  'flex h-12 items-center justify-center gap-2 rounded-2xl font-[family-name:var(--font-v2-arabic)] text-sm font-semibold transition',
+                  mic.recording
+                    ? 'bg-v2-action text-white'
+                    : 'bg-v2-primary text-white',
+                  'disabled:opacity-50',
+                ].join(' ')}
+              >
+                <span className="material-symbols-rounded text-[22px]">
+                  {mic.recording ? 'stop' : 'mic'}
+                </span>
+                {mic.transcribing
+                  ? 'بنحوّل الصوت…'
+                  : mic.recording
+                    ? 'وقّف التسجيل'
+                    : 'اتكلم'}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  mic.cancel();
+                  setVoiceMode(false);
                 }}
-                placeholder={busy ? '…' : 'اكتب بالبرتغالي…'}
-                className="w-full rounded-2xl border border-v2-line bg-white px-3 py-2.5 text-start font-[family-name:var(--font-v2-target)] text-sm text-v2-ink outline-none focus:border-v2-primary disabled:opacity-50"
-              />
+                className="font-[family-name:var(--font-v2-arabic)] text-[12px] text-v2-ink-muted underline-offset-2 hover:underline"
+              >
+                مش قادر أتكلم دلوقتي
+              </button>
+              {mic.error ? (
+                <p className="font-[family-name:var(--font-v2-arabic)] text-[12px] text-v2-ink">
+                  {mic.error}
+                </p>
+              ) : null}
             </div>
-            <PrimaryButton
-              type="button"
-              disabled={busy || !text.trim() || !pending}
-              onClick={submitText}
-              className="shrink-0"
-            >
-              إرسال
-            </PrimaryButton>
-          </div>
+          ) : (
+            <div className="flex items-end gap-2">
+              <div className="flex flex-1 flex-col gap-1">
+                <div className="flex flex-wrap justify-end gap-1">
+                  {ACCENTS.map((a) => (
+                    <button
+                      key={a}
+                      type="button"
+                      disabled={busy}
+                      onClick={() => setText((t) => t + a)}
+                      className="h-7 min-w-7 rounded-md bg-v2-paper-deep px-1.5 font-[family-name:var(--font-v2-target)] text-xs text-v2-primary"
+                    >
+                      {a}
+                    </button>
+                  ))}
+                </div>
+                <input
+                  dir="ltr"
+                  value={text}
+                  disabled={busy || !pending}
+                  onChange={(e) => setText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      submitText();
+                    }
+                  }}
+                  placeholder={busy ? '…' : 'اكتب بالبرتغالي…'}
+                  className="w-full rounded-2xl border border-v2-line bg-white px-3 py-2.5 text-start font-[family-name:var(--font-v2-target)] text-sm text-v2-ink outline-none focus:border-v2-primary disabled:opacity-50"
+                />
+              </div>
+              <PrimaryButton
+                type="button"
+                disabled={busy || !text.trim() || !pending}
+                onClick={submitText}
+                className="shrink-0"
+              >
+                إرسال
+              </PrimaryButton>
+            </div>
+          )}
         </section>
       ) : null}
     </main>

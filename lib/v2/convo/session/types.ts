@@ -63,6 +63,8 @@ export type ConvoSession = {
   coach_recent_ids: string[];
   /** Recap question ids already answered correctly. */
   recap_done_ids: string[];
+  /** Survival button uses this session (Pode repetir? / Mais devagar / Não percebi). */
+  survival_used: number;
   created_at: string;
   updated_at: string;
 };
