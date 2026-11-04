@@ -1,0 +1,56 @@
+{
+  "target_lang": "pt-PT",
+  "topic_id": "food",
+  "angles": [
+    {
+      "id": "food.a01",
+      "tl": "Gosta de cozinhar em casa?",
+      "item_hints": ["cozinhar", "casa"]
+    },
+    {
+      "id": "food.a02",
+      "tl": "O que come ao almoço?",
+      "item_hints": ["almoço", "comer"]
+    },
+    {
+      "id": "food.a03",
+      "tl": "Prefere peixe ou frango?",
+      "item_hints": ["peixe", "frango"]
+    },
+    {
+      "id": "food.a04",
+      "tl": "Bebe café de manhã?",
+      "item_hints": ["café", "manhã"]
+    },
+    {
+      "id": "food.a05",
+      "tl": "Vai ao mercado às vezes?",
+      "item_hints": ["mercado"]
+    },
+    {
+      "id": "food.a06",
+      "tl": "Gosta de comida doce?",
+      "item_hints": ["doce", "comida"]
+    },
+    {
+      "id": "food.a07",
+      "tl": "Come arroz com frango?",
+      "item_hints": ["arroz", "frango"]
+    },
+    {
+      "id": "food.a08",
+      "tl": "Come fora no fim de semana?",
+      "item_hints": ["restaurante", "jantar"]
+    },
+    {
+      "id": "food.a09",
+      "tl": "O que bebe com o jantar?",
+      "item_hints": ["água", "jantar"]
+    },
+    {
+      "id": "food.a10",
+      "tl": "Faz o pequeno-almoço em casa?",
+      "item_hints": ["pequeno-almoço", "pão"]
+    }
+  ]
+}

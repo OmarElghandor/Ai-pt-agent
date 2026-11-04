@@ -422,6 +422,24 @@ export async function processLessonJob(
     return;
   }
 
+  if (job.kind === 'topic_angles') {
+    const { processTopicAnglesJob } = await import(
+      './convo/processTopicAngles'
+    );
+    console.info(
+      `[v2-gen:job] start id=${job.id} kind=${job.kind} topic=${job.lesson_id} (topic_angles)`,
+    );
+    const heartbeatTimer = setInterval(() => {
+      void heartbeat(job.id, workerId);
+    }, 60_000);
+    try {
+      await processTopicAnglesJob(job, workerId);
+    } finally {
+      clearInterval(heartbeatTimer);
+    }
+    return;
+  }
+
   if (String(job.kind).startsWith('convo_')) {
     const { processConvoJob } = await import('./convo/process');
     console.info(

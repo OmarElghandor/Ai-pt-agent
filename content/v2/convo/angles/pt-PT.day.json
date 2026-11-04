@@ -1,0 +1,56 @@
+{
+  "target_lang": "pt-PT",
+  "topic_id": "day",
+  "angles": [
+    {
+      "id": "day.a01",
+      "tl": "Acorda cedo de manhã?",
+      "item_hints": ["acordar", "manhã"]
+    },
+    {
+      "id": "day.a02",
+      "tl": "O que faz depois de acordar?",
+      "item_hints": ["fazer", "acordar"]
+    },
+    {
+      "id": "day.a03",
+      "tl": "Sai de casa a que horas?",
+      "item_hints": ["sair", "hora"]
+    },
+    {
+      "id": "day.a04",
+      "tl": "Como foi o seu dia hoje?",
+      "item_hints": ["dia", "hoje"]
+    },
+    {
+      "id": "day.a05",
+      "tl": "Volta para casa à tarde?",
+      "item_hints": ["voltar", "tarde"]
+    },
+    {
+      "id": "day.a06",
+      "tl": "Dorme cedo à noite?",
+      "item_hints": ["dormir", "noite"]
+    },
+    {
+      "id": "day.a07",
+      "tl": "A sua rotina é sempre igual?",
+      "item_hints": ["rotina"]
+    },
+    {
+      "id": "day.a08",
+      "tl": "Ontem foi um dia bom?",
+      "item_hints": ["ontem", "dia"]
+    },
+    {
+      "id": "day.a09",
+      "tl": "Amanhã começa cedo?",
+      "item_hints": ["amanhã", "começar"]
+    },
+    {
+      "id": "day.a10",
+      "tl": "A que horas acaba o dia?",
+      "item_hints": ["acabar", "hora"]
+    }
+  ]
+}

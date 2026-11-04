@@ -1,0 +1,56 @@
+{
+  "target_lang": "pt-PT",
+  "topic_id": "work",
+  "angles": [
+    {
+      "id": "work.a01",
+      "tl": "Trabalha num escritório?",
+      "item_hints": ["trabalho", "escritório"]
+    },
+    {
+      "id": "work.a02",
+      "tl": "Começa cedo de manhã?",
+      "item_hints": ["manhã", "horário"]
+    },
+    {
+      "id": "work.a03",
+      "tl": "Tem reuniões todos os dias?",
+      "item_hints": ["reunião"]
+    },
+    {
+      "id": "work.a04",
+      "tl": "Usa muito o computador?",
+      "item_hints": ["computador"]
+    },
+    {
+      "id": "work.a05",
+      "tl": "Os colegas são simpáticos?",
+      "item_hints": ["colega"]
+    },
+    {
+      "id": "work.a06",
+      "tl": "Fica ocupado à tarde?",
+      "item_hints": ["ocupado", "tarde"]
+    },
+    {
+      "id": "work.a07",
+      "tl": "Faz uma pausa para café?",
+      "item_hints": ["pausa"]
+    },
+    {
+      "id": "work.a08",
+      "tl": "Fala com o chefe em português?",
+      "item_hints": ["chefe"]
+    },
+    {
+      "id": "work.a09",
+      "tl": "Tem muitos emails?",
+      "item_hints": ["email"]
+    },
+    {
+      "id": "work.a10",
+      "tl": "Sente-se cansado depois do trabalho?",
+      "item_hints": ["cansado", "trabalho"]
+    }
+  ]
+}

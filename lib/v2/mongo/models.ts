@@ -92,6 +92,7 @@ export const V2_JOB_KINDS = [
   'convo_critic',
   'convo_lang_check',
   'convo_assemble',
+  'topic_angles',
 ] as const;
 
 export type V2JobKind = (typeof V2_JOB_KINDS)[number];
@@ -742,6 +743,55 @@ export function V2ConvoSessionModel(): Model<V2ConvoSessionDoc> {
   return (
     (mongoose.models.V2ConvoSession as Model<V2ConvoSessionDoc>) ||
     mongoose.model<V2ConvoSessionDoc>('V2ConvoSession', v2ConvoSessionSchema)
+  );
+}
+
+/** Free-chat angle bank per language × topic (09 §10 / T7.1). */
+const v2TopicAnglesSchema = new Schema(
+  {
+    target_lang: { type: String, required: true, index: true },
+    topic_id: { type: String, required: true, index: true },
+    version: { type: Number, required: true, min: 1, default: 1 },
+    angles: { type: Schema.Types.Mixed, required: true, default: [] },
+  },
+  { timestamps: true, collection: 'v2_topic_angles' },
+);
+
+v2TopicAnglesSchema.index(
+  { target_lang: 1, topic_id: 1, version: 1 },
+  { unique: true },
+);
+
+export type V2TopicAnglesDoc = InferSchemaType<typeof v2TopicAnglesSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2TopicAnglesModel(): Model<V2TopicAnglesDoc> {
+  return (
+    (mongoose.models.V2TopicAngles as Model<V2TopicAnglesDoc>) ||
+    mongoose.model<V2TopicAnglesDoc>('V2TopicAngles', v2TopicAnglesSchema)
+  );
+}
+
+/** Unmatched free-chat topic requests (09 §10 / T7.5). */
+const v2TopicRequestSchema = new Schema(
+  {
+    user_id: { type: String, required: true, index: true },
+    query_eg: { type: String, required: true },
+    session_id: { type: String, required: false },
+    created_at: { type: Date, required: true, default: Date.now },
+  },
+  { timestamps: true, collection: 'v2_topic_requests' },
+);
+
+export type V2TopicRequestDoc = InferSchemaType<typeof v2TopicRequestSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2TopicRequestModel(): Model<V2TopicRequestDoc> {
+  return (
+    (mongoose.models.V2TopicRequest as Model<V2TopicRequestDoc>) ||
+    mongoose.model<V2TopicRequestDoc>('V2TopicRequest', v2TopicRequestSchema)
   );
 }
 

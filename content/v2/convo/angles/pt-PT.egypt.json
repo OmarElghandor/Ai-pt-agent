@@ -1,0 +1,56 @@
+{
+  "target_lang": "pt-PT",
+  "topic_id": "egypt",
+  "angles": [
+    {
+      "id": "egypt.a01",
+      "tl": "A sua família está no Egito?",
+      "item_hints": ["família", "egito"]
+    },
+    {
+      "id": "egypt.a02",
+      "tl": "Tem saudade do Cairo?",
+      "item_hints": ["saudade", "cairo"]
+    },
+    {
+      "id": "egypt.a03",
+      "tl": "Volta ao Egito este ano?",
+      "item_hints": ["voltar", "egito"]
+    },
+    {
+      "id": "egypt.a04",
+      "tl": "Gosta da comida egípcia?",
+      "item_hints": ["comida", "egípcio"]
+    },
+    {
+      "id": "egypt.a05",
+      "tl": "Fala árabe em casa?",
+      "item_hints": ["árabe", "casa"]
+    },
+    {
+      "id": "egypt.a06",
+      "tl": "Tem amigos egípcios aqui?",
+      "item_hints": ["amigos", "egípcio"]
+    },
+    {
+      "id": "egypt.a07",
+      "tl": "É fácil viver longe do país?",
+      "item_hints": ["viver", "país"]
+    },
+    {
+      "id": "egypt.a08",
+      "tl": "Quer visitar o Egito em breve?",
+      "item_hints": ["visitar", "egito"]
+    },
+    {
+      "id": "egypt.a09",
+      "tl": "Mora há muito tempo em Portugal?",
+      "item_hints": ["morar"]
+    },
+    {
+      "id": "egypt.a10",
+      "tl": "Aprende português todos os dias?",
+      "item_hints": ["português"]
+    }
+  ]
+}

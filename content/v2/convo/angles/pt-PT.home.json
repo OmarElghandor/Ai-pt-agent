@@ -1,0 +1,56 @@
+{
+  "target_lang": "pt-PT",
+  "topic_id": "home",
+  "angles": [
+    {
+      "id": "home.a01",
+      "tl": "Mora num prédio alto?",
+      "item_hints": ["morar", "prédio"]
+    },
+    {
+      "id": "home.a02",
+      "tl": "A sua casa é grande?",
+      "item_hints": ["casa"]
+    },
+    {
+      "id": "home.a03",
+      "tl": "Tem uma cozinha boa?",
+      "item_hints": ["cozinha"]
+    },
+    {
+      "id": "home.a04",
+      "tl": "Gosta da sua sala?",
+      "item_hints": ["sala", "sofá"]
+    },
+    {
+      "id": "home.a05",
+      "tl": "Os vizinhos são simpáticos?",
+      "item_hints": ["vizinho"]
+    },
+    {
+      "id": "home.a06",
+      "tl": "Tem chave da porta?",
+      "item_hints": ["chave", "porta"]
+    },
+    {
+      "id": "home.a07",
+      "tl": "O quarto tem janela?",
+      "item_hints": ["quarto", "janela"]
+    },
+    {
+      "id": "home.a08",
+      "tl": "Dorme bem na cama?",
+      "item_hints": ["cama"]
+    },
+    {
+      "id": "home.a09",
+      "tl": "Em que andar vive?",
+      "item_hints": ["andar", "viver"]
+    },
+    {
+      "id": "home.a10",
+      "tl": "Paga aluguer todos os meses?",
+      "item_hints": ["aluguer"]
+    }
+  ]
+}
