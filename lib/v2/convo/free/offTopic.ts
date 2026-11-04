@@ -16,32 +16,56 @@ function stripAccents(s: string): string {
     .replace(/\p{M}/gu, '');
 }
 
+/** Short answers (sim, não, numbers, 1–3 words) are never off-topic. */
+export function isShortOnTopicAnswer(text: string): boolean {
+  const t = text.trim();
+  if (!t) return true;
+  if (/^(sim|não|nao|talvez|mais\s+ou\s+menos|ok|okay)\b/i.test(t)) {
+    return true;
+  }
+  if (/^\d+([.,]\d+)?$/.test(t)) return true;
+  const words = t.split(/\s+/).filter(Boolean);
+  return words.length > 0 && words.length <= 3;
+}
+
 /**
- * Off-topic when the learner message shares no content word with the
- * topic word set (+ optional extras like suggested words / angle hints).
+ * Off-topic only when ≥4 content words and none relate to the topic,
+ * frame chips, or thread lines (Batch 9 C9).
  */
 export function isOffTopic(
   learnerText: string,
   topic: FreeTopic,
   extras: string[] = [],
 ): boolean {
-  const message = new Set(contentTokens(learnerText));
-  if (message.size === 0) return false;
+  if (isShortOnTopicAnswer(learnerText)) return false;
+  const message = contentTokens(learnerText);
+  if (message.length < 4) return false;
+
+  const messageSet = new Set(message);
   const bank = new Set(
     [...topic.word_set, ...extras].flatMap((w) => contentTokens(w)),
   );
-  // Also allow topic title tokens
   for (const t of contentTokens(topic.title_tl)) bank.add(t);
-  for (const w of message) {
+  for (const w of messageSet) {
     if (bank.has(w)) return false;
-    // Multi-word bank entries already tokenized; also check raw includes
     for (const b of topic.word_set) {
-      if (stripAccents(b).includes(w) || w.includes(stripAccents(b).replace(/\s+/g, ''))) {
+      if (
+        stripAccents(b).includes(w) ||
+        w.includes(stripAccents(b).replace(/\s+/g, ''))
+      ) {
         if (stripAccents(b).split(/\s+/).some((p) => p === w)) return false;
       }
     }
   }
   return true;
+}
+
+/** Learner asked the character something (Batch 9 C9). */
+export function isLearnerQuestionToCharacter(text: string): boolean {
+  const t = text.trim();
+  if (!t) return false;
+  if (/\?\s*$/.test(t)) return true;
+  return /^e\s+tu\b/i.test(t);
 }
 
 /** English / meta asks that are not language learning (09 §9). */

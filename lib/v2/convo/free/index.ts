@@ -1,6 +1,8 @@
 export {
   contentTokens,
   isOffTopic,
+  isShortOnTopicAnswer,
+  isLearnerQuestionToCharacter,
   isNonLearningRequest,
   NON_LEARNING_COACH_EG,
   nearestFreeTopic,

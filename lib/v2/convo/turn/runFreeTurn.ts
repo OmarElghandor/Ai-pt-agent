@@ -28,6 +28,7 @@ import {
   currentNextLine,
   extractFreeFact,
   handleFreeArabicSide,
+  isLearnerQuestionToCharacter,
   isNonLearningRequest,
   isOffTopic,
   nearestFreeTopic,
@@ -324,12 +325,24 @@ export async function runFreeConvoTurn(
     ? 'learner replied; continue the free chat'
     : 'conversation started; ask about the topic';
 
+  if (learnerText && isLearnerQuestionToCharacter(learnerText)) {
+    eventLine = 'learner asked you a question';
+  } else if (session.assisted) {
+    eventLine = 'learner used the help chips';
+  }
+
   if (learnerText) {
     const extras = [
       ...session.suggested_words,
       ...(current.frame?.chips ?? []),
       current.tl,
       current.share_tl ?? '',
+      ...threadDoc.threads.flatMap((th) => [
+        th.share.tl,
+        th.ask.tl,
+        ...th.ask.frame.chips,
+        ...th.follow_ups.flatMap((fu) => [fu.tl, ...fu.frame.chips]),
+      ]),
     ];
     if (isOffTopic(learnerText, topic, extras)) {
       session.off_topic_streak = (session.off_topic_streak ?? 0) + 1;
@@ -386,10 +399,6 @@ export async function runFreeConvoTurn(
     nextLinePreview = preview.next.bubble_tl;
   } else if (bridgingBack) {
     nextLinePreview = `Mas diz-me… ${current.tl}`;
-  }
-
-  if (session.assisted) {
-    eventLine = `${eventLine}; learner used the help chips`;
   }
 
   const persona = requirePersona(topic.character_id);
