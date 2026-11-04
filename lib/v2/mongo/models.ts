@@ -669,6 +669,17 @@ const v2ConvoSessionSchema = new Schema(
       default: 'open',
       index: true,
     },
+    phase: {
+      type: String,
+      required: true,
+      enum: ['teaching', 'recap', 'closing'],
+      default: 'teaching',
+    },
+    correct_streak: { type: Number, required: true, default: 0 },
+    struggled: { type: Schema.Types.Mixed, required: true, default: {} },
+    said_once: { type: Schema.Types.Mixed, required: true, default: {} },
+    coach_recent_ids: { type: [String], required: true, default: [] },
+    recap_done_ids: { type: [String], required: true, default: [] },
   },
   { timestamps: true, collection: 'v2_convo_sessions', _id: false },
 );

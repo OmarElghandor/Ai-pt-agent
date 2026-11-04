@@ -43,3 +43,9 @@ export {
   type LoadConvoPackOpts,
   type LoadConvoPackResult,
 } from './load';
+
+export {
+  loadConvoItemSurfaces,
+  surfaceTlFor,
+  clearConvoItemSurfacesCache,
+} from './surfaces';

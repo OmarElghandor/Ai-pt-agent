@@ -1,0 +1,10 @@
+[
+  { "id": "word.station", "tl": "a estação" },
+  { "id": "word.street", "tl": "a rua" },
+  { "id": "word.pharmacy", "tl": "a farmácia" },
+  { "id": "word.left", "tl": "à esquerda" },
+  { "id": "word.right", "tl": "à direita" },
+  { "id": "phrase.go_straight", "tl": "Siga em frente" },
+  { "id": "phrase.turn_left", "tl": "Vire à esquerda" },
+  { "id": "phrase.turn_right", "tl": "Vire à direita" }
+]

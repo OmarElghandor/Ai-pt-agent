@@ -3,7 +3,7 @@ import { V2ConvoSessionModel } from '@/lib/v2/mongo/models';
 import type { ConvoSessionStore } from './store';
 import type { ConvoSession } from './types';
 
-function fromDoc(doc: {
+type ConvoSessionDocLean = {
   _id: { toString(): string };
   user_id: string;
   module: ConvoSession['module'];
@@ -17,9 +17,37 @@ function fromDoc(doc: {
   facts: string[];
   suggested_words: string[];
   status: ConvoSession['status'];
+  phase?: ConvoSession['phase'];
+  correct_streak?: number;
+  struggled?: ConvoSession['struggled'];
+  said_once?: ConvoSession['said_once'];
+  coach_recent_ids?: string[];
+  recap_done_ids?: string[];
   createdAt?: Date;
   updatedAt?: Date;
-}): ConvoSession {
+};
+
+function sessionFields(session: ConvoSession) {
+  return {
+    rungs: session.rungs,
+    help_ladder: session.help_ladder,
+    current_group: session.current_group,
+    candidate_history: session.candidate_history,
+    last_exchanges: session.last_exchanges,
+    pending_question: session.pending_question,
+    facts: session.facts,
+    suggested_words: session.suggested_words,
+    status: session.status,
+    phase: session.phase,
+    correct_streak: session.correct_streak,
+    struggled: session.struggled,
+    said_once: session.said_once,
+    coach_recent_ids: session.coach_recent_ids,
+    recap_done_ids: session.recap_done_ids,
+  };
+}
+
+function fromDoc(doc: ConvoSessionDocLean): ConvoSession {
   return {
     id: String(doc._id),
     user_id: doc.user_id,
@@ -38,6 +66,12 @@ function fromDoc(doc: {
     facts: doc.facts ?? [],
     suggested_words: doc.suggested_words ?? [],
     status: doc.status,
+    phase: doc.phase ?? 'teaching',
+    correct_streak: doc.correct_streak ?? 0,
+    struggled: doc.struggled ?? {},
+    said_once: doc.said_once ?? {},
+    coach_recent_ids: doc.coach_recent_ids ?? [],
+    recap_done_ids: doc.recap_done_ids ?? [],
     created_at: (doc.createdAt ?? new Date()).toISOString(),
     updated_at: (doc.updatedAt ?? new Date()).toISOString(),
   };
@@ -49,7 +83,7 @@ export class MongoConvoSessionStore implements ConvoSessionStore {
     await connectMongo();
     const doc = await V2ConvoSessionModel().findById(id).lean();
     if (!doc) return null;
-    return fromDoc(doc as Parameters<typeof fromDoc>[0]);
+    return fromDoc(doc as ConvoSessionDocLean);
   }
 
   async findOpen(
@@ -65,7 +99,7 @@ export class MongoConvoSessionStore implements ConvoSessionStore {
       })
       .lean();
     if (!doc) return null;
-    return fromDoc(doc as Parameters<typeof fromDoc>[0]);
+    return fromDoc(doc as ConvoSessionDocLean);
   }
 
   async create(session: ConvoSession): Promise<ConvoSession> {
@@ -75,37 +109,19 @@ export class MongoConvoSessionStore implements ConvoSessionStore {
       user_id: session.user_id,
       module: session.module,
       pack_id: session.pack_id,
-      rungs: session.rungs,
-      help_ladder: session.help_ladder,
-      current_group: session.current_group,
-      candidate_history: session.candidate_history,
-      last_exchanges: session.last_exchanges,
-      pending_question: session.pending_question,
-      facts: session.facts,
-      suggested_words: session.suggested_words,
-      status: session.status,
+      ...sessionFields(session),
     });
-    return fromDoc(created.toObject() as Parameters<typeof fromDoc>[0]);
+    return fromDoc(created.toObject() as ConvoSessionDocLean);
   }
 
   async save(session: ConvoSession): Promise<ConvoSession> {
     await connectMongo();
     const doc = await V2ConvoSessionModel().findByIdAndUpdate(
       session.id,
-      {
-        rungs: session.rungs,
-        help_ladder: session.help_ladder,
-        current_group: session.current_group,
-        candidate_history: session.candidate_history,
-        last_exchanges: session.last_exchanges,
-        pending_question: session.pending_question,
-        facts: session.facts,
-        suggested_words: session.suggested_words,
-        status: session.status,
-      },
+      sessionFields(session),
       { new: true },
     );
     if (!doc) throw new Error(`convo session ${session.id} not found`);
-    return fromDoc(doc.toObject() as Parameters<typeof fromDoc>[0]);
+    return fromDoc(doc.toObject() as ConvoSessionDocLean);
   }
 }
