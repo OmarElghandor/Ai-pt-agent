@@ -27,6 +27,17 @@ export type ConvoTurnStreamEvent =
       type: 'reaction_delta';
       text: string;
     }
+  /** Free chat: authored next line appended into the same character bubble. */
+  | {
+      type: 'authored_append';
+      tl: string;
+      audio_key: string;
+    }
+  /** Free chat: full bubble Arabic (reaction AR + authored AR). */
+  | {
+      type: 'bubble_ar';
+      ar: string;
+    }
   | {
       type: 'visual';
       /** Active map step to highlight (from the pending / next question). */

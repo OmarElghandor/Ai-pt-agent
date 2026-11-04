@@ -81,7 +81,46 @@ export function FreeTalkSession({ topicId }: Props) {
       }
       return;
     }
+    if (event.type === 'authored_append') {
+      const sid = streamBubbleId.current;
+      if (sid) {
+        setBubbles((prev) =>
+          prev.map((b) =>
+            b.id === sid && b.role === 'character'
+              ? {
+                  ...b,
+                  tl: `${b.tl}${b.tl.trim() ? ' ' : ''}${event.tl}`.trim(),
+                  streaming: false,
+                }
+              : b,
+          ),
+        );
+      } else {
+        const nid = newId('char');
+        streamBubbleId.current = nid;
+        setBubbles((prev) => [
+          ...prev,
+          { id: nid, role: 'character', tl: event.tl, streaming: false },
+        ]);
+      }
+      return;
+    }
+    if (event.type === 'bubble_ar') {
+      const sid = streamBubbleId.current;
+      if (sid) {
+        setBubbles((prev) =>
+          prev.map((b) =>
+            b.id === sid && b.role === 'character'
+              ? { ...b, ar: event.ar, streaming: false }
+              : b,
+          ),
+        );
+      }
+      streamBubbleId.current = null;
+      return;
+    }
     if (event.type === 'question') {
+      // Batch 9: authored line already in the same bubble via authored_append.
       if (streamBubbleId.current) {
         const sid = streamBubbleId.current;
         setBubbles((prev) =>
@@ -92,27 +131,6 @@ export function FreeTalkSession({ topicId }: Props) {
           ),
         );
         streamBubbleId.current = null;
-      }
-      if (event.tl) {
-        setBubbles((prev) => {
-          const last = prev[prev.length - 1];
-          if (
-            last &&
-            last.role === 'character' &&
-            last.tl.trim() === event.tl.trim()
-          ) {
-            return prev;
-          }
-          return [
-            ...prev,
-            {
-              id: newId('q'),
-              role: 'character',
-              tl: event.tl,
-              say: event.say,
-            },
-          ];
-        });
       }
       return;
     }

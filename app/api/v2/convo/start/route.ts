@@ -10,7 +10,7 @@ import {
   freeTopicIdForPack,
   loadThreadTopic,
 } from '@/lib/v2/convo/topics';
-import { currentNextLine } from '@/lib/v2/convo/free';
+import { authoredLinesForWarm, currentNextLine } from '@/lib/v2/convo/free';
 import {
   MongoConvoSessionStore,
   startConvoSession,
@@ -83,6 +83,14 @@ export async function POST(req: Request) {
         opening: result.opening,
         ...(result.reopening ? { reopening: result.reopening } : {}),
         pending_tl: pendingTl,
+        current_frame: pendingLine.frame
+          ? {
+              tl: pendingLine.frame.tl,
+              eg: pendingLine.frame.eg,
+              chips: pendingLine.frame.chips,
+            }
+          : null,
+        warm_lines: authoredLinesForWarm(threadDoc),
         session: {
           id: result.session.id,
           module: result.session.module,

@@ -6,6 +6,7 @@ import {
 import {
   dropFreeConvoReaction,
   parseFreeConvoReaction,
+  visibleFreeStreamText,
 } from '@/lib/v2/convo/output/parseFree';
 import {
   freeTopicById,
@@ -107,8 +108,16 @@ async function callFreeModel(opts: {
 }> {
   const { model, system, prompt, emit } = opts;
   const asked = learnerAskedQuestion(opts.learnerText ?? '');
+  let rawAcc = '';
+  let visibleAcc = '';
   const onChunk = (chunk: string) => {
-    emit({ type: 'reaction_delta', text: chunk });
+    rawAcc += chunk;
+    const nextVisible = visibleFreeStreamText(rawAcc);
+    if (nextVisible.length > visibleAcc.length) {
+      const delta = nextVisible.slice(visibleAcc.length);
+      visibleAcc = nextVisible;
+      if (delta) emit({ type: 'reaction_delta', text: delta });
+    }
   };
 
   const streamFn = model.stream?.bind(model) ?? model.complete.bind(model);
@@ -404,7 +413,6 @@ export async function runFreeConvoTurn(
     learnerText,
   });
   metrics = { ...metrics, ...modelOut.metricsPartial };
-  void modelOut.reaction_ar;
 
   if (modelOut.reaction) {
     pushExchange(session, 'character', modelOut.reaction);
@@ -438,7 +446,6 @@ export async function runFreeConvoTurn(
       session.pack_id = freePackId(nextTopic.id);
       session.character_id = nextTopic.character_id;
       session.suggested_words = nextTopic.word_set.slice(0, 15);
-      // Opening of related topic: use opening + first thread (C3 will polish)
       const openLine = currentNextLine(
         threadDoc,
         0,
@@ -447,8 +454,8 @@ export async function runFreeConvoTurn(
       );
       const withOpening: FreeNextLine = {
         ...openLine,
-        bubble_tl: `${topic.opening_tl.replace(/\{name\}!?\,?\s*/g, '').trim()} ${openLine.bubble_tl}`.trim(),
-        bubble_ar: `${topic.opening_ar.replace(/\{name\}!?\,?\s*/g, '').trim()} ${openLine.bubble_ar}`.trim(),
+        bubble_tl: `${topic.opening_tl.replace(/\{name\}!?\s*,?\s*/g, '').trim()} ${openLine.bubble_tl}`.trim(),
+        bubble_ar: `${topic.opening_ar.replace(/\{name\}!?\s*,?\s*/g, '').trim()} ${openLine.bubble_ar}`.trim(),
       };
       session.thread_index = 0;
       session.free_step = { kind: 'ask' };
@@ -467,13 +474,47 @@ export async function runFreeConvoTurn(
     applyNextLine(session, nextLine);
   }
 
-  const questionTl = nextLine.bubble_tl || nextLine.tl;
-  pushExchange(session, 'character', questionTl);
+  const authoredTl = nextLine.bubble_tl || nextLine.tl;
+  const authoredAr = nextLine.bubble_ar || nextLine.ar;
+  const characterExchange = [modelOut.reaction, authoredTl]
+    .filter(Boolean)
+    .join(' ')
+    .trim();
+  if (authoredTl) {
+    // One character exchange per turn = reaction + next line
+    if (modelOut.reaction) {
+      // Replace the reaction-only exchange with the combined line.
+      const withoutLast = session.last_exchanges.slice(0, -1);
+      session.last_exchanges = [
+        ...withoutLast,
+        { role: 'character', tl: characterExchange },
+      ].slice(-3);
+    } else {
+      pushExchange(session, 'character', authoredTl);
+    }
+  }
 
+  if (authoredTl) {
+    emit({
+      type: 'authored_append',
+      tl: authoredTl,
+      audio_key: `free:${topic.id}:${nextLine.line_id}`,
+    });
+  }
+
+  const bubbleAr = [modelOut.reaction_ar, authoredAr]
+    .filter(Boolean)
+    .join(' ')
+    .trim();
+  if (bubbleAr) {
+    emit({ type: 'bubble_ar', ar: bubbleAr });
+  }
+
+  // Keep a question event for older clients / tests that look for it.
   emit({
     type: 'question',
     id: nextLine.line_id,
-    tl: questionTl,
+    tl: authoredTl,
     kind: 'open',
     item_id: nextLine.line_id,
     audio_key: `free:${topic.id}:${nextLine.line_id}`,

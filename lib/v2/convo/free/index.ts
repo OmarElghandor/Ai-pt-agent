@@ -31,3 +31,5 @@ export {
   composeOpeningBubbleTl,
   fillNameSlot,
 } from './opening';
+
+export { authoredLinesForWarm } from './warmAudio';
