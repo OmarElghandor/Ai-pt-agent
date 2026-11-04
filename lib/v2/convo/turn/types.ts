@@ -93,7 +93,8 @@ export type ConvoTurnStreamEvent =
   | {
       type: 'metrics';
       input_tokens: number;
-      cached_input_tokens: number;
+      /** Provider cache hits only; null → UI shows n/a (Batch 9 C10 / F9). */
+      cached_input_tokens: number | null;
       output_tokens: number;
       ttft_ms: number;
       total_ms: number;
@@ -106,7 +107,7 @@ export type ConvoTurnStreamEvent =
 
 export type ConvoTurnMetrics = {
   input_tokens: number;
-  cached_input_tokens: number;
+  cached_input_tokens: number | null;
   output_tokens: number;
   ttft_ms: number;
   total_ms: number;

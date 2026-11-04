@@ -69,27 +69,36 @@ export function FreeTopicsScreen() {
       </header>
 
       <ul className="flex flex-col gap-2">
-        {topics.map((topic) => (
-          <li key={topic.id}>
-            <Link
-              href={`/talk/free/${encodeURIComponent(topic.id)}`}
-              className="flex min-h-14 items-center gap-3 rounded-v2-row bg-v2-card px-4 py-3 shadow-[var(--shadow-v2-soft)]"
-            >
-              <span className="min-w-0 flex-1">
+        {topics.map((topic) => {
+          const avatar = topic.character_id.slice(0, 1).toUpperCase();
+          return (
+            <li key={topic.id}>
+              <Link
+                href={`/talk/free/${encodeURIComponent(topic.id)}`}
+                className="flex min-h-14 items-center gap-3 rounded-v2-row bg-v2-card px-4 py-3 shadow-[var(--shadow-v2-soft)]"
+              >
                 <span
-                  className="block font-[family-name:var(--font-v2-target)] text-base font-semibold text-v2-primary"
-                  dir="ltr"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-v2-primary/10 font-[family-name:var(--font-v2-target)] text-sm font-bold text-v2-primary"
+                  aria-label={topic.character_id}
                 >
-                  {topic.title_tl}
+                  {avatar}
                 </span>
-                <span className="block font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-                  {topic.title_ar}
+                <span className="min-w-0 flex-1">
+                  <span
+                    className="block font-[family-name:var(--font-v2-target)] text-base font-semibold text-v2-primary"
+                    dir="ltr"
+                  >
+                    {topic.title_tl}
+                  </span>
+                  <span className="block font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
+                    {topic.title_ar}
+                  </span>
                 </span>
-              </span>
-              <Icon name="arrow_back" size={20} className="text-v2-action" />
-            </Link>
-          </li>
-        ))}
+                <Icon name="arrow_back" size={20} className="text-v2-action" />
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

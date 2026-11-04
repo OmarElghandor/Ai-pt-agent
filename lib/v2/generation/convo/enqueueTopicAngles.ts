@@ -56,16 +56,20 @@ export async function enqueueTopicAnglesJob(opts: {
   };
 }
 
+/**
+ * Batch 9 C10: do not enqueue the 12 authored thread topics.
+ * Pass explicit future topic ids instead.
+ */
 export async function enqueueAllTopicAnglesJobs(opts?: {
   targetLang?: string;
+  /** Future topic ids only; empty = enqueue nothing (authored set is protected). */
+  topicIds?: string[];
 }): Promise<EnqueueTopicAnglesResult[]> {
-  const file = loadFreeTopicsFile();
-  const targetLang = opts?.targetLang ?? file.target_lang;
+  const targetLang = opts?.targetLang ?? 'pt-PT';
+  const ids = opts?.topicIds ?? [];
   const out: EnqueueTopicAnglesResult[] = [];
-  for (const topic of file.topics) {
-    out.push(
-      await enqueueTopicAnglesJob({ topicId: topic.id, targetLang }),
-    );
+  for (const topicId of ids) {
+    out.push(await enqueueTopicAnglesJob({ topicId, targetLang }));
   }
   return out;
 }

@@ -158,8 +158,11 @@ async function callFreeModel(opts: {
   const inputTokens =
     result.usage?.inputTokens ??
     estimateConvoPromptTokens(`${system}\n${prompt}`);
+  // Cached tokens only from the provider; otherwise n/a (null).
   const cachedInputTokens =
-    result.usage?.cachedInputTokens ?? estimateConvoPromptTokens(system);
+    typeof result.usage?.cachedInputTokens === 'number'
+      ? result.usage.cachedInputTokens
+      : null;
   const outputTokens =
     result.usage?.outputTokens ?? estimateConvoPromptTokens(result.text);
 
@@ -196,7 +199,7 @@ export async function runFreeConvoTurn(
   const emit = input.emit;
   let metrics: ConvoTurnMetrics = {
     input_tokens: 0,
-    cached_input_tokens: 0,
+    cached_input_tokens: null,
     output_tokens: 0,
     ttft_ms: 0,
     total_ms: 0,

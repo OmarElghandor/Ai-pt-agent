@@ -6,7 +6,7 @@ const STORAGE_KEY = 'v2-convo-dev-panel';
 
 export type TalkTurnMetrics = {
   input_tokens: number;
-  cached_input_tokens: number;
+  cached_input_tokens: number | null;
   output_tokens: number;
   ttft_ms: number;
   total_ms: number;
@@ -37,7 +37,12 @@ export function TalkDevPanel({ metrics, turnCount }: Props) {
   const rows: Array<[string, string | number]> = [
     ['turn', turnCount ?? '—'],
     ['input', metrics.input_tokens],
-    ['cached', metrics.cached_input_tokens],
+    [
+      'cached',
+      metrics.cached_input_tokens == null
+        ? 'n/a'
+        : metrics.cached_input_tokens,
+    ],
     ['output', metrics.output_tokens],
     ['ttft_ms', metrics.ttft_ms],
     ['total_ms', metrics.total_ms],
