@@ -638,5 +638,59 @@ export function V2ImageModel(): Model<V2ImageDoc> {
   );
 }
 
+/** Conversation sessions — separate from practice-shaped `v2_sessions` (09 §10). */
+const v2ConvoSessionSchema = new Schema(
+  {
+    _id: { type: String, required: true },
+    user_id: { type: String, required: true, index: true },
+    module: {
+      type: String,
+      required: true,
+      enum: ['lesson', 'free'],
+      default: 'lesson',
+    },
+    pack_id: { type: String, required: true, index: true },
+    rungs: { type: Schema.Types.Mixed, required: true, default: {} },
+    help_ladder: {
+      type: Schema.Types.Mixed,
+      required: true,
+      default: { question_id: null, step: 0, attempts: 0 },
+    },
+    current_group: { type: Number, required: true, default: 1 },
+    candidate_history: { type: [String], default: [] },
+    last_exchanges: { type: Schema.Types.Mixed, default: [] },
+    pending_question: { type: Schema.Types.Mixed, default: null },
+    facts: { type: [String], default: [] },
+    suggested_words: { type: [String], default: [] },
+    status: {
+      type: String,
+      required: true,
+      enum: ['open', 'done'],
+      default: 'open',
+      index: true,
+    },
+  },
+  { timestamps: true, collection: 'v2_convo_sessions', _id: false },
+);
+
+v2ConvoSessionSchema.index(
+  { user_id: 1, pack_id: 1, status: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { status: 'open' },
+  },
+);
+
+export type V2ConvoSessionDoc = InferSchemaType<typeof v2ConvoSessionSchema> & {
+  _id: string;
+};
+
+export function V2ConvoSessionModel(): Model<V2ConvoSessionDoc> {
+  return (
+    (mongoose.models.V2ConvoSession as Model<V2ConvoSessionDoc>) ||
+    mongoose.model<V2ConvoSessionDoc>('V2ConvoSession', v2ConvoSessionSchema)
+  );
+}
+
 void overrideFormSchema;
 void skillSrsSchema;

@@ -1,0 +1,49 @@
+import type { ConvoSession } from './types';
+
+export type ConvoSessionStore = {
+  findById(id: string): Promise<ConvoSession | null>;
+  findOpen(userId: string, packId: string): Promise<ConvoSession | null>;
+  create(session: ConvoSession): Promise<ConvoSession>;
+  save(session: ConvoSession): Promise<ConvoSession>;
+};
+
+/** In-memory store for unit tests (no Mongo). */
+export class MemoryConvoSessionStore implements ConvoSessionStore {
+  private byId = new Map<string, ConvoSession>();
+
+  async findById(id: string): Promise<ConvoSession | null> {
+    return this.byId.get(id) ?? null;
+  }
+
+  async findOpen(
+    userId: string,
+    packId: string,
+  ): Promise<ConvoSession | null> {
+    for (const s of this.byId.values()) {
+      if (
+        s.user_id === userId &&
+        s.pack_id === packId &&
+        s.status === 'open'
+      ) {
+        return structuredClone(s);
+      }
+    }
+    return null;
+  }
+
+  async create(session: ConvoSession): Promise<ConvoSession> {
+    const copy = structuredClone(session);
+    this.byId.set(copy.id, copy);
+    return structuredClone(copy);
+  }
+
+  async save(session: ConvoSession): Promise<ConvoSession> {
+    const copy = structuredClone(session);
+    this.byId.set(copy.id, copy);
+    return structuredClone(copy);
+  }
+
+  clear(): void {
+    this.byId.clear();
+  }
+}
