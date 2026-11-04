@@ -23,12 +23,11 @@ export function FreeTalkSession({ topicId }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [title, setTitle] = useState(topicId);
+  const [titleTl, setTitleTl] = useState('');
+  const [titleAr, setTitleAr] = useState('');
   const [bubbles, setBubbles] = useState<TalkBubble[]>([]);
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
-  const [bootstrapped, setBootstrapped] = useState(false);
-  const [skipBootstrap, setSkipBootstrap] = useState(false);
   const [metrics, setMetrics] = useState<TalkTurnMetrics | null>(null);
   const [turnCount, setTurnCount] = useState(0);
   const [lessonHref, setLessonHref] = useState<string | null>(null);
@@ -173,14 +172,18 @@ export function FreeTalkSession({ topicId }: Props) {
         const data = (await res.json()) as {
           session_id: string;
           resumed: boolean;
-          opening: { character: { tl: string } };
+          opening: {
+            character: { tl: string; ar?: string };
+            coach_intros?: Array<{ item_id: string; coach_intro_eg: string }>;
+          };
           reopening?: { character_tl: string; pending_tl: string | null };
-          pending_tl?: string | null;
-          topic_id?: string;
+          title_tl?: string;
+          title_ar?: string;
         };
         if (cancelled) return;
         setSessionId(data.session_id);
-        setTitle(data.topic_id ?? topicId);
+        setTitleTl(data.title_tl ?? '');
+        setTitleAr(data.title_ar ?? '');
         const next: TalkBubble[] = [];
         if (data.resumed && data.reopening) {
           next.push({
@@ -188,21 +191,21 @@ export function FreeTalkSession({ topicId }: Props) {
             role: 'character',
             tl: data.reopening.character_tl,
           });
-          setSkipBootstrap(true);
         } else {
+          for (const intro of data.opening.coach_intros ?? []) {
+            next.push({
+              id: newId('coach'),
+              role: 'coach',
+              eg: intro.coach_intro_eg,
+              moment: 'intro',
+            });
+          }
           next.push({
             id: newId('open'),
             role: 'character',
             tl: data.opening.character.tl,
+            ar: data.opening.character.ar,
           });
-          if (data.pending_tl) {
-            next.push({
-              id: newId('pending'),
-              role: 'character',
-              tl: data.pending_tl,
-            });
-            setSkipBootstrap(true);
-          }
         }
         setBubbles(next);
       } catch (e) {
@@ -215,12 +218,6 @@ export function FreeTalkSession({ topicId }: Props) {
       cancelled = true;
     };
   }, [topicId]);
-
-  useEffect(() => {
-    if (loading || !sessionId || bootstrapped || skipBootstrap) return;
-    setBootstrapped(true);
-    void runTurn('');
-  }, [loading, sessionId, bootstrapped, skipBootstrap, runTurn]);
 
   const send = () => {
     const t = text.trim();
@@ -248,11 +245,13 @@ export function FreeTalkSession({ topicId }: Props) {
             className="truncate font-[family-name:var(--font-v2-target)] text-lg font-semibold text-v2-primary"
             dir="ltr"
           >
-            {title}
+            {titleTl || '…'}
           </h1>
-          <p className="font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
-            كلام حر
-          </p>
+          {titleAr ? (
+            <p className="font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
+              {titleAr}
+            </p>
+          ) : null}
         </div>
       </header>
 
@@ -266,6 +265,7 @@ export function FreeTalkSession({ topicId }: Props) {
                   tl={b.tl}
                   say={b.say}
                   streaming={b.streaming}
+                  meaningEg={b.ar}
                 />
               );
             }

@@ -25,3 +25,9 @@ export {
   type FreeNextLine,
   type FreeThreadStep,
 } from './nextLine';
+
+export {
+  composeOpeningBubbleAr,
+  composeOpeningBubbleTl,
+  fillNameSlot,
+} from './opening';

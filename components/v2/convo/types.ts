@@ -9,6 +9,8 @@ export type TalkBubble =
       role: 'character';
       tl: string;
       say?: string;
+      /** Arabic meaning for معناها؟ */
+      ar?: string;
       streaming?: boolean;
       meaningHidden?: boolean;
     }

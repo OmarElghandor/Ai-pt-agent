@@ -5,10 +5,33 @@
 import mongoose from 'mongoose';
 import { connectMongo, mongoConfigured } from '@/lib/mongo';
 import { getCurrentUserId } from '@/lib/auth/currentUser';
-import { LangifyUserProgressModel, type LangifyUserProgressDoc } from './models';
+import {
+  LangifyUserModel,
+  LangifyUserProgressModel,
+  type LangifyUserProgressDoc,
+} from './models';
 import type { KnownProgress } from './types';
 
 export type { KnownProgress } from './types';
+
+/** First word of Langify users.name, or null if unknown. Read-only. */
+export async function getLangifyUserFirstName(
+  userId: string,
+): Promise<string | null> {
+  if (!mongoConfigured() || !userId) return null;
+  try {
+    await connectMongo();
+    const doc = await LangifyUserModel()
+      .findById(userId)
+      .select({ name: 1 })
+      .lean<{ name?: string }>();
+    const name = doc?.name?.trim();
+    if (!name) return null;
+    return name.split(/\s+/)[0] ?? null;
+  } catch {
+    return null;
+  }
+}
 
 function normalizeWord(w: string): string {
   return String(w || '')

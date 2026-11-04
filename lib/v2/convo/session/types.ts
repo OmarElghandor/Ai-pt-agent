@@ -92,9 +92,9 @@ export type ConvoSession = {
 };
 
 export type ConvoOpeningBubbles = {
-  /** Character opening line. */
-  character: { tl: string; say?: string };
-  /** Group-1 coach intros. */
+  /** Character opening line (free: opening + share + ask in one bubble). */
+  character: { tl: string; ar?: string; say?: string };
+  /** Group-1 coach intros / free intro_eg. */
   coach_intros: Array<{ item_id: string; coach_intro_eg: string }>;
   /** Group-1 card item ids. */
   card_ids: string[];

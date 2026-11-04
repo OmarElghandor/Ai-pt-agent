@@ -1,13 +1,11 @@
 import { randomUUID } from 'node:crypto';
+import { getLangifyUserFirstName } from '@/lib/langifyRead';
 import {
   freeTopicById,
   loadThreadTopic,
   type FreeTopic,
 } from '@/lib/v2/convo/topics';
-import {
-  currentNextLine,
-  openingNextLine,
-} from '@/lib/v2/convo/free/nextLine';
+import { currentNextLine } from '@/lib/v2/convo/free/nextLine';
 import {
   buildFreeOpeningBubbles,
   createFreeConvoSessionDoc,
@@ -26,6 +24,8 @@ export type StartFreeConvoSessionOpts = {
   now?: Date;
   topic?: FreeTopic;
   suggestedWords?: string[];
+  /** Injected for tests; otherwise loaded from Langify users.name. */
+  learnerName?: string | null;
 };
 
 async function resumeFree(
@@ -65,7 +65,7 @@ async function resumeFree(
 
 /**
  * Create or resume a Module C free-chat session (Batch 9).
- * No model call. Opening is coach intro + share+ask (C3 polishes name).
+ * No model call. Opening: coach intro_eg + one bubble (opening+share+ask).
  */
 export async function startFreeConvoSession(
   opts: StartFreeConvoSessionOpts,
@@ -74,6 +74,10 @@ export async function startFreeConvoSession(
   if (!topic) throw new Error(`Unknown free topic: ${opts.topicId}`);
 
   const packId = freePackId(topic.id);
+  const learnerName =
+    opts.learnerName !== undefined
+      ? opts.learnerName
+      : await getLangifyUserFirstName(opts.userId);
 
   if (opts.sessionId) {
     const existing = await opts.store.findById(opts.sessionId);
@@ -103,10 +107,9 @@ export async function startFreeConvoSession(
       : {}),
   });
   const session = await opts.store.create(created);
-  void openingNextLine;
   return {
     session,
-    opening: buildFreeOpeningBubbles(topic),
+    opening: buildFreeOpeningBubbles(topic, { learnerName }),
     resumed: false,
   };
 }

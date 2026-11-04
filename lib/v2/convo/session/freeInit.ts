@@ -1,6 +1,10 @@
 import type { FreeTopic } from '@/lib/v2/convo/topics';
 import { loadThreadTopic } from '@/lib/v2/convo/topics';
-import { openingNextLine } from '@/lib/v2/convo/free/nextLine';
+import {
+  composeOpeningBubbleAr,
+  composeOpeningBubbleTl,
+  openingNextLine,
+} from '@/lib/v2/convo/free';
 import type { ConvoOpeningBubbles, ConvoSession } from './types';
 
 /** Synthetic pack_id for free-chat sessions (store uniqueness). */
@@ -10,12 +14,24 @@ export function freePackId(topicId: string): string {
 
 export function buildFreeOpeningBubbles(
   topic: FreeTopic,
+  opts?: { learnerName?: string | null },
 ): ConvoOpeningBubbles {
   const doc = loadThreadTopic(topic.id);
   const line = openingNextLine(doc);
-  // C3 fills opening_tl + name; until then character shows share+ask.
+  const tl = composeOpeningBubbleTl({
+    opening_tl: topic.opening_tl,
+    share_tl: line.share_tl ?? '',
+    ask_tl: line.tl,
+    name: opts?.learnerName,
+  });
+  const ar = composeOpeningBubbleAr({
+    opening_ar: topic.opening_ar,
+    share_ar: line.share_ar ?? '',
+    ask_ar: line.ar,
+    name: opts?.learnerName,
+  });
   return {
-    character: { tl: line.bubble_tl },
+    character: { tl, ar },
     coach_intros: topic.intro_eg
       ? [{ item_id: topic.id, coach_intro_eg: topic.intro_eg }]
       : [],
