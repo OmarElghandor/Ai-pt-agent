@@ -20,6 +20,7 @@ import {
   mirrorConvoProgress,
   type ConvoProgressWriter,
 } from '@/lib/v2/convo/progress';
+import { deriveWrongWay } from '@/lib/v2/convo/visual';
 import { convoQuestionAudioKey } from './audioKey';
 import {
   findPackQuestion,
@@ -291,6 +292,25 @@ export async function runConvoTurn(
         coach_intros: applied.group_advance.coach_intros,
       });
     }
+    const openMeta = findPackQuestion(pack, pendingBefore.id);
+    const mapStep =
+      openMeta?.kind === 'open'
+        ? pack.items[pendingBefore.item_id]?.open_questions.find(
+            (q) => q.id === pendingBefore.id,
+          )?.map_step
+        : undefined;
+    const wrongWay = deriveWrongWay({
+      pack,
+      mapStepId: mapStep,
+      mistakeId: event.mistake_id,
+    });
+    if (wrongWay || mapStep) {
+      emit({
+        type: 'visual',
+        ...(mapStep ? { map_step: mapStep } : {}),
+        ...(wrongWay ? { wrong_way: wrongWay } : {}),
+      });
+    }
   }
 
   // --- Coach bank first ---
@@ -414,11 +434,15 @@ export async function runConvoTurn(
     ...(resolved.option_ids ? { option_ids: resolved.option_ids } : {}),
     ...(options ? { options } : {}),
     ...(resolved.say ? { say: resolved.say } : {}),
+    ...(resolved.map_step ? { map_step: resolved.map_step } : {}),
     audio_key,
     ...(modelOut.unknownWords.length > 0
       ? { unknown_words: modelOut.unknownWords }
       : {}),
   });
+  if (resolved.map_step) {
+    emit({ type: 'visual', map_step: resolved.map_step });
+  }
 
   // For help step 2, also surface the hint as a coach line if not already.
   if (selected.help?.step === 2 && selected.help.hint_eg) {

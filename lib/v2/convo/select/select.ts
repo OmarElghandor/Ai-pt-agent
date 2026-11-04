@@ -1,5 +1,6 @@
 import type { ConvoPackData } from '@/lib/v2/convo/pack';
 import type { ConvoRung, ConvoSession } from '@/lib/v2/convo/session';
+import { unlockedMapSteps } from '@/lib/v2/convo/visual';
 import type {
   ConvoSelectCandidate,
   ConvoSelectHelp,
@@ -25,37 +26,6 @@ function groupIndexOf(pack: ConvoPackData, itemId: string): number {
     if (pack.groups[i].item_ids.includes(itemId)) return i + 1;
   }
   return 0;
-}
-
-/** Map route steps unlocked by items already at understood+. */
-function unlockedMapSteps(
-  pack: ConvoPackData,
-  rungs: Record<string, ConvoRung>,
-): Set<string> | null {
-  if (pack.visual.type !== 'map') return null;
-  const unlocked = new Set<string>();
-  // Always allow questions with no map_step; unlock route steps in order
-  // as prior step items reach understood+.
-  const route = pack.visual.route;
-  for (let i = 0; i < route.length; i++) {
-    const step = route[i];
-    if (i === 0) {
-      unlocked.add(step.step_id);
-      continue;
-    }
-    const prev = route[i - 1];
-    const prevRung = rungs[prev.item_id] ?? 'taught';
-    if (
-      prevRung === 'understood' ||
-      prevRung === 'said' ||
-      prevRung === 'assisted'
-    ) {
-      unlocked.add(step.step_id);
-    } else {
-      break;
-    }
-  }
-  return unlocked;
 }
 
 function mapConsistent(

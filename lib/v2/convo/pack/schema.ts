@@ -148,9 +148,16 @@ export type ConvoCharacterLine = z.infer<typeof ConvoCharacterLineSchema>;
 export type ConvoScene = z.infer<typeof ConvoSceneSchema>;
 export type ConvoPackData = z.infer<typeof ConvoPackDataSchema>;
 
-/** Minimal surface needed to check choice/open containment. */
+/** Glyph on the inline item card (T1.13). */
+export type ConvoItemGlyph = 'left' | 'right' | 'straight' | 'place';
+
+/** Minimal surface needed to check choice/open containment + card UI. */
 export type ConvoItemSurface = {
   id: string;
   /** Target-language form used in containment checks (e.g. "à direita"). */
   tl: string;
+  /** Arabic-letter pronunciation for the card. */
+  say?: string;
+  /** Card visual: arrow or place placeholder. */
+  glyph?: ConvoItemGlyph;
 };

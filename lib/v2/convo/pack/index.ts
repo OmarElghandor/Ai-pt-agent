@@ -25,6 +25,7 @@ export {
   type ConvoHelpLadder,
   type ConvoCharacterLine,
   type ConvoItemSurface,
+  type ConvoItemGlyph,
 } from './schema';
 
 export {

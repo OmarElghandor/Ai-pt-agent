@@ -28,6 +28,13 @@ export type ConvoTurnStreamEvent =
       text: string;
     }
   | {
+      type: 'visual';
+      /** Active map step to highlight (from the pending / next question). */
+      map_step?: string;
+      /** Brief wrong-way animation after a listed direction mistake. */
+      wrong_way?: { from: string; toward: string };
+    }
+  | {
       type: 'question';
       id: string;
       tl: string;
@@ -37,6 +44,8 @@ export type ConvoTurnStreamEvent =
       option_ids?: string[];
       /** Choice chip labels (same order as option_ids). */
       options?: Array<{ id: string; tl: string }>;
+      /** Map step this open question needs (for highlight). */
+      map_step?: string;
       audio_key: string;
       unknown_words?: string[];
     }
@@ -117,5 +126,6 @@ export type ResolvedConvoQuestion = {
   kind: NonNullable<ConvoPendingQuestion>['kind'];
   item_id: string;
   option_ids?: string[];
+  map_step?: string;
   candidate: ConvoSelectCandidate;
 };

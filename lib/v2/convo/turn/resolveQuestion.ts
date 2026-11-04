@@ -37,6 +37,7 @@ export function resolveCandidateQuestion(
     tl: q?.tl ?? candidate.tl,
     kind: 'open',
     item_id: candidate.item_id,
+    ...(q?.map_step ? { map_step: q.map_step } : {}),
     candidate,
   };
 }

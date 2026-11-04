@@ -61,6 +61,7 @@ export async function POST(req: Request) {
       },
       visual: pack.visual,
       character_id: pack.scene.character_id,
+      item_surfaces: surfaces,
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'start failed';

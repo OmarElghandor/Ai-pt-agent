@@ -1,3 +1,8 @@
+import type {
+  ConvoItemSurface,
+  ConvoVisual,
+} from '@/lib/v2/convo/pack';
+
 export type TalkBubble =
   | {
       id: string;
@@ -17,6 +22,11 @@ export type TalkBubble =
       role: 'coach';
       eg: string;
       moment?: string;
+    }
+  | {
+      id: string;
+      role: 'cards';
+      card_ids: string[];
     };
 
 export type TalkPendingQuestion = {
@@ -27,6 +37,7 @@ export type TalkPendingQuestion = {
   item_id: string;
   option_ids?: string[];
   options?: Array<{ id: string; tl: string }>;
+  map_step?: string;
   audio_key: string;
 };
 
@@ -67,5 +78,7 @@ export type TalkStartResponse = {
     current_group: number;
     pending_question: TalkSessionSnapshot['pending_question'];
   };
+  visual: ConvoVisual;
   character_id: string;
+  item_surfaces: ConvoItemSurface[];
 };

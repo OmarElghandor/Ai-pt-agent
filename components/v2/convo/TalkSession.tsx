@@ -1,13 +1,22 @@
 'use client';
 
 import Link from 'next/link';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { NoteCard } from '@/components/v2/NoteCard';
 import { PrimaryButton } from '@/components/v2/PrimaryButton';
+import type { ConvoItemSurface, ConvoVisual } from '@/lib/v2/convo/pack';
 import type { ConvoTurnStreamEvent } from '@/lib/v2/convo/turn';
+import {
+  mapCharacterNode,
+  mapHiddenForPhase,
+} from '@/lib/v2/convo/visual';
+import type { ConvoRung } from '@/lib/v2/convo/session';
 import { CharacterBubble } from './CharacterBubble';
+import { ConvoMap } from './ConvoMap';
+import { ItemCard } from './ItemCard';
 import { LearnerBubble } from './LearnerBubble';
 import { readConvoNdjson } from './readNdjson';
+import { SceneCardVisual } from './SceneCardVisual';
 import { TalkDevPanel, type TalkTurnMetrics } from './TalkDevPanel';
 import type {
   TalkBubble,
@@ -29,9 +38,16 @@ export function TalkSession({ packId }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [day, setDay] = useState<number | null>(null);
+  const [visual, setVisual] = useState<ConvoVisual | null>(null);
+  const [surfaces, setSurfaces] = useState<ConvoItemSurface[]>([]);
   const [bubbles, setBubbles] = useState<TalkBubble[]>([]);
   const [pending, setPending] = useState<TalkPendingQuestion | null>(null);
   const [snapshot, setSnapshot] = useState<TalkSessionSnapshot | null>(null);
+  const [activeMapStep, setActiveMapStep] = useState<string | null>(null);
+  const [wrongWay, setWrongWay] = useState<{
+    from: string;
+    toward: string;
+  } | null>(null);
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
   const [bootstrapped, setBootstrapped] = useState(false);
@@ -39,6 +55,7 @@ export function TalkSession({ packId }: Props) {
   const [turnCount, setTurnCount] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const streamBubbleId = useRef<string | null>(null);
+  const wrongWayTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const scrollToEnd = useCallback(() => {
     const el = scrollRef.current;
@@ -49,121 +66,172 @@ export function TalkSession({ packId }: Props) {
     scrollToEnd();
   }, [bubbles, pending, scrollToEnd]);
 
-  const applyEvent = useCallback((event: ConvoTurnStreamEvent) => {
-    if (event.type === 'coach') {
-      setBubbles((prev) => [
-        ...prev,
-        { id: newId('coach'), role: 'coach', eg: event.eg, moment: event.moment },
-      ]);
-      return;
-    }
-    if (event.type === 'group_advance') {
-      for (const intro of event.coach_intros) {
-        if (!intro.coach_intro_eg) continue;
-        setBubbles((prev) => [
-          ...prev,
-          {
-            id: newId('intro'),
-            role: 'coach',
-            eg: intro.coach_intro_eg,
-            moment: 'group_intro',
-          },
-        ]);
-      }
-      return;
-    }
-    if (event.type === 'reaction_delta') {
-      const id = streamBubbleId.current;
-      if (!id) {
-        const nid = newId('char');
-        streamBubbleId.current = nid;
-        setBubbles((prev) => [
-          ...prev,
-          {
-            id: nid,
-            role: 'character',
-            tl: event.text,
-            streaming: true,
-          },
-        ]);
-      } else if (event.text === '') {
-        // Dropped reaction — remove streaming bubble content
-        setBubbles((prev) =>
-          prev.map((b) =>
-            b.id === id && b.role === 'character'
-              ? { ...b, tl: '', streaming: false }
-              : b,
-          ),
-        );
-      } else {
-        setBubbles((prev) =>
-          prev.map((b) =>
-            b.id === id && b.role === 'character'
-              ? { ...b, tl: b.tl + event.text, streaming: true }
-              : b,
-          ),
-        );
-      }
-      return;
-    }
-    if (event.type === 'question') {
-      // Finalize streaming bubble
-      if (streamBubbleId.current) {
-        const sid = streamBubbleId.current;
-        setBubbles((prev) =>
-          prev.map((b) =>
-            b.id === sid && b.role === 'character'
-              ? { ...b, streaming: false }
-              : b,
-          ),
-        );
-        streamBubbleId.current = null;
-      }
-      if (event.tl) {
-        setBubbles((prev) => [
-          ...prev,
-          {
-            id: newId('q'),
-            role: 'character',
-            tl: event.tl,
-            say: event.say,
-          },
-        ]);
-      }
-      setPending({
-        id: event.id,
-        tl: event.tl,
-        say: event.say,
-        kind: event.kind,
-        item_id: event.item_id,
-        option_ids: event.option_ids,
-        options: event.options,
-        audio_key: event.audio_key,
-      });
-      return;
-    }
-    if (event.type === 'session') {
-      setSnapshot(event.session as TalkSessionSnapshot);
-      if (event.session.status === 'done') {
-        setPending(null);
-      }
-      return;
-    }
-    if (event.type === 'metrics') {
-      setMetrics({
-        input_tokens: event.input_tokens,
-        cached_input_tokens: event.cached_input_tokens,
-        output_tokens: event.output_tokens,
-        ttft_ms: event.ttft_ms,
-        total_ms: event.total_ms,
-      });
-      setTurnCount((n) => n + 1);
-      return;
-    }
-    if (event.type === 'done' && !event.ok) {
-      setError(event.error ?? 'turn failed');
-    }
+  useEffect(() => {
+    return () => {
+      if (wrongWayTimer.current) clearTimeout(wrongWayTimer.current);
+    };
   }, []);
+
+  const flashWrongWay = useCallback((ww: { from: string; toward: string }) => {
+    setWrongWay(ww);
+    if (wrongWayTimer.current) clearTimeout(wrongWayTimer.current);
+    wrongWayTimer.current = setTimeout(() => setWrongWay(null), 1600);
+  }, []);
+
+  const applyEvent = useCallback(
+    (event: ConvoTurnStreamEvent) => {
+      if (event.type === 'coach') {
+        setBubbles((prev) => [
+          ...prev,
+          {
+            id: newId('coach'),
+            role: 'coach',
+            eg: event.eg,
+            moment: event.moment,
+          },
+        ]);
+        return;
+      }
+      if (event.type === 'group_advance') {
+        if (event.card_ids.length > 0) {
+          setBubbles((prev) => [
+            ...prev,
+            {
+              id: newId('cards'),
+              role: 'cards',
+              card_ids: event.card_ids,
+            },
+          ]);
+        }
+        for (const intro of event.coach_intros) {
+          if (!intro.coach_intro_eg) continue;
+          setBubbles((prev) => [
+            ...prev,
+            {
+              id: newId('intro'),
+              role: 'coach',
+              eg: intro.coach_intro_eg,
+              moment: 'group_intro',
+            },
+          ]);
+        }
+        return;
+      }
+      if (event.type === 'help') {
+        const help = event.help;
+        if (help.hint_eg) {
+          setBubbles((prev) => [
+            ...prev,
+            {
+              id: newId('help'),
+              role: 'coach',
+              eg: help.hint_eg!,
+              moment: 'miss_2',
+            },
+          ]);
+        }
+        return;
+      }
+      if (event.type === 'visual') {
+        if (event.map_step) setActiveMapStep(event.map_step);
+        if (event.wrong_way) flashWrongWay(event.wrong_way);
+        return;
+      }
+      if (event.type === 'reaction_delta') {
+        const id = streamBubbleId.current;
+        if (!id) {
+          const nid = newId('char');
+          streamBubbleId.current = nid;
+          setBubbles((prev) => [
+            ...prev,
+            {
+              id: nid,
+              role: 'character',
+              tl: event.text,
+              streaming: true,
+            },
+          ]);
+        } else if (event.text === '') {
+          setBubbles((prev) =>
+            prev.map((b) =>
+              b.id === id && b.role === 'character'
+                ? { ...b, tl: '', streaming: false }
+                : b,
+            ),
+          );
+        } else {
+          setBubbles((prev) =>
+            prev.map((b) =>
+              b.id === id && b.role === 'character'
+                ? { ...b, tl: b.tl + event.text, streaming: true }
+                : b,
+            ),
+          );
+        }
+        return;
+      }
+      if (event.type === 'question') {
+        if (streamBubbleId.current) {
+          const sid = streamBubbleId.current;
+          setBubbles((prev) =>
+            prev.map((b) =>
+              b.id === sid && b.role === 'character'
+                ? { ...b, streaming: false }
+                : b,
+            ),
+          );
+          streamBubbleId.current = null;
+        }
+        if (event.tl) {
+          setBubbles((prev) => [
+            ...prev,
+            {
+              id: newId('q'),
+              role: 'character',
+              tl: event.tl,
+              say: event.say,
+            },
+          ]);
+        }
+        if (event.map_step) setActiveMapStep(event.map_step);
+        setPending({
+          id: event.id,
+          tl: event.tl,
+          say: event.say,
+          kind: event.kind,
+          item_id: event.item_id,
+          option_ids: event.option_ids,
+          options: event.options,
+          map_step: event.map_step,
+          audio_key: event.audio_key,
+        });
+        return;
+      }
+      if (event.type === 'session') {
+        setSnapshot(event.session as TalkSessionSnapshot);
+        if (event.session.status === 'done') {
+          setPending(null);
+          setActiveMapStep(null);
+        }
+        return;
+      }
+      if (event.type === 'metrics') {
+        setMetrics({
+          input_tokens: event.input_tokens,
+          cached_input_tokens: event.cached_input_tokens,
+          output_tokens: event.output_tokens,
+          ttft_ms: event.ttft_ms,
+          total_ms: event.total_ms,
+        });
+        setTurnCount((n) => n + 1);
+        return;
+      }
+      if (event.type === 'done' && !event.ok) {
+        setError(event.error ?? 'turn failed');
+      }
+    },
+    [flashWrongWay],
+  );
 
   const runTurn = useCallback(
     async (learnerText: string) => {
@@ -195,7 +263,6 @@ export function TalkSession({ packId }: Props) {
     [sessionId, busy, applyEvent],
   );
 
-  // Start session once
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -214,6 +281,22 @@ export function TalkSession({ packId }: Props) {
         if (cancelled) return;
         setSessionId(body.session_id);
         setDay(body.day);
+        setVisual(body.visual);
+        setSurfaces(body.item_surfaces ?? []);
+        setSnapshot({
+          id: body.session.id,
+          rungs: body.session.rungs,
+          phase: body.session.phase,
+          status: body.session.status,
+          help_ladder: {
+            question_id: null,
+            step: 0,
+            attempts: 0,
+          },
+          current_group: body.session.current_group,
+          pending_question: body.session.pending_question,
+          correct_streak: 0,
+        });
         const openingBubbles: TalkBubble[] = [
           {
             id: newId('open'),
@@ -221,6 +304,15 @@ export function TalkSession({ packId }: Props) {
             tl: body.opening.character.tl,
             say: body.opening.character.say,
           },
+        ];
+        if (body.opening.card_ids.length > 0) {
+          openingBubbles.push({
+            id: newId('cards'),
+            role: 'cards',
+            card_ids: body.opening.card_ids,
+          });
+        }
+        openingBubbles.push(
           ...body.opening.coach_intros
             .filter((c) => c.coach_intro_eg)
             .map((c) => ({
@@ -229,7 +321,7 @@ export function TalkSession({ packId }: Props) {
               eg: c.coach_intro_eg,
               moment: 'group_intro',
             })),
-        ];
+        );
         setBubbles(openingBubbles);
         setLoading(false);
       } catch (err) {
@@ -244,7 +336,6 @@ export function TalkSession({ packId }: Props) {
     };
   }, [packId]);
 
-  // Bootstrap first question after start
   useEffect(() => {
     if (!sessionId || bootstrapped || loading || busy) return;
     setBootstrapped(true);
@@ -271,6 +362,32 @@ export function TalkSession({ packId }: Props) {
     void runTurn(optionTl);
   };
 
+  const surfaceById = useMemo(() => {
+    const m = new Map<string, ConvoItemSurface>();
+    for (const s of surfaces) m.set(s.id, s);
+    return m;
+  }, [surfaces]);
+
+  const mapCharNode = useMemo(() => {
+    if (!visual || visual.type !== 'map' || !snapshot) return null;
+    return mapCharacterNode(
+      {
+        visual,
+        groups: [],
+        items: {},
+        pack_id: packId,
+        day: day ?? 0,
+        target_lang: 'pt-PT',
+        scene: { character_id: '', place: '', information_gap: '' },
+        recap: { questions: [] },
+        opening: { tl: '' },
+        closing: { tl: '' },
+        bridge: { tl: '' },
+      },
+      snapshot.rungs as Record<string, ConvoRung>,
+    );
+  }, [visual, snapshot, packId, day]);
+
   const showChips =
     pending &&
     (pending.kind === 'choice' ||
@@ -278,6 +395,7 @@ export function TalkSession({ packId }: Props) {
     (pending.options?.length ?? 0) > 0;
 
   const done = snapshot?.status === 'done' || snapshot?.phase === 'closing';
+  const hideVisual = mapHiddenForPhase(snapshot?.phase ?? 'teaching');
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-[390px] flex-col bg-v2-paper">
@@ -300,6 +418,23 @@ export function TalkSession({ packId }: Props) {
           </h1>
         </div>
       </header>
+
+      {visual?.type === 'map' ? (
+        <ConvoMap
+          visual={visual}
+          characterNode={mapCharNode}
+          activeStepId={activeMapStep ?? pending?.map_step ?? null}
+          wrongWay={wrongWay}
+          hidden={hideVisual || done}
+        />
+      ) : null}
+      {visual?.type === 'scene_card' ? (
+        <SceneCardVisual
+          visual={visual}
+          activeHotspotIds={pending?.item_id ? [pending.item_id] : []}
+          hidden={hideVisual || done}
+        />
+      ) : null}
 
       <div
         ref={scrollRef}
@@ -329,6 +464,23 @@ export function TalkSession({ packId }: Props) {
           }
           if (b.role === 'learner') {
             return <LearnerBubble key={b.id} tl={b.tl} />;
+          }
+          if (b.role === 'cards') {
+            return (
+              <div key={b.id} className="flex flex-col gap-2 self-stretch">
+                {b.card_ids.map((id) => {
+                  const s = surfaceById.get(id);
+                  return (
+                    <ItemCard
+                      key={id}
+                      tl={s?.tl ?? id}
+                      say={s?.say}
+                      glyph={s?.glyph}
+                    />
+                  );
+                })}
+              </div>
+            );
           }
           return (
             <NoteCard key={b.id} className="self-stretch">
