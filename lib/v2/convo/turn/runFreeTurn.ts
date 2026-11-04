@@ -1,6 +1,7 @@
 import {
-  buildConvoPrompt,
+  buildFreeReactionPrompt,
   estimateConvoPromptTokens,
+  freePromptPartsToMessages,
 } from '@/lib/v2/convo/prompt';
 import {
   dropFreeConvoReaction,
@@ -10,6 +11,7 @@ import {
   freeTopicById,
   loadFreeTopicsFile,
   loadThreadTopic,
+  requirePersona,
   type FreeTopic,
 } from '@/lib/v2/convo/topics';
 import type { ConvoSession, ConvoSessionStore } from '@/lib/v2/convo/session';
@@ -339,21 +341,32 @@ export async function runFreeConvoTurn(
     }
   }
 
-  const candidates = [
-    {
-      id: current.line_id,
-      tl: current.tl,
-      item_id: current.line_id,
-      qkind: 'open' as const,
-    },
-  ];
+  // Preview the authored next line for NEXT LINE (after this answer).
+  let nextLinePreview = current.bubble_tl;
+  if (learnerText && !bridgingBack && !switchedTopic) {
+    const preview = advanceAfterAnswer({
+      doc: threadDoc,
+      topic,
+      thread_index: session.thread_index,
+      step: session.free_step,
+      threads_done: session.threads_done,
+      learnerText,
+    });
+    nextLinePreview = preview.next.bubble_tl;
+  } else if (bridgingBack) {
+    nextLinePreview = `Mas diz-me… ${current.tl}`;
+  }
 
-  const promptBuilt = buildConvoPrompt({
+  if (session.assisted) {
+    eventLine = `${eventLine}; learner used the help chips`;
+  }
+
+  const persona = requirePersona(topic.character_id);
+  const promptBuilt = buildFreeReactionPrompt({
     module: 'free',
     pack: null,
     freeTopicTitle: topic.title_tl,
     facts: session.facts,
-    suggestedWords: session.suggested_words,
     event: {
       verdict: 'correct',
       item_id: '',
@@ -362,19 +375,14 @@ export async function runFreeConvoTurn(
       phase: session.phase,
     },
     eventLine,
-    candidates,
+    candidates: [],
     lastExchanges: session.last_exchanges,
     learnerAnswer: learnerText || '(ready)',
+    personaJson: JSON.stringify(persona),
+    nextLineTl: nextLinePreview,
   });
 
-  const system = promptBuilt.parts
-    .filter((p) => p.cache)
-    .map((p) => p.text)
-    .join('\n\n');
-  const prompt = promptBuilt.parts
-    .filter((p) => !p.cache)
-    .map((p) => `### ${p.index}\n${p.text}`)
-    .join('\n\n');
+  const { system, prompt } = freePromptPartsToMessages(promptBuilt);
 
   const modelOut = await callFreeModel({
     model: input.model,

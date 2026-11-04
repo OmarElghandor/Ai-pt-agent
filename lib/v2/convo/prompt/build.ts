@@ -141,3 +141,8 @@ export function setConvoPromptBudgetTestExtra(
 ): void {
   budgetTestExtra = extra;
 }
+
+/** Used by free prompt builder for the same T2.2 budget intentional-fail hook. */
+export function convoPromptBudgetTestExtraText(): string {
+  return budgetTestExtra ? `\n${budgetTestExtra()}` : '';
+}

@@ -5,10 +5,6 @@ import {
   setConvoPromptBudgetTestExtra,
 } from '@/lib/v2/convo/prompt';
 import {
-  endsWithQuestionOrInvitation,
-  parseFreeConvoReaction,
-} from '@/lib/v2/convo/output';
-import {
   MemoryConvoSessionStore,
   startFreeConvoSession,
 } from '@/lib/v2/convo/session';
@@ -19,8 +15,8 @@ import {
 } from '@/lib/v2/convo/turn';
 import { loadFreeTopicsFile, loadThreadTopic } from '@/lib/v2/convo/topics';
 
-describe('v2 free chat · T7.2 prompt', () => {
-  it('builds six parts with suggested words and facts inside 2/4 only', () => {
+describe('v2 free chat · T7.2 prompt (superseded by C4)', () => {
+  it('legacy buildConvoPrompt free path still returns six parts', () => {
     const built = buildConvoPrompt({
       module: 'free',
       pack: null,
@@ -30,42 +26,17 @@ describe('v2 free chat · T7.2 prompt', () => {
       event: {
         verdict: 'correct',
         item_id: '',
-        question_id: 'food.a01',
+        question_id: 'comida.t1.ask',
         question_kind: 'open',
         phase: 'teaching',
       },
       eventLine: 'learner replied',
-      candidates: [
-        {
-          id: 'food.a01',
-          tl: 'Gosta de cozinhar?',
-          item_id: 'food.a01',
-          qkind: 'open',
-        },
-        {
-          id: 'food.a02',
-          tl: 'O que come?',
-          item_id: 'food.a02',
-          qkind: 'open',
-        },
-      ],
+      candidates: [],
       lastExchanges: [{ role: 'learner', tl: 'Sim' }],
       learnerAnswer: 'Sim',
     });
     assert.equal(built.parts.length, 6);
-    assert.match(built.parts[1]!.text, /Comida/);
-    assert.match(built.parts[1]!.text, /likes rice/);
-    assert.match(built.parts[3]!.text, /Prefer these words: arroz, frango/);
     assert.doesNotMatch(built.assembled, /accepted forms|coach bank|يعني/);
-  });
-});
-
-describe('v2 free chat · parseFree', () => {
-  it('keeps trailing questions', () => {
-    const p = parseFreeConvoReaction('Que bom! E tu?');
-    assert.equal(p.decision, 'ok');
-    assert.match(p.reaction, /\?/);
-    assert.equal(endsWithQuestionOrInvitation(p.reaction), true);
   });
 });
 

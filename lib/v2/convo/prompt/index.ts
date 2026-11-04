@@ -7,6 +7,11 @@ export {
   estimateConvoPromptTokens,
   setConvoPromptBudgetTestExtra,
 } from './build';
+export {
+  buildFreeReactionPrompt,
+  freePromptPartsToMessages,
+  estimateFreePromptTokens,
+} from './buildFree';
 export type {
   ConvoPromptPart,
   BuildConvoPromptInput,

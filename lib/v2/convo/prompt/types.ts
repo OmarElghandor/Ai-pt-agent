@@ -29,6 +29,10 @@ export type BuildConvoPromptInput = {
   freeTopicPlace?: string;
   facts?: string[];
   suggestedWords?: string[];
+  /** Batch 9 free: persona JSON string (CHARACTER block). */
+  personaJson?: string;
+  /** Batch 9 free: authored next line the app will append. */
+  nextLineTl?: string;
 };
 
 export type BuildConvoPromptResult = {
