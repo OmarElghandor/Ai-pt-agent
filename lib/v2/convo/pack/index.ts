@@ -37,9 +37,11 @@ export {
 
 export {
   loadConvoPack,
+  loadConvoPackAsync,
   loadConvoPackFromFile,
   readConvoPackFile,
   requireConvoPack,
+  requireConvoPackAsync,
   convoPackPath,
   type LoadConvoPackOpts,
   type LoadConvoPackResult,

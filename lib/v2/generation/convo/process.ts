@@ -268,21 +268,165 @@ async function processConvoJobBody(job: JobView): Promise<void> {
       });
       return;
     }
-    case 'convo_critic':
-    case 'convo_lang_check':
-    case 'convo_assemble': {
-      // T5.3 fills these; soft-success so the DAG can drain after items.
+    case 'convo_critic': {
+      const { applyConvoPatches, runConvoCriticJob } = await import(
+        './runCritic'
+      );
+      const draft = packDoc.data as unknown as ConvoPackData;
+      if (!draft.scene || !draft.items) {
+        throw new Error('convo_critic: pack incomplete');
+      }
+      const critic = await runConvoCriticJob({
+        day: job.day,
+        pack: draft,
+      });
+      const patched = applyConvoPatches(draft, critic.result.patches);
+      await updateConvoPackDraft({
+        day: job.day,
+        targetLang: job.target_lang,
+        version: job.version,
+        data: patched,
+        mergeMeta: true,
+        meta: {
+          issues: critic.result.issues,
+          flagged: critic.result.issues.some((i) => i.severity === 'high'),
+        },
+      });
       await setConvoHandoff({
         day: job.day,
         targetLang: job.target_lang,
         version: job.version,
-        key: job.kind,
-        value: { deferred: true },
+        key: 'critic',
+        value: {
+          patch_count: critic.result.patches.length,
+          issue_count: critic.result.issues.length,
+        },
       });
       await finishJobSuccess({
         jobId: job.id,
-        output: { deferred: true },
-        handoff: { deferred: true },
+        output: critic.result,
+        handoff: { patches: critic.result.patches.length },
+        tokens: critic.tokens,
+        over_budget: critic.over_budget,
+        provider: critic.provider,
+        model: critic.model,
+        timing: critic.timing,
+        issues: critic.result.issues,
+      });
+      return;
+    }
+    case 'convo_lang_check': {
+      // Code-first lang check (Brazilian / length); patches applied in assemble drops.
+      const draft = packDoc.data as unknown as ConvoPackData;
+      const {
+        findBrazilianLeak,
+        wordCount,
+        CONVO_REACTION_MAX_WORDS,
+      } = await import('@/lib/v2/convo/output/checks');
+      const issues: Array<{ path: string; message: string }> = [];
+      const scan = (path: string, tl: string | undefined) => {
+        if (!tl) return;
+        const br = findBrazilianLeak(tl);
+        if (br) issues.push({ path, message: `brazilian:${br}` });
+        if (wordCount(tl) > CONVO_REACTION_MAX_WORDS) {
+          issues.push({ path, message: `length:${wordCount(tl)}` });
+        }
+      };
+      scan('opening.tl', draft.opening?.tl);
+      scan('closing.tl', draft.closing?.tl);
+      scan('bridge.tl', draft.bridge?.tl);
+      for (const [itemId, bank] of Object.entries(draft.items ?? {})) {
+        for (const [i, q] of (bank.choice_questions ?? []).entries()) {
+          scan(`items.${itemId}.choice[${i}]`, q.tl);
+        }
+        for (const [i, q] of (bank.open_questions ?? []).entries()) {
+          scan(`items.${itemId}.open[${i}]`, q.tl);
+        }
+      }
+      await setConvoHandoff({
+        day: job.day,
+        targetLang: job.target_lang,
+        version: job.version,
+        key: 'lang_check',
+        value: { issue_count: issues.length, issues: issues.slice(0, 20) },
+      });
+      await updateConvoPackDraft({
+        day: job.day,
+        targetLang: job.target_lang,
+        version: job.version,
+        mergeMeta: true,
+        meta: { flagged: issues.length > 0 },
+      });
+      await finishJobSuccess({
+        jobId: job.id,
+        output: { issues },
+        handoff: { issue_count: issues.length },
+      });
+      return;
+    }
+    case 'convo_assemble': {
+      const { assembleConvoPack } = await import('./assemble');
+      const { warmConvoPackAudio } = await import('./warmAudio');
+      const surfaces = surfacesForDay(job.day, published.pack);
+      const assembled = assembleConvoPack(packDoc.data, {
+        itemSurfaces: surfaces,
+      });
+      if (!assembled.ok) {
+        const msg = assembled.issues
+          .filter((i) => i.severity === 'error')
+          .slice(0, 8)
+          .map((i) => `${i.path}: [${i.rule}] ${i.message}`)
+          .join('; ');
+        throw new Error(`convo_assemble validation failed: ${msg}`);
+      }
+      const audio = await warmConvoPackAudio(assembled.pack);
+      await updateConvoPackDraft({
+        day: job.day,
+        targetLang: job.target_lang,
+        version: job.version,
+        data: assembled.pack,
+        mergeMeta: true,
+        meta: {
+          lesson_version: published.version,
+          stale: false,
+          text_ready: true,
+          // Character (pt) lines are required; coach (ar) may fail if RunPod is paused.
+          audio_ready: audio.failed_pt === 0,
+          flagged: assembled.warnings.length > 0 || audio.failed_ar > 0,
+          issues: assembled.issues,
+          warnings: [
+            ...assembled.warnings,
+            ...(audio.failed_ar > 0
+              ? [`coach_audio_failed:${audio.failed_ar}`]
+              : []),
+          ],
+          accepted_forms: assembled.accepted_forms,
+        },
+      });
+      await setConvoHandoff({
+        day: job.day,
+        targetLang: job.target_lang,
+        version: job.version,
+        key: 'assemble',
+        value: {
+          ok: true,
+          dropped: assembled.dropped_questions,
+          audio,
+        },
+      });
+      await finishJobSuccess({
+        jobId: job.id,
+        output: {
+          ok: true,
+          dropped: assembled.dropped_questions,
+          audio,
+        },
+        handoff: {
+          ok: true,
+          audio_ready: audio.failed_pt === 0,
+          coach_audio_failed: audio.failed_ar,
+        },
+        issues: assembled.issues,
       });
       return;
     }

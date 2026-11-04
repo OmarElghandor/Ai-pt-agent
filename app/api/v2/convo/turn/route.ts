@@ -2,7 +2,7 @@ import { getCurrentUserId } from '@/lib/auth/currentUser';
 import { isV2Enabled } from '@/lib/v2/flags';
 import {
   loadConvoItemSurfaces,
-  requireConvoPack,
+  requireConvoPackAsync,
 } from '@/lib/v2/convo/pack';
 import {
   MongoConvoSessionStore,
@@ -58,7 +58,9 @@ export async function POST(req: Request) {
   let pack;
   try {
     const surfaces = loadConvoItemSurfaces();
-    pack = requireConvoPack(session.pack_id, { itemSurfaces: surfaces });
+    pack = await requireConvoPackAsync(session.pack_id, {
+      itemSurfaces: surfaces,
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'pack load failed';
     return Response.json({ error: message }, { status: 400 });

@@ -77,9 +77,9 @@ DAY_BRIEF
 ${formatLessonBrief(brief)}
 `;
 
-  const call = await callJobTool({
+  const callOpts = {
     label: 'convo_items',
-    kind: 'convo_items',
+    kind: 'convo_items' as const,
     systemPrompt: CONVO_ITEMS_SYSTEM,
     brief,
     userBody,
@@ -89,7 +89,19 @@ ${formatLessonBrief(brief)}
     systemModules: [{ name: 'convo_items', version: '1' }],
     cachedExtra: day18ItemsExampleSnippet(),
     cachedExampleName: 'pt-PT.day-18.json',
-  });
+  };
+
+  let call: Awaited<ReturnType<typeof callJobTool>>;
+  try {
+    call = await callJobTool(callOpts);
+  } catch (err) {
+    // One retry (09 §4.1 fail → one retry).
+    console.warn(
+      '[convo_items] retry after',
+      err instanceof Error ? err.message : err,
+    );
+    call = await callJobTool(callOpts);
+  }
 
   const parsed = ConvoItemsToolSchema.safeParse(call.data);
   if (!parsed.success) {

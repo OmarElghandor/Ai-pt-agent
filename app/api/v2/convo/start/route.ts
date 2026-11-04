@@ -3,7 +3,7 @@ import { getCurrentUserId } from '@/lib/auth/currentUser';
 import { isV2Enabled } from '@/lib/v2/flags';
 import {
   loadConvoItemSurfaces,
-  requireConvoPack,
+  requireConvoPackAsync,
 } from '@/lib/v2/convo/pack';
 import {
   MongoConvoSessionStore,
@@ -37,7 +37,9 @@ export async function POST(req: Request) {
 
   try {
     const surfaces = loadConvoItemSurfaces();
-    const pack = requireConvoPack(packId, { itemSurfaces: surfaces });
+    const pack = await requireConvoPackAsync(packId, {
+      itemSurfaces: surfaces,
+    });
     const store = new MongoConvoSessionStore();
     const result = await startConvoSession({
       userId,
