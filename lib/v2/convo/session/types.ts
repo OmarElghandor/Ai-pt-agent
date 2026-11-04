@@ -78,9 +78,20 @@ export type ConvoOpeningBubbles = {
   card_ids: string[];
 };
 
+/** Payload when reopening mid-conversation (T4.1). */
+export type ConvoReopeningPayload = {
+  character_tl: string;
+  pending_question: ConvoPendingQuestion;
+  pending_tl: string | null;
+  pending_audio_key: string | null;
+  coach?: { id: string; eg: string };
+};
+
 export type StartConvoResult = {
   session: ConvoSession;
   opening: ConvoOpeningBubbles;
   /** True when an existing open session was reused. */
   resumed: boolean;
+  /** Present when resumed with a pending question (template reopening, no model). */
+  reopening?: ConvoReopeningPayload;
 };

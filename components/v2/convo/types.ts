@@ -73,11 +73,20 @@ export type TalkStartResponse = {
     coach_intros: Array<{ item_id: string; coach_intro_eg: string }>;
     card_ids: string[];
   };
+  /** Present when resuming mid-conversation (T4.1). */
+  reopening?: {
+    character_tl: string;
+    pending_question: TalkSessionSnapshot['pending_question'];
+    pending_tl: string | null;
+    pending_audio_key: string | null;
+    coach?: { id: string; eg: string };
+  };
   session: {
     id: string;
     rungs: Record<string, string>;
     phase: string;
     status: string;
+    help_ladder?: TalkSessionSnapshot['help_ladder'];
     current_group: number;
     pending_question: TalkSessionSnapshot['pending_question'];
     struggled?: Record<string, boolean>;

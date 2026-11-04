@@ -8,6 +8,7 @@ export type {
   ConvoHelpLadderState,
   ConvoSession,
   ConvoOpeningBubbles,
+  ConvoReopeningPayload,
   StartConvoResult,
 } from './types';
 
@@ -16,6 +17,8 @@ export {
   buildOpeningBubbles,
   createConvoSessionDoc,
 } from './init';
+
+export { buildReopening, pendingQuestionTl } from './reopen';
 
 export {
   MemoryConvoSessionStore,

@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import type { ConvoPackData } from '@/lib/v2/convo/pack';
 import { buildOpeningBubbles, createConvoSessionDoc } from './init';
+import { buildReopening } from './reopen';
 import type { ConvoSessionStore } from './store';
 import type { ConvoSession, StartConvoResult } from './types';
 
@@ -15,15 +16,36 @@ export type StartConvoSessionOpts = {
   now?: Date;
 };
 
+function resumeResult(
+  existing: ConvoSession,
+  pack: ConvoPackData,
+  store: ConvoSessionStore,
+): Promise<StartConvoResult> {
+  if (existing.pending_question) {
+    const built = buildReopening(existing, pack);
+    return store.save(built.session).then((session) => ({
+      session,
+      opening: built.opening,
+      resumed: true,
+      reopening: built.reopening,
+    }));
+  }
+  // Open session but no pending yet (left before first question) → fresh opening.
+  return Promise.resolve({
+    session: existing,
+    opening: buildOpeningBubbles(pack),
+    resumed: true,
+  });
+}
+
 /**
  * Create or load a conversation session for user × pack.
- * No model call. Returns opening bubbles (character + group-1 coach intros/cards).
+ * No model call. Fresh start → opening bubbles; resume mid-run → template
+ * reopening + pending question (T4.1).
  */
 export async function startConvoSession(
   opts: StartConvoSessionOpts,
 ): Promise<StartConvoResult> {
-  const opening = buildOpeningBubbles(opts.pack);
-
   if (opts.sessionId) {
     const existing = await opts.store.findById(opts.sessionId);
     if (
@@ -31,13 +53,13 @@ export async function startConvoSession(
       existing.user_id === opts.userId &&
       existing.pack_id === opts.pack.pack_id
     ) {
-      return { session: existing, opening, resumed: true };
+      return resumeResult(existing, opts.pack, opts.store);
     }
   }
 
   const open = await opts.store.findOpen(opts.userId, opts.pack.pack_id);
   if (open) {
-    return { session: open, opening, resumed: true };
+    return resumeResult(open, opts.pack, opts.store);
   }
 
   const id = opts.newId?.() ?? randomUUID();
@@ -48,7 +70,11 @@ export async function startConvoSession(
     now: opts.now,
   });
   const session = await opts.store.create(created);
-  return { session, opening, resumed: false };
+  return {
+    session,
+    opening: buildOpeningBubbles(opts.pack),
+    resumed: false,
+  };
 }
 
 /** Reload a session by id; returns null if missing or wrong user. */

@@ -51,11 +51,13 @@ export async function POST(req: Request) {
       day: pack.day,
       resumed: result.resumed,
       opening: result.opening,
+      ...(result.reopening ? { reopening: result.reopening } : {}),
       session: {
         id: result.session.id,
         rungs: result.session.rungs,
         phase: result.session.phase,
         status: result.session.status,
+        help_ladder: result.session.help_ladder,
         current_group: result.session.current_group,
         pending_question: result.session.pending_question,
         struggled: result.session.struggled,

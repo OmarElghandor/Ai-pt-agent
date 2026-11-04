@@ -59,6 +59,8 @@ export function TalkSession({ packId }: Props) {
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
   const [bootstrapped, setBootstrapped] = useState(false);
+  /** When true, skip empty bootstrap turn (resumed mid-conversation). */
+  const [skipBootstrap, setSkipBootstrap] = useState(false);
   const [metrics, setMetrics] = useState<TalkTurnMetrics | null>(null);
   const [turnCount, setTurnCount] = useState(0);
   const [voiceMode, setVoiceMode] = useState(true);
@@ -341,7 +343,7 @@ export function TalkSession({ packId }: Props) {
           rungs: body.session.rungs,
           phase: body.session.phase,
           status: body.session.status,
-          help_ladder: {
+          help_ladder: body.session.help_ladder ?? {
             question_id: null,
             step: 0,
             attempts: 0,
@@ -353,32 +355,72 @@ export function TalkSession({ packId }: Props) {
           said_once: body.session.said_once ?? {},
           survival_used: body.session.survival_used ?? 0,
         });
-        const openingBubbles: TalkBubble[] = [
-          {
-            id: newId('open'),
-            role: 'character',
-            tl: body.opening.character.tl,
-            say: body.opening.character.say,
-          },
-        ];
-        if (body.opening.card_ids.length > 0) {
-          openingBubbles.push({
-            id: newId('cards'),
-            role: 'cards',
-            card_ids: body.opening.card_ids,
-          });
+
+        const resumedMid =
+          Boolean(body.resumed && body.reopening?.pending_question);
+
+        if (resumedMid && body.reopening) {
+          // T4.1: template reopening + same pending question; no bootstrap turn.
+          const reopenBubbles: TalkBubble[] = [
+            {
+              id: newId('reopen'),
+              role: 'character',
+              tl: body.reopening.character_tl,
+            },
+          ];
+          if (body.reopening.coach?.eg) {
+            reopenBubbles.push({
+              id: newId('reopen-coach'),
+              role: 'coach',
+              eg: body.reopening.coach.eg,
+              moment: 'returned_after_break',
+            });
+          }
+          setBubbles(reopenBubbles);
+          const pq = body.reopening.pending_question!;
+          const ptl = body.reopening.pending_tl ?? '';
+          if (ptl) {
+            setPending({
+              id: pq.id,
+              tl: ptl,
+              kind: pq.kind as TalkPendingQuestion['kind'],
+              item_id: pq.item_id,
+              audio_key:
+                body.reopening.pending_audio_key ??
+                `convo:${body.pack_id}:${pq.id}`,
+            });
+          }
+          setSkipBootstrap(true);
+          setBootstrapped(true);
+        } else {
+          const openingBubbles: TalkBubble[] = [
+            {
+              id: newId('open'),
+              role: 'character',
+              tl: body.opening.character.tl,
+              say: body.opening.character.say,
+            },
+          ];
+          if (body.opening.card_ids.length > 0) {
+            openingBubbles.push({
+              id: newId('cards'),
+              role: 'cards',
+              card_ids: body.opening.card_ids,
+            });
+          }
+          openingBubbles.push(
+            ...body.opening.coach_intros
+              .filter((c) => c.coach_intro_eg)
+              .map((c) => ({
+                id: newId('intro'),
+                role: 'coach' as const,
+                eg: c.coach_intro_eg,
+                moment: 'group_intro',
+              })),
+          );
+          setBubbles(openingBubbles);
+          setSkipBootstrap(false);
         }
-        openingBubbles.push(
-          ...body.opening.coach_intros
-            .filter((c) => c.coach_intro_eg)
-            .map((c) => ({
-              id: newId('intro'),
-              role: 'coach' as const,
-              eg: c.coach_intro_eg,
-              moment: 'group_intro',
-            })),
-        );
-        setBubbles(openingBubbles);
         setLoading(false);
       } catch (err) {
         if (!cancelled) {
@@ -393,10 +435,10 @@ export function TalkSession({ packId }: Props) {
   }, [packId]);
 
   useEffect(() => {
-    if (!sessionId || bootstrapped || loading || busy) return;
+    if (!sessionId || bootstrapped || loading || busy || skipBootstrap) return;
     setBootstrapped(true);
     void runTurn('');
-  }, [sessionId, bootstrapped, loading, busy, runTurn]);
+  }, [sessionId, bootstrapped, loading, busy, skipBootstrap, runTurn]);
 
   const submitText = () => {
     const t = text.trim();

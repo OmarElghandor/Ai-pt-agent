@@ -130,4 +130,85 @@ describe('v2 convo session', () => {
     });
     assert.notEqual(a.session.id, b.session.id);
   });
+
+  it('resume mid-group: template reopening + same pending question (T4.1)', async () => {
+    const first = await startConvoSession({
+      userId: 'user-resume',
+      pack: PACK,
+      store,
+      newId: () => 'sess-resume',
+    });
+
+    const pending = {
+      id: 'q_right_open',
+      kind: 'open' as const,
+      item_id: 'word.right',
+    };
+    const mid = structuredClone(first.session);
+    mid.pending_question = pending;
+    mid.current_group = 2;
+    mid.last_exchanges = [
+      { role: 'character', tl: 'E agora?' },
+      { role: 'learner', tl: 'direita' },
+    ];
+    await store.save(mid);
+
+    const resumed = await startConvoSession({
+      userId: 'user-resume',
+      pack: PACK,
+      store,
+      newId: () => 'sess-should-not-create',
+    });
+
+    assert.equal(resumed.resumed, true);
+    assert.equal(resumed.session.id, 'sess-resume');
+    assert.deepEqual(resumed.session.pending_question, pending);
+    assert.equal(resumed.session.current_group, 2);
+    assert.ok(resumed.reopening);
+    assert.equal(resumed.reopening.pending_question?.id, 'q_right_open');
+    assert.ok(
+      resumed.reopening.character_tl.includes('E agora?') ||
+        resumed.reopening.pending_tl === 'E agora?',
+    );
+    assert.match(resumed.opening.character.tl, /E agora\?/);
+    // No fresh group-1 cards on resume mid-run
+    assert.deepEqual(resumed.opening.card_ids, []);
+  });
+
+  it('resume after simulated server restart (new store instance)', async () => {
+    const first = await startConvoSession({
+      userId: 'user-restart',
+      pack: PACK,
+      store,
+      newId: () => 'sess-restart',
+    });
+    const pending = {
+      id: 'q_left_open',
+      kind: 'open' as const,
+      item_id: 'word.left',
+    };
+    const mid = structuredClone(first.session);
+    mid.pending_question = pending;
+    mid.current_group = 2;
+    await store.save(mid);
+    const snapshot = structuredClone(
+      (await store.findById('sess-restart'))!,
+    );
+
+    // New process → new Memory store seeded with persisted doc
+    const store2 = new MemoryConvoSessionStore();
+    await store2.create(snapshot);
+
+    const resumed = await startConvoSession({
+      userId: 'user-restart',
+      pack: PACK,
+      store: store2,
+    });
+
+    assert.equal(resumed.resumed, true);
+    assert.equal(resumed.session.id, 'sess-restart');
+    assert.deepEqual(resumed.session.pending_question, pending);
+    assert.ok(resumed.reopening?.pending_tl);
+    assert.match(resumed.reopening!.character_tl, /No semáforo\?/);
+  });
 });
