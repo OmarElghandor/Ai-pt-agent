@@ -33,3 +33,11 @@ export {
 } from './opening';
 
 export { authoredLinesForWarm } from './warmAudio';
+
+export { fitFrameFromArabic } from './frameFit';
+
+export {
+  FREE_COACH_TIMEOUT_MS,
+  handleFreeArabicSide,
+  type FreeSideKind,
+} from './sideChannel';
