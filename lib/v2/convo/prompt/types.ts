@@ -13,7 +13,8 @@ export type ConvoPromptPart = {
 };
 
 export type BuildConvoPromptInput = {
-  pack: ConvoPackData;
+  /** Lesson pack (Module A). Optional for free chat. */
+  pack?: ConvoPackData | null;
   event: ConvoEventFacts;
   /** Pre-formatted event line; if omitted, formatConvoEventLine(event) is used. */
   eventLine?: string;
@@ -22,6 +23,12 @@ export type BuildConvoPromptInput = {
   learnerAnswer: string;
   /** Optional two-line visual state summary for part 2. */
   visualStateSummary?: string;
+  /** Module C free chat. */
+  module?: 'lesson' | 'free';
+  freeTopicTitle?: string;
+  freeTopicPlace?: string;
+  facts?: string[];
+  suggestedWords?: string[];
 };
 
 export type BuildConvoPromptResult = {

@@ -13,13 +13,14 @@ import {
   createLiveConvoStreamModel,
   encodeConvoTurnEvent,
   runConvoTurn,
+  runFreeConvoTurn,
   type ConvoTurnStreamEvent,
 } from '@/lib/v2/convo/turn';
 
 export const runtime = 'nodejs';
 
 /**
- * One streamed conversation turn (09 §4.2).
+ * One streamed conversation turn (09 §4.2 / Module C).
  * Body: { session_id: string, text: string }
  * Response: text/x-ndjson event stream.
  */
@@ -55,18 +56,6 @@ export async function POST(req: Request) {
     return Response.json({ error: 'session not found' }, { status: 404 });
   }
 
-  let pack;
-  try {
-    const surfaces = loadConvoItemSurfaces();
-    pack = await requireConvoPackAsync(session.pack_id, {
-      itemSurfaces: surfaces,
-    });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : 'pack load failed';
-    return Response.json({ error: message }, { status: 400 });
-  }
-
-  const surfaces = loadConvoItemSurfaces();
   const encoder = new TextEncoder();
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
@@ -74,19 +63,33 @@ export async function POST(req: Request) {
         controller.enqueue(encoder.encode(encodeConvoTurnEvent(event)));
       };
       try {
-        const { metrics } = await runConvoTurn({
-          session,
-          pack,
-          surfaces,
-          learnerText: body?.text ?? '',
-          store,
-          model: createLiveConvoStreamModel(),
-          emit,
-          progressWriter: createAnswersConvoProgressWriter(),
-          ...(survival ? { survival } : {}),
-        });
-        // Metrics event reserved for T2.1; still available on done path via session.
-        void metrics;
+        if (session.module === 'free') {
+          const { metrics } = await runFreeConvoTurn({
+            session,
+            learnerText: body?.text ?? '',
+            store,
+            model: createLiveConvoStreamModel(),
+            emit,
+          });
+          void metrics;
+        } else {
+          const surfaces = loadConvoItemSurfaces();
+          const pack = await requireConvoPackAsync(session.pack_id, {
+            itemSurfaces: surfaces,
+          });
+          const { metrics } = await runConvoTurn({
+            session,
+            pack,
+            surfaces,
+            learnerText: body?.text ?? '',
+            store,
+            model: createLiveConvoStreamModel(),
+            emit,
+            progressWriter: createAnswersConvoProgressWriter(),
+            ...(survival ? { survival } : {}),
+          });
+          void metrics;
+        }
       } catch (err) {
         const message = err instanceof Error ? err.message : 'turn failed';
         emit({ type: 'done', ok: false, error: message });

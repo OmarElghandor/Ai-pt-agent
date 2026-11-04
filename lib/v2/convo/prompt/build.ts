@@ -1,15 +1,29 @@
 import { formatConvoEventLine } from '@/lib/v2/convo/ladder';
-import { CONVO_CHARACTER_RULES } from './characterRules';
+import {
+  CONVO_CHARACTER_RULES,
+  FREE_CONVO_CHARACTER_RULES,
+} from './characterRules';
 import type {
   BuildConvoPromptInput,
   BuildConvoPromptResult,
   ConvoPromptPart,
 } from './types';
 
-function sceneBlock(
-  input: BuildConvoPromptInput,
-): string {
-  const { pack } = input;
+function sceneBlock(input: BuildConvoPromptInput): string {
+  if (input.module === 'free') {
+    const lines = [
+      `Topic: ${input.freeTopicTitle ?? 'conversa'}.`,
+      `Situation: free chat; keep it light and on topic.`,
+    ];
+    const facts = (input.facts ?? []).slice(0, 5);
+    if (facts.length > 0) {
+      lines.push(`Facts: ${facts.join('; ')}`);
+    }
+    return lines.join('\n');
+  }
+
+  const pack = input.pack;
+  if (!pack) return 'Scene: (none).';
   const visual =
     input.visualStateSummary ??
     (pack.visual.type === 'map'
@@ -24,9 +38,19 @@ function sceneBlock(
 
 function candidatesBlock(
   candidates: BuildConvoPromptInput['candidates'],
+  suggestedWords?: string[],
 ): string {
-  if (candidates.length === 0) return '(no candidates)';
-  return candidates.map((c) => `[${c.id}] ${c.tl}`).join('\n');
+  const lines: string[] = [];
+  if (candidates.length === 0) {
+    lines.push('(no candidates)');
+  } else {
+    lines.push(...candidates.map((c) => `[${c.id}] ${c.tl}`));
+  }
+  const words = (suggestedWords ?? []).slice(0, 15);
+  if (words.length > 0) {
+    lines.push(`Prefer these words: ${words.join(', ')}`);
+  }
+  return lines.join('\n');
 }
 
 function exchangesBlock(
@@ -41,22 +65,22 @@ function exchangesBlock(
 
 /**
  * Build the six fixed prompt parts in order (09 §5.1).
- * Nothing from §5.2 belongs here.
+ * Nothing from §5.2 belongs here. Module C puts facts/suggested words in 2/4.
  */
 export function buildConvoPrompt(
   input: BuildConvoPromptInput,
 ): BuildConvoPromptResult {
   const eventLine =
     input.eventLine ?? formatConvoEventLine(input.event);
+  const isFree = input.module === 'free';
+  const rules = isFree ? FREE_CONVO_CHARACTER_RULES : CONVO_CHARACTER_RULES;
 
   const parts: ConvoPromptPart[] = [
     {
       index: 1,
       label: 'character_rules',
       // budgetTestSuffix is a test-only injection (T2.2 intentional fail).
-      text:
-        CONVO_CHARACTER_RULES +
-        (budgetTestExtra ? `\n${budgetTestExtra()}` : ''),
+      text: rules + (budgetTestExtra ? `\n${budgetTestExtra()}` : ''),
       cache: true,
     },
     {
@@ -74,7 +98,10 @@ export function buildConvoPrompt(
     {
       index: 4,
       label: 'candidates',
-      text: candidatesBlock(input.candidates),
+      text: candidatesBlock(
+        input.candidates,
+        isFree ? input.suggestedWords : undefined,
+      ),
       cache: false,
     },
     {

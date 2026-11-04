@@ -108,6 +108,21 @@ export function TopicsScreen() {
         </div>
       </header>
 
+      <Link
+        href="/talk/free"
+        className="flex min-h-14 items-center gap-3 rounded-v2-row bg-v2-card px-4 py-3 shadow-[var(--shadow-v2-soft)]"
+      >
+        <span className="min-w-0 flex-1">
+          <span className="block font-[family-name:var(--font-v2-display-ar)] text-base font-semibold text-v2-primary">
+            كلام حر
+          </span>
+          <span className="block font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
+            محادثة مفتوحة على موضوع تختاره
+          </span>
+        </span>
+        <Icon name="arrow_back" size={20} className="text-v2-action" />
+      </Link>
+
       {listing.themes.map((theme) => (
         <section key={theme.id} className="flex flex-col gap-3">
           <h2 className="flex items-baseline justify-between gap-2">

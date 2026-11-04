@@ -8,6 +8,12 @@ type ConvoSessionDocLean = {
   user_id: string;
   module: ConvoSession['module'];
   pack_id: string;
+  topic_id?: string | null;
+  character_id?: string | null;
+  angle_index?: number;
+  angles_done?: string[];
+  off_topic_streak?: number;
+  paused_for_pack_id?: string | null;
   rungs: ConvoSession['rungs'];
   help_ladder: ConvoSession['help_ladder'];
   current_group: number;
@@ -30,6 +36,13 @@ type ConvoSessionDocLean = {
 
 function sessionFields(session: ConvoSession) {
   return {
+    module: session.module,
+    topic_id: session.topic_id,
+    character_id: session.character_id,
+    angle_index: session.angle_index,
+    angles_done: session.angles_done,
+    off_topic_streak: session.off_topic_streak,
+    paused_for_pack_id: session.paused_for_pack_id,
     rungs: session.rungs,
     help_ladder: session.help_ladder,
     current_group: session.current_group,
@@ -55,6 +68,12 @@ function fromDoc(doc: ConvoSessionDocLean): ConvoSession {
     user_id: doc.user_id,
     module: doc.module,
     pack_id: doc.pack_id,
+    topic_id: doc.topic_id ?? null,
+    character_id: doc.character_id ?? null,
+    angle_index: doc.angle_index ?? 0,
+    angles_done: doc.angles_done ?? [],
+    off_topic_streak: doc.off_topic_streak ?? 0,
+    paused_for_pack_id: doc.paused_for_pack_id ?? null,
     rungs: doc.rungs ?? {},
     help_ladder: doc.help_ladder ?? {
       question_id: null,

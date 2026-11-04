@@ -692,6 +692,12 @@ const v2ConvoSessionSchema = new Schema(
       default: 'lesson',
     },
     pack_id: { type: String, required: true, index: true },
+    topic_id: { type: String, required: false, default: null, index: true },
+    character_id: { type: String, required: false, default: null },
+    angle_index: { type: Number, required: false, default: 0 },
+    angles_done: { type: [String], required: false, default: [] },
+    off_topic_streak: { type: Number, required: false, default: 0 },
+    paused_for_pack_id: { type: String, required: false, default: null },
     rungs: { type: Schema.Types.Mixed, required: true, default: {} },
     help_ladder: {
       type: Schema.Types.Mixed,

@@ -82,6 +82,12 @@ export function createConvoSessionDoc(opts: {
     user_id: opts.userId,
     module: 'lesson',
     pack_id: opts.pack.pack_id,
+    topic_id: null,
+    character_id: opts.pack.scene.character_id ?? null,
+    angle_index: 0,
+    angles_done: [],
+    off_topic_streak: 0,
+    paused_for_pack_id: null,
     rungs,
     help_ladder: {
       question_id: null,

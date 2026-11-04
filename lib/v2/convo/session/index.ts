@@ -41,3 +41,20 @@ export {
   getConvoSession,
   type StartConvoSessionOpts,
 } from './start';
+
+export {
+  freePackId,
+  freeOpeningLine,
+  buildFreeOpeningBubbles,
+  createFreeConvoSessionDoc,
+} from './freeInit';
+
+export {
+  startFreeConvoSession,
+  type StartFreeConvoSessionOpts,
+} from './startFree';
+
+export {
+  buildFreeReopening,
+  freePendingAngleTl,
+} from './reopenFree';

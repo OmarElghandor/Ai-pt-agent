@@ -11,6 +11,10 @@ export {
   type ConvoSurvivalAction,
 } from './runTurn';
 export {
+  runFreeConvoTurn,
+  type RunFreeConvoTurnInput,
+} from './runFreeTurn';
+export {
   createLiveConvoStreamModel,
   createStubConvoStreamModel,
 } from './streamModel';

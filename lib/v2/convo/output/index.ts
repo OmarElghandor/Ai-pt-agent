@@ -16,3 +16,10 @@ export {
   type ConvoParseDecision,
   type ParseConvoReactionResult,
 } from './parse';
+
+export {
+  FREE_CONVO_MAX_WORDS,
+  endsWithQuestionOrInvitation,
+  parseFreeConvoReaction,
+  dropFreeConvoReaction,
+} from './parseFree';

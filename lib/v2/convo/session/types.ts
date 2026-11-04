@@ -38,6 +38,18 @@ export type ConvoSession = {
   user_id: string;
   module: ConvoModule;
   pack_id: string;
+  /** Free-chat topic id when module === 'free'. */
+  topic_id: string | null;
+  /** Character for free chat (from free-topics file). */
+  character_id: string | null;
+  /** Index into the topic's angle bank. */
+  angle_index: number;
+  /** Angle ids already closed this session. */
+  angles_done: string[];
+  /** Consecutive off-topic learner turns (T7.3). */
+  off_topic_streak: number;
+  /** Lesson pack opened mid free-chat (T7.5); free stays open. */
+  paused_for_pack_id: string | null;
   /** Rung per lesson item id. */
   rungs: Record<string, ConvoRung>;
   help_ladder: ConvoHelpLadderState;

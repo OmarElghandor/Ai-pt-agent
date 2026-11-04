@@ -1,4 +1,7 @@
-export { CONVO_CHARACTER_RULES } from './characterRules';
+export {
+  CONVO_CHARACTER_RULES,
+  FREE_CONVO_CHARACTER_RULES,
+} from './characterRules';
 export {
   buildConvoPrompt,
   estimateConvoPromptTokens,

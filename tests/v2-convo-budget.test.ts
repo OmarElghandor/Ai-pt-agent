@@ -8,11 +8,13 @@ import { setConvoPromptBudgetTestExtra } from '@/lib/v2/convo/prompt';
 import {
   MemoryConvoSessionStore,
   startConvoSession,
+  startFreeConvoSession,
   type ConvoSession,
 } from '@/lib/v2/convo/session';
 import {
   createStubConvoStreamModel,
   runConvoTurn,
+  runFreeConvoTurn,
   type ConvoTurnStreamEvent,
 } from '@/lib/v2/convo/turn';
 import { surfaceTl } from './fixtures/convo/day18-script';
@@ -196,6 +198,50 @@ describe('v2 convo · 40-turn budget (T2.2)', () => {
         false,
         `expected intentional fail: turn3=${turn3} turn40=${turn40}`,
       );
+    } finally {
+      setConvoPromptBudgetTestExtra(null);
+    }
+  });
+});
+
+describe('v2 convo · 30-turn free-chat budget (T7.2)', () => {
+  async function playFreeBudgetTurns(n: number): Promise<number[]> {
+    const inputTokens: number[] = [];
+    const store = new MemoryConvoSessionStore();
+    const started = await startFreeConvoSession({
+      userId: 'budget-free',
+      topicId: 'food',
+      store,
+      newId: () => 'budget-free-sess',
+    });
+    let session = started.session;
+    const model = createStubConvoStreamModel({
+      byCandidate: () => 'Bom! E tu?',
+    });
+    for (let i = 0; i < n; i++) {
+      const events: ConvoTurnStreamEvent[] = [];
+      const out = await runFreeConvoTurn({
+        session,
+        learnerText: i === 0 ? '' : 'Sim.',
+        store,
+        model,
+        emit: (e) => events.push(e),
+      });
+      session = out.session;
+      const m = events.find((e) => e.type === 'metrics');
+      if (m && m.type === 'metrics' && m.input_tokens > 0) {
+        inputTokens.push(m.input_tokens);
+      }
+    }
+    return inputTokens;
+  }
+
+  it('turn 30 input tokens stay within 10% of turn 3', async () => {
+    setConvoPromptBudgetTestExtra(null);
+    try {
+      const tokens = await playFreeBudgetTurns(30);
+      assert.equal(tokens.length, 30);
+      assert.ok(budgetOk(tokens[2]!, tokens[29]!));
     } finally {
       setConvoPromptBudgetTestExtra(null);
     }
