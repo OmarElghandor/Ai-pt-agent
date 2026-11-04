@@ -18,11 +18,13 @@ import type { ConvoSession, ConvoSessionStore } from '@/lib/v2/convo/session';
 import { freePackId } from '@/lib/v2/convo/session/freeInit';
 import { classifySideChannel } from '@/lib/v2/convo/sideChannel';
 import {
+  extractFreeFact,
   isNonLearningRequest,
   isOffTopic,
   nearestFreeTopic,
   NON_LEARNING_COACH_EG,
   offTopicGist,
+  pushFreeFact,
 } from '@/lib/v2/convo/free';
 import type {
   ConvoStreamModel,
@@ -79,16 +81,32 @@ function angleCandidates(
   return out;
 }
 
+function closeAngleWithFact(
+  session: ConvoSession,
+  angle: TopicAngle | undefined,
+  learnerText: string,
+): void {
+  if (!angle) return;
+  if (!session.angles_done.includes(angle.id)) {
+    session.angles_done = [...session.angles_done, angle.id];
+  }
+  const hints = [
+    ...angle.item_hints,
+    ...session.suggested_words.slice(0, 8),
+  ];
+  const fact = extractFreeFact({ learnerText, hints });
+  session.facts = pushFreeFact(session.facts, fact);
+}
+
 /** Move to next angle (or bridge). Returns the angle question to append. */
 function takeNextAngleQuestion(
   session: ConvoSession,
   angles: TopicAngle[],
   topic: FreeTopic,
+  learnerText: string,
 ): TopicAngle {
   const current = angles[session.angle_index];
-  if (current && !session.angles_done.includes(current.id)) {
-    session.angles_done = [...session.angles_done, current.id];
-  }
+  closeAngleWithFact(session, current, learnerText);
   const nextIndex = session.angle_index + 1;
   if (nextIndex >= angles.length) {
     const bridge = bridgeAngle(topic);
@@ -359,11 +377,8 @@ export async function runFreeConvoTurn(
     pushExchange(session, 'character', modelOut.reaction);
     questionTl = modelOut.reaction;
     questionId = session.pending_question?.id ?? `free.${session.angle_index}`;
-    // Close current angle after a solid exchange ending in a question.
     const current = angles[session.angle_index];
-    if (current && !session.angles_done.includes(current.id)) {
-      session.angles_done = [...session.angles_done, current.id];
-    }
+    closeAngleWithFact(session, current, learnerText);
     if (session.angle_index + 1 < angles.length) {
       session.angle_index += 1;
     }
@@ -404,7 +419,7 @@ export async function runFreeConvoTurn(
         item_id: appended.id,
       };
     } else {
-      appended = takeNextAngleQuestion(session, angles, topic);
+      appended = takeNextAngleQuestion(session, angles, topic, learnerText);
     }
     pushExchange(session, 'character', appended.tl);
     questionTl = appended.tl;

@@ -6,3 +6,9 @@ export {
   nearestFreeTopic,
   offTopicGist,
 } from './offTopic';
+
+export {
+  FREE_FACTS_MAX,
+  extractFreeFact,
+  pushFreeFact,
+} from './facts';
