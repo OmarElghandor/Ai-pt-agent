@@ -84,14 +84,21 @@ function closeWithFact(
   session.facts = pushFreeFact(session.facts, fact);
 }
 
+function learnerAskedQuestion(text: string): boolean {
+  const t = text.trim();
+  return /\?\s*$/.test(t) || /^e\s+tu\b/i.test(t);
+}
+
 async function callFreeModel(opts: {
   model: ConvoStreamModel;
   system: string;
   prompt: string;
   emit: (event: ConvoTurnStreamEvent) => void;
   knownWords?: string[];
+  learnerText?: string;
 }): Promise<{
   reaction: string;
+  reaction_ar: string;
   unknownWords: string[];
   metricsPartial: Pick<
     ConvoTurnMetrics,
@@ -99,6 +106,7 @@ async function callFreeModel(opts: {
   >;
 }> {
   const { model, system, prompt, emit } = opts;
+  const asked = learnerAskedQuestion(opts.learnerText ?? '');
   const onChunk = (chunk: string) => {
     emit({ type: 'reaction_delta', text: chunk });
   };
@@ -107,23 +115,25 @@ async function callFreeModel(opts: {
   let result = await streamFn({
     system,
     prompt,
-    maxTokens: 64,
+    maxTokens: 96,
     onChunk,
   });
 
   let parsed = parseFreeConvoReaction(result.text, {
     knownWords: opts.knownWords,
+    learnerAsked: asked,
   });
   if (parsed.decision === 'regenerate' && parsed.regenerateReason) {
     result = await streamFn({
       system,
       prompt,
-      maxTokens: 64,
+      maxTokens: 96,
       regenerateReason: parsed.regenerateReason,
       onChunk,
     });
     parsed = parseFreeConvoReaction(result.text, {
       knownWords: opts.knownWords,
+      learnerAsked: asked,
     });
     if (parsed.decision === 'regenerate') {
       parsed = dropFreeConvoReaction(parsed);
@@ -140,6 +150,7 @@ async function callFreeModel(opts: {
 
   return {
     reaction: parsed.decision === 'drop' ? '' : parsed.reaction,
+    reaction_ar: parsed.decision === 'drop' ? '' : parsed.reaction_ar,
     unknownWords: parsed.unknownWords,
     metricsPartial: {
       ttft_ms: result.ttftMs,
@@ -390,8 +401,10 @@ export async function runFreeConvoTurn(
     prompt,
     emit,
     knownWords: session.suggested_words,
+    learnerText,
   });
   metrics = { ...metrics, ...modelOut.metricsPartial };
+  void modelOut.reaction_ar;
 
   if (modelOut.reaction) {
     pushExchange(session, 'character', modelOut.reaction);

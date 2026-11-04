@@ -79,11 +79,15 @@ export function createStubConvoStreamModel(opts: {
   ): Promise<ConvoStreamModelResult> {
     state.calls += 1;
     state.lastPrompt = withRegen(input.prompt, input.regenerateReason);
-    const text =
+    let text =
       opts.byCandidate?.(candidateIdsFromPrompt, state.lastPrompt) ??
       (candidateIdsFromPrompt[0]
         ? `[${candidateIdsFromPrompt[0]}] Perfeito!`
         : 'Perfeito!');
+    // Batch 9 free reactions need an AR: line; stubs get a default if missing.
+    if (!/\bAR:/i.test(text)) {
+      text = `${text.trim()}\nAR: حسناً.`;
+    }
     const pieces =
       opts.chunks && opts.chunks.length > 0
         ? opts.chunks

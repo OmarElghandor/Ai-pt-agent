@@ -19,7 +19,13 @@ export {
 
 export {
   FREE_CONVO_MAX_WORDS,
+  FREE_CONVO_MAX_WORDS_WHEN_ASKED,
   endsWithQuestionOrInvitation,
+  splitFreeReactionAr,
+  stripQuestionSentences,
+  visibleFreeStreamText,
   parseFreeConvoReaction,
   dropFreeConvoReaction,
+  type ParseFreeConvoResult,
+  type FreeParseExtraIssue,
 } from './parseFree';
