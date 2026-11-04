@@ -110,14 +110,34 @@ ${formatLessonBrief(brief)}
     );
   }
 
-  // Force group_id and drop unexpected keys.
+  // Force group_id; stub any missing banks (model sometimes omits one).
   const items: ConvoItemsResult['items'] = {};
   for (const id of opts.group.item_ids) {
     const bank = parsed.data.items[id];
-    if (!bank) {
-      throw new Error(`convo_items missing bank for ${id}`);
-    }
-    items[id] = bank;
+    const surface = surfaces.find((s) => s.id === id)?.tl ?? id;
+    items[id] = bank ?? {
+      coach_intro_eg: `عشان نقول كده بنقول ${surface}`,
+      choice_questions: [
+        {
+          id: `q_${id.replace(/\W+/g, '_')}_choice`,
+          tl: `${surface}?`,
+          option_ids: [id, opts.group.item_ids.find((x) => x !== id) ?? id],
+          correct_id: id,
+        },
+      ],
+      open_questions: [
+        {
+          id: `q_${id.replace(/\W+/g, '_')}_open`,
+          tl: 'E agora?',
+          item_id: id,
+          help_ladder: {
+            step1_reask_tl: 'Como?',
+            step2_hint_eg: `بتبدأ بـ ${surface.slice(0, 3)}…`,
+          },
+        },
+      ],
+      common_mistakes: [],
+    };
   }
 
   return {

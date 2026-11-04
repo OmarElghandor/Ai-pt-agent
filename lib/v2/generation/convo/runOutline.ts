@@ -128,21 +128,8 @@ ${formatLessonBrief(brief)}
     systemModules: [{ name: 'convo_outline', version: '1' }],
   });
 
-  const validated = validateConvoOutline(call.data, {
-    allowedItemIds: allowedIds,
-    placeHint: place,
-  });
-
-  if (!validated.ok || !validated.outline) {
-    const msg = validated.issues
-      .filter((i) => i.severity === 'error')
-      .map((i) => `${i.path}: [${i.rule}] ${i.message}`)
-      .join('; ');
-    throw new Error(`convo_outline validation failed: ${msg || 'unknown'}`);
-  }
-
   // Prefer a place-fitting character when the model drifted.
-  let outline = validated.outline;
+  let outline = ConvoOutlineToolSchema.parse(call.data);
   const fits = allowedChars.map((c) => c.id);
   if (
     fits.length > 0 &&
@@ -163,6 +150,31 @@ ${formatLessonBrief(brief)}
       scene: { ...outline.scene, character_id: fits[0]! },
     };
   }
+
+  // Drop disallowed group items, then align recap to groups.
+  const groups = outline.groups
+    .map((g) => ({
+      ...g,
+      item_ids: g.item_ids.filter((id) => allowedIds.includes(id)),
+    }))
+    .filter((g) => g.item_ids.length > 0);
+  const groupIds = new Set(groups.flatMap((g) => g.item_ids));
+  const recapQs = outline.recap.questions.filter((q) => groupIds.has(q.item_id));
+  const have = new Set(recapQs.map((q) => q.item_id));
+  for (const id of groupIds) {
+    if (!have.has(id)) {
+      recapQs.push({
+        id: `recap_auto_${id.replace(/[^a-z0-9]+/gi, '_')}`,
+        tl: 'E depois?',
+        item_id: id,
+      });
+    }
+  }
+  outline = {
+    ...outline,
+    groups,
+    recap: { ...outline.recap, questions: recapQs },
+  };
 
   const recheck = validateConvoOutline(outline, {
     allowedItemIds: allowedIds,
