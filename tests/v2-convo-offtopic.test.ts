@@ -2,14 +2,8 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
   isNonLearningRequest,
-  isOffTopic,
-  nearestFreeTopic,
   NON_LEARNING_COACH_EG,
 } from '@/lib/v2/convo/free';
-import {
-  freeTopicById,
-  loadFreeTopicsFile,
-} from '@/lib/v2/convo/topics';
 import {
   MemoryConvoSessionStore,
   startFreeConvoSession,
@@ -20,111 +14,39 @@ import {
   type ConvoTurnStreamEvent,
 } from '@/lib/v2/convo/turn';
 
-describe('v2 free chat · off-topic helpers (T7.3)', () => {
-  const comida = freeTopicById('comida')!;
-
-  it('detects football English as off-topic for comida', () => {
-    assert.equal(
-      isOffTopic('I love watching football matches every Sunday', comida),
-      true,
-    );
-  });
-
-  it('keeps food words on-topic', () => {
-    assert.equal(isOffTopic('Gosto de arroz e frango', comida), false);
-  });
-
-  it('detects non-learning requests', () => {
-    assert.equal(isNonLearningRequest('please write code for me'), true);
-    assert.equal(isNonLearningRequest('translate this email'), true);
-    assert.equal(isNonLearningRequest('Gosto de arroz'), false);
-  });
-
-  it('picks a related nearest topic', () => {
-    const all = loadFreeTopicsFile().topics;
-    const next = nearestFreeTopic(comida, all, 'football stadium weekend');
-    assert.notEqual(next.id, comida.id);
-  });
-});
-
-describe('v2 free chat · off-topic turn behaviour (T7.3)', () => {
-  it('bridges back on the first English football message', async () => {
+describe('v2 free chat · no topic policing (Batch 10 D3)', () => {
+  it('football inside casa gets a normal reaction + next authored line, no topic change', async () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
-      userId: 'ot-1',
-      topicId: 'comida',
+      userId: 'ot-casa',
+      topicId: 'casa',
       store,
-      newId: () => 'ot-sess-1',
+      newId: () => 'ot-casa-1',
     });
     let session = started.session;
-    const pendingBefore = session.pending_question?.id;
+    assert.equal(session.pending_question?.id, 'casa.t1.ask');
     const model = createStubConvoStreamModel({
-      byCandidate: () => 'Que interessante!',
+      byCandidate: () => 'Que fixe!',
     });
     const events: ConvoTurnStreamEvent[] = [];
     const out = await runFreeConvoTurn({
       session,
-      learnerText: 'I love watching football matches every Sunday',
+      learnerText: 'I like football did you watch Benfica',
       store,
       model,
       emit: (e) => events.push(e),
     });
     session = out.session;
-    assert.equal(session.off_topic_streak, 1);
-    assert.equal(session.topic_id, 'comida');
+    assert.equal(session.topic_id, 'casa');
+    assert.equal(session.off_topic_streak, 0);
+    assert.equal(session.pending_question?.id, 'casa.t1.fu0');
+    assert.ok(!events.some((e) => e.type === 'coach' && 'moment' in e && e.moment === 'topic_switch'));
     const q = events.find((e) => e.type === 'question');
     assert.ok(q && q.type === 'question');
-    assert.match(q.tl, /\?/);
-    // Still on same topic / same or current angle
-    assert.ok(session.pending_question);
-    assert.equal(session.topic_id, 'comida');
-    void pendingBefore;
+    assert.ok(!/Mas diz-me/i.test(q.tl));
   });
 
-  it('switches topic on the second consecutive off-topic message', async () => {
-    const store = new MemoryConvoSessionStore();
-    const started = await startFreeConvoSession({
-      userId: 'ot-2',
-      topicId: 'comida',
-      store,
-      newId: () => 'ot-sess-2',
-    });
-    let session = started.session;
-    const model = createStubConvoStreamModel({
-      byCandidate: () => 'Ok!',
-    });
-
-    {
-      const events: ConvoTurnStreamEvent[] = [];
-      const out = await runFreeConvoTurn({
-        session,
-        learnerText: 'I love watching football matches every Sunday',
-        store,
-        model,
-        emit: (e) => events.push(e),
-      });
-      session = out.session;
-      assert.equal(session.off_topic_streak, 1);
-    }
-
-    {
-      const events: ConvoTurnStreamEvent[] = [];
-      const out = await runFreeConvoTurn({
-        session,
-        learnerText: 'Did you see the premier league goal yesterday?',
-        store,
-        model,
-        emit: (e) => events.push(e),
-      });
-      session = out.session;
-      assert.notEqual(session.topic_id, 'comida');
-      assert.equal(session.off_topic_streak, 0);
-      assert.ok(events.some((e) => e.type === 'coach'));
-      assert.ok(events.some((e) => e.type === 'question'));
-    }
-  });
-
-  it('declines non-learning requests with a coach note only', async () => {
+  it('keeps declining non-learning requests with a coach note only', async () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'ot-3',
@@ -149,6 +71,11 @@ describe('v2 free chat · off-topic turn behaviour (T7.3)', () => {
     assert.ok(coach && coach.type === 'coach');
     assert.equal(coach.eg, NON_LEARNING_COACH_EG);
     assert.equal(out.session.topic_id, 'comida');
-    assert.equal(out.session.thread_index, started.session.thread_index);
+  });
+
+  it('detects non-learning requests in helper', () => {
+    assert.equal(isNonLearningRequest('please write code for me'), true);
+    assert.equal(isNonLearningRequest('translate this email'), true);
+    assert.equal(isNonLearningRequest('Gosto de arroz'), false);
   });
 });

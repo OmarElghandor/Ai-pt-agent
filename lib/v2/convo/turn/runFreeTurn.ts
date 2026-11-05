@@ -10,13 +10,11 @@ import {
 } from '@/lib/v2/convo/output/parseFree';
 import {
   freeTopicById,
-  loadFreeTopicsFile,
   loadThreadTopic,
   requirePersona,
   type FreeTopic,
 } from '@/lib/v2/convo/topics';
 import type { ConvoSession, ConvoSessionStore } from '@/lib/v2/convo/session';
-import { freePackId } from '@/lib/v2/convo/session/freeInit';
 import {
   classifySideChannel,
   logUnmatchedTopicRequestSync,
@@ -30,10 +28,7 @@ import {
   handleFreeArabicSide,
   isLearnerQuestionToCharacter,
   isNonLearningRequest,
-  isOffTopic,
-  nearestFreeTopic,
   NON_LEARNING_COACH_EG,
-  offTopicGist,
   pushFreeFact,
   type FreeNextLine,
 } from '@/lib/v2/convo/free';
@@ -192,9 +187,9 @@ export async function runFreeConvoTurn(
   const topicId = session.topic_id;
   if (!topicId) throw new Error('free session missing topic_id');
 
-  let topic = input.topic ?? freeTopicById(topicId);
+  const topic = input.topic ?? freeTopicById(topicId);
   if (!topic) throw new Error(`Unknown free topic: ${topicId}`);
-  let threadDoc = loadThreadTopic(topic.id);
+  const threadDoc = loadThreadTopic(topic.id);
 
   const emit = input.emit;
   let metrics: ConvoTurnMetrics = {
@@ -315,15 +310,13 @@ export async function runFreeConvoTurn(
     return finish(true);
   }
 
-  let current = currentNextLine(
+  const current = currentNextLine(
     threadDoc,
     session.thread_index,
     session.free_step,
     topic,
   );
 
-  let switchedTopic = false;
-  let bridgingBack = false;
   let eventLine = learnerText
     ? 'learner replied; continue the free chat'
     : 'conversation started; ask about the topic';
@@ -335,62 +328,14 @@ export async function runFreeConvoTurn(
   }
 
   if (learnerText) {
-    const extras = [
-      ...session.suggested_words,
-      ...(current.frame?.chips ?? []),
-      current.tl,
-      current.share_tl ?? '',
-      ...threadDoc.threads.flatMap((th) => [
-        th.share.tl,
-        th.ask.tl,
-        ...th.ask.frame.chips,
-        ...th.follow_ups.flatMap((fu) => [fu.tl, ...fu.frame.chips]),
-      ]),
-    ];
-    if (isOffTopic(learnerText, topic, extras)) {
-      session.off_topic_streak = (session.off_topic_streak ?? 0) + 1;
-      const gist = offTopicGist(learnerText);
-      if (session.off_topic_streak >= 2) {
-        const all = loadFreeTopicsFile().topics;
-        const nextTopic = nearestFreeTopic(topic, all, learnerText);
-        topic = nextTopic;
-        threadDoc = loadThreadTopic(nextTopic.id);
-        session.topic_id = nextTopic.id;
-        session.pack_id = freePackId(nextTopic.id);
-        session.character_id = nextTopic.character_id;
-        session.thread_index = 0;
-        session.free_step = { kind: 'ask' };
-        session.threads_done = [];
-        session.off_topic_streak = 0;
-        session.suggested_words = nextTopic.word_set.slice(0, 15);
-        current = currentNextLine(
-          threadDoc,
-          0,
-          { kind: 'ask' },
-          topic,
-        );
-        applyNextLine(session, current);
-        switchedTopic = true;
-        eventLine = `learner went off topic twice; switched to ${nextTopic.title_tl}`;
-        emit({
-          type: 'coach',
-          id: 'free_topic_switch',
-          eg: `خلّينا نغيّر الموضوع لـ ${nextTopic.title_ar} 🙂`,
-          moment: 'topic_switch',
-        });
-      } else {
-        eventLine = `learner went off topic: ${gist}`;
-        bridgingBack = true;
-      }
-    } else {
-      session.off_topic_streak = 0;
-      pushExchange(session, 'learner', learnerText);
-    }
+    // Batch 10 D3: no topic policing — always continue on the same topic.
+    session.off_topic_streak = 0;
+    pushExchange(session, 'learner', learnerText);
   }
 
   // Preview the authored next line for NEXT LINE (after this answer).
   let nextLinePreview = current.bubble_tl;
-  if (learnerText && !bridgingBack && !switchedTopic) {
+  if (learnerText) {
     const preview = advanceAfterAnswer({
       doc: threadDoc,
       topic,
@@ -400,8 +345,6 @@ export async function runFreeConvoTurn(
       learnerText,
     });
     nextLinePreview = preview.next.bubble_tl;
-  } else if (bridgingBack) {
-    nextLinePreview = `Mas diz-me… ${current.tl}`;
   }
 
   const persona = requirePersona(topic.character_id);
@@ -442,16 +385,7 @@ export async function runFreeConvoTurn(
   }
 
   let nextLine: FreeNextLine;
-  if (bridgingBack) {
-    nextLine = {
-      ...current,
-      bubble_tl: `Mas diz-me… ${current.tl}`,
-      tl: current.tl,
-    };
-    applyNextLine(session, current);
-  } else if (switchedTopic) {
-    nextLine = current;
-  } else if (learnerText) {
+  if (learnerText) {
     closeWithFact(session, current, learnerText);
     const advanced = advanceAfterAnswer({
       doc: threadDoc,
@@ -461,37 +395,12 @@ export async function runFreeConvoTurn(
       threads_done: session.threads_done,
       learnerText,
     });
-    if (advanced.switch_topic_id) {
-      const nextTopic = freeTopicById(advanced.switch_topic_id)!;
-      topic = nextTopic;
-      threadDoc = loadThreadTopic(nextTopic.id);
-      session.topic_id = nextTopic.id;
-      session.pack_id = freePackId(nextTopic.id);
-      session.character_id = nextTopic.character_id;
-      session.suggested_words = nextTopic.word_set.slice(0, 15);
-      const openLine = currentNextLine(
-        threadDoc,
-        0,
-        { kind: 'ask' },
-        topic,
-      );
-      const withOpening: FreeNextLine = {
-        ...openLine,
-        bubble_tl: `${topic.opening_tl.replace(/\{name\}!?\s*,?\s*/g, '').trim()} ${openLine.bubble_tl}`.trim(),
-        bubble_ar: `${topic.opening_ar.replace(/\{name\}!?\s*,?\s*/g, '').trim()} ${openLine.bubble_ar}`.trim(),
-      };
-      session.thread_index = 0;
-      session.free_step = { kind: 'ask' };
-      session.threads_done = [];
-      nextLine = withOpening;
-      applyNextLine(session, openLine);
-    } else {
-      session.thread_index = advanced.thread_index;
-      session.free_step = advanced.step;
-      session.threads_done = advanced.threads_done;
-      nextLine = advanced.next;
-      applyNextLine(session, nextLine);
-    }
+    // Batch 10: never switch topic from a bridge; D4 hands off to open mode.
+    session.thread_index = advanced.thread_index;
+    session.free_step = advanced.step;
+    session.threads_done = advanced.threads_done;
+    nextLine = advanced.next;
+    applyNextLine(session, nextLine);
   } else {
     nextLine = current;
     applyNextLine(session, nextLine);
