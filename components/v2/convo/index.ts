@@ -9,6 +9,8 @@ export { TopicsScreen } from './TopicsScreen';
 export { TopicsReviewCard } from './TopicsReviewCard';
 export { FreeTopicsScreen } from './FreeTopicsScreen';
 export { FreeTalkSession } from './FreeTalkSession';
+export { TalkModeScreen } from './TalkModeScreen';
+export type { TalkMode } from './TalkModeScreen';
 export { readConvoNdjson } from './readNdjson';
 export { TalkDevPanel, TALK_DEV_PANEL_KEY } from './TalkDevPanel';
 export type { TalkTurnMetrics } from './TalkDevPanel';
