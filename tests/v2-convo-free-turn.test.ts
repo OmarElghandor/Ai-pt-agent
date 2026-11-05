@@ -84,22 +84,31 @@ describe('v2 free chat · budget (T7.2 / T2.2 free run)', () => {
   async function playFreeBudgetTurns(n: number): Promise<number[]> {
     const inputTokens: number[] = [];
     const store = new MemoryConvoSessionStore();
+    // Open mode only — thread→open handoff changes CHARACTER size (E7 examples).
     const started = await startFreeConvoSession({
       userId: 'free-budget',
-      topicId: 'comida',
+      topicId: 'open',
       store,
       newId: () => 'free-budget-sess',
+      learnerName: 'Omar',
     });
     let session = started.session;
     const model = createStubConvoStreamModel({
-      byCandidate: () => 'Bom! E depois?',
+      byCandidate: () =>
+        [
+          'PT: Fixe! E que carros gostas?',
+          'AR: رائع! وما هي السيارات التي تحبها؟',
+          'FRAME: Gosto de ___.',
+          'HINT: قول نوع العربية',
+          'CHIPS: carros rápidos | carros clássicos | nenhum',
+        ].join('\n'),
     });
 
     for (let i = 0; i < n; i++) {
       const events: ConvoTurnStreamEvent[] = [];
       const out = await runFreeConvoTurn({
         session,
-        learnerText: i === 0 ? '' : 'Gosto de arroz.',
+        learnerText: i === 0 ? '' : 'Gosto de carros.',
         store,
         model,
         emit: (e) => events.push(e),
