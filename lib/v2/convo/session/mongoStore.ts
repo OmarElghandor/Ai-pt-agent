@@ -27,6 +27,7 @@ type ConvoSessionDocLean = {
   candidate_history: string[];
   last_exchanges: ConvoSession['last_exchanges'];
   pending_question: ConvoSession['pending_question'];
+  pending_frame?: ConvoSession['pending_frame'];
   facts: string[];
   suggested_words: string[];
   status: ConvoSession['status'];
@@ -64,6 +65,7 @@ function sessionFields(session: ConvoSession) {
     candidate_history: session.candidate_history,
     last_exchanges: session.last_exchanges,
     pending_question: session.pending_question,
+    pending_frame: session.pending_frame,
     facts: session.facts,
     suggested_words: session.suggested_words,
     status: session.status,
@@ -107,6 +109,7 @@ function fromDoc(doc: ConvoSessionDocLean): ConvoSession {
     candidate_history: doc.candidate_history ?? [],
     last_exchanges: doc.last_exchanges ?? [],
     pending_question: doc.pending_question ?? null,
+    pending_frame: doc.pending_frame ?? null,
     facts: doc.facts ?? [],
     suggested_words: doc.suggested_words ?? [],
     status: doc.status,

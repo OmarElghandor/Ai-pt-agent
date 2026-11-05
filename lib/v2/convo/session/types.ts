@@ -28,6 +28,13 @@ export type ConvoPendingQuestion = {
   item_id: string;
 } | null;
 
+/** Last answer frame shown (open + thread). Side channel / help / resume read this. */
+export type ConvoPendingFrame = {
+  tl: string;
+  eg: string;
+  chips: string[];
+} | null;
+
 export type ConvoHelpLadderState = {
   /** Question currently on the help ladder (empty when idle). */
   question_id: string | null;
@@ -70,6 +77,8 @@ export type ConvoSession = {
   /** Last ≤3 character/learner exchanges (pt-PT only). */
   last_exchanges: ConvoExchange[];
   pending_question: ConvoPendingQuestion;
+  /** Last FRAME/HINT/CHIPS (or authored thread frame) for help + side channel. */
+  pending_frame: ConvoPendingFrame;
   facts: string[];
   suggested_words: string[];
   status: ConvoSessionStatus;

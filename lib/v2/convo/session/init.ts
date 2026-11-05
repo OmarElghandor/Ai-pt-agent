@@ -101,6 +101,7 @@ export function createConvoSessionDoc(opts: {
     candidate_history: [],
     last_exchanges: [],
     pending_question: null,
+    pending_frame: null,
     facts: [],
     suggested_words: [],
     status: 'open',

@@ -48,6 +48,7 @@ export {
   buildOpenOpeningBubbles,
   createFreeConvoSessionDoc,
   openModeOpeningChips,
+  openModeOpeningFrame,
 } from './freeInit';
 
 export {

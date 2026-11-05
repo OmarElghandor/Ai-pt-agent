@@ -393,13 +393,7 @@ export async function runFreeConvoTurn(
         ar: '',
         bubble_tl: '',
         bubble_ar: '',
-        frame: session.suggested_words.length
-          ? {
-              tl: 'Quero falar de ___.',
-              eg: 'قول عايز تتكلم عن إيه',
-              chips: session.suggested_words.slice(0, 4),
-            }
-          : undefined,
+        frame: session.pending_frame ?? undefined,
       }
     : currentNextLine(
         threadDoc!,
@@ -416,7 +410,7 @@ export async function runFreeConvoTurn(
     await handleFreeArabicSide({
       kind: sideKind,
       learnerText: input.learnerText.trim(),
-      frame: pendingLine.frame,
+      frame: session.pending_frame ?? pendingLine.frame,
       emit,
       ...(input.coachCaller ? { coachCaller: input.coachCaller } : {}),
     });
@@ -569,6 +563,11 @@ export async function runFreeConvoTurn(
         ...session.suggested_words,
       ].slice(0, 15);
     }
+    session.pending_frame = {
+      tl: modelOut.frame_tl,
+      eg: modelOut.hint_eg,
+      chips: [...modelOut.chips],
+    };
 
     if (modelOut.ar) {
       emit({ type: 'bubble_ar', ar: modelOut.ar });
@@ -680,6 +679,11 @@ export async function runFreeConvoTurn(
           ...session.suggested_words,
         ].slice(0, 15);
       }
+      session.pending_frame = {
+        tl: modelOut.frame_tl,
+        eg: modelOut.hint_eg,
+        chips: [...modelOut.chips],
+      };
       if (modelOut.ar) emit({ type: 'bubble_ar', ar: modelOut.ar });
       emit({
         type: 'question',
@@ -850,6 +854,11 @@ export async function runFreeConvoTurn(
   });
 
   if (nextLine.frame) {
+    session.pending_frame = {
+      tl: nextLine.frame.tl,
+      eg: nextLine.frame.eg,
+      chips: [...nextLine.frame.chips],
+    };
     emit({
       type: 'free_frame',
       tl: nextLine.frame.tl,

@@ -27,6 +27,13 @@ function cloneSession(session: ConvoSession): ConvoSession {
     candidate_history: [...session.candidate_history],
     last_exchanges: session.last_exchanges.map((e) => ({ ...e })),
     facts: [...session.facts],
+    pending_frame: session.pending_frame
+      ? {
+          tl: session.pending_frame.tl,
+          eg: session.pending_frame.eg,
+          chips: [...session.pending_frame.chips],
+        }
+      : null,
     suggested_words: [...session.suggested_words],
     struggled: { ...session.struggled },
     said_once: { ...session.said_once },

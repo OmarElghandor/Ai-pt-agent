@@ -14,7 +14,7 @@ import {
 import { authoredLinesForWarm, currentNextLine } from '@/lib/v2/convo/free';
 import {
   MongoConvoSessionStore,
-  openModeOpeningChips,
+  openModeOpeningFrame,
   startConvoSession,
   startFreeConvoSession,
 } from '@/lib/v2/convo/session';
@@ -73,7 +73,8 @@ export async function POST(req: Request) {
 
       if (isOpen) {
         const openingTl = result.opening.character.tl;
-        const chips = openModeOpeningChips();
+        const frame =
+          result.session.pending_frame ?? openModeOpeningFrame();
         return NextResponse.json({
           session_id: result.session.id,
           module: 'free',
@@ -86,9 +87,9 @@ export async function POST(req: Request) {
           ...(result.reopening ? { reopening: result.reopening } : {}),
           pending_tl: result.reopening?.pending_tl ?? openingTl,
           current_frame: {
-            tl: 'Quero falar de ___.',
-            eg: 'قول عايز تتكلم عن إيه',
-            chips,
+            tl: frame.tl,
+            eg: frame.eg,
+            chips: frame.chips,
           },
           warm_lines: [],
           open_mode: true,
@@ -134,13 +135,19 @@ export async function POST(req: Request) {
         opening: result.opening,
         ...(result.reopening ? { reopening: result.reopening } : {}),
         pending_tl: pendingTl,
-        current_frame: pendingLine.frame
+        current_frame: result.session.pending_frame
           ? {
-              tl: pendingLine.frame.tl,
-              eg: pendingLine.frame.eg,
-              chips: pendingLine.frame.chips,
+              tl: result.session.pending_frame.tl,
+              eg: result.session.pending_frame.eg,
+              chips: result.session.pending_frame.chips,
             }
-          : null,
+          : pendingLine.frame
+            ? {
+                tl: pendingLine.frame.tl,
+                eg: pendingLine.frame.eg,
+                chips: pendingLine.frame.chips,
+              }
+            : null,
         warm_lines: authoredLinesForWarm(threadDoc),
         open_mode: false,
         session: {

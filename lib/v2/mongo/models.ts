@@ -715,6 +715,7 @@ const v2ConvoSessionSchema = new Schema(
     candidate_history: { type: [String], default: [] },
     last_exchanges: { type: Schema.Types.Mixed, default: [] },
     pending_question: { type: Schema.Types.Mixed, default: null },
+    pending_frame: { type: Schema.Types.Mixed, required: false, default: null },
     facts: { type: [String], default: [] },
     suggested_words: { type: [String], default: [] },
     status: {

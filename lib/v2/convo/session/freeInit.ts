@@ -23,6 +23,19 @@ export function openModeOpeningChips(): string[] {
   return [...titles.slice(0, 8), 'Sobre o meu dia'];
 }
 
+/** Default open-mode answer frame (also stored as pending_frame). */
+export function openModeOpeningFrame(): {
+  tl: string;
+  eg: string;
+  chips: string[];
+} {
+  return {
+    tl: 'Quero falar de ___.',
+    eg: 'قول عايز تتكلم عن إيه',
+    chips: openModeOpeningChips().slice(0, 4),
+  };
+}
+
 export function buildOpenOpeningBubbles(opts?: {
   topic?: FreeTopic;
   learnerName?: string | null;
@@ -117,6 +130,7 @@ export function createFreeConvoSessionDoc(opts: {
         kind: 'open',
         item_id: lineId,
       },
+      pending_frame: openModeOpeningFrame(),
       facts: [],
       suggested_words: openModeOpeningChips().slice(0, 15),
       status: 'open',
@@ -168,6 +182,13 @@ export function createFreeConvoSessionDoc(opts: {
       kind: 'open',
       item_id: first.line_id,
     },
+    pending_frame: first.frame
+      ? {
+          tl: first.frame.tl,
+          eg: first.frame.eg,
+          chips: [...first.frame.chips],
+        }
+      : null,
     facts: [],
     suggested_words: suggested,
     status: 'open',

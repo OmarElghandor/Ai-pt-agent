@@ -100,8 +100,30 @@ CHIPS: a | b`);
     assert.deepEqual(out.session.free_step, { kind: 'open' });
     const frame = events.find((e) => e.type === 'free_frame');
     assert.ok(frame);
+    assert.ok(out.session.pending_frame);
+    assert.equal(
+      out.session.pending_frame!.tl,
+      (frame as { tl: string }).tl,
+    );
+    assert.deepEqual(
+      out.session.pending_frame!.chips,
+      (frame as { chips: string[] }).chips,
+    );
     const q = events.find((e) => e.type === 'question');
     assert.ok(q && 'tl' in q);
     assert.match(String((q as { tl: string }).tl), /\?/);
+  });
+
+  it('open start seeds pending_frame (E3)', async () => {
+    const store = new MemoryConvoSessionStore();
+    const started = await startFreeConvoSession({
+      userId: 'open-frame',
+      topicId: 'open',
+      store,
+      newId: () => 'open-frame-1',
+    });
+    assert.ok(started.session.pending_frame);
+    assert.match(started.session.pending_frame!.tl, /___/);
+    assert.ok(started.session.pending_frame!.chips.length >= 2);
   });
 });
