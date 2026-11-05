@@ -8,45 +8,32 @@ import { talkHrefForTopic } from '@/lib/v2/convo/topics/suggestion';
 import type { TopicRow, TopicsListResult } from '@/lib/v2/convo/topics/types';
 
 function TopicRowView({ topic }: { topic: TopicRow }) {
-  const body = (
-    <>
-      <span className="text-lg" aria-hidden>
-        {topic.status_glyph}
-      </span>
-      <span className="min-w-0 flex-1">
-        <span
-          className="block font-[family-name:var(--font-v2-target)] text-base font-semibold text-v2-primary"
-          dir="ltr"
-        >
-          {topic.title_tl}
-        </span>
-        <span className="block font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-          {topic.title_ar}
-        </span>
-      </span>
-      {topic.unlocked ? (
-        <Icon name="arrow_back" size={20} className="text-v2-action" />
-      ) : (
-        <Icon name="lock" size={20} className="text-v2-ink-muted" />
-      )}
-    </>
-  );
-
-  if (!topic.unlocked) {
-    return (
-      <li className="flex min-h-14 items-center gap-3 rounded-v2-row bg-v2-paper-deep/60 px-4 py-3 opacity-70">
-        {body}
-      </li>
-    );
-  }
-
   return (
     <li>
       <Link
         href={talkHrefForTopic(topic)}
         className="flex min-h-14 items-center gap-3 rounded-v2-row bg-v2-card px-4 py-3 shadow-[var(--shadow-v2-soft)]"
       >
-        {body}
+        <span className="text-lg" aria-hidden>
+          {topic.status_glyph}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span
+            className="block font-[family-name:var(--font-v2-target)] text-base font-semibold text-v2-primary"
+            dir="ltr"
+          >
+            {topic.title_tl}
+          </span>
+          <span className="block font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
+            {topic.title_ar}
+          </span>
+          {!topic.pack_available ? (
+            <span className="mt-0.5 block font-[family-name:var(--font-v2-arabic)] text-[11px] text-v2-ink-muted">
+              هنتولّد أول ما تفتح
+            </span>
+          ) : null}
+        </span>
+        <Icon name="arrow_back" size={20} className="text-v2-action" />
       </Link>
     </li>
   );

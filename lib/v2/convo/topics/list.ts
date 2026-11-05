@@ -4,6 +4,7 @@ import { V2ItemStateModel } from '@/lib/v2/mongo/models';
 import { learnerCurrentDay } from '@/lib/v2/progress/learnerDay';
 import type { ItemState } from '@/lib/v2/progress/types';
 import { loadWeakItemIds } from '@/lib/v2/progress/weakItems';
+import { convoPackExistsAsync } from '@/lib/v2/convo/pack';
 import { convoPackFileExists, loadTopicsFile } from './load';
 import { statusGlyph, topicStatus } from './status';
 import type {
@@ -84,8 +85,9 @@ export function buildTopicsList(opts: {
   for (const theme of opts.file.themes) {
     const topics: TopicRow[] = theme.topics.map((t) => {
       const pack_available = packAvailable(t.pack_id);
-      const dayReached = opts.currentDay >= t.day;
-      const unlocked = dayReached && pack_available;
+      // Learn catalog: always unlocked; missing packs generate on first open.
+      const unlocked = true;
+      void opts.currentDay;
       const status = topicStatus(
         t.item_ids,
         opts.statesById,
@@ -103,7 +105,7 @@ export function buildTopicsList(opts: {
         status_glyph: statusGlyph(status),
         ...(character_name ? { character_name } : {}),
       };
-      if (!suggestion && unlocked && status === 'needs_review') {
+      if (!suggestion && status === 'needs_review') {
         suggestion = row;
       }
       return row;
@@ -134,11 +136,25 @@ export async function listTopicsForUser(
     loadStatesById(userId),
     loadWeakItemIds(userId),
   ]);
+
+  const packIds = [
+    ...new Set(
+      file.themes.flatMap((th) => th.topics.map((t) => t.pack_id)),
+    ),
+  ];
+  const available = new Set<string>();
+  await Promise.all(
+    packIds.map(async (id) => {
+      if (await convoPackExistsAsync(id)) available.add(id);
+    }),
+  );
+
   return buildTopicsList({
     file,
     currentDay,
     statesById,
     weakIds,
     now: opts?.now,
+    packAvailable: (id) => available.has(id),
   });
 }

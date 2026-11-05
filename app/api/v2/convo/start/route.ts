@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import { getCurrentUserId } from '@/lib/auth/currentUser';
 import { isV2Enabled } from '@/lib/v2/flags';
 import {
+  ensureConvoPackReady,
   loadConvoItemSurfaces,
-  requireConvoPackAsync,
 } from '@/lib/v2/convo/pack';
 import {
   freeTopicById,
@@ -20,6 +20,8 @@ import {
 } from '@/lib/v2/convo/session';
 
 export const runtime = 'nodejs';
+/** Allow blocking while a missing pack is generated on first open. */
+export const maxDuration = 300;
 
 /**
  * Start or resume a conversation (09 §10).
@@ -174,9 +176,18 @@ export async function POST(req: Request) {
 
   try {
     const surfaces = loadConvoItemSurfaces();
-    const pack = await requireConvoPackAsync(packId, {
-      itemSurfaces: surfaces,
-    });
+    const ensured = await ensureConvoPackReady(packId);
+    if (!ensured.ok) {
+      return NextResponse.json(
+        {
+          error: ensured.message,
+          error_eg: ensured.message_eg,
+          code: ensured.code,
+        },
+        { status: ensured.code === 'no_published_lesson' ? 404 : 503 },
+      );
+    }
+    const pack = ensured.pack;
     const result = await startConvoSession({
       userId,
       pack,
@@ -189,6 +200,7 @@ export async function POST(req: Request) {
       pack_id: pack.pack_id,
       day: pack.day,
       resumed: result.resumed,
+      generated: ensured.generated,
       opening: result.opening,
       ...(result.reopening ? { reopening: result.reopening } : {}),
       session: {

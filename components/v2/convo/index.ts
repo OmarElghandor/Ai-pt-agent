@@ -1,6 +1,8 @@
 export { TalkSession } from './TalkSession';
 export { CharacterBubble } from './CharacterBubble';
+export type { BubbleTone } from './CharacterBubble';
 export { LearnerBubble } from './LearnerBubble';
+export { CoachCard } from './CoachCard';
 export { ItemCard } from './ItemCard';
 export { ConvoMap } from './ConvoMap';
 export { SceneCardVisual } from './SceneCardVisual';

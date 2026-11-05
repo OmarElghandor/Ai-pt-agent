@@ -20,6 +20,7 @@ export {
 } from './plan';
 export {
   getCoreItemsDay,
+  findCoreItemById,
   loadCoreItemsFile,
   isNoNewItemsDay,
   type CoreItem,

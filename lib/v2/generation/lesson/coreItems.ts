@@ -270,6 +270,22 @@ export function getCoreItemsDay(
   };
 }
 
+/**
+ * First core-items row for an id across the curriculum (any day).
+ * Used to stub recycle ids missing from the registry.
+ */
+export function findCoreItemById(
+  id: string,
+  filePath?: string,
+): CoreItem | null {
+  const file = loadCoreItemsFile(filePath);
+  for (const day of file.days) {
+    const hit = day.core_items?.find((c) => c.id === id);
+    if (hit) return { ...hit };
+  }
+  return null;
+}
+
 function asAuthoredImage(value: unknown): AuthoredImage | null {
   if (!value || typeof value !== 'object') return null;
   const v = value as Partial<AuthoredImage>;

@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { NoteCard } from '@/components/v2/NoteCard';
 import type { ConvoTurnStreamEvent } from '@/lib/v2/convo/turn';
 import type { ConvoSessionSummary } from '@/lib/v2/convo/result';
 import { CharacterBubble } from './CharacterBubble';
+import { CoachCard } from './CoachCard';
 import { ConvoSummaryCard } from './ConvoSummaryCard';
 import { ConvoVoiceBar } from './ConvoVoiceBar';
 import { LearnerBubble } from './LearnerBubble';
@@ -21,6 +21,10 @@ const PARTNERS = [
 
 function newId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+}
+
+function partnerLabel(id: string): string {
+  return PARTNERS.find((p) => p.id === id)?.label ?? 'Inês';
 }
 
 type Props = { topicId: string };
@@ -139,7 +143,6 @@ export function FreeTalkSession({ topicId }: Props) {
       return;
     }
     if (event.type === 'question') {
-      // Batch 9: authored line already in the same bubble via authored_append.
       if (streamBubbleId.current) {
         const sid = streamBubbleId.current;
         setBubbles((prev) =>
@@ -250,7 +253,6 @@ export function FreeTalkSession({ topicId }: Props) {
         setOpenMode(Boolean(data.open_mode) || topicId === 'open');
         if (data.character_id) setCharacterId(data.character_id);
         if (data.current_frame) setFrame(data.current_frame);
-        // Warm a few authored lines only — avoid flooding Network on start.
         const warm = (data.warm_lines ?? []).slice(0, 3);
         for (const line of warm) {
           void fetch('/api/tts', {
@@ -323,9 +325,14 @@ export function FreeTalkSession({ topicId }: Props) {
     }
   };
 
+  const topicLine =
+    titleTl && titleAr
+      ? `${titleTl} · ${titleAr}`
+      : titleTl || titleAr || 'محادثة صوتية';
+
   if (summary) {
     return (
-      <div className="mx-auto flex h-[100dvh] w-full max-w-[390px] flex-col overflow-y-auto bg-v2-paper">
+      <div className="v2-free-talk mx-auto flex h-[100dvh] w-full max-w-[390px] flex-col overflow-y-auto">
         <ConvoSummaryCard
           summary={summary}
           practiceHref="/talk/practice"
@@ -337,33 +344,41 @@ export function FreeTalkSession({ topicId }: Props) {
   }
 
   return (
-    <div className="mx-auto flex h-[100dvh] w-full max-w-[390px] flex-col bg-v2-paper">
-      <header className="flex items-center gap-2 border-b border-v2-line/40 px-3 py-3">
+    <div className="v2-free-talk mx-auto flex h-[100dvh] w-full max-w-[390px] flex-col">
+      <header className="sticky top-0 z-20 flex h-20 shrink-0 items-center gap-2 border-b border-[var(--ft-border)]/60 bg-[color-mix(in_srgb,var(--ft-ivory)_80%,transparent)] px-3 shadow-[0_1px_8px_rgba(0,0,0,0.03)] backdrop-blur-xl">
         <Link
           href="/talk/practice"
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-v2-card text-v2-primary"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[var(--ft-ink)]"
           aria-label="رجوع"
         >
-          ←
+          <span className="material-symbols-rounded text-[22px]">
+            arrow_forward
+          </span>
         </Link>
+
+        <span
+          aria-hidden
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--ft-mist)_50%,transparent)] text-[var(--ft-sage)] ring-2 ring-[var(--ft-moss)]/40"
+        >
+          <span className="material-symbols-rounded text-[20px]">
+            record_voice_over
+          </span>
+        </span>
+
         <div className="min-w-0 flex-1">
-          <h1
-            className="truncate font-[family-name:var(--font-v2-target)] text-lg font-semibold text-v2-primary"
-            dir="ltr"
-          >
-            {titleTl || '…'}
+          <h1 className="truncate font-[family-name:var(--font-ft-ui)] text-[15px] font-semibold text-[var(--ft-ink)]">
+            محادثة صوتية
           </h1>
-          {titleAr ? (
-            <p className="font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
-              {titleAr}
-            </p>
-          ) : null}
+          <p className="truncate font-[family-name:var(--font-ft-ar)] text-[11px] text-[var(--ft-text-secondary)]">
+            البرتغالية الأوروبية • {topicLine}
+          </p>
         </div>
+
         {openMode || topicId === 'open' ? (
           <label className="shrink-0">
             <span className="sr-only">الشريك</span>
             <select
-              className="rounded-v2-chip border border-v2-line/50 bg-v2-card px-2 py-1 font-[family-name:var(--font-v2-target)] text-sm text-v2-primary"
+              className="h-8 max-w-[5.5rem] rounded-[var(--ft-radius-control)] border border-[var(--ft-border)] bg-[var(--ft-surface)] px-2 font-[family-name:var(--font-ft-pt)] text-[12px] text-[var(--ft-ink)]"
               value={characterId}
               onChange={(e) => setCharacterId(e.target.value)}
               dir="ltr"
@@ -376,23 +391,41 @@ export function FreeTalkSession({ topicId }: Props) {
             </select>
           </label>
         ) : null}
+
         <button
           type="button"
           onClick={() => void endSession()}
           disabled={!sessionId || ending || loading}
-          className="shrink-0 rounded-v2-chip bg-v2-primary/10 px-3 py-1.5 font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-v2-primary disabled:opacity-40"
+          className="shrink-0 rounded-[var(--ft-radius-control)] bg-[var(--ft-sage)] px-3.5 py-1.5 font-[family-name:var(--font-ft-ar)] text-[13px] font-semibold text-[var(--ft-on-sage)] disabled:opacity-40"
         >
           خلّص
         </button>
+
+        <span
+          aria-hidden
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--ft-sage-dark)] text-white"
+        >
+          <span className="material-symbols-rounded text-[18px]">person</span>
+        </span>
       </header>
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-3 py-4">
-        <div className="flex flex-col gap-3">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4">
+        <div className="flex flex-col gap-3.5">
+          {titleTl || titleAr ? (
+            <div className="flex justify-center">
+              <span className="rounded-[var(--ft-radius-control)] bg-[var(--ft-mist)]/50 px-3 py-1 font-[family-name:var(--font-ft-ar)] text-[11px] text-[var(--ft-text-secondary)]">
+                الموضوع: {topicLine}
+              </span>
+            </div>
+          ) : null}
+
           {bubbles.map((b) => {
             if (b.role === 'character') {
               return (
                 <CharacterBubble
                   key={b.id}
+                  tone="calm"
+                  partnerName={partnerLabel(characterId)}
                   tl={b.tl}
                   say={b.say}
                   streaming={b.streaming}
@@ -402,13 +435,32 @@ export function FreeTalkSession({ topicId }: Props) {
               );
             }
             if (b.role === 'learner') {
-              return <LearnerBubble key={b.id} tl={b.tl} />;
+              return <LearnerBubble key={b.id} tone="calm" tl={b.tl} />;
             }
             if (b.role === 'coach') {
+              const moment = b.moment ?? '';
+              const isSide =
+                moment.startsWith('language_question') ||
+                moment === 'arabic_answer' ||
+                moment === 'non_learning';
+              const isCorrection =
+                moment === 'recast' || moment === 'correction';
               return (
-                <NoteCard key={b.id} className="self-stretch">
+                <CoachCard
+                  key={b.id}
+                  label={
+                    isCorrection
+                      ? 'تصحيح لطيف'
+                      : isSide
+                        ? 'المساعد اللغوي'
+                        : moment === 'intro'
+                          ? 'نصيحة المحادثة'
+                          : undefined
+                  }
+                  correction={isCorrection}
+                >
                   {b.eg}
-                </NoteCard>
+                </CoachCard>
               );
             }
             return null;
@@ -417,18 +469,21 @@ export function FreeTalkSession({ topicId }: Props) {
       </div>
 
       {lessonHref ? (
-        <div className="px-3 pb-2">
+        <div className="px-4 pb-2">
           <Link
             href={lessonHref}
-            className="inline-flex min-h-11 items-center justify-center rounded-v2-chip bg-v2-action px-5 py-2.5 font-[family-name:var(--font-v2-arabic)] text-base font-semibold text-white"
+            className="inline-flex min-h-11 items-center justify-center gap-1 rounded-[var(--ft-radius-control)] bg-[var(--ft-sage)] px-5 py-2.5 font-[family-name:var(--font-ft-ar)] text-base font-semibold text-[var(--ft-on-sage)]"
           >
             افتح محادثة الدرس
+            <span className="material-symbols-rounded text-[18px]">
+              arrow_back
+            </span>
           </Link>
         </div>
       ) : null}
 
       {error ? (
-        <p className="px-3 pb-2 font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
+        <p className="px-4 pb-2 font-[family-name:var(--font-ft-ar)] text-sm text-[var(--ft-text-secondary)]">
           {error}
         </p>
       ) : null}

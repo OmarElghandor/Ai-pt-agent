@@ -39,16 +39,47 @@ export function readConvoPackFile(filePath: string): unknown {
   return JSON.parse(raw) as unknown;
 }
 
-function packIdToDay(packId: string): number | null {
+export function packIdToDay(packId: string): number | null {
   const m = /day-(\d+)/i.exec(packId) || /\.d(\d+)/i.exec(packId);
   if (!m) return null;
   const n = Number(m[1]);
   return Number.isInteger(n) ? n : null;
 }
 
-function packIdToLang(packId: string): string {
+export function packIdToLang(packId: string): string {
   const m = /^(pt-PT|en-GB|de-DE)/i.exec(packId);
   return m?.[1] ?? 'pt-PT';
+}
+
+/** True when a content file exists for this pack id. */
+export function convoPackFileExists(packId: string): boolean {
+  return existsSync(convoPackPath(packId));
+}
+
+/**
+ * True when the pack can be loaded now: content file OR Mongo published /
+ * text_ready draft.
+ */
+export async function convoPackExistsAsync(packId: string): Promise<boolean> {
+  if (convoPackFileExists(packId)) return true;
+  if (!mongoConfigured()) return false;
+  const day = packIdToDay(packId);
+  if (day == null) return false;
+  const target_lang = packIdToLang(packId);
+  try {
+    await connectMongo();
+    const doc = await V2ConvoPackModel()
+      .findOne({
+        day,
+        target_lang,
+        $or: [{ status: 'published' }, { 'meta.text_ready': true }],
+      })
+      .select({ _id: 1 })
+      .lean();
+    return Boolean(doc);
+  } catch {
+    return false;
+  }
 }
 
 async function loadFromMongo(

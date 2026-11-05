@@ -354,8 +354,14 @@ export function TalkSession({ packId }: Props) {
         });
         const body = (await res.json()) as TalkStartResponse & {
           error?: string;
+          error_eg?: string;
+          code?: string;
         };
-        if (!res.ok) throw new Error(body.error ?? `start ${res.status}`);
+        if (!res.ok) {
+          throw new Error(
+            body.error_eg || body.error || `start ${res.status}`,
+          );
+        }
         if (cancelled) return;
         setSessionId(body.session_id);
         setDay(body.day);
@@ -685,7 +691,7 @@ export function TalkSession({ packId }: Props) {
       >
         {loading ? (
           <p className="text-center font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-            بنحضّر المحادثة…
+            بنحضّر المحادثة… لو أول مرة، ممكن ناخد دقيقة نجهّزها
           </p>
         ) : null}
         {error ? (

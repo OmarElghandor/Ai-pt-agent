@@ -6,6 +6,7 @@ Run after batch 9. Decisions (Omar, 2026-11-05):
 - **Practice:** a catalog topic (threads) or "أي حاجة" (fully open). Once a free chat starts, it stays free until the end. Nothing checks the topic of the learner's messages; the learner leaves whenever they want.
 - **Learn:** the lesson conversation engine (packs, ladder, cards). A new topic requested here is logged as a request in this version (no live pack generation yet).
 - **Voice-first UI**, with an icon that switches to text.
+- **Calm Kit visual** for the free session only (`/talk/free/[topicId]`): sage/ivory voice chrome under `.v2-free-talk` (refs in `design/calm-kit/`). Mode picker and learn session stay Warm Editorial (`05`).
 
 What stays, because it doesn't interrupt the conversation: the Arabic side channel, the recast inside the reaction, the checks on the **model's output** (pt-PT, tu, one question, translation), and the "ساعدني أرد" help.
 

@@ -253,7 +253,7 @@ API (thin routes; logic in `lib/v2/convo`):
 - topics list with statuses;
 - free topics list.
 
-UI (follow `05` Warm Editorial, `design/stitch-html/11-practice-conversation.html`, 390px):
+UI (Module A / learn: follow `05` Warm Editorial, `design/stitch-html/11-practice-conversation.html`, 390px. Module C free session: **Calm Kit** under `.v2-free-talk` — see `05` exception and `design/calm-kit/`):
 
 - character bubbles: pt-PT, `say` line under it, "معناها؟" hidden translation, play button;
 - learner bubbles deep teal; coach as NoteCard (amber/yellow), never red;

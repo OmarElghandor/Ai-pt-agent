@@ -99,10 +99,10 @@ describe('v2 convo topics · list for a test user', () => {
   const now = new Date('2026-11-04T12:00:00.000Z');
   const file = loadTopicsFile();
 
-  it('unlocks day-18 when currentDay >= 18 and pack exists; placeholders stay locked without pack', () => {
+  it('unlocks every catalog topic; pack_available still reflects ready packs', () => {
     const listing = buildTopicsList({
       file,
-      currentDay: 18,
+      currentDay: 1,
       statesById: new Map(),
       weakIds: new Set(),
       now,
@@ -114,6 +114,7 @@ describe('v2 convo topics · list for a test user', () => {
       .find((t) => t.id === 'directions.day-18');
     assert.ok(d18);
     assert.equal(d18!.unlocked, true);
+    assert.equal(d18!.pack_available, true);
     assert.equal(d18!.status, 'not_tried');
     assert.equal(d18!.status_glyph, '⚪');
 
@@ -121,7 +122,7 @@ describe('v2 convo topics · list for a test user', () => {
       .flatMap((t) => t.topics)
       .find((t) => t.id === 'cafe.day-3');
     assert.ok(cafe);
-    assert.equal(cafe!.unlocked, false);
+    assert.equal(cafe!.unlocked, true);
     assert.equal(cafe!.pack_available, false);
   });
 

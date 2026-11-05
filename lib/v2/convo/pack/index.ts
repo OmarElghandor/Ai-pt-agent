@@ -43,6 +43,10 @@ export {
   requireConvoPack,
   requireConvoPackAsync,
   convoPackPath,
+  convoPackFileExists,
+  convoPackExistsAsync,
+  packIdToDay,
+  packIdToLang,
   type LoadConvoPackOpts,
   type LoadConvoPackResult,
 } from './load';
@@ -52,3 +56,9 @@ export {
   surfaceTlFor,
   clearConvoItemSurfacesCache,
 } from './surfaces';
+
+export {
+  ensureConvoPackReady,
+  type EnsureConvoPackErrorCode,
+  type EnsureConvoPackResult,
+} from './ensure';

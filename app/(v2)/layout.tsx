@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Inter, Newsreader, Noto_Sans_Arabic } from 'next/font/google';
+import { Inter, Manrope, Newsreader, Noto_Sans_Arabic } from 'next/font/google';
 import { V2Unavailable } from '@/components/v2/V2Unavailable';
 import { isV2Enabled } from '@/lib/v2/flags';
 import './v2.css';
@@ -28,6 +28,14 @@ const inter = Inter({
   variable: '--font-v2-inter',
 });
 
+/** Calm Kit UI chrome for Module C free talk only. */
+const manrope = Manrope({
+  subsets: ['latin', 'latin-ext'],
+  weight: ['400', '500', '600'],
+  display: 'swap',
+  variable: '--font-v2-manrope',
+});
+
 export default function V2Layout({ children }: { children: ReactNode }) {
   const enabled = isV2Enabled();
 
@@ -40,6 +48,7 @@ export default function V2Layout({ children }: { children: ReactNode }) {
         newsreader.variable,
         notoAr.variable,
         inter.variable,
+        manrope.variable,
       ].join(' ')}
     >
       {/* Material Symbols — not available via next/font */}

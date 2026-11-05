@@ -210,7 +210,45 @@ export function fillPatternsInBank(
         (i as PatternItem).kind ?? kinds.get(i.id),
       ) === 'chamo_me',
   );
-  if (!words.length && !coreFills.size && !hasChamoMe) return bank;
+  /** Freeform patterns with empty/missing slots get a head + word hole. */
+  const freeformSlots = (pattern: PatternItem): PatternSlot[] => {
+    const tl =
+      typeof (pattern as { tl?: string }).tl === 'string'
+        ? (pattern as { tl: string }).tl
+        : '';
+    const head =
+      (tl || pattern.id.replace(/^pattern\./, '')).split(/\s+/)[0] ?? '…';
+    return [{ tl: head }, { name_eg: 'كلمة', kind: 'word' }];
+  };
+
+  const withFreeformSkeleton = (item: Item): Item => {
+    if (item.type !== 'pattern') return item;
+    const pattern = item as PatternItem;
+    const kind =
+      resolvePatternKind(pattern.id, pattern.kind ?? kinds.get(pattern.id)) ??
+      null;
+    if (kind != null) {
+      const slots = slotsForKind(kind);
+      const examples =
+        Array.isArray(pattern.examples) && pattern.examples.length
+          ? pattern.examples
+          : [`${pattern.id}.ex.1`];
+      return { ...pattern, kind, slots, examples } as Item;
+    }
+    const slots =
+      Array.isArray(pattern.slots) && pattern.slots.length
+        ? (pattern.slots as PatternSlot[])
+        : freeformSlots(pattern);
+    const examples =
+      Array.isArray(pattern.examples) && pattern.examples.length
+        ? pattern.examples
+        : [`${pattern.id}.ex.1`];
+    return { ...pattern, slots, examples } as Item;
+  };
+
+  if (!words.length && !coreFills.size && !hasChamoMe) {
+    return bank.map(withFreeformSkeleton);
+  }
 
   const derived: Item[] = [];
   const next = bank.map((item) => {
@@ -225,7 +263,9 @@ export function fillPatternsInBank(
         ? slotsForKind(kind)
         : ((pattern.slots ?? []) as PatternSlot[]);
 
-    if (!slots.length) return item;
+    if (!slots.length) {
+      slots = freeformSlots(pattern);
+    }
 
     // Name-slot patterns (Chamo-me + name) — no article, names not words
     if (kind === 'chamo_me') {
