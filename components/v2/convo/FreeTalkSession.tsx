@@ -178,11 +178,12 @@ export function FreeTalkSession({ topicId }: Props) {
   }, []);
 
   const runTurn = useCallback(
-    async (learnerText: string) => {
+    async (learnerText: string, opts?: { assisted?: boolean }) => {
       if (!sessionId || busy) return;
       setBusy(true);
       setError(null);
       streamBubbleId.current = null;
+      const useAssisted = opts?.assisted ?? assisted;
       try {
         const res = await fetch('/api/v2/convo/turn', {
           method: 'POST',
@@ -190,7 +191,7 @@ export function FreeTalkSession({ topicId }: Props) {
           body: JSON.stringify({
             session_id: sessionId,
             text: learnerText,
-            ...(assisted ? { assisted: true } : {}),
+            ...(useAssisted ? { assisted: true } : {}),
             ...(openMode ? { character_id: characterId } : {}),
           }),
         });
@@ -300,7 +301,7 @@ export function FreeTalkSession({ topicId }: Props) {
       ...prev,
       { id: newId('learner'), role: 'learner', tl: t.trim() },
     ]);
-    void runTurn(t.trim());
+    void runTurn(t.trim(), { assisted: opts?.assisted });
   };
 
   const endSession = async () => {
