@@ -13,6 +13,7 @@ export { TalkModeScreen } from './TalkModeScreen';
 export type { TalkMode } from './TalkModeScreen';
 export { LearnTopicsScreen } from './LearnTopicsScreen';
 export { ConvoSummaryCard } from './ConvoSummaryCard';
+export { ConvoVoiceBar } from './ConvoVoiceBar';
 export { readConvoNdjson } from './readNdjson';
 export { TalkDevPanel, TALK_DEV_PANEL_KEY } from './TalkDevPanel';
 export type { TalkTurnMetrics } from './TalkDevPanel';

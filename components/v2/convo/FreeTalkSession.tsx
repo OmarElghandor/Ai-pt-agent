@@ -3,17 +3,15 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { NoteCard } from '@/components/v2/NoteCard';
-import { PrimaryButton } from '@/components/v2/PrimaryButton';
 import type { ConvoTurnStreamEvent } from '@/lib/v2/convo/turn';
 import type { ConvoSessionSummary } from '@/lib/v2/convo/result';
 import { CharacterBubble } from './CharacterBubble';
 import { ConvoSummaryCard } from './ConvoSummaryCard';
+import { ConvoVoiceBar } from './ConvoVoiceBar';
 import { LearnerBubble } from './LearnerBubble';
 import { readConvoNdjson } from './readNdjson';
 import { TalkDevPanel, type TalkTurnMetrics } from './TalkDevPanel';
 import type { TalkBubble } from './types';
-
-const ACCENTS = ['ã', 'õ', 'ç', 'á', 'é', 'í', 'ó', 'ú', 'â', 'ê', 'ô', 'à'];
 
 const PARTNERS = [
   { id: 'ines', label: 'Inês' },
@@ -34,7 +32,6 @@ export function FreeTalkSession({ topicId }: Props) {
   const [titleTl, setTitleTl] = useState('');
   const [titleAr, setTitleAr] = useState('');
   const [bubbles, setBubbles] = useState<TalkBubble[]>([]);
-  const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
   const [metrics, setMetrics] = useState<TalkTurnMetrics | null>(null);
   const [turnCount, setTurnCount] = useState(0);
@@ -296,15 +293,14 @@ export function FreeTalkSession({ topicId }: Props) {
     };
   }, [topicId]);
 
-  const send = () => {
-    const t = text.trim();
-    if (!t || busy) return;
+  const sendPt = (t: string, opts?: { assisted?: boolean }) => {
+    if (!t.trim() || busy) return;
+    if (opts?.assisted) setAssisted(true);
     setBubbles((prev) => [
       ...prev,
-      { id: newId('learner'), role: 'learner', tl: t },
+      { id: newId('learner'), role: 'learner', tl: t.trim() },
     ]);
-    setText('');
-    void runTurn(t);
+    void runTurn(t.trim());
   };
 
   const endSession = async () => {
@@ -400,6 +396,7 @@ export function FreeTalkSession({ topicId }: Props) {
                   say={b.say}
                   streaming={b.streaming}
                   meaningEg={b.ar}
+                  autoPlay={!b.streaming && Boolean(b.tl)}
                 />
               );
             }
@@ -435,74 +432,51 @@ export function FreeTalkSession({ topicId }: Props) {
         </p>
       ) : null}
 
-      <div className="border-t border-v2-line/40 px-3 py-3">
-        {helpOpen && frame ? (
-          <NoteCard className="mb-3 self-stretch">
-            <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink">
-              {frame.eg}
-            </p>
-            <p
-              className="mt-1 font-[family-name:var(--font-v2-target)] text-sm font-semibold text-v2-primary"
-              dir="ltr"
-            >
-              {frame.tl}
-            </p>
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {frame.chips.map((chip) => (
-                <button
-                  key={chip}
-                  type="button"
-                  className="rounded-v2-chip bg-v2-card px-3 py-1.5 font-[family-name:var(--font-v2-target)] text-sm text-v2-primary shadow-[var(--shadow-v2-soft)]"
-                  dir="ltr"
-                  onClick={() => {
-                    setText(chip);
-                    setAssisted(true);
-                  }}
-                >
-                  {chip}
-                </button>
-              ))}
-            </div>
-          </NoteCard>
-        ) : null}
-        <button
-          type="button"
-          className="mb-2 w-full rounded-v2-row bg-v2-card px-3 py-2 text-center font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-v2-primary shadow-[var(--shadow-v2-soft)]"
-          onClick={() => setHelpOpen((v) => !v)}
-          disabled={!frame || busy || loading}
-        >
-          ساعدني أرد
-        </button>
-        <div className="mb-2 flex flex-wrap gap-1">
-          {ACCENTS.map((a) => (
-            <button
-              key={a}
-              type="button"
-              className="rounded bg-v2-card px-2 py-1 text-sm text-v2-primary"
-              onClick={() => setText((t) => t + a)}
-            >
-              {a}
-            </button>
-          ))}
-        </div>
-        <div className="flex gap-2">
-          <input
-            className="min-w-0 flex-1 rounded-v2-row border border-v2-line/50 bg-v2-card px-3 py-2 font-[family-name:var(--font-v2-target)] text-v2-primary"
-            dir="ltr"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') send();
-            }}
-            placeholder="Escreve em português…"
-            disabled={busy || loading}
-          />
-          <PrimaryButton onClick={send} disabled={busy || loading || !text.trim()}>
-            إرسال
-          </PrimaryButton>
-        </div>
-        <TalkDevPanel metrics={metrics} turnCount={turnCount} />
-      </div>
+      <TalkDevPanel metrics={metrics} turnCount={turnCount} />
+
+      {!loading ? (
+        <ConvoVoiceBar
+          busy={busy}
+          disabled={loading}
+          frame={frame}
+          helpOpen={helpOpen}
+          onToggleHelp={() => setHelpOpen((v) => !v)}
+          onSend={(t, opts) => sendPt(t, { assisted: opts?.assisted })}
+          onArabicSend={(t) => {
+            setBubbles((prev) => [
+              ...prev,
+              { id: newId('learner'), role: 'learner', tl: t },
+            ]);
+            void runTurn(t);
+          }}
+          onUnclearStt={() => {
+            setBubbles((prev) => [
+              ...prev,
+              {
+                id: newId('coach'),
+                role: 'coach',
+                eg: 'ما سمعتكش كويس 🎧 قولها تاني؟',
+                moment: 'stt_unclear',
+              },
+            ]);
+          }}
+          onSurvival={(action) => {
+            const last = [...bubbles]
+              .reverse()
+              .find((b) => b.role === 'character' && b.tl);
+            if (!last || last.role !== 'character') return;
+            void fetch('/api/tts', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                text: last.tl,
+                lang: 'pt',
+                ...(action === 'slow' ? { slow: true } : {}),
+              }),
+            }).catch(() => {});
+          }}
+        />
+      ) : null}
     </div>
   );
 }

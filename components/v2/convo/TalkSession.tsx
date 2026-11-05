@@ -70,6 +70,10 @@ export function TalkSession({ packId }: Props) {
   const [metrics, setMetrics] = useState<TalkTurnMetrics | null>(null);
   const [turnCount, setTurnCount] = useState(0);
   const [voiceMode, setVoiceMode] = useState(true);
+  const [sttMs, setSttMs] = useState<number | null>(null);
+  const [firstAudioMs, setFirstAudioMs] = useState<number | null>(null);
+  const [ttsMs, setTtsMs] = useState<number | null>(null);
+  const sendAtRef = useRef<number | null>(null);
   const [summary, setSummary] = useState<ConvoSessionSummary | null>(null);
   const [practiceHref, setPracticeHref] = useState('/talk/practice');
   const [ending, setEnding] = useState(false);
@@ -87,6 +91,16 @@ export function TalkSession({ packId }: Props) {
   useEffect(() => {
     scrollToEnd();
   }, [bubbles, pending, scrollToEnd]);
+
+  useEffect(() => {
+    try {
+      const v = localStorage.getItem('v2.talk.inputMode');
+      if (v === 'text') setVoiceMode(false);
+      if (v === 'voice') setVoiceMode(true);
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -488,15 +502,28 @@ export function TalkSession({ packId }: Props) {
   const toggleMic = async () => {
     if (busy || !pending || !voiceMode) return;
     if (mic.recording) {
+      const t0 = performance.now();
       const spoken = await mic.stopAndTranscribe();
+      setSttMs(Math.round(performance.now() - t0));
       if (!spoken) {
         if (mic.error) setError(mic.error);
+        setBubbles((prev) => [
+          ...prev,
+          {
+            id: newId('coach'),
+            role: 'coach',
+            eg: 'ما سمعتكش كويس 🎧 قولها تاني؟',
+            moment: 'stt_unclear',
+          },
+        ]);
         return;
       }
       setBubbles((prev) => [
         ...prev,
         { id: newId('you'), role: 'learner', tl: spoken },
       ]);
+      sendAtRef.current = performance.now();
+      setFirstAudioMs(null);
       void runTurn(spoken);
       return;
     }
@@ -675,6 +702,14 @@ export function TalkSession({ packId }: Props) {
                 tl={b.tl}
                 say={b.say}
                 streaming={b.streaming}
+                autoPlay={!b.streaming && Boolean(b.tl)}
+                onPlayStart={() => {
+                  if (sendAtRef.current != null) {
+                    const ms = Math.round(performance.now() - sendAtRef.current);
+                    setFirstAudioMs((prev) => prev ?? ms);
+                    setTtsMs(ms);
+                  }
+                }}
               />
             );
           }
@@ -716,7 +751,13 @@ export function TalkSession({ packId }: Props) {
         ) : null}
       </div>
 
-      <TalkDevPanel metrics={metrics} turnCount={turnCount} />
+      <TalkDevPanel
+        metrics={metrics}
+        turnCount={turnCount}
+        sttMs={sttMs}
+        firstAudioMs={firstAudioMs}
+        ttsMs={ttsMs}
+      />
 
       {!done && !loading ? (
         <section className="shrink-0 border-t border-v2-line/60 bg-v2-paper px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2">
@@ -786,10 +827,19 @@ export function TalkSession({ packId }: Props) {
                 onClick={() => {
                   mic.cancel();
                   setVoiceMode(false);
+                  try {
+                    localStorage.setItem('v2.talk.inputMode', 'text');
+                  } catch {
+                    /* ignore */
+                  }
                 }}
-                className="font-[family-name:var(--font-v2-arabic)] text-[12px] text-v2-ink-muted underline-offset-2 hover:underline"
+                className="flex items-center justify-center gap-1 font-[family-name:var(--font-v2-arabic)] text-[12px] text-v2-ink-muted"
+                aria-label="لوحة المفاتيح"
               >
-                مش قادر أتكلم دلوقتي
+                <span className="material-symbols-rounded text-[18px]">
+                  keyboard
+                </span>
+                اكتب
               </button>
               {mic.error ? (
                 <p className="font-[family-name:var(--font-v2-arabic)] text-[12px] text-v2-ink">
@@ -799,6 +849,21 @@ export function TalkSession({ packId }: Props) {
             </div>
           ) : (
             <div className="flex items-end gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setVoiceMode(true);
+                  try {
+                    localStorage.setItem('v2.talk.inputMode', 'voice');
+                  } catch {
+                    /* ignore */
+                  }
+                }}
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-v2-card text-v2-primary"
+                aria-label="مايك"
+              >
+                <span className="material-symbols-rounded text-[22px]">mic</span>
+              </button>
               <div className="flex flex-1 flex-col gap-1">
                 <div className="flex flex-wrap justify-end gap-1">
                   {ACCENTS.map((a) => (

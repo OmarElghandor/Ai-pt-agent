@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AudioButton } from '@/components/v2/AudioButton';
 
 type Props = {
@@ -9,6 +9,12 @@ type Props = {
   streaming?: boolean;
   /** Egyptian / MSA meaning — revealed via معناها؟ */
   meaningEg?: string;
+  /** Auto-play TTS when the line finishes streaming (Batch 10 D9). */
+  autoPlay?: boolean;
+  /** Playback rate (Mais devagar). */
+  playbackRate?: number;
+  onPlayStart?: () => void;
+  onPlayEnd?: () => void;
 };
 
 export function CharacterBubble({
@@ -16,8 +22,48 @@ export function CharacterBubble({
   say,
   streaming,
   meaningEg,
+  autoPlay,
+  playbackRate = 1,
+  onPlayStart,
+  onPlayEnd,
 }: Props) {
   const [showMeaning, setShowMeaning] = useState(false);
+  const playedRef = useRef<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    if (!autoPlay || streaming || !tl.trim()) return;
+    if (playedRef.current === tl) return;
+    playedRef.current = tl;
+    let cancelled = false;
+    (async () => {
+      try {
+        onPlayStart?.();
+        const res = await fetch('/api/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: tl, lang: 'pt' }),
+        });
+        if (!res.ok || cancelled) return;
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        audio.playbackRate = playbackRate;
+        audioRef.current = audio;
+        audio.onended = () => {
+          URL.revokeObjectURL(url);
+          onPlayEnd?.();
+        };
+        await audio.play();
+      } catch {
+        onPlayEnd?.();
+      }
+    })();
+    return () => {
+      cancelled = true;
+      audioRef.current?.pause();
+    };
+  }, [autoPlay, streaming, tl, playbackRate, onPlayStart, onPlayEnd]);
 
   return (
     <div className="flex max-w-[85%] flex-col items-start gap-1 self-start">

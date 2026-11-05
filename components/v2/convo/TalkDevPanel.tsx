@@ -10,18 +10,31 @@ export type TalkTurnMetrics = {
   output_tokens: number;
   ttft_ms: number;
   total_ms: number;
+  /** Batch 10 D10 */
+  stt_ms?: number | null;
+  send_to_first_audio_ms?: number | null;
+  reaction_tts_ms?: number | null;
 };
 
 type Props = {
   metrics: TalkTurnMetrics | null;
   turnCount?: number;
+  sttMs?: number | null;
+  firstAudioMs?: number | null;
+  ttsMs?: number | null;
 };
 
 /**
- * Per-turn token/latency strip (09 §5.5 / T2.1).
+ * Per-turn token/latency strip (09 §5.5 / Batch 10 D10).
  * Toggle with localStorage key `v2-convo-dev-panel` = "1".
  */
-export function TalkDevPanel({ metrics, turnCount }: Props) {
+export function TalkDevPanel({
+  metrics,
+  turnCount,
+  sttMs,
+  firstAudioMs,
+  ttsMs,
+}: Props) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -46,6 +59,18 @@ export function TalkDevPanel({ metrics, turnCount }: Props) {
     ['output', metrics.output_tokens],
     ['ttft_ms', metrics.ttft_ms],
     ['total_ms', metrics.total_ms],
+    [
+      'stt_ms',
+      sttMs ?? metrics.stt_ms ?? 'n/a',
+    ],
+    [
+      '1st_audio',
+      firstAudioMs ?? metrics.send_to_first_audio_ms ?? 'n/a',
+    ],
+    [
+      'tts_ms',
+      ttsMs ?? metrics.reaction_tts_ms ?? 'n/a',
+    ],
   ];
 
   return (
@@ -55,7 +80,7 @@ export function TalkDevPanel({ metrics, turnCount }: Props) {
       aria-label="Conversation turn metrics"
     >
       <div className="mb-1 flex items-center justify-between text-[#6a6]">
-        <span>convo dev · turn metrics</span>
+        <span>convo dev · turn metrics (target 1st audio ~2.5s)</span>
         <button
           type="button"
           className="text-[#888] hover:text-white"
