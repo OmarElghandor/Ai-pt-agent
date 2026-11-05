@@ -93,11 +93,11 @@ A vertical list of white rows (radius 14). Each row has:
   - «لسه» (secondary text, outline only).
 
 Rows:
-- «Onde fica? · الاتجاهات» 🟡;
-- «No café · في الكافيه» 🟢;
-- «O vizinho · الجيران» ⚪;
-- «Na farmácia · في الصيدلية» ⚪;
-- «Ser e estar · أنا مين وأنا عامل إيه» 🟢.
+- «Onde fica? · الاتجاهات» (محتاج مراجعة);
+- «No café · في الكافيه» (كويس);
+- «O vizinho · الجيران» (لسه);
+- «Na farmácia · في الصيدلية» (لسه);
+- «Ser e estar · أنا مين وأنا عامل إيه» (كويس).
 
 Locked rows are faded, with a small lock and «بعد درس 24».
 
