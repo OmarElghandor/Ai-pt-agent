@@ -12,10 +12,12 @@ import {
   classifySideChannel,
   COACH_CALL_FALLBACK_EG,
   createStubConvoCoachCaller,
+  finalizeCoachReply,
   hasArabicScript,
   isMixedScript,
   matchPackItemQuestion,
   needsSideChannel,
+  validateCoachReply,
 } from '@/lib/v2/convo/sideChannel';
 import {
   createStubConvoStreamModel,
@@ -269,6 +271,38 @@ describe('v2 convo · pack-item language questions (T3.2)', () => {
         assert.doesNotMatch(ex.tl, /[\u0600-\u06FF]/);
       }
     }
+  });
+});
+
+describe('v2 convo · coach reply validation (E2)', () => {
+  it('rejects bare Portuguese like "Sobre onde?"', () => {
+    const check = validateCoachReply('Sobre onde?', 'عايز اعلم عن الاتجاهات');
+    assert.equal(check.ok, false);
+    if (!check.ok) assert.equal(check.reason, 'missing_arabic');
+  });
+
+  it('accepts Egyptian + distinct pt-PT and finalizes the suffix in code', () => {
+    const raw = 'قول مع أرز: com arroz';
+    const check = validateCoachReply(raw, 'ازاي أقول مع رز؟');
+    assert.equal(check.ok, true);
+    const finalized = finalizeCoachReply(raw);
+    assert.match(finalized, /com arroz/i);
+    assert.match(finalized, /جرّب تقولها/);
+    // Model-supplied suffix is stripped then re-appended once
+    assert.equal(
+      finalizeCoachReply('قول «com arroz» — جرّب تقولها'),
+      'قول «com arroz» — جرّب تقولها',
+    );
+  });
+
+  it('stub falls back when the model returns bare Portuguese', async () => {
+    const coach = createStubConvoCoachCaller({ eg: 'Sobre onde?' });
+    const out = await coach({
+      learnerQuestion: 'عايز اعلم عن الاتجاهات',
+      itemHints: [],
+    });
+    assert.equal(out.eg, COACH_CALL_FALLBACK_EG);
+    assert.equal(out.error, 'missing_arabic');
   });
 });
 

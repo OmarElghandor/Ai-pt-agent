@@ -1,19 +1,31 @@
 import { generateText } from 'ai';
-import { getChatModel } from '@/lib/model';
+import { getCoachModel } from '@/lib/model';
 
 export const COACH_CALL_TIMEOUT_MS = 4_000;
 
 export const COACH_CALL_FALLBACK_EG =
   'جرّب تقولها بالبرتغالي — لو مش متأكد، اسأل تاني بجملة أقصر';
 
+export const COACH_SUFFIX_EG = 'جرّب تقولها';
+
 /** Fixed Egyptian coach system prompt (09 §6). Never sees the character prompt. */
 export const COACH_SIDE_SYSTEM = [
   'أنت كوتش مصري بتساعد متعلم برتغالي أوروبي (pt-PT) في لشبونة.',
   'جاوب بالعامية المصرية في سطر أو سطرين فقط.',
   'لو سأل ازاي يقول حاجة، ادّي الصيغة البرتغالية القصيرة المناسبة لمستوى مبتدئ.',
-  'اختم دايماً بجملة: جرّب تقولها',
-  'ما تتكلمش برتغالي في شرحك إلا الكلمة/الجملة المطلوبة.',
+  'لازم الرد فيه عربي مصري + جملة أو كلمة برتغالية (pt-PT) واضحة.',
+  'ما تكتبش «جرّب تقولها» — الكود بيضيفها لوحده.',
   'ما تشرحش قواعد، وما تطوّلش.',
+  '',
+  'أمثلة:',
+  'سؤال: ازاي أقول مع رز؟',
+  'جواب: قول «com arroz».',
+  '',
+  'سؤال: يعني إيه esquina؟',
+  'جواب: esquina يعني ركن الشارع.',
+  '',
+  'سؤال: ساكن في أمادورا',
+  'جواب: حلو — بالبرتغالي: «Moro em Amadora».',
 ].join('\n');
 
 export type CoachCallInput = {
@@ -32,22 +44,95 @@ export type ConvoCoachCaller = (
   input: CoachCallInput,
 ) => Promise<CoachCallResult>;
 
-function buildUserPrompt(input: CoachCallInput): string {
+const LATIN_SPAN_RE =
+  /[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ'’-]*(?:\s+[A-Za-zÀ-ÿ'’-]+)*/g;
+
+/** Strip any model-supplied suffix; code always re-appends it. */
+export function stripCoachSuffix(eg: string): string {
+  return eg
+    .replace(/\s*[—\-–]?\s*جرّب تقولها\s*$/u, '')
+    .replace(/\s+$/u, '')
+    .trim();
+}
+
+export function finalizeCoachReply(eg: string): string {
+  const body = stripCoachSuffix(eg);
+  if (!body) return COACH_CALL_FALLBACK_EG;
+  return `${body} — ${COACH_SUFFIX_EG}`;
+}
+
+export type CoachValidation = { ok: true } | { ok: false; reason: string };
+
+/**
+ * Coach reply must include Arabic script and a Portuguese segment that
+ * is not just echoing the learner's own Latin text (E2).
+ */
+export function validateCoachReply(
+  eg: string,
+  learnerQuestion: string,
+): CoachValidation {
+  const body = stripCoachSuffix(eg);
+  if (!body) return { ok: false, reason: 'empty' };
+  if (!/[\u0600-\u06FF]/.test(body)) {
+    return { ok: false, reason: 'missing_arabic' };
+  }
+  const spans = [...body.matchAll(LATIN_SPAN_RE)].map((m) => m[0]!.trim());
+  if (spans.length === 0) {
+    return { ok: false, reason: 'missing_portuguese' };
+  }
+  const learnerLower = learnerQuestion.toLowerCase();
+  const hasDistinctPt = spans.some(
+    (s) => s.length >= 2 && !learnerLower.includes(s.toLowerCase()),
+  );
+  if (hasDistinctPt) return { ok: true };
+  // Learner already asked about a PT word (يعني إيه esquina) — repeating it is OK.
+  if (/[A-Za-zÀ-ÿ]/.test(learnerQuestion)) return { ok: true };
+  return { ok: false, reason: 'portuguese_same_as_learner' };
+}
+
+function buildUserPrompt(input: CoachCallInput, retryReason?: string): string {
   const items =
     input.itemHints.length > 0
       ? input.itemHints.map((i) => `- ${i.id}: ${i.tl}`).join('\n')
       : '(none)';
-  return [
+  const parts = [
     'سؤال المتعلم:',
     input.learnerQuestion.trim(),
     '',
     'كلمات الدرس الحالية (لو مفيدة):',
     items,
-  ].join('\n');
+  ];
+  if (retryReason) {
+    parts.push(
+      '',
+      `الرد السابق كان غلط (${retryReason}). جاوب بالعامية المصرية ومعاها جملة/كلمة برتغالية pt-PT واضحة.`,
+    );
+  }
+  return parts.join('\n');
+}
+
+async function generateCoachText(
+  input: CoachCallInput,
+  timeoutMs: number,
+  retryReason?: string,
+): Promise<string> {
+  const result = await Promise.race([
+    generateText({
+      model: getCoachModel(),
+      system: COACH_SIDE_SYSTEM,
+      prompt: buildUserPrompt(input, retryReason),
+      temperature: 0.3,
+      maxOutputTokens: 80,
+    }),
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('coach_timeout')), timeoutMs),
+    ),
+  ]);
+  return (result.text ?? '').trim();
 }
 
 /**
- * Live coach side-channel call. Short timeout → bank fallback.
+ * Live coach side-channel call. Validates Arabic+PT, one retry, then bank fallback.
  * Separate from the character turn model.
  */
 export function createLiveConvoCoachCaller(
@@ -55,26 +140,20 @@ export function createLiveConvoCoachCaller(
 ): ConvoCoachCaller {
   return async (input) => {
     try {
-      const result = await Promise.race([
-        generateText({
-          model: getChatModel(),
-          system: COACH_SIDE_SYSTEM,
-          prompt: buildUserPrompt(input),
-          temperature: 0.3,
-          maxOutputTokens: 80,
-        }),
-        new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error('coach_timeout')), timeoutMs),
-        ),
-      ]);
-      let eg = (result.text ?? '').trim();
-      if (!eg) {
-        return { eg: COACH_CALL_FALLBACK_EG, timedOut: false, error: 'empty' };
+      let raw = await generateCoachText(input, timeoutMs);
+      let check = validateCoachReply(raw, input.learnerQuestion);
+      if (!check.ok) {
+        raw = await generateCoachText(input, timeoutMs, check.reason);
+        check = validateCoachReply(raw, input.learnerQuestion);
       }
-      if (!eg.includes('جرّب تقولها')) {
-        eg = `${eg.replace(/\s+$/, '')} — جرّب تقولها`;
+      if (!check.ok) {
+        return {
+          eg: COACH_CALL_FALLBACK_EG,
+          timedOut: false,
+          error: check.reason,
+        };
       }
-      return { eg, timedOut: false };
+      return { eg: finalizeCoachReply(raw), timedOut: false };
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'coach_error';
       return {
@@ -118,10 +197,18 @@ export function createStubConvoCoachCaller(
         error: 'coach_error',
       };
     }
+    const raw =
+      opts.eg ?? 'قول مع أرز: com arroz — جرّب تقولها';
+    const check = validateCoachReply(raw, input.learnerQuestion);
+    if (!check.ok) {
+      return {
+        eg: COACH_CALL_FALLBACK_EG,
+        timedOut: false,
+        error: check.reason,
+      };
+    }
     return {
-      eg:
-        opts.eg ??
-        'قول مع أرز: com arroz — جرّب تقولها',
+      eg: finalizeCoachReply(raw),
       timedOut: false,
     };
   }) as ConvoCoachCaller & {

@@ -69,7 +69,10 @@ export async function handleLanguageQuestionCoachCall(input: {
 
   emit({
     type: 'coach',
-    id: result.timedOut ? 'coach_call_fallback' : 'coach_call',
+    id:
+      result.timedOut || result.error
+        ? 'coach_call_fallback'
+        : 'coach_call',
     eg: result.eg,
     moment: 'language_question_coach',
   });

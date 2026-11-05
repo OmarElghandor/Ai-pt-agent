@@ -48,3 +48,12 @@ export function getChatModel(): LanguageModel {
 
   return deepinfra(modelId);
 }
+
+/** Side-channel coach model. Rare calls — override with V2_COACH_MODEL. */
+export function getCoachModel(): LanguageModel {
+  const modelId =
+    process.env.V2_COACH_MODEL?.trim() ||
+    process.env.DEEPINFRA_MODEL ||
+    'Qwen/Qwen3.5-35B-A3B';
+  return deepinfra(modelId);
+}
