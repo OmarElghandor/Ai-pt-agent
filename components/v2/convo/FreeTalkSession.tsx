@@ -340,10 +340,14 @@ export function FreeTalkSession({ topicId }: Props) {
     }
   };
 
-  const topicLine =
-    titleTl && titleAr
+  const isOpenTopic = openMode || topicId === 'open';
+  const topicLine = isOpenTopic
+    ? 'أي حاجة'
+    : titleTl && titleAr
       ? `${titleTl} · ${titleAr}`
-      : titleTl || titleAr || 'محادثة صوتية';
+      : titleTl || titleAr || 'أي حاجة';
+  const partner = partnerLabel(characterId);
+  const partnerInitial = partner.slice(0, 1).toUpperCase();
 
   if (summary) {
     return (
@@ -360,7 +364,7 @@ export function FreeTalkSession({ topicId }: Props) {
 
   return (
     <div className="v2-free-talk mx-auto flex h-[100dvh] w-full max-w-[390px] flex-col">
-      <header className="sticky top-0 z-20 flex h-20 shrink-0 items-center gap-2 border-b border-[var(--ft-border)]/60 bg-[color-mix(in_srgb,var(--ft-ivory)_80%,transparent)] px-3 shadow-[0_1px_8px_rgba(0,0,0,0.03)] backdrop-blur-xl">
+      <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-2 border-b border-[var(--ft-border)]/60 bg-[color-mix(in_srgb,var(--ft-ivory)_80%,transparent)] px-3 shadow-[0_1px_8px_rgba(0,0,0,0.03)] backdrop-blur-xl">
         <Link
           href="/talk/practice"
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[var(--ft-ink)]"
@@ -371,32 +375,29 @@ export function FreeTalkSession({ topicId }: Props) {
           </span>
         </Link>
 
-        <span
-          aria-hidden
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--ft-mist)_50%,transparent)] text-[var(--ft-sage)] ring-2 ring-[var(--ft-moss)]/40"
-        >
-          <span className="material-symbols-rounded text-[20px]">
-            record_voice_over
-          </span>
-        </span>
-
-        <div className="min-w-0 flex-1">
-          <h1 className="truncate font-[family-name:var(--font-ft-ui)] text-[15px] font-semibold text-[var(--ft-ink)]">
-            محادثة صوتية
-          </h1>
-          <p className="truncate font-[family-name:var(--font-ft-ar)] text-[11px] text-[var(--ft-text-secondary)]">
-            البرتغالية الأوروبية • {topicLine}
-          </p>
-        </div>
-
-        {openMode || topicId === 'open' ? (
-          <label className="shrink-0">
+        {isOpenTopic ? (
+          <label className="relative shrink-0">
             <span className="sr-only">الشريك</span>
+            <span
+              aria-hidden
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--ft-moss)] font-[family-name:var(--font-ft-ui)] text-[14px] font-semibold text-white"
+            >
+              {partnerInitial}
+            </span>
+            <span
+              aria-hidden
+              className="absolute -bottom-0.5 -left-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[var(--ft-surface)] text-[var(--ft-ink)] ring-1 ring-[var(--ft-border)]"
+            >
+              <span className="material-symbols-rounded text-[12px]">
+                expand_more
+              </span>
+            </span>
             <select
-              className="h-8 max-w-[5.5rem] rounded-[var(--ft-radius-control)] border border-[var(--ft-border)] bg-[var(--ft-surface)] px-2 font-[family-name:var(--font-ft-pt)] text-[12px] text-[var(--ft-ink)]"
+              className="absolute inset-0 cursor-pointer opacity-0"
               value={characterId}
               onChange={(e) => setCharacterId(e.target.value)}
               dir="ltr"
+              aria-label="اختيار الشريك"
             >
               {PARTNERS.map((p) => (
                 <option key={p.id} value={p.id}>
@@ -405,7 +406,23 @@ export function FreeTalkSession({ topicId }: Props) {
               ))}
             </select>
           </label>
-        ) : null}
+        ) : (
+          <span
+            aria-hidden
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--ft-moss)] font-[family-name:var(--font-ft-ui)] text-[14px] font-semibold text-white"
+          >
+            {partnerInitial}
+          </span>
+        )}
+
+        <div className="min-w-0 flex-1">
+          <h1 className="truncate font-[family-name:var(--font-ft-ui)] text-[15px] font-semibold text-[var(--ft-ink)]">
+            {partner}
+          </h1>
+          <p className="truncate font-[family-name:var(--font-ft-ar)] text-[11px] text-[var(--ft-text-secondary)]">
+            {topicLine}
+          </p>
+        </div>
 
         <button
           type="button"
@@ -415,13 +432,6 @@ export function FreeTalkSession({ topicId }: Props) {
         >
           خلّص
         </button>
-
-        <span
-          aria-hidden
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--ft-sage-dark)] text-white"
-        >
-          <span className="material-symbols-rounded text-[18px]">person</span>
-        </span>
       </header>
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4">

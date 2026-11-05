@@ -84,6 +84,7 @@ export function ConvoVoiceBar({
 }: Props) {
   const [mode, setMode] = useState<ConvoInputMode>('voice');
   const [text, setText] = useState('');
+  const [accentsOpen, setAccentsOpen] = useState(false);
   const [pendingTranscript, setPendingTranscript] = useState<string | null>(
     null,
   );
@@ -579,21 +580,20 @@ export function ConvoVoiceBar({
             </button>
           ) : null}
 
-          <p className="mb-1.5 font-[family-name:var(--font-ft-ar)] text-[11px] font-medium text-[var(--ft-text-secondary)]">
-            حروف العِلة والنبرات البرتغالية
-          </p>
-          <div className="mb-2 flex flex-wrap gap-1">
-            {ACCENTS.map((a) => (
-              <button
-                key={a}
-                type="button"
-                className="flex h-9 min-w-7 items-center justify-center rounded-md bg-white px-1.5 font-[family-name:var(--font-ft-pt)] text-sm text-[var(--ft-ink)] ring-1 ring-[var(--ft-border)]"
-                onClick={() => setText((t) => t + a)}
-              >
-                {a}
-              </button>
-            ))}
-          </div>
+          {accentsOpen ? (
+            <div className="mb-2 flex gap-1 overflow-x-auto pb-1">
+              {ACCENTS.map((a) => (
+                <button
+                  key={a}
+                  type="button"
+                  className="flex h-9 min-w-8 shrink-0 items-center justify-center rounded-md bg-white px-1.5 font-[family-name:var(--font-ft-pt)] text-sm text-[var(--ft-ink)] ring-1 ring-[var(--ft-border)]"
+                  onClick={() => setText((t) => t + a)}
+                >
+                  {a}
+                </button>
+              ))}
+            </div>
+          ) : null}
 
           <div className="flex items-center gap-2">
             <button
@@ -603,6 +603,19 @@ export function ConvoVoiceBar({
               aria-label="مايك"
             >
               <span className="material-symbols-rounded text-[22px]">mic</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setAccentsOpen((v) => !v)}
+              className={`flex h-12 w-10 shrink-0 items-center justify-center rounded-[var(--ft-radius-control)] font-[family-name:var(--font-ft-pt)] text-base ring-1 ${
+                accentsOpen
+                  ? 'bg-[var(--ft-sage)] text-white ring-[var(--ft-sage)]'
+                  : 'bg-white text-[var(--ft-ink)] ring-[var(--ft-border)]'
+              }`}
+              aria-label="حروف بنبرات"
+              aria-pressed={accentsOpen}
+            >
+              á
             </button>
             <input
               className="h-12 min-w-0 flex-1 rounded-[var(--ft-radius-control)] border-0 bg-white px-4 font-[family-name:var(--font-ft-pt)] text-[var(--ft-ink)] shadow-[var(--ft-shadow-soft)] outline-none ring-1 ring-[var(--ft-border)] placeholder:text-[var(--ft-text-secondary)]"
@@ -629,7 +642,7 @@ export function ConvoVoiceBar({
           </div>
 
           <p className="mt-2 text-center font-[family-name:var(--font-ft-ar)] text-[10px] text-[var(--ft-text-secondary)]">
-            أنت في نمط الكتابة النصية الهادئ • انقر المايك للتبديل الفوري للصوت
+            دوس المايك ترجع للصوت
           </p>
         </div>
       )}

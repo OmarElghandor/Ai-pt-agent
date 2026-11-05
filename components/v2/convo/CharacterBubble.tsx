@@ -88,19 +88,19 @@ export function CharacterBubble({
             <div className="flex items-center gap-2">
               <span
                 aria-hidden
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--ft-sage-dark)] ring-2 ring-[var(--ft-moss)]"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--ft-moss)] font-[family-name:var(--font-ft-ui)] text-[13px] font-semibold text-white ring-2 ring-[var(--ft-moss)]/40"
               >
-                <span className="material-symbols-rounded text-[18px] text-white">
-                  person
-                </span>
+                {partnerName.slice(0, 1).toUpperCase()}
               </span>
               <div>
                 <p className="font-[family-name:var(--font-ft-ui)] text-[12px] font-semibold text-[var(--ft-ink)]">
                   {partnerName}
                 </p>
-                <p className="font-[family-name:var(--font-ft-ar)] text-[10px] text-[var(--ft-text-secondary)]">
-                  {streaming || playing ? 'تتحدث الآن' : 'البرتغال'}
-                </p>
+                {streaming || playing ? (
+                  <p className="font-[family-name:var(--font-ft-ar)] text-[10px] text-[var(--ft-text-secondary)]">
+                    تتحدث الآن
+                  </p>
+                ) : null}
               </div>
             </div>
             {(streaming || playing) && tl.trim() ? (
