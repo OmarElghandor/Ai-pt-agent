@@ -111,6 +111,17 @@ export function bridgeLine(
   };
 }
 
+/** Sentinel line while the session is in open mode (no authored bank). */
+export function openModeLine(topicId: string): FreeNextLine {
+  return {
+    line_id: `${topicId}.open`,
+    tl: '',
+    ar: '',
+    bubble_tl: '',
+    bubble_ar: '',
+  };
+}
+
 /** Current authored line for the session cursor (does not advance). */
 export function currentNextLine(
   doc: ThreadTopicFile,
@@ -118,6 +129,9 @@ export function currentNextLine(
   step: FreeThreadStep,
   topic: FreeTopic,
 ): FreeNextLine {
+  if (step.kind === 'open') {
+    return openModeLine(topic.id);
+  }
   if (step.kind === 'bridge') {
     const relatedId =
       topic.related_topic_ids[step.relatedIndex] ??
@@ -140,13 +154,15 @@ export type AdvanceFreeCursorResult = {
   threads_done: string[];
   last_line_id: string;
   next: FreeNextLine;
-  /** When bridge yes: switch to this topic id. */
+  /** True when this advance enters open mode after the last thread. */
+  entered_open?: boolean;
+  /** @deprecated Batch 10 — related-topic bridge removed. */
   switch_topic_id?: string;
 };
 
 /**
  * Advance after a learner Portuguese answer.
- * Never dead-ends: always returns a next line (ask, follow-up, or bridge).
+ * Never dead-ends: always returns a next line (ask, follow-up, or open).
  */
 export function advanceAfterAnswer(opts: {
   doc: ThreadTopicFile;
@@ -161,40 +177,27 @@ export function advanceAfterAnswer(opts: {
   let step = opts.step;
   let threads_done = [...opts.threads_done];
 
-  if (step.kind === 'bridge') {
-    if (isBridgeYes(learnerText)) {
-      const relatedId =
-        topic.related_topic_ids[step.relatedIndex] ??
-        topic.related_topic_ids[0]!;
-      const relatedDoc = loadThreadTopic(relatedId);
-      const relatedTopic = freeTopicById(relatedId)!;
-      const next = askLine(
-        relatedDoc.topic.id,
-        relatedDoc.threads[0]!.id,
-        relatedDoc.threads[0]!.ask,
-        relatedDoc.threads[0]!.share,
-      );
-      return {
-        thread_index: 0,
-        step: { kind: 'ask' },
-        threads_done: [],
-        last_line_id: next.line_id,
-        next,
-        switch_topic_id: relatedTopic.id,
-      };
-    }
-    const nextIndex =
-      (step.relatedIndex + 1) % Math.max(topic.related_topic_ids.length, 1);
-    const relatedId =
-      topic.related_topic_ids[nextIndex] ?? topic.related_topic_ids[0]!;
-    const related = freeTopicById(relatedId) ?? topic;
-    const next = bridgeLine(topic, related, nextIndex);
+  if (step.kind === 'open') {
+    const next = openModeLine(topic.id);
     return {
       thread_index,
-      step: { kind: 'bridge', relatedIndex: nextIndex },
+      step: { kind: 'open' },
       threads_done,
       last_line_id: next.line_id,
       next,
+    };
+  }
+
+  // Legacy bridge sessions: treat any answer as entering open on this topic.
+  if (step.kind === 'bridge') {
+    const next = openModeLine(topic.id);
+    return {
+      thread_index,
+      step: { kind: 'open' },
+      threads_done,
+      last_line_id: next.line_id,
+      next,
+      entered_open: true,
     };
   }
 
@@ -219,8 +222,7 @@ export function advanceAfterAnswer(opts: {
         next,
       };
     }
-    // No follow-up to take → next thread or bridge
-    return goNextThreadOrBridge({
+    return goNextThreadOrOpen({
       doc,
       topic,
       thread_index,
@@ -245,7 +247,7 @@ export function advanceAfterAnswer(opts: {
     };
   }
 
-  return goNextThreadOrBridge({
+  return goNextThreadOrOpen({
     doc,
     topic,
     thread_index,
@@ -253,7 +255,7 @@ export function advanceAfterAnswer(opts: {
   });
 }
 
-function goNextThreadOrBridge(opts: {
+function goNextThreadOrOpen(opts: {
   doc: ThreadTopicFile;
   topic: FreeTopic;
   thread_index: number;
@@ -272,17 +274,20 @@ function goNextThreadOrBridge(opts: {
       next,
     };
   }
-  const relatedId = topic.related_topic_ids[0] ?? topic.id;
-  const related = freeTopicById(relatedId) ?? topic;
-  const next = bridgeLine(topic, related, 0);
+  const next = openModeLine(topic.id);
   return {
     thread_index: opts.thread_index,
-    step: { kind: 'bridge', relatedIndex: 0 },
+    step: { kind: 'open' },
     threads_done,
     last_line_id: next.line_id,
     next,
+    entered_open: true,
   };
 }
+
+/** Coach note shown once when threads finish (Batch 10 D4). */
+export const THREADS_DONE_COACH_EG =
+  'خلصنا أسئلة البيت 👏 كمّل كلام براحتك، أو دوس "خلّص"';
 
 /** Opening: thread 0 share + ask (no model). */
 export function openingNextLine(doc: ThreadTopicFile): FreeNextLine {

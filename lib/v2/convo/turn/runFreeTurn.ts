@@ -30,6 +30,7 @@ import {
   isNonLearningRequest,
   NON_LEARNING_COACH_EG,
   pushFreeFact,
+  THREADS_DONE_COACH_EG,
   type FreeNextLine,
 } from '@/lib/v2/convo/free';
 import type { ConvoCoachCaller } from '@/lib/v2/convo/sideChannel/coachCall';
@@ -334,7 +335,11 @@ export async function runFreeConvoTurn(
   }
 
   // Preview the authored next line for NEXT LINE (after this answer).
-  let nextLinePreview = current.bubble_tl;
+  const OPEN_NEXT =
+    'You ask the next question yourself: open or either/or, never yes/no, about what the learner just said.';
+  let nextLinePreview =
+    session.free_step.kind === 'open' ? OPEN_NEXT : current.bubble_tl;
+  let enteringOpen = false;
   if (learnerText) {
     const preview = advanceAfterAnswer({
       doc: threadDoc,
@@ -344,7 +349,11 @@ export async function runFreeConvoTurn(
       threads_done: session.threads_done,
       learnerText,
     });
-    nextLinePreview = preview.next.bubble_tl;
+    enteringOpen = Boolean(preview.entered_open);
+    nextLinePreview =
+      preview.step.kind === 'open'
+        ? OPEN_NEXT
+        : preview.next.bubble_tl || OPEN_NEXT;
   }
 
   const persona = requirePersona(topic.character_id);
@@ -395,12 +404,26 @@ export async function runFreeConvoTurn(
       threads_done: session.threads_done,
       learnerText,
     });
-    // Batch 10: never switch topic from a bridge; D4 hands off to open mode.
     session.thread_index = advanced.thread_index;
     session.free_step = advanced.step;
     session.threads_done = advanced.threads_done;
     nextLine = advanced.next;
     applyNextLine(session, nextLine);
+    if (
+      (advanced.entered_open || enteringOpen) &&
+      !session.coach_recent_ids.includes('threads_done_open')
+    ) {
+      session.coach_recent_ids = [
+        ...session.coach_recent_ids,
+        'threads_done_open',
+      ].slice(-8);
+      emit({
+        type: 'coach',
+        id: 'threads_done_open',
+        eg: THREADS_DONE_COACH_EG,
+        moment: 'threads_done_open',
+      });
+    }
   } else {
     nextLine = current;
     applyNextLine(session, nextLine);

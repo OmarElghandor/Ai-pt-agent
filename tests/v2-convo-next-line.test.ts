@@ -36,18 +36,19 @@ describe('v2 free chat · C2 nextLine machine', () => {
     assert.ok(line.share_tl);
   });
 
-  it('scripted answers walk asks then follow-ups then next thread', () => {
+  it('scripted answers walk asks then follow-ups then open on same topic', () => {
     const doc = loadThreadTopic('casa');
     const topic = freeTopicById('casa')!;
     let thread_index = 0;
-    let step: { kind: 'ask' } | { kind: 'follow_up'; n: number } | {
-      kind: 'bridge';
-      relatedIndex: number;
-    } = { kind: 'ask' };
+    let step:
+      | { kind: 'ask' }
+      | { kind: 'follow_up'; n: number }
+      | { kind: 'open' } = { kind: 'ask' };
     let threads_done: string[] = [];
     const lineIds: string[] = [];
+    let enteredOpen = false;
 
-    // Each of 5 threads: ask + follow-up → 10 answers land on the bridge.
+    // Each of 5 threads: ask + follow-up → 10 answers land in open mode.
     for (let i = 0; i < 10; i++) {
       const cur = currentNextLine(doc, thread_index, step, topic);
       lineIds.push(cur.line_id);
@@ -63,17 +64,16 @@ describe('v2 free chat · C2 nextLine machine', () => {
       step = advanced.step;
       threads_done = advanced.threads_done;
       assert.equal(advanced.switch_topic_id, undefined);
+      if (advanced.entered_open) enteredOpen = true;
     }
 
     assert.ok(lineIds.includes('casa.t1.ask'));
     assert.ok(lineIds.includes('casa.t1.fu0'));
     assert.ok(lineIds.includes('casa.t2.ask'));
     assert.ok(lineIds.includes('casa.t5.ask'));
-    assert.equal(step.kind, 'bridge');
-    assert.match(
-      currentNextLine(doc, thread_index, step, topic).tl,
-      /Queres falar/,
-    );
+    assert.equal(step.kind, 'open');
+    assert.equal(enteredOpen, true);
+    assert.equal(currentNextLine(doc, thread_index, step, topic).line_id, 'casa.open');
   });
 
   it('negative answer skips skip_if_negative follow-up', () => {
@@ -96,7 +96,7 @@ describe('v2 free chat · C2 nextLine machine', () => {
     assert.deepEqual(afterAsk.step, { kind: 'ask' });
   });
 
-  it('bridge yes switches topic', () => {
+  it('legacy bridge step enters open on the same topic', () => {
     const doc = loadThreadTopic('casa');
     const topic = freeTopicById('casa')!;
     const advanced = advanceAfterAnswer({
@@ -107,10 +107,10 @@ describe('v2 free chat · C2 nextLine machine', () => {
       threads_done: doc.threads.map((t) => t.id),
       learnerText: 'Sim!',
     });
-    assert.equal(advanced.switch_topic_id, topic.related_topic_ids[0]);
-    assert.equal(advanced.thread_index, 0);
-    assert.deepEqual(advanced.step, { kind: 'ask' });
-    assert.ok(advanced.next.line_id.endsWith('.ask'));
+    assert.equal(advanced.switch_topic_id, undefined);
+    assert.deepEqual(advanced.step, { kind: 'open' });
+    assert.equal(advanced.entered_open, true);
+    assert.equal(advanced.next.line_id, 'casa.open');
   });
 
   it('runFreeTurn advances thread cursor across answers', async () => {
