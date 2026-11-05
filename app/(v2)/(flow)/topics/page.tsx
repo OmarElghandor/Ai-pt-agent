@@ -1,9 +1,6 @@
-import { TopicsScreen } from '@/components/v2/convo/TopicsScreen';
+import { redirect } from 'next/navigation';
 
+/** Legacy topics list → Learn picker (Batch 10). */
 export default function TopicsPage() {
-  return (
-    <main className="mx-auto flex w-full max-w-[390px] flex-1 flex-col">
-      <TopicsScreen />
-    </main>
-  );
+  redirect('/talk/learn');
 }

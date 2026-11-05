@@ -109,15 +109,15 @@ export function TopicsScreen() {
       </header>
 
       <Link
-        href="/talk/free"
+        href="/talk"
         className="flex min-h-14 items-center gap-3 rounded-v2-row bg-v2-card px-4 py-3 shadow-[var(--shadow-v2-soft)]"
       >
         <span className="min-w-0 flex-1">
           <span className="block font-[family-name:var(--font-v2-display-ar)] text-base font-semibold text-v2-primary">
-            كلام حر
+            محادثة
           </span>
           <span className="block font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-            محادثة مفتوحة على موضوع تختاره
+            اتكلّم أو اتعلّم
           </span>
         </span>
         <Icon name="arrow_back" size={20} className="text-v2-action" />

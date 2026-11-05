@@ -786,12 +786,18 @@ export function V2TopicAnglesModel(): Model<V2TopicAnglesDoc> {
   );
 }
 
-/** Unmatched free-chat topic requests (09 §10 / T7.5). */
+/** Topic requests — free unmatched (09) or Learn «موضوع جديد» (Batch 10 D6). */
 const v2TopicRequestSchema = new Schema(
   {
     user_id: { type: String, required: true, index: true },
     query_eg: { type: String, required: true },
     session_id: { type: String, required: false },
+    mode: {
+      type: String,
+      required: false,
+      enum: ['learn', 'practice', 'free'],
+      default: null,
+    },
     created_at: { type: Date, required: true, default: Date.now },
   },
   { timestamps: true, collection: 'v2_topic_requests' },
