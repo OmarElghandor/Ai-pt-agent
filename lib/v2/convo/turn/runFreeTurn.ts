@@ -371,10 +371,12 @@ export async function runFreeConvoTurn(
         moment: 'learn_suggest',
       });
       emit({
-        type: 'coach',
-        id: `open_pack:${matched.pack_id}`,
-        eg: `آيو\n${coach.href ?? `/talk/${encodeURIComponent(matched.pack_id)}`}`,
-        moment: 'learn_suggest_cta',
+        type: 'cta',
+        id: `learn_cta:${matched.pack_id}`,
+        label_eg: 'يلا نتعلّم',
+        href:
+          coach.href ?? `/talk/${encodeURIComponent(matched.pack_id)}`,
+        dismiss_eg: 'لأ، نكمّل',
       });
       session.learn_suggest_done = true;
     } else {
@@ -450,10 +452,11 @@ export async function runFreeConvoTurn(
             moment: 'learn_suggest',
           });
           emit({
-            type: 'coach',
-            id: `open_pack:${hit.packId}`,
-            eg: `آيو\n${hit.talkHref}`,
-            moment: 'learn_suggest_cta',
+            type: 'cta',
+            id: `learn_cta:${hit.packId}`,
+            label_eg: 'يلا نتعلّم',
+            href: hit.talkHref,
+            dismiss_eg: 'لأ، نكمّل',
           });
         }
       }

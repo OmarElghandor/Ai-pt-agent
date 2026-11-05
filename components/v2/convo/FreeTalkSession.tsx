@@ -64,21 +64,20 @@ export function FreeTalkSession({ topicId }: Props) {
   }, [bubbles, scrollToEnd]);
 
   const applyEvent = useCallback((event: ConvoTurnStreamEvent) => {
+    if (event.type === 'cta') {
+      setLessonHref(event.href);
+      return;
+    }
     if (event.type === 'coach') {
       if (event.id === 'threads_done_open') {
         setOpenMode(true);
-      }
-      if (event.id.startsWith('open_pack:')) {
-        const packId = event.id.slice('open_pack:'.length);
-        const hrefLine = event.eg.split('\n').find((l) => l.startsWith('/'));
-        setLessonHref(hrefLine ?? `/talk/${encodeURIComponent(packId)}`);
       }
       setBubbles((prev) => [
         ...prev,
         {
           id: newId('coach'),
           role: 'coach',
-          eg: event.eg.split('\n')[0] ?? event.eg,
+          eg: event.eg,
           moment: event.moment,
         },
       ]);
@@ -485,16 +484,23 @@ export function FreeTalkSession({ topicId }: Props) {
       </div>
 
       {lessonHref ? (
-        <div className="px-4 pb-2">
+        <div className="flex gap-2 px-4 pb-2">
           <Link
             href={lessonHref}
-            className="inline-flex min-h-11 items-center justify-center gap-1 rounded-[var(--ft-radius-control)] bg-[var(--ft-sage)] px-5 py-2.5 font-[family-name:var(--font-ft-ar)] text-base font-semibold text-[var(--ft-on-sage)]"
+            className="inline-flex min-h-11 flex-1 items-center justify-center gap-1 rounded-[var(--ft-radius-control)] bg-[var(--ft-sage)] px-4 py-2.5 font-[family-name:var(--font-ft-ar)] text-base font-semibold text-[var(--ft-on-sage)]"
           >
-            افتح محادثة الدرس
-            <span className="material-symbols-rounded text-[18px]">
-              arrow_back
-            </span>
+            يلا نتعلّم
           </Link>
+          <button
+            type="button"
+            className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[var(--ft-radius-control)] border border-[var(--ft-line)] px-4 py-2.5 font-[family-name:var(--font-ft-ar)] text-base text-[var(--ft-text)]"
+            onClick={() => {
+              setLessonHref(null);
+              void runTurn('لأ');
+            }}
+          >
+            لأ، نكمّل
+          </button>
         </div>
       ) : null}
 

@@ -13,6 +13,14 @@ export type ConvoTurnStreamEvent =
       eg: string;
       moment: CoachMoment | string;
     }
+  /** Soft Learn CTA — two client buttons, no href-in-text (E9). */
+  | {
+      type: 'cta';
+      id: string;
+      label_eg: string;
+      href: string;
+      dismiss_eg?: string;
+    }
   | {
       type: 'group_advance';
       group: number;

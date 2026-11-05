@@ -138,11 +138,11 @@ describe('v2 free chat · topic request (T7.5)', () => {
         (e) => e.type === 'coach' && e.id === 'free_topic_request',
       ),
     );
-    assert.ok(
-      events.some(
-        (e) => e.type === 'coach' && String(e.id).startsWith('open_pack:'),
-      ),
-    );
+    const cta = events.find((e) => e.type === 'cta');
+    assert.ok(cta && cta.type === 'cta');
+    assert.equal(cta.label_eg, 'يلا نتعلّم');
+    assert.ok(cta.href.includes('talk'));
+    assert.equal(cta.dismiss_eg, 'لأ، نكمّل');
   });
 });
 
