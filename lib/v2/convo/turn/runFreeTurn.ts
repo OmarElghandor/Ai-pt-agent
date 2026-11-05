@@ -44,6 +44,10 @@ import {
   maybeRecastPair,
   pushLearnerLine,
 } from '@/lib/v2/convo/result/summary';
+import {
+  learnSuggestCoachEg,
+  matchLearnSuggest,
+} from '@/lib/v2/convo/free/learnSuggest';
 import type { ConvoCoachCaller } from '@/lib/v2/convo/sideChannel/coachCall';
 import type {
   ConvoStreamModel,
@@ -351,38 +355,23 @@ export async function runFreeConvoTurn(
 
   const sideKind = classifySideChannel(input.learnerText);
   if (sideKind === 'topic_request') {
+    // Batch 10 D8: practice stays free — soft Learn CTA only, no forced pack jump.
     const matched = matchTopicRequest(input.learnerText);
     const coach = topicRequestCoachEg(matched);
     if (matched) {
-      session.paused_for_pack_id = matched.pack_id;
       emit({
         type: 'coach',
         id: 'free_topic_request',
-        eg: coach.eg,
-        moment: 'topic_request',
-      });
-      emit({
-        type: 'session',
-        session: {
-          id: session.id,
-          rungs: session.rungs,
-          phase: session.phase,
-          status: session.status,
-          help_ladder: session.help_ladder,
-          current_group: session.current_group,
-          pending_question: session.pending_question,
-          correct_streak: session.correct_streak,
-          struggled: session.struggled,
-          said_once: session.said_once,
-          survival_used: session.survival_used,
-        },
+        eg: learnSuggestCoachEg(matched.title_ar),
+        moment: 'learn_suggest',
       });
       emit({
         type: 'coach',
         id: `open_pack:${matched.pack_id}`,
-        eg: coach.href ? `${coach.eg}\n${coach.href}` : coach.eg,
-        moment: 'topic_request_cta',
+        eg: `آيو\n${coach.href ?? `/talk/${encodeURIComponent(matched.pack_id)}`}`,
+        moment: 'learn_suggest_cta',
       });
+      session.learn_suggest_done = true;
     } else {
       logUnmatchedTopicRequestSync({
         userId: session.user_id,
@@ -431,7 +420,56 @@ export async function runFreeConvoTurn(
       emit,
       ...(input.coachCaller ? { coachCaller: input.coachCaller } : {}),
     });
+
+    // D8: after 3 language Qs on the same item group → one Learn suggestion.
+    if (
+      sideKind === 'language_question' &&
+      !session.learn_suggest_done
+    ) {
+      const hit = await matchLearnSuggest(
+        input.learnerText.trim(),
+        session.topic_id,
+      );
+      if (hit) {
+        if (session.learn_suggest_group === hit.groupKey) {
+          session.learn_suggest_count =
+            (session.learn_suggest_count ?? 0) + 1;
+        } else {
+          session.learn_suggest_group = hit.groupKey;
+          session.learn_suggest_count = 1;
+        }
+        if (session.learn_suggest_count >= 3) {
+          session.learn_suggest_done = true;
+          session.coach_recent_ids = [
+            ...session.coach_recent_ids,
+            'learn_suggest',
+          ].slice(-8);
+          emit({
+            type: 'coach',
+            id: 'learn_suggest',
+            eg: learnSuggestCoachEg(hit.topicTitleAr),
+            moment: 'learn_suggest',
+          });
+          emit({
+            type: 'coach',
+            id: `open_pack:${hit.packId}`,
+            eg: `آيو\n${hit.talkHref}`,
+            moment: 'learn_suggest_cta',
+          });
+        }
+      }
+    }
     return finish(true);
+  }
+
+  // Learner dismissed Learn suggestion («لأ») — no more this session.
+  if (
+    !session.learn_suggest_done &&
+    /^(لأ|لا|no|nao|não)\b/i.test(input.learnerText.trim())
+  ) {
+    if (session.coach_recent_ids.includes('learn_suggest')) {
+      session.learn_suggest_done = true;
+    }
   }
 
   const learnerText = input.learnerText.trim();

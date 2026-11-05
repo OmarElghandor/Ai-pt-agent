@@ -91,6 +91,12 @@ export type ConvoSession = {
   learner_lines: string[];
   /** Recast pairs when the reaction corrected the learner (Batch 10). */
   recasts: Array<{ original: string; corrected: string }>;
+  /** Language-Q group key being counted toward a Learn suggestion (D8). */
+  learn_suggest_group: string | null;
+  /** Hits on learn_suggest_group this session. */
+  learn_suggest_count: number;
+  /** True after one Learn suggestion (or dismiss) — no more this session. */
+  learn_suggest_done: boolean;
   created_at: string;
   updated_at: string;
 };

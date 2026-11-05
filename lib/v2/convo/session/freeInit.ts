@@ -129,6 +129,9 @@ export function createFreeConvoSessionDoc(opts: {
       survival_used: 0,
       learner_lines: [],
       recasts: [],
+      learn_suggest_group: null,
+      learn_suggest_count: 0,
+      learn_suggest_done: false,
       created_at: now,
       updated_at: now,
     };
@@ -177,6 +180,9 @@ export function createFreeConvoSessionDoc(opts: {
     survival_used: 0,
     learner_lines: [],
     recasts: [],
+    learn_suggest_group: null,
+    learn_suggest_count: 0,
+    learn_suggest_done: false,
     created_at: now,
     updated_at: now,
   };

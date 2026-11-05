@@ -52,3 +52,10 @@ export {
   pickOpenFallback,
   type OpenFallbackQuestion,
 } from './openFallback';
+
+export {
+  learnSuggestCoachEg,
+  matchLearnSuggest,
+  packForFreeTopic,
+  type LearnSuggestHit,
+} from './learnSuggest';

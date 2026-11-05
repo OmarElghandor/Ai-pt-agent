@@ -39,6 +39,9 @@ type ConvoSessionDocLean = {
   survival_used?: number;
   learner_lines?: string[];
   recasts?: Array<{ original: string; corrected: string }>;
+  learn_suggest_group?: string | null;
+  learn_suggest_count?: number;
+  learn_suggest_done?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -73,6 +76,9 @@ function sessionFields(session: ConvoSession) {
     survival_used: session.survival_used,
     learner_lines: session.learner_lines,
     recasts: session.recasts,
+    learn_suggest_group: session.learn_suggest_group,
+    learn_suggest_count: session.learn_suggest_count,
+    learn_suggest_done: session.learn_suggest_done,
   };
 }
 
@@ -113,6 +119,9 @@ function fromDoc(doc: ConvoSessionDocLean): ConvoSession {
     survival_used: doc.survival_used ?? 0,
     learner_lines: doc.learner_lines ?? [],
     recasts: Array.isArray(doc.recasts) ? doc.recasts : [],
+    learn_suggest_group: doc.learn_suggest_group ?? null,
+    learn_suggest_count: doc.learn_suggest_count ?? 0,
+    learn_suggest_done: doc.learn_suggest_done ?? false,
     created_at: (doc.createdAt ?? new Date()).toISOString(),
     updated_at: (doc.updatedAt ?? new Date()).toISOString(),
   };
