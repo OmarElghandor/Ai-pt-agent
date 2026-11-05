@@ -28,6 +28,7 @@ export {
 } from './rungsFromProgress';
 
 export { loadItemStatesById } from './loadItemStates';
+export { loadSuggestedSurfacesForUser } from './suggestedWords';
 
 export {
   MemoryConvoSessionStore,

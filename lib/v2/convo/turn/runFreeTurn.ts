@@ -557,12 +557,7 @@ export async function runFreeConvoTurn(
       item_id: lineId,
     };
     session.assisted = false;
-    if (modelOut.chips.length) {
-      session.suggested_words = [
-        ...modelOut.chips,
-        ...session.suggested_words,
-      ].slice(0, 15);
-    }
+    // Chips stay on pending_frame only — do not merge into suggested_words (E4).
     session.pending_frame = {
       tl: modelOut.frame_tl,
       eg: modelOut.hint_eg,
@@ -673,12 +668,6 @@ export async function runFreeConvoTurn(
         item_id: lineId,
       };
       session.assisted = false;
-      if (modelOut.chips.length) {
-        session.suggested_words = [
-          ...modelOut.chips,
-          ...session.suggested_words,
-        ].slice(0, 15);
-      }
       session.pending_frame = {
         tl: modelOut.frame_tl,
         eg: modelOut.hint_eg,

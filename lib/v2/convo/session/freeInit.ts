@@ -132,7 +132,11 @@ export function createFreeConvoSessionDoc(opts: {
       },
       pending_frame: openModeOpeningFrame(),
       facts: [],
-      suggested_words: openModeOpeningChips().slice(0, 15),
+      // Opening chips live on pending_frame only; vocab comes from item state (E4).
+      suggested_words: (opts.suggestedWords ?? [])
+        .slice(0, 15)
+        .map((w) => w.trim())
+        .filter(Boolean),
       status: 'open',
       phase: 'teaching',
       correct_streak: 0,

@@ -13,6 +13,7 @@ import {
   freePackId,
 } from './freeInit';
 import { buildFreeReopening } from './reopenFree';
+import { loadSuggestedSurfacesForUser } from './suggestedWords';
 import type { ConvoSessionStore } from './store';
 import type { ConvoSession, StartConvoResult } from './types';
 
@@ -98,14 +99,16 @@ export async function startFreeConvoSession(
   }
 
   const id = opts.newId?.() ?? randomUUID();
+  let suggestedWords = opts.suggestedWords;
+  if (suggestedWords === undefined && isOpenTopicId(topic.id)) {
+    suggestedWords = await loadSuggestedSurfacesForUser(opts.userId);
+  }
   const created = createFreeConvoSessionDoc({
     id,
     userId: opts.userId,
     topic,
     now: opts.now,
-    ...(opts.suggestedWords
-      ? { suggestedWords: opts.suggestedWords }
-      : {}),
+    ...(suggestedWords ? { suggestedWords } : {}),
   });
   const session = await opts.store.create(created);
   return {

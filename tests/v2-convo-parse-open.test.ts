@@ -126,4 +126,25 @@ CHIPS: a | b`);
     assert.match(started.session.pending_frame!.tl, /___/);
     assert.ok(started.session.pending_frame!.chips.length >= 2);
   });
+
+  it('open suggested_words are not catalog title chips (E4)', async () => {
+    const store = new MemoryConvoSessionStore();
+    const started = await startFreeConvoSession({
+      userId: 'open-words',
+      topicId: 'open',
+      store,
+      newId: () => 'open-words-1',
+      suggestedWords: ['à direita', 'a esquina'],
+    });
+    assert.deepEqual(started.session.suggested_words, [
+      'à direita',
+      'a esquina',
+    ]);
+    assert.ok(
+      !started.session.suggested_words.some((w) =>
+        /^Sobre\s/i.test(w),
+      ),
+    );
+    assert.ok(started.session.pending_frame?.chips.length);
+  });
 });
