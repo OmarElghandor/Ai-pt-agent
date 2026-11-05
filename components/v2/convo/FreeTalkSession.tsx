@@ -5,7 +5,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { NoteCard } from '@/components/v2/NoteCard';
 import { PrimaryButton } from '@/components/v2/PrimaryButton';
 import type { ConvoTurnStreamEvent } from '@/lib/v2/convo/turn';
+import type { ConvoSessionSummary } from '@/lib/v2/convo/result';
 import { CharacterBubble } from './CharacterBubble';
+import { ConvoSummaryCard } from './ConvoSummaryCard';
 import { LearnerBubble } from './LearnerBubble';
 import { readConvoNdjson } from './readNdjson';
 import { TalkDevPanel, type TalkTurnMetrics } from './TalkDevPanel';
@@ -46,6 +48,8 @@ export function FreeTalkSession({ topicId }: Props) {
   const [assisted, setAssisted] = useState(false);
   const [openMode, setOpenMode] = useState(topicId === 'open');
   const [characterId, setCharacterId] = useState('ines');
+  const [summary, setSummary] = useState<ConvoSessionSummary | null>(null);
+  const [ending, setEnding] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const streamBubbleId = useRef<string | null>(null);
 
@@ -303,9 +307,41 @@ export function FreeTalkSession({ topicId }: Props) {
     void runTurn(t);
   };
 
+  const endSession = async () => {
+    if (!sessionId || ending) return;
+    setEnding(true);
+    try {
+      const res = await fetch('/api/v2/convo/end', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId }),
+      });
+      if (!res.ok) throw new Error(`end ${res.status}`);
+      const data = (await res.json()) as { summary: ConvoSessionSummary };
+      setSummary(data.summary);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'end failed');
+    } finally {
+      setEnding(false);
+    }
+  };
+
+  if (summary) {
+    return (
+      <div className="mx-auto flex h-[100dvh] w-full max-w-[390px] flex-col overflow-y-auto bg-v2-paper">
+        <ConvoSummaryCard
+          summary={summary}
+          practiceHref="/talk/practice"
+          backHref="/talk/practice"
+          showPracticeCta={false}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto flex h-[100dvh] w-full max-w-[390px] flex-col bg-v2-paper">
-      <header className="flex items-center gap-3 border-b border-v2-line/40 px-3 py-3">
+      <header className="flex items-center gap-2 border-b border-v2-line/40 px-3 py-3">
         <Link
           href="/talk/practice"
           className="flex h-10 w-10 items-center justify-center rounded-full bg-v2-card text-v2-primary"
@@ -343,6 +379,14 @@ export function FreeTalkSession({ topicId }: Props) {
             </select>
           </label>
         ) : null}
+        <button
+          type="button"
+          onClick={() => void endSession()}
+          disabled={!sessionId || ending || loading}
+          className="shrink-0 rounded-v2-chip bg-v2-primary/10 px-3 py-1.5 font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-v2-primary disabled:opacity-40"
+        >
+          خلّص
+        </button>
       </header>
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-3 py-4">

@@ -6,7 +6,10 @@ import { NoteCard } from '@/components/v2/NoteCard';
 import { PrimaryButton } from '@/components/v2/PrimaryButton';
 import { useMicRecorder } from '@/hooks/useMicRecorder';
 import type { ConvoItemSurface, ConvoVisual } from '@/lib/v2/convo/pack';
-import { buildConvoResultStats } from '@/lib/v2/convo/result';
+import {
+  buildConvoResultStats,
+  type ConvoSessionSummary,
+} from '@/lib/v2/convo/result';
 import type { ConvoRung } from '@/lib/v2/convo/session';
 import type {
   ConvoSurvivalAction,
@@ -19,6 +22,7 @@ import {
 import { CharacterBubble } from './CharacterBubble';
 import { ConvoMap } from './ConvoMap';
 import { ConvoResultCard } from './ConvoResultCard';
+import { ConvoSummaryCard } from './ConvoSummaryCard';
 import { ItemCard } from './ItemCard';
 import { LearnerBubble } from './LearnerBubble';
 import { readConvoNdjson } from './readNdjson';
@@ -66,6 +70,9 @@ export function TalkSession({ packId }: Props) {
   const [metrics, setMetrics] = useState<TalkTurnMetrics | null>(null);
   const [turnCount, setTurnCount] = useState(0);
   const [voiceMode, setVoiceMode] = useState(true);
+  const [summary, setSummary] = useState<ConvoSessionSummary | null>(null);
+  const [practiceHref, setPracticeHref] = useState('/talk/practice');
+  const [ending, setEnding] = useState(false);
   const mic = useMicRecorder({ language: 'pt-PT' });
   const scrollRef = useRef<HTMLDivElement>(null);
   const streamBubbleId = useRef<string | null>(null);
@@ -528,6 +535,30 @@ export function TalkSession({ packId }: Props) {
       (pending.kind === 'help' && (pending.options?.length ?? 0) > 0)) &&
     (pending.options?.length ?? 0) > 0;
 
+  const endSession = async () => {
+    if (!sessionId || ending) return;
+    setEnding(true);
+    try {
+      const res = await fetch('/api/v2/convo/end', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId }),
+      });
+      if (!res.ok) throw new Error(`end ${res.status}`);
+      const data = (await res.json()) as {
+        summary: ConvoSessionSummary;
+        practice_href?: string;
+      };
+      setSummary(data.summary);
+      if (data.practice_href) setPracticeHref(data.practice_href);
+      setSnapshot((s) => (s ? { ...s, status: 'done' } : s));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'end failed');
+    } finally {
+      setEnding(false);
+    }
+  };
+
   const done = snapshot?.status === 'done' || snapshot?.phase === 'closing';
   const hideVisual = mapHiddenForPhase(snapshot?.phase ?? 'teaching');
 
@@ -558,11 +589,26 @@ export function TalkSession({ packId }: Props) {
     });
   }, [done, snapshot, visual, packId, day, surfaceById]);
 
+  if (summary) {
+    return (
+      <main className="mx-auto flex min-h-dvh w-full max-w-[390px] flex-col overflow-y-auto bg-v2-paper">
+        <ConvoSummaryCard
+          summary={summary}
+          lessonStats={resultStats}
+          lessonDay={day}
+          practiceHref={practiceHref}
+          backHref="/talk/learn"
+          showPracticeCta
+        />
+      </main>
+    );
+  }
+
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-[390px] flex-col bg-v2-paper">
       <header className="sticky top-0 z-30 flex items-center gap-2 border-b border-v2-line/50 bg-v2-paper/95 px-3 py-3 backdrop-blur-md">
         <Link
-          href={day ? `/day/${day}` : '/'}
+          href={day ? `/day/${day}` : '/talk/learn'}
           className="flex h-10 w-10 items-center justify-center rounded-full text-v2-primary hover:bg-v2-primary/10"
           aria-label="رجوع"
         >
@@ -578,6 +624,14 @@ export function TalkSession({ packId }: Props) {
             {packId}
           </h1>
         </div>
+        <button
+          type="button"
+          onClick={() => void endSession()}
+          disabled={!sessionId || ending || loading}
+          className="shrink-0 rounded-v2-chip bg-v2-primary/10 px-3 py-1.5 font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-v2-primary disabled:opacity-40"
+        >
+          خلّص
+        </button>
       </header>
 
       {visual?.type === 'map' ? (

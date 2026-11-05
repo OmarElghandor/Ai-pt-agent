@@ -87,6 +87,10 @@ export type ConvoSession = {
   recap_done_ids: string[];
   /** Survival button uses this session (Pode repetir? / Mais devagar / Não percebi). */
   survival_used: number;
+  /** Learner Portuguese lines this session (Batch 10 خلاص, max 8). */
+  learner_lines: string[];
+  /** Recast pairs when the reaction corrected the learner (Batch 10). */
+  recasts: Array<{ original: string; corrected: string }>;
   created_at: string;
   updated_at: string;
 };

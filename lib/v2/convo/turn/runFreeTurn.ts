@@ -40,6 +40,10 @@ import {
   THREADS_DONE_COACH_EG,
   type FreeNextLine,
 } from '@/lib/v2/convo/free';
+import {
+  maybeRecastPair,
+  pushLearnerLine,
+} from '@/lib/v2/convo/result/summary';
 import type { ConvoCoachCaller } from '@/lib/v2/convo/sideChannel/coachCall';
 import type {
   ConvoStreamModel,
@@ -458,6 +462,10 @@ export async function runFreeConvoTurn(
     }
     if (learnerText) {
       pushExchange(session, 'learner', learnerText);
+      session.learner_lines = pushLearnerLine(
+        session.learner_lines ?? [],
+        learnerText,
+      );
       const fact = extractFreeFact({
         learnerText,
         hints: session.suggested_words.slice(0, 8),
@@ -502,6 +510,12 @@ export async function runFreeConvoTurn(
 
     if (modelOut.pt) {
       pushExchange(session, 'character', modelOut.pt);
+      if (learnerText) {
+        const pair = maybeRecastPair(learnerText, modelOut.pt);
+        if (pair) {
+          session.recasts = [...(session.recasts ?? []), pair].slice(-8);
+        }
+      }
     }
     const lineId = `${topic.id}.open.${Date.now()}`;
     session.last_line_id = lineId;
@@ -664,6 +678,10 @@ export async function runFreeConvoTurn(
     // Batch 10 D3: no topic policing — always continue on the same topic.
     session.off_topic_streak = 0;
     pushExchange(session, 'learner', learnerText);
+    session.learner_lines = pushLearnerLine(
+      session.learner_lines ?? [],
+      learnerText,
+    );
   }
 
   // Preview the authored next line for NEXT LINE (after this answer).
@@ -715,6 +733,12 @@ export async function runFreeConvoTurn(
 
   if (modelOut.reaction) {
     pushExchange(session, 'character', modelOut.reaction);
+    if (learnerText) {
+      const pair = maybeRecastPair(learnerText, modelOut.reaction);
+      if (pair) {
+        session.recasts = [...(session.recasts ?? []), pair].slice(-8);
+      }
+    }
   }
 
   let nextLine: FreeNextLine;

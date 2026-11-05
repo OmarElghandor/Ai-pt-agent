@@ -736,6 +736,8 @@ const v2ConvoSessionSchema = new Schema(
     coach_recent_ids: { type: [String], required: true, default: [] },
     recap_done_ids: { type: [String], required: true, default: [] },
     survival_used: { type: Number, required: true, default: 0 },
+    learner_lines: { type: [String], required: false, default: [] },
+    recasts: { type: Schema.Types.Mixed, required: false, default: [] },
   },
   { timestamps: true, collection: 'v2_convo_sessions', _id: false },
 );

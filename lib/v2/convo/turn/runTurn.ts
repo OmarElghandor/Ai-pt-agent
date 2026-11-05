@@ -388,6 +388,12 @@ export async function runConvoTurn(
     eventLine = 'conversation started; ask the first question';
   } else {
     pushExchange(session, 'learner', learnerText);
+    session.learner_lines = [
+      ...(session.learner_lines ?? []),
+      learnerText.trim(),
+    ]
+      .filter(Boolean)
+      .slice(-8);
     const qMeta =
       findPackQuestion(pack, pendingBefore.id) ??
       ({

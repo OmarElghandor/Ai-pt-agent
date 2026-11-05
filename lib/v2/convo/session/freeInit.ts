@@ -127,6 +127,8 @@ export function createFreeConvoSessionDoc(opts: {
       coach_recent_ids: [],
       recap_done_ids: [],
       survival_used: 0,
+      learner_lines: [],
+      recasts: [],
       created_at: now,
       updated_at: now,
     };
@@ -173,6 +175,8 @@ export function createFreeConvoSessionDoc(opts: {
     coach_recent_ids: [],
     recap_done_ids: [],
     survival_used: 0,
+    learner_lines: [],
+    recasts: [],
     created_at: now,
     updated_at: now,
   };
