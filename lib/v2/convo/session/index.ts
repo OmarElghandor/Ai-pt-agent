@@ -50,6 +50,7 @@ export {
   createFreeConvoSessionDoc,
   openModeOpeningChips,
   openModeOpeningFrame,
+  OPEN_MODE_OPENING_CHIPS,
 } from './freeInit';
 
 export {

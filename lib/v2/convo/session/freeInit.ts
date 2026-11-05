@@ -23,6 +23,14 @@ export function openModeOpeningChips(): string[] {
   return [...titles.slice(0, 8), 'Sobre o meu dia'];
 }
 
+/** Fixed opening chips for «أي حاجة» (E5) — not catalog titles. */
+export const OPEN_MODE_OPENING_CHIPS = [
+  'Sobre o meu dia',
+  'Futebol',
+  'Comida',
+  'O trabalho',
+] as const;
+
 /** Default open-mode answer frame (also stored as pending_frame). */
 export function openModeOpeningFrame(): {
   tl: string;
@@ -32,7 +40,7 @@ export function openModeOpeningFrame(): {
   return {
     tl: 'Quero falar de ___.',
     eg: 'قول عايز تتكلم عن إيه',
-    chips: openModeOpeningChips().slice(0, 4),
+    chips: [...OPEN_MODE_OPENING_CHIPS],
   };
 }
 

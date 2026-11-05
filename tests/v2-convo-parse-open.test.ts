@@ -114,7 +114,7 @@ CHIPS: a | b`);
     assert.match(String((q as { tl: string }).tl), /\?/);
   });
 
-  it('open start seeds pending_frame (E3)', async () => {
+  it('open start seeds pending_frame with fixed opening chips (E3/E5)', async () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'open-frame',
@@ -123,8 +123,14 @@ CHIPS: a | b`);
       newId: () => 'open-frame-1',
     });
     assert.ok(started.session.pending_frame);
-    assert.match(started.session.pending_frame!.tl, /___/);
-    assert.ok(started.session.pending_frame!.chips.length >= 2);
+    assert.equal(started.session.pending_frame!.tl, 'Quero falar de ___.');
+    assert.equal(started.session.pending_frame!.eg, 'قول عايز تتكلم عن إيه');
+    assert.deepEqual(started.session.pending_frame!.chips, [
+      'Sobre o meu dia',
+      'Futebol',
+      'Comida',
+      'O trabalho',
+    ]);
   });
 
   it('open suggested_words are not catalog title chips (E4)', async () => {
