@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { personaById, loadPersonasFile } from './personaLoad';
+import { isOpenTopicId, OPEN_TOPIC } from './openTopic';
 import type {
   FreeTopic,
   FreeTopicsFile,
@@ -159,6 +160,7 @@ export function freeTopicById(
   topicId: string,
   file: FreeTopicsFile = loadFreeTopicsFile(),
 ): FreeTopic | null {
+  if (isOpenTopicId(topicId)) return OPEN_TOPIC;
   return file.topics.find((t) => t.id === topicId) ?? null;
 }
 

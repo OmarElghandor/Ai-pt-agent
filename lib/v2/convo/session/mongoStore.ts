@@ -137,6 +137,25 @@ export class MongoConvoSessionStore implements ConvoSessionStore {
     return fromDoc(doc as ConvoSessionDocLean);
   }
 
+  async findOpenFreeTopicIds(userId: string): Promise<string[]> {
+    await connectMongo();
+    const docs = await V2ConvoSessionModel()
+      .find({
+        user_id: userId,
+        module: 'free',
+        status: 'open',
+        topic_id: { $ne: null },
+      })
+      .select({ topic_id: 1 })
+      .lean();
+    const ids: string[] = [];
+    for (const d of docs) {
+      const tid = (d as { topic_id?: string | null }).topic_id;
+      if (tid) ids.push(tid);
+    }
+    return ids;
+  }
+
   async create(session: ConvoSession): Promise<ConvoSession> {
     await connectMongo();
     const created = await V2ConvoSessionModel().create({

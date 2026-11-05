@@ -1,11 +1,12 @@
 import type { FreeTopic, ThreadAsk, ThreadTopicFile } from '@/lib/v2/convo/topics';
 import { freeTopicById, loadThreadTopic } from '@/lib/v2/convo/topics';
 
-/** Session cursor into a topic's threads. */
+/** Session cursor into a topic's threads (or open mode after threads / أي حاجة). */
 export type FreeThreadStep =
   | { kind: 'ask' }
   | { kind: 'follow_up'; n: number }
-  | { kind: 'bridge'; relatedIndex: number };
+  | { kind: 'bridge'; relatedIndex: number }
+  | { kind: 'open' };
 
 export type FreeNextLine = {
   /** Stable id for pending_question / audio. */
@@ -32,6 +33,7 @@ export function parseFreeThreadStep(raw: unknown): FreeThreadStep {
   if (o.kind === 'bridge' && typeof o.relatedIndex === 'number') {
     return { kind: 'bridge', relatedIndex: o.relatedIndex };
   }
+  if (o.kind === 'open') return { kind: 'open' };
   return { kind: 'ask' };
 }
 

@@ -29,6 +29,12 @@ export {
   freeTopicIdForLessonTopic,
 } from './lessonFreeBridge';
 
+export {
+  OPEN_TOPIC,
+  OPEN_TOPIC_ID,
+  isOpenTopicId,
+} from './openTopic';
+
 export type {
   FreeTopic,
   FreeTopicsFile,

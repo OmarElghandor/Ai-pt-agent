@@ -1,8 +1,13 @@
 import type { FreeTopic } from '@/lib/v2/convo/topics';
-import { loadThreadTopic } from '@/lib/v2/convo/topics';
+import {
+  isOpenTopicId,
+  loadFreeTopicsFile,
+  loadThreadTopic,
+} from '@/lib/v2/convo/topics';
 import {
   composeOpeningBubbleAr,
   composeOpeningBubbleTl,
+  fillNameSlot,
   openingNextLine,
 } from '@/lib/v2/convo/free';
 import type { ConvoOpeningBubbles, ConvoSession } from './types';
@@ -12,10 +17,48 @@ export function freePackId(topicId: string): string {
   return `free.${topicId}`;
 }
 
+/** Opening chips for «أي حاجة»: catalog titles + day. */
+export function openModeOpeningChips(): string[] {
+  const titles = loadFreeTopicsFile().topics.map((t) => `Sobre ${t.title_in_sentence_tl}`);
+  return [...titles.slice(0, 8), 'Sobre o meu dia'];
+}
+
+export function buildOpenOpeningBubbles(opts?: {
+  topic?: FreeTopic;
+  learnerName?: string | null;
+}): ConvoOpeningBubbles {
+  const topic = opts?.topic;
+  const tl = fillNameSlot(
+    topic?.opening_tl ??
+      'Olá {name}! 😊 Sobre o que queres falar hoje?',
+    opts?.learnerName,
+  );
+  const ar = fillNameSlot(
+    topic?.opening_ar ??
+      'مرحباً {name}! 🙂 عن ماذا تريد أن تتحدث اليوم؟',
+    opts?.learnerName,
+  );
+  return {
+    character: { tl, ar },
+    coach_intros: topic?.intro_eg
+      ? [{ item_id: topic.id, coach_intro_eg: topic.intro_eg }]
+      : [
+          {
+            item_id: 'open',
+            coach_intro_eg: 'اتكلم في أي موضوع إنت عايزه — أنا معاكي.',
+          },
+        ],
+    card_ids: [],
+  };
+}
+
 export function buildFreeOpeningBubbles(
   topic: FreeTopic,
   opts?: { learnerName?: string | null },
 ): ConvoOpeningBubbles {
+  if (isOpenTopicId(topic.id)) {
+    return buildOpenOpeningBubbles({ topic, learnerName: opts?.learnerName });
+  }
   const doc = loadThreadTopic(topic.id);
   const line = openingNextLine(doc);
   const tl = composeOpeningBubbleTl({
@@ -47,6 +90,48 @@ export function createFreeConvoSessionDoc(opts: {
   now?: Date;
 }): ConvoSession {
   const now = (opts.now ?? new Date()).toISOString();
+
+  if (isOpenTopicId(opts.topic.id)) {
+    const lineId = 'open.opening';
+    return {
+      id: opts.id,
+      user_id: opts.userId,
+      module: 'free',
+      pack_id: freePackId(opts.topic.id),
+      topic_id: opts.topic.id,
+      character_id: opts.topic.character_id,
+      thread_index: 0,
+      free_step: { kind: 'open' },
+      threads_done: [],
+      last_line_id: lineId,
+      assisted: false,
+      off_topic_streak: 0,
+      paused_for_pack_id: null,
+      rungs: {},
+      help_ladder: { question_id: null, step: 0, attempts: 0 },
+      current_group: 1,
+      candidate_history: [],
+      last_exchanges: [],
+      pending_question: {
+        id: lineId,
+        kind: 'open',
+        item_id: lineId,
+      },
+      facts: [],
+      suggested_words: openModeOpeningChips().slice(0, 15),
+      status: 'open',
+      phase: 'teaching',
+      correct_streak: 0,
+      struggled: {},
+      said_once: {},
+      coach_recent_ids: [],
+      recap_done_ids: [],
+      survival_used: 0,
+      created_at: now,
+      updated_at: now,
+    };
+  }
+
   const doc = loadThreadTopic(opts.topic.id);
   const first = openingNextLine(doc);
   const suggested = (opts.suggestedWords ?? opts.topic.word_set)

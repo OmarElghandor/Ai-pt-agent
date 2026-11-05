@@ -8,11 +8,13 @@ import {
 import {
   freeTopicById,
   freeTopicIdForPack,
+  isOpenTopicId,
   loadThreadTopic,
 } from '@/lib/v2/convo/topics';
 import { authoredLinesForWarm, currentNextLine } from '@/lib/v2/convo/free';
 import {
   MongoConvoSessionStore,
+  openModeOpeningChips,
   startConvoSession,
   startFreeConvoSession,
 } from '@/lib/v2/convo/session';
@@ -63,6 +65,53 @@ export async function POST(req: Request) {
         topic,
         ...(body?.session_id ? { sessionId: body.session_id } : {}),
       });
+
+      const isOpen =
+        isOpenTopicId(topic.id) || result.session.free_step.kind === 'open';
+
+      if (isOpen) {
+        const openingTl = result.opening.character.tl;
+        const chips = openModeOpeningChips();
+        return NextResponse.json({
+          session_id: result.session.id,
+          module: 'free',
+          topic_id: topic.id,
+          title_tl: topic.title_tl,
+          title_ar: topic.title_ar,
+          pack_id: result.session.pack_id,
+          resumed: result.resumed,
+          opening: result.opening,
+          ...(result.reopening ? { reopening: result.reopening } : {}),
+          pending_tl: result.reopening?.pending_tl ?? openingTl,
+          current_frame: {
+            tl: 'Quero falar de ___.',
+            eg: 'قول عايز تتكلم عن إيه',
+            chips,
+          },
+          warm_lines: [],
+          open_mode: true,
+          session: {
+            id: result.session.id,
+            module: result.session.module,
+            topic_id: result.session.topic_id,
+            rungs: result.session.rungs,
+            phase: result.session.phase,
+            status: result.session.status,
+            help_ladder: result.session.help_ladder,
+            current_group: result.session.current_group,
+            pending_question: result.session.pending_question,
+            struggled: result.session.struggled,
+            said_once: result.session.said_once,
+            survival_used: result.session.survival_used,
+            suggested_words: result.session.suggested_words,
+            facts: result.session.facts,
+            free_step: result.session.free_step,
+            character_id: result.session.character_id,
+          },
+          character_id: result.session.character_id ?? topic.character_id,
+        });
+      }
+
       const threadDoc = loadThreadTopic(topic.id);
       const pendingLine = currentNextLine(
         threadDoc,
@@ -91,6 +140,7 @@ export async function POST(req: Request) {
             }
           : null,
         warm_lines: authoredLinesForWarm(threadDoc),
+        open_mode: false,
         session: {
           id: result.session.id,
           module: result.session.module,
@@ -106,8 +156,10 @@ export async function POST(req: Request) {
           survival_used: result.session.survival_used,
           suggested_words: result.session.suggested_words,
           facts: result.session.facts,
+          free_step: result.session.free_step,
+          character_id: result.session.character_id,
         },
-        character_id: topic.character_id,
+        character_id: result.session.character_id ?? topic.character_id,
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'start failed';

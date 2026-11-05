@@ -3,6 +3,8 @@ import type { ConvoSession } from './types';
 export type ConvoSessionStore = {
   findById(id: string): Promise<ConvoSession | null>;
   findOpen(userId: string, packId: string): Promise<ConvoSession | null>;
+  /** Open free-chat topic ids for a user (practice picker «كمّل»). */
+  findOpenFreeTopicIds?(userId: string): Promise<string[]>;
   create(session: ConvoSession): Promise<ConvoSession>;
   save(session: ConvoSession): Promise<ConvoSession>;
 };
@@ -29,6 +31,21 @@ export class MemoryConvoSessionStore implements ConvoSessionStore {
       }
     }
     return null;
+  }
+
+  async findOpenFreeTopicIds(userId: string): Promise<string[]> {
+    const ids: string[] = [];
+    for (const s of this.byId.values()) {
+      if (
+        s.user_id === userId &&
+        s.module === 'free' &&
+        s.status === 'open' &&
+        s.topic_id
+      ) {
+        ids.push(s.topic_id);
+      }
+    }
+    return ids;
   }
 
   async create(session: ConvoSession): Promise<ConvoSession> {

@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { getLangifyUserFirstName } from '@/lib/langifyRead';
 import {
   freeTopicById,
+  isOpenTopicId,
   loadThreadTopic,
   type FreeTopic,
 } from '@/lib/v2/convo/topics';
@@ -37,7 +38,7 @@ async function resumeFree(
     existing.paused_for_pack_id != null
       ? { ...existing, paused_for_pack_id: null }
       : existing;
-  if (cleared.pending_question) {
+  if (cleared.pending_question && !isOpenTopicId(topic.id) && cleared.free_step.kind !== 'open') {
     const doc = loadThreadTopic(topic.id);
     const pending = currentNextLine(
       doc,

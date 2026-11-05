@@ -1,5 +1,6 @@
-import { FreeTopicsScreen } from '@/components/v2/convo';
+import { redirect } from 'next/navigation';
 
+/** Legacy free catalogue → practice picker (Batch 10). */
 export default function FreeTopicsPage() {
-  return <FreeTopicsScreen />;
+  redirect('/talk/practice');
 }

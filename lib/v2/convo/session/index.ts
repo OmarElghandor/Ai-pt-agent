@@ -44,9 +44,10 @@ export {
 
 export {
   freePackId,
-  freeOpeningLine,
   buildFreeOpeningBubbles,
+  buildOpenOpeningBubbles,
   createFreeConvoSessionDoc,
+  openModeOpeningChips,
 } from './freeInit';
 
 export {
