@@ -1,5 +1,6 @@
 import {
   buildFreeReactionPrompt,
+  buildOpenConvoPrompt,
   estimateConvoPromptTokens,
   freePromptPartsToMessages,
 } from '@/lib/v2/convo/prompt';
@@ -9,7 +10,12 @@ import {
   visibleFreeStreamText,
 } from '@/lib/v2/convo/output/parseFree';
 import {
+  parseOpenConvoTurn,
+  visibleOpenStreamText,
+} from '@/lib/v2/convo/output/parseOpen';
+import {
   freeTopicById,
+  isOpenTopicId,
   loadThreadTopic,
   requirePersona,
   type FreeTopic,
@@ -29,6 +35,7 @@ import {
   isLearnerQuestionToCharacter,
   isNonLearningRequest,
   NON_LEARNING_COACH_EG,
+  pickOpenFallback,
   pushFreeFact,
   THREADS_DONE_COACH_EG,
   type FreeNextLine,
@@ -40,6 +47,8 @@ import type {
   ConvoTurnStreamEvent,
 } from './types';
 
+const OPEN_PARTNER_IDS = new Set(['ines', 'tiago', 'nour']);
+
 export type RunFreeConvoTurnInput = {
   session: ConvoSession;
   learnerText: string;
@@ -50,6 +59,8 @@ export type RunFreeConvoTurnInput = {
   /** When true, learner used ساعدني أرد chips this turn. */
   assisted?: boolean;
   coachCaller?: ConvoCoachCaller;
+  /** Optional partner switch (أي حاجة header). */
+  characterId?: string;
 };
 
 function pushExchange(
@@ -175,10 +186,107 @@ async function callFreeModel(opts: {
   };
 }
 
+async function callOpenModel(opts: {
+  model: ConvoStreamModel;
+  system: string;
+  prompt: string;
+  emit: (event: ConvoTurnStreamEvent) => void;
+  knownWords?: string[];
+  fallbackIndex?: number;
+}): Promise<{
+  pt: string;
+  ar: string;
+  frame_tl: string;
+  hint_eg: string;
+  chips: string[];
+  unknownWords: string[];
+  metricsPartial: Pick<
+    ConvoTurnMetrics,
+    'ttft_ms' | 'input_tokens' | 'cached_input_tokens' | 'output_tokens'
+  >;
+}> {
+  const { model, system, prompt, emit } = opts;
+  let rawAcc = '';
+  let visibleAcc = '';
+  const onChunk = (chunk: string) => {
+    rawAcc += chunk;
+    const nextVisible = visibleOpenStreamText(rawAcc);
+    if (nextVisible.length > visibleAcc.length) {
+      const delta = nextVisible.slice(visibleAcc.length);
+      visibleAcc = nextVisible;
+      if (delta) emit({ type: 'reaction_delta', text: delta });
+    }
+  };
+
+  const streamFn = model.stream?.bind(model) ?? model.complete.bind(model);
+  let result = await streamFn({
+    system,
+    prompt,
+    maxTokens: 220,
+    onChunk,
+  });
+
+  let parsed = parseOpenConvoTurn(result.text, {
+    knownWords: opts.knownWords,
+  });
+  if (parsed.decision === 'regenerate' && parsed.regenerateReason) {
+    rawAcc = '';
+    visibleAcc = '';
+    result = await streamFn({
+      system,
+      prompt,
+      maxTokens: 220,
+      regenerateReason: parsed.regenerateReason,
+      onChunk,
+    });
+    parsed = parseOpenConvoTurn(result.text, {
+      knownWords: opts.knownWords,
+    });
+  }
+
+  if (parsed.decision !== 'ok') {
+    const fb = pickOpenFallback(opts.fallbackIndex ?? 0);
+    const stem = parsed.ptWithoutQuestion || parsed.pt || 'Hmm.';
+    parsed = {
+      ...parsed,
+      pt: `${stem} ${fb.tl}`.replace(/\s+/g, ' ').trim(),
+      ar: parsed.ar || fb.ar,
+      frame_tl: fb.frame.tl,
+      hint_eg: fb.frame.eg,
+      chips: fb.frame.chips,
+      decision: 'ok',
+      issues: [],
+    };
+  }
+
+  const inputTokens =
+    result.usage?.inputTokens ??
+    estimateConvoPromptTokens(`${system}\n${prompt}`);
+  const cachedInputTokens =
+    typeof result.usage?.cachedInputTokens === 'number'
+      ? result.usage.cachedInputTokens
+      : null;
+  const outputTokens =
+    result.usage?.outputTokens ?? estimateConvoPromptTokens(result.text);
+
+  return {
+    pt: parsed.pt,
+    ar: parsed.ar,
+    frame_tl: parsed.frame_tl,
+    hint_eg: parsed.hint_eg,
+    chips: parsed.chips,
+    unknownWords: parsed.unknownWords,
+    metricsPartial: {
+      ttft_ms: result.ttftMs,
+      input_tokens: inputTokens,
+      cached_input_tokens: cachedInputTokens,
+      output_tokens: outputTokens,
+    },
+  };
+}
+
 /**
- * One Module C free-chat turn (Batch 9 C2).
- * Code owns the next authored line; the model only reacts (prompt still
- * transitional until C4).
+ * One Module C free-chat turn (Batch 9 threads + Batch 10 open mode).
  */
 export async function runFreeConvoTurn(
   input: RunFreeConvoTurnInput,
@@ -190,7 +298,18 @@ export async function runFreeConvoTurn(
 
   const topic = input.topic ?? freeTopicById(topicId);
   if (!topic) throw new Error(`Unknown free topic: ${topicId}`);
-  const threadDoc = loadThreadTopic(topic.id);
+
+  if (
+    input.characterId &&
+    OPEN_PARTNER_IDS.has(input.characterId) &&
+    (isOpenTopicId(topic.id) || session.free_step.kind === 'open')
+  ) {
+    session.character_id = input.characterId;
+  }
+
+  const inOpenMode =
+    isOpenTopicId(topic.id) || session.free_step.kind === 'open';
+  const threadDoc = inOpenMode ? null : loadThreadTopic(topic.id);
 
   const emit = input.emit;
   let metrics: ConvoTurnMetrics = {
@@ -274,12 +393,27 @@ export async function runFreeConvoTurn(
     }
     return finish(true);
   }
-  const pendingLine = currentNextLine(
-    threadDoc,
-    session.thread_index,
-    session.free_step,
-    topic,
-  );
+  const pendingLine = inOpenMode
+    ? {
+        line_id: `${topic.id}.open`,
+        tl: '',
+        ar: '',
+        bubble_tl: '',
+        bubble_ar: '',
+        frame: session.suggested_words.length
+          ? {
+              tl: 'Quero falar de ___.',
+              eg: 'قول عايز تتكلم عن إيه',
+              chips: session.suggested_words.slice(0, 4),
+            }
+          : undefined,
+      }
+    : currentNextLine(
+        threadDoc!,
+        session.thread_index,
+        session.free_step,
+        topic,
+      );
 
   if (
     sideKind === 'arabic_answer' ||
@@ -311,12 +445,210 @@ export async function runFreeConvoTurn(
     return finish(true);
   }
 
+  // —— Open mode (أي حاجة / after threads) ——
+  if (inOpenMode) {
+    session.free_step = { kind: 'open' };
+    let eventLine = learnerText
+      ? 'learner replied; continue the open chat'
+      : 'conversation started; ask about anything';
+    if (learnerText && isLearnerQuestionToCharacter(learnerText)) {
+      eventLine = 'learner asked you a question; answer briefly then ask one open question';
+    } else if (session.assisted) {
+      eventLine = 'learner used the help chips';
+    }
+    if (learnerText) {
+      pushExchange(session, 'learner', learnerText);
+      const fact = extractFreeFact({
+        learnerText,
+        hints: session.suggested_words.slice(0, 8),
+      });
+      session.facts = pushFreeFact(session.facts, fact);
+    }
+
+    const characterId = session.character_id ?? topic.character_id;
+    const persona = requirePersona(characterId);
+    const topicTitle = isOpenTopicId(topic.id)
+      ? 'open chat'
+      : topic.title_tl;
+    const promptBuilt = buildOpenConvoPrompt({
+      module: 'free',
+      pack: null,
+      freeTopicTitle: topicTitle,
+      facts: session.facts,
+      event: {
+        verdict: 'correct',
+        item_id: '',
+        question_id: session.pending_question?.id ?? '',
+        question_kind: 'open',
+        phase: session.phase,
+      },
+      eventLine,
+      candidates: [],
+      lastExchanges: session.last_exchanges,
+      learnerAnswer: learnerText || '(ready)',
+      personaJson: JSON.stringify(persona),
+      nextLineTl: '',
+    });
+    const { system, prompt } = freePromptPartsToMessages(promptBuilt);
+    const modelOut = await callOpenModel({
+      model: input.model,
+      system,
+      prompt,
+      emit,
+      knownWords: session.suggested_words,
+      fallbackIndex: session.threads_done.length + session.last_exchanges.length,
+    });
+    metrics = { ...metrics, ...modelOut.metricsPartial };
+
+    if (modelOut.pt) {
+      pushExchange(session, 'character', modelOut.pt);
+    }
+    const lineId = `${topic.id}.open.${Date.now()}`;
+    session.last_line_id = lineId;
+    session.pending_question = {
+      id: lineId,
+      kind: 'open',
+      item_id: lineId,
+    };
+    session.assisted = false;
+    if (modelOut.chips.length) {
+      session.suggested_words = [
+        ...modelOut.chips,
+        ...session.suggested_words,
+      ].slice(0, 15);
+    }
+
+    if (modelOut.ar) {
+      emit({ type: 'bubble_ar', ar: modelOut.ar });
+    }
+    emit({
+      type: 'question',
+      id: lineId,
+      tl: modelOut.pt,
+      kind: 'open',
+      item_id: lineId,
+      audio_key: `free:${topic.id}:${lineId}`,
+      ...(modelOut.unknownWords.length
+        ? { unknown_words: modelOut.unknownWords }
+        : {}),
+    });
+    emit({
+      type: 'free_frame',
+      tl: modelOut.frame_tl,
+      eg: modelOut.hint_eg,
+      chips: modelOut.chips,
+    });
+    return finish(true);
+  }
+
   const current = currentNextLine(
-    threadDoc,
+    threadDoc!,
     session.thread_index,
     session.free_step,
     topic,
   );
+
+  // If this answer finishes the last thread, hand off to open mode now.
+  if (learnerText) {
+    const preview = advanceAfterAnswer({
+      doc: threadDoc!,
+      topic,
+      thread_index: session.thread_index,
+      step: session.free_step,
+      threads_done: session.threads_done,
+      learnerText,
+    });
+    if (preview.step.kind === 'open') {
+      closeWithFact(session, current, learnerText);
+      session.thread_index = preview.thread_index;
+      session.free_step = { kind: 'open' };
+      session.threads_done = preview.threads_done;
+      applyNextLine(session, preview.next);
+      if (!session.coach_recent_ids.includes('threads_done_open')) {
+        session.coach_recent_ids = [
+          ...session.coach_recent_ids,
+          'threads_done_open',
+        ].slice(-8);
+        emit({
+          type: 'coach',
+          id: 'threads_done_open',
+          eg: THREADS_DONE_COACH_EG,
+          moment: 'threads_done_open',
+        });
+      }
+      pushExchange(session, 'learner', learnerText);
+      let eventLine = 'learner finished the topic threads; continue in open chat';
+      if (isLearnerQuestionToCharacter(learnerText)) {
+        eventLine =
+          'learner asked you a question; answer briefly then ask one open question';
+      }
+      const characterId = session.character_id ?? topic.character_id;
+      const persona = requirePersona(characterId);
+      const promptBuilt = buildOpenConvoPrompt({
+        module: 'free',
+        pack: null,
+        freeTopicTitle: topic.title_tl,
+        facts: session.facts,
+        event: {
+          verdict: 'correct',
+          item_id: '',
+          question_id: session.pending_question?.id ?? '',
+          question_kind: 'open',
+          phase: session.phase,
+        },
+        eventLine,
+        candidates: [],
+        lastExchanges: session.last_exchanges,
+        learnerAnswer: learnerText,
+        personaJson: JSON.stringify(persona),
+        nextLineTl: '',
+      });
+      const { system, prompt } = freePromptPartsToMessages(promptBuilt);
+      const modelOut = await callOpenModel({
+        model: input.model,
+        system,
+        prompt,
+        emit,
+        knownWords: session.suggested_words,
+        fallbackIndex: session.threads_done.length,
+      });
+      metrics = { ...metrics, ...modelOut.metricsPartial };
+      if (modelOut.pt) pushExchange(session, 'character', modelOut.pt);
+      const lineId = `${topic.id}.open.${Date.now()}`;
+      session.last_line_id = lineId;
+      session.pending_question = {
+        id: lineId,
+        kind: 'open',
+        item_id: lineId,
+      };
+      session.assisted = false;
+      if (modelOut.chips.length) {
+        session.suggested_words = [
+          ...modelOut.chips,
+          ...session.suggested_words,
+        ].slice(0, 15);
+      }
+      if (modelOut.ar) emit({ type: 'bubble_ar', ar: modelOut.ar });
+      emit({
+        type: 'question',
+        id: lineId,
+        tl: modelOut.pt,
+        kind: 'open',
+        item_id: lineId,
+        audio_key: `free:${topic.id}:${lineId}`,
+        ...(modelOut.unknownWords.length
+          ? { unknown_words: modelOut.unknownWords }
+          : {}),
+      });
+      emit({
+        type: 'free_frame',
+        tl: modelOut.frame_tl,
+        eg: modelOut.hint_eg,
+        chips: modelOut.chips,
+      });
+      return finish(true);
+    }
+  }
 
   let eventLine = learnerText
     ? 'learner replied; continue the free chat'
@@ -335,25 +667,17 @@ export async function runFreeConvoTurn(
   }
 
   // Preview the authored next line for NEXT LINE (after this answer).
-  const OPEN_NEXT =
-    'You ask the next question yourself: open or either/or, never yes/no, about what the learner just said.';
-  let nextLinePreview =
-    session.free_step.kind === 'open' ? OPEN_NEXT : current.bubble_tl;
-  let enteringOpen = false;
+  let nextLinePreview = current.bubble_tl;
   if (learnerText) {
     const preview = advanceAfterAnswer({
-      doc: threadDoc,
+      doc: threadDoc!,
       topic,
       thread_index: session.thread_index,
       step: session.free_step,
       threads_done: session.threads_done,
       learnerText,
     });
-    enteringOpen = Boolean(preview.entered_open);
-    nextLinePreview =
-      preview.step.kind === 'open'
-        ? OPEN_NEXT
-        : preview.next.bubble_tl || OPEN_NEXT;
+    nextLinePreview = preview.next.bubble_tl;
   }
 
   const persona = requirePersona(topic.character_id);
@@ -397,7 +721,7 @@ export async function runFreeConvoTurn(
   if (learnerText) {
     closeWithFact(session, current, learnerText);
     const advanced = advanceAfterAnswer({
-      doc: threadDoc,
+      doc: threadDoc!,
       topic,
       thread_index: session.thread_index,
       step: session.free_step,
@@ -409,21 +733,6 @@ export async function runFreeConvoTurn(
     session.threads_done = advanced.threads_done;
     nextLine = advanced.next;
     applyNextLine(session, nextLine);
-    if (
-      (advanced.entered_open || enteringOpen) &&
-      !session.coach_recent_ids.includes('threads_done_open')
-    ) {
-      session.coach_recent_ids = [
-        ...session.coach_recent_ids,
-        'threads_done_open',
-      ].slice(-8);
-      emit({
-        type: 'coach',
-        id: 'threads_done_open',
-        eg: THREADS_DONE_COACH_EG,
-        moment: 'threads_done_open',
-      });
-    }
   } else {
     nextLine = current;
     applyNextLine(session, nextLine);

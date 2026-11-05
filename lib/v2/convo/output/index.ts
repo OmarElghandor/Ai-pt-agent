@@ -29,3 +29,13 @@ export {
   type ParseFreeConvoResult,
   type FreeParseExtraIssue,
 } from './parseFree';
+
+export {
+  parseOpenConvoTurn,
+  splitOpenMarkers,
+  visibleOpenStreamText,
+  isYesNoQuestion,
+  stripTrailingQuestion,
+  type ParseOpenConvoResult,
+  type OpenParseIssue,
+} from './parseOpen';

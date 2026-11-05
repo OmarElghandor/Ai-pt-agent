@@ -13,6 +13,12 @@ import type { TalkBubble } from './types';
 
 const ACCENTS = ['ã', 'õ', 'ç', 'á', 'é', 'í', 'ó', 'ú', 'â', 'ê', 'ô', 'à'];
 
+const PARTNERS = [
+  { id: 'ines', label: 'Inês' },
+  { id: 'tiago', label: 'Tiago' },
+  { id: 'nour', label: 'Nour' },
+] as const;
+
 function newId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
@@ -38,6 +44,8 @@ export function FreeTalkSession({ topicId }: Props) {
   } | null>(null);
   const [helpOpen, setHelpOpen] = useState(false);
   const [assisted, setAssisted] = useState(false);
+  const [openMode, setOpenMode] = useState(topicId === 'open');
+  const [characterId, setCharacterId] = useState('ines');
   const scrollRef = useRef<HTMLDivElement>(null);
   const streamBubbleId = useRef<string | null>(null);
 
@@ -52,6 +60,9 @@ export function FreeTalkSession({ topicId }: Props) {
 
   const applyEvent = useCallback((event: ConvoTurnStreamEvent) => {
     if (event.type === 'coach') {
+      if (event.id === 'threads_done_open') {
+        setOpenMode(true);
+      }
       if (event.id.startsWith('open_pack:')) {
         const packId = event.id.slice('open_pack:'.length);
         const hrefLine = event.eg.split('\n').find((l) => l.startsWith('/'));
@@ -179,12 +190,15 @@ export function FreeTalkSession({ topicId }: Props) {
             session_id: sessionId,
             text: learnerText,
             ...(assisted ? { assisted: true } : {}),
+            ...(openMode ? { character_id: characterId } : {}),
           }),
         });
         if (!res.ok || !res.body) {
           throw new Error(`turn ${res.status}`);
         }
-        await readConvoNdjson(res.body, applyEvent);
+        for await (const event of readConvoNdjson(res.body)) {
+          applyEvent(event);
+        }
         setAssisted(false);
         setHelpOpen(false);
       } catch (e) {
@@ -193,7 +207,7 @@ export function FreeTalkSession({ topicId }: Props) {
         setBusy(false);
       }
     },
-    [sessionId, busy, applyEvent, assisted],
+    [sessionId, busy, applyEvent, assisted, openMode, characterId],
   );
 
   useEffect(() => {
@@ -224,14 +238,19 @@ export function FreeTalkSession({ topicId }: Props) {
             chips: string[];
           } | null;
           warm_lines?: string[];
+          open_mode?: boolean;
+          character_id?: string;
         };
         if (cancelled) return;
         setSessionId(data.session_id);
         setTitleTl(data.title_tl ?? '');
         setTitleAr(data.title_ar ?? '');
+        setOpenMode(Boolean(data.open_mode) || topicId === 'open');
+        if (data.character_id) setCharacterId(data.character_id);
         if (data.current_frame) setFrame(data.current_frame);
-        // Warm authored TTS in the background (fire-and-forget).
-        for (const line of (data.warm_lines ?? []).slice(0, 24)) {
+        // Warm a few authored lines only — avoid flooding Network on start.
+        const warm = (data.warm_lines ?? []).slice(0, 3);
+        for (const line of warm) {
           void fetch('/api/tts', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -288,7 +307,7 @@ export function FreeTalkSession({ topicId }: Props) {
     <div className="mx-auto flex h-[100dvh] w-full max-w-[390px] flex-col bg-v2-paper">
       <header className="flex items-center gap-3 border-b border-v2-line/40 px-3 py-3">
         <Link
-          href="/talk/free"
+          href="/talk/practice"
           className="flex h-10 w-10 items-center justify-center rounded-full bg-v2-card text-v2-primary"
           aria-label="رجوع"
         >
@@ -307,6 +326,23 @@ export function FreeTalkSession({ topicId }: Props) {
             </p>
           ) : null}
         </div>
+        {openMode || topicId === 'open' ? (
+          <label className="shrink-0">
+            <span className="sr-only">الشريك</span>
+            <select
+              className="rounded-v2-chip border border-v2-line/50 bg-v2-card px-2 py-1 font-[family-name:var(--font-v2-target)] text-sm text-v2-primary"
+              value={characterId}
+              onChange={(e) => setCharacterId(e.target.value)}
+              dir="ltr"
+            >
+              {PARTNERS.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : null}
       </header>
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-3 py-4">

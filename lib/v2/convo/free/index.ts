@@ -45,3 +45,10 @@ export {
   handleFreeArabicSide,
   type FreeSideKind,
 } from './sideChannel';
+
+export {
+  clearOpenFallbackCache,
+  loadOpenFallback,
+  pickOpenFallback,
+  type OpenFallbackQuestion,
+} from './openFallback';

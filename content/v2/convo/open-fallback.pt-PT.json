@@ -1,0 +1,106 @@
+{
+  "target_lang": "pt-PT",
+  "version": 1,
+  "questions": [
+    {
+      "id": "fb1",
+      "tl": "Conta-me mais!",
+      "ar": "احكِ لي المزيد!",
+      "frame": {
+        "tl": "___.",
+        "eg": "كمّل الجملة بأي حاجة",
+        "chips": ["É fixe", "É difícil", "Gosto muito"]
+      }
+    },
+    {
+      "id": "fb2",
+      "tl": "E tu, o que achas?",
+      "ar": "وأنت، ما رأيك؟",
+      "frame": {
+        "tl": "Acho que ___.",
+        "eg": "قول رأيك",
+        "chips": ["Acho que sim", "Acho que não", "Não sei"]
+      }
+    },
+    {
+      "id": "fb3",
+      "tl": "Porquê?",
+      "ar": "لماذا؟",
+      "frame": {
+        "tl": "Porque ___.",
+        "eg": "قول السبب",
+        "chips": ["Porque gosto", "Porque é perto", "Porque é barato"]
+      }
+    },
+    {
+      "id": "fb4",
+      "tl": "E depois, o que aconteceu?",
+      "ar": "وبعدين، ماذا حدث؟",
+      "frame": {
+        "tl": "Depois ___.",
+        "eg": "قول اللي حصل بعد كده",
+        "chips": ["Depois fui para casa", "Depois comi", "Depois dormi"]
+      }
+    },
+    {
+      "id": "fb5",
+      "tl": "Com quem foste?",
+      "ar": "مع من ذهبت؟",
+      "frame": {
+        "tl": "Fui com ___.",
+        "eg": "قول مع مين",
+        "chips": ["Fui com um amigo", "Fui sozinho", "Fui com a família"]
+      }
+    },
+    {
+      "id": "fb6",
+      "tl": "Onde foi isso?",
+      "ar": "أين كان ذلك؟",
+      "frame": {
+        "tl": "Foi em ___.",
+        "eg": "قول فين",
+        "chips": ["Foi em Lisboa", "Foi em casa", "Foi no trabalho"]
+      }
+    },
+    {
+      "id": "fb7",
+      "tl": "E como foi?",
+      "ar": "وكيف كان؟",
+      "frame": {
+        "tl": "Foi ___.",
+        "eg": "وصف اللي حصل",
+        "chips": ["Foi fixe", "Foi bom", "Foi cansativo"]
+      }
+    },
+    {
+      "id": "fb8",
+      "tl": "O que preferes?",
+      "ar": "ماذا تفضّل؟",
+      "frame": {
+        "tl": "Prefiro ___.",
+        "eg": "قول بتفضّل إيه",
+        "chips": ["Prefiro isto", "Prefiro aquilo", "Não sei"]
+      }
+    },
+    {
+      "id": "fb9",
+      "tl": "E no fim de semana?",
+      "ar": "وفي عطلة نهاية الأسبوع؟",
+      "frame": {
+        "tl": "No fim de semana ___.",
+        "eg": "قول بتعمل إيه في الويكند",
+        "chips": ["Descanso", "Vejo amigos", "Fico em casa"]
+      }
+    },
+    {
+      "id": "fb10",
+      "tl": "Queres falar de outra coisa?",
+      "ar": "هل تريد التحدث عن شيء آخر؟",
+      "frame": {
+        "tl": "Quero falar de ___.",
+        "eg": "قول عايز تتكلم عن إيه",
+        "chips": ["Sobre o meu dia", "Sobre a comida", "Sobre o trabalho"]
+      }
+    }
+  ]
+}

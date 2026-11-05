@@ -39,6 +39,7 @@ export async function POST(req: Request) {
     text?: string;
     assisted?: boolean;
     survival?: 'repeat' | 'slow' | 'nao_percebi';
+    character_id?: string;
   } | null;
   const sessionId = body?.session_id?.trim();
   if (!sessionId) {
@@ -72,6 +73,9 @@ export async function POST(req: Request) {
             model: createLiveConvoStreamModel(),
             emit,
             ...(body?.assisted ? { assisted: true } : {}),
+            ...(body?.character_id
+              ? { characterId: body.character_id }
+              : {}),
           });
           void metrics;
         } else {
