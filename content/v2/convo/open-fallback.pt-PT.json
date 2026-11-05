@@ -1,0 +1,16 @@
+{
+  "target_lang": "pt-PT",
+  "note": "Fallback questions for open mode when the model's question fails its checks twice. tu form. Code picks one not used in the last 5 turns.",
+  "questions": [
+    { "id": "open.f01", "tl": "Conta-me mais!", "ar": "أخبرني المزيد!", "frame": { "tl": "___.", "eg": "احكي أكتر بجملة بسيطة", "chips": ["É muito bom.", "É difícil.", "Gosto muito."] } },
+    { "id": "open.f02", "tl": "E tu, o que achas?", "ar": "وأنت، ما رأيك؟", "frame": { "tl": "Acho que ___.", "eg": "رأيك: Acho que…", "chips": ["Acho que é bom.", "Acho que é difícil.", "Não sei."] } },
+    { "id": "open.f03", "tl": "Porquê?", "ar": "لماذا؟", "frame": { "tl": "Porque ___.", "eg": "ليه: Porque…", "chips": ["Porque gosto.", "Porque é fácil.", "Porque não tenho tempo."] } },
+    { "id": "open.f04", "tl": "E depois, o que aconteceu?", "ar": "وبعد ذلك، ماذا حدث؟", "frame": { "tl": "Depois ___.", "eg": "وبعدين حصل إيه: Depois…", "chips": ["Depois fui para casa.", "Depois comi.", "Depois dormi."] } },
+    { "id": "open.f05", "tl": "Como é isso no Egito?", "ar": "كيف يكون ذلك في مصر؟", "frame": { "tl": "No Egito ___.", "eg": "في مصر: No Egito…", "chips": ["No Egito é diferente.", "No Egito é igual.", "No Egito é mais barato."] } },
+    { "id": "open.f06", "tl": "Preferes isso aqui ou no Egito?", "ar": "هل تفضل ذلك هنا أم في مصر؟", "frame": { "tl": "Prefiro ___.", "eg": "بتفضل فين: Prefiro aqui / no Egito", "chips": ["Prefiro aqui.", "Prefiro no Egito.", "Os dois."] } },
+    { "id": "open.f07", "tl": "Com quem fazes isso?", "ar": "مع من تفعل ذلك؟", "frame": { "tl": "Com ___.", "eg": "مع مين: Com…", "chips": ["Com amigos.", "Com a minha família.", "Com ninguém."] } },
+    { "id": "open.f08", "tl": "Quando fazes isso: de manhã ou à noite?", "ar": "متى تفعل ذلك: في الصباح أم في الليل؟", "frame": { "tl": "___.", "eg": "الصبح = de manhã، بالليل = à noite", "chips": ["De manhã.", "À noite.", "Ao fim de semana."] } },
+    { "id": "open.f09", "tl": "E como te sentes com isso?", "ar": "وكيف تشعر حيال ذلك؟", "frame": { "tl": "Sinto-me ___.", "eg": "حاسس بإيه: Sinto-me bem / feliz / cansado", "chips": ["Sinto-me bem.", "Sinto-me feliz.", "Mais ou menos."] } },
+    { "id": "open.f10", "tl": "Sobre o que queres falar agora?", "ar": "عن ماذا تريد أن تتحدث الآن؟", "frame": { "tl": "Quero falar de ___.", "eg": "عايز تتكلم عن إيه: Quero falar de…", "chips": ["Quero falar do trabalho.", "Quero falar de comida.", "Quero falar do meu dia."] } }
+  ]
+}
