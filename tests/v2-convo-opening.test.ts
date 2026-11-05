@@ -50,4 +50,17 @@ describe('v2 free chat · C3 opening', () => {
     });
     assert.equal(tl, 'Olá Sara! Eu moro em Alfama. E tu, onde moras?');
   });
+
+  it('open mode opening fills learner name (E6)', async () => {
+    const store = new MemoryConvoSessionStore();
+    const started = await startFreeConvoSession({
+      userId: 'open-name',
+      topicId: 'open',
+      store,
+      newId: () => 'open-name-1',
+      learnerName: 'Omar',
+    });
+    assert.match(started.opening.character.tl, /Omar/);
+    assert.doesNotMatch(started.opening.character.tl, /\{name\}/);
+  });
 });

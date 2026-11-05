@@ -34,6 +34,7 @@ async function resumeFree(
   existing: ConvoSession,
   topic: FreeTopic,
   store: ConvoSessionStore,
+  learnerName?: string | null,
 ): Promise<StartConvoResult> {
   const cleared =
     existing.paused_for_pack_id != null
@@ -60,7 +61,7 @@ async function resumeFree(
     cleared !== existing ? await store.save(cleared) : cleared;
   return {
     session,
-    opening: buildFreeOpeningBubbles(topic),
+    opening: buildFreeOpeningBubbles(topic, { learnerName }),
     resumed: true,
   };
 }
@@ -89,13 +90,13 @@ export async function startFreeConvoSession(
       existing.module === 'free' &&
       existing.topic_id === topic.id
     ) {
-      return resumeFree(existing, topic, opts.store);
+      return resumeFree(existing, topic, opts.store, learnerName);
     }
   }
 
   const open = await opts.store.findOpen(opts.userId, packId);
   if (open && open.module === 'free') {
-    return resumeFree(open, topic, opts.store);
+    return resumeFree(open, topic, opts.store, learnerName);
   }
 
   const id = opts.newId?.() ?? randomUUID();
