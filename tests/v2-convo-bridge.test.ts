@@ -37,6 +37,32 @@ describe('v2 free chat · topic request (T7.5)', () => {
     );
   });
 
+  it('classifies wide Arabic learn phrasings as topic_request (E1)', () => {
+    const phrasings = [
+      'عايز أتعلم الاتجاهات',
+      'عايز اعلم عن الاتجاهات',
+      'عاوز اتعلم الاتجاهات',
+      'علمني الاتجاهات',
+      'علّمني الاتجاهات',
+      'عايز أفهم الاتجاهات',
+      'عايز أعرف أقول الاتجاهات',
+      'محتاج أتعلم الاتجاهات',
+      'نفسي أتعلم الاتجاهات',
+      'فهمني الاتجاهات',
+      'إزاي أقول الاتجاهات',
+    ];
+    for (const p of phrasings) {
+      assert.equal(
+        classifySideChannel(p),
+        'topic_request',
+        `expected topic_request for: ${p}`,
+      );
+    }
+    // Language question about a word stays language_question (not a topic title)
+    assert.equal(classifySideChannel('ازاي أقول شمال؟'), 'language_question');
+    assert.equal(classifySideChannel('ازاي أقول مع رز؟'), 'language_question');
+  });
+
   it('matches directions from the topics catalogue', () => {
     const matched = matchTopicRequest('عايز أتعلم الاتجاهات');
     assert.ok(matched);
@@ -44,6 +70,13 @@ describe('v2 free chat · topic request (T7.5)', () => {
     const coach = topicRequestCoachEg(matched);
     assert.match(coach.eg, /الاتجاهات|المترو/);
     assert.ok(coach.href?.includes('talk'));
+  });
+
+  it('matches directions for unhamzed عايز اعلم عن الاتجاهات (E1)', () => {
+    const matched = matchTopicRequest('عايز اعلم عن الاتجاهات');
+    assert.ok(matched);
+    assert.equal(matched!.pack_id, 'pt-PT.day-18');
+    assert.equal(classifySideChannel('عايز اعلم عن الاتجاهات'), 'topic_request');
   });
 
   it('logs unmatched requests in memory', async () => {
@@ -76,7 +109,7 @@ describe('v2 free chat · topic request (T7.5)', () => {
     );
   });
 
-  it('pauses free chat and points at the directions pack', async () => {
+  it('keeps free chat open and emits a soft Learn CTA (batch 10)', async () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'br-2',
@@ -96,8 +129,15 @@ describe('v2 free chat · topic request (T7.5)', () => {
       model,
       emit: (e) => events.push(e),
     });
-    assert.equal(out.session.paused_for_pack_id, 'pt-PT.day-18');
+    // Soft CTA only — no forced pack jump
+    assert.equal(out.session.paused_for_pack_id, null);
     assert.equal(out.session.pending_question?.id, pendingBefore);
+    assert.equal(out.session.learn_suggest_done, true);
+    assert.ok(
+      events.some(
+        (e) => e.type === 'coach' && e.id === 'free_topic_request',
+      ),
+    );
     assert.ok(
       events.some(
         (e) => e.type === 'coach' && String(e.id).startsWith('open_pack:'),
@@ -117,10 +157,9 @@ describe('v2 free chat · lesson→free bridge (T7.5)', () => {
     assert.ok(pack.bridge.tl.length > 0);
   });
 
-  it('free → directions lesson → back to free restores pending', async () => {
+  it('soft Learn CTA leaves free session resumable without pause', async () => {
     const store = new MemoryConvoSessionStore();
 
-    // 1. Start free chat
     const freeStart = await startFreeConvoSession({
       userId: 'loop-u',
       topicId: 'comida',
@@ -130,20 +169,20 @@ describe('v2 free chat · lesson→free bridge (T7.5)', () => {
     const pendingFree = freeStart.session.pending_question?.id;
     assert.ok(pendingFree);
 
-    // 2. Topic request pauses free
     const model = createStubConvoStreamModel({
       byCandidate: () => 'Ok!',
     });
-    const paused = await runFreeConvoTurn({
+    const afterSuggest = await runFreeConvoTurn({
       session: freeStart.session,
       learnerText: 'عايز أتعلم الاتجاهات',
       store,
       model,
       emit: () => {},
     });
-    assert.equal(paused.session.paused_for_pack_id, 'pt-PT.day-18');
+    assert.equal(afterSuggest.session.paused_for_pack_id, null);
+    assert.equal(afterSuggest.session.learn_suggest_done, true);
 
-    // 3. Start lesson conversation (directions)
+    // Learner can still open the directions lesson separately
     const lesson = await startConvoSession({
       userId: 'loop-u',
       pack,
@@ -153,7 +192,6 @@ describe('v2 free chat · lesson→free bridge (T7.5)', () => {
     assert.equal(lesson.session.module, 'lesson');
     assert.equal(lesson.session.pack_id, 'pt-PT.day-18');
 
-    // Mark lesson done (simulate end)
     const doneLesson = {
       ...lesson.session,
       status: 'done' as const,
@@ -161,7 +199,6 @@ describe('v2 free chat · lesson→free bridge (T7.5)', () => {
     };
     await store.save(doneLesson);
 
-    // 4. Resume free chat — same pending angle, pause cleared
     const resumed = await startFreeConvoSession({
       userId: 'loop-u',
       topicId: 'comida',

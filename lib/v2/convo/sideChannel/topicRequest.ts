@@ -6,12 +6,15 @@ import {
 } from '@/lib/v2/convo/topics';
 import { talkHrefForTopic } from '@/lib/v2/convo/topics/suggestion';
 
+/**
+ * Matched against normalizeAr(text): hamza/diacritics already folded,
+ * so أتعلم and اعلم both become اتعلم / اعلم forms listed here.
+ */
 const TOPIC_REQUEST_RE =
-  /عايز(ة)?\s*أتعلم|عاوز(ة)?\s*أتعلم|أريد\s*أن\s*أتعلم|عايز\s*أتكلم\s*عن|هتعلّمني|هتعلمني/;
+  /(عايزه?|عاوزه?|محتاج(ه)?|نفسي)\s*(اتعلم|اعلم|افهم|اعرف)|اريد\s*ان\s*اتعلم|عايزه?\s*اتكلم\s*عن|هتعلمني|علمني|فهمني/;
 
-export function isTopicRequestText(text: string): boolean {
-  return TOPIC_REQUEST_RE.test(text.trim());
-}
+/** «إزاي أقول» + a catalogue topic/theme title (not word aliases like شمال). */
+const EZAY_AQOOL_RE = /ازاي\s*اقول|كيف\s*اقول/;
 
 function normalizeAr(s: string): string {
   return s
@@ -20,6 +23,31 @@ function normalizeAr(s: string): string {
     .replace(/ى/g, 'ي')
     .replace(/[\u064B-\u065F]/g, '')
     .toLowerCase();
+}
+
+function matchesTopicTitleNoun(text: string): boolean {
+  const file = loadTopicsFile();
+  const norm = normalizeAr(text);
+  for (const theme of file.themes) {
+    for (const topic of theme.topics) {
+      const ar = normalizeAr(topic.title_ar);
+      if (ar && norm.includes(ar)) return true;
+      const tl = topic.title_tl.toLowerCase();
+      if (tl && text.toLowerCase().includes(tl)) return true;
+    }
+    const themeAr = normalizeAr(theme.title_ar);
+    if (themeAr && norm.includes(themeAr)) return true;
+  }
+  return false;
+}
+
+export function isTopicRequestText(text: string): boolean {
+  const raw = text.trim();
+  if (!raw) return false;
+  const norm = normalizeAr(raw);
+  if (TOPIC_REQUEST_RE.test(norm)) return true;
+  if (EZAY_AQOOL_RE.test(norm) && matchesTopicTitleNoun(raw)) return true;
+  return false;
 }
 
 /**
