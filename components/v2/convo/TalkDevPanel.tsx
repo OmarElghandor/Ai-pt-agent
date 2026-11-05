@@ -14,6 +14,10 @@ export type TalkTurnMetrics = {
   stt_ms?: number | null;
   send_to_first_audio_ms?: number | null;
   reaction_tts_ms?: number | null;
+  /** Batch 10 E7 open-mode fallback */
+  open_used_fallback?: boolean;
+  open_turns?: number;
+  open_fallbacks?: number;
 };
 
 type Props = {
@@ -72,6 +76,16 @@ export function TalkDevPanel({
       ttsMs ?? metrics.reaction_tts_ms ?? 'n/a',
     ],
   ];
+
+  if (metrics.open_turns != null && metrics.open_turns > 0) {
+    const hits = metrics.open_fallbacks ?? 0;
+    const turns = metrics.open_turns;
+    const pct = Math.round((hits / turns) * 100);
+    rows.push([
+      'fallback',
+      `${hits}/${turns} (${pct}%)${metrics.open_used_fallback ? ' *' : ''}`,
+    ]);
+  }
 
   return (
     <aside

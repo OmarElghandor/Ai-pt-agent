@@ -742,6 +742,8 @@ const v2ConvoSessionSchema = new Schema(
     learn_suggest_group: { type: String, required: false, default: null },
     learn_suggest_count: { type: Number, required: false, default: 0 },
     learn_suggest_done: { type: Boolean, required: false, default: false },
+    open_turns: { type: Number, required: false, default: 0 },
+    open_fallbacks: { type: Number, required: false, default: 0 },
   },
   { timestamps: true, collection: 'v2_convo_sessions', _id: false },
 );

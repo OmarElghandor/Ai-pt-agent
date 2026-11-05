@@ -43,6 +43,8 @@ type ConvoSessionDocLean = {
   learn_suggest_group?: string | null;
   learn_suggest_count?: number;
   learn_suggest_done?: boolean;
+  open_turns?: number;
+  open_fallbacks?: number;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -81,6 +83,8 @@ function sessionFields(session: ConvoSession) {
     learn_suggest_group: session.learn_suggest_group,
     learn_suggest_count: session.learn_suggest_count,
     learn_suggest_done: session.learn_suggest_done,
+    open_turns: session.open_turns,
+    open_fallbacks: session.open_fallbacks,
   };
 }
 
@@ -125,6 +129,8 @@ function fromDoc(doc: ConvoSessionDocLean): ConvoSession {
     learn_suggest_group: doc.learn_suggest_group ?? null,
     learn_suggest_count: doc.learn_suggest_count ?? 0,
     learn_suggest_done: doc.learn_suggest_done ?? false,
+    open_turns: doc.open_turns ?? 0,
+    open_fallbacks: doc.open_fallbacks ?? 0,
     created_at: (doc.createdAt ?? new Date()).toISOString(),
     updated_at: (doc.updatedAt ?? new Date()).toISOString(),
   };

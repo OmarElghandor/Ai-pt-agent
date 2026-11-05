@@ -117,6 +117,8 @@ export function createConvoSessionDoc(opts: {
     learn_suggest_group: null,
     learn_suggest_count: 0,
     learn_suggest_done: false,
+    open_turns: 0,
+    open_fallbacks: 0,
     created_at: now,
     updated_at: now,
   };

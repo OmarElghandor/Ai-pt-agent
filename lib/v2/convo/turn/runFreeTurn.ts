@@ -208,6 +208,7 @@ async function callOpenModel(opts: {
   hint_eg: string;
   chips: string[];
   unknownWords: string[];
+  usedFallback: boolean;
   metricsPartial: Pick<
     ConvoTurnMetrics,
     'ttft_ms' | 'input_tokens' | 'cached_input_tokens' | 'output_tokens'
@@ -252,7 +253,9 @@ async function callOpenModel(opts: {
     });
   }
 
+  let usedFallback = false;
   if (parsed.decision !== 'ok') {
+    usedFallback = true;
     const fb = pickOpenFallback(opts.fallbackIndex ?? 0);
     const stem = parsed.ptWithoutQuestion || parsed.pt || 'Hmm.';
     parsed = {
@@ -284,6 +287,7 @@ async function callOpenModel(opts: {
     hint_eg: parsed.hint_eg,
     chips: parsed.chips,
     unknownWords: parsed.unknownWords,
+    usedFallback,
     metricsPartial: {
       ttft_ms: result.ttftMs,
       input_tokens: inputTokens,
@@ -538,7 +542,17 @@ export async function runFreeConvoTurn(
       knownWords: session.suggested_words,
       fallbackIndex: session.threads_done.length + session.last_exchanges.length,
     });
-    metrics = { ...metrics, ...modelOut.metricsPartial };
+    session.open_turns = (session.open_turns ?? 0) + 1;
+    if (modelOut.usedFallback) {
+      session.open_fallbacks = (session.open_fallbacks ?? 0) + 1;
+    }
+    metrics = {
+      ...metrics,
+      ...modelOut.metricsPartial,
+      open_used_fallback: modelOut.usedFallback,
+      open_turns: session.open_turns,
+      open_fallbacks: session.open_fallbacks ?? 0,
+    };
 
     if (modelOut.pt) {
       pushExchange(session, 'character', modelOut.pt);
@@ -658,7 +672,17 @@ export async function runFreeConvoTurn(
         knownWords: session.suggested_words,
         fallbackIndex: session.threads_done.length,
       });
-      metrics = { ...metrics, ...modelOut.metricsPartial };
+      session.open_turns = (session.open_turns ?? 0) + 1;
+      if (modelOut.usedFallback) {
+        session.open_fallbacks = (session.open_fallbacks ?? 0) + 1;
+      }
+      metrics = {
+        ...metrics,
+        ...modelOut.metricsPartial,
+        open_used_fallback: modelOut.usedFallback,
+        open_turns: session.open_turns,
+        open_fallbacks: session.open_fallbacks ?? 0,
+      };
       if (modelOut.pt) pushExchange(session, 'character', modelOut.pt);
       const lineId = `${topic.id}.open.${Date.now()}`;
       session.last_line_id = lineId;

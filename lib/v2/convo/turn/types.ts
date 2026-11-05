@@ -98,6 +98,11 @@ export type ConvoTurnStreamEvent =
       output_tokens: number;
       ttft_ms: number;
       total_ms: number;
+      /** Open-mode fallback bank used this turn (E7). */
+      open_used_fallback?: boolean;
+      /** Session open-turn counts for fallback rate. */
+      open_turns?: number;
+      open_fallbacks?: number;
     }
   | {
       type: 'done';
@@ -111,6 +116,9 @@ export type ConvoTurnMetrics = {
   output_tokens: number;
   ttft_ms: number;
   total_ms: number;
+  open_used_fallback?: boolean;
+  open_turns?: number;
+  open_fallbacks?: number;
 };
 
 export type ConvoStreamModelResult = {

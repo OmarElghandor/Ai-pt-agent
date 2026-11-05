@@ -106,6 +106,10 @@ export type ConvoSession = {
   learn_suggest_count: number;
   /** True after one Learn suggestion (or dismiss) — no more this session. */
   learn_suggest_done: boolean;
+  /** Open-mode turns this session (E7 fallback rate). */
+  open_turns: number;
+  /** Open-mode turns that used the fallback bank. */
+  open_fallbacks: number;
   created_at: string;
   updated_at: string;
 };

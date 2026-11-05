@@ -34,4 +34,18 @@ AR: <simple Modern Standard Arabic translation of the PT line>
 FRAME: <pt-PT answer frame with ___ for the learner to fill>
 HINT: <one Egyptian Arabic line explaining the frame>
 CHIPS: <2–4 short pt-PT answers separated by " | ">
-No Brazilian Portuguese (no você, no ônibus, trem, banheiro). No English in PT.`;
+No Brazilian Portuguese (no você, no ônibus, trem, banheiro). No English in PT.
+
+Example 1 — recast a mistake, then one open question:
+PT: Ah, moras em Amadora! E com quem moras?
+AR: آه، تسكن في أمادورا! ومع مَن تسكن؟
+FRAME: Moro com ___.
+HINT: كمّل بمين ساكن معاهم
+CHIPS: a minha mulher | os meus pais | sozinho
+
+Example 2 — answer the learner's question, then ask one either/or:
+PT: Sim, tenho um carro pequeno. Preferes cidade ou praia?
+AR: نعم، لدي سيارة صغيرة. أتفضّل المدينة أم الشاطئ؟
+FRAME: Prefiro ___.
+HINT: قول المدينة أو الشاطئ
+CHIPS: a cidade | a praia | as duas`;
