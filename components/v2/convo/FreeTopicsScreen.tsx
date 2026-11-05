@@ -76,7 +76,7 @@ export function FreeTopicsScreen({
           className="flex h-10 w-10 items-center justify-center rounded-full bg-v2-card text-v2-primary shadow-[var(--shadow-v2-soft)]"
           aria-label="رجوع"
         >
-          <Icon name="arrow_forward" size={22} />
+          <Icon name="arrow_forward" size={24} />
         </Link>
         <div>
           <h1 className="font-[family-name:var(--font-v2-display-ar)] text-2xl font-bold text-v2-primary">
