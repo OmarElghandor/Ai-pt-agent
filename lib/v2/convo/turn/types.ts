@@ -39,11 +39,14 @@ export type ConvoTurnStreamEvent =
       type: 'authored_append';
       tl: string;
       audio_key: string;
+      say?: string;
     }
   /** Free chat: full bubble Arabic (reaction AR + authored AR). */
   | {
       type: 'bubble_ar';
       ar: string;
+      /** Pronunciation for the full character bubble (E8). */
+      say?: string;
     }
   | {
       type: 'visual';

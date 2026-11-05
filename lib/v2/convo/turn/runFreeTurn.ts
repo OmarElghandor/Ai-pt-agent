@@ -49,6 +49,7 @@ import {
   matchLearnSuggest,
 } from '@/lib/v2/convo/free/learnSuggest';
 import type { ConvoCoachCaller } from '@/lib/v2/convo/sideChannel/coachCall';
+import { transliteratePtToSay } from '@/lib/v2/generation/say';
 import type {
   ConvoStreamModel,
   ConvoTurnMetrics,
@@ -578,8 +579,13 @@ export async function runFreeConvoTurn(
       chips: [...modelOut.chips],
     };
 
+    const say = modelOut.pt ? transliteratePtToSay(modelOut.pt) : undefined;
     if (modelOut.ar) {
-      emit({ type: 'bubble_ar', ar: modelOut.ar });
+      emit({
+        type: 'bubble_ar',
+        ar: modelOut.ar,
+        ...(say ? { say } : {}),
+      });
     }
     emit({
       type: 'question',
@@ -588,6 +594,7 @@ export async function runFreeConvoTurn(
       kind: 'open',
       item_id: lineId,
       audio_key: `free:${topic.id}:${lineId}`,
+      ...(say ? { say } : {}),
       ...(modelOut.unknownWords.length
         ? { unknown_words: modelOut.unknownWords }
         : {}),
@@ -697,7 +704,14 @@ export async function runFreeConvoTurn(
         eg: modelOut.hint_eg,
         chips: [...modelOut.chips],
       };
-      if (modelOut.ar) emit({ type: 'bubble_ar', ar: modelOut.ar });
+      const say = modelOut.pt ? transliteratePtToSay(modelOut.pt) : undefined;
+      if (modelOut.ar) {
+        emit({
+          type: 'bubble_ar',
+          ar: modelOut.ar,
+          ...(say ? { say } : {}),
+        });
+      }
       emit({
         type: 'question',
         id: lineId,
@@ -705,6 +719,7 @@ export async function runFreeConvoTurn(
         kind: 'open',
         item_id: lineId,
         audio_key: `free:${topic.id}:${lineId}`,
+        ...(say ? { say } : {}),
         ...(modelOut.unknownWords.length
           ? { unknown_words: modelOut.unknownWords }
           : {}),
@@ -837,11 +852,16 @@ export async function runFreeConvoTurn(
     }
   }
 
+  const say = characterExchange
+    ? transliteratePtToSay(characterExchange)
+    : undefined;
+
   if (authoredTl) {
     emit({
       type: 'authored_append',
       tl: authoredTl,
       audio_key: `free:${topic.id}:${nextLine.line_id}`,
+      ...(say ? { say } : {}),
     });
   }
 
@@ -850,7 +870,11 @@ export async function runFreeConvoTurn(
     .join(' ')
     .trim();
   if (bubbleAr) {
-    emit({ type: 'bubble_ar', ar: bubbleAr });
+    emit({
+      type: 'bubble_ar',
+      ar: bubbleAr,
+      ...(say ? { say } : {}),
+    });
   }
 
   // Keep a question event for older clients / tests that look for it.
@@ -861,6 +885,7 @@ export async function runFreeConvoTurn(
     kind: 'open',
     item_id: nextLine.line_id,
     audio_key: `free:${topic.id}:${nextLine.line_id}`,
+    ...(say ? { say } : {}),
     ...(modelOut.unknownWords.length
       ? { unknown_words: modelOut.unknownWords }
       : {}),

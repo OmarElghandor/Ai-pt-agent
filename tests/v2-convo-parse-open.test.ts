@@ -112,6 +112,10 @@ CHIPS: a | b`);
     const q = events.find((e) => e.type === 'question');
     assert.ok(q && 'tl' in q);
     assert.match(String((q as { tl: string }).tl), /\?/);
+    assert.ok(
+      'say' in q && typeof (q as { say?: string }).say === 'string',
+      'open question should include say (E8)',
+    );
   });
 
   it('open start seeds pending_frame with fixed opening chips (E3/E5)', async () => {

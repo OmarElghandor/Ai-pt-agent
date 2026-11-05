@@ -114,6 +114,7 @@ export function FreeTalkSession({ topicId }: Props) {
                   ...b,
                   tl: `${b.tl}${b.tl.trim() ? ' ' : ''}${event.tl}`.trim(),
                   streaming: false,
+                  ...(event.say ? { say: event.say } : {}),
                 }
               : b,
           ),
@@ -123,7 +124,13 @@ export function FreeTalkSession({ topicId }: Props) {
         streamBubbleId.current = nid;
         setBubbles((prev) => [
           ...prev,
-          { id: nid, role: 'character', tl: event.tl, streaming: false },
+          {
+            id: nid,
+            role: 'character',
+            tl: event.tl,
+            streaming: false,
+            ...(event.say ? { say: event.say } : {}),
+          },
         ]);
       }
       return;
@@ -134,7 +141,12 @@ export function FreeTalkSession({ topicId }: Props) {
         setBubbles((prev) =>
           prev.map((b) =>
             b.id === sid && b.role === 'character'
-              ? { ...b, ar: event.ar, streaming: false }
+              ? {
+                  ...b,
+                  ar: event.ar,
+                  streaming: false,
+                  ...(event.say ? { say: event.say } : {}),
+                }
               : b,
           ),
         );
@@ -148,7 +160,11 @@ export function FreeTalkSession({ topicId }: Props) {
         setBubbles((prev) =>
           prev.map((b) =>
             b.id === sid && b.role === 'character'
-              ? { ...b, streaming: false }
+              ? {
+                  ...b,
+                  streaming: false,
+                  ...(event.say ? { say: event.say } : {}),
+                }
               : b,
           ),
         );
