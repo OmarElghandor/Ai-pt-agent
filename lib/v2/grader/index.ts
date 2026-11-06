@@ -189,6 +189,25 @@ export async function gradeAnswer(req: GradeRequest): Promise<GradeResponse> {
   }
 }
 
+export {
+  FREE_TEXT_TIMEOUT_MS,
+  FREE_ERROR_TYPES,
+  createStubFreeTextGrader,
+  gradeFreeText,
+  noFreeTextCorrection,
+  normalizeFreeCompare,
+  parseFreeTextCorrection,
+  validateFreeTextCorrection,
+  type FreeErrorType,
+  type FreeTextChange,
+  type FreeTextCorrection,
+  type FreeTextGrader,
+  type FreeTextMainError,
+  type FreeTextRequest,
+  type FreeTextSeverity,
+  type FreeTextValidation,
+} from './freeText';
+
 export function parseGradeModelOutput(
   text: string,
   req: GradeRequest,
