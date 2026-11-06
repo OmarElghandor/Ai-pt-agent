@@ -955,7 +955,6 @@ export function TalkSession({ packId }: Props) {
               <CharacterBubble
                 key={b.id}
                 tl={b.tl}
-                say={b.say}
                 meaningEg={b.ar}
                 streaming={b.streaming}
                 tone="calm"

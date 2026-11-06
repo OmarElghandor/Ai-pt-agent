@@ -7,9 +7,10 @@ export type BubbleTone = 'warm' | 'calm';
 
 type Props = {
   tl: string;
+  /** @deprecated Unused in talk UI — pronunciation-in-Arabic is no longer shown. */
   say?: string;
   streaming?: boolean;
-  /** Egyptian / MSA meaning — revealed via معناها؟ */
+  /** Egyptian / MSA meaning — revealed via translate icon. */
   meaningEg?: string;
   /** Auto-play TTS when the line finishes streaming (Batch 10 D9). */
   autoPlay?: boolean;
@@ -25,9 +26,51 @@ type Props = {
   ttsEpoch?: number;
 };
 
+function MeaningToggle({
+  meaningEg,
+  showMeaning,
+  onToggle,
+  calm,
+}: {
+  meaningEg?: string;
+  showMeaning: boolean;
+  onToggle: () => void;
+  calm: boolean;
+}) {
+  if (meaningEg) {
+    return (
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-label={showMeaning ? 'إخفاء المعنى' : 'معناها؟'}
+        aria-pressed={showMeaning}
+        className={
+          calm
+            ? 'inline-flex h-8 w-8 items-center justify-center rounded-full text-[var(--ft-sage)] hover:bg-[color-mix(in_srgb,var(--ft-mist)_40%,transparent)]'
+            : 'inline-flex h-8 w-8 items-center justify-center rounded-full text-v2-primary/80 hover:bg-v2-primary/5'
+        }
+      >
+        <span className="material-symbols-rounded text-[20px]">translate</span>
+      </button>
+    );
+  }
+  return (
+    <span
+      className={
+        calm
+          ? 'inline-flex h-8 w-8 items-center justify-center rounded-full text-[var(--ft-text-secondary)]/40'
+          : 'inline-flex h-8 w-8 items-center justify-center rounded-full text-v2-ink-muted/40'
+      }
+      title="المعنى هيتضاف لاحقاً"
+      aria-hidden
+    >
+      <span className="material-symbols-rounded text-[20px]">translate</span>
+    </span>
+  );
+}
+
 export function CharacterBubble({
   tl,
-  say,
   streaming,
   meaningEg,
   autoPlay,
@@ -147,15 +190,6 @@ export function CharacterBubble({
             ) : null}
           </p>
 
-          {say ? (
-            <p
-              dir="rtl"
-              className="mt-2 rounded-xl bg-[color-mix(in_srgb,var(--ft-ivory)_70%,transparent)] px-2.5 py-1.5 text-end font-[family-name:var(--font-ft-ar)] text-[12px] leading-5 text-[var(--ft-text-secondary)]"
-            >
-              {say}
-            </p>
-          ) : null}
-
           {showMeaning && meaningEg ? (
             <p
               dir="rtl"
@@ -171,22 +205,12 @@ export function CharacterBubble({
             ) : (
               <span />
             )}
-            {meaningEg ? (
-              <button
-                type="button"
-                onClick={() => setShowMeaning((v) => !v)}
-                className="font-[family-name:var(--font-ft-ar)] text-[12px] font-semibold text-[var(--ft-sage)] underline decoration-[var(--ft-sand)] underline-offset-4"
-              >
-                {showMeaning ? 'إخفاء المعنى' : 'معناها؟'}
-              </button>
-            ) : (
-              <span
-                className="font-[family-name:var(--font-ft-ar)] text-[12px] text-[var(--ft-text-secondary)]/50"
-                title="المعنى هيتضاف لاحقاً"
-              >
-                معناها؟
-              </span>
-            )}
+            <MeaningToggle
+              meaningEg={meaningEg}
+              showMeaning={showMeaning}
+              onToggle={() => setShowMeaning((v) => !v)}
+              calm
+            />
           </div>
         </div>
       </div>
@@ -206,14 +230,6 @@ export function CharacterBubble({
             <span className="ms-0.5 inline-block h-3 w-1 animate-pulse rounded-sm bg-v2-action align-middle" />
           ) : null}
         </p>
-        {say ? (
-          <p
-            dir="rtl"
-            className="mt-1 text-end font-[family-name:var(--font-v2-arabic)] text-[11px] text-v2-ink-muted"
-          >
-            {say}
-          </p>
-        ) : null}
         {showMeaning && meaningEg ? (
           <p
             dir="rtl"
@@ -228,22 +244,12 @@ export function CharacterBubble({
           ) : (
             <span />
           )}
-          {meaningEg ? (
-            <button
-              type="button"
-              onClick={() => setShowMeaning((v) => !v)}
-              className="font-[family-name:var(--font-v2-arabic)] text-[11px] font-semibold text-v2-primary/80 underline-offset-2 hover:underline"
-            >
-              {showMeaning ? 'إخفاء المعنى' : 'معناها؟'}
-            </button>
-          ) : (
-            <span
-              className="font-[family-name:var(--font-v2-arabic)] text-[11px] text-v2-ink-muted/50"
-              title="المعنى هيتضاف لاحقاً"
-            >
-              معناها؟
-            </span>
-          )}
+          <MeaningToggle
+            meaningEg={meaningEg}
+            showMeaning={showMeaning}
+            onToggle={() => setShowMeaning((v) => !v)}
+            calm={false}
+          />
         </div>
       </div>
     </div>

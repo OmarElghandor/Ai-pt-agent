@@ -589,7 +589,6 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
                   tone="calm"
                   partnerName={partnerLabel(characterId)}
                   tl={b.tl}
-                  say={b.say}
                   streaming={b.streaming}
                   meaningEg={b.ar}
                   ttsEpoch={b.ttsEpoch}
