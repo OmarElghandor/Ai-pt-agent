@@ -118,14 +118,25 @@ export function drainMemoryTopicRequests(): Array<{
   return memoryRequests.splice(0, memoryRequests.length);
 }
 
-export function topicRequestCoachEg(matched: TopicsFileTopic | null): {
+export function topicRequestCoachEg(
+  matched: TopicsFileTopic | null,
+  opts?: { packReady?: boolean },
+): {
   eg: string;
   href: string | null;
 } {
   if (matched) {
+    const href = talkHrefForTopic(matched);
+    // Unready days still link into /talk → preparing screen (P3/P5).
+    if (opts?.packReady === false) {
+      return {
+        eg: `تمام — هنجهّز ${matched.title_ar} دلوقتي، دوس هنا`,
+        href,
+      };
+    }
     return {
       eg: `تمام — افتح محادثة ${matched.title_ar}`,
-      href: talkHrefForTopic(matched),
+      href,
     };
   }
   return {

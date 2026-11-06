@@ -5,14 +5,37 @@ import { learnerCurrentDay } from '@/lib/v2/progress/learnerDay';
 import type { ItemState } from '@/lib/v2/progress/types';
 import { loadWeakItemIds } from '@/lib/v2/progress/weakItems';
 import { convoPackExistsAsync } from '@/lib/v2/convo/pack';
+import {
+  getDaysReadiness,
+  type DayReadiness,
+} from '@/lib/v2/generation/prepare';
 import { convoPackFileExists, loadTopicsFile } from './load';
 import { statusGlyph, topicStatus } from './status';
 import type {
   ThemeWithTopics,
+  TopicReadyChip,
   TopicRow,
   TopicsFile,
   TopicsListResult,
 } from './types';
+
+export function readyChipFromReadiness(
+  readiness: DayReadiness | undefined,
+  packAvailable: boolean,
+): TopicReadyChip {
+  if (packAvailable && readiness?.ready) return null;
+  if (packAvailable && !readiness) return null;
+  if (readiness?.ready) return null;
+  if (
+    readiness?.lesson === 'generating' ||
+    readiness?.pack === 'generating' ||
+    readiness?.job_id
+  ) {
+    return 'preparing';
+  }
+  if (packAvailable) return null;
+  return 'soon';
+}
 
 function docToState(doc: Record<string, unknown>): ItemState {
   const card = (doc.card ?? {}) as Record<string, unknown>;
@@ -76,6 +99,7 @@ export function buildTopicsList(opts: {
   weakIds: ReadonlySet<string>;
   now?: Date;
   packAvailable?: (packId: string) => boolean;
+  readinessByDay?: ReadonlyMap<number, DayReadiness>;
 }): TopicsListResult {
   const now = opts.now ?? new Date();
   const packAvailable = opts.packAvailable ?? convoPackFileExists;
@@ -97,6 +121,10 @@ export function buildTopicsList(opts: {
       const character_name = t.character_id
         ? (getCharacter(t.character_id)?.name ?? undefined)
         : undefined;
+      const ready_chip = readyChipFromReadiness(
+        opts.readinessByDay?.get(t.day),
+        pack_available,
+      );
       const row: TopicRow = {
         ...t,
         unlocked,
@@ -104,6 +132,7 @@ export function buildTopicsList(opts: {
         status,
         status_glyph: statusGlyph(status),
         ...(character_name ? { character_name } : {}),
+        ...(ready_chip ? { ready_chip } : {}),
       };
       if (!suggestion && status === 'needs_review') {
         suggestion = row;
@@ -142,11 +171,20 @@ export async function listTopicsForUser(
       file.themes.flatMap((th) => th.topics.map((t) => t.pack_id)),
     ),
   ];
+  const days = [
+    ...new Set(file.themes.flatMap((th) => th.topics.map((t) => t.day))),
+  ];
   const available = new Set<string>();
-  await Promise.all(
-    packIds.map(async (id) => {
-      if (await convoPackExistsAsync(id)) available.add(id);
-    }),
+  const [readinessList] = await Promise.all([
+    getDaysReadiness(days, file.target_lang || 'pt-PT'),
+    Promise.all(
+      packIds.map(async (id) => {
+        if (await convoPackExistsAsync(id)) available.add(id);
+      }),
+    ),
+  ]);
+  const readinessByDay = new Map(
+    readinessList.map((r) => [r.day, r] as const),
   );
 
   return buildTopicsList({
@@ -156,5 +194,6 @@ export async function listTopicsForUser(
     weakIds,
     now: opts?.now,
     packAvailable: (id) => available.has(id),
+    readinessByDay,
   });
 }

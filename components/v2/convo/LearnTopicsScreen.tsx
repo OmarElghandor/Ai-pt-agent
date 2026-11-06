@@ -8,6 +8,12 @@ import { talkHrefForTopic } from '@/lib/v2/convo/topics/suggestion';
 import type { TopicRow, TopicsListResult } from '@/lib/v2/convo/topics/types';
 
 function TopicRowView({ topic }: { topic: TopicRow }) {
+  const chip =
+    topic.ready_chip === 'preparing'
+      ? 'بيتجهّز'
+      : topic.ready_chip === 'soon'
+        ? 'قريباً'
+        : null;
   return (
     <li>
       <Link
@@ -18,20 +24,22 @@ function TopicRowView({ topic }: { topic: TopicRow }) {
           {topic.status_glyph}
         </span>
         <span className="min-w-0 flex-1">
-          <span
-            className="block font-[family-name:var(--font-v2-target)] text-base font-semibold text-v2-primary"
-            dir="ltr"
-          >
-            {topic.title_tl}
+          <span className="flex items-center gap-2">
+            <span
+              className="block font-[family-name:var(--font-v2-target)] text-base font-semibold text-v2-primary"
+              dir="ltr"
+            >
+              {topic.title_tl}
+            </span>
+            {chip ? (
+              <span className="shrink-0 rounded-full bg-v2-paper px-2 py-0.5 font-[family-name:var(--font-v2-arabic)] text-[10px] font-semibold text-v2-ink-muted ring-1 ring-v2-line/40">
+                {chip}
+              </span>
+            ) : null}
           </span>
           <span className="block font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
             {topic.title_ar}
           </span>
-          {!topic.pack_available ? (
-            <span className="mt-0.5 block font-[family-name:var(--font-v2-arabic)] text-[11px] text-v2-ink-muted">
-              هنتولّد أول ما تفتح
-            </span>
-          ) : null}
         </span>
         <Icon name="arrow_back" size={20} className="text-v2-action" />
       </Link>

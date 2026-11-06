@@ -24,6 +24,9 @@ export type TopicsFile = {
   themes: TopicsFileTheme[];
 };
 
+/** Chip on Learn cards when the day isn't fully ready (P5). */
+export type TopicReadyChip = 'preparing' | 'soon' | null;
+
 export type TopicRow = TopicsFileTopic & {
   unlocked: boolean;
   pack_available: boolean;
@@ -32,6 +35,11 @@ export type TopicRow = TopicsFileTopic & {
   status_glyph: '🟢' | '🟡' | '⚪';
   /** Display name for home suggestion copy (from characters.json). */
   character_name?: string;
+  /**
+   * When set, the day needs preparation — tap still opens /talk (P3 preparing).
+   * `preparing` = job running; `soon` = not ready yet.
+   */
+  ready_chip?: TopicReadyChip;
 };
 
 export type ThemeWithTopics = {

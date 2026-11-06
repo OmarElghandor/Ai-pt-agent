@@ -17,7 +17,11 @@ export {
 
 export { topicStatus, statusGlyph } from './status';
 
-export { buildTopicsList, listTopicsForUser } from './list';
+export {
+  buildTopicsList,
+  listTopicsForUser,
+  readyChipFromReadiness,
+} from './list';
 
 export {
   topicReviewSuggestionEg,
