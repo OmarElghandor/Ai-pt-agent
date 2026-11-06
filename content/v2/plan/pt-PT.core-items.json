@@ -142,7 +142,34 @@
           "ines"
         ],
         "prompt": "Wide but intimate scene inside the entrance hall of a modern office on Yassin's first day: Yassin, on the left, just arrived with his backpack and a visitor badge, offers his hand; Inês, on the right, steps toward him from the reception area with a big welcoming smile, mid-introduction. Morning sun through tall windows, a few colleagues of different ages blurred in the background, warm hopeful first-day mood."
-      }
+      },
+      "real_world": [
+        {
+          "tl": "Olá, bom dia!",
+          "ar": "مرحباً، صباح الخير!",
+          "eg_note": "التحية العادية الصبح في الشغل — bom dia لحد الضهر تقريباً",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Sou o Omar.",
+          "tl_f": "Sou a Sara.",
+          "ar": "أنا عمر.",
+          "eg_note": "البرتغاليين بيحطوا o/a قبل الاسم وهما بيعرّفوا نفسهم: Sou o Omar / Sou a Sara",
+          "tag": "نصيحة لشبونية"
+        },
+        {
+          "tl": "Prazer!",
+          "ar": "تشرفنا!",
+          "eg_note": "الأقصر من Muito prazer — بتتقال وإنتو بتسلّموا على بعض",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Bom dia a todos!",
+          "ar": "صباح الخير للجميع!",
+          "eg_note": "لما تدخل المكتب والناس قاعدين",
+          "tag": "قولها كده"
+        }
+      ]
     },
     {
       "day": 2,
@@ -241,6 +268,38 @@
         "pattern.chamo_me",
         "phrase.hello",
         "phrase.good_morning"
+      ],
+      "real_world": [
+        {
+          "tl": "Tudo bem contigo?",
+          "ar": "هل كل شيء بخير معك؟",
+          "eg_note": "إزيك؟ بين الصحاب والزمايل (contigo = معاك)",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Até já!",
+          "ar": "أراك بعد قليل!",
+          "eg_note": "لما هتشوف الشخص تاني كمان شوية — منتشرة جداً",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Xau!",
+          "ar": "مع السلامة!",
+          "eg_note": "باي بين الصحاب — بتتكتب Xau في البرتغال",
+          "tag": "كلام شارع"
+        },
+        {
+          "tl": "Fica bem!",
+          "ar": "اعتنِ بنفسك!",
+          "eg_note": "خلي بالك من نفسك — وداع ودود",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Bom fim de semana!",
+          "ar": "عطلة نهاية أسبوع سعيدة!",
+          "eg_note": "يوم الجمعة وإنتو بتمشوا من الشغل",
+          "tag": "قولها كده"
+        }
       ]
     },
     {
@@ -343,34 +402,40 @@
       ],
       "real_world": [
         {
+          "tl": "Diga!",
+          "ar": "تفضل!",
+          "eg_note": "أول حاجة هتسمعها من اللي على الكاونتر — يعني «اتفضل، عايز إيه؟»",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "O que vai ser?",
+          "ar": "ماذا ستطلب؟",
+          "eg_note": "نفس المعنى: هتطلب إيه؟",
+          "tag": "هتسمعها"
+        },
+        {
           "tl": "Uma bica e um pastel de nata.",
           "ar": "إسبريسو وباستيل دي ناتا.",
-          "eg_note": "الطلب الكلاسيكي في كافيهات لشبونة — بيكا يعني إسبريسو صغير",
+          "eg_note": "الطلب الكلاسيكي في لشبونة — bica يعني إسبريسو صغير",
           "tag": "نصيحة لشبونية"
         },
         {
           "tl": "Uma água, se faz favor.",
-          "ar": "مية، من فضلك.",
-          "eg_note": "طلب مية بسيط في الكافيه",
+          "ar": "ماء، من فضلك.",
+          "eg_note": "se faz favor = لو سمحت، بيتقال أكتر من por favor في الكافيه",
           "tag": "أسلوب مهذب"
         },
         {
           "tl": "A conta, se faz favor.",
           "ar": "الحساب، من فضلك.",
           "eg_note": "لما تخلّص وتطلب الحساب",
-          "tag": "الحساب"
+          "tag": "قولها كده"
         },
         {
           "tl": "Tem leite sem lactose?",
-          "ar": "في لبن من غير لاكتوز؟",
-          "eg_note": "لما يكون عندك حساسية من اللبن العادي",
-          "tag": "سؤال"
-        },
-        {
-          "tl": "Queria um galão, por favor.",
-          "ar": "عايز جالون، من فضلك.",
-          "eg_note": "جالون = قهوة بلبن في كوباية زجاج",
-          "tag": "الطلب"
+          "ar": "هل يوجد حليب خالٍ من اللاكتوز؟",
+          "eg_note": "لو اللبن العادي بيتعبك",
+          "tag": "قولها كده"
         }
       ]
     },
@@ -448,6 +513,40 @@
         "phrase.hello",
         "phrase.good_morning",
         "phrase.fine_thanks"
+      ],
+      "real_world": [
+        {
+          "tl": "Faz favor!",
+          "ar": "لو سمحت!",
+          "eg_note": "عشان تنادي الجرسون — ارفع إيدك وقولها",
+          "tag": "نصيحة لشبونية"
+        },
+        {
+          "tl": "É para levar?",
+          "ar": "هل هو للأخذ؟",
+          "eg_note": "هتاخده معاك ولا هتاكل هنا؟",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Mais nada, obrigado.",
+          "tl_f": "Mais nada, obrigada.",
+          "ar": "لا شيء آخر، شكراً.",
+          "eg_note": "رد على Mais alguma coisa?",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Obrigadinho!",
+          "tl_f": "Obrigadinha!",
+          "ar": "شكراً جزيلاً!",
+          "eg_note": "شكراً بطريقة لطيفة — البرتغاليين بيحبوا التصغير",
+          "tag": "كلام شارع"
+        },
+        {
+          "tl": "Um copo de água da torneira, se faz favor.",
+          "ar": "كوب ماء من الحنفية، من فضلك.",
+          "eg_note": "مية الحنفية في البرتغال تتشرب وغالباً ببلاش",
+          "tag": "نصيحة لشبونية"
+        }
       ]
     },
     {
@@ -507,7 +606,7 @@
         {
           "id": "phrase.where_is_x",
           "kind": "phrase",
-          "tl": "Onde fica o leite?",
+          "tl": "Onde está o leite?",
           "eg": "اللبن فين؟"
         },
         {
@@ -528,6 +627,32 @@
         "word.milk",
         "word.water",
         "phrase.order_coffee"
+      ],
+      "real_world": [
+        {
+          "tl": "Tem cartão Continente?",
+          "ar": "هل عندك بطاقة كونتيننتي؟",
+          "eg_note": "كارت العروض بتاع السوبر ماركت — هتسمعها عند الكاشير (أو Pingo Doce / Lidl)",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Onde estão os ovos?",
+          "ar": "أين البيض؟",
+          "eg_note": "للحاجات جوه المحل بنستخدم estar",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Está no corredor três.",
+          "ar": "إنه في الممر الثالث.",
+          "eg_note": "corredor = الممر بين الرفوف",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Quer o talão?",
+          "ar": "هل تريد الإيصال؟",
+          "eg_note": "talão = الإيصال/الفاتورة الصغيرة",
+          "tag": "هتسمعها"
+        }
       ]
     },
     {
@@ -594,6 +719,12 @@
             "word.bag",
             "word.bread"
           ]
+        },
+        {
+          "id": "phrase.kilo_potatoes",
+          "kind": "phrase",
+          "tl": "Queria um quilo de batatas.",
+          "eg": "عايز كيلو بطاطس"
         }
       ],
       "recycle_ids": [
@@ -603,6 +734,32 @@
         "word.milk",
         "word.water",
         "phrase.order_coffee"
+      ],
+      "real_world": [
+        {
+          "tl": "Quer saco?",
+          "ar": "هل تريد كيساً؟",
+          "eg_note": "الأقصر من Precisa de saco? — والكيس غالباً بفلوس",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Onde se pesa a fruta?",
+          "ar": "أين تُوزن الفاكهة؟",
+          "eg_note": "في محلات كتير بتوزن الفاكهة بنفسك قبل الكاشير",
+          "tag": "نصيحة لشبونية"
+        },
+        {
+          "tl": "Queria meio quilo de tomates.",
+          "ar": "أريد نصف كيلو طماطم.",
+          "eg_note": "في السوق: meio quilo = نص كيلو",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "São dois euros e cinquenta.",
+          "ar": "المبلغ اثنان يورو وخمسون.",
+          "eg_note": "هتسمع السعر كده — الأرقام هتيجي يوم 8",
+          "tag": "هتسمعها"
+        }
       ]
     },
     {
@@ -694,6 +851,32 @@
         "phrase.how_much_does_it_cost",
         "phrase.how_much_is_it",
         "phrase.thats_all"
+      ],
+      "real_world": [
+        {
+          "tl": "São cinco euros e vinte.",
+          "ar": "المبلغ خمسة يورو وعشرون.",
+          "eg_note": "السعر باليورو والسنت",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Tem trocado?",
+          "ar": "هل عندك فكة؟",
+          "eg_note": "معاك فكة؟ — لما تدفع بورقة كبيرة",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Pode ser Multibanco?",
+          "ar": "هل يمكن الدفع بالبطاقة؟",
+          "eg_note": "Multibanco = الدفع بالكارت (ومكنة الـ ATM كمان)",
+          "tag": "نصيحة لشبونية"
+        },
+        {
+          "tl": "Fica com o troco.",
+          "ar": "احتفظ بالباقي.",
+          "eg_note": "خلي الباقي",
+          "tag": "قولها كده"
+        }
       ]
     },
     {
@@ -767,6 +950,33 @@
         "phrase.how_much_does_it_cost",
         "phrase.how_much_is_it",
         "phrase.thats_all"
+      ],
+      "real_world": [
+        {
+          "tl": "Quer fatura com contribuinte?",
+          "ar": "هل تريد فاتورة برقمك الضريبي؟",
+          "eg_note": "هتسمعها في كل مكان — لو عندك NIF قوله، ولو لأ قول sem contribuinte",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Sem contribuinte, obrigado.",
+          "tl_f": "Sem contribuinte, obrigada.",
+          "ar": "بدون رقم ضريبي، شكراً.",
+          "eg_note": "لو مش عايز تدّي رقمك",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Pode encostar o cartão.",
+          "ar": "يمكنك تقريب البطاقة.",
+          "eg_note": "قرّب الكارت من المكنة (contactless)",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Já está!",
+          "ar": "تم!",
+          "eg_note": "خلاص/تمام — هتسمعها بعد الدفع وفي حاجات كتير",
+          "tag": "هتسمعها"
+        }
       ]
     },
     {
@@ -827,6 +1037,32 @@
         "phrase.good_morning",
         "phrase.how_are_you",
         "phrase.bye"
+      ],
+      "real_world": [
+        {
+          "tl": "Desculpe, não percebi.",
+          "ar": "آسف، لم أفهم.",
+          "eg_note": "مفهمتش اللي اتقال دلوقتي (الماضي من perceber)",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Como?",
+          "ar": "عفواً؟",
+          "eg_note": "نعم؟ — لما متسمعش كويس وعايزه يعيد",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Pois.",
+          "ar": "نعم/صحيح.",
+          "eg_note": "هتسمعها طول الوقت — يعني «آه/فعلاً» وهما بيوافقوا",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Fala inglês?",
+          "ar": "هل تتكلم الإنجليزية؟",
+          "eg_note": "لو اتزنقت — بس حاول البرتغالي الأول",
+          "tag": "قولها كده"
+        }
       ]
     },
     {
@@ -863,9 +1099,10 @@
         {
           "id": "word.you_o_senhor",
           "kind": "word",
-          "tl": "o senhor / a senhora",
+          "tl": "o senhor",
           "eg": "حضرتك",
-          "plural_tl": null
+          "plural_tl": null,
+          "tl_f": "a senhora"
         },
         {
           "id": "phrase.see_you_later",
@@ -900,6 +1137,33 @@
         "phrase.good_morning",
         "phrase.how_are_you",
         "phrase.bye"
+      ],
+      "real_world": [
+        {
+          "tl": "Moro no segundo esquerdo.",
+          "ar": "أسكن في الطابق الثاني على اليسار.",
+          "eg_note": "العناوين في البرتغال: الدور + الشقة يمين/شمال (2.º Esq.)",
+          "tag": "نصيحة لشبونية"
+        },
+        {
+          "tl": "Bom dia, vizinha!",
+          "ar": "صباح الخير يا جارة!",
+          "eg_note": "التحية بين الجيران على السلم",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Qualquer coisa, estou aqui.",
+          "ar": "لأي شيء، أنا هنا.",
+          "eg_note": "لو احتجت أي حاجة أنا موجود — جملة الجار اللطيف",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Seja bem-vindo ao prédio!",
+          "tl_f": "Seja bem-vinda ao prédio!",
+          "ar": "أهلاً بك في العمارة!",
+          "eg_note": "ترحيب الجيران بيك أول ما تسكن",
+          "tag": "هتسمعها"
+        }
       ]
     },
     {
@@ -974,6 +1238,32 @@
         "word.you_voce",
         "word.coffee",
         "pattern.nao_verb"
+      ],
+      "real_world": [
+        {
+          "tl": "Trabalha em quê?",
+          "ar": "في ماذا تعمل؟",
+          "eg_note": "بتشتغل في إيه؟ — صيغة منتشرة",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Estou à procura de trabalho.",
+          "ar": "أبحث عن عمل.",
+          "eg_note": "بدوّر على شغل",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Trabalho na construção.",
+          "ar": "أعمل في البناء.",
+          "eg_note": "na construção / na restauração (المطاعم) / em entregas (الدليفري)",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Há quanto tempo está em Portugal?",
+          "ar": "منذ متى أنت في البرتغال؟",
+          "eg_note": "أكتر سؤال هيتسأل للمقيم",
+          "tag": "هتسمعها"
+        }
       ]
     },
     {
@@ -1049,6 +1339,32 @@
         "word.you_voce",
         "word.coffee",
         "pattern.nao_verb"
+      ],
+      "real_world": [
+        {
+          "tl": "Mora aqui perto?",
+          "ar": "هل تسكن قريباً من هنا؟",
+          "eg_note": "ساكن قريب من هنا؟",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Moro na Amadora.",
+          "ar": "أسكن في أمادورا.",
+          "eg_note": "بعض الأماكن بتاخد أداة: na Amadora، no Porto — بس em Lisboa",
+          "tag": "نصيحة لشبونية"
+        },
+        {
+          "tl": "Qual é a sua morada?",
+          "ar": "ما هو عنوانك؟",
+          "eg_note": "morada = العنوان — هتسمعها في أي ورق",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Vivo com amigos.",
+          "ar": "أعيش مع أصدقاء.",
+          "eg_note": "viver = morar في المعنى ده",
+          "tag": "قولها كده"
+        }
       ]
     },
     {
@@ -1150,6 +1466,32 @@
         "pattern.queria_um_uma",
         "pattern.ar_endings",
         "phrase.card_ok"
+      ],
+      "real_world": [
+        {
+          "tl": "Já escolheu?",
+          "ar": "هل اخترت؟",
+          "eg_note": "اخترت؟ — الجرسون عايز ياخد الطلب",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "E para beber?",
+          "ar": "وماذا تشرب؟",
+          "eg_note": "وتشرب إيه؟",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "O que é que recomenda?",
+          "ar": "ماذا تنصح؟",
+          "eg_note": "تنصحني بإيه؟",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Está tudo bem?",
+          "ar": "هل كل شيء على ما يرام؟",
+          "eg_note": "الجرسون بيسأل الأكل تمام؟",
+          "tag": "هتسمعها"
+        }
       ]
     },
     {
@@ -1209,6 +1551,18 @@
           "kind": "phrase",
           "tl": "Bom apetite!",
           "eg": "بالهنا والشفا"
+        },
+        {
+          "id": "phrase.no_pork",
+          "kind": "phrase",
+          "tl": "Não como carne de porco.",
+          "eg": "مباكلش لحم خنزير"
+        },
+        {
+          "id": "phrase.has_pork",
+          "kind": "phrase",
+          "tl": "Isto tem porco?",
+          "eg": "ده فيه خنزير؟"
         }
       ],
       "recycle_ids": [
@@ -1219,6 +1573,33 @@
         "pattern.queria_um_uma",
         "pattern.ar_endings",
         "phrase.card_ok"
+      ],
+      "real_world": [
+        {
+          "tl": "Querem sobremesa?",
+          "ar": "هل تريدون حلوى؟",
+          "eg_note": "تحبوا حلو؟",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Um café e a conta, se faz favor.",
+          "ar": "قهوة والحساب، من فضلك.",
+          "eg_note": "الختام الكلاسيكي للأكلة في البرتغال",
+          "tag": "نصيحة لشبونية"
+        },
+        {
+          "tl": "Estava ótimo, obrigado!",
+          "tl_f": "Estava ótimo, obrigada!",
+          "ar": "كان رائعاً، شكراً!",
+          "eg_note": "الأكل كان حلو أوي",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Hoje pago eu.",
+          "ar": "اليوم أدفع أنا.",
+          "eg_note": "النهارده عليّا",
+          "tag": "قولها كده"
+        }
       ]
     },
     {
@@ -1289,6 +1670,32 @@
         "pattern.er_endings",
         "pattern.ar_endings",
         "verb.trabalhar"
+      ],
+      "real_world": [
+        {
+          "tl": "Que sono!",
+          "ar": "كم أنا نعسان!",
+          "eg_note": "أنا نعسان أوي",
+          "tag": "كلام شارع"
+        },
+        {
+          "tl": "Dormi mal.",
+          "ar": "نمت بشكل سيئ.",
+          "eg_note": "منمتش كويس (ماضي — جملة جاهزة)",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Abre a janela, se faz favor.",
+          "ar": "افتح النافذة، من فضلك.",
+          "eg_note": "لصاحبك (tu) — للغريب: Abra a janela",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Dorme bem!",
+          "ar": "نم جيداً!",
+          "eg_note": "تصبح على خير بطريقة ودودة",
+          "tag": "هتسمعها"
+        }
       ]
     },
     {
@@ -1357,6 +1764,38 @@
         "pattern.er_endings",
         "pattern.ar_endings",
         "verb.trabalhar"
+      ],
+      "real_world": [
+        {
+          "tl": "Onde é a casa de banho?",
+          "ar": "أين الحمام؟",
+          "eg_note": "من أهم الجمل — في أي بيت أو مطعم",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "É ao fundo, à direita.",
+          "ar": "إنه في الآخر، على اليمين.",
+          "eg_note": "ao fundo = في الآخر/جوه",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Fica à vontade!",
+          "ar": "خذ راحتك!",
+          "eg_note": "البيت بيتك",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Aluga-se quarto.",
+          "ar": "غرفة للإيجار.",
+          "eg_note": "هتشوفها على الشبابيك والإعلانات",
+          "tag": "هتشوفها مكتوبة"
+        },
+        {
+          "tl": "Tem casa de banho privativa?",
+          "ar": "هل يوجد حمام خاص؟",
+          "eg_note": "لما تسأل على أوضة للإيجار",
+          "tag": "قولها كده"
+        }
       ]
     },
     {
@@ -1373,20 +1812,23 @@
         {
           "id": "word.egyptian",
           "kind": "word",
-          "tl": "egípcio / egípcia",
-          "eg": "مصري / مصرية"
+          "tl": "egípcio",
+          "eg": "مصري / مصرية",
+          "tl_f": "egípcia"
         },
         {
           "id": "word.portuguese",
           "kind": "word",
-          "tl": "português / portuguesa",
-          "eg": "برتغالي / برتغالية"
+          "tl": "português",
+          "eg": "برتغالي / برتغالية",
+          "tl_f": "portuguesa"
         },
         {
           "id": "word.engineer",
           "kind": "word",
-          "tl": "engenheiro / engenheira",
-          "eg": "مهندس / مهندسة"
+          "tl": "engenheiro",
+          "eg": "مهندس / مهندسة",
+          "tl_f": "engenheira"
         },
         {
           "id": "word.egypt",
@@ -1424,6 +1866,33 @@
         "word.you_o_senhor",
         "phrase.my_name_is",
         "verb.morar"
+      ],
+      "real_world": [
+        {
+          "tl": "É de onde?",
+          "ar": "من أين أنت؟",
+          "eg_note": "إنت منين؟ — صيغة أقصر",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Ah, do Egito! As pirâmides!",
+          "ar": "آه، من مصر! الأهرامات!",
+          "eg_note": "أول رد فعل هتسمعه غالباً 😄",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Fala muito bem português!",
+          "ar": "تتكلم البرتغالية جيداً!",
+          "eg_note": "مجاملة هتسمعها كتير",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Obrigado, ainda estou a aprender.",
+          "tl_f": "Obrigada, ainda estou a aprender.",
+          "ar": "شكراً، ما زلت أتعلم.",
+          "eg_note": "الرد اللطيف على المجاملة",
+          "tag": "قولها كده"
+        }
       ]
     },
     {
@@ -1434,14 +1903,16 @@
         {
           "id": "word.teacher",
           "kind": "word",
-          "tl": "professor / professora",
-          "eg": "مدرس / مدرسة"
+          "tl": "professor",
+          "eg": "مدرس / مدرسة",
+          "tl_f": "professora"
         },
         {
           "id": "word.doctor",
           "kind": "word",
-          "tl": "médico / médica",
-          "eg": "دكتور / دكتورة"
+          "tl": "médico",
+          "eg": "دكتور / دكتورة",
+          "tl_f": "médica"
         },
         {
           "id": "word.student",
@@ -1475,6 +1946,33 @@
         "word.you_o_senhor",
         "phrase.my_name_is",
         "verb.morar"
+      ],
+      "real_world": [
+        {
+          "tl": "Em que área trabalha?",
+          "ar": "في أي مجال تعمل؟",
+          "eg_note": "شغلك في أنهي مجال؟",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Trabalho por conta própria.",
+          "ar": "أعمل لحسابي الخاص.",
+          "eg_note": "شغال لحسابك (فريلانس)",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Estou desempregado.",
+          "tl_f": "Estou desempregada.",
+          "ar": "أنا عاطل عن العمل.",
+          "eg_note": "مش شغال دلوقتي",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Que giro!",
+          "ar": "جميل!",
+          "eg_note": "حلو أوي! — giro = حلو/لطيف في البرتغال",
+          "tag": "كلام شارع"
+        }
       ]
     },
     {
@@ -1507,8 +2005,9 @@
         {
           "id": "word.tired",
           "kind": "word",
-          "tl": "cansado / cansada",
-          "eg": "تعبان"
+          "tl": "cansado",
+          "eg": "تعبان",
+          "tl_f": "cansada"
         },
         {
           "id": "word.sick",
@@ -1525,8 +2024,9 @@
         {
           "id": "word.nervous",
           "kind": "word",
-          "tl": "nervoso / nervosa",
-          "eg": "متوتر"
+          "tl": "nervoso",
+          "eg": "متوتر",
+          "tl_f": "nervosa"
         },
         {
           "id": "phrase.im_tired",
@@ -1557,6 +2057,34 @@
         "pattern.ser_conj",
         "phrase.im_egyptian",
         "phrase.how_are_you"
+      ],
+      "real_world": [
+        {
+          "tl": "Mais ou menos.",
+          "ar": "بين بين.",
+          "eg_note": "نص نص",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Estou constipado.",
+          "tl_f": "Estou constipada.",
+          "ar": "أنا مصاب بالبرد.",
+          "eg_note": "عندي برد — constipado في البرتغال يعني زكام، مش إمساك!",
+          "tag": "نصيحة لشبونية"
+        },
+        {
+          "tl": "As melhoras!",
+          "ar": "أتمنى لك الشفاء!",
+          "eg_note": "ألف سلامة",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Estou cheio de sono.",
+          "tl_f": "Estou cheia de sono.",
+          "ar": "أنا نعسان جداً.",
+          "eg_note": "هموت من النوم",
+          "tag": "كلام شارع"
+        }
       ]
     },
     {
@@ -1579,8 +2107,9 @@
         {
           "id": "word.busy",
           "kind": "word",
-          "tl": "ocupado / ocupada",
-          "eg": "مشغول / مشغولة"
+          "tl": "ocupado",
+          "eg": "مشغول / مشغولة",
+          "tl_f": "ocupada"
         },
         {
           "id": "phrase.my_head_hurts",
@@ -1591,8 +2120,8 @@
         {
           "id": "phrase.are_you_ok",
           "kind": "phrase",
-          "tl": "Está bem?",
-          "eg": "إنت كويس؟"
+          "tl": "Está tudo bem?",
+          "eg": "كله تمام؟ / إنت كويس؟"
         },
         {
           "id": "pattern.ser_vs_estar",
@@ -1608,6 +2137,32 @@
         "pattern.ser_conj",
         "phrase.im_egyptian",
         "phrase.how_are_you"
+      ],
+      "real_world": [
+        {
+          "tl": "Está bem.",
+          "ar": "حسناً.",
+          "eg_note": "ماشي/تمام — أكتر استخدام لـ «está bem» في البرتغال",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Que chatice!",
+          "ar": "يا للإزعاج!",
+          "eg_note": "إيه الرخامة دي! — لما حاجة تضايق",
+          "tag": "كلام شارع"
+        },
+        {
+          "tl": "Estou com pressa.",
+          "ar": "أنا مستعجل.",
+          "eg_note": "أنا مستعجل",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Não estou bem.",
+          "ar": "لست بخير.",
+          "eg_note": "مش كويس",
+          "tag": "قولها كده"
+        }
       ]
     },
     {
@@ -1702,6 +2257,32 @@
         "pattern.estar_conj",
         "verb.comer",
         "verb.estudar"
+      ],
+      "real_world": [
+        {
+          "tl": "Está lá?",
+          "ar": "هل أنت هناك؟",
+          "eg_note": "ألو؟ — الشخص التاني بيرد كده كتير",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Quem fala?",
+          "ar": "من المتكلم؟",
+          "eg_note": "مين معايا؟",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Já lhe ligo.",
+          "ar": "سأتصل بك حالاً.",
+          "eg_note": "هكلمك حالاً",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Desculpe, enganei-me no número.",
+          "ar": "آسف، أخطأت في الرقم.",
+          "eg_note": "النمرة غلط",
+          "tag": "قولها كده"
+        }
       ]
     },
     {
@@ -1792,6 +2373,32 @@
         "word.tea",
         "pattern.nao_verb",
         "pattern.ar_endings"
+      ],
+      "real_world": [
+        {
+          "tl": "Bora?",
+          "ar": "هيا؟",
+          "eg_note": "يلا؟ — للخروج مع الصحاب",
+          "tag": "كلام شارع"
+        },
+        {
+          "tl": "És do Benfica ou do Sporting?",
+          "ar": "هل تشجع بنفيكا أم سبورتينغ؟",
+          "eg_note": "سؤال هتسمعه في لشبونة أكيد",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Não sou muito de futebol.",
+          "ar": "لست مهتماً كثيراً بكرة القدم.",
+          "eg_note": "مش بتاع كورة أوي",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Adoro!",
+          "ar": "أحبه كثيراً!",
+          "eg_note": "بموت فيه",
+          "tag": "قولها كده"
+        }
       ]
     },
     {
@@ -1852,6 +2459,32 @@
         "word.tea",
         "pattern.nao_verb",
         "pattern.ar_endings"
+      ],
+      "real_world": [
+        {
+          "tl": "Está um calor!",
+          "ar": "الجو حار جداً!",
+          "eg_note": "الجو نار!",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Está muito vento.",
+          "ar": "الرياح قوية.",
+          "eg_note": "هوا جامد — كتير في لشبونة",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Vai chover amanhã.",
+          "ar": "ستمطر غداً.",
+          "eg_note": "هتسمعها في الأخبار والشغل",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Leva guarda-chuva!",
+          "ar": "خذ مظلة!",
+          "eg_note": "خد شمسية — guarda-chuva = الشمسية",
+          "tag": "هتسمعها"
+        }
       ]
     },
     {
@@ -1920,6 +2553,32 @@
         "word.cinema",
         "phrase.do_you_like",
         "pattern.ar_endings"
+      ],
+      "real_world": [
+        {
+          "tl": "Combinado!",
+          "ar": "اتفقنا!",
+          "eg_note": "اتفقنا!",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Pode ser.",
+          "ar": "ممكن.",
+          "eg_note": "ماشي/ينفع",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Fica para a próxima.",
+          "ar": "لنجعلها المرة القادمة.",
+          "eg_note": "خليها المرة الجاية",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Então, vamos?",
+          "ar": "إذن، هل نذهب؟",
+          "eg_note": "يلا بينا؟",
+          "tag": "هتسمعها"
+        }
       ]
     },
     {
@@ -1973,6 +2632,32 @@
         "word.cinema",
         "phrase.do_you_like",
         "pattern.ar_endings"
+      ],
+      "real_world": [
+        {
+          "tl": "Bora lá!",
+          "ar": "هيا بنا!",
+          "eg_note": "يلا بينا!",
+          "tag": "كلام شارع"
+        },
+        {
+          "tl": "Hoje não dá.",
+          "ar": "اليوم لا يناسب.",
+          "eg_note": "النهارده مش هينفع",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Logo vejo.",
+          "ar": "سأرى لاحقاً.",
+          "eg_note": "هشوف بعدين",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Encontramo-nos às oito?",
+          "ar": "نلتقي في الثامنة؟",
+          "eg_note": "نتقابل الساعة تمانية؟",
+          "tag": "قولها كده"
+        }
       ]
     },
     {
@@ -2068,6 +2753,32 @@
         "phrase.where_is_x",
         "phrase.whats_your_name",
         "phrase.can_you_repeat"
+      ],
+      "real_world": [
+        {
+          "tl": "Sabe onde fica o metro?",
+          "ar": "هل تعرف أين المترو؟",
+          "eg_note": "الطريقة المؤدبة تسأل بيها في الشارع",
+          "tag": "أسلوب مهذب"
+        },
+        {
+          "tl": "Não sou daqui.",
+          "ar": "لست من هنا.",
+          "eg_note": "هتسمعها من ناس كتير في وسط البلد",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Como assim?",
+          "ar": "ماذا تقصد؟",
+          "eg_note": "يعني إيه؟/قصدك إيه؟",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Não faço ideia.",
+          "ar": "ليست لدي فكرة.",
+          "eg_note": "معرفش خالص",
+          "tag": "هتسمعها"
+        }
       ]
     },
     {
@@ -2134,6 +2845,32 @@
         "phrase.shall_we_go",
         "word.q_where",
         "word.q_when"
+      ],
+      "real_world": [
+        {
+          "tl": "Próxima estação: Baixa-Chiado.",
+          "ar": "المحطة القادمة: بايشا-شيادو.",
+          "eg_note": "إعلان المترو",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Tem de validar o passe.",
+          "ar": "يجب أن تفعّل الاشتراك.",
+          "eg_note": "لازم تمرر الكارت على المكنة كل مرة",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Este metro vai para o Aeroporto?",
+          "ar": "هل هذا المترو يذهب إلى المطار؟",
+          "eg_note": "الخط الأحمر بيروح المطار",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Posso passar?",
+          "ar": "هل يمكنني المرور؟",
+          "eg_note": "عايز أعدّي — في المترو الزحمة",
+          "tag": "أسلوب مهذب"
+        }
       ]
     },
     {
@@ -2186,6 +2923,12 @@
           "kind": "pattern",
           "tl": "de + وسيلة (de metro) · a pé",
           "eg": "بالمواصلات"
+        },
+        {
+          "id": "phrase.bus_to_centre",
+          "kind": "phrase",
+          "tl": "Este autocarro vai para o centro?",
+          "eg": "الأتوبيس ده رايح وسط البلد؟"
         }
       ],
       "recycle_ids": [
@@ -2196,6 +2939,32 @@
         "phrase.shall_we_go",
         "word.q_where",
         "word.q_when"
+      ],
+      "real_world": [
+        {
+          "tl": "Quero carregar o passe.",
+          "ar": "أريد شحن الاشتراك.",
+          "eg_note": "عايز أشحن الكارت",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Saio na próxima.",
+          "ar": "سأنزل في المحطة القادمة.",
+          "eg_note": "نازل المحطة الجاية",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Paragem solicitada",
+          "ar": "توقف مطلوب",
+          "eg_note": "هتظهر على الشاشة بعد ما تدوس زرار النزول في الأتوبيس",
+          "tag": "هتشوفها مكتوبة"
+        },
+        {
+          "tl": "Quanto custa o passe?",
+          "ar": "كم سعر الاشتراك؟",
+          "eg_note": "الاشتراك بكام؟",
+          "tag": "قولها كده"
+        }
       ]
     },
     {
@@ -2266,6 +3035,32 @@
         "phrase.excuse_me",
         "phrase.can_you_help_me",
         "phrase.slower"
+      ],
+      "real_world": [
+        {
+          "tl": "É já ali.",
+          "ar": "إنه هناك تماماً.",
+          "eg_note": "هي هناك على طول — هتسمعها كتير",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Sempre em frente.",
+          "ar": "دائماً إلى الأمام.",
+          "eg_note": "على طول على طول",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Não tem nada que enganar.",
+          "ar": "لا يمكن أن تضيع.",
+          "eg_note": "مش هتتوه — الطريق سهل",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Fica a cinco minutos a pé.",
+          "ar": "إنها على بعد خمس دقائق مشياً.",
+          "eg_note": "خمس دقايق مشي",
+          "tag": "هتسمعها"
+        }
       ]
     },
     {
@@ -2328,6 +3123,32 @@
         "phrase.excuse_me",
         "phrase.can_you_help_me",
         "phrase.slower"
+      ],
+      "real_world": [
+        {
+          "tl": "Ao fundo da rua.",
+          "ar": "في آخر الشارع.",
+          "eg_note": "في آخر الشارع",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Na segunda à direita.",
+          "ar": "في الثاني على اليمين.",
+          "eg_note": "تاني شارع يمين",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Depois do semáforo.",
+          "ar": "بعد الإشارة.",
+          "eg_note": "بعد الإشارة",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Em frente à igreja.",
+          "ar": "أمام الكنيسة.",
+          "eg_note": "قصاد الكنيسة — em frente a = قدام/قصاد",
+          "tag": "هتسمعها"
+        }
       ]
     },
     {
@@ -2406,6 +3227,32 @@
         "phrase.see_you_tomorrow",
         "pattern.queria_um_uma",
         "word.q_when"
+      ],
+      "real_world": [
+        {
+          "tl": "Para quando?",
+          "ar": "لأي موعد؟",
+          "eg_note": "عايز الميعاد إمتى؟",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "De manhã ou à tarde?",
+          "ar": "في الصباح أم بعد الظهر؟",
+          "eg_note": "الصبح ولا بعد الضهر؟",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Esta semana não dá.",
+          "ar": "هذا الأسبوع غير ممكن.",
+          "eg_note": "الأسبوع ده مش هينفع",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Pode ser na segunda de manhã?",
+          "ar": "هل يمكن يوم الاثنين صباحاً؟",
+          "eg_note": "ينفع الاتنين الصبح؟",
+          "tag": "قولها كده"
+        }
       ]
     },
     {
@@ -2457,6 +3304,32 @@
         "phrase.see_you_tomorrow",
         "pattern.queria_um_uma",
         "word.q_when"
+      ],
+      "real_world": [
+        {
+          "tl": "Tem número de utente?",
+          "ar": "هل عندك رقم المستخدم الصحي؟",
+          "eg_note": "رقمك في الـ SNS (المركز الصحي) — هتسمعها في أي حجز طبي",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Qual é a sua data de nascimento?",
+          "ar": "ما تاريخ ميلادك؟",
+          "eg_note": "في أي استمارة أو حجز",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Traga o passaporte.",
+          "ar": "أحضر جواز السفر.",
+          "eg_note": "هات الباسبور معاك",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Fica marcado para dia dez.",
+          "ar": "تم الحجز ليوم عشرة.",
+          "eg_note": "الميعاد اتحجز يوم 10",
+          "tag": "هتسمعها"
+        }
       ]
     },
     {
@@ -2546,6 +3419,32 @@
         "word.day_periods",
         "verb.abrir",
         "word.q_when"
+      ],
+      "real_world": [
+        {
+          "tl": "Fechado para almoço",
+          "ar": "مغلق للغداء",
+          "eg_note": "محلات كتير بتقفل ساعة الغدا",
+          "tag": "هتشوفها مكتوبة"
+        },
+        {
+          "tl": "Até que horas está aberto?",
+          "ar": "حتى أي ساعة يكون مفتوحاً؟",
+          "eg_note": "فاتح لحد الساعة كام؟",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Abrimos às nove.",
+          "ar": "نفتح في التاسعة.",
+          "eg_note": "بنفتح الساعة تسعة",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "São quase dez.",
+          "ar": "الساعة تقريباً عشرة.",
+          "eg_note": "قربت عشرة",
+          "tag": "هتسمعها"
+        }
       ]
     },
     {
@@ -2637,6 +3536,32 @@
         "word.today_tomorrow",
         "word.beach",
         "phrase.shall_we_go"
+      ],
+      "real_world": [
+        {
+          "tl": "Vais fazer alguma coisa logo?",
+          "ar": "هل ستفعل شيئاً لاحقاً اليوم؟",
+          "eg_note": "logo = بعدين النهارده (الليلة)",
+          "tag": "نصيحة لشبونية"
+        },
+        {
+          "tl": "Logo à noite.",
+          "ar": "الليلة.",
+          "eg_note": "النهارده بالليل",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Vou ficar por casa.",
+          "ar": "سأبقى في البيت.",
+          "eg_note": "هقعد في البيت",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Ainda não sei.",
+          "ar": "لا أعرف بعد.",
+          "eg_note": "لسه مش عارف",
+          "tag": "قولها كده"
+        }
       ]
     },
     {
@@ -2741,6 +3666,32 @@
         "phrase.my_head_hurts",
         "phrase.im_tired",
         "pattern.queria_um_uma"
+      ],
+      "real_world": [
+        {
+          "tl": "É para tomar de oito em oito horas.",
+          "ar": "يؤخذ كل ثماني ساعات.",
+          "eg_note": "كل 8 ساعات — كده بيقولوا جرعة الدوا",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Antes ou depois das refeições?",
+          "ar": "قبل الوجبات أم بعدها؟",
+          "eg_note": "قبل الأكل ولا بعده؟",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Tem alguma alergia?",
+          "ar": "هل عندك أي حساسية؟",
+          "eg_note": "عندك حساسية من حاجة؟",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Tem algo para as dores sem receita?",
+          "ar": "هل عندك شيء للألم بدون وصفة؟",
+          "eg_note": "عايز مسكّن من غير روشتة",
+          "tag": "قولها كده"
+        }
       ]
     },
     {
@@ -2848,6 +3799,32 @@
         "verb.morar",
         "phrase.im_from_cairo",
         "word.numbers_0_10"
+      ],
+      "real_world": [
+        {
+          "tl": "Tem família cá?",
+          "ar": "هل لديك عائلة هنا؟",
+          "eg_note": "cá = هنا (في البرتغال) — سؤال هتسمعه كتير",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "A minha família está no Egito.",
+          "ar": "عائلتي في مصر.",
+          "eg_note": "عيلتي في مصر",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Tenho saudades da minha mãe.",
+          "ar": "أشتاق إلى أمي.",
+          "eg_note": "saudades = الوحشة/الحنين — أشهر كلمة برتغالية",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Que giros!",
+          "ar": "كم هم لطفاء!",
+          "eg_note": "إيه الحلاوة دي! — لما تفرّج حد صور ولادك",
+          "tag": "هتسمعها"
+        }
       ]
     },
     {
@@ -2920,6 +3897,33 @@
         "pattern.plural_s",
         "pattern.article_gender",
         "phrase.how_much_does_it_cost"
+      ],
+      "real_world": [
+        {
+          "tl": "Posso ajudar?",
+          "ar": "هل يمكنني المساعدة؟",
+          "eg_note": "البياع بيعرض يساعدك",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Estou só a ver, obrigado.",
+          "tl_f": "Estou só a ver, obrigada.",
+          "ar": "أنا أتفرج فقط، شكراً.",
+          "eg_note": "بتفرج بس — أهم جملة في محلات الهدوم",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Está em saldos.",
+          "ar": "إنه في التخفيضات.",
+          "eg_note": "saldos = الأوكازيون",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Fica-lhe bem!",
+          "ar": "يناسبك!",
+          "eg_note": "لايق عليك!",
+          "tag": "هتسمعها"
+        }
       ]
     },
     {
@@ -2973,6 +3977,32 @@
         "pattern.plural_s",
         "pattern.article_gender",
         "phrase.how_much_does_it_cost"
+      ],
+      "real_world": [
+        {
+          "tl": "Que tamanho veste?",
+          "ar": "ما مقاسك؟",
+          "eg_note": "مقاسك كام؟",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Visto o M.",
+          "ar": "ألبس مقاس M.",
+          "eg_note": "بلبس M (بيتنطق «إيمي»)",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Os provadores são ali.",
+          "ar": "غرف القياس هناك.",
+          "eg_note": "البروفة هناك",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Pode trocar com o talão.",
+          "ar": "يمكنك الاستبدال بالإيصال.",
+          "eg_note": "تقدر تبدّل بالفاتورة",
+          "tag": "هتسمعها"
+        }
       ]
     },
     {
@@ -3063,6 +4093,32 @@
         "word.q_which",
         "word.sweater",
         "pattern.adj_agreement"
+      ],
+      "real_world": [
+        {
+          "tl": "É para oferecer?",
+          "ar": "هل هو هدية؟",
+          "eg_note": "ده هدية؟ — هتسمعها في أي محل برتغالي",
+          "tag": "نصيحة لشبونية"
+        },
+        {
+          "tl": "Quer embrulho?",
+          "ar": "هل تريد تغليفه؟",
+          "eg_note": "تحب نغلفه؟",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Esse aí.",
+          "ar": "ذاك هناك.",
+          "eg_note": "اللي هناك ده",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Este ou aquele?",
+          "ar": "هذا أم ذاك؟",
+          "eg_note": "ده ولا ده؟",
+          "tag": "هتسمعها"
+        }
       ]
     },
     {
@@ -3159,6 +4215,33 @@
         "phrase.at_nine",
         "word.jacket",
         "pattern.chamo_me"
+      ],
+      "real_world": [
+        {
+          "tl": "Despacha-te!",
+          "ar": "أسرع!",
+          "eg_note": "يلا بسرعة! (لصاحبك)",
+          "tag": "كلام شارع"
+        },
+        {
+          "tl": "Estou atrasado!",
+          "tl_f": "Estou atrasada!",
+          "ar": "أنا متأخر!",
+          "eg_note": "أنا متأخر!",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Já tomaste o pequeno-almoço?",
+          "ar": "هل تناولت الفطور؟",
+          "eg_note": "فطرت؟",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Onde é que eu pus o telemóvel?",
+          "ar": "أين وضعت هاتفي؟",
+          "eg_note": "حطيت الموبايل فين؟",
+          "tag": "قولها كده"
+        }
       ]
     },
     {
@@ -3227,6 +4310,32 @@
         "word.supermarket",
         "word.bread",
         "pattern.contractions"
+      ],
+      "real_world": [
+        {
+          "tl": "Então, o fim de semana?",
+          "ar": "إذن، كيف كانت عطلة نهاية الأسبوع؟",
+          "eg_note": "سؤال كل يوم اتنين في الشغل",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Correu bem?",
+          "ar": "هل سار الأمر جيداً؟",
+          "eg_note": "عدّى كويس؟",
+          "tag": "هتسمعها"
+        },
+        {
+          "tl": "Foi ótimo!",
+          "ar": "كان رائعاً!",
+          "eg_note": "كان حلو أوي",
+          "tag": "قولها كده"
+        },
+        {
+          "tl": "Não fiz nada de especial.",
+          "ar": "لم أفعل شيئاً مميزاً.",
+          "eg_note": "معملتش حاجة مميزة",
+          "tag": "قولها كده"
+        }
       ]
     },
     {

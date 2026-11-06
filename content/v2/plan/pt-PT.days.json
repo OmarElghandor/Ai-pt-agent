@@ -348,7 +348,7 @@
       "title_tl": "Gramática Básica",
       "title_ar": "قواعد أساسية",
       "situation_eg": "في السوبر ماركت",
-      "example_tl": "Onde fica o leite?",
+      "example_tl": "Onde está o leite?",
       "rule_eg": "o / a: مذكر ومؤنث + الجمع (Plurais)",
       "extra_units_tl": [
         "Plurais"
@@ -400,7 +400,7 @@
             "o saco"
           ],
           "phrases": [
-            "Onde fica o leite?",
+            "Onde está o leite?",
             "O que é isto?"
           ]
         },
@@ -481,7 +481,8 @@
           ],
           "phrases": [
             "Quanto custa isso?",
-            "Precisa de saco?"
+            "Precisa de saco?",
+            "Queria um quilo de batatas."
           ]
         },
         "recycle": [
@@ -751,7 +752,7 @@
             "a vizinha",
             "tu",
             "você",
-            "o senhor / a senhora"
+            "o senhor"
           ],
           "phrases": [
             "Até logo!",
@@ -1021,7 +1022,9 @@
           ],
           "phrases": [
             "A conta, por favor.",
-            "Bom apetite!"
+            "Bom apetite!",
+            "Não como carne de porco.",
+            "Isto tem porco?"
           ]
         },
         "recycle": [],
@@ -1165,9 +1168,9 @@
         ],
         "new_items": {
           "words": [
-            "egípcio / egípcia",
-            "português / portuguesa",
-            "engenheiro / engenheira",
+            "egípcio",
+            "português",
+            "engenheiro",
             "o Egito"
           ],
           "phrases": [
@@ -1217,8 +1220,8 @@
         ],
         "new_items": {
           "words": [
-            "professor / professora",
-            "médico / médica",
+            "professor",
+            "médico",
             "estudante"
           ],
           "phrases": [
@@ -1307,10 +1310,10 @@
         ],
         "new_items": {
           "words": [
-            "cansado / cansada",
+            "cansado",
             "doente",
             "contente",
-            "nervoso / nervosa"
+            "nervoso"
           ],
           "phrases": [
             "Estou cansado.",
@@ -1362,11 +1365,11 @@
           "words": [
             "feliz",
             "triste",
-            "ocupado / ocupada"
+            "ocupado"
           ],
           "phrases": [
             "Dói-me a cabeça.",
-            "Está bem?"
+            "Está tudo bem?"
           ]
         },
         "recycle": [],
@@ -1811,7 +1814,8 @@
           ],
           "phrases": [
             "Estou na paragem.",
-            "Um bilhete para Sintra, por favor."
+            "Um bilhete para Sintra, por favor.",
+            "Este autocarro vai para o centro?"
           ]
         },
         "recycle": [],
