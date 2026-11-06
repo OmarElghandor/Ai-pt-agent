@@ -5,8 +5,12 @@ import {
   wordCount,
   type ConvoOutputIssue,
 } from './checks';
+import {
+  checkArScript,
+  checkPtScript,
+  scriptIssueReason,
+} from './scriptGuard';
 
-const ARABIC_SCRIPT_RE = /[\u0600-\u06FF]/;
 const FORMAL_RE = /\b(você|a sua|o seu|os seus|as suas)\b/i;
 
 /** Yes/no openers blocked unless the question has "ou". */
@@ -16,6 +20,10 @@ export type OpenParseIssue =
   | 'missing_pt'
   | 'missing_ar'
   | 'not_arabic'
+  | 'cjk'
+  | 'cyrillic'
+  | 'forbidden_script'
+  | 'pt_not_latin'
   | 'missing_frame'
   | 'frame_no_blank'
   | 'missing_hint'
@@ -101,7 +109,11 @@ function reasonFor(issues: OpenParseIssue[]): string {
   const map: Partial<Record<OpenParseIssue, string>> = {
     missing_pt: 'start with PT: reaction plus one question',
     missing_ar: 'add AR: with an Arabic translation',
-    not_arabic: 'AR: must be Arabic script',
+    not_arabic: scriptIssueReason('ar_not_arabic'),
+    cjk: scriptIssueReason('cjk'),
+    cyrillic: scriptIssueReason('cyrillic'),
+    forbidden_script: scriptIssueReason('forbidden_script'),
+    pt_not_latin: scriptIssueReason('pt_not_latin'),
     missing_frame: 'add FRAME: with a pt-PT answer frame containing ___',
     frame_no_blank: 'FRAME: must include ___',
     missing_hint: 'add HINT: one Egyptian line',
@@ -142,7 +154,20 @@ export function parseOpenConvoTurn(
 
   if (!pt) issues.push('missing_pt');
   if (!ar) issues.push('missing_ar');
-  else if (!ARABIC_SCRIPT_RE.test(ar)) issues.push('not_arabic');
+  else {
+    const arIssue = checkArScript(ar);
+    if (arIssue === 'ar_not_arabic') issues.push('not_arabic');
+    else if (arIssue === 'cjk') issues.push('cjk');
+    else if (arIssue === 'cyrillic') issues.push('cyrillic');
+    else if (arIssue) issues.push('forbidden_script');
+  }
+  if (pt) {
+    const ptIssue = checkPtScript(pt);
+    if (ptIssue === 'cjk') issues.push('cjk');
+    else if (ptIssue === 'cyrillic') issues.push('cyrillic');
+    else if (ptIssue === 'pt_not_latin') issues.push('pt_not_latin');
+    else if (ptIssue) issues.push('forbidden_script');
+  }
   if (!frame_tl) issues.push('missing_frame');
   else if (!frame_tl.includes('___')) issues.push('frame_no_blank');
   if (!hint_eg) issues.push('missing_hint');

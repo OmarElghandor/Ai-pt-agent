@@ -18,6 +18,8 @@ export type TalkTurnMetrics = {
   open_used_fallback?: boolean;
   open_turns?: number;
   open_fallbacks?: number;
+  /** Model output regenerate/drop reason (learn-fix-2 M2). */
+  regenerate_reason?: string;
 };
 
 type Props = {
@@ -85,6 +87,9 @@ export function TalkDevPanel({
       'fallback',
       `${hits}/${turns} (${pct}%)${metrics.open_used_fallback ? ' *' : ''}`,
     ]);
+  }
+  if (metrics.regenerate_reason) {
+    rows.push(['regen', metrics.regenerate_reason]);
   }
 
   return (

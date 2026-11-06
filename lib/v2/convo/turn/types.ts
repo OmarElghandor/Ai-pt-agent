@@ -137,6 +137,8 @@ export type ConvoTurnStreamEvent =
       /** Session open-turn counts for fallback rate. */
       open_turns?: number;
       open_fallbacks?: number;
+      /** Why a model output was regenerated/dropped (M2). */
+      regenerate_reason?: string;
     }
   | {
       type: 'done';
@@ -153,6 +155,7 @@ export type ConvoTurnMetrics = {
   open_used_fallback?: boolean;
   open_turns?: number;
   open_fallbacks?: number;
+  regenerate_reason?: string;
 };
 
 export type ConvoStreamModelResult = {

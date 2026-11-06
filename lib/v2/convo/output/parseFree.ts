@@ -9,6 +9,13 @@ import type {
   ConvoParseDecision,
   ParseConvoReactionResult,
 } from './parse';
+import {
+  checkArScript,
+  checkPtScript,
+  scriptIssueReason,
+  splitReactionAr,
+  type ScriptIssue,
+} from './scriptGuard';
 
 /** Batch 9: default reaction cap; 24 when the learner asked a question. */
 export const FREE_CONVO_MAX_WORDS = 12;
@@ -16,45 +23,24 @@ export const FREE_CONVO_MAX_WORDS_WHEN_ASKED = 24;
 
 const FORMAL_RE = /\b(você|a sua|o seu|os seus|as suas)\b/i;
 
-const ARABIC_SCRIPT_RE = /[\u0600-\u06FF]/;
-
 export type FreeParseExtraIssue =
   | 'missing_ar'
   | 'question'
   | 'formal'
-  | 'not_arabic';
+  | 'not_arabic'
+  | ScriptIssue;
 
 export type ParseFreeConvoResult = ParseConvoReactionResult & {
   reaction_ar: string;
   extraIssues: FreeParseExtraIssue[];
 };
 
-/** Split raw model text on a line that starts with AR: (handles stream chunk joins). */
+/** Split raw model text on AR: anywhere (line or inline). */
 export function splitFreeReactionAr(text: string): {
   reaction: string;
   ar: string | null;
 } {
-  const normalized = text.replace(/\r\n/g, '\n');
-  // Marker may arrive mid-stream as "AR:" on its own line, possibly with spaces.
-  const m = normalized.match(/^([\s\S]*?)\n\s*AR:\s*([\s\S]*)$/im);
-  if (m) {
-    return {
-      reaction: (m[1] ?? '').replace(/^\s*\[[^\]]*\]\s*/, '').trim(),
-      ar: (m[2] ?? '').trim(),
-    };
-  }
-  // Same-line fallback: "... text AR: ترجمة"
-  const inline = normalized.match(/^([\s\S]*?)\bAR:\s*([\s\S]+)$/i);
-  if (inline) {
-    return {
-      reaction: (inline[1] ?? '').replace(/^\s*\[[^\]]*\]\s*/, '').trim(),
-      ar: (inline[2] ?? '').trim(),
-    };
-  }
-  return {
-    reaction: normalized.replace(/^\s*\[[^\]]*\]\s*/, '').trim(),
-    ar: null,
-  };
+  return splitReactionAr(text);
 }
 
 /** Remove any sentence that ends with ?. */
@@ -93,8 +79,16 @@ function decisionFor(
   if (extra.includes('missing_ar')) {
     reasons.push('add a second line starting with AR: and the Arabic translation');
   }
-  if (extra.includes('not_arabic')) {
-    reasons.push('the AR: line must be in Arabic script');
+  if (extra.includes('not_arabic') || extra.includes('ar_not_arabic')) {
+    reasons.push(scriptIssueReason('ar_not_arabic'));
+  }
+  for (const issue of [
+    'cjk',
+    'cyrillic',
+    'forbidden_script',
+    'pt_not_latin',
+  ] as const) {
+    if (extra.includes(issue)) reasons.push(scriptIssueReason(issue));
   }
   if (extra.includes('question')) {
     reasons.push('do not ask a question; the app adds the next line');
@@ -127,9 +121,14 @@ export function parseFreeConvoReaction(
 
   if (ar == null || !ar.trim()) {
     extraIssues.push('missing_ar');
-  } else if (!ARABIC_SCRIPT_RE.test(ar)) {
-    extraIssues.push('not_arabic');
+  } else {
+    const arIssue = checkArScript(ar);
+    if (arIssue) {
+      extraIssues.push(arIssue === 'ar_not_arabic' ? 'not_arabic' : arIssue);
+    }
   }
+  const ptIssue = checkPtScript(rawReaction);
+  if (ptIssue) extraIssues.push(ptIssue);
 
   if (/\?/.test(rawReaction)) {
     // Stripped for display, but still regenerate so the model learns.
@@ -184,20 +183,19 @@ export function dropFreeConvoReaction(
 /**
  * Hide everything from the AR: marker onward while streaming (G1).
  * Holds incomplete leading labels and trailing partial "AR" so fragments
- * never reach the client.
+ * never reach the client. Cuts on AR: anywhere (inline or new line).
  */
 export function visibleFreeStreamText(accumulated: string): string {
   let s = accumulated.replace(/\r\n/g, '\n');
 
-  // Complete AR: marker (start of line or after newline)
-  const cut = s.search(/(?:^|\n)\s*AR\s*:/i);
+  // Complete AR: marker anywhere
+  const cut = s.search(/\s*AR\s*:/i);
   if (cut >= 0) {
-    // If AR: is at the very start, nothing visible yet
     if (cut === 0 || /^\s*$/.test(s.slice(0, cut))) return '';
     s = s.slice(0, cut);
   } else {
-    // Trailing partial AR label
-    const partial = s.match(/\n\s*(A|AR)\s*:?\s*$/i);
+    // Trailing partial AR label (newline or inline)
+    const partial = s.match(/(?:\n|\s)(A|AR)\s*:?\s*$/i);
     if (partial && partial.index != null) {
       s = s.slice(0, partial.index);
     } else if (/\n\s*$/.test(s)) {
@@ -208,12 +206,10 @@ export function visibleFreeStreamText(accumulated: string): string {
   const trimmedStart = s.replace(/^\s+/, '');
   if (!trimmedStart) return '';
 
-  // Same-line "AR:" without prior PT body
   if (/^AR\s*:/i.test(trimmedStart)) return '';
   if (/^A$/i.test(trimmedStart) || /^AR$/i.test(trimmedStart)) {
-    // Could be start of AR: on first line — hold only if entire buffer is that
     if (/^\s*A(?:R)?\s*:?\s*$/i.test(accumulated)) return '';
   }
 
-  return trimmedStart.replace(/\n\s*AR:[\s\S]*$/i, '');
+  return trimmedStart.replace(/\s*AR\s*:[\s\S]*$/i, '');
 }

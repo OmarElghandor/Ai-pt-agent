@@ -307,6 +307,9 @@ export function TalkSession({ packId }: Props) {
           output_tokens: event.output_tokens,
           ttft_ms: event.ttft_ms,
           total_ms: event.total_ms,
+          ...(event.regenerate_reason
+            ? { regenerate_reason: event.regenerate_reason }
+            : {}),
         });
         setTurnCount((n) => n + 1);
         return;

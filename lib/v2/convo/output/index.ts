@@ -7,6 +7,15 @@ export {
   type ConvoOutputIssue,
 } from './checks';
 
+export {
+  splitReactionAr,
+  checkPtScript,
+  checkArScript,
+  findForbiddenScript,
+  scriptIssueReason,
+  type ScriptIssue,
+} from './scriptGuard';
+
 export { consumeConvoTag, type ConsumeConvoTagResult } from './tag';
 
 export {

@@ -14,6 +14,7 @@ import {
   consumeConvoTag,
   dropConvoReaction,
   parseConvoReaction,
+  visibleFreeStreamText,
 } from '@/lib/v2/convo/output';
 import type { ConvoSession, ConvoSessionStore } from '@/lib/v2/convo/session';
 import {
@@ -148,6 +149,7 @@ async function callModel(opts: {
     'ttft_ms' | 'input_tokens' | 'cached_input_tokens' | 'output_tokens'
   >;
   dropped: boolean;
+  regenerateReason?: string;
 }> {
   const { model, system, prompt, candidateIds, emit } = opts;
   let buffer = '';
@@ -162,10 +164,17 @@ async function callModel(opts: {
       tagDone = true;
       if (consumed.tag) chosenId = consumed.tag;
     }
-    if (consumed.complete && consumed.rest.length > lastEmittedReaction.length) {
-      const delta = consumed.rest.slice(lastEmittedReaction.length);
-      lastEmittedReaction = consumed.rest;
-      if (delta) emit({ type: 'reaction_delta', text: delta });
+    if (consumed.complete) {
+      // Hide AR: and beyond while streaming (M2).
+      const visible = visibleFreeStreamText(consumed.rest);
+      if (visible.length > lastEmittedReaction.length) {
+        const delta = visible.slice(lastEmittedReaction.length);
+        lastEmittedReaction = visible;
+        if (delta) emit({ type: 'reaction_delta', text: delta });
+      } else if (visible.length < lastEmittedReaction.length) {
+        lastEmittedReaction = visible;
+        emit({ type: 'reaction_reset', text: visible });
+      }
     }
   };
 
@@ -178,11 +187,14 @@ async function callModel(opts: {
     onChunk,
   });
 
+  let lastRegenReason: string | undefined;
   let parsed = parseConvoReaction(result.text, candidateIds);
   if (parsed.decision === 'regenerate' && parsed.regenerateReason) {
+    lastRegenReason = parsed.regenerateReason;
     buffer = '';
     tagDone = false;
     lastEmittedReaction = '';
+    emit({ type: 'reaction_reset', text: '' });
     result = await streamFn({
       system,
       prompt,
@@ -192,6 +204,7 @@ async function callModel(opts: {
     });
     parsed = parseConvoReaction(result.text, candidateIds);
     if (parsed.decision === 'regenerate') {
+      lastRegenReason = parsed.regenerateReason ?? lastRegenReason;
       parsed = dropConvoReaction(parsed);
     }
   }
@@ -221,6 +234,7 @@ async function callModel(opts: {
     candidateId: parsed.candidateId || chosenId,
     unknownWords: parsed.unknownWords,
     dropped: parsed.decision === 'drop',
+    regenerateReason: lastRegenReason,
     metricsPartial: {
       ttft_ms: result.ttftMs,
       input_tokens: inputTokens,
@@ -293,6 +307,9 @@ export async function runConvoTurn(
       output_tokens: metrics.output_tokens,
       ttft_ms: metrics.ttft_ms,
       total_ms: metrics.total_ms,
+      ...(metrics.regenerate_reason
+        ? { regenerate_reason: metrics.regenerate_reason }
+        : {}),
     });
     emit({ type: 'done', ok, ...(error ? { error } : {}) });
     return { session, metrics };
@@ -617,6 +634,9 @@ export async function runConvoTurn(
     metrics = {
       ...metrics,
       ...modelOut.metricsPartial,
+      ...(modelOut.regenerateReason
+        ? { regenerate_reason: modelOut.regenerateReason }
+        : {}),
     };
 
     const chosenId = modelOut.candidateId;
