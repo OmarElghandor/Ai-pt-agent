@@ -1,4 +1,5 @@
 import { needsSideChannel } from './detect';
+import { normalizeAr } from './normalizeAr';
 import { isTopicRequestText } from './topicRequest';
 
 export type SideChannelKind =
@@ -8,9 +9,12 @@ export type SideChannelKind =
   | 'other'
   | null;
 
-/** Egyptian / MSA patterns for “what does X mean / how do I say X”. */
+/**
+ * Egyptian / MSA patterns for “what does X mean / how do I say X”.
+ * Matched against normalizeAr(text) so hamza/ya/ta-marbuta are folded.
+ */
 const LANGUAGE_QUESTION_RE =
-  /يعني\s*إيه|ازاي\s*أقول|ازاى\s*أقول|ايه\s*معنى|إيه\s*معنى|معناها|معناها؟|كيف\s*أقول|ما\s*معنى/;
+  /(ازاي|ازاى|كيف)\s*(اقول|نقول|بيقولوا|بقول)|يعني\s*ايه|ايه\s*معنى|ما\s*معنى|معناها|معنى|ترجمه|بالبرتغالي\s*ايه|قولي\b.*بالبرتغالي/;
 
 /**
  * Classify a learner message for the Arabic side channel (09 §6).
@@ -24,7 +28,8 @@ export function classifySideChannel(text: string): SideChannelKind {
     return 'topic_request';
   }
 
-  if (LANGUAGE_QUESTION_RE.test(t)) {
+  const norm = normalizeAr(t);
+  if (LANGUAGE_QUESTION_RE.test(norm)) {
     return 'language_question';
   }
 

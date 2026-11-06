@@ -84,6 +84,19 @@ describe('v2 convo · side channel detect/classify (T3.1)', () => {
     assert.equal(classifySideChannel('ازاي أقول مع رز؟'), 'language_question');
     assert.equal(classifySideChannel('direita'), null);
   });
+
+  it('S1 · normalised Arabic language questions (no hamza / digits)', () => {
+    assert.equal(
+      classifySideChannel('ازاي اقول بتمرن ٣ مرات?'),
+      'language_question',
+    );
+    assert.equal(classifySideChannel('إزاي أقول شمال؟'), 'language_question');
+    assert.equal(classifySideChannel('يعني ايه semana'), 'language_question');
+    assert.equal(
+      classifySideChannel('بالبرتغالي ايه جيم'),
+      'language_question',
+    );
+  });
 });
 
 describe('v2 convo · Arabic answer waits (T3.1)', () => {

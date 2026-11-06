@@ -4,6 +4,7 @@ export {
   needsSideChannel,
   isArabicOnly,
 } from './detect';
+export { normalizeAr } from './normalizeAr';
 export { classifySideChannel, type SideChannelKind } from './classify';
 export { handleArabicAnswer } from './handleArabicAnswer';
 export {

@@ -1,10 +1,10 @@
+import { normalizeAr } from '@/lib/v2/convo/sideChannel/normalizeAr';
+
 /** Whole-message Learn CTA yes/no (G4). */
 
 const YES = new Set([
   'نعم',
-  'أيوه',
   'ايوه',
-  'آه',
   'اه',
   'تمام',
   'يلا',
@@ -14,16 +14,17 @@ const YES = new Set([
   'ok',
 ]);
 
-const NO = new Set(['لا', 'لأ', 'no', 'não', 'nao']);
+/** After normalizeAr, «لأ» folds to «لا». */
+const NO = new Set(['لا', 'no', 'nao']);
 
 /**
- * Strip punctuation/emoji/diacritics; keep letters/digits/spaces.
+ * Strip punctuation/emoji; fold Arabic variants; keep letters/digits/spaces.
  * Matching is against the entire remaining string only.
  */
 export function normalizeCtaReply(text: string): string {
-  return text
+  const folded = normalizeAr(text);
+  return folded
     .normalize('NFKD')
-    .replace(/[\u064B-\u065F]/g, '')
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^\p{L}\p{N}\s]/gu, '')
     .replace(/\s+/g, ' ')

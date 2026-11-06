@@ -5,6 +5,7 @@ import {
   type TopicsFileTopic,
 } from '@/lib/v2/convo/topics';
 import { talkHrefForTopic } from '@/lib/v2/convo/topics/suggestion';
+import { normalizeAr } from './normalizeAr';
 
 /**
  * Matched against normalizeAr(text): hamza/diacritics already folded,
@@ -15,15 +16,6 @@ const TOPIC_REQUEST_RE =
 
 /** «إزاي أقول» + a catalogue topic/theme title (not word aliases like شمال). */
 const EZAY_AQOOL_RE = /ازاي\s*اقول|كيف\s*اقول/;
-
-function normalizeAr(s: string): string {
-  return s
-    .replace(/[إأآا]/g, 'ا')
-    .replace(/ة/g, 'ه')
-    .replace(/ى/g, 'ي')
-    .replace(/[\u064B-\u065F]/g, '')
-    .toLowerCase();
-}
 
 function matchesTopicTitleNoun(text: string): boolean {
   const file = loadTopicsFile();
