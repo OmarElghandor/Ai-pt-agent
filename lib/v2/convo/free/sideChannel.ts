@@ -82,9 +82,17 @@ export async function handleFreeArabicSide(opts: {
   }));
   if (frame?.tl) hints.unshift({ id: 'frame', tl: frame.tl });
 
+  const contextLines = (opts.context?.candidates ?? [])
+    .slice(0, 8)
+    .map((c) => ({
+      tl: c.tl,
+      ...(c.ar ? { ar: c.ar } : {}),
+    }));
+
   const result = await caller({
     learnerQuestion: learnerText,
     itemHints: hints,
+    ...(contextLines.length > 0 ? { contextLines } : {}),
   });
 
   let eg = result.eg || COACH_CALL_FALLBACK_EG;

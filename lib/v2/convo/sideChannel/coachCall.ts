@@ -1,7 +1,9 @@
 import { generateText } from 'ai';
 import { getCoachModel } from '@/lib/model';
+import { findForbiddenScript } from '@/lib/v2/convo/output/scriptGuard';
 
-export const COACH_CALL_TIMEOUT_MS = 4_000;
+/** Batch 9 C8 / side-channel fix S4: 6 s. */
+export const COACH_CALL_TIMEOUT_MS = 6_000;
 
 export const COACH_CALL_FALLBACK_EG =
   'جرّب تقولها بالبرتغالي — لو مش متأكد، اسأل تاني بجملة أقصر';
@@ -14,8 +16,10 @@ export const COACH_SIDE_SYSTEM = [
   'جاوب بالعامية المصرية في سطر أو سطرين فقط.',
   'لو سأل ازاي يقول حاجة، ادّي الصيغة البرتغالية القصيرة المناسبة لمستوى مبتدئ.',
   'لازم الرد فيه عربي مصري + جملة أو كلمة برتغالية (pt-PT) واضحة.',
+  'فضّل إعادة استخدام جمل المحادثة الحالية لو مناسبة.',
   'ما تكتبش «جرّب تقولها» — الكود بيضيفها لوحده.',
   'ما تشرحش قواعد، وما تطوّلش.',
+  'ممنوع صيني أو سيريلي أو أي سكريبت غير عربي/لاتيني.',
   '',
   'أمثلة:',
   'سؤال: ازاي أقول مع رز؟',
@@ -28,10 +32,17 @@ export const COACH_SIDE_SYSTEM = [
   'جواب: حلو — بالبرتغالي: «Moro em Amadora».',
 ].join('\n');
 
+export type CoachContextLine = {
+  tl: string;
+  ar?: string;
+};
+
 export type CoachCallInput = {
   learnerQuestion: string;
   /** Current pack item ids with tl surfaces (context only). */
   itemHints: Array<{ id: string; tl: string }>;
+  /** S4: conversation lines (share/ask/chips) for the model to reuse. */
+  contextLines?: CoachContextLine[];
 };
 
 export type CoachCallResult = {
@@ -65,7 +76,8 @@ export type CoachValidation = { ok: true } | { ok: false; reason: string };
 
 /**
  * Coach reply must include Arabic script and a Portuguese segment that
- * is not just echoing the learner's own Latin text (E2).
+ * is not just echoing the learner's own Latin text (E2), and no forbidden
+ * scripts (learn-fix-2 M2).
  */
 export function validateCoachReply(
   eg: string,
@@ -73,6 +85,10 @@ export function validateCoachReply(
 ): CoachValidation {
   const body = stripCoachSuffix(eg);
   if (!body) return { ok: false, reason: 'empty' };
+  const forbidden = findForbiddenScript(body);
+  if (forbidden) {
+    return { ok: false, reason: `forbidden_script:${forbidden}` };
+  }
   if (!/[\u0600-\u06FF]/.test(body)) {
     return { ok: false, reason: 'missing_arabic' };
   }
@@ -102,10 +118,19 @@ function buildUserPrompt(input: CoachCallInput, retryReason?: string): string {
     'كلمات الدرس الحالية (لو مفيدة):',
     items,
   ];
+  if (input.contextLines && input.contextLines.length > 0) {
+    parts.push(
+      '',
+      'جمل المحادثة الحالية (فضّل إعادة استخدامها لو مناسبة):',
+      ...input.contextLines.map((l) =>
+        l.ar ? `- PT: ${l.tl} | AR: ${l.ar}` : `- PT: ${l.tl}`,
+      ),
+    );
+  }
   if (retryReason) {
     parts.push(
       '',
-      `الرد السابق كان غلط (${retryReason}). جاوب بالعامية المصرية ومعاها جملة/كلمة برتغالية pt-PT واضحة.`,
+      `الرد السابق كان غلط (${retryReason}). جاوب بالعامية المصرية ومعاها جملة/كلمة برتغالية pt-PT واضحة. بدون سكريبتات تانية.`,
     );
   }
   return parts.join('\n');

@@ -8,6 +8,7 @@ import {
 import {
   classifySideChannel,
   COACH_CALL_FALLBACK_EG,
+  COACH_CALL_TIMEOUT_MS,
   createStubConvoCoachCaller,
   finalizeCoachReply,
   hasArabicScript,
@@ -332,6 +333,16 @@ describe('v2 convo · coach reply validation (E2)', () => {
     });
     assert.equal(out.eg, COACH_CALL_FALLBACK_EG);
     assert.equal(out.error, 'missing_arabic');
+  });
+
+  it('S4 · 6s timeout and rejects forbidden scripts (CJK)', () => {
+    assert.equal(COACH_CALL_TIMEOUT_MS, 6_000);
+    const check = validateCoachReply(
+      'قول «treino» 你好',
+      'ازاي أقول بتمرن؟',
+    );
+    assert.equal(check.ok, false);
+    if (!check.ok) assert.match(check.reason, /forbidden_script/);
   });
 });
 
