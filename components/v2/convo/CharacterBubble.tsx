@@ -21,6 +21,8 @@ type Props = {
   tone?: BubbleTone;
   /** Partner display name for calm header. */
   partnerName?: string;
+  /** Increment to abort in-flight TTS (G2 reaction_reset). */
+  ttsEpoch?: number;
 };
 
 export function CharacterBubble({
@@ -34,11 +36,19 @@ export function CharacterBubble({
   onPlayEnd,
   tone = 'warm',
   partnerName = 'Inês',
+  ttsEpoch = 0,
 }: Props) {
   const [showMeaning, setShowMeaning] = useState(false);
   const [playing, setPlaying] = useState(false);
   const playedRef = useRef<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    audioRef.current?.pause();
+    audioRef.current = null;
+    playedRef.current = null;
+    setPlaying(false);
+  }, [ttsEpoch]);
 
   useEffect(() => {
     if (!autoPlay || streaming || !tl.trim()) return;

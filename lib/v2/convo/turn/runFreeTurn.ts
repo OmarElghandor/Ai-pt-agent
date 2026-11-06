@@ -590,13 +590,12 @@ export async function runFreeConvoTurn(
     };
 
     const say = modelOut.pt ? transliteratePtToSay(modelOut.pt) : undefined;
-    if (modelOut.ar) {
-      emit({
-        type: 'bubble_ar',
-        ar: modelOut.ar,
-        ...(say ? { say } : {}),
-      });
-    }
+    emit({
+      type: 'bubble_ar',
+      ar: modelOut.ar || '',
+      pt: modelOut.pt,
+      ...(say ? { say } : {}),
+    });
     emit({
       type: 'question',
       id: lineId,
@@ -715,13 +714,12 @@ export async function runFreeConvoTurn(
         chips: [...modelOut.chips],
       };
       const say = modelOut.pt ? transliteratePtToSay(modelOut.pt) : undefined;
-      if (modelOut.ar) {
-        emit({
-          type: 'bubble_ar',
-          ar: modelOut.ar,
-          ...(say ? { say } : {}),
-        });
-      }
+      emit({
+        type: 'bubble_ar',
+        ar: modelOut.ar || '',
+        pt: modelOut.pt,
+        ...(say ? { say } : {}),
+      });
       emit({
         type: 'question',
         id: lineId,
@@ -879,13 +877,12 @@ export async function runFreeConvoTurn(
     .filter(Boolean)
     .join(' ')
     .trim();
-  if (bubbleAr) {
-    emit({
-      type: 'bubble_ar',
-      ar: bubbleAr,
-      ...(say ? { say } : {}),
-    });
-  }
+  emit({
+    type: 'bubble_ar',
+    ar: bubbleAr,
+    pt: characterExchange || authoredTl,
+    ...(say ? { say } : {}),
+  });
 
   // Keep a question event for older clients / tests that look for it.
   emit({

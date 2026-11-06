@@ -60,6 +60,8 @@ export type ConvoTurnStreamEvent =
       ar: string;
       /** Pronunciation for the full character bubble (E8). */
       say?: string;
+      /** Authoritative PT — replaces streamed preview (G3). */
+      pt?: string;
     }
   | {
       type: 'visual';

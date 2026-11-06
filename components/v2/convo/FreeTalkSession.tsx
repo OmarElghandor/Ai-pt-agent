@@ -83,6 +83,46 @@ export function FreeTalkSession({ topicId }: Props) {
       ]);
       return;
     }
+    if (event.type === 'reaction_reset') {
+      const sid = streamBubbleId.current;
+      if (!event.text) {
+        if (sid) {
+          setBubbles((prev) => prev.filter((b) => b.id !== sid));
+          streamBubbleId.current = null;
+        }
+        return;
+      }
+      if (sid) {
+        setBubbles((prev) =>
+          prev.map((b) =>
+            b.id === sid && b.role === 'character'
+              ? {
+                  ...b,
+                  tl: event.text,
+                  streaming: true,
+                  final: false,
+                  say: undefined,
+                  ttsEpoch: (b.ttsEpoch ?? 0) + 1,
+                }
+              : b,
+          ),
+        );
+      } else {
+        const nid = newId('char');
+        streamBubbleId.current = nid;
+        setBubbles((prev) => [
+          ...prev,
+          {
+            id: nid,
+            role: 'character',
+            tl: event.text,
+            streaming: true,
+            ttsEpoch: 1,
+          },
+        ]);
+      }
+      return;
+    }
     if (event.type === 'reaction_delta') {
       const id = streamBubbleId.current;
       if (!id) {
@@ -112,7 +152,8 @@ export function FreeTalkSession({ topicId }: Props) {
               ? {
                   ...b,
                   tl: `${b.tl}${b.tl.trim() ? ' ' : ''}${event.tl}`.trim(),
-                  streaming: false,
+                  // Keep streaming until bubble_ar/question finalizes (G3 TTS)
+                  streaming: true,
                   ...(event.say ? { say: event.say } : {}),
                 }
               : b,
@@ -127,7 +168,7 @@ export function FreeTalkSession({ topicId }: Props) {
             id: nid,
             role: 'character',
             tl: event.tl,
-            streaming: false,
+            streaming: true,
             ...(event.say ? { say: event.say } : {}),
           },
         ]);
@@ -142,26 +183,48 @@ export function FreeTalkSession({ topicId }: Props) {
             b.id === sid && b.role === 'character'
               ? {
                   ...b,
+                  ...(event.pt ? { tl: event.pt, final: true } : {}),
                   ar: event.ar,
-                  streaming: false,
+                  // Stay streaming until question if no authoritative pt yet
+                  streaming: event.pt ? false : b.streaming,
                   ...(event.say ? { say: event.say } : {}),
                 }
               : b,
           ),
         );
       }
-      streamBubbleId.current = null;
+      if (event.pt) streamBubbleId.current = null;
       return;
     }
     if (event.type === 'question') {
-      if (streamBubbleId.current) {
-        const sid = streamBubbleId.current;
+      const sid = streamBubbleId.current;
+      if (sid && event.tl) {
+        setBubbles((prev) =>
+          prev.map((b) =>
+            b.id === sid && b.role === 'character'
+              ? {
+                  ...b,
+                  // Open: question.tl is the full PT. Thread: may already include authored.
+                  tl:
+                    b.final || (b.tl.length > event.tl.length && b.tl.includes(event.tl))
+                      ? b.tl
+                      : event.tl,
+                  streaming: false,
+                  final: true,
+                  ...(event.say ? { say: event.say } : {}),
+                }
+              : b,
+          ),
+        );
+        streamBubbleId.current = null;
+      } else if (sid) {
         setBubbles((prev) =>
           prev.map((b) =>
             b.id === sid && b.role === 'character'
               ? {
                   ...b,
                   streaming: false,
+                  final: true,
                   ...(event.say ? { say: event.say } : {}),
                 }
               : b,
@@ -455,7 +518,10 @@ export function FreeTalkSession({ topicId }: Props) {
                   say={b.say}
                   streaming={b.streaming}
                   meaningEg={b.ar}
-                  autoPlay={!b.streaming && Boolean(b.tl)}
+                  ttsEpoch={b.ttsEpoch}
+                  autoPlay={
+                    !b.streaming && Boolean(b.final) && Boolean(b.tl)
+                  }
                 />
               );
             }

@@ -12,6 +12,10 @@ export type TalkBubble =
       /** Arabic meaning for معناها؟ */
       ar?: string;
       streaming?: boolean;
+      /** Bumps on reaction_reset to stop in-flight TTS (G2). */
+      ttsEpoch?: number;
+      /** True once authoritative final PT was applied (G3). */
+      final?: boolean;
       meaningHidden?: boolean;
     }
   | {
