@@ -188,4 +188,79 @@ describe('v2 free chat · C7/C8 side channel + frame', () => {
       /جرّب تقولها بالبرتغالي — لو مش متأكد/,
     );
   });
+
+  it('S6 · character waits; English side channel; G6 practise phrase', async () => {
+    const store = new MemoryConvoSessionStore();
+    const started = await startFreeConvoSession({
+      userId: 's6-u',
+      topicId: 'ginasio',
+      store,
+      newId: () => 's6-wait',
+    });
+    const pendingBefore = started.session.pending_question?.id;
+    const threadBefore = started.session.thread_index;
+    const stepBefore = structuredClone(started.session.free_step);
+    const exchangesBefore = started.session.last_exchanges.length;
+    const model = createStubConvoStreamModel({
+      byCandidate: (_ids, prompt) => {
+        assert.match(
+          prompt,
+          /learner practised the coach's phrase: Eu vou ao ginásio três vezes por semana/,
+        );
+        return 'Boa! Quantas vezes por semana?';
+      },
+    });
+    const coach = createStubConvoCoachCaller({ fail: 'timeout' });
+
+    // 1. Arabic how-do-I-say → coach; Tiago still on ask.
+    const arEvents: ConvoTurnStreamEvent[] = [];
+    const afterAr = await runFreeConvoTurn({
+      session: started.session,
+      learnerText: 'ازاي اقول بتمرن ٣ مرات?',
+      store,
+      model,
+      emit: (e) => arEvents.push(e),
+      coachCaller: coach,
+    });
+    assert.equal(model.calls, 0);
+    assert.equal(afterAr.session.pending_question?.id, pendingBefore);
+    assert.equal(afterAr.session.thread_index, threadBefore);
+    assert.deepEqual(afterAr.session.free_step, stepBefore);
+    assert.equal(afterAr.session.last_exchanges.length, exchangesBefore);
+    const arCoach = arEvents.find((e) => e.type === 'coach');
+    assert.ok(arCoach && arCoach.type === 'coach');
+    assert.match(arCoach.eg, /três vezes por semana/i);
+    assert.ok(afterAr.session.coach_phrase?.phrase);
+
+    // 2. English how-do-I-say → same; still waiting.
+    const enEvents: ConvoTurnStreamEvent[] = [];
+    const afterEn = await runFreeConvoTurn({
+      session: afterAr.session,
+      learnerText: 'how i can say i train 3 times in week?',
+      store,
+      model,
+      emit: (e) => enEvents.push(e),
+      coachCaller: coach,
+    });
+    assert.equal(model.calls, 0);
+    assert.equal(afterEn.session.pending_question?.id, pendingBefore);
+    assert.equal(afterEn.session.thread_index, threadBefore);
+    assert.equal(afterEn.session.last_exchanges.length, exchangesBefore);
+    const enCoach = enEvents.find((e) => e.type === 'coach');
+    assert.ok(enCoach && enCoach.type === 'coach');
+    assert.match(enCoach.eg, /três vezes|ginásio/i);
+
+    // 3. Learner says the coach phrase → G6 event (character model runs).
+    const phrase = afterEn.session.coach_phrase!.phrase;
+    const afterPractise = await runFreeConvoTurn({
+      session: afterEn.session,
+      learnerText: phrase,
+      store,
+      model,
+      emit: () => {},
+      coachCaller: coach,
+    });
+    assert.ok(model.calls >= 1, 'character reacts after practised phrase');
+    assert.equal(afterPractise.session.coach_phrase, null);
+  });
 });
