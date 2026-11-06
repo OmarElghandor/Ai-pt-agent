@@ -10,6 +10,8 @@ export type TopicsFileTopic = {
   character_id?: string;
   /** Free-chat topic to continue into after the lesson (T7.5). */
   free_topic_id?: string;
+  /** Egyptian situation line (from the days plan). */
+  subtitle_eg?: string;
 };
 
 export type TopicsFileTheme = {

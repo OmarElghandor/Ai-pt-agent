@@ -23,6 +23,8 @@ export {
   readyChipFromReadiness,
 } from './list';
 
+export { buildTopicsFromCurriculum } from './fromCurriculum';
+
 export {
   topicReviewSuggestionEg,
   talkHrefForTopic,

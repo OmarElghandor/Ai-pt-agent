@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { convoPackPath } from '@/lib/v2/convo/pack';
+import { buildTopicsFromCurriculum } from './fromCurriculum';
 import type { TopicsFile, TopicsFileTheme, TopicsFileTopic } from './types';
 
 const DEFAULT_PATH = path.join(
@@ -20,7 +21,8 @@ function isTopic(v: unknown): v is TopicsFileTopic {
     typeof o.day === 'number' &&
     typeof o.pack_id === 'string' &&
     Array.isArray(o.item_ids) &&
-    o.item_ids.every((id) => typeof id === 'string')
+    o.item_ids.every((id) => typeof id === 'string') &&
+    (o.subtitle_eg === undefined || typeof o.subtitle_eg === 'string')
   );
 }
 
@@ -66,16 +68,31 @@ export function parseTopicsFile(raw: unknown): TopicsFile {
         ...(typeof topic.free_topic_id === 'string'
           ? { free_topic_id: topic.free_topic_id }
           : {}),
+        ...(typeof topic.subtitle_eg === 'string'
+          ? { subtitle_eg: topic.subtitle_eg }
+          : {}),
       })),
     })),
   };
 }
 
+/**
+ * Learn catalog: curriculum days + core items, with themes/overrides from
+ * topics.pt-PT.json (P8). Pass a non-default path to load that JSON alone
+ * (tests / overrides inspection).
+ */
 export function loadTopicsFile(filePath: string = DEFAULT_PATH): TopicsFile {
   if (cached && filePath === DEFAULT_PATH) return cached;
+
   const raw = JSON.parse(readFileSync(filePath, 'utf8')) as unknown;
-  const file = parseTopicsFile(raw);
-  if (filePath === DEFAULT_PATH) cached = file;
+  const overrides = parseTopicsFile(raw);
+
+  if (filePath !== DEFAULT_PATH) {
+    return overrides;
+  }
+
+  const file = buildTopicsFromCurriculum({ overridesFile: overrides });
+  cached = file;
   return file;
 }
 

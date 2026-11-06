@@ -38,7 +38,7 @@ function TopicRowView({ topic }: { topic: TopicRow }) {
             ) : null}
           </span>
           <span className="block font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-            {topic.title_ar}
+            {topic.subtitle_eg || topic.title_ar}
           </span>
         </span>
         <Icon name="arrow_back" size={20} className="text-v2-action" />
