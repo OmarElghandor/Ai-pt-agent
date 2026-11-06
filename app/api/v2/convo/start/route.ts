@@ -21,8 +21,8 @@ import {
 } from '@/lib/v2/convo/session';
 
 export const runtime = 'nodejs';
-/** Allow blocking while a missing pack is generated on first open. */
-export const maxDuration = 300;
+/** Generation runs in the worker; start returns preparing immediately (P3). */
+export const maxDuration = 60;
 
 /**
  * Start or resume a conversation (09 §10).
@@ -186,13 +186,35 @@ export async function POST(req: Request) {
     const surfaces = loadConvoItemSurfaces();
     const ensured = await ensureConvoPackReady(packId);
     if (!ensured.ok) {
+      if (ensured.code === 'preparing') {
+        return NextResponse.json(
+          {
+            status: 'preparing',
+            job_id: ensured.job_id,
+            readiness: ensured.readiness,
+            pack_id: packId,
+            day: ensured.readiness.day,
+            error_eg: ensured.message_eg,
+          },
+          { status: 202 },
+        );
+      }
+      const status =
+        ensured.code === 'needs_review'
+          ? 409
+          : ensured.code === 'no_published_lesson'
+            ? 404
+            : 503;
       return NextResponse.json(
         {
           error: ensured.message,
           error_eg: ensured.message_eg,
           code: ensured.code,
+          ...(ensured.code === 'needs_review'
+            ? { status: 'needs_review' }
+            : {}),
         },
-        { status: ensured.code === 'no_published_lesson' ? 404 : 503 },
+        { status },
       );
     }
     const pack = ensured.pack;

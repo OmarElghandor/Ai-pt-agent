@@ -62,3 +62,4 @@ export {
   type EnsureConvoPackErrorCode,
   type EnsureConvoPackResult,
 } from './ensure';
+// EnsureConvoPackResult now includes a non-blocking `preparing` branch (P3).
