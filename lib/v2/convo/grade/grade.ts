@@ -84,6 +84,19 @@ export function gradeConvoAnswer(
     return { verdict: 'correct', itemIds };
   }
 
+  // Pattern / phrase stems: learner may expand "Onde fica" → "Onde fica a farmácia?"
+  const stem = normalizeForCompare(input.itemTl.replace(/[.?!,;:]+$/g, ''));
+  const answerNorm = normalizeForCompare(text);
+  if (
+    stem.length >= 6 &&
+    (answerNorm === stem ||
+      answerNorm.startsWith(stem + ' ') ||
+      answerNorm.includes(' ' + stem + ' ') ||
+      answerNorm.endsWith(' ' + stem))
+  ) {
+    return { verdict: 'correct', itemIds };
+  }
+
   const near = matchKnownNearMiss(text);
   if (near) {
     return { verdict: 'near_miss', itemIds };

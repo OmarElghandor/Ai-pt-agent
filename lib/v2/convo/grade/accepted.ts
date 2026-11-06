@@ -65,7 +65,24 @@ function withArticleVariants(base: string): string[] {
     add(out, `à ${core}`);
     add(out, `a ${core}`);
   }
-  for (const art of ['o', 'a', 'os', 'as', 'à', 'ao']) {
+  for (const art of [
+    'o',
+    'a',
+    'os',
+    'as',
+    'à',
+    'ao',
+    'às',
+    'aos',
+    'na',
+    'no',
+    'nas',
+    'nos',
+    'da',
+    'do',
+    'das',
+    'dos',
+  ]) {
     add(out, `${art} ${core}`);
   }
   return [...out];
