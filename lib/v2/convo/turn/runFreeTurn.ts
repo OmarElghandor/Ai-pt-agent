@@ -41,6 +41,7 @@ import {
   THREADS_DONE_COACH_EG,
   type FreeNextLine,
 } from '@/lib/v2/convo/free';
+import { classifyCtaReply } from '@/lib/v2/convo/free/ctaReply';
 import {
   maybeRecastPair,
   pushLearnerLine,
@@ -71,6 +72,8 @@ export type RunFreeConvoTurnInput = {
   coachCaller?: ConvoCoachCaller;
   /** Optional partner switch (أي حاجة header). */
   characterId?: string;
+  /** Dismiss pending Learn CTA without a transcript line (G4). */
+  dismissCta?: boolean;
 };
 
 function pushExchange(
@@ -365,12 +368,38 @@ export async function runFreeConvoTurn(
     return { session, metrics };
   };
 
+  // G4: dedicated dismiss — no transcript line.
+  if (input.dismissCta) {
+    session.pending_cta = null;
+    session.learn_suggest_done = true;
+    emit({ type: 'cta_dismissed' });
+    return finish(true);
+  }
+
+  // G4: pending CTA expires after this message, whatever it is.
+  if (session.pending_cta) {
+    const cta = session.pending_cta;
+    session.pending_cta = null;
+    const kind = classifyCtaReply(input.learnerText);
+    if (kind === 'yes') {
+      emit({ type: 'cta_navigate', href: cta.href });
+      return finish(true);
+    }
+    if (kind === 'no') {
+      emit({ type: 'cta_dismissed' });
+      return finish(true);
+    }
+    // Any other message: CTA consumed; continue normal path below.
+  }
+
   const sideKind = classifySideChannel(input.learnerText);
   if (sideKind === 'topic_request') {
     // Batch 10 D8: practice stays free — soft Learn CTA only, no forced pack jump.
     const matched = matchTopicRequest(input.learnerText);
     const coach = topicRequestCoachEg(matched);
     if (matched) {
+      const href =
+        coach.href ?? `/talk/${encodeURIComponent(matched.pack_id)}`;
       emit({
         type: 'coach',
         id: 'free_topic_request',
@@ -381,10 +410,10 @@ export async function runFreeConvoTurn(
         type: 'cta',
         id: `learn_cta:${matched.pack_id}`,
         label_eg: 'يلا نتعلّم',
-        href:
-          coach.href ?? `/talk/${encodeURIComponent(matched.pack_id)}`,
+        href,
         dismiss_eg: 'لأ، نكمّل',
       });
+      session.pending_cta = { href, pack_id: matched.pack_id };
       session.learn_suggest_done = true;
     } else {
       logUnmatchedTopicRequestSync({
@@ -465,6 +494,10 @@ export async function runFreeConvoTurn(
             href: hit.talkHref,
             dismiss_eg: 'لأ، نكمّل',
           });
+          session.pending_cta = {
+            href: hit.talkHref,
+            pack_id: hit.packId,
+          };
         }
       }
     }

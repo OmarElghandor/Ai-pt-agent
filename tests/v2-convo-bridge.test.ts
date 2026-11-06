@@ -143,6 +143,8 @@ describe('v2 free chat · topic request (T7.5)', () => {
     assert.equal(cta.label_eg, 'يلا نتعلّم');
     assert.ok(cta.href.includes('talk'));
     assert.equal(cta.dismiss_eg, 'لأ، نكمّل');
+    assert.ok(out.session.pending_cta?.href);
+    assert.equal(out.session.pending_cta?.href, cta.href);
   });
 });
 

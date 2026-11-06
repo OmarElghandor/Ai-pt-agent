@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ConvoTurnStreamEvent } from '@/lib/v2/convo/turn';
 import type { ConvoSessionSummary } from '@/lib/v2/convo/result';
@@ -30,6 +31,7 @@ function partnerLabel(id: string): string {
 type Props = { topicId: string };
 
 export function FreeTalkSession({ topicId }: Props) {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -66,6 +68,15 @@ export function FreeTalkSession({ topicId }: Props) {
   const applyEvent = useCallback((event: ConvoTurnStreamEvent) => {
     if (event.type === 'cta') {
       setLessonHref(event.href);
+      return;
+    }
+    if (event.type === 'cta_navigate') {
+      setLessonHref(null);
+      router.push(event.href);
+      return;
+    }
+    if (event.type === 'cta_dismissed') {
+      setLessonHref(null);
       return;
     }
     if (event.type === 'coach') {
@@ -256,10 +267,13 @@ export function FreeTalkSession({ topicId }: Props) {
     if (event.type === 'done' && !event.ok) {
       setError(event.error ?? 'turn failed');
     }
-  }, []);
+  }, [router]);
 
   const runTurn = useCallback(
-    async (learnerText: string, opts?: { assisted?: boolean }) => {
+    async (
+      learnerText: string,
+      opts?: { assisted?: boolean; dismissCta?: boolean },
+    ) => {
       if (!sessionId || busy) return;
       setBusy(true);
       setError(null);
@@ -274,6 +288,7 @@ export function FreeTalkSession({ topicId }: Props) {
             text: learnerText,
             ...(useAssisted ? { assisted: true } : {}),
             ...(openMode ? { character_id: characterId } : {}),
+            ...(opts?.dismissCta ? { dismiss_cta: true } : {}),
           }),
         });
         if (!res.ok || !res.body) {
@@ -572,7 +587,7 @@ export function FreeTalkSession({ topicId }: Props) {
             className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[var(--ft-radius-control)] border border-[var(--ft-line)] px-4 py-2.5 font-[family-name:var(--font-ft-ar)] text-base text-[var(--ft-text)]"
             onClick={() => {
               setLessonHref(null);
-              void runTurn('لأ');
+              void runTurn('', { dismissCta: true });
             }}
           >
             لأ، نكمّل

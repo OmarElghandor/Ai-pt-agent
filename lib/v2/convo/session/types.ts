@@ -106,6 +106,11 @@ export type ConvoSession = {
   learn_suggest_count: number;
   /** True after one Learn suggestion (or dismiss) — no more this session. */
   learn_suggest_done: boolean;
+  /**
+   * Soft Learn CTA waiting for the learner's next message only (G4).
+   * Cleared on yes/no/any other message or dismiss_cta.
+   */
+  pending_cta: { href: string; pack_id: string } | null;
   /** Open-mode turns this session (E7 fallback rate). */
   open_turns: number;
   /** Open-mode turns that used the fallback bank. */

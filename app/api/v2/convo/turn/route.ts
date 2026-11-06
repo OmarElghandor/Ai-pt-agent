@@ -40,6 +40,7 @@ export async function POST(req: Request) {
     assisted?: boolean;
     survival?: 'repeat' | 'slow' | 'nao_percebi';
     character_id?: string;
+    dismiss_cta?: boolean;
   } | null;
   const sessionId = body?.session_id?.trim();
   if (!sessionId) {
@@ -76,6 +77,7 @@ export async function POST(req: Request) {
             ...(body?.character_id
               ? { characterId: body.character_id }
               : {}),
+            ...(body?.dismiss_cta ? { dismissCta: true } : {}),
           });
           void metrics;
         } else {

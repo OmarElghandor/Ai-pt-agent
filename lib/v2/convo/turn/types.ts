@@ -21,6 +21,15 @@ export type ConvoTurnStreamEvent =
       href: string;
       dismiss_eg?: string;
     }
+  /** Learner accepted pending CTA — client should navigate (G4). */
+  | {
+      type: 'cta_navigate';
+      href: string;
+    }
+  /** Learner dismissed pending CTA (G4). */
+  | {
+      type: 'cta_dismissed';
+    }
   | {
       type: 'group_advance';
       group: number;
