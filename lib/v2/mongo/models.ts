@@ -93,6 +93,8 @@ export const V2_JOB_KINDS = [
   'convo_lang_check',
   'convo_assemble',
   'topic_angles',
+  /** Orchestrates lesson → gate → convo → audio for one day. */
+  'prepare_day',
 ] as const;
 
 export type V2JobKind = (typeof V2_JOB_KINDS)[number];
@@ -821,6 +823,32 @@ export function V2TopicRequestModel(): Model<V2TopicRequestDoc> {
   return (
     (mongoose.models.V2TopicRequest as Model<V2TopicRequestDoc>) ||
     mongoose.model<V2TopicRequestDoc>('V2TopicRequest', v2TopicRequestSchema)
+  );
+}
+
+/** Per-day prepare lock — second callers join the same prepare_day job. */
+const v2PrepareLockSchema = new Schema(
+  {
+    key: { type: String, required: true, unique: true, index: true },
+    day: { type: Number, required: true, index: true },
+    target_lang: { type: String, required: true },
+    job_id: { type: String, required: true },
+    /** TTL index field — lock expires so a stuck prepare can be retried. */
+    expires_at: { type: Date, required: true, index: true },
+  },
+  { timestamps: true, collection: 'v2_prepare_locks' },
+);
+
+v2PrepareLockSchema.index({ expires_at: 1 }, { expireAfterSeconds: 0 });
+
+export type V2PrepareLockDoc = InferSchemaType<typeof v2PrepareLockSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2PrepareLockModel(): Model<V2PrepareLockDoc> {
+  return (
+    (mongoose.models.V2PrepareLock as Model<V2PrepareLockDoc>) ||
+    mongoose.model<V2PrepareLockDoc>('V2PrepareLock', v2PrepareLockSchema)
   );
 }
 

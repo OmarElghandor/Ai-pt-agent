@@ -406,6 +406,31 @@ export async function processLessonJob(
   job: JobView,
   workerId: string,
 ): Promise<void> {
+  if (job.kind === 'prepare_day') {
+    const { processPrepareDayJob } = await import('./prepare/runPrepareDay');
+    console.info(
+      `[v2-gen:job] start id=${job.id} kind=prepare_day day=${job.day}`,
+    );
+    const heartbeatTimer = setInterval(() => {
+      void heartbeat(job.id, workerId);
+    }, 60_000);
+    try {
+      await markJobStarted(job.id);
+      await processPrepareDayJob({
+        jobId: job.id,
+        day: job.day,
+        targetLang: job.target_lang,
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      await finishJobFailed(job.id, message);
+      throw err;
+    } finally {
+      clearInterval(heartbeatTimer);
+    }
+    return;
+  }
+
   if (String(job.kind).startsWith('pack_')) {
     const { processPackJob } = await import('./pack/process');
     console.info(
