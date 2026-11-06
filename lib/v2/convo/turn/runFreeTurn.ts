@@ -30,6 +30,7 @@ import {
 } from '@/lib/v2/convo/sideChannel';
 import {
   advanceAfterAnswer,
+  consumeCoachPhraseOnLearnerTurn,
   currentNextLine,
   extractFreeFact,
   handleFreeArabicSide,
@@ -38,6 +39,7 @@ import {
   NON_LEARNING_COACH_EG,
   pickOpenFallback,
   pushFreeFact,
+  setCoachPhrase,
   THREADS_DONE_COACH_EG,
   type FreeNextLine,
 } from '@/lib/v2/convo/free';
@@ -450,13 +452,16 @@ export async function runFreeConvoTurn(
     sideKind === 'other' ||
     sideKind === 'language_question'
   ) {
-    await handleFreeArabicSide({
+    const side = await handleFreeArabicSide({
       kind: sideKind,
       learnerText: input.learnerText.trim(),
       frame: session.pending_frame ?? pendingLine.frame,
       emit,
       ...(input.coachCaller ? { coachCaller: input.coachCaller } : {}),
     });
+    if (side.coachPhrase) {
+      session.coach_phrase = setCoachPhrase(side.coachPhrase);
+    }
 
     // D8: after 3 language Qs on the same item group → one Learn suggestion.
     if (
@@ -541,6 +546,12 @@ export async function runFreeConvoTurn(
       eventLine = 'learner used the help chips';
     }
     if (learnerText) {
+      const practised = consumeCoachPhraseOnLearnerTurn(
+        session.coach_phrase,
+        learnerText,
+      );
+      session.coach_phrase = practised.next;
+      if (practised.eventLine) eventLine = practised.eventLine;
       pushExchange(session, 'learner', learnerText);
       session.learner_lines = pushLearnerLine(
         session.learner_lines ?? [],
@@ -691,6 +702,12 @@ export async function runFreeConvoTurn(
         eventLine =
           'learner asked you a question; answer briefly then ask one open question';
       }
+      const practisedOpen = consumeCoachPhraseOnLearnerTurn(
+        session.coach_phrase,
+        learnerText,
+      );
+      session.coach_phrase = practisedOpen.next;
+      if (practisedOpen.eventLine) eventLine = practisedOpen.eventLine;
       const characterId = session.character_id ?? topic.character_id;
       const persona = requirePersona(characterId);
       const promptBuilt = buildOpenConvoPrompt({
@@ -786,6 +803,12 @@ export async function runFreeConvoTurn(
   }
 
   if (learnerText) {
+    const practised = consumeCoachPhraseOnLearnerTurn(
+      session.coach_phrase,
+      learnerText,
+    );
+    session.coach_phrase = practised.next;
+    if (practised.eventLine) eventLine = practised.eventLine;
     // Batch 10 D3: no topic policing — always continue on the same topic.
     session.off_topic_streak = 0;
     pushExchange(session, 'learner', learnerText);

@@ -48,6 +48,15 @@ export {
 } from './ctaReply';
 
 export {
+  coachPhrasesEqual,
+  consumeCoachPhraseOnLearnerTurn,
+  extractCoachPhrase,
+  normalizeCoachPhrase,
+  setCoachPhrase,
+  type CoachPhraseState,
+} from './coachPhrase';
+
+export {
   FREE_COACH_TIMEOUT_MS,
   handleFreeArabicSide,
   type FreeSideKind,

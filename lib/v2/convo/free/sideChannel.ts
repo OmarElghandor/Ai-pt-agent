@@ -5,11 +5,17 @@ import {
 } from '@/lib/v2/convo/sideChannel/coachCall';
 import type { ThreadFrame } from '@/lib/v2/convo/topics';
 import type { ConvoTurnStreamEvent } from '@/lib/v2/convo/turn/types';
+import { extractCoachPhrase } from './coachPhrase';
 import { fitFrameFromArabic } from './frameFit';
 
 export const FREE_COACH_TIMEOUT_MS = 6_000;
 
 export type FreeSideKind = 'arabic_answer' | 'language_question' | 'other';
+
+export type FreeArabicSideResult = {
+  /** PT phrase for the learner to practise (G6), if any. */
+  coachPhrase: string | null;
+};
 
 /**
  * Free-chat Arabic side channel (Batch 9 C8).
@@ -21,7 +27,7 @@ export async function handleFreeArabicSide(opts: {
   frame?: ThreadFrame | null;
   emit: (event: ConvoTurnStreamEvent) => void;
   coachCaller?: ConvoCoachCaller;
-}): Promise<void> {
+}): Promise<FreeArabicSideResult> {
   const { kind, learnerText, frame, emit } = opts;
 
   if (kind === 'arabic_answer' || kind === 'other') {
@@ -33,7 +39,7 @@ export async function handleFreeArabicSide(opts: {
         eg: `بالبرتغالي: «${fitted}» — جرّب تقولها`,
         moment: 'arabic_answer',
       });
-      return;
+      return { coachPhrase: fitted };
     }
   }
 
@@ -61,4 +67,5 @@ export async function handleFreeArabicSide(opts: {
     eg,
     moment: kind,
   });
+  return { coachPhrase: extractCoachPhrase(eg) };
 }

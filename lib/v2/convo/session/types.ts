@@ -111,6 +111,11 @@ export type ConvoSession = {
    * Cleared on yes/no/any other message or dismiss_cta.
    */
   pending_cta: { href: string; pack_id: string } | null;
+  /**
+   * PT phrase from the free Arabic coach for the learner to practise (G6).
+   * Expires after 2 learner PT turns without a match.
+   */
+  coach_phrase: { phrase: string; turns_left: number } | null;
   /** Open-mode turns this session (E7 fallback rate). */
   open_turns: number;
   /** Open-mode turns that used the fallback bank. */

@@ -743,6 +743,7 @@ const v2ConvoSessionSchema = new Schema(
     learn_suggest_count: { type: Number, required: false, default: 0 },
     learn_suggest_done: { type: Boolean, required: false, default: false },
     pending_cta: { type: Schema.Types.Mixed, required: false, default: null },
+    coach_phrase: { type: Schema.Types.Mixed, required: false, default: null },
     open_turns: { type: Number, required: false, default: 0 },
     open_fallbacks: { type: Number, required: false, default: 0 },
   },
