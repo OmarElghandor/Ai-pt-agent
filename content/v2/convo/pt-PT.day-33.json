@@ -24,9 +24,45 @@
     ]
   },
   "groups": [
-    { "id": "g1_places", "item_ids": ["word.station", "word.street", "word.pharmacy"], "intro_eg": "Inês طلعت من المترو وتاهت 😅 إنت شايف مكانها على الخريطة. محتاجين 3 أماكن:" },
-    { "id": "g2_directions", "item_ids": ["word.right", "word.left", "phrase.is_it_near", "phrase.its_far"], "intro_eg": "دلوقتي وجّهها. يمين وشمال، وقريب ولا بعيد:" },
-    { "id": "g3_asking", "item_ids": ["phrase.where_is_station", "pattern.onde_fica"], "intro_eg": "Inês وصلت 🎉 دلوقتي إنت اللي هتسأل. عشان تسأل حاجة فين بنقول Onde fica…?" }
+    {
+      "id": "g1_places",
+      "item_ids": ["word.station", "word.street", "word.pharmacy"],
+      "intro_eg": "Inês طلعت من المترو وتاهت 😅 إنت شايف مكانها على الخريطة. محتاجين 3 أماكن:",
+      "flow": [
+        "q_station_choice",
+        "q_station_open",
+        "q_street_choice",
+        "q_street_open",
+        "q_pharmacy_choice",
+        "q_pharmacy_open"
+      ]
+    },
+    {
+      "id": "g2_directions",
+      "item_ids": ["word.right", "word.left", "phrase.is_it_near", "phrase.its_far"],
+      "intro_eg": "دلوقتي وجّهها. يمين وشمال، وقريب ولا بعيد:",
+      "flow": [
+        "q_right_choice",
+        "q_right_open",
+        "q_left_choice",
+        "q_left_open",
+        "q_near_choice",
+        "q_near_open",
+        "q_far_choice",
+        "q_far_open"
+      ]
+    },
+    {
+      "id": "g3_asking",
+      "item_ids": ["phrase.where_is_station", "pattern.onde_fica"],
+      "intro_eg": "Inês وصلت 🎉 دلوقتي إنت اللي هتسأل. عشان تسأل حاجة فين بنقول Onde fica…?",
+      "flow": [
+        "q_where_station_choice",
+        "q_where_station_open",
+        "q_onde_fica_choice",
+        "q_onde_fica_open"
+      ]
+    }
   ],
   "items": {
     "word.station": {
@@ -39,7 +75,12 @@
         { "id": "q_station_open", "tl": "Saí do metro… Como se chama este sítio?", "ar": "خرجت من المترو... ما اسم هذا المكان؟", "item_id": "word.station", "map_node": "station",
           "help_ladder": { "step1_reask_tl": "O metro… é na…?", "step1_reask_ar": "المترو... يكون في...؟", "step2_hint_eg": "بتبدأ بـ a esta…" } }
       ],
-      "common_mistakes": []
+      "common_mistakes": [],
+      "reactions_correct": [
+        { "tl": "Isso, a estação! Já te vejo. 😊", "ar": "صحيح، المحطة! أراك الآن." },
+        { "tl": "Perfeito — a estação do metro!", "ar": "ممتاز — محطة المترو!" }
+      ],
+      "reactions_near_miss": "Ah, {correct}! 😊"
     },
     "word.street": {
       "coach_intro_eg": "الشارع بنقوله a rua. والـ r في الأول بتتنطق قريب من الغين: «غوا».",
@@ -50,7 +91,12 @@
         { "id": "q_street_open", "tl": "E agora? Onde estou?", "ar": "والآن؟ أين أنا؟", "item_id": "word.street", "map_node": "street",
           "help_ladder": { "step1_reask_tl": "Não é a estação… é a…?", "step1_reask_ar": "ليست المحطة... إنها الـ...؟", "step2_hint_eg": "بتبدأ بـ a ru…" } }
       ],
-      "common_mistakes": []
+      "common_mistakes": [],
+      "reactions_correct": [
+        { "tl": "Sim, a rua! Continuamos.", "ar": "نعم، الشارع! نكمل." },
+        { "tl": "Boa — estou na rua. 👍", "ar": "حسنًا — أنا في الشارع." }
+      ],
+      "reactions_near_miss": "Ah, {correct}! 😊"
     },
     "word.pharmacy": {
       "coach_intro_eg": "الصيدلية بنقولها a farmácia. في البرتغال علامتها صليب أخضر ➕",
@@ -62,7 +108,12 @@
         { "id": "q_pharmacy_open", "tl": "E esta loja com a cruz verde, o que é?", "ar": "وهذا المحل الذي عليه صليب أخضر، ما هو؟", "item_id": "word.pharmacy", "map_node": "pharmacy",
           "help_ladder": { "step1_reask_tl": "Uma loja… para comprar paracetamol?", "step1_reask_ar": "محل... لشراء الباراسيتامول؟", "step2_hint_eg": "بتبدأ بـ a farm…" } }
       ],
-      "common_mistakes": []
+      "common_mistakes": [],
+      "reactions_correct": [
+        { "tl": "Exato, a farmácia! ➕", "ar": "بالضبط، الصيدلية!" },
+        { "tl": "Isso — a farmácia com a cruz verde.", "ar": "صحيح — الصيدلية ذات الصليب الأخضر." }
+      ],
+      "reactions_near_miss": "Ah, {correct}! 😊"
     },
     "word.right": {
       "coach_intro_eg": "يمين بنقولها à direita ➡️",
@@ -76,7 +127,12 @@
       ],
       "common_mistakes": [
         { "id": "m_right_left", "trigger": "word.left", "consequence_tl": "Fui para a esquerda… e vejo o rio! 😅", "coach_note_eg": "بص على السهم ➡️ ده يمين، يعني à direita." }
-      ]
+      ],
+      "reactions_correct": [
+        { "tl": "Ok, à direita! Vou.", "ar": "حسناً، يميناً! سأذهب." },
+        { "tl": "À direita — percibido! ➡️", "ar": "يميناً — فهمت!" }
+      ],
+      "reactions_near_miss": "Ah, {correct}! 😊"
     },
     "word.left": {
       "coach_intro_eg": "شمال بنقولها à esquerda ⬅️",
@@ -90,7 +146,12 @@
       ],
       "common_mistakes": [
         { "id": "m_left_right", "trigger": "word.right", "consequence_tl": "Fui para a direita… mas não vejo a tua casa! 🤔", "coach_note_eg": "السهم ⬅️ شمال، يعني à esquerda." }
-      ]
+      ],
+      "reactions_correct": [
+        { "tl": "À esquerda — já vou! ⬅️", "ar": "يساراً — سأذهب الآن!" },
+        { "tl": "Perfeito, à esquerda.", "ar": "ممتاز، يساراً." }
+      ],
+      "reactions_near_miss": "Ah, {correct}! 😊"
     },
     "phrase.is_it_near": {
       "coach_intro_eg": "قريب = perto. وعشان تسأل «قريب؟» بنقول É perto?",
@@ -103,7 +164,12 @@
       ],
       "common_mistakes": [
         { "id": "m_near_far", "trigger": "phrase.its_far", "consequence_tl": "Longe? Ai não… vou apanhar um táxi! 😩", "coach_note_eg": "البيت دقيقتين بس من الصيدلية، يعني perto." }
-      ]
+      ],
+      "reactions_correct": [
+        { "tl": "É perto? Ótimo! 😌", "ar": "قريب؟ رائع!" },
+        { "tl": "Perto — ainda bem!", "ar": "قريب — الحمد لله!" }
+      ],
+      "reactions_near_miss": "Ah, {correct}! 😊"
     },
     "phrase.its_far": {
       "coach_intro_eg": "بعيد = longe. É longe = بعيد.",
@@ -114,7 +180,12 @@
         { "id": "q_far_open", "tl": "Amanhã quero ir à estação de comboios a pé. Achas boa ideia?", "ar": "غداً أريد الذهاب إلى محطة القطارات مشياً. هل تراها فكرة جيدة؟", "item_id": "phrase.its_far", "map_node": "train",
           "help_ladder": { "step1_reask_tl": "Quarenta minutos a pé… é perto?", "step1_reask_ar": "أربعون دقيقة مشياً... هل هي قريبة؟", "step2_hint_eg": "بعيدة = longe. قول: Não, é longe." } }
       ],
-      "common_mistakes": []
+      "common_mistakes": [],
+      "reactions_correct": [
+        { "tl": "É longe, pois é… 😅", "ar": "بعيد، صحيح…" },
+        { "tl": "Longe — melhor de metro!", "ar": "بعيد — المترو أفضل!" }
+      ],
+      "reactions_near_miss": "Ah, {correct}! 😊"
     },
     "phrase.where_is_station": {
       "coach_intro_eg": "عشان تسأل «المحطة فين؟» بنقول Onde fica a estação?",
@@ -125,7 +196,12 @@
         { "id": "q_where_station_open", "tl": "Agora sou eu a turista. 😄 Queres o metro… o que me perguntas?", "ar": "الآن أنا السائحة. تريد المترو... ماذا تسألني؟", "item_id": "phrase.where_is_station", "map_node": "station",
           "help_ladder": { "step1_reask_tl": "Onde… fica… o quê?", "step1_reask_ar": "أين... تقع... ماذا؟", "step2_hint_eg": "ابدأ بـ Onde fica…" } }
       ],
-      "common_mistakes": []
+      "common_mistakes": [],
+      "reactions_correct": [
+        { "tl": "Muito bem: Onde fica a estação?", "ar": "أحسنت: أين تقع المحطة؟" },
+        { "tl": "Isso! Assim perguntas. 😊", "ar": "صحيح! هكذا تسأل." }
+      ],
+      "reactions_near_miss": "Ah, {correct}! 😊"
     },
     "pattern.onde_fica": {
       "coach_intro_eg": "نفس السؤال ينفع لأي مكان: Onde fica + a/o + المكان؟",
@@ -136,7 +212,12 @@
         { "id": "q_onde_fica_open", "tl": "Tens dor de cabeça e precisas da cruz verde. O que perguntas?", "ar": "عندك صداع وتحتاج إلى الصليب الأخضر. ماذا تسأل؟", "item_id": "pattern.onde_fica", "map_node": "pharmacy",
           "help_ladder": { "step1_reask_tl": "Como perguntas a uma pessoa na rua?", "step1_reask_ar": "كيف تسأل شخصاً في الشارع؟", "step2_hint_eg": "قول: Onde fica a farmácia?" } }
       ],
-      "common_mistakes": []
+      "common_mistakes": [],
+      "reactions_correct": [
+        { "tl": "Onde fica a farmácia? Perfeito!", "ar": "أين تقع الصيدلية؟ ممتاز!" },
+        { "tl": "Boa pergunta! 👏", "ar": "سؤال جيد!" }
+      ],
+      "reactions_near_miss": "Ah, {correct}! 😊"
     }
   },
   "recap": {
@@ -153,5 +234,6 @@
   },
   "opening": { "tl": "Olá! 😊 Já saí do metro, mas estou perdida! Vês-me no mapa?", "ar": "مرحباً! خرجت من المترو، لكنني تائهة! هل تراني على الخريطة؟" },
   "closing": { "tl": "Cheguei! 🔔 Obrigada pela ajuda!", "ar": "وصلت! شكراً على المساعدة!" },
-  "bridge": { "tl": "Agora, enquanto subo… gostas de morar aqui?", "ar": "والآن، بينما أصعد... هل تحب السكن هنا؟" }
+  "bridge": { "tl": "Agora, enquanto subo… gostas de morar aqui?", "ar": "والآن، بينما أصعد... هل تحب السكن هنا؟" },
+  "resume": { "tl": "Olá outra vez! 😊 Então…", "ar": "مرحباً مرة أخرى! إذن…" }
 }

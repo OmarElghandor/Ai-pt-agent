@@ -58,6 +58,12 @@ export const ConvoMistakeSchema = z.object({
   coach_note_eg: z.string().min(1),
 });
 
+/** Authored correct-answer reaction (Learn pack reactions, no model). */
+export const ConvoReactionLineSchema = z.object({
+  tl: z.string().min(1),
+  ar: z.string().min(1).optional(),
+});
+
 /** Per-item bank; card data stays on the lesson item (reference by id only). */
 export const ConvoItemBankSchema = z.object({
   coach_intro_eg: z.string().min(1),
@@ -67,6 +73,10 @@ export const ConvoItemBankSchema = z.object({
   /** Domain check requires ≥1; empty allowed here so validate can emit open_min. */
   open_questions: z.array(ConvoOpenQuestionSchema).default([]),
   common_mistakes: z.array(ConvoMistakeSchema).max(2).default([]),
+  /** Code-picked reactions on correct (rotate; never same twice in a row). */
+  reactions_correct: z.array(ConvoReactionLineSchema).min(1).max(4).optional(),
+  /** Template with `{correct}` filled by code on near_miss. */
+  reactions_near_miss: z.string().min(1).optional(),
 });
 
 export const ConvoMapNodeKindSchema = z.enum(['place', 'home', 'far_place']);
@@ -121,6 +131,11 @@ export const ConvoGroupSchema = z.object({
   item_ids: z.array(z.string().min(1)).min(1).max(5),
   /** One Egyptian coach line that introduces the whole group. */
   intro_eg: z.string().min(1).optional(),
+  /**
+   * Authored question order (question ids). When set, Learn follows this
+   * instead of model/ranking candidate choice.
+   */
+  flow: z.array(z.string().min(1)).min(1).optional(),
 });
 
 export const ConvoRecapQuestionSchema = z.object({
@@ -167,12 +182,15 @@ export const ConvoPackDataSchema = z.object({
   opening: ConvoCharacterLineSchema,
   closing: ConvoCharacterLineSchema,
   bridge: ConvoCharacterLineSchema,
+  /** Resume line when the learner returns mid-conversation. */
+  resume: ConvoCharacterLineSchema.optional(),
 });
 
 export type ConvoChoiceQuestion = z.infer<typeof ConvoChoiceQuestionSchema>;
 export type ConvoHelpLadder = z.infer<typeof ConvoHelpLadderSchema>;
 export type ConvoOpenQuestion = z.infer<typeof ConvoOpenQuestionSchema>;
 export type ConvoMistake = z.infer<typeof ConvoMistakeSchema>;
+export type ConvoReactionLine = z.infer<typeof ConvoReactionLineSchema>;
 export type ConvoItemBank = z.infer<typeof ConvoItemBankSchema>;
 export type ConvoMapNode = z.infer<typeof ConvoMapNodeSchema>;
 export type ConvoMapVisual = z.infer<typeof ConvoMapVisualSchema>;
