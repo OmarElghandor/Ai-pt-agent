@@ -1,13 +1,25 @@
 import type { BubbleTone } from './CharacterBubble';
+import {
+  CorrectionHint,
+  type CorrectionHintData,
+} from './CorrectionHint';
 
 type Props = {
   tl: string;
   tone?: BubbleTone;
   /** Soft draft look (text-mode preview) — Calm only. */
   draft?: boolean;
+  correction?: CorrectionHintData | null;
+  onAddCard?: (data: CorrectionHintData) => void;
 };
 
-export function LearnerBubble({ tl, tone = 'warm', draft }: Props) {
+export function LearnerBubble({
+  tl,
+  tone = 'warm',
+  draft,
+  correction,
+  onAddCard,
+}: Props) {
   if (tone === 'calm') {
     return (
       <div className="flex max-w-[85%] flex-col items-end self-end">
@@ -32,6 +44,9 @@ export function LearnerBubble({ tl, tone = 'warm', draft }: Props) {
             {tl}
           </p>
         </div>
+        {correction ? (
+          <CorrectionHint data={correction} onAddCard={onAddCard} />
+        ) : null}
       </div>
     );
   }
@@ -47,6 +62,9 @@ export function LearnerBubble({ tl, tone = 'warm', draft }: Props) {
           {tl}
         </p>
       </div>
+      {correction ? (
+        <CorrectionHint data={correction} onAddCard={onAddCard} />
+      ) : null}
     </div>
   );
 }

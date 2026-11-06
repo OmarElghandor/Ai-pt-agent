@@ -22,6 +22,15 @@ export type TalkBubble =
       id: string;
       role: 'learner';
       tl: string;
+      correction?: {
+        severity: 'accent' | 'error';
+        corrected_tl: string;
+        changes: Array<{ from: string; to: string }>;
+        note_eg: string;
+        ar: string;
+        original: string;
+        index: number;
+      };
     }
   | {
       id: string;

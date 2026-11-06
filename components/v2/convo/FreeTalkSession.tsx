@@ -60,6 +60,7 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
   const [ending, setEnding] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const streamBubbleId = useRef<string | null>(null);
+  const correctionCountRef = useRef(0);
 
   const scrollToEnd = useCallback(() => {
     const el = scrollRef.current;
@@ -269,6 +270,30 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
       setTurnCount((n) => n + 1);
       return;
     }
+    if (event.type === 'correction') {
+      if (event.severity !== 'accent' && event.severity !== 'error') return;
+      const index = correctionCountRef.current;
+      correctionCountRef.current += 1;
+      setBubbles((prev) =>
+        prev.map((b) =>
+          b.id === event.learner_turn_id && b.role === 'learner'
+            ? {
+                ...b,
+                correction: {
+                  severity: event.severity,
+                  corrected_tl: event.corrected_tl,
+                  changes: event.changes,
+                  note_eg: event.note_eg,
+                  ar: event.ar,
+                  original: event.original,
+                  index,
+                },
+              }
+            : b,
+        ),
+      );
+      return;
+    }
     if (event.type === 'done' && !event.ok) {
       setError(event.error ?? 'turn failed');
     }
@@ -277,7 +302,11 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
   const runTurn = useCallback(
     async (
       learnerText: string,
-      opts?: { assisted?: boolean; dismissCta?: boolean },
+      opts?: {
+        assisted?: boolean;
+        dismissCta?: boolean;
+        learnerTurnId?: string;
+      },
     ) => {
       if (!sessionId || busy) return;
       setBusy(true);
@@ -294,6 +323,9 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
             ...(useAssisted ? { assisted: true } : {}),
             ...(openMode ? { character_id: characterId } : {}),
             ...(opts?.dismissCta ? { dismiss_cta: true } : {}),
+            ...(opts?.learnerTurnId
+              ? { learner_turn_id: opts.learnerTurnId }
+              : {}),
           }),
         });
         if (!res.ok || !res.body) {
@@ -401,11 +433,15 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
   const sendPt = (t: string, opts?: { assisted?: boolean }) => {
     if (!t.trim() || busy) return;
     if (opts?.assisted) setAssisted(true);
+    const learnerTurnId = newId('learner');
     setBubbles((prev) => [
       ...prev,
-      { id: newId('learner'), role: 'learner', tl: t.trim() },
+      { id: learnerTurnId, role: 'learner', tl: t.trim() },
     ]);
-    void runTurn(t.trim(), { assisted: opts?.assisted });
+    void runTurn(t.trim(), {
+      assisted: opts?.assisted,
+      learnerTurnId,
+    });
   };
 
   const endSession = async () => {
@@ -563,7 +599,14 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
               );
             }
             if (b.role === 'learner') {
-              return <LearnerBubble key={b.id} tone="calm" tl={b.tl} />;
+              return (
+                <LearnerBubble
+                  key={b.id}
+                  tone="calm"
+                  tl={b.tl}
+                  correction={b.correction ?? null}
+                />
+              );
             }
             if (b.role === 'coach') {
               const moment = b.moment ?? '';
@@ -634,11 +677,12 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
           onToggleHelp={() => setHelpOpen((v) => !v)}
           onSend={(t, opts) => sendPt(t, { assisted: opts?.assisted })}
           onArabicSend={(t) => {
+            const learnerTurnId = newId('learner');
             setBubbles((prev) => [
               ...prev,
-              { id: newId('learner'), role: 'learner', tl: t },
+              { id: learnerTurnId, role: 'learner', tl: t },
             ]);
-            void runTurn(t);
+            void runTurn(t, { learnerTurnId });
           }}
           onUnclearStt={() => {
             setBubbles((prev) => [
