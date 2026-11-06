@@ -97,6 +97,7 @@ export function TalkSession({ packId }: Props) {
   const streamBubbleId = useRef<string | null>(null);
   const wrongWayTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingPlayRef = useRef<{ tl: string; slow: boolean } | null>(null);
+  const correctionCountRef = useRef(0);
 
   const scrollToEnd = useCallback(() => {
     const el = scrollRef.current;
@@ -314,6 +315,30 @@ export function TalkSession({ packId }: Props) {
         setTurnCount((n) => n + 1);
         return;
       }
+      if (event.type === 'correction') {
+        if (event.severity !== 'accent' && event.severity !== 'error') return;
+        const index = correctionCountRef.current;
+        correctionCountRef.current += 1;
+        setBubbles((prev) =>
+          prev.map((b) =>
+            b.id === event.learner_turn_id && b.role === 'learner'
+              ? {
+                  ...b,
+                  correction: {
+                    severity: event.severity,
+                    corrected_tl: event.corrected_tl,
+                    changes: event.changes,
+                    note_eg: event.note_eg,
+                    ar: event.ar,
+                    original: event.original,
+                    index,
+                  },
+                }
+              : b,
+          ),
+        );
+        return;
+      }
       if (event.type === 'done' && !event.ok) {
         setError(event.error ?? 'turn failed');
       }
@@ -324,7 +349,11 @@ export function TalkSession({ packId }: Props) {
   const runTurn = useCallback(
     async (
       learnerText: string,
-      opts?: { survival?: ConvoSurvivalAction; viaVoice?: boolean },
+      opts?: {
+        survival?: ConvoSurvivalAction;
+        viaVoice?: boolean;
+        learnerTurnId?: string;
+      },
     ) => {
       if (!sessionId || busy) return;
       setBusy(true);
@@ -339,6 +368,9 @@ export function TalkSession({ packId }: Props) {
             text: learnerText,
             ...(opts?.survival ? { survival: opts.survival } : {}),
             ...(opts?.viaVoice ? { via_voice: true } : {}),
+            ...(opts?.learnerTurnId
+              ? { learner_turn_id: opts.learnerTurnId }
+              : {}),
           }),
         });
         if (!res.ok || !res.body) {
@@ -508,6 +540,7 @@ export function TalkSession({ packId }: Props) {
           if (cancelled) return;
           setPreparing(true);
           setPrepareFailed(false);
+          setReadyToast(false);
           setDay(body.day ?? body.readiness?.day ?? null);
           setReadiness(body.readiness ?? null);
           setLoading(false);
@@ -516,12 +549,16 @@ export function TalkSession({ packId }: Props) {
 
         if (
           res.status === 409 ||
+          res.status === 422 ||
           body.code === 'needs_review' ||
-          body.status === 'needs_review'
+          body.code === 'pack_unusable' ||
+          body.status === 'needs_review' ||
+          body.status === 'pack_unusable'
         ) {
           if (cancelled) return;
           setPreparing(true);
           setPrepareFailed(true);
+          setReadyToast(false);
           setDay(body.day ?? body.readiness?.day ?? null);
           setReadiness(body.readiness ?? null);
           setError(body.error_eg || body.error || null);
@@ -538,7 +575,12 @@ export function TalkSession({ packId }: Props) {
         applyStartBody(body as TalkStartResponse);
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : 'start failed');
+          const msg = err instanceof Error ? err.message : 'start failed';
+          setError(msg);
+          // Keep preparing shell so the Egyptian error is visible (not a blank chat).
+          setPreparing(true);
+          setPrepareFailed(true);
+          setReadyToast(false);
           setLoading(false);
         }
       }
@@ -596,21 +638,23 @@ export function TalkSession({ packId }: Props) {
   const submitText = () => {
     const t = text.trim();
     if (!t || busy || !pending) return;
+    const learnerTurnId = newId('you');
     setBubbles((prev) => [
       ...prev,
-      { id: newId('you'), role: 'learner', tl: t },
+      { id: learnerTurnId, role: 'learner', tl: t },
     ]);
     setText('');
-    void runTurn(t);
+    void runTurn(t, { learnerTurnId });
   };
 
   const submitChoice = (optionTl: string) => {
     if (busy || !pending) return;
+    const learnerTurnId = newId('you');
     setBubbles((prev) => [
       ...prev,
-      { id: newId('you'), role: 'learner', tl: optionTl },
+      { id: learnerTurnId, role: 'learner', tl: optionTl },
     ]);
-    void runTurn(optionTl);
+    void runTurn(optionTl, { learnerTurnId });
   };
 
   const runSurvival = (action: ConvoSurvivalAction) => {
@@ -637,13 +681,14 @@ export function TalkSession({ packId }: Props) {
         ]);
         return;
       }
+      const learnerTurnId = newId('you');
       setBubbles((prev) => [
         ...prev,
-        { id: newId('you'), role: 'learner', tl: spoken },
+        { id: learnerTurnId, role: 'learner', tl: spoken },
       ]);
       sendAtRef.current = performance.now();
       setFirstAudioMs(null);
-      void runTurn(spoken, { viaVoice: true });
+      void runTurn(spoken, { viaVoice: true, learnerTurnId });
       return;
     }
     await mic.start();
@@ -926,7 +971,14 @@ export function TalkSession({ packId }: Props) {
             );
           }
           if (b.role === 'learner') {
-            return <LearnerBubble key={b.id} tone="calm" tl={b.tl} />;
+            return (
+              <LearnerBubble
+                key={b.id}
+                tone="calm"
+                tl={b.tl}
+                correction={b.correction ?? null}
+              />
+            );
           }
           if (b.role === 'group_coach') {
             return (

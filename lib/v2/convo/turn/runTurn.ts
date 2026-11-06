@@ -23,6 +23,12 @@ import {
 } from '@/lib/v2/convo/progress';
 import { deriveWrongWay } from '@/lib/v2/convo/visual';
 import {
+  awaitAndEmitCorrection,
+  shouldFireFreeTextCorrection,
+  startFreeTextCorrection,
+} from '@/lib/v2/convo/correction';
+import type { FreeTextCorrection, FreeTextGrader } from '@/lib/v2/grader';
+import {
   classifySideChannel,
   handleArabicAnswer,
   handleLanguageQuestionCoachCall,
@@ -98,6 +104,10 @@ export type RunConvoTurnInput = {
   coachCaller?: ConvoCoachCaller;
   /** True when the learner text came from STT (M5 voice-only coach lines). */
   viaVoice?: boolean;
+  /** Client learner bubble id — echoed on correction events (K2/K4). */
+  learnerTurnId?: string;
+  /** Injected free-text grader (tests). */
+  freeTextGrader?: FreeTextGrader;
 };
 
 function findOpenHelpReask(
@@ -270,7 +280,32 @@ export async function runConvoTurn(
     total_ms: 0,
   };
 
+  let correctionJob: {
+    promise: Promise<FreeTextCorrection>;
+    learner_turn_id: string;
+    original: string;
+  } | null = null;
+
   const finish = async (ok: boolean, error?: string) => {
+    if (correctionJob) {
+      const job = correctionJob;
+      correctionJob = null;
+      const corr = await awaitAndEmitCorrection({
+        promise: job.promise,
+        learner_turn_id: job.learner_turn_id,
+        original: job.original,
+        emit,
+      });
+      if (corr.has_error && corr.severity === 'error' && corr.corrected_tl) {
+        session.recasts = [
+          ...(session.recasts ?? []),
+          {
+            original: job.original,
+            corrected: corr.corrected_tl,
+          },
+        ].slice(-8);
+      }
+    }
     metrics.total_ms = Date.now() - started;
     emit({
       type: 'session',
@@ -478,6 +513,35 @@ export async function runConvoTurn(
     session = applied.session;
     moments = applied.moments;
     event = applied.event;
+
+    // K4: open answer accepted (correct / near_miss) → free-text sentence correction.
+    const openKind =
+      pendingBefore.kind === 'open' || pendingBefore.kind === 'help';
+    if (
+      openKind &&
+      (event.verdict === 'correct' || event.near_miss) &&
+      shouldFireFreeTextCorrection({
+        learnerText,
+        survival: Boolean(input.survival),
+      })
+    ) {
+      const lastChar = session.last_exchanges
+        .filter((e) => e.role === 'character')
+        .at(-1)?.tl;
+      correctionJob = {
+        promise: startFreeTextCorrection(
+          {
+            answer: learnerText.trim(),
+            character_tl: lastChar,
+          },
+          input.freeTextGrader,
+        ),
+        learner_turn_id:
+          input.learnerTurnId?.trim() || `lt_${Date.now().toString(36)}`,
+        original: learnerText.trim(),
+      };
+    }
+
     if (applied.group_advance) {
       emit({
         type: 'group_advance',

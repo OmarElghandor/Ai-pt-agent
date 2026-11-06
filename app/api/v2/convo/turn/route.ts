@@ -101,6 +101,9 @@ export async function POST(req: Request) {
             progressWriter: createAnswersConvoProgressWriter(),
             ...(survival ? { survival } : {}),
             ...(body?.via_voice ? { viaVoice: true } : {}),
+            ...(body?.learner_turn_id
+              ? { learnerTurnId: body.learner_turn_id }
+              : {}),
           });
           void metrics;
         }
