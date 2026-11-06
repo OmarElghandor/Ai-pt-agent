@@ -51,7 +51,7 @@ describe('v2 convo ladder · unit', () => {
     assert.equal(result.event.first_without_help, true);
   });
 
-  it('unclear does not escalate help or change rung', () => {
+  it('unclear re-asks same question via help without changing rung (M4)', () => {
     const session = createConvoSessionDoc({
       id: 's1',
       userId: 'u',
@@ -66,9 +66,10 @@ describe('v2 convo ladder · unit', () => {
       pending,
     });
     assert.equal(result.session.rungs[itemId], 'taught');
-    assert.equal(result.session.help_ladder.step, 0);
+    assert.equal(result.session.help_ladder.step, 1);
+    assert.equal(result.session.help_ladder.question_id, pending.id);
     assert.ok(result.moments.includes('unclear'));
-    assert.equal(formatConvoEventLine(result.event), 'answer unclear');
+    assert.match(formatConvoEventLine(result.event), /unclear/);
   });
 
   it('wrong answer escalates help 1→4 and marks struggled', () => {
