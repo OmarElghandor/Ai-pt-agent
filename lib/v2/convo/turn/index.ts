@@ -1,4 +1,5 @@
 export { convoQuestionAudioKey } from './audioKey';
+export { pickPackReaction, type PackReaction } from './packReaction';
 export {
   findPackQuestion,
   resolveCandidateQuestion,

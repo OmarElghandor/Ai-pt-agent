@@ -29,7 +29,9 @@ import {
   type ConvoCoachCaller,
 } from '@/lib/v2/convo/sideChannel';
 import { requirePersona } from '@/lib/v2/convo/topics';
+import { isLearnModelReactionsEnabled } from '@/lib/v2/flags';
 import { convoQuestionAudioKey } from './audioKey';
+import { pickPackReaction } from './packReaction';
 import {
   findPackQuestion,
   resolveCandidateQuestion,
@@ -547,71 +549,86 @@ export async function runConvoTurn(
     return finish(true);
   }
 
-  let personaJson: string | undefined;
-  try {
-    const persona = requirePersona(pack.scene.character_id);
-    personaJson = JSON.stringify(persona);
-  } catch {
-    personaJson = undefined;
-  }
+  const usePackReactions =
+    session.module === 'lesson' && !isLearnModelReactionsEnabled();
 
-  const untaughtTls = surfaces
-    .filter((s) => (session.rungs[s.id] ?? 'taught') === 'taught')
-    .map((s) => s.tl);
-
-  const promptBuilt = buildConvoPrompt({
-    pack,
-    event,
-    eventLine,
-    candidates,
-    lastExchanges: session.last_exchanges,
-    learnerAnswer: pendingBefore ? learnerText : '(ready)',
-    ...(personaJson ? { personaJson } : {}),
-    taughtTls: taught,
-  });
-  const { system, prompt } = promptPartsToMessages(promptBuilt);
-  const candidateIds = candidates.map((c) => c.id);
-
-  let modelOut = await callModel({
-    model,
-    system,
-    prompt,
-    candidateIds,
-    emit,
-  });
-  metrics = {
-    ...metrics,
-    ...modelOut.metricsPartial,
-  };
-
-  const chosenId = modelOut.candidateId;
-  const chosenCandidate =
-    candidates.find((c) => c.id === chosenId) ?? candidates[0];
-
+  let reactionTl = '';
+  let reactionAr: string | undefined;
   let resolved: ResolvedConvoQuestion;
-  if (helpResolved && helpResolved.id === chosenCandidate.id) {
-    resolved = helpResolved;
-  } else {
-    resolved = resolveCandidateQuestion(pack, chosenCandidate);
-  }
+  let unknownWords: string[] = [];
 
-  // Post-check: drop reaction if it leaks the answer or an untaught item.
-  if (
-    modelOut.reaction &&
-    reactionLeaksAnswer(
-      modelOut.reaction,
-      event.forbid_answer_tl,
-      untaughtTls,
-    )
-  ) {
-    modelOut = await callModel({
+  if (usePackReactions) {
+    // M1: no model — pick authored reaction; first flow/ranked candidate wins.
+    const chosenCandidate = candidates[0]!;
+    if (helpResolved && helpResolved.id === chosenCandidate.id) {
+      resolved = helpResolved;
+    } else {
+      resolved = resolveCandidateQuestion(pack, chosenCandidate);
+    }
+    if (pendingBefore) {
+      const picked = pickPackReaction({
+        pack,
+        event,
+        surfaces,
+        lastCorrectTl: session.last_pack_reaction_tl,
+      });
+      reactionTl = picked.tl;
+      reactionAr = picked.ar;
+      if (event.verdict === 'correct' && picked.tl) {
+        session.last_pack_reaction_tl = picked.tl;
+      }
+      if (reactionTl) {
+        emit({ type: 'reaction_delta', text: reactionTl });
+      }
+    }
+  } else {
+    let personaJson: string | undefined;
+    try {
+      const persona = requirePersona(pack.scene.character_id);
+      personaJson = JSON.stringify(persona);
+    } catch {
+      personaJson = undefined;
+    }
+
+    const untaughtTls = surfaces
+      .filter((s) => (session.rungs[s.id] ?? 'taught') === 'taught')
+      .map((s) => s.tl);
+
+    const promptBuilt = buildConvoPrompt({
+      pack,
+      event,
+      eventLine,
+      candidates,
+      lastExchanges: session.last_exchanges,
+      learnerAnswer: pendingBefore ? learnerText : '(ready)',
+      ...(personaJson ? { personaJson } : {}),
+      taughtTls: taught,
+    });
+    const { system, prompt } = promptPartsToMessages(promptBuilt);
+    const candidateIds = candidates.map((c) => c.id);
+
+    let modelOut = await callModel({
       model,
       system,
       prompt,
       candidateIds,
       emit,
-      regenerateReason: 'leaked answer or untaught item',
     });
+    metrics = {
+      ...metrics,
+      ...modelOut.metricsPartial,
+    };
+
+    const chosenId = modelOut.candidateId;
+    const chosenCandidate =
+      candidates.find((c) => c.id === chosenId) ?? candidates[0]!;
+
+    if (helpResolved && helpResolved.id === chosenCandidate.id) {
+      resolved = helpResolved;
+    } else {
+      resolved = resolveCandidateQuestion(pack, chosenCandidate);
+    }
+
     if (
       modelOut.reaction &&
       reactionLeaksAnswer(
@@ -620,19 +637,42 @@ export async function runConvoTurn(
         untaughtTls,
       )
     ) {
-      emit({ type: 'reaction_delta', text: '' });
-      modelOut = { ...modelOut, reaction: '' };
+      modelOut = await callModel({
+        model,
+        system,
+        prompt,
+        candidateIds,
+        emit,
+        regenerateReason: 'leaked answer or untaught item',
+      });
+      if (
+        modelOut.reaction &&
+        reactionLeaksAnswer(
+          modelOut.reaction,
+          event.forbid_answer_tl,
+          untaughtTls,
+        )
+      ) {
+        emit({ type: 'reaction_delta', text: '' });
+        modelOut = { ...modelOut, reaction: '' };
+      }
     }
+    reactionTl = modelOut.reaction;
+    unknownWords = modelOut.unknownWords;
   }
 
   // Character reaction + question into exchanges (one character turn)
-  const combinedTl = [modelOut.reaction, resolved.tl]
+  const combinedTl = [reactionTl, resolved.tl]
     .map((s) => s.trim())
     .filter(Boolean)
     .join(' ');
   if (combinedTl) {
     pushExchange(session, 'character', combinedTl);
   }
+
+  const bubbleAr = [reactionAr?.trim(), resolved.ar?.trim()]
+    .filter(Boolean)
+    .join(' ');
 
   session.pending_question = {
     id: resolved.id,
@@ -666,13 +706,11 @@ export async function runConvoTurn(
     ...(resolved.option_ids ? { option_ids: resolved.option_ids } : {}),
     ...(options ? { options } : {}),
     ...(resolved.say ? { say: resolved.say } : {}),
-    ...(resolved.ar ? { ar: resolved.ar } : {}),
+    ...(bubbleAr ? { ar: bubbleAr } : {}),
     ...(resolved.map_step ? { map_step: resolved.map_step } : {}),
     ...(resolved.map_node ? { map_node: resolved.map_node } : {}),
     audio_key,
-    ...(modelOut.unknownWords.length > 0
-      ? { unknown_words: modelOut.unknownWords }
-      : {}),
+    ...(unknownWords.length > 0 ? { unknown_words: unknownWords } : {}),
   });
   if (resolved.map_step || resolved.map_node) {
     emit({

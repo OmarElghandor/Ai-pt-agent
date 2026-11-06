@@ -748,6 +748,7 @@ const v2ConvoSessionSchema = new Schema(
     coach_phrase: { type: Schema.Types.Mixed, required: false, default: null },
     open_turns: { type: Number, required: false, default: 0 },
     open_fallbacks: { type: Number, required: false, default: 0 },
+    last_pack_reaction_tl: { type: String, required: false, default: null },
   },
   { timestamps: true, collection: 'v2_convo_sessions', _id: false },
 );

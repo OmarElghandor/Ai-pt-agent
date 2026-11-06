@@ -47,6 +47,7 @@ type ConvoSessionDocLean = {
   coach_phrase?: ConvoSession['coach_phrase'];
   open_turns?: number;
   open_fallbacks?: number;
+  last_pack_reaction_tl?: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -89,6 +90,7 @@ function sessionFields(session: ConvoSession) {
     coach_phrase: session.coach_phrase,
     open_turns: session.open_turns,
     open_fallbacks: session.open_fallbacks,
+    last_pack_reaction_tl: session.last_pack_reaction_tl ?? null,
   };
 }
 
@@ -137,6 +139,7 @@ function fromDoc(doc: ConvoSessionDocLean): ConvoSession {
     coach_phrase: doc.coach_phrase ?? null,
     open_turns: doc.open_turns ?? 0,
     open_fallbacks: doc.open_fallbacks ?? 0,
+    last_pack_reaction_tl: doc.last_pack_reaction_tl ?? null,
     created_at: (doc.createdAt ?? new Date()).toISOString(),
     updated_at: (doc.updatedAt ?? new Date()).toISOString(),
   };

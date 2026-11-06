@@ -120,6 +120,8 @@ export type ConvoSession = {
   open_turns: number;
   /** Open-mode turns that used the fallback bank. */
   open_fallbacks: number;
+  /** Last pack correct-reaction tl (rotate; avoid back-to-back). */
+  last_pack_reaction_tl?: string | null;
   created_at: string;
   updated_at: string;
 };
