@@ -6,8 +6,14 @@ import {
 } from '@/lib/v2/answers/normalize';
 import { buildConvoAcceptedForms } from './accepted';
 
-/** Accent-only difference on the content word → spelling near_miss (M5). */
+/** Accent-only difference vs expected surface → spelling near_miss (M5). */
 function accentOnlyNearMiss(learner: string, expectedTl: string): boolean {
+  if (
+    normalizeForCompare(learner) === normalizeForCompare(expectedTl) &&
+    normalizeAnswer(learner) !== normalizeAnswer(expectedTl)
+  ) {
+    return true;
+  }
   const a = contentWord(learner);
   const b = contentWord(expectedTl);
   if (!a || !b) return false;
