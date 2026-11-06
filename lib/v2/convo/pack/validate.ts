@@ -14,6 +14,11 @@ export type ValidateConvoPackResult = {
 export type ValidateConvoPackOpts = {
   /** Lesson item surfaces for containment checks (id → tl). */
   itemSurfaces: ConvoItemSurface[];
+  /**
+   * Allowed item ids outside this day's core (recycle). When set, every
+   * group item must be in core∪recycle for the pack's day.
+   */
+  allowedItemIds?: Set<string>;
 };
 
 function issue(
@@ -45,6 +50,10 @@ export function containsItemSurface(haystack: string, itemTl: string): boolean {
   const stripped = needle.replace(/^(o|a|os|as|à|ao|às|aos|um|uma)\s+/i, '');
   if (stripped && stripped !== needle && h.includes(stripped)) return true;
   return false;
+}
+
+function isPatternItem(itemId: string): boolean {
+  return itemId.startsWith('pattern.');
 }
 
 /**
@@ -92,6 +101,15 @@ export function validateConvoPack(
           ),
         );
       }
+      if (opts.allowedItemIds && !opts.allowedItemIds.has(id)) {
+        issues.push(
+          issue(
+            `groups[${gi}].item_ids`,
+            'cross_day_item',
+            `item "${id}" is not in this day's core or recycle list`,
+          ),
+        );
+      }
     }
   }
 
@@ -118,6 +136,10 @@ export function validateConvoPack(
     pack.visual.type === 'map'
       ? new Set(pack.visual.nodes.map((n) => n.id))
       : new Set<string>();
+  const nodeById =
+    pack.visual.type === 'map'
+      ? new Map(pack.visual.nodes.map((n) => [n.id, n] as const))
+      : new Map();
   const hotspotIds =
     pack.visual.type === 'scene_card'
       ? new Set(pack.visual.hotspots.map((h) => h.id))
@@ -143,6 +165,41 @@ export function validateConvoPack(
           ),
         );
       }
+    }
+  }
+
+  function checkMapRefs(
+    path: string,
+    q: { map_node?: string; map_step?: string },
+    requireAnchor: boolean,
+  ): void {
+    if (pack.visual.type !== 'map') return;
+    if (requireAnchor && !q.map_node && !q.map_step) {
+      issues.push(
+        issue(
+          path,
+          'map_anchor_required',
+          `map pack question needs map_node or map_step`,
+        ),
+      );
+    }
+    if (q.map_node && !nodeIds.has(q.map_node)) {
+      issues.push(
+        issue(
+          `${path}.map_node`,
+          'map_node_exists',
+          `map_node "${q.map_node}" is not an existing node`,
+        ),
+      );
+    }
+    if (q.map_step && !routeStepIds.has(q.map_step)) {
+      issues.push(
+        issue(
+          `${path}.map_step`,
+          'map_step_exists',
+          `map_step "${q.map_step}" is not an existing route step`,
+        ),
+      );
     }
   }
 
@@ -186,6 +243,7 @@ export function validateConvoPack(
           `items.${itemId}`,
           'recap_coverage',
           `item "${itemId}" must appear in the recap`,
+          pack.authored ? 'warning' : 'error',
         ),
       );
     }
@@ -201,7 +259,11 @@ export function validateConvoPack(
           ),
         );
       }
-      if (itemTl && !containsItemSurface(q.tl, itemTl)) {
+      if (
+        itemTl &&
+        !isPatternItem(itemId) &&
+        !containsItemSurface(q.tl, itemTl)
+      ) {
         issues.push(
           issue(
             `${path}.tl`,
@@ -209,6 +271,23 @@ export function validateConvoPack(
             `choice question must contain the item surface "${itemTl}"`,
           ),
         );
+      }
+      checkMapRefs(path, q, false);
+      if (pack.visual.type === 'map' && q.map_node) {
+        const node = nodeById.get(q.map_node);
+        if (
+          node?.kind === 'place' &&
+          node.item_id &&
+          q.correct_id !== node.item_id
+        ) {
+          issues.push(
+            issue(
+              `${path}.correct_id`,
+              'map_node_correct',
+              `place question correct_id "${q.correct_id}" must match node item "${node.item_id}"`,
+            ),
+          );
+        }
       }
     }
 
@@ -223,7 +302,7 @@ export function validateConvoPack(
           ),
         );
       }
-      if (itemTl && containsItemSurface(q.tl, itemTl)) {
+      if (itemTl && !isPatternItem(itemId) && containsItemSurface(q.tl, itemTl)) {
         issues.push(
           issue(
             `${path}.tl`,
@@ -232,25 +311,7 @@ export function validateConvoPack(
           ),
         );
       }
-      if (pack.visual.type === 'map') {
-        if (!q.map_step) {
-          issues.push(
-            issue(
-              `${path}.map_step`,
-              'map_step_required',
-              `map pack open question needs map_step`,
-            ),
-          );
-        } else if (!routeStepIds.has(q.map_step)) {
-          issues.push(
-            issue(
-              `${path}.map_step`,
-              'map_step_exists',
-              `map_step "${q.map_step}" is not an existing route step`,
-            ),
-          );
-        }
-      }
+      checkMapRefs(path, q, pack.visual.type === 'map');
       if (pack.visual.type === 'scene_card' && q.hotspot_id) {
         if (!hotspotIds.has(q.hotspot_id)) {
           issues.push(

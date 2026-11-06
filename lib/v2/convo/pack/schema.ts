@@ -5,16 +5,26 @@ export const ConvoChoiceQuestionSchema = z.object({
   id: z.string().min(1),
   /** Character line in pt-PT; must contain the item surface. */
   tl: z.string().min(1),
+  /** Simple MSA translation of the character line. */
+  ar: z.string().min(1).optional(),
   /** Option item ids (2–3). */
   option_ids: z.array(z.string().min(1)).min(2).max(3),
   /** Correct option item id (must be in option_ids). */
   correct_id: z.string().min(1),
+  /** Map node this question highlights. */
+  map_node: z.string().min(1).optional(),
+  /** Map route step this question needs. */
+  map_step: z.string().min(1).optional(),
+  /** Scene-card hotspot this question needs. */
+  hotspot_id: z.string().min(1).optional(),
 });
 
 /** Help-ladder lines for one open question (steps 1–2 authored; step 3 built later). */
 export const ConvoHelpLadderSchema = z.object({
   /** Step 1: simpler re-ask by the character. */
   step1_reask_tl: z.string().min(1),
+  /** MSA translation of the step-1 re-ask. */
+  step1_reask_ar: z.string().min(1).optional(),
   /** Step 2: coach hint giving the start of the answer (Egyptian). */
   step2_hint_eg: z.string().min(1),
 });
@@ -24,8 +34,12 @@ export const ConvoOpenQuestionSchema = z.object({
   id: z.string().min(1),
   /** Character line in pt-PT; must NOT contain the item surface. */
   tl: z.string().min(1),
+  /** Simple MSA translation of the character line. */
+  ar: z.string().min(1).optional(),
   /** Expected answer item id. */
   item_id: z.string().min(1),
+  /** Map node this question highlights. */
+  map_node: z.string().min(1).optional(),
   /** Map route step this question needs (map visuals). */
   map_step: z.string().min(1).optional(),
   /** Scene-card hotspot this question needs. */
@@ -55,16 +69,28 @@ export const ConvoItemBankSchema = z.object({
   common_mistakes: z.array(ConvoMistakeSchema).max(2).default([]),
 });
 
+export const ConvoMapNodeKindSchema = z.enum(['place', 'home', 'far_place']);
+
 export const ConvoMapNodeSchema = z.object({
   id: z.string().min(1),
   label_tl: z.string().min(1),
+  /** 0–100 horizontal position on the illustrated map. */
+  x: z.number().min(0).max(100).optional(),
+  /** 0–100 vertical position on the illustrated map. */
+  y: z.number().min(0).max(100).optional(),
+  kind: ConvoMapNodeKindSchema.optional(),
+  /** Lesson item id when this node is a place the learner names. */
+  item_id: z.string().min(1).optional(),
 });
+
+export const ConvoMapArrowSchema = z.enum(['left', 'right', 'straight']);
 
 export const ConvoMapRouteStepSchema = z.object({
   step_id: z.string().min(1),
   from: z.string().min(1),
   to: z.string().min(1),
   item_id: z.string().min(1),
+  arrow: ConvoMapArrowSchema.optional(),
 });
 
 export const ConvoMapVisualSchema = z.object({
@@ -93,21 +119,27 @@ export const ConvoGroupSchema = z.object({
   id: z.string().min(1),
   /** Core (+ optional recycled) item ids for this group. */
   item_ids: z.array(z.string().min(1)).min(1).max(5),
+  /** One Egyptian coach line that introduces the whole group. */
+  intro_eg: z.string().min(1).optional(),
 });
 
 export const ConvoRecapQuestionSchema = z.object({
   id: z.string().min(1),
   tl: z.string().min(1),
+  ar: z.string().min(1).optional(),
   item_id: z.string().min(1),
 });
 
 export const ConvoRecapSchema = z.object({
   framing_eg: z.string().min(1).optional(),
+  intro_tl: z.string().min(1).optional(),
+  intro_ar: z.string().min(1).optional(),
   questions: z.array(ConvoRecapQuestionSchema).min(1),
 });
 
 export const ConvoCharacterLineSchema = z.object({
   tl: z.string().min(1),
+  ar: z.string().min(1).optional(),
   say: z.string().min(1).optional(),
 });
 
@@ -122,6 +154,9 @@ export const ConvoPackDataSchema = z.object({
   pack_id: z.string().min(1),
   day: z.number().int().positive(),
   target_lang: z.string().min(1).default('pt-PT'),
+  /** Hand-authored reference pack (skips some generation-only strictness). */
+  authored: z.boolean().optional(),
+  note: z.string().min(1).optional(),
   scene: ConvoSceneSchema,
   visual: ConvoVisualSchema,
   /** Ordered groups; max 4. */
@@ -139,6 +174,7 @@ export type ConvoHelpLadder = z.infer<typeof ConvoHelpLadderSchema>;
 export type ConvoOpenQuestion = z.infer<typeof ConvoOpenQuestionSchema>;
 export type ConvoMistake = z.infer<typeof ConvoMistakeSchema>;
 export type ConvoItemBank = z.infer<typeof ConvoItemBankSchema>;
+export type ConvoMapNode = z.infer<typeof ConvoMapNodeSchema>;
 export type ConvoMapVisual = z.infer<typeof ConvoMapVisualSchema>;
 export type ConvoSceneCardVisual = z.infer<typeof ConvoSceneCardVisualSchema>;
 export type ConvoVisual = z.infer<typeof ConvoVisualSchema>;
