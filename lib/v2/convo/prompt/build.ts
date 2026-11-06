@@ -74,13 +74,18 @@ export function buildConvoPrompt(
     input.eventLine ?? formatConvoEventLine(input.event);
   const isFree = input.module === 'free';
   const rules = isFree ? FREE_CONVO_CHARACTER_RULES : CONVO_CHARACTER_RULES;
+  const persona =
+    !isFree && input.personaJson?.trim()
+      ? `${input.personaJson.trim()}\n\n`
+      : '';
 
   const parts: ConvoPromptPart[] = [
     {
       index: 1,
       label: 'character_rules',
       // budgetTestSuffix is a test-only injection (T2.2 intentional fail).
-      text: rules + (budgetTestExtra ? `\n${budgetTestExtra()}` : ''),
+      text:
+        persona + rules + (budgetTestExtra ? `\n${budgetTestExtra()}` : ''),
       cache: true,
     },
     {

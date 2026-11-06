@@ -29,8 +29,10 @@ export type BuildConvoPromptInput = {
   freeTopicPlace?: string;
   facts?: string[];
   suggestedWords?: string[];
-  /** Batch 9 free: persona JSON string (CHARACTER block). */
+  /** Persona JSON string (Module A + free CHARACTER block). */
   personaJson?: string;
+  /** Surfaces already taught — Module A must not invent others. */
+  taughtTls?: string[];
   /** Batch 9 free: authored next line the app will append. */
   nextLineTl?: string;
 };

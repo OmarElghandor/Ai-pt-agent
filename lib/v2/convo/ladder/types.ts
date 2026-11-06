@@ -33,13 +33,21 @@ export type ConvoEventFacts = {
   after_misses?: number;
   mistake_id?: string;
   consequence_tl?: string;
+  /** Egyptian coach note from a listed common mistake. */
+  coach_note_eg?: string;
   near_miss?: boolean;
   phase?: ConvoPhase;
+  /** Surfaces the character may use (already taught). */
+  taught_tls?: string[];
+  /** Correct answer surface — never say this in the reaction. */
+  forbid_answer_tl?: string;
 };
 
 export type ConvoGroupAdvance = {
   /** 1-based group index that just became active. */
   group: number;
+  /** One Egyptian coach line for the whole group. */
+  intro_eg?: string;
   card_ids: string[];
   coach_intros: Array<{ item_id: string; coach_intro_eg: string }>;
 };

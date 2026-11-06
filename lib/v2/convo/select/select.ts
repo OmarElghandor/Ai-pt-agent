@@ -46,7 +46,11 @@ function buildHelp(
   let itemId: string | null = null;
   let open:
     | {
-        help_ladder?: { step1_reask_tl: string; step2_hint_eg: string };
+        help_ladder?: {
+          step1_reask_tl: string;
+          step1_reask_ar?: string;
+          step2_hint_eg: string;
+        };
       }
     | undefined;
 
@@ -55,6 +59,12 @@ function buildHelp(
     if (q) {
       itemId = id;
       open = q;
+      break;
+    }
+    // Choice miss → help ladder still uses the item's first open ladder when present.
+    if (bank.choice_questions.some((x) => x.id === question_id)) {
+      itemId = id;
+      open = bank.open_questions[0];
       break;
     }
   }
@@ -72,6 +82,9 @@ function buildHelp(
 
   if (step === 1 && open?.help_ladder) {
     help.tl = open.help_ladder.step1_reask_tl;
+    if (open.help_ladder.step1_reask_ar) {
+      help.ar = open.help_ladder.step1_reask_ar;
+    }
   } else if (step === 2 && open?.help_ladder) {
     help.hint_eg = open.help_ladder.step2_hint_eg;
   } else if (step === 3 && bank) {

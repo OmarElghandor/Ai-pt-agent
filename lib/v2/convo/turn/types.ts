@@ -33,6 +33,7 @@ export type ConvoTurnStreamEvent =
   | {
       type: 'group_advance';
       group: number;
+      intro_eg?: string;
       card_ids: string[];
       coach_intros: Array<{ item_id: string; coach_intro_eg: string }>;
     }
@@ -76,6 +77,8 @@ export type ConvoTurnStreamEvent =
       type: 'visual';
       /** Active map step to highlight (from the pending / next question). */
       map_step?: string;
+      /** Map node to pulse for the current question. */
+      map_node?: string;
       /** Brief wrong-way animation after a listed direction mistake. */
       wrong_way?: { from: string; toward: string };
       /** Side-channel: highlight a pack item card (T3.2). */
@@ -88,6 +91,8 @@ export type ConvoTurnStreamEvent =
       id: string;
       tl: string;
       say?: string;
+      /** Simple MSA translation of the question line. */
+      ar?: string;
       kind: NonNullable<ConvoPendingQuestion>['kind'];
       item_id: string;
       option_ids?: string[];
@@ -95,6 +100,8 @@ export type ConvoTurnStreamEvent =
       options?: Array<{ id: string; tl: string }>;
       /** Map step this open question needs (for highlight). */
       map_step?: string;
+      /** Map node this question highlights. */
+      map_node?: string;
       audio_key: string;
       /** Client should play TTS slower (survival Mais devagar). */
       playback?: 'normal' | 'slow';
@@ -186,9 +193,11 @@ export type ResolvedConvoQuestion = {
   id: string;
   tl: string;
   say?: string;
+  ar?: string;
   kind: NonNullable<ConvoPendingQuestion>['kind'];
   item_id: string;
   option_ids?: string[];
   map_step?: string;
+  map_node?: string;
   candidate: ConvoSelectCandidate;
 };

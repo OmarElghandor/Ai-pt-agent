@@ -70,10 +70,18 @@ function findMistake(
   pack: ConvoPackData,
   itemId: string,
   mistakeId: string | undefined,
-): { id: string; consequence_tl: string } | undefined {
+):
+  | { id: string; consequence_tl: string; coach_note_eg: string }
+  | undefined {
   if (!mistakeId) return undefined;
   const m = pack.items[itemId]?.common_mistakes.find((x) => x.id === mistakeId);
-  return m ? { id: m.id, consequence_tl: m.consequence_tl } : undefined;
+  return m
+    ? {
+        id: m.id,
+        consequence_tl: m.consequence_tl,
+        coach_note_eg: m.coach_note_eg,
+      }
+    : undefined;
 }
 
 function buildGroupAdvance(
@@ -86,8 +94,10 @@ function buildGroupAdvance(
   const card_ids = rungs
     ? rawIds.filter((id) => (rungs[id] ?? 'taught') === 'taught')
     : rawIds;
+  const intro_eg = pack.groups[group - 1]?.intro_eg;
   return {
     group,
+    ...(intro_eg ? { intro_eg } : {}),
     card_ids,
     coach_intros: card_ids.map((item_id) => ({
       item_id,
@@ -170,6 +180,7 @@ export function applyConvoGrade(input: {
     if (mistake) {
       event.mistake_id = mistake.id;
       event.consequence_tl = mistake.consequence_tl;
+      event.coach_note_eg = mistake.coach_note_eg;
     } else if (grade.mistakeId) {
       event.mistake_id = grade.mistakeId;
     }

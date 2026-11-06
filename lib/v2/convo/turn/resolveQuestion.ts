@@ -12,6 +12,7 @@ export function resolveCandidateQuestion(
     return {
       id: candidate.id,
       tl: q?.tl ?? candidate.tl,
+      ...(q?.ar ? { ar: q.ar } : {}),
       kind: 'recap',
       item_id: candidate.item_id,
       candidate,
@@ -24,9 +25,12 @@ export function resolveCandidateQuestion(
     return {
       id: candidate.id,
       tl: q?.tl ?? candidate.tl,
+      ...(q?.ar ? { ar: q.ar } : {}),
       kind: 'choice',
       item_id: candidate.item_id,
       option_ids: q?.option_ids,
+      ...(q?.map_step ? { map_step: q.map_step } : {}),
+      ...(q?.map_node ? { map_node: q.map_node } : {}),
       candidate,
     };
   }
@@ -35,9 +39,11 @@ export function resolveCandidateQuestion(
   return {
     id: candidate.id,
     tl: q?.tl ?? candidate.tl,
+    ...(q?.ar ? { ar: q.ar } : {}),
     kind: 'open',
     item_id: candidate.item_id,
     ...(q?.map_step ? { map_step: q.map_step } : {}),
+    ...(q?.map_node ? { map_node: q.map_node } : {}),
     candidate,
   };
 }
@@ -57,6 +63,7 @@ export function resolveHelpQuestion(
   return {
     id: help.question_id,
     tl,
+    ...(help.ar ? { ar: help.ar } : {}),
     kind: 'help',
     item_id: help.item_id,
     option_ids: help.option_ids,
@@ -73,6 +80,8 @@ export function findPackQuestion(
   kind: 'choice' | 'open' | 'recap';
   option_ids?: string[];
   correct_id?: string;
+  map_step?: string;
+  map_node?: string;
   mistakes?: Array<{ id: string; trigger: string }>;
 } | null {
   for (const [itemId, bank] of Object.entries(pack.items)) {
@@ -83,6 +92,8 @@ export function findPackQuestion(
         kind: 'choice',
         option_ids: choice.option_ids,
         correct_id: choice.correct_id,
+        ...(choice.map_step ? { map_step: choice.map_step } : {}),
+        ...(choice.map_node ? { map_node: choice.map_node } : {}),
         mistakes: bank.common_mistakes.map((m) => ({
           id: m.id,
           trigger: m.trigger,
@@ -94,6 +105,8 @@ export function findPackQuestion(
       return {
         item_id: itemId,
         kind: 'open',
+        ...(open.map_step ? { map_step: open.map_step } : {}),
+        ...(open.map_node ? { map_node: open.map_node } : {}),
         mistakes: bank.common_mistakes.map((m) => ({
           id: m.id,
           trigger: m.trigger,

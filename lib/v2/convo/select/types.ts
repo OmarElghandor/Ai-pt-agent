@@ -20,6 +20,8 @@ export type ConvoSelectHelp = {
   step: 1 | 2 | 3 | 4;
   /** Step 1 re-ask (character). */
   tl?: string;
+  /** MSA translation of the step-1 re-ask. */
+  ar?: string;
   /** Step 2 coach hint. */
   hint_eg?: string;
   /** Step 3 choice option item ids. */

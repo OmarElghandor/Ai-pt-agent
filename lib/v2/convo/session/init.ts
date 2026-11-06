@@ -53,8 +53,10 @@ export function buildOpeningBubbles(
   return {
     character: {
       tl: pack.opening.tl,
+      ...(pack.opening.ar ? { ar: pack.opening.ar } : {}),
       ...(pack.opening.say ? { say: pack.opening.say } : {}),
     },
+    ...(group?.intro_eg ? { intro_eg: group.intro_eg } : {}),
     coach_intros,
     card_ids,
   };

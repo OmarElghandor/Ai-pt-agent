@@ -28,6 +28,7 @@ import {
   handleLanguageQuestionFromPack,
   type ConvoCoachCaller,
 } from '@/lib/v2/convo/sideChannel';
+import { requirePersona } from '@/lib/v2/convo/topics';
 import { convoQuestionAudioKey } from './audioKey';
 import {
   findPackQuestion,
@@ -40,6 +41,36 @@ import type {
   ConvoTurnStreamEvent,
   ResolvedConvoQuestion,
 } from './types';
+
+function taughtSurfaces(
+  session: ConvoSession,
+  surfaces: ConvoItemSurface[],
+): string[] {
+  const out: string[] = [];
+  for (const [id, rung] of Object.entries(session.rungs)) {
+    if (rung === 'taught') continue;
+    const tl = surfaceTlFor(surfaces, id);
+    if (tl) out.push(tl);
+  }
+  return out;
+}
+
+function reactionLeaksAnswer(
+  reaction: string,
+  forbidTl: string | undefined,
+  untaught: string[],
+): boolean {
+  const lower = reaction.toLowerCase();
+  if (forbidTl) {
+    const needle = forbidTl.toLowerCase().replace(/^(o|a|os|as|à|ao)\s+/i, '');
+    if (needle && lower.includes(needle)) return true;
+  }
+  for (const tl of untaught) {
+    const needle = tl.toLowerCase().replace(/^(o|a|os|as|à|ao)\s+/i, '');
+    if (needle.length >= 3 && lower.includes(needle)) return true;
+  }
+  return false;
+}
 
 export type ConvoSurvivalAction = 'repeat' | 'slow' | 'nao_percebi';
 
@@ -429,52 +460,67 @@ export async function runConvoTurn(
       emit({
         type: 'group_advance',
         group: applied.group_advance.group,
+        ...(applied.group_advance.intro_eg
+          ? { intro_eg: applied.group_advance.intro_eg }
+          : {}),
         card_ids: applied.group_advance.card_ids,
         coach_intros: applied.group_advance.coach_intros,
       });
     }
-    const openMeta = findPackQuestion(pack, pendingBefore.id);
-    const mapStep =
-      openMeta?.kind === 'open'
-        ? pack.items[pendingBefore.item_id]?.open_questions.find(
-            (q) => q.id === pendingBefore.id,
-          )?.map_step
-        : undefined;
+    const qMetaVis = findPackQuestion(pack, pendingBefore.id);
+    const mapStep = qMetaVis?.map_step;
+    const mapNode = qMetaVis?.map_node;
     const wrongWay = deriveWrongWay({
       pack,
       mapStepId: mapStep,
       mistakeId: event.mistake_id,
     });
-    if (wrongWay || mapStep) {
+    if (wrongWay || mapStep || mapNode) {
       emit({
         type: 'visual',
         ...(mapStep ? { map_step: mapStep } : {}),
+        ...(mapNode ? { map_node: mapNode } : {}),
         ...(wrongWay ? { wrong_way: wrongWay } : {}),
       });
     }
   }
 
-  // --- Coach bank first ---
-  for (const moment of moments) {
-    try {
-      const itemId = event.item_id;
-      const picked = pickCoachLine({
-        moment,
-        itemTl: itemId ? surfaceTlFor(surfaces, itemId) : undefined,
-        memoryTrickEg: itemId
-          ? pack.items[itemId]?.memory_trick_eg
-          : undefined,
-        recentIds: session.coach_recent_ids,
-      });
-      session.coach_recent_ids = picked.recentIds;
-      emit({
-        type: 'coach',
-        id: picked.id,
-        eg: picked.eg,
-        moment,
-      });
-    } catch {
-      // Missing bank moment — skip quietly.
+  const taught = taughtSurfaces(session, surfaces);
+  event.taught_tls = taught;
+  if (event.item_id) {
+    event.forbid_answer_tl = surfaceTlFor(surfaces, event.item_id);
+  }
+
+  // --- Coach: listed mistake note wins; else bank ---
+  if (event.coach_note_eg) {
+    emit({
+      type: 'coach',
+      id: `mistake_${event.mistake_id ?? 'note'}`,
+      eg: event.coach_note_eg,
+      moment: moments[0] ?? 'miss_1',
+    });
+  } else {
+    for (const moment of moments) {
+      try {
+        const itemId = event.item_id;
+        const picked = pickCoachLine({
+          moment,
+          itemTl: itemId ? surfaceTlFor(surfaces, itemId) : undefined,
+          memoryTrickEg: itemId
+            ? pack.items[itemId]?.memory_trick_eg
+            : undefined,
+          recentIds: session.coach_recent_ids,
+        });
+        session.coach_recent_ids = picked.recentIds;
+        emit({
+          type: 'coach',
+          id: picked.id,
+          eg: picked.eg,
+          moment,
+        });
+      } catch {
+        // Missing bank moment — skip quietly.
+      }
     }
   }
 
@@ -501,6 +547,18 @@ export async function runConvoTurn(
     return finish(true);
   }
 
+  let personaJson: string | undefined;
+  try {
+    const persona = requirePersona(pack.scene.character_id);
+    personaJson = JSON.stringify(persona);
+  } catch {
+    personaJson = undefined;
+  }
+
+  const untaughtTls = surfaces
+    .filter((s) => (session.rungs[s.id] ?? 'taught') === 'taught')
+    .map((s) => s.tl);
+
   const promptBuilt = buildConvoPrompt({
     pack,
     event,
@@ -508,11 +566,13 @@ export async function runConvoTurn(
     candidates,
     lastExchanges: session.last_exchanges,
     learnerAnswer: pendingBefore ? learnerText : '(ready)',
+    ...(personaJson ? { personaJson } : {}),
+    taughtTls: taught,
   });
   const { system, prompt } = promptPartsToMessages(promptBuilt);
   const candidateIds = candidates.map((c) => c.id);
 
-  const modelOut = await callModel({
+  let modelOut = await callModel({
     model,
     system,
     prompt,
@@ -535,12 +595,43 @@ export async function runConvoTurn(
     resolved = resolveCandidateQuestion(pack, chosenCandidate);
   }
 
-  // Character reaction + question into exchanges
-  if (modelOut.reaction) {
-    pushExchange(session, 'character', modelOut.reaction);
+  // Post-check: drop reaction if it leaks the answer or an untaught item.
+  if (
+    modelOut.reaction &&
+    reactionLeaksAnswer(
+      modelOut.reaction,
+      event.forbid_answer_tl,
+      untaughtTls,
+    )
+  ) {
+    modelOut = await callModel({
+      model,
+      system,
+      prompt,
+      candidateIds,
+      emit,
+      regenerateReason: 'leaked answer or untaught item',
+    });
+    if (
+      modelOut.reaction &&
+      reactionLeaksAnswer(
+        modelOut.reaction,
+        event.forbid_answer_tl,
+        untaughtTls,
+      )
+    ) {
+      emit({ type: 'reaction_delta', text: '' });
+      modelOut = { ...modelOut, reaction: '' };
+    }
   }
-  if (resolved.tl) {
-    pushExchange(session, 'character', resolved.tl);
+
+  // Character reaction + question into exchanges (one character turn)
+  const combinedTl = [modelOut.reaction, resolved.tl]
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .join(' ');
+  if (combinedTl) {
+    pushExchange(session, 'character', combinedTl);
   }
 
   session.pending_question = {
@@ -575,18 +666,24 @@ export async function runConvoTurn(
     ...(resolved.option_ids ? { option_ids: resolved.option_ids } : {}),
     ...(options ? { options } : {}),
     ...(resolved.say ? { say: resolved.say } : {}),
+    ...(resolved.ar ? { ar: resolved.ar } : {}),
     ...(resolved.map_step ? { map_step: resolved.map_step } : {}),
+    ...(resolved.map_node ? { map_node: resolved.map_node } : {}),
     audio_key,
     ...(modelOut.unknownWords.length > 0
       ? { unknown_words: modelOut.unknownWords }
       : {}),
   });
-  if (resolved.map_step) {
-    emit({ type: 'visual', map_step: resolved.map_step });
+  if (resolved.map_step || resolved.map_node) {
+    emit({
+      type: 'visual',
+      ...(resolved.map_step ? { map_step: resolved.map_step } : {}),
+      ...(resolved.map_node ? { map_node: resolved.map_node } : {}),
+    });
   }
 
   // For help step 2, also surface the hint as a coach line if not already.
-  if (selected.help?.step === 2 && selected.help.hint_eg) {
+  if (selected.help?.step === 2 && selected.help.hint_eg && !event.coach_note_eg) {
     emit({
       type: 'coach',
       id: `help_hint_${selected.help.question_id}`,
