@@ -42,6 +42,7 @@ export async function POST(req: Request) {
     character_id?: string;
     dismiss_cta?: boolean;
     via_voice?: boolean;
+    learner_turn_id?: string;
   } | null;
   const sessionId = body?.session_id?.trim();
   if (!sessionId) {
@@ -79,6 +80,9 @@ export async function POST(req: Request) {
               ? { characterId: body.character_id }
               : {}),
             ...(body?.dismiss_cta ? { dismissCta: true } : {}),
+            ...(body?.learner_turn_id
+              ? { learnerTurnId: body.learner_turn_id }
+              : {}),
           });
           void metrics;
         } else {

@@ -24,6 +24,13 @@ import {
 import type { ConvoSession, ConvoSessionStore } from '@/lib/v2/convo/session';
 import { getCharacter } from '@/lib/v2/characters/registry';
 import {
+  awaitAndEmitCorrection,
+  matchesAcceptedForm,
+  shouldFireFreeTextCorrection,
+  startFreeTextCorrection,
+} from '@/lib/v2/convo/correction';
+import type { FreeTextCorrection, FreeTextGrader } from '@/lib/v2/grader';
+import {
   classifySideChannel,
   collectFreeContextCandidates,
   logUnmatchedTopicRequestSync,
@@ -78,6 +85,10 @@ export type RunFreeConvoTurnInput = {
   characterId?: string;
   /** Dismiss pending Learn CTA without a transcript line (G4). */
   dismissCta?: boolean;
+  /** Client learner bubble id — echoed on correction events (K2). */
+  learnerTurnId?: string;
+  /** Injected free-text grader (tests). */
+  freeTextGrader?: FreeTextGrader;
 };
 
 function pushExchange(
@@ -347,7 +358,33 @@ export async function runFreeConvoTurn(
     total_ms: 0,
   };
 
+  /** K2: async free-text correction — started after PT accept, emitted before done. */
+  let correctionJob: {
+    promise: Promise<FreeTextCorrection>;
+    learner_turn_id: string;
+    original: string;
+  } | null = null;
+
   const finish = async (ok: boolean, error?: string) => {
+    if (correctionJob) {
+      const job = correctionJob;
+      correctionJob = null;
+      const corr = await awaitAndEmitCorrection({
+        promise: job.promise,
+        learner_turn_id: job.learner_turn_id,
+        original: job.original,
+        emit,
+      });
+      if (corr.has_error && corr.severity === 'error' && corr.corrected_tl) {
+        session.recasts = [
+          ...(session.recasts ?? []),
+          {
+            original: job.original,
+            corrected: corr.corrected_tl,
+          },
+        ].slice(-8);
+      }
+    }
     session.updated_at = new Date().toISOString();
     session = await input.store.save(session);
     metrics.total_ms = Date.now() - started;
@@ -569,6 +606,39 @@ export async function runFreeConvoTurn(
       moment: 'non_learning',
     });
     return finish(true);
+  }
+
+  // K2: start free-text correction in parallel with the character reply.
+  {
+    const frame = session.pending_frame ?? pendingLine.frame;
+    const chips = frame?.chips ?? [];
+    const exactAccepted = matchesAcceptedForm(learnerText, chips);
+    if (
+      shouldFireFreeTextCorrection({
+        learnerText,
+        assisted: input.assisted || session.assisted,
+        exactAccepted,
+      })
+    ) {
+      const lastChar = session.last_exchanges
+        .filter((e) => e.role === 'character')
+        .at(-1)?.tl;
+      correctionJob = {
+        promise: startFreeTextCorrection(
+          {
+            answer: learnerText,
+            character_tl: lastChar,
+            frame_tl: frame?.tl,
+            frame_chips: chips,
+          },
+          input.freeTextGrader,
+        ),
+        learner_turn_id:
+          input.learnerTurnId?.trim() ||
+          `lt_${Date.now().toString(36)}`,
+        original: learnerText,
+      };
+    }
   }
 
   // —— Open mode (أي حاجة / after threads) ——

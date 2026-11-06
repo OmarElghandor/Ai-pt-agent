@@ -141,6 +141,21 @@ export type ConvoTurnStreamEvent =
       regenerate_reason?: string;
     }
   | {
+      type: 'correction';
+      learner_turn_id: string;
+      severity: 'none' | 'accent' | 'error';
+      corrected_tl: string;
+      changes: Array<{ from: string; to: string }>;
+      main_error: {
+        from: string;
+        to: string;
+        type: string;
+      } | null;
+      note_eg: string;
+      ar: string;
+      original: string;
+    }
+  | {
       type: 'done';
       ok: boolean;
       error?: string;
