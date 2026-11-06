@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { fitFrameFromArabic, handleFreeArabicSide } from '@/lib/v2/convo/free';
+import {
+  collectFreeContextCandidates,
+  createStubConvoCoachCaller,
+  matchContextLine,
+} from '@/lib/v2/convo/sideChannel';
 import { loadThreadTopic } from '@/lib/v2/convo/topics';
 import {
   MemoryConvoSessionStore,
@@ -88,5 +93,49 @@ describe('v2 free chat · C7/C8 side channel + frame', () => {
     });
     assert.equal(events.length, 1);
     assert.equal(events[0]!.type, 'coach');
+  });
+
+  it('S3 · ginasio context match without coach model', async () => {
+    const doc = loadThreadTopic('ginasio');
+    const thread = doc.threads[0]!;
+    const candidates = collectFreeContextCandidates({
+      share: thread.share,
+      ask: thread.ask,
+      followUps: thread.follow_ups,
+      frame: thread.ask.frame,
+    });
+    const hit = matchContextLine('ازاي اقول بتمرن ٣ مرات?', candidates);
+    assert.ok(hit);
+    assert.match(hit.tl, /três vezes|ginasio|ginásio|Treino/i);
+
+    const store = new MemoryConvoSessionStore();
+    const started = await startFreeConvoSession({
+      userId: 's3-u',
+      topicId: 'ginasio',
+      store,
+      newId: () => 's3-ginasio',
+    });
+    const coach = createStubConvoCoachCaller({
+      eg: 'should not be used',
+    });
+    const events: ConvoTurnStreamEvent[] = [];
+    const model = createStubConvoStreamModel({
+      byCandidate: () => 'should not run',
+    });
+    const callsBefore = model.calls;
+    await runFreeConvoTurn({
+      session: started.session,
+      learnerText: 'ازاي اقول بتمرن ٣ مرات?',
+      store,
+      model,
+      emit: (e) => events.push(e),
+      coachCaller: coach,
+    });
+    assert.equal(model.calls, callsBefore);
+    assert.equal(coach.calls, 0, 'S3 must not call the coach model');
+    const note = events.find((e) => e.type === 'coach');
+    assert.ok(note && note.type === 'coach');
+    assert.match(note.eg, /Vou ao ginásio três vezes|Treino três vezes/i);
+    assert.match(note.eg, /Tiago|زي ما/);
   });
 });

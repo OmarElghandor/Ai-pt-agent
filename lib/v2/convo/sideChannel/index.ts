@@ -37,3 +37,11 @@ export {
   drainMemoryTopicRequests,
   topicRequestCoachEg,
 } from './topicRequest';
+export {
+  collectFreeContextCandidates,
+  contextMatchCoachEg,
+  expandLearnerSignals,
+  matchContextLine,
+  type ContextLine,
+  type ContextMatch,
+} from './matchContext';

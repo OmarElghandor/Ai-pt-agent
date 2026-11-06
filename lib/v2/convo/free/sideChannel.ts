@@ -3,6 +3,12 @@ import {
   createLiveConvoCoachCaller,
   type ConvoCoachCaller,
 } from '@/lib/v2/convo/sideChannel/coachCall';
+import {
+  collectFreeContextCandidates,
+  contextMatchCoachEg,
+  matchContextLine,
+  type ContextLine,
+} from '@/lib/v2/convo/sideChannel/matchContext';
 import type { ThreadFrame } from '@/lib/v2/convo/topics';
 import type { ConvoTurnStreamEvent } from '@/lib/v2/convo/turn/types';
 import { extractCoachPhrase } from './coachPhrase';
@@ -17,9 +23,14 @@ export type FreeArabicSideResult = {
   coachPhrase: string | null;
 };
 
+export type FreeSideContext = {
+  candidates: ContextLine[];
+  characterName?: string | null;
+};
+
 /**
- * Free-chat Arabic side channel (Batch 9 C8).
- * Character waits; thread does not advance; Arabic never enters exchanges.
+ * Free-chat Arabic/English side channel (Batch 9 C8 + side-channel fix).
+ * Character waits; thread does not advance; Arabic/English never enters exchanges.
  */
 export async function handleFreeArabicSide(opts: {
   kind: FreeSideKind;
@@ -27,8 +38,28 @@ export async function handleFreeArabicSide(opts: {
   frame?: ThreadFrame | null;
   emit: (event: ConvoTurnStreamEvent) => void;
   coachCaller?: ConvoCoachCaller;
+  /** S3: conversation lines for no-model answers. */
+  context?: FreeSideContext | null;
 }): Promise<FreeArabicSideResult> {
   const { kind, learnerText, frame, emit } = opts;
+
+  // S3: answer from conversation context first (language questions + other).
+  if (kind === 'language_question' || kind === 'other') {
+    const candidates =
+      opts.context?.candidates ??
+      collectFreeContextCandidates({ frame: frame ?? null });
+    const hit = matchContextLine(learnerText, candidates);
+    if (hit) {
+      const eg = contextMatchCoachEg(hit.tl, opts.context?.characterName);
+      emit({
+        type: 'coach',
+        id: 'free_context_match',
+        eg,
+        moment: kind === 'language_question' ? 'language_question' : kind,
+      });
+      return { coachPhrase: hit.tl.replace(/[💪😅😊🔥]+/gu, '').trim() };
+    }
+  }
 
   if (kind === 'arabic_answer' || kind === 'other') {
     const fitted = fitFrameFromArabic(learnerText, frame);

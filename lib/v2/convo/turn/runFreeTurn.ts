@@ -22,8 +22,10 @@ import {
   type FreeTopic,
 } from '@/lib/v2/convo/topics';
 import type { ConvoSession, ConvoSessionStore } from '@/lib/v2/convo/session';
+import { getCharacter } from '@/lib/v2/characters/registry';
 import {
   classifySideChannel,
+  collectFreeContextCandidates,
   logUnmatchedTopicRequestSync,
   matchTopicRequest,
   topicRequestCoachEg,
@@ -452,11 +454,46 @@ export async function runFreeConvoTurn(
     sideKind === 'other' ||
     sideKind === 'language_question'
   ) {
+    const frame = session.pending_frame ?? pendingLine.frame;
+    const thread =
+      threadDoc && session.thread_index != null
+        ? threadDoc.threads[session.thread_index]
+        : null;
+    const arByTl = new Map<string, string>();
+    if (threadDoc) {
+      for (const th of threadDoc.threads) {
+        arByTl.set(th.share.tl.replace(/\s+/g, ' ').trim(), th.share.ar);
+        arByTl.set(th.ask.tl.replace(/\s+/g, ' ').trim(), th.ask.ar);
+        for (const fu of th.follow_ups) {
+          arByTl.set(fu.tl.replace(/\s+/g, ' ').trim(), fu.ar);
+        }
+      }
+    }
+    const recentCharacterTls = session.last_exchanges
+      .filter((e) => e.role === 'character')
+      .slice(-3)
+      .map((e) => e.tl);
+    const candidates = collectFreeContextCandidates({
+      share: thread?.share ?? null,
+      ask: thread?.ask ?? null,
+      followUps: thread?.follow_ups ?? [],
+      frame: frame ?? null,
+      recentCharacterTls,
+      arByTl,
+    });
+    const characterId = session.character_id ?? topic.character_id;
+    const characterName =
+      getCharacter(characterId)?.name ??
+      (characterId
+        ? characterId.charAt(0).toUpperCase() + characterId.slice(1)
+        : null);
+
     const side = await handleFreeArabicSide({
       kind: sideKind,
       learnerText: input.learnerText.trim(),
-      frame: session.pending_frame ?? pendingLine.frame,
+      frame,
       emit,
+      context: { candidates, characterName },
       ...(input.coachCaller ? { coachCaller: input.coachCaller } : {}),
     });
     if (side.coachPhrase) {
