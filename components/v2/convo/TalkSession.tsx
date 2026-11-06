@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PrimaryButton } from '@/components/v2/PrimaryButton';
 import { useMicRecorder } from '@/hooks/useMicRecorder';
@@ -14,6 +15,7 @@ import type {
   ConvoSurvivalAction,
   ConvoTurnStreamEvent,
 } from '@/lib/v2/convo/turn';
+import type { DayReadiness } from '@/lib/v2/generation/prepare';
 import {
   mapCharacterNode,
   mapHiddenForPhase,
@@ -25,6 +27,7 @@ import { ConvoResultCard } from './ConvoResultCard';
 import { ConvoSummaryCard } from './ConvoSummaryCard';
 import { GroupCoachCard } from './GroupCoachCard';
 import { LearnerBubble } from './LearnerBubble';
+import { PreparingDayScreen } from './PreparingDayScreen';
 import { readConvoNdjson } from './readNdjson';
 import { SceneCardVisual } from './SceneCardVisual';
 import { TalkDevPanel, type TalkTurnMetrics } from './TalkDevPanel';
@@ -44,8 +47,14 @@ function newId(prefix: string): string {
 type Props = { packId: string };
 
 export function TalkSession({ packId }: Props) {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [preparing, setPreparing] = useState(false);
+  const [prepareFailed, setPrepareFailed] = useState(false);
+  const [readiness, setReadiness] = useState<DayReadiness | null>(null);
+  const [readyToast, setReadyToast] = useState(false);
+  const [startNonce, setStartNonce] = useState(0);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [day, setDay] = useState<number | null>(null);
   const [titleTl, setTitleTl] = useState('');
@@ -372,6 +381,105 @@ export function TalkSession({ packId }: Props) {
     })();
   }, [pending, bubbles]);
 
+  const applyStartBody = useCallback(
+    (body: TalkStartResponse) => {
+      setPreparing(false);
+      setPrepareFailed(false);
+      setReadyToast(false);
+      setSessionId(body.session_id);
+      setDay(body.day);
+      setTitleTl(body.title_tl ?? '');
+      setTitleAr(body.title_ar ?? '');
+      setGroupCount(body.group_count ?? 3);
+      if (body.character_id === 'ines') setPartnerName('Inês');
+      else if (body.character_id === 'manuel') setPartnerName('Manuel');
+      else if (body.character_id) setPartnerName(body.character_id);
+      setVisual(body.visual);
+      setSurfaces(body.item_surfaces ?? []);
+      setBridgeTl(typeof body.bridge_tl === 'string' ? body.bridge_tl : '');
+      setFreeTopicId(
+        typeof body.free_topic_id === 'string' ? body.free_topic_id : null,
+      );
+      setSnapshot({
+        id: body.session.id,
+        rungs: body.session.rungs,
+        phase: body.session.phase,
+        status: body.session.status,
+        help_ladder: body.session.help_ladder ?? {
+          question_id: null,
+          step: 0,
+          attempts: 0,
+        },
+        current_group: body.session.current_group,
+        pending_question: body.session.pending_question,
+        correct_streak: 0,
+        struggled: body.session.struggled ?? {},
+        said_once: body.session.said_once ?? {},
+        survival_used: body.session.survival_used ?? 0,
+      });
+
+      const resumedMid = Boolean(
+        body.resumed && body.reopening?.pending_question,
+      );
+
+      if (resumedMid && body.reopening) {
+        const reopenBubbles: TalkBubble[] = [
+          {
+            id: newId('reopen'),
+            role: 'character',
+            tl: body.reopening.character_tl,
+          },
+        ];
+        if (body.reopening.coach?.eg) {
+          reopenBubbles.push({
+            id: newId('reopen-coach'),
+            role: 'coach',
+            eg: body.reopening.coach.eg,
+            moment: 'returned_after_break',
+          });
+        }
+        setBubbles(reopenBubbles);
+        const pq = body.reopening.pending_question!;
+        const ptl = body.reopening.pending_tl ?? '';
+        if (ptl) {
+          setPending({
+            id: pq.id,
+            tl: ptl,
+            kind: pq.kind as TalkPendingQuestion['kind'],
+            item_id: pq.item_id,
+            audio_key:
+              body.reopening.pending_audio_key ??
+              `convo:${body.pack_id}:${pq.id}`,
+          });
+        }
+        setSkipBootstrap(true);
+        setBootstrapped(true);
+      } else {
+        const openingBubbles: TalkBubble[] = [];
+        if (body.opening.card_ids.length > 0 || body.opening.intro_eg) {
+          openingBubbles.push({
+            id: newId('group'),
+            role: 'group_coach',
+            intro_eg: body.opening.intro_eg,
+            card_ids: body.opening.card_ids,
+            coach_intros: body.opening.coach_intros,
+          });
+        }
+        openingBubbles.push({
+          id: newId('open'),
+          role: 'character',
+          tl: body.opening.character.tl,
+          say: body.opening.character.say,
+          ar: body.opening.character.ar,
+        });
+        setBubbles(openingBubbles);
+        setSkipBootstrap(false);
+      }
+      setLoading(false);
+    },
+    [],
+  );
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -387,108 +495,44 @@ export function TalkSession({ packId }: Props) {
           error?: string;
           error_eg?: string;
           code?: string;
+          status?: string;
+          job_id?: string;
+          readiness?: DayReadiness;
+          day?: number;
         };
+
+        if (res.status === 202 || body.status === 'preparing') {
+          if (cancelled) return;
+          setPreparing(true);
+          setPrepareFailed(false);
+          setDay(body.day ?? body.readiness?.day ?? null);
+          setReadiness(body.readiness ?? null);
+          setLoading(false);
+          return;
+        }
+
+        if (
+          res.status === 409 ||
+          body.code === 'needs_review' ||
+          body.status === 'needs_review'
+        ) {
+          if (cancelled) return;
+          setPreparing(true);
+          setPrepareFailed(true);
+          setDay(body.day ?? body.readiness?.day ?? null);
+          setReadiness(body.readiness ?? null);
+          setError(body.error_eg || body.error || null);
+          setLoading(false);
+          return;
+        }
+
         if (!res.ok) {
           throw new Error(
             body.error_eg || body.error || `start ${res.status}`,
           );
         }
         if (cancelled) return;
-        setSessionId(body.session_id);
-        setDay(body.day);
-        setTitleTl(body.title_tl ?? '');
-        setTitleAr(body.title_ar ?? '');
-        setGroupCount(body.group_count ?? 3);
-        if (body.character_id === 'ines') setPartnerName('Inês');
-        else if (body.character_id === 'manuel') setPartnerName('Manuel');
-        else if (body.character_id) setPartnerName(body.character_id);
-        setVisual(body.visual);
-        setSurfaces(body.item_surfaces ?? []);
-        setBridgeTl(
-          typeof body.bridge_tl === 'string' ? body.bridge_tl : '',
-        );
-        setFreeTopicId(
-          typeof body.free_topic_id === 'string' ? body.free_topic_id : null,
-        );
-        setSnapshot({
-          id: body.session.id,
-          rungs: body.session.rungs,
-          phase: body.session.phase,
-          status: body.session.status,
-          help_ladder: body.session.help_ladder ?? {
-            question_id: null,
-            step: 0,
-            attempts: 0,
-          },
-          current_group: body.session.current_group,
-          pending_question: body.session.pending_question,
-          correct_streak: 0,
-          struggled: body.session.struggled ?? {},
-          said_once: body.session.said_once ?? {},
-          survival_used: body.session.survival_used ?? 0,
-        });
-
-        const resumedMid =
-          Boolean(body.resumed && body.reopening?.pending_question);
-
-        if (resumedMid && body.reopening) {
-          // T4.1: template reopening + same pending question; no bootstrap turn.
-          const reopenBubbles: TalkBubble[] = [
-            {
-              id: newId('reopen'),
-              role: 'character',
-              tl: body.reopening.character_tl,
-            },
-          ];
-          if (body.reopening.coach?.eg) {
-            reopenBubbles.push({
-              id: newId('reopen-coach'),
-              role: 'coach',
-              eg: body.reopening.coach.eg,
-              moment: 'returned_after_break',
-            });
-          }
-          setBubbles(reopenBubbles);
-          const pq = body.reopening.pending_question!;
-          const ptl = body.reopening.pending_tl ?? '';
-          if (ptl) {
-            setPending({
-              id: pq.id,
-              tl: ptl,
-              kind: pq.kind as TalkPendingQuestion['kind'],
-              item_id: pq.item_id,
-              audio_key:
-                body.reopening.pending_audio_key ??
-                `convo:${body.pack_id}:${pq.id}`,
-            });
-          }
-          setSkipBootstrap(true);
-          setBootstrapped(true);
-        } else {
-          const openingBubbles: TalkBubble[] = [];
-          if (
-            body.opening.card_ids.length > 0 ||
-            body.opening.intro_eg
-          ) {
-            openingBubbles.push({
-              id: newId('group'),
-              role: 'group_coach',
-              intro_eg: body.opening.intro_eg,
-              card_ids: body.opening.card_ids,
-              coach_intros: body.opening.coach_intros,
-            });
-          }
-          openingBubbles.push({
-            id: newId('open'),
-            role: 'character',
-            tl: body.opening.character.tl,
-            say: body.opening.character.say,
-            ar: body.opening.character.ar,
-          });
-          setBubbles(openingBubbles);
-          setSkipBootstrap(false);
-        }
-        setLoading(false);
+        applyStartBody(body as TalkStartResponse);
       } catch (err) {
         if (!cancelled) {
           setError(err instanceof Error ? err.message : 'start failed');
@@ -499,7 +543,46 @@ export function TalkSession({ packId }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [packId]);
+  }, [packId, startNonce, applyStartBody]);
+
+  // Poll readiness while preparing; auto-open when ready.
+  useEffect(() => {
+    if (!preparing || prepareFailed) return;
+    const dayNum = day ?? readiness?.day;
+    if (dayNum == null) return;
+    let cancelled = false;
+
+    const tick = async () => {
+      try {
+        const res = await fetch(`/api/v2/prepare/day/${dayNum}`);
+        if (!res.ok) return;
+        const body = (await res.json()) as DayReadiness;
+        if (cancelled) return;
+        setReadiness(body);
+        if (body.lesson === 'needs_review') {
+          setPrepareFailed(true);
+          setError(body.error_eg);
+          return;
+        }
+        if (body.ready) {
+          setReadyToast(true);
+          // Auto-open after a short beat so the toast can flash.
+          window.setTimeout(() => {
+            if (!cancelled) setStartNonce((n) => n + 1);
+          }, 600);
+        }
+      } catch {
+        /* ignore poll errors */
+      }
+    };
+
+    void tick();
+    const id = window.setInterval(() => void tick(), 3000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(id);
+    };
+  }, [preparing, prepareFailed, day, readiness?.day]);
 
   useEffect(() => {
     if (!sessionId || bootstrapped || loading || busy || skipBootstrap) return;
@@ -648,6 +731,25 @@ export function TalkSession({ packId }: Props) {
       surfaceTl: (id) => surfaceById.get(id)?.tl ?? id,
     });
   }, [done, snapshot, visual, packId, day, surfaceById]);
+
+  if (preparing) {
+    return (
+      <PreparingDayScreen
+        partnerName={partnerName}
+        readiness={readiness}
+        day={day}
+        readyToast={readyToast}
+        failed={prepareFailed}
+        errorEg={error}
+        onOpen={() => setStartNonce((n) => n + 1)}
+        onPracticeNow={() => {
+          const q = day != null ? `?day=${day}` : '';
+          router.push(`/talk/free/open${q}`);
+        }}
+        backHref="/talk/learn"
+      />
+    );
+  }
 
   if (summary) {
     return (

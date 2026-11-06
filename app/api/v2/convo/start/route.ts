@@ -19,6 +19,7 @@ import {
   startConvoSession,
   startFreeConvoSession,
 } from '@/lib/v2/convo/session';
+import { suggestedWordsForDay } from '@/lib/v2/convo/session/suggestedWords';
 
 export const runtime = 'nodejs';
 /** Generation runs in the worker; start returns preparing immediately (P3). */
@@ -44,6 +45,8 @@ export async function POST(req: Request) {
     session_id?: string;
     module?: 'lesson' | 'free';
     topic_id?: string;
+    /** Open-mode bridge: seed suggested words from this day's core items. */
+    day?: number;
   } | null;
 
   const store = new MongoConvoSessionStore();
@@ -61,12 +64,25 @@ export async function POST(req: Request) {
           { status: 400 },
         );
       }
+      const dayHint =
+        typeof body?.day === 'number' &&
+        Number.isInteger(body.day) &&
+        body.day > 0
+          ? body.day
+          : null;
+      const dayWords =
+        dayHint != null && isOpenTopicId(topicId)
+          ? suggestedWordsForDay(dayHint)
+          : undefined;
       const result = await startFreeConvoSession({
         userId,
         topicId,
         store,
         topic,
         ...(body?.session_id ? { sessionId: body.session_id } : {}),
+        ...(dayWords && dayWords.length
+          ? { suggestedWords: dayWords }
+          : {}),
       });
 
       const isOpen =

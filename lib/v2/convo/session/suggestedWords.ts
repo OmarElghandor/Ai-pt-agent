@@ -4,9 +4,45 @@ import {
   loadConvoItemSurfaces,
   surfaceTlFor,
 } from '@/lib/v2/convo/pack';
+import { getCoreItemsDay } from '@/lib/v2/generation/lesson/coreItems';
+import { getDayPlan } from '@/lib/v2/generation/lesson/plan';
 import { loadWeakItemIds } from '@/lib/v2/progress/weakItems';
 
 const MAX_SUGGESTED = 15;
+
+/** Core-item TLS for open mode while a day is preparing (P4). */
+export function suggestedWordsForDay(
+  day: number,
+  limit: number = MAX_SUGGESTED,
+): string[] {
+  try {
+    const core = getCoreItemsDay(day);
+    const words: string[] = [];
+    const seen = new Set<string>();
+    for (const item of core.core_items) {
+      const tl = item.tl?.trim();
+      if (!tl) continue;
+      const key = tl.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      words.push(tl);
+      if (words.length >= limit) break;
+    }
+    return words;
+  } catch {
+    return [];
+  }
+}
+
+/** Egyptian situation line for the day (coach context). */
+export function situationEgForDay(day: number): string | null {
+  try {
+    const plan = getDayPlan(day);
+    return plan.situation_eg?.trim() || null;
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Up to 15 tl surfaces from the learner's weak + recently updated items.

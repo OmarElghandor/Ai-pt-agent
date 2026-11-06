@@ -28,9 +28,13 @@ function partnerLabel(id: string): string {
   return PARTNERS.find((p) => p.id === id)?.label ?? 'Inês';
 }
 
-type Props = { topicId: string };
+type Props = {
+  topicId: string;
+  /** Seed open-mode suggested words from this day's core items (P4). */
+  day?: number | null;
+};
 
-export function FreeTalkSession({ topicId }: Props) {
+export function FreeTalkSession({ topicId, day = null }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -317,7 +321,11 @@ export function FreeTalkSession({ topicId }: Props) {
         const res = await fetch('/api/v2/convo/start', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ module: 'free', topic_id: topicId }),
+          body: JSON.stringify({
+            module: 'free',
+            topic_id: topicId,
+            ...(day != null ? { day } : {}),
+          }),
         });
         if (!res.ok) throw new Error(`start ${res.status}`);
         const data = (await res.json()) as {
@@ -387,7 +395,7 @@ export function FreeTalkSession({ topicId }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [topicId]);
+  }, [topicId, day]);
 
   const sendPt = (t: string, opts?: { assisted?: boolean }) => {
     if (!t.trim() || busy) return;
