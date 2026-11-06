@@ -28,8 +28,14 @@ export type FreeSideContext = {
   characterName?: string | null;
 };
 
+function frameFallbackEg(frame: ThreadFrame): string {
+  const tl = frame.tl.replace(/\s+/g, ' ').trim();
+  return `تقدر تقول: **${tl}**`;
+}
+
 /**
  * Free-chat Arabic/English side channel (Batch 9 C8 + side-channel fix).
+ * Fallback order (S5): context match → coach model → frame → generic.
  * Character waits; thread does not advance; Arabic/English never enters exchanges.
  */
 export async function handleFreeArabicSide(opts: {
@@ -43,7 +49,7 @@ export async function handleFreeArabicSide(opts: {
 }): Promise<FreeArabicSideResult> {
   const { kind, learnerText, frame, emit } = opts;
 
-  // S3: answer from conversation context first (language questions + other).
+  // 1. S3: answer from conversation context first.
   if (kind === 'language_question' || kind === 'other') {
     const candidates =
       opts.context?.candidates ??
@@ -74,6 +80,7 @@ export async function handleFreeArabicSide(opts: {
     }
   }
 
+  // 2. Coach model (S4).
   const caller =
     opts.coachCaller ?? createLiveConvoCoachCaller(FREE_COACH_TIMEOUT_MS);
   const hints = (frame?.chips ?? []).map((tl, i) => ({
@@ -95,16 +102,44 @@ export async function handleFreeArabicSide(opts: {
     ...(contextLines.length > 0 ? { contextLines } : {}),
   });
 
-  let eg = result.eg || COACH_CALL_FALLBACK_EG;
-  if (!eg.includes('جرّب تقولها')) {
-    eg = `${eg.replace(/\s+$/, '')} — جرّب تقولها`;
+  const modelOk =
+    !result.timedOut &&
+    !result.error &&
+    result.eg &&
+    result.eg !== COACH_CALL_FALLBACK_EG;
+
+  if (modelOk) {
+    let eg = result.eg;
+    if (!eg.includes('جرّب تقولها')) {
+      eg = `${eg.replace(/\s+$/, '')} — جرّب تقولها`;
+    }
+    emit({
+      type: 'coach',
+      id: kind === 'language_question' ? 'free_lang_q' : 'free_ar_coach',
+      eg,
+      moment: kind,
+    });
+    return { coachPhrase: extractCoachPhrase(eg) };
   }
 
+  // 3. Frame template fallback.
+  if (frame?.tl?.trim()) {
+    const eg = frameFallbackEg(frame);
+    emit({
+      type: 'coach',
+      id: 'free_frame_fallback',
+      eg,
+      moment: kind,
+    });
+    return { coachPhrase: extractCoachPhrase(eg) };
+  }
+
+  // 4. Generic last resort.
   emit({
     type: 'coach',
     id: kind === 'language_question' ? 'free_lang_q' : 'free_ar_coach',
-    eg,
+    eg: COACH_CALL_FALLBACK_EG,
     moment: kind,
   });
-  return { coachPhrase: extractCoachPhrase(eg) };
+  return { coachPhrase: null };
 }

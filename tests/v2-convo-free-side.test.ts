@@ -138,4 +138,54 @@ describe('v2 free chat · C7/C8 side channel + frame', () => {
     assert.match(note.eg, /Vou ao ginásio três vezes|Treino três vezes/i);
     assert.match(note.eg, /Tiago|زي ما/);
   });
+
+  it('S5 · coach timeout still uses S3 context answer', async () => {
+    const store = new MemoryConvoSessionStore();
+    const started = await startFreeConvoSession({
+      userId: 's5-u',
+      topicId: 'ginasio',
+      store,
+      newId: () => 's5-timeout',
+    });
+    const coach = createStubConvoCoachCaller({ fail: 'timeout' });
+    const events: ConvoTurnStreamEvent[] = [];
+    await runFreeConvoTurn({
+      session: started.session,
+      learnerText: 'ازاي اقول بتمرن ٣ مرات?',
+      store,
+      model: createStubConvoStreamModel({ byCandidate: () => 'nope' }),
+      emit: (e) => events.push(e),
+      coachCaller: coach,
+    });
+    assert.equal(coach.calls, 0, 'S3 hits before the model');
+    const note = events.find((e) => e.type === 'coach');
+    assert.ok(note && note.type === 'coach');
+    assert.match(note.eg, /três vezes|ginásio/i);
+    assert.doesNotMatch(note.eg, /مش متأكد من الجملة دي/);
+  });
+
+  it('S5 · no context → frame fallback, not old generic', async () => {
+    const events: ConvoTurnStreamEvent[] = [];
+    const frame = {
+      tl: 'Sim, ___. / Não muito.',
+      eg: 'بتلعب رياضة؟',
+      chips: ['Sim, vou ao ginásio.'],
+    };
+    await handleFreeArabicSide({
+      kind: 'language_question',
+      learnerText: 'ازاي اقول حاجة غريبة خالص مش موجودة؟',
+      frame,
+      context: { candidates: [] },
+      emit: (e) => events.push(e),
+      coachCaller: createStubConvoCoachCaller({ fail: 'timeout' }),
+    });
+    const note = events.find((e) => e.type === 'coach');
+    assert.ok(note && note.type === 'coach');
+    assert.match(note.eg, /تقدر تقول:/);
+    assert.match(note.eg, /Sim/);
+    assert.doesNotMatch(
+      note.eg,
+      /جرّب تقولها بالبرتغالي — لو مش متأكد/,
+    );
+  });
 });

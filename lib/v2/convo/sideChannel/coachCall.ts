@@ -5,8 +5,9 @@ import { findForbiddenScript } from '@/lib/v2/convo/output/scriptGuard';
 /** Batch 9 C8 / side-channel fix S4: 6 s. */
 export const COACH_CALL_TIMEOUT_MS = 6_000;
 
+/** Last-resort coach line (S5) — never the first answer. */
 export const COACH_CALL_FALLBACK_EG =
-  'جرّب تقولها بالبرتغالي — لو مش متأكد، اسأل تاني بجملة أقصر';
+  'مش متأكد من الجملة دي 🙏 دوس "ساعدني أرد" أو اكتبها بطريقة تانية';
 
 export const COACH_SUFFIX_EG = 'جرّب تقولها';
 
