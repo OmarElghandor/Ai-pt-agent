@@ -56,3 +56,11 @@ export {
   runPrepareKeepAhead,
   type PrepareRangeProgress,
 } from './range';
+
+export {
+  classifyReviewItem,
+  listReviewQueue,
+  markAutoPublishedChecked,
+  type ReviewQueueItem,
+  type ReviewQueueKind,
+} from './reviewQueue';

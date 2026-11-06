@@ -651,6 +651,8 @@ export default function V2AdminPage() {
           {' · '}
           <Link href="/v2-admin/reports">Reports</Link>
           {' · '}
+          <Link href="/v2-admin/review">Review queue</Link>
+          {' · '}
           <Link href="/v2-admin/characters">الشخصيات</Link>
           {' · '}
           open a day for the full job graph / timeline
