@@ -1,9 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import {
-  loadConvoItemSurfaces,
-  requireConvoPack,
-} from '@/lib/v2/convo/pack';
+import { requireConvoPack } from '@/lib/v2/convo/pack';
 import {
   MemoryConvoSessionStore,
   createConvoSessionDoc,
@@ -14,12 +11,15 @@ import {
   runConvoTurn,
   type ConvoTurnStreamEvent,
 } from '@/lib/v2/convo/turn';
-import { surfaceTl } from './fixtures/convo/day18-script';
+import path from 'node:path';
+import { surfaceTl, DAY18_SURFACES } from './fixtures/convo/day18-script';
 
+const FIXTURE_DIR = path.join(process.cwd(), 'tests/fixtures/convo');
 const pack = requireConvoPack('pt-PT.day-18', {
-  itemSurfaces: loadConvoItemSurfaces(),
+  itemSurfaces: DAY18_SURFACES,
+  baseDir: FIXTURE_DIR,
 });
-const surfaces = loadConvoItemSurfaces();
+const surfaces = DAY18_SURFACES;
 
 function collectEvents() {
   const events: ConvoTurnStreamEvent[] = [];

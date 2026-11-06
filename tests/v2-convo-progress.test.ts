@@ -16,7 +16,7 @@ import {
 import { createConvoSessionDoc } from '@/lib/v2/convo/session';
 import { requireConvoPack, loadConvoItemSurfaces } from '@/lib/v2/convo/pack';
 
-const pack = requireConvoPack('pt-PT.day-18', {
+const pack = requireConvoPack('pt-PT.day-33', {
   itemSurfaces: loadConvoItemSurfaces(),
 });
 

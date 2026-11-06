@@ -17,12 +17,15 @@ import {
   runFreeConvoTurn,
   type ConvoTurnStreamEvent,
 } from '@/lib/v2/convo/turn';
-import { surfaceTl } from './fixtures/convo/day18-script';
+import path from 'node:path';
+import { surfaceTl, DAY18_SURFACES } from './fixtures/convo/day18-script';
 
+const FIXTURE_DIR = path.join(process.cwd(), 'tests/fixtures/convo');
 const pack = requireConvoPack('pt-PT.day-18', {
-  itemSurfaces: loadConvoItemSurfaces(),
+  itemSurfaces: DAY18_SURFACES,
+  baseDir: FIXTURE_DIR,
 });
-const surfaces = loadConvoItemSurfaces();
+const surfaces = DAY18_SURFACES;
 
 /** Cycle: correct, wrong direction, unclear, off-topic, Arabic. */
 const MIXED: string[] = [
@@ -44,7 +47,7 @@ function learnerForTurn(turnIndex: number, session: ConvoSession): string {
 }
 
 /**
- * Play `n` model-backed turns on day 18 (restart a session if one ends early).
+ * Play `n` model-backed turns on day 33 (restart a session if one ends early).
  * Returns input_tokens per turn (index 0 = turn 1).
  */
 async function playBudgetTurns(n: number): Promise<number[]> {

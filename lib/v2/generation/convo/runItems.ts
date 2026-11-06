@@ -6,7 +6,7 @@ import {
 } from '@/lib/v2/generation/lesson/brief';
 import { callJobTool } from '@/lib/v2/generation/lesson/jobs/call';
 import { getDayPlan } from '@/lib/v2/generation/lesson/plan';
-import { day18ItemsExampleSnippet } from './day18Example';
+import { day33ItemsExampleSnippet } from './day33Example';
 import { ConvoItemsToolSchema, type ConvoItemsResult } from './itemsSchema';
 import { CONVO_ITEMS_SYSTEM } from './prompts/items';
 import { surfacesForDay } from './itemSurfaces';
@@ -71,7 +71,7 @@ HOTSPOTS
 ${hotspots}
 
 EXAMPLE_SHAPE (hand-written day 18 — match this depth)
-${day18ItemsExampleSnippet()}
+${day33ItemsExampleSnippet()}
 
 DAY_BRIEF
 ${formatLessonBrief(brief)}
@@ -87,8 +87,8 @@ ${formatLessonBrief(brief)}
     toolDescription: 'Item banks for one conversation group',
     schema: ConvoItemsToolSchema,
     systemModules: [{ name: 'convo_items', version: '1' }],
-    cachedExtra: day18ItemsExampleSnippet(),
-    cachedExampleName: 'pt-PT.day-18.json',
+    cachedExtra: day33ItemsExampleSnippet(),
+    cachedExampleName: 'pt-PT.day-33.json',
   };
 
   let call: Awaited<ReturnType<typeof callJobTool>>;

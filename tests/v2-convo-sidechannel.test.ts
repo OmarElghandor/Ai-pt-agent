@@ -1,9 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import {
-  loadConvoItemSurfaces,
-  requireConvoPack,
-} from '@/lib/v2/convo/pack';
+import { requireConvoPack } from '@/lib/v2/convo/pack';
 import {
   MemoryConvoSessionStore,
   startConvoSession,
@@ -24,11 +21,15 @@ import {
   runConvoTurn,
   type ConvoTurnStreamEvent,
 } from '@/lib/v2/convo/turn';
+import path from 'node:path';
+import { DAY18_SURFACES } from './fixtures/convo/day18-script';
 
+const FIXTURE_DIR = path.join(process.cwd(), 'tests/fixtures/convo');
 const pack = requireConvoPack('pt-PT.day-18', {
-  itemSurfaces: loadConvoItemSurfaces(),
+  itemSurfaces: DAY18_SURFACES,
+  baseDir: FIXTURE_DIR,
 });
-const surfaces = loadConvoItemSurfaces();
+const surfaces = DAY18_SURFACES;
 
 const DAY18_ITEM_IDS = Object.keys(pack.items);
 
@@ -165,7 +166,7 @@ describe('v2 convo · Arabic answer waits (T3.1)', () => {
 });
 
 describe('v2 convo · pack-item language questions (T3.2)', () => {
-  it('matches every day 18 pack item by tl', () => {
+  it('matches every day 33 pack item by tl', () => {
     for (const itemId of DAY18_ITEM_IDS) {
       const tl = surfaces.find((s) => s.id === itemId)?.tl ?? itemId;
       const core = tl.replace(/^(a|à|o)\s+/i, '');

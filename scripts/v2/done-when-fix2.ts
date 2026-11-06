@@ -288,7 +288,7 @@ async function main() {
     const ok =
       nav?.type === 'cta_navigate' &&
       nav.href === href &&
-      /talk|direc|day-18|اتجاه/i.test(href);
+      /talk|direc|day-33|day-18|اتجاه/i.test(href);
     results.push(ok ? 'S4 PASS' : 'S4 FAIL');
     console.log('href', href, 'nav', nav, results.at(-1));
   }

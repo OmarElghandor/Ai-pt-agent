@@ -25,7 +25,7 @@ import {
   type ConvoTurnStreamEvent,
 } from '@/lib/v2/convo/turn';
 
-const pack = requireConvoPack('pt-PT.day-18', {
+const pack = requireConvoPack('pt-PT.day-33', {
   itemSurfaces: loadConvoItemSurfaces(),
 });
 
@@ -66,16 +66,16 @@ describe('v2 free chat · topic request (T7.5)', () => {
   it('matches directions from the topics catalogue', () => {
     const matched = matchTopicRequest('عايز أتعلم الاتجاهات');
     assert.ok(matched);
-    assert.equal(matched!.pack_id, 'pt-PT.day-18');
+    assert.equal(matched!.pack_id, 'pt-PT.day-33');
     const coach = topicRequestCoachEg(matched);
-    assert.match(coach.eg, /الاتجاهات|المترو/);
+    assert.match(coach.eg, /الاتجاهات|المترو|فين المكان/);
     assert.ok(coach.href?.includes('talk'));
   });
 
   it('matches directions for unhamzed عايز اعلم عن الاتجاهات (E1)', () => {
     const matched = matchTopicRequest('عايز اعلم عن الاتجاهات');
     assert.ok(matched);
-    assert.equal(matched!.pack_id, 'pt-PT.day-18');
+    assert.equal(matched!.pack_id, 'pt-PT.day-33');
     assert.equal(classifySideChannel('عايز اعلم عن الاتجاهات'), 'topic_request');
   });
 
@@ -149,12 +149,12 @@ describe('v2 free chat · topic request (T7.5)', () => {
 });
 
 describe('v2 free chat · lesson→free bridge (T7.5)', () => {
-  it('maps day-18 pack to free topic casa', () => {
-    assert.equal(freeTopicIdForPack('pt-PT.day-18'), 'casa');
+  it('maps day-33 pack to free topic casa', () => {
+    assert.equal(freeTopicIdForPack('pt-PT.day-33'), 'casa');
     const file = loadTopicsFile();
     const topic = file.themes
       .flatMap((t) => t.topics)
-      .find((t) => t.id === 'directions.day-18');
+      .find((t) => t.id === 'directions.day-33');
     assert.equal(topic?.free_topic_id, 'casa');
     assert.ok(pack.bridge.tl.length > 0);
   });
@@ -192,7 +192,7 @@ describe('v2 free chat · lesson→free bridge (T7.5)', () => {
       newId: () => 'loop-lesson',
     });
     assert.equal(lesson.session.module, 'lesson');
-    assert.equal(lesson.session.pack_id, 'pt-PT.day-18');
+    assert.equal(lesson.session.pack_id, 'pt-PT.day-33');
 
     const doneLesson = {
       ...lesson.session,

@@ -1,10 +1,70 @@
 [
-  { "id": "word.station", "tl": "a estação", "say": "أ إستاساون", "glyph": "place" },
-  { "id": "word.street", "tl": "a rua", "say": "أ غوا", "glyph": "place" },
-  { "id": "word.pharmacy", "tl": "a farmácia", "say": "أ فارماسيا", "glyph": "place" },
-  { "id": "word.left", "tl": "à esquerda", "say": "أ إشكيردا", "glyph": "left" },
-  { "id": "word.right", "tl": "à direita", "say": "أ ديريطا", "glyph": "right" },
-  { "id": "phrase.go_straight", "tl": "Siga em frente", "say": "سيغا إن فرينتي", "glyph": "straight" },
-  { "id": "phrase.turn_left", "tl": "Vire à esquerda", "say": "ڤيري أ إشكيردا", "glyph": "left" },
-  { "id": "phrase.turn_right", "tl": "Vire à direita", "say": "ڤيري أ ديريطا", "glyph": "right" }
+  {
+    "id": "word.station",
+    "tl": "a estação",
+    "say": "أ إستاساون",
+    "glyph": "place"
+  },
+  {
+    "id": "word.street",
+    "tl": "a rua",
+    "say": "أ غوا",
+    "glyph": "place"
+  },
+  {
+    "id": "word.pharmacy",
+    "tl": "a farmácia",
+    "say": "أ فارماسيا",
+    "glyph": "place"
+  },
+  {
+    "id": "word.left",
+    "tl": "à esquerda",
+    "say": "أ إشكيردا",
+    "glyph": "left"
+  },
+  {
+    "id": "word.right",
+    "tl": "à direita",
+    "say": "أ ديريطا",
+    "glyph": "right"
+  },
+  {
+    "id": "phrase.go_straight",
+    "tl": "Siga em frente",
+    "say": "سيغا إن فرينتي",
+    "glyph": "straight"
+  },
+  {
+    "id": "phrase.turn_left",
+    "tl": "Vire à esquerda",
+    "say": "ڤيري أ إشكيردا",
+    "glyph": "left"
+  },
+  {
+    "id": "phrase.turn_right",
+    "tl": "Vire à direita",
+    "say": "ڤيري أ ديريطا",
+    "glyph": "right"
+  },
+  {
+    "id": "phrase.where_is_station",
+    "tl": "Onde fica a estação?",
+    "say": "أوندي فيكا أ إستاساون"
+  },
+  {
+    "id": "phrase.is_it_near",
+    "tl": "É perto?",
+    "say": "إي پيرتو"
+  },
+  {
+    "id": "phrase.its_far",
+    "tl": "É longe.",
+    "say": "إي لونجي"
+  },
+  {
+    "id": "pattern.onde_fica",
+    "tl": "Onde fica",
+    "say": "أوندي فيكا"
+  }
 ]

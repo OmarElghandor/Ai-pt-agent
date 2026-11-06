@@ -7,20 +7,41 @@
       "title_ar": "الاتجاهات",
       "topics": [
         {
-          "id": "directions.day-18",
-          "title_tl": "Do metro a casa",
-          "title_ar": "من المترو للبيت",
-          "day": 18,
-          "pack_id": "pt-PT.day-18",
+          "id": "directions.day-33",
+          "title_tl": "Onde fica?",
+          "title_ar": "فين المكان",
+          "day": 33,
+          "pack_id": "pt-PT.day-33",
           "character_id": "ines",
           "free_topic_id": "casa",
           "item_ids": [
             "word.station",
             "word.street",
             "word.pharmacy",
-            "word.right",
             "word.left",
-            "phrase.go_straight"
+            "word.right",
+            "phrase.where_is_station",
+            "phrase.is_it_near",
+            "phrase.its_far",
+            "pattern.onde_fica"
+          ]
+        },
+        {
+          "id": "directions.day-34",
+          "title_tl": "Vire à esquerda",
+          "title_ar": "لف شمال",
+          "day": 34,
+          "pack_id": "pt-PT.day-34",
+          "character_id": "ines",
+          "free_topic_id": "casa",
+          "item_ids": [
+            "word.bank",
+            "word.hospital",
+            "word.corner",
+            "word.square",
+            "phrase.turn_left",
+            "phrase.go_straight",
+            "phrase.next_to"
           ]
         }
       ]
