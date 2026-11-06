@@ -97,6 +97,21 @@ describe('v2 convo · side channel detect/classify (T3.1)', () => {
       'language_question',
     );
   });
+
+  it('S2 · English goes to the side channel', () => {
+    assert.equal(
+      classifySideChannel('how i can say i train 3 times in week?'),
+      'language_question',
+    );
+    assert.equal(
+      classifySideChannel('what does semana mean'),
+      'language_question',
+    );
+    assert.equal(classifySideChannel('I like football'), 'other');
+    assert.equal(classifySideChannel('Eu treino três vezes'), null);
+    assert.equal(classifySideChannel('ok'), null);
+    assert.equal(classifySideChannel('sim'), null);
+  });
 });
 
 describe('v2 convo · Arabic answer waits (T3.1)', () => {

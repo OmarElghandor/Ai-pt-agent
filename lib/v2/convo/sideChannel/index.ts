@@ -1,6 +1,7 @@
 export {
   hasArabicScript,
   isMixedScript,
+  isEnglishSideChannel,
   needsSideChannel,
   isArabicOnly,
 } from './detect';
