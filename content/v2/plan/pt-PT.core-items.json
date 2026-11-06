@@ -56,7 +56,7 @@
           "id": "phrase.good_night",
           "kind": "phrase",
           "tl": "Boa noite!",
-          "eg": "تصبح على خير",
+          "eg": "مساء الخير (بالليل) / تصبح على خير",
           "context_eg": "بتحية بالليل وبرضو لما تودّع بالليل",
           "variant_group": "greeting.time_of_day",
           "image": {
@@ -553,14 +553,14 @@
           "id": "word.tomato",
           "kind": "word",
           "tl": "o tomate",
-          "eg": "الطماطم",
+          "eg": "الطماطماية (الطماطم)",
           "plural_tl": "os tomates"
         },
         {
           "id": "word.potato",
           "kind": "word",
           "tl": "a batata",
-          "eg": "البطاطس",
+          "eg": "البطاطساية (البطاطس)",
           "plural_tl": "as batatas"
         },
         {
@@ -858,7 +858,7 @@
           "id": "word.you_voce",
           "kind": "word",
           "tl": "você",
-          "eg": "إنت (رسمي شوية)"
+          "eg": "إنت (رسمي شوية) — في البرتغال الأأمن o senhor / a senhora أو الفعل لوحده"
         },
         {
           "id": "word.you_o_senhor",
