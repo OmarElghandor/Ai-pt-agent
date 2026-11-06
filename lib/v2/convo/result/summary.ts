@@ -3,6 +3,7 @@ import type { ConvoSession } from '@/lib/v2/convo/session';
 export type ConvoSummaryRecast = {
   original: string;
   corrected: string;
+  ar?: string;
   add_default: boolean;
 };
 
@@ -28,6 +29,7 @@ export function buildConvoSessionSummary(
   const recasts = (session.recasts ?? []).slice(0, 8).map((r, i) => ({
     original: r.original,
     corrected: r.corrected,
+    ...(r.ar ? { ar: r.ar } : {}),
     add_default: i < 3,
   }));
   return {

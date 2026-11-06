@@ -10,3 +10,10 @@ export {
   startFreeTextCorrection,
   type CorrectionEmitPayload,
 } from './emit';
+
+export { appendConvoCorrectionError } from './storeError';
+
+export {
+  customCardItemId,
+  addCustomCorrectionCard,
+} from './customCard';

@@ -98,8 +98,8 @@ export type ConvoSession = {
   survival_used: number;
   /** Learner Portuguese lines this session (Batch 10 خلاص, max 8). */
   learner_lines: string[];
-  /** Recast pairs when the reaction corrected the learner (Batch 10). */
-  recasts: Array<{ original: string; corrected: string }>;
+  /** Recast / free-text correction pairs (Batch 10 + K5). */
+  recasts: Array<{ original: string; corrected: string; ar?: string }>;
   /** Language-Q group key being counted toward a Learn suggestion (D8). */
   learn_suggest_group: string | null;
   /** Hits on learn_suggest_group this session. */

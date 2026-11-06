@@ -23,6 +23,7 @@ import {
 } from '@/lib/v2/convo/progress';
 import { deriveWrongWay } from '@/lib/v2/convo/visual';
 import {
+  appendConvoCorrectionError,
   awaitAndEmitCorrection,
   shouldFireFreeTextCorrection,
   startFreeTextCorrection,
@@ -302,8 +303,15 @@ export async function runConvoTurn(
           {
             original: job.original,
             corrected: corr.corrected_tl,
+            ...(corr.ar ? { ar: corr.ar } : {}),
           },
         ].slice(-8);
+        void appendConvoCorrectionError({
+          userId: session.user_id,
+          correction: corr,
+          itemId: session.pending_question?.item_id,
+          toolId: 'convo_learn',
+        });
       }
     }
     metrics.total_ms = Date.now() - started;

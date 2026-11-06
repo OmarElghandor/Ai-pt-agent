@@ -60,7 +60,7 @@ export function ConvoSummaryCard({
         {summary.recasts.length > 0 ? (
           <div className="mt-4">
             <p className="font-[family-name:var(--font-v2-arabic)] text-[12px] font-semibold text-v2-ink">
-              تصحيحات ممكن تبقى كروت
+              اتصلّحت وإنت بتتكلم
             </p>
             <ul className="mt-2 flex flex-col gap-2">
               {summary.recasts.map((r, i) => (
@@ -85,9 +85,21 @@ export function ConvoSummaryCard({
                       type="checkbox"
                       checked={addFlags[i] ?? false}
                       onChange={(e) => {
+                        const checked = e.target.checked;
                         const next = [...addFlags];
-                        next[i] = e.target.checked;
+                        next[i] = checked;
                         setAddFlags(next);
+                        if (checked) {
+                          void fetch('/api/v2/cards/custom', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              tl: r.corrected,
+                              ar: r.ar,
+                              day: lessonDay ?? undefined,
+                            }),
+                          });
+                        }
                       }}
                     />
                     ضيفها للكروت

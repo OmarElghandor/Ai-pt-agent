@@ -24,6 +24,7 @@ import {
 import type { ConvoSession, ConvoSessionStore } from '@/lib/v2/convo/session';
 import { getCharacter } from '@/lib/v2/characters/registry';
 import {
+  appendConvoCorrectionError,
   awaitAndEmitCorrection,
   matchesAcceptedForm,
   shouldFireFreeTextCorrection,
@@ -381,8 +382,14 @@ export async function runFreeConvoTurn(
           {
             original: job.original,
             corrected: corr.corrected_tl,
+            ...(corr.ar ? { ar: corr.ar } : {}),
           },
         ].slice(-8);
+        void appendConvoCorrectionError({
+          userId: session.user_id,
+          correction: corr,
+          toolId: 'convo_free',
+        });
       }
     }
     session.updated_at = new Date().toISOString();

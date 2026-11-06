@@ -605,6 +605,16 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
                   tone="calm"
                   tl={b.tl}
                   correction={b.correction ?? null}
+                  onAddCard={(data) => {
+                    void fetch('/api/v2/cards/custom', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        tl: data.corrected_tl,
+                        ar: data.ar,
+                      }),
+                    });
+                  }}
                 />
               );
             }
