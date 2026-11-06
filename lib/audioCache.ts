@@ -1,5 +1,11 @@
 import { createHash } from 'node:crypto';
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
+import {
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+  existsSync,
+  unlinkSync,
+} from 'node:fs';
 import path from 'node:path';
 import { parseTaggedMessage, segmentTtsText } from './parseTaggedMessage';
 import { speakSegment, TTSNotConfiguredError } from './tts';
@@ -9,6 +15,31 @@ const dir = path.join(process.cwd(), 'data', 'opener-audio');
 function fileBase(lang: string, text: string): string {
   const hash = createHash('sha256').update(`${lang}\0${text}`).digest('hex');
   return path.join(dir, hash);
+}
+
+/** Remove disk cache for one lang+text pair (dev regenerate menu). */
+export function clearCachedAudio(lang: string, text: string): boolean {
+  const base = fileBase(lang, text.trim());
+  let removed = false;
+  for (const ext of ['.bin', '.type'] as const) {
+    const p = `${base}${ext}`;
+    if (existsSync(p)) {
+      unlinkSync(p);
+      removed = true;
+    }
+  }
+  return removed;
+}
+
+/** Clear cache entries for many texts; returns how many pairs were removed. */
+export function clearCachedAudioForTexts(
+  entries: Array<{ lang: string; text: string }>,
+): number {
+  let n = 0;
+  for (const e of entries) {
+    if (clearCachedAudio(e.lang, e.text)) n += 1;
+  }
+  return n;
 }
 
 export function readCachedAudio(

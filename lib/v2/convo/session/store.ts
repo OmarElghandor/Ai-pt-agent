@@ -7,6 +7,8 @@ export type ConvoSessionStore = {
   findOpenFreeTopicIds?(userId: string): Promise<string[]>;
   create(session: ConvoSession): Promise<ConvoSession>;
   save(session: ConvoSession): Promise<ConvoSession>;
+  /** Delete open session(s) for user+pack so start can reopen fresh. */
+  deleteOpen?(userId: string, packId: string): Promise<number>;
 };
 
 /** In-memory store for unit tests (no Mongo). */
@@ -58,6 +60,21 @@ export class MemoryConvoSessionStore implements ConvoSessionStore {
     const copy = structuredClone(session);
     this.byId.set(copy.id, copy);
     return structuredClone(copy);
+  }
+
+  async deleteOpen(userId: string, packId: string): Promise<number> {
+    let n = 0;
+    for (const [id, s] of this.byId) {
+      if (
+        s.user_id === userId &&
+        s.pack_id === packId &&
+        s.status === 'open'
+      ) {
+        this.byId.delete(id);
+        n += 1;
+      }
+    }
+    return n;
   }
 
   clear(): void {

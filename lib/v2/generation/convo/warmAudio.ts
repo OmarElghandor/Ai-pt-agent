@@ -14,7 +14,7 @@ export type WarmConvoAudioResult = {
 
 type Segment = { lang: 'pt' | 'ar'; text: string };
 
-function collectConvoSegments(pack: ConvoPackData): Segment[] {
+export function collectConvoSegments(pack: ConvoPackData): Segment[] {
   const out: Segment[] = [];
   const seen = new Set<string>();
   const add = (lang: 'pt' | 'ar', text: string | undefined) => {

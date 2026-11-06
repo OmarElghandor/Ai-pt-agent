@@ -211,4 +211,14 @@ export class MongoConvoSessionStore implements ConvoSessionStore {
     if (!doc) throw new Error(`convo session ${session.id} not found`);
     return fromDoc(doc.toObject() as ConvoSessionDocLean);
   }
+
+  async deleteOpen(userId: string, packId: string): Promise<number> {
+    await connectMongo();
+    const res = await V2ConvoSessionModel().deleteMany({
+      user_id: userId,
+      pack_id: packId,
+      status: 'open',
+    });
+    return res.deletedCount ?? 0;
+  }
 }

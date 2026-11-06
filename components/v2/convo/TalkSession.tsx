@@ -21,6 +21,7 @@ import {
 } from '@/lib/v2/convo/visual';
 import { CharacterBubble } from './CharacterBubble';
 import { CoachCard } from './CoachCard';
+import { ConvoDevMenu } from './ConvoDevMenu';
 import { ConvoMap } from './ConvoMap';
 import { ConvoResultCard } from './ConvoResultCard';
 import { ConvoSummaryCard } from './ConvoSummaryCard';
@@ -839,6 +840,22 @@ export function TalkSession({ packId }: Props) {
             ))}
           </div>
         </div>
+        <ConvoDevMenu
+          packId={packId}
+          day={day}
+          onPreparing={() => {
+            setPreparing(true);
+            setPrepareFailed(false);
+          }}
+          onReloadStart={() => {
+            setBubbles([]);
+            setPending(null);
+            setSessionId(null);
+            setBootstrapped(false);
+            setSkipBootstrap(false);
+            setStartNonce((n) => n + 1);
+          }}
+        />
         <Link
           href={day ? `/day/${day}` : '/talk/learn'}
           className="flex h-10 w-10 items-center justify-center rounded-full text-[color:var(--ft-sage,#6B7F6E)] hover:bg-[color:var(--ft-mist,#D9E1D9)]/50"

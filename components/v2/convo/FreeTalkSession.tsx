@@ -7,6 +7,7 @@ import type { ConvoTurnStreamEvent } from '@/lib/v2/convo/turn';
 import type { ConvoSessionSummary } from '@/lib/v2/convo/result';
 import { CharacterBubble } from './CharacterBubble';
 import { CoachCard } from './CoachCard';
+import { ConvoDevMenu } from './ConvoDevMenu';
 import { ConvoSummaryCard } from './ConvoSummaryCard';
 import { ConvoVoiceBar } from './ConvoVoiceBar';
 import { LearnerBubble } from './LearnerBubble';
@@ -510,6 +511,19 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
           </p>
         </div>
 
+        <ConvoDevMenu
+          topicId={topicId}
+          day={day}
+          onReloadStart={() => {
+            setBubbles([]);
+            setSessionId(null);
+            setLoading(true);
+            setSummary(null);
+            // Remount start via topicId effect dependency bounce
+            setCharacterId((c) => c);
+            window.location.reload();
+          }}
+        />
         <button
           type="button"
           onClick={() => void endSession()}
