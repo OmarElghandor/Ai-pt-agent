@@ -4,8 +4,15 @@ import {
   type ConvoCoachCaller,
 } from '@/lib/v2/convo/sideChannel/coachCall';
 import {
+  contextMatchCoachSegments,
+  flattenCoachSegments,
+  frameFallbackCoachSegments,
+  frameFitCoachSegments,
+  splitCoachEgToSegments,
+  type CoachSegment,
+} from '@/lib/v2/convo/sideChannel/coachSegments';
+import {
   collectFreeContextCandidates,
-  contextMatchCoachEg,
   matchContextLine,
   type ContextLine,
 } from '@/lib/v2/convo/sideChannel/matchContext';
@@ -28,9 +35,21 @@ export type FreeSideContext = {
   characterName?: string | null;
 };
 
-function frameFallbackEg(frame: ThreadFrame): string {
-  const tl = frame.tl.replace(/\s+/g, ' ').trim();
-  return `تقدر تقول: **${tl}**`;
+function emitCoach(
+  emit: (event: ConvoTurnStreamEvent) => void,
+  opts: {
+    id: string;
+    moment: string;
+    segments: CoachSegment[];
+  },
+): void {
+  emit({
+    type: 'coach',
+    id: opts.id,
+    eg: flattenCoachSegments(opts.segments),
+    moment: opts.moment,
+    segments: opts.segments,
+  });
 }
 
 /**
@@ -56,12 +75,14 @@ export async function handleFreeArabicSide(opts: {
       collectFreeContextCandidates({ frame: frame ?? null });
     const hit = matchContextLine(learnerText, candidates);
     if (hit) {
-      const eg = contextMatchCoachEg(hit.tl, opts.context?.characterName);
-      emit({
-        type: 'coach',
+      const segments = contextMatchCoachSegments(
+        hit.tl,
+        opts.context?.characterName,
+      );
+      emitCoach(emit, {
         id: 'free_context_match',
-        eg,
         moment: kind === 'language_question' ? 'language_question' : kind,
+        segments,
       });
       return { coachPhrase: hit.tl.replace(/[💪😅😊🔥]+/gu, '').trim() };
     }
@@ -70,11 +91,11 @@ export async function handleFreeArabicSide(opts: {
   if (kind === 'arabic_answer' || kind === 'other') {
     const fitted = fitFrameFromArabic(learnerText, frame);
     if (fitted) {
-      emit({
-        type: 'coach',
+      const segments = frameFitCoachSegments(fitted);
+      emitCoach(emit, {
         id: 'free_frame_fit',
-        eg: `بالبرتغالي: «${fitted}» — جرّب تقولها`,
         moment: 'arabic_answer',
+        segments,
       });
       return { coachPhrase: fitted };
     }
@@ -113,33 +134,31 @@ export async function handleFreeArabicSide(opts: {
     if (!eg.includes('جرّب تقولها')) {
       eg = `${eg.replace(/\s+$/, '')} — جرّب تقولها`;
     }
-    emit({
-      type: 'coach',
+    const segments = splitCoachEgToSegments(eg);
+    emitCoach(emit, {
       id: kind === 'language_question' ? 'free_lang_q' : 'free_ar_coach',
-      eg,
       moment: kind,
+      segments,
     });
     return { coachPhrase: extractCoachPhrase(eg) };
   }
 
   // 3. Frame template fallback.
   if (frame?.tl?.trim()) {
-    const eg = frameFallbackEg(frame);
-    emit({
-      type: 'coach',
+    const segments = frameFallbackCoachSegments(frame.tl);
+    emitCoach(emit, {
       id: 'free_frame_fallback',
-      eg,
       moment: kind,
+      segments,
     });
-    return { coachPhrase: extractCoachPhrase(eg) };
+    return { coachPhrase: extractCoachPhrase(flattenCoachSegments(segments)) };
   }
 
   // 4. Generic last resort.
-  emit({
-    type: 'coach',
+  emitCoach(emit, {
     id: kind === 'language_question' ? 'free_lang_q' : 'free_ar_coach',
-    eg: COACH_CALL_FALLBACK_EG,
     moment: kind,
+    segments: [{ type: 'eg', text: COACH_CALL_FALLBACK_EG }],
   });
   return { coachPhrase: null };
 }

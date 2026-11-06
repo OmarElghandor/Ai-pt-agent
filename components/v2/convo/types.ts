@@ -37,6 +37,7 @@ export type TalkBubble =
       role: 'coach';
       eg: string;
       moment?: string;
+      segments?: Array<{ type: 'eg' | 'tl'; text: string }>;
     }
   | {
       id: string;

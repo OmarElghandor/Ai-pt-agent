@@ -40,8 +40,16 @@ export {
 export {
   collectFreeContextCandidates,
   contextMatchCoachEg,
+  contextMatchCoachSegments,
   expandLearnerSignals,
   matchContextLine,
   type ContextLine,
   type ContextMatch,
 } from './matchContext';
+export {
+  flattenCoachSegments,
+  frameFallbackCoachSegments,
+  frameFitCoachSegments,
+  splitCoachEgToSegments,
+  type CoachSegment,
+} from './coachSegments';

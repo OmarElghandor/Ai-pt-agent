@@ -148,6 +148,7 @@ export function TalkSession({ packId }: Props) {
             role: 'coach',
             eg: event.eg,
             moment: event.moment,
+            ...(event.segments ? { segments: event.segments } : {}),
           },
         ]);
         return;

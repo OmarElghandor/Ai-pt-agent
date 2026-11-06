@@ -12,6 +12,8 @@ export type ConvoTurnStreamEvent =
       id: string;
       eg: string;
       moment: CoachMoment | string;
+      /** Structured EG/TL segments (K6); preferred over parsing eg. */
+      segments?: Array<{ type: 'eg' | 'tl'; text: string }>;
     }
   /** Soft Learn CTA — two client buttons, no href-in-text (E9). */
   | {

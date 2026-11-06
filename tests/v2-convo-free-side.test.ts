@@ -137,6 +137,12 @@ describe('v2 free chat · C7/C8 side channel + frame', () => {
     assert.ok(note && note.type === 'coach');
     assert.match(note.eg, /Vou ao ginásio três vezes|Treino três vezes/i);
     assert.match(note.eg, /Tiago|زي ما/);
+    assert.doesNotMatch(note.eg, /\*\*/);
+    assert.ok(note.type === 'coach' && note.segments);
+    assert.ok(
+      note.segments!.some((s) => s.type === 'tl' && /ginásio|ginasio/i.test(s.text)),
+    );
+    assert.equal(note.segments![0]?.type, 'eg');
   });
 
   it('S5 · coach timeout still uses S3 context answer', async () => {

@@ -96,6 +96,7 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
           role: 'coach',
           eg: event.eg,
           moment: event.moment,
+          ...(event.segments ? { segments: event.segments } : {}),
         },
       ]);
       return;
@@ -639,6 +640,7 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
                           : undefined
                   }
                   correction={isCorrection}
+                  segments={b.segments}
                 >
                   {b.eg}
                 </CoachCard>

@@ -1,3 +1,7 @@
+import {
+  contextMatchCoachSegments,
+  flattenCoachSegments,
+} from './coachSegments';
 import { normalizeAr } from './normalizeAr';
 
 export type ContextLine = {
@@ -181,16 +185,15 @@ export function matchContextLine(
   return best;
 }
 
-/** Coach EG when answering from a character line already in the thread. */
+/** Flat coach EG (no markdown) when answering from a character line. */
 export function contextMatchCoachEg(
   tl: string,
   characterName?: string | null,
 ): string {
-  const name = characterName?.trim() || 'الشخصية';
-  const clean = tl.replace(/[💪😅😊🔥]+/gu, '').replace(/\s+/g, ' ').trim();
-  return `زي ما ${name} قال: **${clean}** — جرّب تقولها`;
+  return flattenCoachSegments(contextMatchCoachSegments(tl, characterName));
 }
 
+export { contextMatchCoachSegments };
 /**
  * Collect candidate lines from a free-chat thread + frame + recent character TLs.
  */
