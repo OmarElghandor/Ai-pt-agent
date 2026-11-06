@@ -34,6 +34,7 @@ export {
   composeOpeningBubbleAr,
   composeOpeningBubbleTl,
   fillNameSlot,
+  sanitizeLearnerName,
 } from './opening';
 
 export { authoredLinesForWarm } from './warmAudio';

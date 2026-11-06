@@ -1,3 +1,20 @@
+const BLOCKED_NAMES = new Set(['admin', 'test', 'user', 'dev']);
+
+/**
+ * Reject placeholder / account-looking names for `{name}` (G5).
+ * Returns null when the name should be dropped.
+ */
+export function sanitizeLearnerName(
+  name: string | null | undefined,
+): string | null {
+  const trimmed = name?.trim() ?? '';
+  if (!trimmed) return null;
+  if (BLOCKED_NAMES.has(trimmed.toLowerCase())) return null;
+  if (trimmed.includes('@')) return null;
+  if (/\d/.test(trimmed)) return null;
+  return trimmed;
+}
+
 /**
  * Fill `{name}` in opening lines. If unknown, drop the slot and a following comma.
  */
@@ -5,8 +22,9 @@ export function fillNameSlot(
   template: string,
   name: string | null | undefined,
 ): string {
-  if (name?.trim()) {
-    return template.replace(/\{name\}/g, name.trim());
+  const safe = sanitizeLearnerName(name);
+  if (safe) {
+    return template.replace(/\{name\}/g, safe);
   }
   return template
     .replace(/\s*\{name\}\s*,?/g, '')

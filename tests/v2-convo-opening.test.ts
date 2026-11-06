@@ -21,6 +21,17 @@ describe('v2 free chat · C3 opening', () => {
     );
   });
 
+  it('rejects admin/test/user/dev/@/digits for {name} (G5)', () => {
+    const tpl = 'Olá {name}! 😊 Sobre o que queres falar hoje?';
+    for (const bad of ['admin', 'Admin', 'test', 'user', 'dev', 'a@b', 'Omar2']) {
+      assert.equal(
+        fillNameSlot(tpl, bad),
+        'Olá! 😊 Sobre o que queres falar hoje?',
+        bad,
+      );
+    }
+  });
+
   it('start returns coach intro + one opening bubble with name', async () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
