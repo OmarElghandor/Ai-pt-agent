@@ -2,7 +2,7 @@
 
 > **Changed 2026-10-27:** v2 now uses the **Warm Editorial** look from the Stitch export `stitch_bilingual_grammar_notebook_app_5`. It replaces the earlier navy "Editorial Notebook" look. The old references are kept for history in `design/archive-v4/`. Don't copy colors from there. Phases 0–2 already built the components with the old tokens, so the switch is a token swap plus a few component changes (see "Migration from v4" at the end).
 >
-> **Exception — Module C free talk (2026-11-05):** the live free session at `/talk/free/[topicId]` uses **Calm Kit** (sage/ivory voice UI) scoped under `.v2-free-talk`. Tokens live in `app/(v2)/v2.css`; references in `design/calm-kit/`. Grammar, cards, day map, and Module A `TalkSession` stay Warm Editorial. Do not promote Calm Kit colors into the global v2 theme.
+> **Exception — voice sessions (2026-11-06):** Module C free talk (`/talk/free/[topicId]`) and Module A Learn `TalkSession` (`/talk/[packId]`) use **Calm Kit** (sage/ivory voice UI) scoped under `.v2-free-talk`. Tokens live in `app/(v2)/v2.css`; free-talk refs in `design/calm-kit/`; Learn map/session refs in `design/onde-fica/`. Grammar, cards, and day map stay Warm Editorial. Do not promote Calm Kit colors into the global v2 theme.
 
 ## The references
 

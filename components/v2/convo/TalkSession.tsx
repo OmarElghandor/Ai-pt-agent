@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { NoteCard } from '@/components/v2/NoteCard';
 import { PrimaryButton } from '@/components/v2/PrimaryButton';
 import { useMicRecorder } from '@/hooks/useMicRecorder';
 import type { ConvoItemSurface, ConvoVisual } from '@/lib/v2/convo/pack';
@@ -20,10 +19,11 @@ import {
   mapHiddenForPhase,
 } from '@/lib/v2/convo/visual';
 import { CharacterBubble } from './CharacterBubble';
+import { CoachCard } from './CoachCard';
 import { ConvoMap } from './ConvoMap';
 import { ConvoResultCard } from './ConvoResultCard';
 import { ConvoSummaryCard } from './ConvoSummaryCard';
-import { ItemCard } from './ItemCard';
+import { GroupCoachCard } from './GroupCoachCard';
 import { LearnerBubble } from './LearnerBubble';
 import { readConvoNdjson } from './readNdjson';
 import { SceneCardVisual } from './SceneCardVisual';
@@ -48,6 +48,10 @@ export function TalkSession({ packId }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [day, setDay] = useState<number | null>(null);
+  const [titleTl, setTitleTl] = useState('');
+  const [titleAr, setTitleAr] = useState('');
+  const [groupCount, setGroupCount] = useState(3);
+  const [partnerName, setPartnerName] = useState('Inês');
   const [visual, setVisual] = useState<ConvoVisual | null>(null);
   const [surfaces, setSurfaces] = useState<ConvoItemSurface[]>([]);
   const [bridgeTl, setBridgeTl] = useState('');
@@ -56,8 +60,10 @@ export function TalkSession({ packId }: Props) {
   const [pending, setPending] = useState<TalkPendingQuestion | null>(null);
   const [snapshot, setSnapshot] = useState<TalkSessionSnapshot | null>(null);
   const [activeMapStep, setActiveMapStep] = useState<string | null>(null);
+  const [pulseNodeId, setPulseNodeId] = useState<string | null>(null);
   const [highlightNodeId, setHighlightNodeId] = useState<string | null>(null);
   const [highlightItemId, setHighlightItemId] = useState<string | null>(null);
+  const [mapCollapsed, setMapCollapsed] = useState(false);
   const [wrongWay, setWrongWay] = useState<{
     from: string;
     toward: string;
@@ -91,6 +97,14 @@ export function TalkSession({ packId }: Props) {
   useEffect(() => {
     scrollToEnd();
   }, [bubbles, pending, scrollToEnd]);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onScroll = () => setMapCollapsed(el.scrollTop > 24);
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => el.removeEventListener('scroll', onScroll);
+  }, [loading]);
 
   useEffect(() => {
     try {
@@ -129,25 +143,15 @@ export function TalkSession({ packId }: Props) {
         return;
       }
       if (event.type === 'group_advance') {
-        if (event.card_ids.length > 0) {
+        if (event.card_ids.length > 0 || event.intro_eg) {
           setBubbles((prev) => [
             ...prev,
             {
-              id: newId('cards'),
-              role: 'cards',
+              id: newId('group'),
+              role: 'group_coach',
+              intro_eg: event.intro_eg,
               card_ids: event.card_ids,
-            },
-          ]);
-        }
-        for (const intro of event.coach_intros) {
-          if (!intro.coach_intro_eg) continue;
-          setBubbles((prev) => [
-            ...prev,
-            {
-              id: newId('intro'),
-              role: 'coach',
-              eg: intro.coach_intro_eg,
-              moment: 'group_intro',
+              coach_intros: event.coach_intros,
             },
           ]);
         }
@@ -170,6 +174,7 @@ export function TalkSession({ packId }: Props) {
       }
       if (event.type === 'visual') {
         if (event.map_step) setActiveMapStep(event.map_step);
+        if (event.map_node) setPulseNodeId(event.map_node);
         if (event.wrong_way) flashWrongWay(event.wrong_way);
         if (event.highlight_node_id) {
           setHighlightNodeId(event.highlight_node_id);
@@ -213,7 +218,44 @@ export function TalkSession({ packId }: Props) {
         return;
       }
       if (event.type === 'question') {
-        if (streamBubbleId.current) {
+        if (event.tl) {
+          setBubbles((prev) => {
+            const sid = streamBubbleId.current;
+            const idx = sid
+              ? prev.findIndex((b) => b.id === sid)
+              : prev.length - 1;
+            const target =
+              idx >= 0 && prev[idx]?.role === 'character' ? prev[idx] : null;
+            if (target && target.role === 'character') {
+              const merged = `${target.tl} ${event.tl}`.trim();
+              return prev.map((b, i) =>
+                i === idx && b.role === 'character'
+                  ? {
+                      ...b,
+                      tl: merged,
+                      say: event.say ?? b.say,
+                      ar: event.ar ?? b.ar,
+                      streaming: false,
+                    }
+                  : b,
+              );
+            }
+            return [
+              ...prev,
+              {
+                id: newId('q'),
+                role: 'character' as const,
+                tl: event.tl,
+                say: event.say,
+                ar: event.ar,
+              },
+            ];
+          });
+          streamBubbleId.current = null;
+          if (event.playback === 'slow') {
+            pendingPlayRef.current = { tl: event.tl, slow: true };
+          }
+        } else if (streamBubbleId.current) {
           const sid = streamBubbleId.current;
           setBubbles((prev) =>
             prev.map((b) =>
@@ -224,30 +266,19 @@ export function TalkSession({ packId }: Props) {
           );
           streamBubbleId.current = null;
         }
-        if (event.tl) {
-          setBubbles((prev) => [
-            ...prev,
-            {
-              id: newId('q'),
-              role: 'character',
-              tl: event.tl,
-              say: event.say,
-            },
-          ]);
-          if (event.playback === 'slow') {
-            pendingPlayRef.current = { tl: event.tl, slow: true };
-          }
-        }
         if (event.map_step) setActiveMapStep(event.map_step);
+        if (event.map_node) setPulseNodeId(event.map_node);
         setPending({
           id: event.id,
           tl: event.tl,
           say: event.say,
+          ar: event.ar,
           kind: event.kind,
           item_id: event.item_id,
           option_ids: event.option_ids,
           options: event.options,
           map_step: event.map_step,
+          map_node: event.map_node,
           audio_key: event.audio_key,
         });
         return;
@@ -365,18 +396,19 @@ export function TalkSession({ packId }: Props) {
         if (cancelled) return;
         setSessionId(body.session_id);
         setDay(body.day);
+        setTitleTl(body.title_tl ?? '');
+        setTitleAr(body.title_ar ?? '');
+        setGroupCount(body.group_count ?? 3);
+        if (body.character_id === 'ines') setPartnerName('Inês');
+        else if (body.character_id === 'manuel') setPartnerName('Manuel');
+        else if (body.character_id) setPartnerName(body.character_id);
         setVisual(body.visual);
         setSurfaces(body.item_surfaces ?? []);
         setBridgeTl(
-          typeof (body as { bridge_tl?: string }).bridge_tl === 'string'
-            ? (body as { bridge_tl: string }).bridge_tl
-            : '',
+          typeof body.bridge_tl === 'string' ? body.bridge_tl : '',
         );
         setFreeTopicId(
-          typeof (body as { free_topic_id?: string | null }).free_topic_id ===
-            'string'
-            ? (body as { free_topic_id: string }).free_topic_id
-            : null,
+          typeof body.free_topic_id === 'string' ? body.free_topic_id : null,
         );
         setSnapshot({
           id: body.session.id,
@@ -433,31 +465,26 @@ export function TalkSession({ packId }: Props) {
           setSkipBootstrap(true);
           setBootstrapped(true);
         } else {
-          const openingBubbles: TalkBubble[] = [
-            {
-              id: newId('open'),
-              role: 'character',
-              tl: body.opening.character.tl,
-              say: body.opening.character.say,
-            },
-          ];
-          if (body.opening.card_ids.length > 0) {
+          const openingBubbles: TalkBubble[] = [];
+          if (
+            body.opening.card_ids.length > 0 ||
+            body.opening.intro_eg
+          ) {
             openingBubbles.push({
-              id: newId('cards'),
-              role: 'cards',
+              id: newId('group'),
+              role: 'group_coach',
+              intro_eg: body.opening.intro_eg,
               card_ids: body.opening.card_ids,
+              coach_intros: body.opening.coach_intros,
             });
           }
-          openingBubbles.push(
-            ...body.opening.coach_intros
-              .filter((c) => c.coach_intro_eg)
-              .map((c) => ({
-                id: newId('intro'),
-                role: 'coach' as const,
-                eg: c.coach_intro_eg,
-                moment: 'group_intro',
-              })),
-          );
+          openingBubbles.push({
+            id: newId('open'),
+            role: 'character',
+            tl: body.opening.character.tl,
+            say: body.opening.character.say,
+            ar: body.opening.character.ar,
+          });
           setBubbles(openingBubbles);
           setSkipBootstrap(false);
         }
@@ -637,34 +664,56 @@ export function TalkSession({ packId }: Props) {
     );
   }
 
+  const topicLabel =
+    titleTl && titleAr
+      ? `${titleTl} · ${titleAr}`
+      : titleTl || titleAr || 'محادثة';
+  const currentGroup = snapshot?.current_group ?? 1;
+
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-[390px] flex-col bg-v2-paper">
-      <header className="sticky top-0 z-30 flex items-center gap-2 border-b border-v2-line/50 bg-v2-paper/95 px-3 py-3 backdrop-blur-md">
-        <Link
-          href={day ? `/day/${day}` : '/talk/learn'}
-          className="flex h-10 w-10 items-center justify-center rounded-full text-v2-primary hover:bg-v2-primary/10"
-          aria-label="رجوع"
-        >
-          <span className="material-symbols-rounded text-[22px] rotate-180">
-            arrow_back
-          </span>
-        </Link>
-        <div className="min-w-0 flex-1 text-end">
-          <p className="font-[family-name:var(--font-v2-ui)] text-[10px] font-semibold uppercase tracking-wide text-v2-action">
-            محادثة · يوم {day ?? '—'}
-          </p>
-          <h1 className="truncate font-[family-name:var(--font-v2-arabic)] text-[15px] font-bold text-v2-primary">
-            {packId}
-          </h1>
-        </div>
+    <main className="v2-free-talk mx-auto flex min-h-dvh w-full max-w-[390px] flex-col bg-[color:var(--ft-ivory,#F4EFE8)]">
+      <header className="sticky top-0 z-30 flex items-center gap-2 border-b border-[color:var(--ft-border,#E5DED5)] bg-[color:var(--ft-surface,#FBF8F3)]/95 px-3 py-3 backdrop-blur-md">
         <button
           type="button"
           onClick={() => void endSession()}
           disabled={!sessionId || ending || loading}
-          className="shrink-0 rounded-v2-chip bg-v2-primary/10 px-3 py-1.5 font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-v2-primary disabled:opacity-40"
+          className="shrink-0 rounded-full bg-white px-3 py-1.5 font-[family-name:var(--font-ft-ar,var(--font-v2-arabic))] text-sm font-semibold text-[color:var(--ft-ink,#202A25)] shadow-sm disabled:opacity-40"
         >
           خلّص
         </button>
+        <div className="min-w-0 flex-1 text-center">
+          <div className="mx-auto mb-1 flex h-9 w-9 items-center justify-center rounded-full bg-[color:var(--ft-sage,#6B7F6E)] text-sm font-semibold text-white">
+            {partnerName.slice(0, 1)}
+          </div>
+          <p className="font-[family-name:var(--font-ft-pt,var(--font-v2-target))] text-[13px] font-semibold text-[color:var(--ft-ink,#202A25)]">
+            {partnerName}
+          </p>
+          <h1 className="truncate font-[family-name:var(--font-ft-ar,var(--font-v2-arabic))] text-[12px] text-[color:var(--ft-text-secondary,#666963)]">
+            {topicLabel}
+          </h1>
+          <div className="mt-1.5 flex justify-center gap-1.5" aria-hidden>
+            {Array.from({ length: groupCount }, (_, i) => (
+              <span
+                key={i}
+                className={[
+                  'h-1.5 w-1.5 rounded-full',
+                  i + 1 <= currentGroup
+                    ? 'bg-[color:var(--ft-sage,#6B7F6E)]'
+                    : 'bg-[color:var(--ft-mist,#D9E1D9)]',
+                ].join(' ')}
+              />
+            ))}
+          </div>
+        </div>
+        <Link
+          href={day ? `/day/${day}` : '/talk/learn'}
+          className="flex h-10 w-10 items-center justify-center rounded-full text-[color:var(--ft-sage,#6B7F6E)] hover:bg-[color:var(--ft-mist,#D9E1D9)]/50"
+          aria-label="رجوع"
+        >
+          <span className="material-symbols-rounded text-[22px]">
+            arrow_forward
+          </span>
+        </Link>
       </header>
 
       {visual?.type === 'map' ? (
@@ -672,8 +721,10 @@ export function TalkSession({ packId }: Props) {
           visual={visual}
           characterNode={mapCharNode}
           activeStepId={activeMapStep ?? pending?.map_step ?? null}
+          pulseNodeId={pulseNodeId ?? pending?.map_node ?? null}
           wrongWay={wrongWay}
           highlightNodeId={highlightNodeId}
+          collapsed={mapCollapsed}
           hidden={hideVisual || done}
         />
       ) : null}
@@ -707,7 +758,10 @@ export function TalkSession({ packId }: Props) {
                 key={b.id}
                 tl={b.tl}
                 say={b.say}
+                meaningEg={b.ar}
                 streaming={b.streaming}
+                tone="calm"
+                partnerName={partnerName}
                 autoPlay={!b.streaming && Boolean(b.tl)}
                 onPlayStart={() => {
                   if (sendAtRef.current != null) {
@@ -720,31 +774,30 @@ export function TalkSession({ packId }: Props) {
             );
           }
           if (b.role === 'learner') {
-            return <LearnerBubble key={b.id} tl={b.tl} />;
+            return <LearnerBubble key={b.id} tone="calm" tl={b.tl} />;
+          }
+          if (b.role === 'group_coach') {
+            return (
+              <GroupCoachCard
+                key={b.id}
+                introEg={b.intro_eg}
+                cardIds={b.card_ids}
+                coachIntros={b.coach_intros}
+                surfaceById={surfaceById}
+              />
+            );
           }
           if (b.role === 'cards') {
             return (
-              <div key={b.id} className="flex flex-col gap-2 self-stretch">
-                {b.card_ids.map((id) => {
-                  const s = surfaceById.get(id);
-                  return (
-                    <ItemCard
-                      key={id}
-                      tl={s?.tl ?? id}
-                      say={s?.say}
-                      glyph={s?.glyph}
-                      highlighted={highlightItemId === id}
-                    />
-                  );
-                })}
-              </div>
+              <GroupCoachCard
+                key={b.id}
+                cardIds={b.card_ids}
+                coachIntros={[]}
+                surfaceById={surfaceById}
+              />
             );
           }
-          return (
-            <NoteCard key={b.id} className="self-stretch">
-              {b.eg}
-            </NoteCard>
-          );
+          return <CoachCard key={b.id}>{b.eg}</CoachCard>;
         })}
 
         {done && resultStats ? (
@@ -766,8 +819,8 @@ export function TalkSession({ packId }: Props) {
       />
 
       {!done && !loading ? (
-        <section className="shrink-0 border-t border-v2-line/60 bg-v2-paper px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2">
-          <div className="mb-2 flex flex-wrap justify-end gap-1.5">
+        <section className="shrink-0 border-t border-[color:var(--ft-border,#E5DED5)] bg-[color:var(--ft-surface,#FBF8F3)] px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2">
+          <div className="mb-2 flex flex-wrap justify-center gap-1.5">
             {(
               [
                 ['repeat', 'Pode repetir?'],
@@ -781,7 +834,7 @@ export function TalkSession({ packId }: Props) {
                 disabled={busy || !pending}
                 onClick={() => runSurvival(action)}
                 dir="ltr"
-                className="rounded-v2-pill border border-v2-line bg-white px-2.5 py-1.5 font-[family-name:var(--font-v2-target)] text-[11px] font-semibold text-v2-primary disabled:opacity-50"
+                className="rounded-full border border-[color:var(--ft-border,#E5DED5)] bg-white px-2.5 py-1.5 font-[family-name:var(--font-ft-pt,var(--font-v2-target))] text-[11px] font-semibold text-[color:var(--ft-ink,#202A25)] disabled:opacity-50"
               >
                 {label}
               </button>
@@ -789,19 +842,32 @@ export function TalkSession({ packId }: Props) {
           </div>
 
           {showChips ? (
-            <div className="mb-2 flex flex-wrap justify-end gap-2">
-              {pending!.options!.map((opt) => (
-                <button
-                  key={opt.id}
-                  type="button"
-                  disabled={busy}
-                  onClick={() => submitChoice(opt.tl)}
-                  dir="ltr"
-                  className="rounded-v2-pill border border-v2-primary/20 bg-white px-3 py-2 font-[family-name:var(--font-v2-target)] text-sm font-semibold text-v2-primary shadow-sm active:scale-95 disabled:opacity-50"
-                >
-                  {opt.tl}
-                </button>
-              ))}
+            <div className="mb-3 grid grid-cols-2 gap-2">
+              {pending!.options!.map((opt) => {
+                const s = surfaceById.get(opt.id);
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    disabled={busy}
+                    onClick={() => submitChoice(opt.tl)}
+                    className="rounded-2xl border border-[color:var(--ft-border,#E5DED5)] bg-white px-3 py-3 text-center shadow-sm active:scale-[0.98] disabled:opacity-50"
+                  >
+                    <span
+                      className="block font-[family-name:var(--font-ft-ar,var(--font-v2-arabic))] text-[11px] text-[color:var(--ft-text-secondary,#666963)]"
+                      dir="rtl"
+                    >
+                      {s?.say ? s.say : 'اختيار'}
+                    </span>
+                    <span
+                      className="mt-0.5 block font-[family-name:var(--font-ft-pt,var(--font-v2-target))] text-[15px] font-semibold text-[color:var(--ft-ink,#202A25)]"
+                      dir="ltr"
+                    >
+                      {opt.tl}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           ) : null}
 
@@ -812,22 +878,24 @@ export function TalkSession({ packId }: Props) {
                 disabled={busy || !pending || mic.transcribing}
                 onClick={() => void toggleMic()}
                 className={[
-                  'flex h-12 items-center justify-center gap-2 rounded-2xl font-[family-name:var(--font-v2-arabic)] text-sm font-semibold transition',
+                  'ft-mic-halo mx-auto flex h-16 w-16 items-center justify-center rounded-full font-[family-name:var(--font-ft-ar,var(--font-v2-arabic))] text-sm font-semibold text-white shadow-[var(--ft-shadow-mic)] transition',
                   mic.recording
-                    ? 'bg-v2-action text-white'
-                    : 'bg-v2-primary text-white',
+                    ? 'bg-[color:var(--ft-sage-dark,#4d6151)]'
+                    : 'bg-[color:var(--ft-sage,#6B7F6E)]',
                   'disabled:opacity-50',
                 ].join(' ')}
               >
-                <span className="material-symbols-rounded text-[22px]">
+                <span className="material-symbols-rounded text-[28px]">
                   {mic.recording ? 'stop' : 'mic'}
                 </span>
+              </button>
+              <p className="text-center font-[family-name:var(--font-ft-ar,var(--font-v2-arabic))] text-[12px] text-[color:var(--ft-text-secondary,#666963)]">
                 {mic.transcribing
                   ? 'بنحوّل الصوت…'
                   : mic.recording
                     ? 'وقّف التسجيل'
-                    : 'اتكلم'}
-              </button>
+                    : 'دوس مطولاً على المايك واتكلم برتغالي 🇵🇹'}
+              </p>
               <button
                 type="button"
                 onClick={() => {

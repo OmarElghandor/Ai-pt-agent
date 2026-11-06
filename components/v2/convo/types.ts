@@ -33,17 +33,26 @@ export type TalkBubble =
       id: string;
       role: 'cards';
       card_ids: string[];
+    }
+  | {
+      id: string;
+      role: 'group_coach';
+      intro_eg?: string;
+      card_ids: string[];
+      coach_intros: Array<{ item_id: string; coach_intro_eg: string }>;
     };
 
 export type TalkPendingQuestion = {
   id: string;
   tl: string;
   say?: string;
+  ar?: string;
   kind: 'choice' | 'open' | 'recap' | 'help';
   item_id: string;
   option_ids?: string[];
   options?: Array<{ id: string; tl: string }>;
   map_step?: string;
+  map_node?: string;
   audio_key: string;
 };
 
@@ -73,9 +82,13 @@ export type TalkStartResponse = {
   session_id: string;
   pack_id: string;
   day: number;
+  title_tl?: string;
+  title_ar?: string;
+  group_count?: number;
   resumed: boolean;
   opening: {
-    character: { tl: string; say?: string };
+    character: { tl: string; ar?: string; say?: string };
+    intro_eg?: string;
     coach_intros: Array<{ item_id: string; coach_intro_eg: string }>;
     card_ids: string[];
   };
@@ -102,4 +115,6 @@ export type TalkStartResponse = {
   visual: ConvoVisual;
   character_id: string;
   item_surfaces: ConvoItemSurface[];
+  bridge_tl?: string;
+  free_topic_id?: string | null;
 };

@@ -10,6 +10,7 @@ import {
   freeTopicIdForPack,
   isOpenTopicId,
   loadThreadTopic,
+  loadTopicsFile,
 } from '@/lib/v2/convo/topics';
 import { authoredLinesForWarm, currentNextLine } from '@/lib/v2/convo/free';
 import {
@@ -201,11 +202,19 @@ export async function POST(req: Request) {
       store,
       ...(body?.session_id ? { sessionId: body.session_id } : {}),
     });
+    const topic = loadTopicsFile()
+      .themes.flatMap((th) => th.topics)
+      .find((t) => t.pack_id === pack.pack_id);
+    const titleTl = topic?.title_tl ?? pack.scene.place;
+    const titleAr = topic?.title_ar ?? '';
     return NextResponse.json({
       session_id: result.session.id,
       module: 'lesson',
       pack_id: pack.pack_id,
       day: pack.day,
+      title_tl: titleTl,
+      title_ar: titleAr,
+      group_count: pack.groups.length,
       resumed: result.resumed,
       generated: ensured.generated,
       opening: result.opening,

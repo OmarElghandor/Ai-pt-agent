@@ -100,7 +100,7 @@ Code checks (fail the job → one retry → drop the offending question and warn
 - every map-dependent open question references an existing step; the route uses only items from the pack;
 - coach lines are Egyptian Arabic with the Portuguese wrapped as tl segments (the existing rt rules).
 
-Reference pack: **day 18, "Primeira Viagem a Portugal"** (directions: estação, rua, farmácia, à esquerda, à direita, esquina, praça, Vire à esquerda, Siga em frente, Fica ao lado do banco, É perto? É longe). Build and hand-tune this one first; it is the template for the prompt examples.
+Reference pack: **day 33, "Primeira Viagem a Portugal"** (directions: estação, rua, farmácia, à esquerda, à direita, É perto?, É longe, Onde fica…). Hand-authored at `content/v2/convo/pt-PT.day-33.json`; day 34 is «Vire à esquerda». It is the template for the prompt examples.
 
 ### 4.2 One turn, step by step
 
@@ -253,7 +253,7 @@ API (thin routes; logic in `lib/v2/convo`):
 - topics list with statuses;
 - free topics list.
 
-UI (Module A / learn: follow `05` Warm Editorial, `design/stitch-html/11-practice-conversation.html`, 390px. Module C free session: **Calm Kit** under `.v2-free-talk` — see `05` exception and `design/calm-kit/`):
+UI (Module A Learn + Module C free: **Calm Kit** under `.v2-free-talk` — see `05` exception, `design/calm-kit/`, and Learn screens in `design/onde-fica/`, 390px):
 
 - character bubbles: pt-PT, `say` line under it, "معناها؟" hidden translation, play button;
 - learner bubbles deep teal; coach as NoteCard (amber/yellow), never red;
