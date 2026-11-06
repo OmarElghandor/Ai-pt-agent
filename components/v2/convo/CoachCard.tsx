@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { isolatePtInText } from '@/lib/v2/convo/ui/isolatePt';
 
 type Props = {
   children: ReactNode;
@@ -16,6 +17,8 @@ export function CoachCard({
   className,
   correction,
 }: Props) {
+  const body =
+    typeof children === 'string' ? isolatePtInText(children) : children;
   return (
     <aside
       className={[
@@ -71,7 +74,7 @@ export function CoachCard({
                 : 'text-[var(--ft-ink)]',
             ].join(' ')}
           >
-            {children}
+            {body}
           </div>
         </div>
       </div>

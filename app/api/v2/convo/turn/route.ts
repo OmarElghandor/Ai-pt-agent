@@ -41,6 +41,7 @@ export async function POST(req: Request) {
     survival?: 'repeat' | 'slow' | 'nao_percebi';
     character_id?: string;
     dismiss_cta?: boolean;
+    via_voice?: boolean;
   } | null;
   const sessionId = body?.session_id?.trim();
   if (!sessionId) {
@@ -95,6 +96,7 @@ export async function POST(req: Request) {
             emit,
             progressWriter: createAnswersConvoProgressWriter(),
             ...(survival ? { survival } : {}),
+            ...(body?.via_voice ? { viaVoice: true } : {}),
           });
           void metrics;
         }

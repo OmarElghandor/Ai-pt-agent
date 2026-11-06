@@ -10,6 +10,8 @@ type Props = {
   activeStepId: string | null;
   /** Node to pulse (current question). */
   pulseNodeId?: string | null;
+  /** Place nodes answered correctly — sage check (M6). */
+  checkedNodeIds?: string[];
   /** Brief wrong-way flash. */
   wrongWay: { from: string; toward: string } | null;
   /** Side-channel: highlight a map node (T3.2). */
@@ -34,11 +36,13 @@ export function ConvoMap({
   characterNode,
   activeStepId,
   pulseNodeId,
+  checkedNodeIds,
   wrongWay,
   highlightNodeId,
   collapsed,
   hidden,
 }: Props) {
+  const checked = new Set(checkedNodeIds ?? []);
   if (hidden) return null;
 
   const activeStep = visual.route.find((s) => s.step_id === activeStepId);
@@ -172,6 +176,7 @@ export function ConvoMap({
 
         {visual.nodes.map((node) => {
           const isChar = characterNode === node.id;
+          const isChecked = checked.has(node.id) && !isChar;
           const pulse =
             pulseNodeId === node.id || highlightNodeId === node.id;
           const isWrong =
@@ -197,6 +202,8 @@ export function ConvoMap({
                     'flex h-9 min-w-9 items-center justify-center rounded-full border px-2 shadow-sm',
                     isChar
                       ? 'border-[color:var(--ft-sage,#6B7F6E)] bg-[color:var(--ft-sage,#6B7F6E)] text-white'
+                      : isChecked
+                        ? 'border-[color:var(--ft-sage,#6B7F6E)] bg-[color:var(--ft-success-soft,#E5E9DF)] text-[color:var(--ft-sage,#6B7F6E)]'
                       : isWrong
                         ? 'border-[#C4A574] bg-[#F3E6D0] text-[#7A5C2E] ring-2 ring-[#C4A574]/50'
                         : onEdge || pulse
@@ -205,6 +212,7 @@ export function ConvoMap({
                   ].join(' ')}
                 >
                   <span className="font-[family-name:var(--font-ft-pt,var(--font-v2-target))] text-[10px] font-bold leading-none">
+                    {isChecked ? '✓ ' : ''}
                     {node.label_tl}
                   </span>
                 </div>

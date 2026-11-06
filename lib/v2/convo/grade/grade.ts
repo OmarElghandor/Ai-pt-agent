@@ -1,10 +1,21 @@
-import { matchAnswer } from '@/lib/v2/answers/match';
+import { contentWord, matchAnswer } from '@/lib/v2/answers/match';
 import { matchKnownNearMiss } from '@/lib/v2/answers/knownNearMiss';
 import {
   normalizeAnswer,
   normalizeForCompare,
 } from '@/lib/v2/answers/normalize';
 import { buildConvoAcceptedForms } from './accepted';
+
+/** Accent-only difference on the content word → spelling near_miss (M5). */
+function accentOnlyNearMiss(learner: string, expectedTl: string): boolean {
+  const a = contentWord(learner);
+  const b = contentWord(expectedTl);
+  if (!a || !b) return false;
+  return (
+    normalizeForCompare(a) === normalizeForCompare(b) &&
+    normalizeAnswer(a) !== normalizeAnswer(b)
+  );
+}
 
 export type ConvoGradeVerdict =
   | 'correct'
@@ -80,8 +91,15 @@ export function gradeConvoAnswer(
     buildConvoAcceptedForms(input.itemTl);
 
   const match = matchAnswer(text, accepted);
-  if (match.kind === 'exact' || match.kind === 'accent') {
+  if (match.kind === 'exact') {
+    if (accentOnlyNearMiss(text, input.itemTl)) {
+      return { verdict: 'near_miss', itemIds };
+    }
     return { verdict: 'correct', itemIds };
+  }
+  // Accent-only or close spelling → near_miss (counts correct for rung; M5 coach).
+  if (match.kind === 'accent' || match.kind === 'spelling') {
+    return { verdict: 'near_miss', itemIds };
   }
 
   // Pattern / phrase stems: learner may expand "Onde fica" → "Onde fica a farmácia?"
@@ -112,7 +130,12 @@ export function gradeConvoAnswer(
     if (other.id === input.question.item_id) continue;
     const otherAccepted = buildConvoAcceptedForms(other.tl);
     const otherMatch = matchAnswer(text, otherAccepted);
-    if (otherMatch.kind === 'exact' || otherMatch.kind === 'accent') {
+    // Spelling-close to a *different* lemma stays wrong (e.g. farácia on street Q).
+    if (
+      otherMatch.kind === 'exact' ||
+      otherMatch.kind === 'accent' ||
+      otherMatch.kind === 'spelling'
+    ) {
       // Prefer a listed mistake id when the trigger matches this other item.
       const listed = (input.question.mistakes ?? []).find((m) =>
         matchesTrigger(text, m.trigger) ||

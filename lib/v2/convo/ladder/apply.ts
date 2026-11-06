@@ -133,19 +133,15 @@ export function applyConvoGrade(input: {
   };
   if (grade.verdict === 'near_miss') {
     event.near_miss = true;
+    moments.push('near_miss_repeat');
   }
 
-  // --- unclear: no rung / help change ---
-  if (grade.verdict === 'unclear') {
+  // --- wrong / unclear: escalate help ladder; re-ask same Q (M4) ---
+  if (grade.verdict === 'wrong' || grade.verdict === 'unclear') {
     next.correct_streak = 0;
-    moments.push('unclear');
-    return { session: next, moments, event, group_advance: null };
-  }
-
-  // --- wrong: escalate help ladder ---
-  if (grade.verdict === 'wrong') {
-    next.correct_streak = 0;
-    next.struggled[itemId] = true;
+    if (grade.verdict === 'wrong') {
+      next.struggled[itemId] = true;
+    }
 
     const qid =
       pending.kind === 'help'
@@ -172,8 +168,12 @@ export function applyConvoGrade(input: {
       item_id: itemId,
     };
 
-    const missMoment = `miss_${nextStep}` as CoachMoment;
-    moments.push(missMoment);
+    if (grade.verdict === 'unclear') {
+      moments.push('unclear');
+    } else {
+      const missMoment = `miss_${nextStep}` as CoachMoment;
+      moments.push(missMoment);
+    }
 
     event.help_step = nextStep;
     event.attempts = attempts;

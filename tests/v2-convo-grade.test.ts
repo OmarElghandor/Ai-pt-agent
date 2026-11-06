@@ -76,7 +76,7 @@ describe('v2 convo grade · day-18 style cases', () => {
     { name: 'a direita', text: 'a direita', verdict: 'correct' },
     { name: 'gender direito', text: 'direito', verdict: 'correct' },
     { name: 'À Direita caps', text: 'À Direita', verdict: 'correct' },
-    { name: 'accentless a direita', text: 'a direita', verdict: 'correct' },
+    { name: 'accentless a direita', text: 'a direita', verdict: 'near_miss' },
     { name: 'trailing punct', text: 'à direita!', verdict: 'correct' },
     { name: 'por favor tail still needs core', text: 'direita', verdict: 'correct' },
     {

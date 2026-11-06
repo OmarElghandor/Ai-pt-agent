@@ -32,6 +32,7 @@ import {
 import { requirePersona } from '@/lib/v2/convo/topics';
 import { isLearnModelReactionsEnabled } from '@/lib/v2/flags';
 import { convoQuestionAudioKey } from './audioKey';
+import { contentWord } from '@/lib/v2/answers/match';
 import { pickPackReaction } from './packReaction';
 import {
   findPackQuestion,
@@ -95,6 +96,8 @@ export type RunConvoTurnInput = {
   survival?: ConvoSurvivalAction;
   /** Injectable Arabic coach caller (T3.3); defaults to live model. */
   coachCaller?: ConvoCoachCaller;
+  /** True when the learner text came from STT (M5 voice-only coach lines). */
+  viaVoice?: boolean;
 };
 
 function findOpenHelpReask(
@@ -518,8 +521,43 @@ export async function runConvoTurn(
       eg: event.coach_note_eg,
       moment: moments[0] ?? 'miss_1',
     });
+  } else if (event.near_miss && event.item_id) {
+    // M5: spelling near_miss coach (exact wording from batch).
+    const lemma =
+      contentWord(surfaceTlFor(surfaces, event.item_id) || event.item_id) ||
+      event.item_id;
+    emit({
+      type: 'coach',
+      id: 'spelling_near_miss',
+      eg: `مظبوط 👏 بتتكتب ${lemma}`,
+      moment: 'near_miss_repeat',
+    });
+  } else if (
+    event.verdict === 'unclear' &&
+    !input.viaVoice &&
+    (event.help_step ?? 0) >= 2 &&
+    event.item_id
+  ) {
+    // M5: typed unclear after help step 2 → show the word (never مش واصلاني).
+    const lemma =
+      contentWord(surfaceTlFor(surfaces, event.item_id) || event.item_id) ||
+      event.item_id;
+    emit({
+      type: 'coach',
+      id: 'typed_unclear_reveal',
+      eg: `قربت! الكلمة هي ${lemma}`,
+      moment: 'unclear',
+    });
+  } else if (event.verdict === 'unclear' && !input.viaVoice) {
+    emit({
+      type: 'coach',
+      id: 'typed_unclear',
+      eg: 'مش واضح — حاول تكتبها تاني',
+      moment: 'unclear',
+    });
   } else {
     for (const moment of moments) {
+      if (moment === 'near_miss_repeat') continue;
       try {
         const itemId = event.item_id;
         const picked = pickCoachLine({
@@ -531,10 +569,19 @@ export async function runConvoTurn(
           recentIds: session.coach_recent_ids,
         });
         session.coach_recent_ids = picked.recentIds;
+        // M5: مش واصلاني only for voice; rewrite bank line if typed slipped through.
+        let eg = picked.eg;
+        if (
+          moment === 'unclear' &&
+          !input.viaVoice &&
+          /مش واصلاني/.test(eg)
+        ) {
+          eg = 'مش واضح — حاول تكتبها تاني';
+        }
         emit({
           type: 'coach',
           id: picked.id,
-          eg: picked.eg,
+          eg,
           moment,
         });
       } catch {

@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { PrimaryButton } from '@/components/v2/PrimaryButton';
 import { useMicRecorder } from '@/hooks/useMicRecorder';
 import type { ConvoItemSurface, ConvoVisual } from '@/lib/v2/convo/pack';
 import {
@@ -324,7 +323,7 @@ export function TalkSession({ packId }: Props) {
   const runTurn = useCallback(
     async (
       learnerText: string,
-      opts?: { survival?: ConvoSurvivalAction },
+      opts?: { survival?: ConvoSurvivalAction; viaVoice?: boolean },
     ) => {
       if (!sessionId || busy) return;
       setBusy(true);
@@ -338,6 +337,7 @@ export function TalkSession({ packId }: Props) {
             session_id: sessionId,
             text: learnerText,
             ...(opts?.survival ? { survival: opts.survival } : {}),
+            ...(opts?.viaVoice ? { via_voice: true } : {}),
           }),
         });
         if (!res.ok || !res.body) {
@@ -426,22 +426,15 @@ export function TalkSession({ packId }: Props) {
       );
 
       if (resumedMid && body.reopening) {
-        const reopenBubbles: TalkBubble[] = [
+        // M7: one resume bubble only — no returned_after_break coach.
+        setBubbles([
           {
             id: newId('reopen'),
             role: 'character',
             tl: body.reopening.character_tl,
+            ar: body.reopening.character_ar,
           },
-        ];
-        if (body.reopening.coach?.eg) {
-          reopenBubbles.push({
-            id: newId('reopen-coach'),
-            role: 'coach',
-            eg: body.reopening.coach.eg,
-            moment: 'returned_after_break',
-          });
-        }
-        setBubbles(reopenBubbles);
+        ]);
         const pq = body.reopening.pending_question!;
         const ptl = body.reopening.pending_tl ?? '';
         if (ptl) {
@@ -453,7 +446,13 @@ export function TalkSession({ packId }: Props) {
             audio_key:
               body.reopening.pending_audio_key ??
               `convo:${body.pack_id}:${pq.id}`,
+            ...(body.reopening.map_node
+              ? { map_node: body.reopening.map_node }
+              : {}),
           });
+        }
+        if (body.reopening.map_node) {
+          setPulseNodeId(body.reopening.map_node);
         }
         setSkipBootstrap(true);
         setBootstrapped(true);
@@ -643,7 +642,7 @@ export function TalkSession({ packId }: Props) {
       ]);
       sendAtRef.current = performance.now();
       setFirstAudioMs(null);
-      void runTurn(spoken);
+      void runTurn(spoken, { viaVoice: true });
       return;
     }
     await mic.start();
@@ -674,6 +673,30 @@ export function TalkSession({ packId }: Props) {
       snapshot.rungs as Record<string, ConvoRung>,
     );
   }, [visual, snapshot, packId, day]);
+
+  /** M6: pulse / character follow the pending question's map_node or map_step.from. */
+  const questionMapNode = useMemo(() => {
+    if (!visual || visual.type !== 'map') return null;
+    if (pending?.map_node) return pending.map_node;
+    if (pending?.map_step) {
+      const step = visual.route.find((s) => s.step_id === pending.map_step);
+      return step?.from ?? null;
+    }
+    return pulseNodeId;
+  }, [visual, pending, pulseNodeId]);
+
+  const checkedMapNodes = useMemo(() => {
+    if (!visual || visual.type !== 'map' || !snapshot) return [] as string[];
+    const out: string[] = [];
+    for (const node of visual.nodes) {
+      if (!node.item_id) continue;
+      const r = snapshot.rungs[node.item_id];
+      if (r === 'understood' || r === 'said' || r === 'assisted') {
+        out.push(node.id);
+      }
+    }
+    return out;
+  }, [visual, snapshot]);
 
   const showChips =
     pending &&
@@ -769,10 +792,6 @@ export function TalkSession({ packId }: Props) {
     );
   }
 
-  const topicLabel =
-    titleTl && titleAr
-      ? `${titleTl} · ${titleAr}`
-      : titleTl || titleAr || 'محادثة';
   const currentGroup = snapshot?.current_group ?? 1;
 
   return (
@@ -790,11 +809,21 @@ export function TalkSession({ packId }: Props) {
           <div className="mx-auto mb-1 flex h-9 w-9 items-center justify-center rounded-full bg-[color:var(--ft-sage,#6B7F6E)] text-sm font-semibold text-white">
             {partnerName.slice(0, 1)}
           </div>
-          <p className="font-[family-name:var(--font-ft-pt,var(--font-v2-target))] text-[13px] font-semibold text-[color:var(--ft-ink,#202A25)]">
+          <p
+            className="font-[family-name:var(--font-ft-pt,var(--font-v2-target))] text-[13px] font-semibold text-[color:var(--ft-ink,#202A25)]"
+            dir="ltr"
+            style={{ unicodeBidi: 'isolate' }}
+          >
             {partnerName}
           </p>
           <h1 className="truncate font-[family-name:var(--font-ft-ar,var(--font-v2-arabic))] text-[12px] text-[color:var(--ft-text-secondary,#666963)]">
-            {topicLabel}
+            {titleTl ? (
+              <span dir="ltr" style={{ unicodeBidi: 'isolate' }}>
+                {titleTl}
+              </span>
+            ) : null}
+            {titleTl && titleAr ? ' · ' : null}
+            {titleAr || (!titleTl ? 'محادثة' : null)}
           </h1>
           <div className="mt-1.5 flex justify-center gap-1.5" aria-hidden>
             {Array.from({ length: groupCount }, (_, i) => (
@@ -824,9 +853,10 @@ export function TalkSession({ packId }: Props) {
       {visual?.type === 'map' ? (
         <ConvoMap
           visual={visual}
-          characterNode={mapCharNode}
+          characterNode={questionMapNode ?? mapCharNode}
           activeStepId={activeMapStep ?? pending?.map_step ?? null}
-          pulseNodeId={pulseNodeId ?? pending?.map_node ?? null}
+          pulseNodeId={questionMapNode ?? pulseNodeId}
+          checkedNodeIds={checkedMapNodes}
           wrongWay={wrongWay}
           highlightNodeId={highlightNodeId}
           collapsed={mapCollapsed}
@@ -1051,7 +1081,7 @@ export function TalkSession({ packId }: Props) {
                       type="button"
                       disabled={busy}
                       onClick={() => setText((t) => t + a)}
-                      className="h-7 min-w-7 rounded-md bg-v2-paper-deep px-1.5 font-[family-name:var(--font-v2-target)] text-xs text-v2-primary"
+                      className="h-7 min-w-7 rounded-md border border-[color:var(--ft-sand,#C4A574)] bg-[color:var(--ft-surface,#FBF8F3)] px-1.5 font-[family-name:var(--font-ft-pt,var(--font-v2-target))] text-xs text-[color:var(--ft-ink,#202A25)] disabled:opacity-50"
                     >
                       {a}
                     </button>
@@ -1069,17 +1099,17 @@ export function TalkSession({ packId }: Props) {
                     }
                   }}
                   placeholder={busy ? '…' : 'اكتب بالبرتغالي…'}
-                  className="w-full rounded-2xl border border-v2-line bg-white px-3 py-2.5 text-start font-[family-name:var(--font-v2-target)] text-sm text-v2-ink outline-none focus:border-v2-primary disabled:opacity-50"
+                  className="w-full rounded-2xl border border-[color:var(--ft-border,#E5DED5)] bg-white px-3 py-2.5 text-start font-[family-name:var(--font-ft-pt,var(--font-v2-target))] text-sm text-[color:var(--ft-ink,#202A25)] outline-none focus:border-[color:var(--ft-sage,#6B7F6E)] disabled:opacity-50"
                 />
               </div>
-              <PrimaryButton
+              <button
                 type="button"
                 disabled={busy || !text.trim() || !pending}
                 onClick={submitText}
-                className="shrink-0"
+                className="shrink-0 rounded-full bg-[color:var(--ft-sage,#6B7F6E)] px-4 py-2.5 font-[family-name:var(--font-ft-ar,var(--font-v2-arabic))] text-sm font-semibold text-white shadow-sm disabled:opacity-50"
               >
                 إرسال
-              </PrimaryButton>
+              </button>
             </div>
           )}
         </section>

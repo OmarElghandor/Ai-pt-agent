@@ -225,6 +225,80 @@ function rankOf(
   return 30;
 }
 
+/** Look up a pack question by id for authored `flow` selection. */
+function findFlowQuestion(
+  pack: ConvoPackData,
+  questionId: string,
+): ConvoSelectCandidate | null {
+  for (const [itemId, bank] of Object.entries(pack.items)) {
+    const choice = bank.choice_questions.find((q) => q.id === questionId);
+    if (choice) {
+      return {
+        id: choice.id,
+        tl: choice.tl,
+        item_id: itemId,
+        qkind: 'choice',
+      };
+    }
+    const open = bank.open_questions.find((q) => q.id === questionId);
+    if (open) {
+      return {
+        id: open.id,
+        tl: open.tl,
+        item_id: open.item_id || itemId,
+        qkind: 'open',
+      };
+    }
+  }
+  const recap = pack.recap.questions.find((q) => q.id === questionId);
+  if (recap) {
+    return {
+      id: recap.id,
+      tl: recap.tl,
+      item_id: recap.item_id,
+      qkind: 'recap',
+    };
+  }
+  return null;
+}
+
+/**
+ * Authored flow: first question id whose item still needs that rung (M3).
+ * Returns a single candidate, or [] if flow is exhausted for the group.
+ * null when the group has no flow (fall back to ranking).
+ */
+function candidatesFromFlow(
+  pack: ConvoPackData,
+  session: ConvoSession,
+): ConvoSelectCandidate[] | null {
+  const group = pack.groups[session.current_group - 1];
+  if (!group?.flow?.length) return null;
+
+  const review =
+    session.phase === 'recap' ||
+    Object.values(session.rungs).every(
+      (r) => r === 'said' || r === 'assisted',
+    );
+
+  for (const qid of group.flow) {
+    const cand = findFlowQuestion(pack, qid);
+    if (!cand) continue;
+    const rung = session.rungs[cand.item_id] ?? 'taught';
+
+    if (cand.qkind === 'choice') {
+      if (rung === 'taught' || rung === 'heard') return [cand];
+      continue;
+    }
+    if (cand.qkind === 'open') {
+      if (rung === 'understood') return [cand];
+      // Review mode may re-open said/assisted items.
+      if (review && (rung === 'said' || rung === 'assisted')) return [cand];
+      continue;
+    }
+  }
+  return [];
+}
+
 /**
  * Pick up to 3 eligible questions, or the help-ladder step after a miss (09 §4.3).
  */
@@ -276,6 +350,15 @@ export function selectConvoCandidates(input: {
       return { kind: 'recap', candidates: fallback };
     }
     return { kind: 'recap', candidates };
+  }
+
+  // M3: authored flow wins over ranking / model choice.
+  const fromFlow = candidatesFromFlow(pack, session);
+  if (fromFlow) {
+    if (fromFlow.length === 0) {
+      return { kind: 'empty', candidates: [] };
+    }
+    return { kind: 'candidates', candidates: fromFlow };
   }
 
   const ranked = collectEligible(pack, session);

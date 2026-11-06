@@ -137,12 +137,16 @@ export type ConvoOpeningBubbles = {
   card_ids: string[];
 };
 
-/** Payload when reopening mid-conversation (T4.1). */
+/** Payload when reopening mid-conversation (T4.1 / M7). */
 export type ConvoReopeningPayload = {
   character_tl: string;
+  character_ar?: string;
   pending_question: ConvoPendingQuestion;
   pending_tl: string | null;
   pending_audio_key: string | null;
+  /** Restore map pulse to the pending question's node. */
+  map_node?: string;
+  /** @deprecated M7: no returned_after_break coach. */
   coach?: { id: string; eg: string };
 };
 
