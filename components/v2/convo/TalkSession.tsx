@@ -1013,7 +1013,11 @@ export function TalkSession({ packId }: Props) {
               />
             );
           }
-          return <CoachCard key={b.id}>{b.eg}</CoachCard>;
+          return (
+            <CoachCard key={b.id} segments={b.segments}>
+              {b.eg}
+            </CoachCard>
+          );
         })}
 
         {done && resultStats ? (
