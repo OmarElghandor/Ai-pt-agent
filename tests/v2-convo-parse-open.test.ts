@@ -4,7 +4,19 @@ import {
   isYesNoQuestion,
   parseOpenConvoTurn,
   splitOpenMarkers,
+  visibleOpenStreamText,
 } from '@/lib/v2/convo/output/parseOpen';
+
+/** Simulate char-by-char streaming; return last non-held visible text. */
+function streamVisible(full: string): string[] {
+  const snaps: string[] = [];
+  let acc = '';
+  for (const ch of full) {
+    acc += ch;
+    snaps.push(visibleOpenStreamText(acc));
+  }
+  return snaps;
+}
 import { pickOpenFallback } from '@/lib/v2/convo/free/openFallback';
 import {
   MemoryConvoSessionStore,
@@ -20,6 +32,41 @@ AR: رائع! هل سيارتك جديدة أم مستعملة؟
 FRAME: O meu carro é ___.
 HINT: قول عربيتك جديدة ولا مستعملة
 CHIPS: novo | usado | Não tenho carro`;
+
+describe('v2 open mode · visible stream filter (G1)', () => {
+  it('never shows PT/AR fragments char-by-char for a labelled turn', () => {
+    const full =
+      'PT: Claro! E tu?\nAR: حسناً!\nFRAME: Eu ___.\nHINT: كمّل\nCHIPS: a | b';
+    const snaps = streamVisible(full);
+    for (const s of snaps) {
+      assert.doesNotMatch(s, /^PT/i);
+      assert.doesNotMatch(s, /\bAR\s*:/i);
+      // No leaked leading label stub
+      assert.notEqual(s, 'PT');
+      assert.notEqual(s, 'P');
+    }
+    const last = snaps[snaps.length - 1]!;
+    assert.equal(last, 'Claro! E tu?');
+  });
+
+  it('handles PT:Claro! with no space after the colon', () => {
+    const snaps = streamVisible('PT:Claro!\nAR: حسناً!');
+    assert.equal(snaps[snaps.length - 1], 'Claro!');
+    assert.ok(snaps.every((s) => !s.startsWith('PT')));
+  });
+
+  it('passes through a reply with no labels', () => {
+    const snaps = streamVisible('Que fixe! E depois?');
+    assert.equal(snaps[snaps.length - 1], 'Que fixe! E depois?');
+  });
+
+  it('keeps the Portuguese word AR inside the PT line', () => {
+    const snaps = streamVisible(
+      'PT: Em AR há praias?\nAR: هل في أر؟\nFRAME: Em ___.\nHINT: x\nCHIPS: a | b',
+    );
+    assert.equal(snaps[snaps.length - 1], 'Em AR há praias?');
+  });
+});
 
 describe('v2 open mode · parser (Batch 10 D5)', () => {
   it('parses a markers-split stream', () => {

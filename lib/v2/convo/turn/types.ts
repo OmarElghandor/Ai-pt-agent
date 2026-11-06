@@ -42,6 +42,11 @@ export type ConvoTurnStreamEvent =
       type: 'reaction_delta';
       text: string;
     }
+  /** Replace (or clear) the streaming reaction bubble (G1/G2). */
+  | {
+      type: 'reaction_reset';
+      text: string;
+    }
   /** Free chat: authored next line appended into the same character bubble. */
   | {
       type: 'authored_append';

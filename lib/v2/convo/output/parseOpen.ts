@@ -198,14 +198,65 @@ export function parseOpenConvoTurn(
   };
 }
 
-/** Visible stream text: show PT until FRAME/HINT/CHIPS markers. */
+/** Next-field markers that end the visible PT line (open mode). */
+const OPEN_FIELD_CUT_RE = /\n\s*(AR|FRAME|HINT|CHIPS)\s*:/i;
+/** Trailing partial next-field label still forming — hold it back (G1). */
+const OPEN_FIELD_PARTIAL_RE =
+  /\n\s*(A|AR|F|FR|FRA|FRAM|FRAME|H|HI|HIN|HINT|C|CH|CHI|CHIP|CHIPS)\s*:?\s*$/i;
+
+/**
+ * Visible PT while an open-mode stream arrives (G1).
+ * Holds incomplete leading `PT:` and trailing partial field labels so the
+ * client never sees "PT" / "AR" fragments.
+ */
 export function visibleOpenStreamText(accumulated: string): string {
-  const cut = accumulated.search(/\n\s*(AR|FRAME|HINT|CHIPS)\s*:/i);
-  if (cut >= 0) {
-    return accumulated
-      .slice(0, cut)
-      .replace(/^\s*PT\s*:\s*/i, '')
-      .trim();
+  let s = accumulated.replace(/\r\n/g, '\n');
+
+  const cut = s.search(OPEN_FIELD_CUT_RE);
+  if (cut >= 0) s = s.slice(0, cut);
+
+  const partial = s.match(OPEN_FIELD_PARTIAL_RE);
+  if (partial && partial.index != null) {
+    s = s.slice(0, partial.index);
+  } else if (/\n\s*$/.test(s)) {
+    // Bare newline could start AR:/FRAME:… — hold it
+    s = s.replace(/\n\s*$/, '');
   }
-  return accumulated.replace(/^\s*PT\s*:\s*/i, '').trim();
+
+  const trimmedStart = s.replace(/^\s+/, '');
+  if (!trimmedStart) return '';
+
+  // Incomplete leading label "P" / "PT" / "PT " (before colon)
+  if (/^P$/i.test(trimmedStart) || /^PT$/i.test(trimmedStart)) return '';
+  if (/^PT\s+$/i.test(trimmedStart)) return '';
+
+  if (/^PT\s*:/i.test(trimmedStart)) {
+    return trimmedStart.replace(/^PT\s*:\s*/i, '');
+  }
+
+  // "P…" that is not heading toward "PT:" (e.g. "Praia", "Olá") → show as-is
+  return trimmedStart;
+}
+
+/**
+ * Emit stream updates with prefix safety (G1).
+ * Returns the new visibleAcc for the caller to keep.
+ */
+export function emitVisibleStreamDelta(opts: {
+  nextVisible: string;
+  visibleAcc: string;
+  emit: (event: { type: 'reaction_delta' | 'reaction_reset'; text: string }) => void;
+}): string {
+  const { nextVisible, emit } = opts;
+  let { visibleAcc } = opts;
+  if (nextVisible === visibleAcc) return visibleAcc;
+  if (nextVisible.startsWith(visibleAcc)) {
+    const delta = nextVisible.slice(visibleAcc.length);
+    visibleAcc = nextVisible;
+    if (delta) emit({ type: 'reaction_delta', text: delta });
+    return visibleAcc;
+  }
+  visibleAcc = nextVisible;
+  emit({ type: 'reaction_reset', text: nextVisible });
+  return visibleAcc;
 }

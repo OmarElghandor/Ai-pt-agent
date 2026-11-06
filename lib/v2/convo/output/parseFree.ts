@@ -182,19 +182,38 @@ export function dropFreeConvoReaction(
 }
 
 /**
- * Hide everything from the AR: marker onward while streaming.
- * Returns visible Portuguese so far (may be partial).
+ * Hide everything from the AR: marker onward while streaming (G1).
+ * Holds incomplete leading labels and trailing partial "AR" so fragments
+ * never reach the client.
  */
 export function visibleFreeStreamText(accumulated: string): string {
-  const { reaction } = splitFreeReactionAr(
-    accumulated.includes('AR:') || accumulated.includes('ar:')
-      ? accumulated
-      : `${accumulated}\n`,
-  );
-  // If AR: not complete yet, hide from the start of a partial "AR" at EOL.
-  const cut = accumulated.search(/\n\s*AR:?/i);
-  if (cut >= 0) return accumulated.slice(0, cut).trim();
-  const partial = accumulated.match(/^([\s\S]*?)\n\s*A(?:R)?$/i);
-  if (partial) return (partial[1] ?? '').trim();
-  return reaction || accumulated.replace(/\n\s*AR:[\s\S]*$/i, '').trim();
+  let s = accumulated.replace(/\r\n/g, '\n');
+
+  // Complete AR: marker (start of line or after newline)
+  const cut = s.search(/(?:^|\n)\s*AR\s*:/i);
+  if (cut >= 0) {
+    // If AR: is at the very start, nothing visible yet
+    if (cut === 0 || /^\s*$/.test(s.slice(0, cut))) return '';
+    s = s.slice(0, cut);
+  } else {
+    // Trailing partial AR label
+    const partial = s.match(/\n\s*(A|AR)\s*:?\s*$/i);
+    if (partial && partial.index != null) {
+      s = s.slice(0, partial.index);
+    } else if (/\n\s*$/.test(s)) {
+      s = s.replace(/\n\s*$/, '');
+    }
+  }
+
+  const trimmedStart = s.replace(/^\s+/, '');
+  if (!trimmedStart) return '';
+
+  // Same-line "AR:" without prior PT body
+  if (/^AR\s*:/i.test(trimmedStart)) return '';
+  if (/^A$/i.test(trimmedStart) || /^AR$/i.test(trimmedStart)) {
+    // Could be start of AR: on first line — hold only if entire buffer is that
+    if (/^\s*A(?:R)?\s*:?\s*$/i.test(accumulated)) return '';
+  }
+
+  return trimmedStart.replace(/\n\s*AR:[\s\S]*$/i, '');
 }

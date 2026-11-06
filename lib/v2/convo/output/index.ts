@@ -34,6 +34,7 @@ export {
   parseOpenConvoTurn,
   splitOpenMarkers,
   visibleOpenStreamText,
+  emitVisibleStreamDelta,
   isYesNoQuestion,
   stripTrailingQuestion,
   type ParseOpenConvoResult,

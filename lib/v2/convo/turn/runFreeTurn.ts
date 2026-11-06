@@ -10,6 +10,7 @@ import {
   visibleFreeStreamText,
 } from '@/lib/v2/convo/output/parseFree';
 import {
+  emitVisibleStreamDelta,
   parseOpenConvoTurn,
   visibleOpenStreamText,
 } from '@/lib/v2/convo/output/parseOpen';
@@ -135,11 +136,11 @@ async function callFreeModel(opts: {
   const onChunk = (chunk: string) => {
     rawAcc += chunk;
     const nextVisible = visibleFreeStreamText(rawAcc);
-    if (nextVisible.length > visibleAcc.length) {
-      const delta = nextVisible.slice(visibleAcc.length);
-      visibleAcc = nextVisible;
-      if (delta) emit({ type: 'reaction_delta', text: delta });
-    }
+    visibleAcc = emitVisibleStreamDelta({
+      nextVisible,
+      visibleAcc,
+      emit,
+    });
   };
 
   const streamFn = model.stream?.bind(model) ?? model.complete.bind(model);
@@ -155,6 +156,9 @@ async function callFreeModel(opts: {
     learnerAsked: asked,
   });
   if (parsed.decision === 'regenerate' && parsed.regenerateReason) {
+    emit({ type: 'reaction_reset', text: '' });
+    rawAcc = '';
+    visibleAcc = '';
     result = await streamFn({
       system,
       prompt,
@@ -167,6 +171,7 @@ async function callFreeModel(opts: {
       learnerAsked: asked,
     });
     if (parsed.decision === 'regenerate') {
+      emit({ type: 'reaction_reset', text: '' });
       parsed = dropFreeConvoReaction(parsed);
     }
   }
@@ -221,11 +226,11 @@ async function callOpenModel(opts: {
   const onChunk = (chunk: string) => {
     rawAcc += chunk;
     const nextVisible = visibleOpenStreamText(rawAcc);
-    if (nextVisible.length > visibleAcc.length) {
-      const delta = nextVisible.slice(visibleAcc.length);
-      visibleAcc = nextVisible;
-      if (delta) emit({ type: 'reaction_delta', text: delta });
-    }
+    visibleAcc = emitVisibleStreamDelta({
+      nextVisible,
+      visibleAcc,
+      emit,
+    });
   };
 
   const streamFn = model.stream?.bind(model) ?? model.complete.bind(model);
@@ -240,6 +245,7 @@ async function callOpenModel(opts: {
     knownWords: opts.knownWords,
   });
   if (parsed.decision === 'regenerate' && parsed.regenerateReason) {
+    emit({ type: 'reaction_reset', text: '' });
     rawAcc = '';
     visibleAcc = '';
     result = await streamFn({
@@ -256,6 +262,7 @@ async function callOpenModel(opts: {
 
   let usedFallback = false;
   if (parsed.decision !== 'ok') {
+    emit({ type: 'reaction_reset', text: '' });
     usedFallback = true;
     const fb = pickOpenFallback(opts.fallbackIndex ?? 0);
     const stem = parsed.ptWithoutQuestion || parsed.pt || 'Hmm.';

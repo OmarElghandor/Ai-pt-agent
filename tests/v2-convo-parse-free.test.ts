@@ -54,6 +54,18 @@ describe('v2 free chat · C5 parse', () => {
     );
   });
 
+  it('char-by-char free stream never leaks AR label (G1)', () => {
+    const full = 'Ah, fixe!\nAR: رائع!';
+    let acc = '';
+    for (const ch of full) {
+      acc += ch;
+      const vis = visibleFreeStreamText(acc);
+      assert.doesNotMatch(vis, /\n\s*AR/i);
+      assert.notEqual(vis.trim(), 'AR');
+    }
+    assert.equal(visibleFreeStreamText(full), 'Ah, fixe!');
+  });
+
   it('stripQuestionSentences removes ? sentences', () => {
     assert.equal(stripQuestionSentences('Ok. E depois? Fixe.'), 'Ok. Fixe.');
   });
