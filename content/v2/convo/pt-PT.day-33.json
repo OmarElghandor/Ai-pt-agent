@@ -1,0 +1,157 @@
+{
+  "pack_id": "pt-PT.day-33",
+  "day": 33,
+  "target_lang": "pt-PT",
+  "authored": true,
+  "note": "Hand-authored reference pack for the Learn conversation of day 33 (Primeira Viagem a Portugal). Replaces the stale pt-PT.day-18 pack (directions moved to days 33–34). Uses only day 33 core items plus known words. New optional fields (ar on every line, map_node / map_step on questions, x/y on nodes, kind on nodes) are described in batch-learn-fix-1.md.",
+  "scene": {
+    "character_id": "ines",
+    "place": "Lisboa, Baixa — da estação do metro até à casa do aprendiz",
+    "information_gap": "Inês is visiting the learner for the first time. She just left the metro, is lost, and shares her location. The learner sees the map with her dot and the route; she doesn't. The learner names the places and tells her right or left. At the end, the roles flip: the learner practises asking where things are."
+  },
+  "visual": {
+    "type": "map",
+    "nodes": [
+      { "id": "station", "label_tl": "a estação", "kind": "place", "item_id": "word.station", "x": 15, "y": 75 },
+      { "id": "street", "label_tl": "a rua", "kind": "place", "item_id": "word.street", "x": 45, "y": 75 },
+      { "id": "pharmacy", "label_tl": "a farmácia", "kind": "place", "item_id": "word.pharmacy", "x": 75, "y": 75 },
+      { "id": "home", "label_tl": "casa", "kind": "home", "x": 75, "y": 35 },
+      { "id": "train", "label_tl": "comboios", "kind": "far_place", "x": 10, "y": 10 }
+    ],
+    "route": [
+      { "step_id": "step_right", "from": "station", "to": "street", "item_id": "word.right", "arrow": "right" },
+      { "step_id": "step_left", "from": "pharmacy", "to": "home", "item_id": "word.left", "arrow": "left" }
+    ]
+  },
+  "groups": [
+    { "id": "g1_places", "item_ids": ["word.station", "word.street", "word.pharmacy"], "intro_eg": "Inês طلعت من المترو وتاهت 😅 إنت شايف مكانها على الخريطة. محتاجين 3 أماكن:" },
+    { "id": "g2_directions", "item_ids": ["word.right", "word.left", "phrase.is_it_near", "phrase.its_far"], "intro_eg": "دلوقتي وجّهها. يمين وشمال، وقريب ولا بعيد:" },
+    { "id": "g3_asking", "item_ids": ["phrase.where_is_station", "pattern.onde_fica"], "intro_eg": "Inês وصلت 🎉 دلوقتي إنت اللي هتسأل. عشان تسأل حاجة فين بنقول Onde fica…?" }
+  ],
+  "items": {
+    "word.station": {
+      "coach_intro_eg": "المحطة بنقولها a estação، زي station بالإنجليزي.",
+      "memory_trick_eg": "estação قريبة من station.",
+      "choice_questions": [
+        { "id": "q_station_choice", "tl": "Vês-me no mapa? Estou na estação ou na rua?", "ar": "هل تراني على الخريطة؟ هل أنا في المحطة أم في الشارع؟", "option_ids": ["word.station", "word.street"], "correct_id": "word.station", "map_node": "station" }
+      ],
+      "open_questions": [
+        { "id": "q_station_open", "tl": "Saí do metro… Como se chama este sítio?", "ar": "خرجت من المترو... ما اسم هذا المكان؟", "item_id": "word.station", "map_node": "station",
+          "help_ladder": { "step1_reask_tl": "O metro… é na…?", "step1_reask_ar": "المترو... يكون في...؟", "step2_hint_eg": "بتبدأ بـ a esta…" } }
+      ],
+      "common_mistakes": []
+    },
+    "word.street": {
+      "coach_intro_eg": "الشارع بنقوله a rua. والـ r في الأول بتتنطق قريب من الغين: «غوا».",
+      "choice_questions": [
+        { "id": "q_street_choice", "tl": "Pronto, já saí. Agora estou na rua ou na farmácia?", "ar": "حسناً، خرجت. الآن أنا في الشارع أم في الصيدلية؟", "option_ids": ["word.street", "word.pharmacy"], "correct_id": "word.street", "map_node": "street" }
+      ],
+      "open_questions": [
+        { "id": "q_street_open", "tl": "E agora? Onde estou?", "ar": "والآن؟ أين أنا؟", "item_id": "word.street", "map_node": "street",
+          "help_ladder": { "step1_reask_tl": "Não é a estação… é a…?", "step1_reask_ar": "ليست المحطة... إنها الـ...؟", "step2_hint_eg": "بتبدأ بـ a ru…" } }
+      ],
+      "common_mistakes": []
+    },
+    "word.pharmacy": {
+      "coach_intro_eg": "الصيدلية بنقولها a farmácia. في البرتغال علامتها صليب أخضر ➕",
+      "memory_trick_eg": "farmácia زي pharmacy.",
+      "choice_questions": [
+        { "id": "q_pharmacy_choice", "tl": "Vejo uma loja com uma cruz verde. É uma farmácia ou uma estação?", "ar": "أرى محلاً عليه صليب أخضر. هل هو صيدلية أم محطة؟", "option_ids": ["word.pharmacy", "word.station"], "correct_id": "word.pharmacy", "map_node": "pharmacy" }
+      ],
+      "open_questions": [
+        { "id": "q_pharmacy_open", "tl": "E esta loja com a cruz verde, o que é?", "ar": "وهذا المحل الذي عليه صليب أخضر، ما هو؟", "item_id": "word.pharmacy", "map_node": "pharmacy",
+          "help_ladder": { "step1_reask_tl": "Uma loja… para comprar paracetamol?", "step1_reask_ar": "محل... لشراء الباراسيتامول؟", "step2_hint_eg": "بتبدأ بـ a farm…" } }
+      ],
+      "common_mistakes": []
+    },
+    "word.right": {
+      "coach_intro_eg": "يمين بنقولها à direita ➡️",
+      "memory_trick_eg": "direita فيها «d» زي دراعك اليمين لو بتكتب بيه.",
+      "choice_questions": [
+        { "id": "q_right_choice", "tl": "Estou à porta da estação. Vou à direita ou à esquerda?", "ar": "أنا عند باب المحطة. هل أذهب يميناً أم يساراً؟", "option_ids": ["word.right", "word.left"], "correct_id": "word.right", "map_step": "step_right" }
+      ],
+      "open_questions": [
+        { "id": "q_right_open", "tl": "Saio da estação… e agora, para que lado?", "ar": "أخرج من المحطة... والآن، إلى أي اتجاه؟", "item_id": "word.right", "map_step": "step_right",
+          "help_ladder": { "step1_reask_tl": "Para que lado vou?", "step1_reask_ar": "إلى أي اتجاه أذهب؟", "step2_hint_eg": "بص على السهم ➡️ بتبدأ بـ à di…" } }
+      ],
+      "common_mistakes": [
+        { "id": "m_right_left", "trigger": "word.left", "consequence_tl": "Fui para a esquerda… e vejo o rio! 😅", "coach_note_eg": "بص على السهم ➡️ ده يمين، يعني à direita." }
+      ]
+    },
+    "word.left": {
+      "coach_intro_eg": "شمال بنقولها à esquerda ⬅️",
+      "memory_trick_eg": "esquerda وشمال: الاتنين فيهم «ش».",
+      "choice_questions": [
+        { "id": "q_left_choice", "tl": "Estou na farmácia. Vou à esquerda ou à direita?", "ar": "أنا عند الصيدلية. هل أذهب يساراً أم يميناً؟", "option_ids": ["word.left", "word.right"], "correct_id": "word.left", "map_step": "step_left" }
+      ],
+      "open_questions": [
+        { "id": "q_left_open", "tl": "Cheguei à farmácia. E agora, para que lado?", "ar": "وصلت إلى الصيدلية. والآن، إلى أي اتجاه؟", "item_id": "word.left", "map_step": "step_left",
+          "help_ladder": { "step1_reask_tl": "Direita? Não… é para o outro lado?", "step1_reask_ar": "يميناً؟ لا... إلى الجهة الأخرى؟", "step2_hint_eg": "بص على السهم ⬅️ بتبدأ بـ à es…" } }
+      ],
+      "common_mistakes": [
+        { "id": "m_left_right", "trigger": "word.right", "consequence_tl": "Fui para a direita… mas não vejo a tua casa! 🤔", "coach_note_eg": "السهم ⬅️ شمال، يعني à esquerda." }
+      ]
+    },
+    "phrase.is_it_near": {
+      "coach_intro_eg": "قريب = perto. وعشان تسأل «قريب؟» بنقول É perto?",
+      "choice_questions": [
+        { "id": "q_near_choice", "tl": "E a tua casa? É perto ou é longe da farmácia?", "ar": "وبيتك؟ هل هو قريب أم بعيد عن الصيدلية؟", "option_ids": ["phrase.is_it_near", "phrase.its_far"], "correct_id": "phrase.is_it_near", "map_node": "home" }
+      ],
+      "open_questions": [
+        { "id": "q_near_open", "tl": "Ai, estou cansada… A tua casa, falta muito?", "ar": "آه، أنا متعبة... بيتك، هل ما زال بعيداً؟", "item_id": "phrase.is_it_near", "map_node": "home",
+          "help_ladder": { "step1_reask_tl": "Dois minutos… então é…?", "step1_reask_ar": "دقيقتان... إذن هو...؟", "step2_hint_eg": "قريب = perto. قول: É perto." } }
+      ],
+      "common_mistakes": [
+        { "id": "m_near_far", "trigger": "phrase.its_far", "consequence_tl": "Longe? Ai não… vou apanhar um táxi! 😩", "coach_note_eg": "البيت دقيقتين بس من الصيدلية، يعني perto." }
+      ]
+    },
+    "phrase.its_far": {
+      "coach_intro_eg": "بعيد = longe. É longe = بعيد.",
+      "choice_questions": [
+        { "id": "q_far_choice", "tl": "E a estação de comboios? É perto ou é longe daqui?", "ar": "ومحطة القطارات؟ هل هي قريبة أم بعيدة من هنا؟", "option_ids": ["phrase.its_far", "phrase.is_it_near"], "correct_id": "phrase.its_far", "map_node": "train" }
+      ],
+      "open_questions": [
+        { "id": "q_far_open", "tl": "Amanhã quero ir à estação de comboios a pé. Achas boa ideia?", "ar": "غداً أريد الذهاب إلى محطة القطارات مشياً. هل تراها فكرة جيدة؟", "item_id": "phrase.its_far", "map_node": "train",
+          "help_ladder": { "step1_reask_tl": "Quarenta minutos a pé… é perto?", "step1_reask_ar": "أربعون دقيقة مشياً... هل هي قريبة؟", "step2_hint_eg": "بعيدة = longe. قول: Não, é longe." } }
+      ],
+      "common_mistakes": []
+    },
+    "phrase.where_is_station": {
+      "coach_intro_eg": "عشان تسأل «المحطة فين؟» بنقول Onde fica a estação?",
+      "choice_questions": [
+        { "id": "q_where_station_choice", "tl": "Imagina: queres o metro e não sabes o caminho. O que perguntas: «Onde fica a estação?» ou «É longe?»", "ar": "تخيّل: تريد المترو ولا تعرف الطريق. ماذا تسأل: «أين تقع المحطة؟» أم «هل هي بعيدة؟»", "option_ids": ["phrase.where_is_station", "phrase.its_far"], "correct_id": "phrase.where_is_station" }
+      ],
+      "open_questions": [
+        { "id": "q_where_station_open", "tl": "Agora sou eu a turista. 😄 Queres o metro… o que me perguntas?", "ar": "الآن أنا السائحة. تريد المترو... ماذا تسألني؟", "item_id": "phrase.where_is_station", "map_node": "station",
+          "help_ladder": { "step1_reask_tl": "Onde… fica… o quê?", "step1_reask_ar": "أين... تقع... ماذا؟", "step2_hint_eg": "ابدأ بـ Onde fica…" } }
+      ],
+      "common_mistakes": []
+    },
+    "pattern.onde_fica": {
+      "coach_intro_eg": "نفس السؤال ينفع لأي مكان: Onde fica + a/o + المكان؟",
+      "choice_questions": [
+        { "id": "q_onde_fica_choice", "tl": "E se queres a farmácia? «Onde fica a farmácia?» ou «Onde fica a rua?»", "ar": "وإذا أردت الصيدلية؟ «أين تقع الصيدلية؟» أم «أين يقع الشارع؟»", "option_ids": ["pattern.onde_fica", "word.street"], "correct_id": "pattern.onde_fica" }
+      ],
+      "open_questions": [
+        { "id": "q_onde_fica_open", "tl": "Tens dor de cabeça e precisas da cruz verde. O que perguntas?", "ar": "عندك صداع وتحتاج إلى الصليب الأخضر. ماذا تسأل؟", "item_id": "pattern.onde_fica", "map_node": "pharmacy",
+          "help_ladder": { "step1_reask_tl": "Como perguntas a uma pessoa na rua?", "step1_reask_ar": "كيف تسأل شخصاً في الشارع؟", "step2_hint_eg": "قول: Onde fica a farmácia?" } }
+      ],
+      "common_mistakes": []
+    }
+  },
+  "recap": {
+    "framing_eg": "الخريطة اتقفلت 🙈 أخو Inês جاي بكرة. قوله الطريق من دماغك، خطوة خطوة:",
+    "intro_tl": "Amanhã vem o meu irmão. Ajudas? Ele sai do metro…",
+    "intro_ar": "غداً سيأتي أخي. هل تساعدني؟ سيخرج من المترو...",
+    "questions": [
+      { "id": "recap_1", "tl": "Sai da estação. E depois, para que lado?", "ar": "يخرج من المحطة. وبعدها، إلى أي اتجاه؟", "item_id": "word.right" },
+      { "id": "recap_2", "tl": "E a loja com a cruz verde, o que é?", "ar": "والمحل الذي عليه صليب أخضر، ما هو؟", "item_id": "word.pharmacy" },
+      { "id": "recap_3", "tl": "Na farmácia… para que lado?", "ar": "عند الصيدلية... إلى أي اتجاه؟", "item_id": "word.left" },
+      { "id": "recap_4", "tl": "E depois, falta muito?", "ar": "وبعد ذلك، هل ما زال الطريق طويلاً؟", "item_id": "phrase.is_it_near" },
+      { "id": "recap_5", "tl": "E se ele se perder, o que pergunta?", "ar": "وإذا ضاع، ماذا يسأل؟", "item_id": "phrase.where_is_station" }
+    ]
+  },
+  "opening": { "tl": "Olá! 😊 Já saí do metro, mas estou perdida! Vês-me no mapa?", "ar": "مرحباً! خرجت من المترو، لكنني تائهة! هل تراني على الخريطة؟" },
+  "closing": { "tl": "Cheguei! 🔔 Obrigada pela ajuda!", "ar": "وصلت! شكراً على المساعدة!" },
+  "bridge": { "tl": "Agora, enquanto subo… gostas de morar aqui?", "ar": "والآن، بينما أصعد... هل تحب السكن هنا؟" }
+}
