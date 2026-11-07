@@ -3,7 +3,7 @@ import { getCurrentUserId } from '@/lib/auth/currentUser';
 import { isV2Enabled } from '@/lib/v2/flags';
 import {
   ensureConvoPackReady,
-  loadConvoItemSurfaces,
+  resolveConvoItemSurfacesForPack,
 } from '@/lib/v2/convo/pack';
 import {
   freeTopicById,
@@ -80,13 +80,16 @@ export async function POST(req: Request) {
         store,
         topic,
         ...(body?.session_id ? { sessionId: body.session_id } : {}),
+        ...(dayHint != null ? { lessonDay: dayHint } : {}),
         ...(dayWords && dayWords.length
           ? { suggestedWords: dayWords }
           : {}),
       });
 
       const isOpen =
-        isOpenTopicId(topic.id) || result.session.free_step.kind === 'open';
+        (isOpenTopicId(topic.id) && !(result.session.goals?.length > 0)) ||
+        (result.session.free_step.kind === 'open' &&
+          !(result.session.goals?.length > 0));
 
       if (isOpen) {
         const openingTl = result.opening.character.tl;
@@ -199,7 +202,6 @@ export async function POST(req: Request) {
   }
 
   try {
-    const surfaces = loadConvoItemSurfaces();
     const ensured = await ensureConvoPackReady(packId);
     if (!ensured.ok) {
       if (ensured.code === 'preparing') {
@@ -218,9 +220,11 @@ export async function POST(req: Request) {
       const status =
         ensured.code === 'needs_review'
           ? 409
-          : ensured.code === 'no_published_lesson'
-            ? 404
-            : 503;
+          : ensured.code === 'pack_unusable'
+            ? 422
+            : ensured.code === 'no_published_lesson'
+              ? 404
+              : 503;
       return NextResponse.json(
         {
           error: ensured.message,
@@ -229,11 +233,15 @@ export async function POST(req: Request) {
           ...(ensured.code === 'needs_review'
             ? { status: 'needs_review' }
             : {}),
+          ...(ensured.code === 'pack_unusable'
+            ? { status: 'pack_unusable' }
+            : {}),
         },
         { status },
       );
     }
     const pack = ensured.pack;
+    const surfaces = await resolveConvoItemSurfacesForPack(packId);
     const result = await startConvoSession({
       userId,
       pack,

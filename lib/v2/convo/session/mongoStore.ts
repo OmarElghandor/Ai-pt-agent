@@ -48,6 +48,11 @@ type ConvoSessionDocLean = {
   open_turns?: number;
   open_fallbacks?: number;
   last_pack_reaction_tl?: string | null;
+  goals?: ConvoSession['goals'];
+  current_goal?: string | null;
+  turns_on_goal?: number;
+  scene?: ConvoSession['scene'];
+  lesson_day?: number | null;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -91,6 +96,11 @@ function sessionFields(session: ConvoSession) {
     open_turns: session.open_turns,
     open_fallbacks: session.open_fallbacks,
     last_pack_reaction_tl: session.last_pack_reaction_tl ?? null,
+    goals: session.goals ?? [],
+    current_goal: session.current_goal ?? null,
+    turns_on_goal: session.turns_on_goal ?? 0,
+    scene: session.scene ?? null,
+    lesson_day: session.lesson_day ?? null,
   };
 }
 
@@ -106,6 +116,11 @@ function fromDoc(doc: ConvoSessionDocLean): ConvoSession {
     free_step: parseFreeThreadStep(doc.free_step),
     threads_done: doc.threads_done ?? doc.angles_done ?? [],
     last_line_id: doc.last_line_id ?? null,
+    goals: Array.isArray(doc.goals) ? doc.goals : [],
+    current_goal: doc.current_goal ?? null,
+    turns_on_goal: doc.turns_on_goal ?? 0,
+    scene: doc.scene ?? null,
+    lesson_day: doc.lesson_day ?? null,
     assisted: doc.assisted ?? false,
     off_topic_streak: doc.off_topic_streak ?? 0,
     paused_for_pack_id: doc.paused_for_pack_id ?? null,

@@ -46,9 +46,10 @@ describe('v2 free chat · C3 opening', () => {
     assert.match(started.opening.coach_intros[0]!.coach_intro_eg, /البيت/);
     assert.match(started.opening.character.tl, /Omar/);
     assert.match(started.opening.character.tl, /Alfama/);
-    assert.match(started.opening.character.tl, /onde moras/);
+    // v3: opening is greeting + seed; the model asks toward the current goal.
+    assert.doesNotMatch(started.opening.character.tl, /onde moras/);
     assert.ok(started.opening.character.ar);
-    // One bubble only — share+ask are inside character.tl
+    assert.equal(started.session.current_goal, 'casa.t1.ask');
     assert.equal(started.session.pending_question?.id, 'casa.t1.ask');
   });
 

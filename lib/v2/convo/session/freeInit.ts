@@ -10,6 +10,15 @@ import {
   fillNameSlot,
   openingNextLine,
 } from '@/lib/v2/convo/free';
+import {
+  firstOpenGoalId,
+  goalStatesFromBank,
+  loadGoalsForDay,
+  loadGoalsForTopic,
+  pendingFrameFromGoal,
+  type ConvoGoalBank,
+  type ConvoSceneTimeOfDay,
+} from '@/lib/v2/convo/goals';
 import type { ConvoOpeningBubbles, ConvoSession } from './types';
 
 /** Synthetic pack_id for free-chat sessions (store uniqueness). */
@@ -75,11 +84,44 @@ export function buildOpenOpeningBubbles(opts?: {
 
 export function buildFreeOpeningBubbles(
   topic: FreeTopic,
-  opts?: { learnerName?: string | null },
+  opts?: {
+    learnerName?: string | null;
+    lessonDay?: number | null;
+    bank?: ConvoGoalBank | null;
+  },
 ): ConvoOpeningBubbles {
-  if (isOpenTopicId(topic.id)) {
+  if (isOpenTopicId(topic.id) && !opts?.bank && !opts?.lessonDay) {
     return buildOpenOpeningBubbles({ topic, learnerName: opts?.learnerName });
   }
+  const bank =
+    opts?.bank ??
+    resolveFreeGoalBank({
+      topic,
+      lessonDay: opts?.lessonDay,
+    });
+  const first = bank?.goals[0];
+  if (first?.seed_tl) {
+    const tl = composeOpeningBubbleTl({
+      opening_tl: topic.opening_tl,
+      share_tl: first.seed_tl,
+      ask_tl: '',
+      name: opts?.learnerName,
+    });
+    const ar = composeOpeningBubbleAr({
+      opening_ar: topic.opening_ar,
+      share_ar: first.seed_ar ?? '',
+      ask_ar: '',
+      name: opts?.learnerName,
+    });
+    return {
+      character: { tl, ar },
+      coach_intros: topic.intro_eg
+        ? [{ item_id: topic.id, coach_intro_eg: topic.intro_eg }]
+        : [],
+      card_ids: [],
+    };
+  }
+  // Legacy fallback if no goal bank.
   const doc = loadThreadTopic(topic.id);
   const line = openingNextLine(doc);
   const tl = composeOpeningBubbleTl({
@@ -103,16 +145,56 @@ export function buildFreeOpeningBubbles(
   };
 }
 
+/** Resolve the goal bank for a free session (topic threads or lesson day). */
+export function resolveFreeGoalBank(opts: {
+  topic: FreeTopic;
+  lessonDay?: number | null;
+  timeOfDay?: ConvoSceneTimeOfDay;
+}): ConvoGoalBank | null {
+  const day = opts.lessonDay;
+  if (typeof day === 'number' && day > 0) {
+    return loadGoalsForDay(day, { timeOfDay: opts.timeOfDay ?? 'morning' });
+  }
+  if (isOpenTopicId(opts.topic.id)) {
+    return null;
+  }
+  return loadGoalsForTopic(opts.topic.id);
+}
+
 export function createFreeConvoSessionDoc(opts: {
   id: string;
   userId: string;
   topic: FreeTopic;
   suggestedWords?: string[];
+  /** Lesson day for goal-directed free talk (v3). */
+  lessonDay?: number | null;
+  timeOfDay?: ConvoSceneTimeOfDay;
   now?: Date;
 }): ConvoSession {
   const now = (opts.now ?? new Date()).toISOString();
+  const bank = resolveFreeGoalBank({
+    topic: opts.topic,
+    lessonDay: opts.lessonDay,
+    timeOfDay: opts.timeOfDay,
+  });
+  const goals = bank ? goalStatesFromBank(bank) : [];
+  const current_goal = firstOpenGoalId(goals);
+  const currentDef = bank?.goals.find((g) => g.id === current_goal);
+  const scene = bank?.scene
+    ? {
+        ...bank.scene,
+        character_id: bank.scene.character_id || opts.topic.character_id,
+      }
+    : {
+        character_id: opts.topic.character_id,
+        time_of_day: opts.timeOfDay ?? ('morning' as const),
+      };
+  const lesson_day =
+    typeof opts.lessonDay === 'number' && opts.lessonDay > 0
+      ? opts.lessonDay
+      : null;
 
-  if (isOpenTopicId(opts.topic.id)) {
+  if (isOpenTopicId(opts.topic.id) && !bank) {
     const lineId = 'open.opening';
     return {
       id: opts.id,
@@ -125,6 +207,11 @@ export function createFreeConvoSessionDoc(opts: {
       free_step: { kind: 'open' },
       threads_done: [],
       last_line_id: lineId,
+      goals: [],
+      current_goal: null,
+      turns_on_goal: 0,
+      scene,
+      lesson_day,
       assisted: false,
       off_topic_streak: 0,
       paused_for_pack_id: null,
@@ -140,7 +227,6 @@ export function createFreeConvoSessionDoc(opts: {
       },
       pending_frame: openModeOpeningFrame(),
       facts: [],
-      // Opening chips live on pending_frame only; vocab comes from item state (E4).
       suggested_words: (opts.suggestedWords ?? [])
         .slice(0, 15)
         .map((w) => w.trim())
@@ -167,9 +253,12 @@ export function createFreeConvoSessionDoc(opts: {
     };
   }
 
-  const doc = loadThreadTopic(opts.topic.id);
-  const first = openingNextLine(doc);
-  const suggested = (opts.suggestedWords ?? opts.topic.word_set)
+  const lineId = current_goal ?? 'goal.opening';
+  const fromBankWords = bank?.suggested_words ?? [];
+  const suggested = (
+    opts.suggestedWords ??
+    (fromBankWords.length ? fromBankWords : opts.topic.word_set)
+  )
     .slice(0, 15)
     .map((w) => w.trim())
     .filter(Boolean);
@@ -180,11 +269,16 @@ export function createFreeConvoSessionDoc(opts: {
     module: 'free',
     pack_id: freePackId(opts.topic.id),
     topic_id: opts.topic.id,
-    character_id: opts.topic.character_id,
+    character_id: scene.character_id || opts.topic.character_id,
     thread_index: 0,
-    free_step: { kind: 'ask' },
+    free_step: { kind: 'open' },
     threads_done: [],
-    last_line_id: first.line_id,
+    last_line_id: lineId,
+    goals,
+    current_goal,
+    turns_on_goal: 0,
+    scene,
+    lesson_day,
     assisted: false,
     off_topic_streak: 0,
     paused_for_pack_id: null,
@@ -194,17 +288,11 @@ export function createFreeConvoSessionDoc(opts: {
     candidate_history: [],
     last_exchanges: [],
     pending_question: {
-      id: first.line_id,
+      id: lineId,
       kind: 'open',
-      item_id: first.line_id,
+      item_id: lineId,
     },
-    pending_frame: first.frame
-      ? {
-          tl: first.frame.tl,
-          eg: first.frame.eg,
-          chips: [...first.frame.chips],
-        }
-      : null,
+    pending_frame: pendingFrameFromGoal(currentDef) ?? openModeOpeningFrame(),
     facts: [],
     suggested_words: suggested,
     status: 'open',

@@ -749,6 +749,11 @@ const v2ConvoSessionSchema = new Schema(
     open_turns: { type: Number, required: false, default: 0 },
     open_fallbacks: { type: Number, required: false, default: 0 },
     last_pack_reaction_tl: { type: String, required: false, default: null },
+    goals: { type: Schema.Types.Mixed, required: false, default: [] },
+    current_goal: { type: String, required: false, default: null },
+    turns_on_goal: { type: Number, required: false, default: 0 },
+    scene: { type: Schema.Types.Mixed, required: false, default: null },
+    lesson_day: { type: Number, required: false, default: null },
   },
   { timestamps: true, collection: 'v2_convo_sessions', _id: false },
 );

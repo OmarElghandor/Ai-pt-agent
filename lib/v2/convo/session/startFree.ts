@@ -26,6 +26,8 @@ export type StartFreeConvoSessionOpts = {
   now?: Date;
   topic?: FreeTopic;
   suggestedWords?: string[];
+  /** Lesson day → load that day's goals (v3). */
+  lessonDay?: number | null;
   /** Injected for tests; otherwise loaded from Langify users.name. */
   learnerName?: string | null;
 };
@@ -101,7 +103,11 @@ export async function startFreeConvoSession(
 
   const id = opts.newId?.() ?? randomUUID();
   let suggestedWords = opts.suggestedWords;
-  if (suggestedWords === undefined && isOpenTopicId(topic.id)) {
+  if (
+    suggestedWords === undefined &&
+    isOpenTopicId(topic.id) &&
+    !(typeof opts.lessonDay === 'number' && opts.lessonDay > 0)
+  ) {
     suggestedWords = await loadSuggestedSurfacesForUser(opts.userId);
   }
   const created = createFreeConvoSessionDoc({
@@ -109,12 +115,16 @@ export async function startFreeConvoSession(
     userId: opts.userId,
     topic,
     now: opts.now,
+    lessonDay: opts.lessonDay,
     ...(suggestedWords ? { suggestedWords } : {}),
   });
   const session = await opts.store.create(created);
   return {
     session,
-    opening: buildFreeOpeningBubbles(topic, { learnerName }),
+    opening: buildFreeOpeningBubbles(topic, {
+      learnerName,
+      lessonDay: opts.lessonDay,
+    }),
     resumed: false,
   };
 }

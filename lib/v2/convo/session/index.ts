@@ -48,6 +48,7 @@ export {
   buildFreeOpeningBubbles,
   buildOpenOpeningBubbles,
   createFreeConvoSessionDoc,
+  resolveFreeGoalBank,
   openModeOpeningChips,
   openModeOpeningFrame,
   OPEN_MODE_OPENING_CHIPS,

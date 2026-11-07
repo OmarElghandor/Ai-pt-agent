@@ -1,4 +1,8 @@
 import type { FreeThreadStep } from '@/lib/v2/convo/free/nextLine';
+import type {
+  ConvoGoalState,
+  ConvoScene,
+} from '@/lib/v2/convo/goals';
 
 export type { FreeThreadStep };
 
@@ -53,14 +57,24 @@ export type ConvoSession = {
   topic_id: string | null;
   /** Character for free chat (from free-topics file). */
   character_id: string | null;
-  /** Index into the topic's thread list (Batch 9). */
+  /** Index into the topic's thread list (Batch 9, legacy). */
   thread_index: number;
-  /** Cursor within the current thread (or bridge). */
+  /** Cursor within the current thread (or bridge) — legacy. */
   free_step: FreeThreadStep;
-  /** Thread ids already closed this session. */
+  /** Thread ids already closed this session — legacy. */
   threads_done: string[];
-  /** Last authored line id shown (ask / follow-up / bridge). */
+  /** Last authored line id shown (ask / follow-up / bridge) — legacy. */
   last_line_id: string | null;
+  /** v3 free-talk goals (status only; definitions reloaded from bank). */
+  goals: ConvoGoalState[];
+  /** Id of the goal the character is steering toward. */
+  current_goal: string | null;
+  /** Learner PT turns since current_goal was set / last completed. */
+  turns_on_goal: number;
+  /** Scene fixed in code (time_of_day must not contradict the character). */
+  scene: ConvoScene | null;
+  /** When free talk was started from a lesson day (`?day=`). */
+  lesson_day: number | null;
   /** True when the learner used ساعدني أرد on the current question. */
   assisted: boolean;
   /** Consecutive off-topic learner turns (T7.3). */
