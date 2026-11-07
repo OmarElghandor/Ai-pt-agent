@@ -33,7 +33,10 @@ import {
   acceptModelReportedGoals,
   applyCompletedGoals,
   checkGoals,
+  isStuckHelpRequest,
   openGoalsFromSession,
+  steerActionForTurns,
+  stuckHelpForGoal,
 } from '@/lib/v2/convo/goals';
 import { getCharacter } from '@/lib/v2/characters/registry';
 import {
@@ -540,6 +543,49 @@ export async function runFreeConvoTurn(
     // Any other message: CTA consumed; continue normal path below.
   }
 
+  // V5: stuck help for goal sessions before Arabic side-channel handling.
+  if (
+    hasGoals &&
+    isStuckHelpRequest(input.learnerText.trim())
+  ) {
+    const bank = resolveFreeGoalBank({
+      topic,
+      lessonDay: session.lesson_day,
+      timeOfDay: session.scene?.time_of_day,
+    });
+    const currentDefEarly = bank?.goals.find(
+      (g) => g.id === session.current_goal,
+    );
+    if (currentDefEarly) {
+      const help = stuckHelpForGoal(currentDefEarly);
+      session.pending_frame = {
+        tl: help.frame_tl,
+        eg: help.eg,
+        chips: help.chips,
+      };
+      const coachId = `goal_help:${currentDefEarly.id}`;
+      if (session.coach_recent_ids.at(-1) !== coachId) {
+        session.coach_recent_ids = [
+          ...session.coach_recent_ids,
+          coachId,
+        ].slice(-8);
+        emit({
+          type: 'coach',
+          id: coachId,
+          eg: help.eg,
+          moment: 'help',
+        });
+      }
+      emit({
+        type: 'free_frame',
+        tl: help.frame_tl,
+        eg: help.eg,
+        chips: help.chips,
+      });
+      return finish(true);
+    }
+  }
+
   const sideKind = classifySideChannel(input.learnerText);
   if (sideKind === 'topic_request') {
     // Batch 10 D8: practice stays free — soft Learn CTA only, no forced pack jump.
@@ -760,6 +806,10 @@ export async function runFreeConvoTurn(
       return finish(false, 'goal bank missing');
     }
 
+    const currentDefEarly = bank.goals.find(
+      (g) => g.id === session.current_goal,
+    );
+
     let eventLine = learnerText
       ? 'learner replied; continue toward the current goal'
       : 'conversation started; steer toward the current goal';
@@ -775,6 +825,55 @@ export async function runFreeConvoTurn(
       ? checkGoals(learnerText, openDefs).completedIds
       : [];
     const acceptedFromModel: string[] = [];
+
+    // V5 escalation before the model call (based on prior stuck turns).
+    const turnsBefore = session.turns_on_goal ?? 0;
+    const steer = steerActionForTurns(turnsBefore, currentDefEarly);
+    if (steer.kind === 'coach_frame') {
+      const coachId = `goal_steer_frame:${currentDefEarly?.id ?? ''}`;
+      if (session.coach_recent_ids.at(-1) !== coachId) {
+        session.coach_recent_ids = [
+          ...session.coach_recent_ids,
+          coachId,
+        ].slice(-8);
+        emit({
+          type: 'coach',
+          id: coachId,
+          eg: steer.eg,
+          moment: 'help',
+        });
+      }
+      session.pending_frame = {
+        tl: steer.frame_tl,
+        eg: steer.eg,
+        chips: steer.chips,
+      };
+    } else if (steer.kind === 'coach_give_answer' && currentDefEarly) {
+      const coachId = `goal_steer_give:${currentDefEarly.id}`;
+      if (session.coach_recent_ids.at(-1) !== coachId) {
+        session.coach_recent_ids = [
+          ...session.coach_recent_ids,
+          coachId,
+        ].slice(-8);
+        emit({
+          type: 'coach',
+          id: coachId,
+          eg: steer.eg,
+          moment: 'help',
+        });
+      }
+      applyCompletedGoals(session, bank, [currentDefEarly.id], {
+        assisted: true,
+      });
+      session.coach_phrase = setCoachPhrase(steer.sentence_tl);
+      emit({
+        type: 'free_frame',
+        tl: steer.sentence_tl,
+        eg: steer.eg,
+        chips: [steer.sentence_tl],
+      });
+      // Character still replies so the chat continues toward the next goal.
+    }
 
     if (learnerText) {
       const practised = consumeCoachPhraseOnLearnerTurn(
@@ -808,7 +907,7 @@ export async function runFreeConvoTurn(
           seedTl: currentDef.seed_tl,
           goalId: currentDef.id,
           turnsOnGoal: session.turns_on_goal ?? 0,
-          openGoalIds: openDefs.map((g) => g.id),
+          openGoalIds: openGoalsFromSession(session, bank).map((g) => g.id),
         })
       : '(no open goal — keep chatting naturally)';
 

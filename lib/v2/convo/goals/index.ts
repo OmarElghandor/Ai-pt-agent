@@ -31,3 +31,9 @@ export {
   markGoalsDone,
   openGoalsFromSession,
 } from './advance';
+export {
+  isStuckHelpRequest,
+  steerActionForTurns,
+  stuckHelpForGoal,
+  type SteerAction,
+} from './steer';
