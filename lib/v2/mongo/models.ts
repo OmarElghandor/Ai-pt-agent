@@ -777,6 +777,37 @@ export function V2ConvoSessionModel(): Model<V2ConvoSessionDoc> {
   );
 }
 
+/** Cached generated free-talk goals per language × topic slug (v3 V7). */
+const v2ConvoGoalBankSchema = new Schema(
+  {
+    target_lang: { type: String, required: true, index: true },
+    topic_slug: { type: String, required: true, index: true },
+    goals: { type: Schema.Types.Mixed, required: true, default: [] },
+  },
+  { timestamps: true, collection: 'v2_convo_goal_banks' },
+);
+
+v2ConvoGoalBankSchema.index(
+  { target_lang: 1, topic_slug: 1 },
+  { unique: true },
+);
+
+export type V2ConvoGoalBankDoc = InferSchemaType<
+  typeof v2ConvoGoalBankSchema
+> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2ConvoGoalBankModel(): Model<V2ConvoGoalBankDoc> {
+  return (
+    (mongoose.models.V2ConvoGoalBank as Model<V2ConvoGoalBankDoc>) ||
+    mongoose.model<V2ConvoGoalBankDoc>(
+      'V2ConvoGoalBank',
+      v2ConvoGoalBankSchema,
+    )
+  );
+}
+
 /** Free-chat angle bank per language × topic (09 §10 / T7.1). */
 const v2TopicAnglesSchema = new Schema(
   {

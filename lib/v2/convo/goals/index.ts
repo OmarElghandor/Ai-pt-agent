@@ -42,3 +42,13 @@ export {
   goalsFromWeakSurfaces,
   refillSessionGoals,
 } from './refill';
+export {
+  ensureGeneratedGoalBank,
+  ensureGeneratedGoalBankMemory,
+  extractTopicLabel,
+  getCachedGoalBank,
+  resetMemoryGoalBanks,
+  stubGenerateGoals,
+  topicSlugFromLabel,
+  type GoalGenerator,
+} from './generate';

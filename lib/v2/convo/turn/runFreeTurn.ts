@@ -33,9 +33,14 @@ import {
   acceptModelReportedGoals,
   applyCompletedGoals,
   checkGoals,
+  ensureGeneratedGoalBankMemory,
+  extractTopicLabel,
+  firstOpenGoalId,
   GOALS_DONE_COACH_EG,
+  goalStatesFromBank,
   isStuckHelpRequest,
   openGoalsFromSession,
+  pendingFrameFromGoal,
   refillSessionGoals,
   steerActionForTurns,
   stuckHelpForGoal,
@@ -1053,6 +1058,97 @@ export async function runFreeConvoTurn(
   // —— Open mode (أي حاجة / after threads) ——
   if (inOpenMode) {
     session.free_step = { kind: 'open' };
+
+    // V7: «Quero falar de carros» → generate/cache goals, then continue as goal talk.
+    if (learnerText && isOpenTopicId(topic.id)) {
+      const label = extractTopicLabel(learnerText);
+      if (label) {
+        const { bank: genBank } = await ensureGeneratedGoalBankMemory({
+          topicLabel: label,
+        });
+        session.goals = goalStatesFromBank(genBank);
+        session.current_goal = firstOpenGoalId(session.goals);
+        session.turns_on_goal = 0;
+        session.scene = genBank.scene ?? session.scene;
+        const cur = genBank.goals.find((g) => g.id === session.current_goal);
+        session.pending_frame = pendingFrameFromGoal(cur);
+        if (session.current_goal) {
+          session.pending_question = {
+            id: session.current_goal,
+            kind: 'open',
+            item_id: session.current_goal,
+          };
+        }
+        pushExchange(session, 'learner', learnerText);
+        session.learner_lines = pushLearnerLine(
+          session.learner_lines ?? [],
+          learnerText,
+        );
+        // Hand off into the goal path on the next turn; this turn: short ack question.
+        const characterId = session.character_id ?? topic.character_id;
+        const persona = requirePersona(characterId);
+        const promptBuilt = buildGoalFreePrompt({
+          module: 'free',
+          pack: null,
+          freeTopicTitle: label,
+          facts: session.facts,
+          event: {
+            verdict: 'correct',
+            item_id: '',
+            question_id: session.pending_question?.id ?? '',
+            question_kind: 'open',
+            phase: session.phase,
+          },
+          eventLine: `learner chose topic: ${label}; start steering toward the first goal`,
+          candidates: [],
+          lastExchanges: session.last_exchanges,
+          learnerAnswer: learnerText,
+          personaJson: JSON.stringify(persona),
+          currentGoalLine: cur
+            ? formatCurrentGoalLine({
+                intentEn: cur.intent_en ?? cur.examples_tl[0] ?? label,
+                seedTl: cur.seed_tl,
+                goalId: cur.id,
+                turnsOnGoal: 0,
+                openGoalIds: genBank.goals.map((g) => g.id),
+              })
+            : label,
+        });
+        const { system, prompt } = freePromptPartsToMessages(promptBuilt);
+        const modelOut = await callGoalModel({
+          model: input.model,
+          system,
+          prompt,
+          emit,
+          knownWords: session.suggested_words,
+        });
+        metrics = { ...metrics, ...modelOut.metricsPartial };
+        if (modelOut.pt) pushExchange(session, 'character', modelOut.pt);
+        emit({
+          type: 'bubble_ar',
+          ar: modelOut.ar || '',
+          pt: modelOut.pt,
+        });
+        emit({
+          type: 'question',
+          id: session.current_goal ?? 'open.topic',
+          tl: modelOut.pt,
+          kind: 'open',
+          item_id: session.current_goal ?? 'open.topic',
+          audio_key: `free:open:${session.current_goal ?? 'topic'}`,
+        });
+        if (session.pending_frame) {
+          emit({
+            type: 'free_frame',
+            tl: session.pending_frame.tl,
+            eg: session.pending_frame.eg,
+            chips: session.pending_frame.chips,
+          });
+        }
+        return finish(true);
+      }
+    }
+
     let eventLine = learnerText
       ? 'learner replied; continue the open chat'
       : 'conversation started; ask about anything';
