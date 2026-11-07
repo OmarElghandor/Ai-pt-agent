@@ -17,6 +17,7 @@ export {
 export {
   buildGoalFreePrompt,
   formatCurrentGoalLine,
+  pickGoalAskLines,
 } from './buildGoalFree';
 export {
   buildOpenConvoPrompt,

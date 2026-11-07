@@ -1,3 +1,5 @@
+import { getLangifyUserFirstName } from '@/lib/langifyRead';
+import { fillNameSlot } from '@/lib/v2/convo/free';
 import {
   buildFreeReactionPrompt,
   buildGoalFreePrompt,
@@ -5,6 +7,7 @@ import {
   estimateConvoPromptTokens,
   formatCurrentGoalLine,
   freePromptPartsToMessages,
+  pickGoalAskLines,
 } from '@/lib/v2/convo/prompt';
 import {
   dropFreeConvoReaction,
@@ -354,6 +357,8 @@ async function callGoalModel(opts: {
   emit: (event: ConvoTurnStreamEvent) => void;
   knownWords?: string[];
   allowFormal?: boolean;
+  /** Verbatim ask line after two failed model checks (F4). */
+  fallbackAsk?: { tl: string; ar: string } | null;
 }): Promise<{
   pt: string;
   ar: string;
@@ -363,6 +368,7 @@ async function callGoalModel(opts: {
     ConvoTurnMetrics,
     'ttft_ms' | 'input_tokens' | 'cached_input_tokens' | 'output_tokens'
   >;
+  usedAskFallback?: boolean;
 }> {
   const { model, system, prompt, emit } = opts;
   const parseOpts = {
@@ -404,6 +410,33 @@ async function callGoalModel(opts: {
     parsed = parseGoalConvoTurn(result.text, parseOpts);
     if (parsed.decision === 'regenerate') {
       emit({ type: 'reaction_reset', text: '' });
+      const ask = opts.fallbackAsk;
+      if (ask?.tl) {
+        const pt = `Hmm… ${ask.tl}`.trim();
+        emit({ type: 'reaction_reset', text: pt });
+        const inputTokens =
+          result.usage?.inputTokens ??
+          estimateConvoPromptTokens(`${system}\n${prompt}`);
+        const cachedInputTokens =
+          typeof result.usage?.cachedInputTokens === 'number'
+            ? result.usage.cachedInputTokens
+            : null;
+        const outputTokens =
+          result.usage?.outputTokens ?? estimateConvoPromptTokens(result.text);
+        return {
+          pt,
+          ar: ask.ar || '',
+          reported_goal_ids: [],
+          unknownWords: [],
+          usedAskFallback: true,
+          metricsPartial: {
+            ttft_ms: result.ttftMs,
+            input_tokens: inputTokens,
+            cached_input_tokens: cachedInputTokens,
+            output_tokens: outputTokens,
+          },
+        };
+      }
       parsed = { ...parsed, pt: '', ar: '', decision: 'drop' };
     }
   }
@@ -908,12 +941,16 @@ export async function runFreeConvoTurn(
     }
 
     const currentDef = bank.goals.find((g) => g.id === session.current_goal);
+    const askLines = currentDef
+      ? pickGoalAskLines(currentDef)
+      : null;
     const currentGoalLine = currentDef
       ? formatCurrentGoalLine({
           intentEn:
             currentDef.intent_en ??
             `get the learner to say: ${currentDef.examples_tl[0] ?? ''}`,
           seedTl: currentDef.seed_tl,
+          askTl: askLines?.tl,
           goalId: currentDef.id,
           turnsOnGoal: session.turns_on_goal ?? 0,
           openGoalIds: openGoalsFromSession(session, bank).map((g) => g.id),
@@ -956,8 +993,11 @@ export async function runFreeConvoTurn(
       emit,
       knownWords: session.suggested_words,
       allowFormal,
+      fallbackAsk: askLines,
     });
     metrics = { ...metrics, ...modelOut.metricsPartial };
+    let replyPt = modelOut.pt;
+    let replyAr = modelOut.ar;
 
     if (learnerText) {
       acceptedFromModel.push(
@@ -973,11 +1013,17 @@ export async function runFreeConvoTurn(
     ];
     applyCompletedGoals(session, bank, completedIds);
 
-    // V6: all goals done → coach note + refill from weak items; chat continues.
+    // V6: all goals done → closing line (F4) + coach note + refill; chat continues.
     if (
       session.goals.length > 0 &&
       session.goals.every((g) => g.status !== 'open')
     ) {
+      if (bank.closing?.tl?.trim()) {
+        const learnerName = await getLangifyUserFirstName(session.user_id);
+        replyPt = fillNameSlot(bank.closing.tl, learnerName);
+        replyAr = fillNameSlot(bank.closing.ar ?? '', learnerName);
+        emit({ type: 'reaction_reset', text: replyPt });
+      }
       const coachId = 'goals_done';
       if (session.coach_recent_ids.at(-1) !== coachId) {
         session.coach_recent_ids = [
@@ -1024,10 +1070,10 @@ export async function runFreeConvoTurn(
       }
     }
 
-    if (modelOut.pt) {
-      pushExchange(session, 'character', modelOut.pt);
+    if (replyPt) {
+      pushExchange(session, 'character', replyPt);
       if (learnerText) {
-        const pair = maybeRecastPair(learnerText, modelOut.pt);
+        const pair = maybeRecastPair(learnerText, replyPt);
         if (pair) {
           session.recasts = [...(session.recasts ?? []), pair].slice(-8);
         }
@@ -1037,13 +1083,13 @@ export async function runFreeConvoTurn(
     const lineId = session.current_goal ?? `${topic.id}.goal`;
     emit({
       type: 'bubble_ar',
-      ar: modelOut.ar || '',
-      pt: modelOut.pt,
+      ar: replyAr || '',
+      pt: replyPt,
     });
     emit({
       type: 'question',
       id: lineId,
-      tl: modelOut.pt,
+      tl: replyPt,
       kind: 'open',
       item_id: lineId,
       audio_key: `free:${topic.id}:${lineId}`,

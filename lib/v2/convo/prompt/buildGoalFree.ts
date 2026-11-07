@@ -100,6 +100,7 @@ export function buildGoalFreePrompt(
 export function formatCurrentGoalLine(opts: {
   intentEn: string;
   seedTl?: string;
+  askTl?: string;
   goalId: string;
   turnsOnGoal: number;
   openGoalIds: string[];
@@ -107,7 +108,10 @@ export function formatCurrentGoalLine(opts: {
   const share = opts.seedTl?.trim()
     ? ` · you may share: ${opts.seedTl.trim()}`
     : '';
-  let steer = `steer toward: ${opts.intentEn}${share}`;
+  const ask = opts.askTl?.trim()
+    ? ` · open this goal with something like: ${opts.askTl.trim()}`
+    : '';
+  let steer = `steer toward: ${opts.intentEn}${share}${ask}`;
   if (opts.turnsOnGoal >= 2) {
     steer += ' · ask about it directly now';
   }
@@ -116,4 +120,18 @@ export function formatCurrentGoalLine(opts: {
     steer += ` · open ids: ${opts.openGoalIds.join(',')}`;
   }
   return steer;
+}
+
+/** Pick ask_tl / ask_ar by learner gender. */
+export function pickGoalAskLines(
+  goal: { ask_tl?: string; ask_ar?: string; ask_tl_f?: string; ask_ar_f?: string },
+  gender: 'm' | 'f' = 'm',
+): { tl: string; ar: string } | null {
+  const useF = gender === 'f';
+  const tl =
+    (useF && goal.ask_tl_f?.trim() ? goal.ask_tl_f : goal.ask_tl)?.trim() ?? '';
+  const ar =
+    (useF && goal.ask_ar_f?.trim() ? goal.ask_ar_f : goal.ask_ar)?.trim() ?? '';
+  if (!tl) return null;
+  return { tl, ar };
 }

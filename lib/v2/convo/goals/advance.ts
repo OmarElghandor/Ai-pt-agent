@@ -35,6 +35,16 @@ export function applyCompletedGoals(
   }
 
   const current = bank.goals.find((g) => g.id === session.current_goal);
+  if (
+    current?.time_of_day &&
+    session.scene &&
+    session.current_goal !== beforeCurrent
+  ) {
+    session.scene = {
+      ...session.scene,
+      time_of_day: current.time_of_day,
+    };
+  }
   session.pending_frame = pendingFrameFromGoal(current);
   if (session.current_goal) {
     session.pending_question = {
