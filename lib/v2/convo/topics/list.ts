@@ -10,6 +10,7 @@ import {
   type DayReadiness,
 } from '@/lib/v2/generation/prepare';
 import { convoPackFileExists, loadTopicsFile } from './load';
+import { isRolePlayDay } from './rolePlay';
 import { statusGlyph, topicStatus } from './status';
 import type {
   ThemeWithTopics,
@@ -107,9 +108,12 @@ export function buildTopicsList(opts: {
   let suggestion: TopicRow | null = null;
 
   for (const theme of opts.file.themes) {
-    const topics: TopicRow[] = theme.topics.map((t) => {
+    // v3: role-play list = task days only (day 33 for now).
+    const rolePlayTopics = theme.topics.filter((t) => isRolePlayDay(t.day));
+    if (!rolePlayTopics.length) continue;
+    const topics: TopicRow[] = rolePlayTopics.map((t) => {
       const pack_available = packAvailable(t.pack_id);
-      // Learn catalog: always unlocked; missing packs generate on first open.
+      // Role-play catalog: always unlocked; missing packs generate on first open.
       const unlocked = true;
       void opts.currentDay;
       const status = topicStatus(

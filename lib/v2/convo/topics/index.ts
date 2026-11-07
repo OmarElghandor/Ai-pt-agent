@@ -23,6 +23,12 @@ export {
   readyChipFromReadiness,
 } from './list';
 
+export {
+  ROLE_PLAY_DAYS,
+  isRolePlayDay,
+  isGreetingStyleDay,
+} from './rolePlay';
+
 export { buildTopicsFromCurriculum } from './fromCurriculum';
 
 export {

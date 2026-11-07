@@ -126,12 +126,14 @@ describe('v2 convo topics · list for a test user', () => {
     assert.equal(d33!.status, 'not_tried');
     assert.equal(d33!.status_glyph, '⚪');
 
+    // v3: role-play list is task days only (day 33 for now).
     const cafe = listing.themes
       .flatMap((t) => t.topics)
       .find((t) => t.id === 'cafe.day-3');
-    assert.ok(cafe);
-    assert.equal(cafe!.unlocked, true);
-    assert.equal(cafe!.pack_available, false);
+    assert.equal(cafe, undefined);
+    assert.ok(
+      listing.themes.flatMap((t) => t.topics).every((t) => t.day === 33),
+    );
   });
 
   it('returns needs_review statuses and a 🟡 suggestion for a test user', () => {

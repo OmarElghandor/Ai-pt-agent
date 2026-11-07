@@ -123,10 +123,10 @@ export function LearnTopicsScreen() {
         </Link>
         <div>
           <h1 className="font-[family-name:var(--font-v2-display-ar)] text-2xl font-bold text-v2-primary">
-            اتعلّم
+            رول بلاي
           </h1>
           <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-            افهم موضوع خطوة بخطوة
+            مشاهد بمهمة — دلوقتي يوم الاتجاهات
           </p>
         </div>
       </header>

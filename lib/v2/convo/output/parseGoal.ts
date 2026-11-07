@@ -91,13 +91,47 @@ export function parseReportedGoalIds(raw: string | null): {
   return { ids, missing: false };
 }
 
+/** Collapse accidental triple repeats («Hmm… Como? Hmm… Como? …»). */
+export function collapseRepeatedPt(text: string): string {
+  const t = text.trim();
+  if (!t) return t;
+  // Sentence-level: same sentence repeated 2–3×
+  const sentences = t
+    .split(/(?<=[.!?…])\s+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (
+    sentences.length >= 2 &&
+    sentences.every((s) => s === sentences[0])
+  ) {
+    return sentences[0]!;
+  }
+  // Phrase repeated with spaces: "A A A"
+  const spaced = t.split(/\s{2,}|\s(?=[A-ZÀ-ÝHmm])/);
+  // Fallback: detect "X X" / "X X X" where X is half/third of the string
+  for (const n of [3, 2]) {
+    const parts = t.split(/\s+/);
+    if (parts.length >= n * 2 && parts.length % n === 0) {
+      const size = parts.length / n;
+      const chunk = parts.slice(0, size).join(' ');
+      if (Array.from({ length: n }, (_, i) =>
+        parts.slice(i * size, (i + 1) * size).join(' '),
+      ).every((c) => c === chunk)) {
+        return chunk;
+      }
+    }
+  }
+  void spaced;
+  return t;
+}
+
 export function parseGoalConvoTurn(
   text: string,
   opts?: { knownWords?: string[] },
 ): ParseGoalConvoResult {
   const { pt: rawPt, ar, goalsRaw } = splitGoalMarkers(text);
   const { ids, missing } = parseReportedGoalIds(goalsRaw);
-  const pt = rawPt.trim();
+  const pt = collapseRepeatedPt(rawPt.trim());
 
   const issues: ConvoOutputIssue[] = [];
   const extraIssues: GoalParseExtraIssue[] = [];

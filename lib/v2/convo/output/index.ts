@@ -55,6 +55,7 @@ export {
   splitGoalMarkers,
   parseReportedGoalIds,
   visibleGoalStreamText,
+  collapseRepeatedPt,
   GOAL_CONVO_MAX_WORDS,
   type ParseGoalConvoResult,
   type GoalParseExtraIssue,

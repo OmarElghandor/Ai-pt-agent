@@ -43,9 +43,9 @@ const MODES: Array<{
   {
     id: 'learn',
     href: '/talk/learn',
-    emoji: '📖',
-    title: 'اتعلّم',
-    subtitle: 'افهم موضوع خطوة بخطوة',
+    emoji: '🗺️',
+    title: 'رول بلاي',
+    subtitle: 'مشهد بمهمة واضحة — زي توصّل Inês على الخريطة',
   },
 ];
 
@@ -71,7 +71,7 @@ export function TalkModeScreen() {
             محادثة
           </h1>
           <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-            عايز تتكلم ولا تتعلّم؟
+            اتكلّم بحريّة، أو رول بلاي بمهمة
           </p>
         </div>
       </header>
