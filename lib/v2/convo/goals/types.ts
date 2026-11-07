@@ -1,10 +1,14 @@
-/** Conversations v3 free-talk goal (batch-v3-two-modes). */
+/** Conversations v3 free-talk goal (batch-v3-two-modes + fix-1). */
 
 export type ConvoGoalHelp = {
   frame_tl: string;
   eg: string;
   chips: string[];
 };
+
+export type ConvoSceneTimeOfDay = 'morning' | 'afternoon' | 'evening' | 'night';
+
+export type ConvoSceneAddress = 'formal' | 'tu';
 
 export type ConvoGoal = {
   id: string;
@@ -19,6 +23,16 @@ export type ConvoGoal = {
   /** Character can share this to open the goal. */
   seed_tl?: string;
   seed_ar?: string;
+  /**
+   * Character line that opens this goal (authored / generated lesson banks).
+   * Never the learner's expected line.
+   */
+  ask_tl?: string;
+  ask_ar?: string;
+  ask_tl_f?: string;
+  ask_ar_f?: string;
+  /** When this goal becomes current, scene time moves to it. */
+  time_of_day?: ConvoSceneTimeOfDay;
   help: ConvoGoalHelp;
 };
 
@@ -29,12 +43,24 @@ export type ConvoGoalState = {
   status: ConvoGoalStatus;
 };
 
-export type ConvoSceneTimeOfDay = 'morning' | 'afternoon' | 'evening' | 'night';
-
 export type ConvoScene = {
   place?: string;
   character_id: string;
   time_of_day: ConvoSceneTimeOfDay;
+  /** formal → o senhor / a senhora; tu → informal. */
+  address?: ConvoSceneAddress;
+};
+
+export type ConvoBankOpening = {
+  tl: string;
+  ar: string;
+  tl_f?: string;
+  ar_f?: string;
+};
+
+export type ConvoBankClosing = {
+  tl: string;
+  ar: string;
 };
 
 export type ConvoGoalBank = {
@@ -45,10 +71,17 @@ export type ConvoGoalBank = {
   /** Words (not goals) for the session chip strip. */
   suggested_words: string[];
   scene?: ConvoScene;
+  /** Authored / generated lesson-day framing (fix-1). */
+  authored?: boolean;
+  title_tl?: string;
+  title_ar?: string;
+  intro_eg?: string;
+  opening?: ConvoBankOpening;
+  closing?: ConvoBankClosing;
 };
 
 export type ConvoGoalIssue = {
   path: string;
-  rule: 'shape' | 'examples' | 'keywords' | 'help' | 'intent';
+  rule: 'shape' | 'examples' | 'keywords' | 'help' | 'intent' | 'ask' | 'opening';
   message: string;
 };

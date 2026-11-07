@@ -2,6 +2,7 @@ import type { CoreItem } from '@/lib/v2/generation/lesson/coreItems';
 import { getCoreItemsDay } from '@/lib/v2/generation/lesson/coreItems';
 import { getDayPlan } from '@/lib/v2/generation/lesson/plan';
 import { keywordsFromExamples } from './keywords';
+import { resolveLessonDayBank } from './loadLessonDay';
 import type {
   ConvoGoal,
   ConvoGoalBank,
@@ -115,114 +116,6 @@ function buildGreetGoal(
   };
 }
 
-/** Day 1 conversational goals (batch done-when). */
-function day1Goals(
-  items: CoreItem[],
-  timeOfDay: ConvoSceneTimeOfDay,
-): ConvoGoal[] {
-  const byId = new Map(items.map((i) => [i.id, i]));
-  const greet = buildGreetGoal(items, timeOfDay);
-
-  const nameItem = byId.get('phrase.my_name_is');
-  const name: ConvoGoal = nameItem
-    ? {
-        ...phraseGoal(nameItem, ['Chamo-me Omar.', 'Chamo-me Ana.']),
-        id: 'day.name',
-        intent_eg: 'يقول اسمه',
-        intent_en: 'say their name',
-        help: {
-          frame_tl: 'Chamo-me ___.',
-          eg: 'Chamo-me + اسمك',
-          chips: ['Chamo-me Omar.', 'Chamo-me Ana.', 'Chamo-me Yassin.'],
-        },
-        keywords: keywordsFromExamples([
-          'Chamo-me Omar.',
-          'chamo',
-          'nome',
-        ]),
-      }
-    : {
-        id: 'day.name',
-        intent_eg: 'يقول اسمه',
-        intent_en: 'say their name',
-        examples_tl: ['Chamo-me Omar.', 'Chamo-me Ana.'],
-        keywords: ['chamo', 'omar', 'ana'],
-        help: {
-          frame_tl: 'Chamo-me ___.',
-          eg: 'Chamo-me + اسمك',
-          chips: ['Chamo-me Omar.', 'Chamo-me Ana.'],
-        },
-      };
-
-  const askItem = byId.get('phrase.whats_your_name');
-  const askName: ConvoGoal = {
-    id: 'day.ask_name',
-    intent_eg: 'يسألها عن اسمها',
-    intent_en: 'ask her name',
-    examples_tl: [
-      askItem?.tl ?? 'Como te chamas?',
-      'E tu, como te chamas?',
-      'Como se chama?',
-    ].slice(0, 4),
-    keywords: keywordsFromExamples([
-      'Como te chamas?',
-      'chamas',
-      'chama',
-      'nome',
-    ]),
-    help: {
-      frame_tl: 'Como te chamas?',
-      eg: askItem?.eg ?? 'اسألها اسمها إيه',
-      chips: [
-        'Como te chamas?',
-        'E tu, como te chamas?',
-        'Como se chama?',
-      ],
-    },
-  };
-
-  const niceItem = byId.get('phrase.nice_to_meet');
-  const nice: ConvoGoal = niceItem
-    ? {
-        ...phraseGoal(niceItem),
-        id: 'day.nice_to_meet',
-        intent_eg: 'يقول Muito prazer',
-        intent_en: 'say nice to meet you (Muito prazer)',
-      }
-    : {
-        id: 'day.nice_to_meet',
-        intent_eg: 'يقول Muito prazer',
-        intent_en: 'say nice to meet you (Muito prazer)',
-        examples_tl: ['Muito prazer!', 'Muito prazer.'],
-        keywords: ['muito', 'prazer'],
-        help: {
-          frame_tl: 'Muito prazer!',
-          eg: 'اتشرفنا',
-          chips: ['Muito prazer!', 'Igualmente.'],
-        },
-      };
-
-  const goodbye: ConvoGoal = {
-    id: 'day.goodbye',
-    intent_eg: 'يودّع',
-    intent_en: 'say goodbye',
-    examples_tl: ['Adeus!', 'Tchau!', 'Até logo!', 'Até amanhã!'],
-    keywords: keywordsFromExamples([
-      'Adeus!',
-      'Tchau!',
-      'Até logo!',
-      'amanha',
-    ]),
-    help: {
-      frame_tl: 'Adeus!',
-      eg: 'مع السلامة',
-      chips: ['Adeus!', 'Tchau!', 'Até logo!'],
-    },
-  };
-
-  return [greet, name, askName, nice, goodbye];
-}
-
 function generalDayGoals(items: CoreItem[]): {
   goals: ConvoGoal[];
   suggested_words: string[];
@@ -266,32 +159,18 @@ export function sceneForDay(
 }
 
 /**
- * Build free-talk goals for a lesson day from core-items.
+ * Core-items fallback only (no authored file / cache).
  * Words → suggested_words; phrases/patterns → goals.
  */
-export function loadGoalsForDay(
+export function loadGoalsForDayCore(
   day: number,
   opts?: { timeOfDay?: ConvoSceneTimeOfDay },
 ): ConvoGoalBank {
   const timeOfDay = opts?.timeOfDay ?? 'morning';
   const entry = getCoreItemsDay(day);
   const items = entry.core_items;
-
-  let goals: ConvoGoal[];
-  let suggested_words: string[];
-
-  if (day === 1) {
-    goals = day1Goals(items, timeOfDay);
-    suggested_words = items
-      .filter((i) => i.kind === 'word' || i.kind === 'verb')
-      .map((i) => i.tl);
-  } else {
-    const built = generalDayGoals(items);
-    goals = built.goals;
-    suggested_words = built.suggested_words;
-  }
-
-  const { ok, issues } = validateGoals(goals);
+  const built = generalDayGoals(items);
+  const { ok, issues } = validateGoals(built.goals);
   if (!ok) {
     throw new Error(
       `Invalid goals for day ${day}: ${issues
@@ -303,8 +182,34 @@ export function loadGoalsForDay(
   return {
     source: 'lesson',
     day,
-    goals,
-    suggested_words,
+    goals: built.goals,
+    suggested_words: built.suggested_words,
     scene: sceneForDay(day, timeOfDay),
   };
+}
+
+/**
+ * Lesson-day goals: authored file → cached generated → core-items.
+ */
+export function loadGoalsForDay(
+  day: number,
+  opts?: { timeOfDay?: ConvoSceneTimeOfDay; baseDir?: string },
+): ConvoGoalBank {
+  const resolved = resolveLessonDayBank(day, {
+    ...(opts?.baseDir ? { baseDir: opts.baseDir } : {}),
+  });
+  if (resolved) {
+    if (
+      opts?.timeOfDay &&
+      resolved.scene &&
+      !resolved.goals.some((g) => g.time_of_day)
+    ) {
+      return {
+        ...resolved,
+        scene: { ...resolved.scene, time_of_day: opts.timeOfDay },
+      };
+    }
+    return resolved;
+  }
+  return loadGoalsForDayCore(day, { timeOfDay: opts?.timeOfDay });
 }

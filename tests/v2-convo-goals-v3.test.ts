@@ -24,7 +24,7 @@ describe('conversations v3 V3 goal check', () => {
     assert.ok(!completedIds.includes('day.name'));
   });
 
-  it('«Chamo-me Omar. E tu, como te chamas?» completes name and ask name', () => {
+  it('«Chamo-me Omar. Como se chama?» completes name and ask name', () => {
     const bank = loadGoalsForDay(1);
     const open = bank.goals.filter(
       (g) =>
@@ -33,7 +33,7 @@ describe('conversations v3 V3 goal check', () => {
         g.id === 'day.greet',
     );
     const { completedIds } = checkGoals(
-      'Chamo-me Omar. E tu, como te chamas?',
+      'Chamo-me Omar. Como se chama?',
       open,
     );
     assert.ok(completedIds.includes('day.name'));

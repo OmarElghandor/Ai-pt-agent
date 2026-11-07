@@ -9,9 +9,27 @@ export type {
   ConvoSceneTimeOfDay,
 } from './types';
 export { keywordsFromExamples } from './keywords';
-export { validateGoal, validateGoals } from './validate';
+export {
+  validateGoal,
+  validateGoals,
+  validateLessonDayBank,
+} from './validate';
 export { goalsFromThreadDoc, loadGoalsForTopic } from './fromThreads';
-export { loadGoalsForDay, sceneForDay } from './fromLesson';
+export {
+  loadGoalsForDay,
+  loadGoalsForDayCore,
+  sceneForDay,
+} from './fromLesson';
+export {
+  authoredLessonDayPath,
+  getCachedLessonDayBankSync,
+  lessonDayCacheSlug,
+  loadAuthoredLessonDayBank,
+  parseLessonDayBankJson,
+  resetMemoryLessonDayBanks,
+  resolveLessonDayBank,
+  setCachedLessonDayBankMemory,
+} from './loadLessonDay';
 export {
   findGoal,
   firstOpenGoalId,

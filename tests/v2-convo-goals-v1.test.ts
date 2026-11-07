@@ -22,19 +22,24 @@ describe('conversations v3 V1 goals', () => {
     }
   });
 
-  it('day 1 has greet, name, ask name, Muito prazer, goodbye', () => {
+  it('day 1 authored bank: greet, name, ask name, nice, bye', () => {
     const bank = loadGoalsForDay(1, { timeOfDay: 'morning' });
     const ids = bank.goals.map((g) => g.id);
-    assert.ok(ids.includes('day.greet'));
-    assert.ok(ids.includes('day.name'));
-    assert.ok(ids.includes('day.ask_name'));
-    assert.ok(ids.includes('day.nice_to_meet'));
-    assert.ok(ids.includes('day.goodbye'));
+    assert.deepEqual(ids, [
+      'day.greet',
+      'day.name',
+      'day.ask_name',
+      'day.nice',
+      'day.bye',
+    ]);
+    assert.match(bank.opening?.tl ?? '', /É o novo colega/);
+    assert.equal(bank.scene?.address, 'formal');
+    assert.ok(bank.goals.every((g) => g.ask_tl && g.ask_ar));
 
     const greet = bank.goals.find((g) => g.id === 'day.greet')!;
     assert.ok(greet.examples_tl.some((e) => /bom\s*dia/i.test(e)));
 
-    const { ok, issues } = validateGoals(bank.goals);
+    const { ok, issues } = validateGoals(bank.goals, { requireAsk: true });
     assert.equal(ok, true, JSON.stringify(issues));
     assert.equal(bank.scene?.character_id, 'ines');
     assert.equal(bank.scene?.time_of_day, 'morning');

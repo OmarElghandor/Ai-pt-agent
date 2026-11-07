@@ -35,22 +35,22 @@ describe('conversations v3 V6 goals done continue', () => {
       newId: () => 'v6-sess',
       learnerName: 'Omar',
     });
-    // Mark all but goodbye done; complete goodbye this turn.
+    // Mark all but bye done; complete bye this turn.
     started.session.goals = started.session.goals.map((g) =>
-      g.id === 'day.goodbye' ? g : { ...g, status: 'done' },
+      g.id === 'day.bye' ? g : { ...g, status: 'done' },
     );
-    started.session.current_goal = 'day.goodbye';
+    started.session.current_goal = 'day.bye';
     started.session.suggested_words = ['Tudo bem.', 'Obrigado.', 'Por favor.'];
     await store.save(started.session);
 
     const events: ConvoTurnStreamEvent[] = [];
     const model = createStubConvoStreamModel({
       byCandidate: () =>
-        'Adeus! Até amanhã?\nAR: مع السلامة!\nGOALS: day.goodbye',
+        'Até amanhã!\nAR: إلى الغد!\nGOALS: day.bye',
     });
     const { session } = await runFreeConvoTurn({
       session: started.session,
-      learnerText: 'Adeus!',
+      learnerText: 'Boa tarde!',
       store,
       model,
       emit: (e) => events.push(e),
