@@ -50,9 +50,11 @@ export {
   buildOpenOpeningBubbles,
   createFreeConvoSessionDoc,
   resolveFreeGoalBank,
+  pickBankOpeningLines,
   openModeOpeningChips,
   openModeOpeningFrame,
   OPEN_MODE_OPENING_CHIPS,
+  type LearnerGender,
 } from './freeInit';
 
 export {

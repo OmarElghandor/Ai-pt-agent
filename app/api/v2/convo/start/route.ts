@@ -16,6 +16,7 @@ import { authoredLinesForWarm, currentNextLine } from '@/lib/v2/convo/free';
 import {
   MongoConvoSessionStore,
   openModeOpeningFrame,
+  resolveFreeGoalBank,
   startConvoSession,
   startFreeConvoSession,
 } from '@/lib/v2/convo/session';
@@ -86,10 +87,34 @@ export async function POST(req: Request) {
           : {}),
       });
 
+      const hasGoals = (result.session.goals?.length ?? 0) > 0;
+      const isLessonDay =
+        typeof result.session.lesson_day === 'number' &&
+        result.session.lesson_day > 0;
       const isOpen =
-        (isOpenTopicId(topic.id) && !(result.session.goals?.length > 0)) ||
-        (result.session.free_step.kind === 'open' &&
-          !(result.session.goals?.length > 0));
+        !hasGoals &&
+        ((isOpenTopicId(topic.id) && !isLessonDay) ||
+          result.session.free_step.kind === 'open');
+
+      const sessionPayload = {
+        id: result.session.id,
+        module: result.session.module,
+        topic_id: result.session.topic_id,
+        rungs: result.session.rungs,
+        phase: result.session.phase,
+        status: result.session.status,
+        help_ladder: result.session.help_ladder,
+        current_group: result.session.current_group,
+        pending_question: result.session.pending_question,
+        struggled: result.session.struggled,
+        said_once: result.session.said_once,
+        survival_used: result.session.survival_used,
+        suggested_words: result.session.suggested_words,
+        facts: result.session.facts,
+        free_step: result.session.free_step,
+        character_id: result.session.character_id,
+        lesson_day: result.session.lesson_day ?? null,
+      };
 
       if (isOpen) {
         const openingTl = result.opening.character.tl;
@@ -113,24 +138,43 @@ export async function POST(req: Request) {
           },
           warm_lines: [],
           open_mode: true,
-          session: {
-            id: result.session.id,
-            module: result.session.module,
-            topic_id: result.session.topic_id,
-            rungs: result.session.rungs,
-            phase: result.session.phase,
-            status: result.session.status,
-            help_ladder: result.session.help_ladder,
-            current_group: result.session.current_group,
-            pending_question: result.session.pending_question,
-            struggled: result.session.struggled,
-            said_once: result.session.said_once,
-            survival_used: result.session.survival_used,
-            suggested_words: result.session.suggested_words,
-            facts: result.session.facts,
-            free_step: result.session.free_step,
-            character_id: result.session.character_id,
-          },
+          session: sessionPayload,
+          character_id: result.session.character_id ?? topic.character_id,
+        });
+      }
+
+      // Goal-directed free talk (lesson day or catalog topic with goals).
+      if (hasGoals || isLessonDay) {
+        const bank = resolveFreeGoalBank({
+          topic,
+          lessonDay: result.session.lesson_day,
+          timeOfDay: result.session.scene?.time_of_day,
+        });
+        const title_tl = bank?.title_tl?.trim() || topic.title_tl;
+        const title_ar = bank?.title_ar?.trim() || topic.title_ar;
+        return NextResponse.json({
+          session_id: result.session.id,
+          module: 'free',
+          topic_id: topic.id,
+          title_tl,
+          title_ar,
+          pack_id: result.session.pack_id,
+          resumed: result.resumed,
+          opening: result.opening,
+          ...(result.reopening ? { reopening: result.reopening } : {}),
+          pending_tl:
+            result.reopening?.pending_tl ?? result.opening.character.tl,
+          current_frame: result.session.pending_frame
+            ? {
+                tl: result.session.pending_frame.tl,
+                eg: result.session.pending_frame.eg,
+                chips: result.session.pending_frame.chips,
+              }
+            : null,
+          warm_lines: [],
+          open_mode: false,
+          lesson_day: result.session.lesson_day ?? null,
+          session: sessionPayload,
           character_id: result.session.character_id ?? topic.character_id,
         });
       }
@@ -170,24 +214,7 @@ export async function POST(req: Request) {
             : null,
         warm_lines: authoredLinesForWarm(threadDoc),
         open_mode: false,
-        session: {
-          id: result.session.id,
-          module: result.session.module,
-          topic_id: result.session.topic_id,
-          rungs: result.session.rungs,
-          phase: result.session.phase,
-          status: result.session.status,
-          help_ladder: result.session.help_ladder,
-          current_group: result.session.current_group,
-          pending_question: result.session.pending_question,
-          struggled: result.session.struggled,
-          said_once: result.session.said_once,
-          survival_used: result.session.survival_used,
-          suggested_words: result.session.suggested_words,
-          facts: result.session.facts,
-          free_step: result.session.free_step,
-          character_id: result.session.character_id,
-        },
+        session: sessionPayload,
         character_id: result.session.character_id ?? topic.character_id,
       });
     } catch (err) {

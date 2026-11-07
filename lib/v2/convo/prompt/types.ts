@@ -39,6 +39,8 @@ export type BuildConvoPromptInput = {
   currentGoalLine?: string;
   /** v3: scene time of day (code-owned). */
   sceneTimeOfDay?: string;
+  /** v3: scene address register (formal | tu). */
+  sceneAddress?: 'formal' | 'tu';
 };
 
 export type BuildConvoPromptResult = {

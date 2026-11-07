@@ -127,7 +127,7 @@ export function collapseRepeatedPt(text: string): string {
 
 export function parseGoalConvoTurn(
   text: string,
-  opts?: { knownWords?: string[] },
+  opts?: { knownWords?: string[]; allowFormal?: boolean },
 ): ParseGoalConvoResult {
   const { pt: rawPt, ar, goalsRaw } = splitGoalMarkers(text);
   const { ids, missing } = parseReportedGoalIds(goalsRaw);
@@ -150,7 +150,9 @@ export function parseGoalConvoTurn(
   if (!/\?/.test(pt)) {
     extraIssues.push('missing_question');
   }
-  if (FORMAL_RE.test(pt)) extraIssues.push('formal');
+  if (!opts?.allowFormal && FORMAL_RE.test(pt)) {
+    extraIssues.push('formal');
+  }
   if (findBrazilianLeak(pt)) issues.push('brazilian');
   if (findEnglishLeak(pt)) issues.push('english');
   if (wordCount(pt) > GOAL_CONVO_MAX_WORDS) issues.push('length');

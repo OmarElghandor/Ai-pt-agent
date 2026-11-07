@@ -353,6 +353,7 @@ async function callGoalModel(opts: {
   prompt: string;
   emit: (event: ConvoTurnStreamEvent) => void;
   knownWords?: string[];
+  allowFormal?: boolean;
 }): Promise<{
   pt: string;
   ar: string;
@@ -364,6 +365,10 @@ async function callGoalModel(opts: {
   >;
 }> {
   const { model, system, prompt, emit } = opts;
+  const parseOpts = {
+    knownWords: opts.knownWords,
+    allowFormal: opts.allowFormal,
+  };
   let rawAcc = '';
   let visibleAcc = '';
   const onChunk = (chunk: string) => {
@@ -384,9 +389,7 @@ async function callGoalModel(opts: {
     onChunk,
   });
 
-  let parsed = parseGoalConvoTurn(result.text, {
-    knownWords: opts.knownWords,
-  });
+  let parsed = parseGoalConvoTurn(result.text, parseOpts);
   if (parsed.decision === 'regenerate' && parsed.regenerateReason) {
     emit({ type: 'reaction_reset', text: '' });
     rawAcc = '';
@@ -398,9 +401,7 @@ async function callGoalModel(opts: {
       regenerateReason: parsed.regenerateReason,
       onChunk,
     });
-    parsed = parseGoalConvoTurn(result.text, {
-      knownWords: opts.knownWords,
-    });
+    parsed = parseGoalConvoTurn(result.text, parseOpts);
     if (parsed.decision === 'regenerate') {
       emit({ type: 'reaction_reset', text: '' });
       parsed = { ...parsed, pt: '', ar: '', decision: 'drop' };
@@ -921,12 +922,15 @@ export async function runFreeConvoTurn(
 
     const characterId = session.character_id ?? topic.character_id;
     const persona = requirePersona(characterId);
+    const topicTitle =
+      bank.title_tl?.trim() || topic.title_tl;
     const promptBuilt = buildGoalFreePrompt({
       module: 'free',
       pack: null,
-      freeTopicTitle: topic.title_tl,
+      freeTopicTitle: topicTitle,
       freeTopicPlace: session.scene?.place,
       sceneTimeOfDay: session.scene?.time_of_day,
+      sceneAddress: session.scene?.address ?? bank.scene?.address,
       facts: session.facts,
       event: {
         verdict: 'correct',
@@ -943,12 +947,15 @@ export async function runFreeConvoTurn(
       currentGoalLine,
     });
     const { system, prompt } = freePromptPartsToMessages(promptBuilt);
+    const allowFormal =
+      (session.scene?.address ?? bank.scene?.address) === 'formal';
     const modelOut = await callGoalModel({
       model: input.model,
       system,
       prompt,
       emit,
       knownWords: session.suggested_words,
+      allowFormal,
     });
     metrics = { ...metrics, ...modelOut.metricsPartial };
 

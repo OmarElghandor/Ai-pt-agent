@@ -14,6 +14,13 @@ function topicBlock(input: BuildConvoPromptInput): string {
   if (input.sceneTimeOfDay) {
     lines.push(`Time of day (fixed): ${input.sceneTimeOfDay}. Do not contradict it.`);
   }
+  if (input.sceneAddress === 'formal') {
+    lines.push(
+      'Address form (fixed): formal — use o senhor / a senhora or the verb with no tu pronoun. Never use tu / te / ti / Contigo.',
+    );
+  } else if (input.sceneAddress === 'tu') {
+    lines.push('Address form (fixed): tu (informal).');
+  }
   const facts = (input.facts ?? []).slice(0, 5);
   if (facts.length > 0) {
     lines.push(`Facts about the learner: ${facts.join('; ')}`);

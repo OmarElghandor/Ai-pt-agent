@@ -96,12 +96,29 @@ export function buildOpenOpeningBubbles(opts?: {
   };
 }
 
+export type LearnerGender = 'm' | 'f';
+
+/** Pick bank opening by learner gender (_f when female). */
+export function pickBankOpeningLines(
+  bank: ConvoGoalBank,
+  gender: LearnerGender = 'm',
+): { tl: string; ar: string } | null {
+  const opening = bank.opening;
+  if (!opening?.tl?.trim()) return null;
+  const useF = gender === 'f';
+  return {
+    tl: useF && opening.tl_f?.trim() ? opening.tl_f : opening.tl,
+    ar: useF && opening.ar_f?.trim() ? opening.ar_f : opening.ar,
+  };
+}
+
 export function buildFreeOpeningBubbles(
   topic: FreeTopic,
   opts?: {
     learnerName?: string | null;
     lessonDay?: number | null;
     bank?: ConvoGoalBank | null;
+    learnerGender?: LearnerGender;
   },
 ): ConvoOpeningBubbles {
   if (isOpenTopicId(topic.id) && !opts?.bank && !opts?.lessonDay) {
@@ -113,27 +130,33 @@ export function buildFreeOpeningBubbles(
       topic,
       lessonDay: opts?.lessonDay,
     });
-  const first = bank?.goals[0];
-  if (bank) {
-    const tl = composeOpeningBubbleTl({
-      opening_tl: topic.opening_tl,
-      share_tl: first?.seed_tl ?? '',
-      ask_tl: '',
-      name: opts?.learnerName,
-    });
-    const ar = composeOpeningBubbleAr({
-      opening_ar: topic.opening_ar,
-      share_ar: first?.seed_ar ?? '',
-      ask_ar: '',
-      name: opts?.learnerName,
-    });
+  if (bank?.opening) {
+    const lines = pickBankOpeningLines(bank, opts?.learnerGender ?? 'm')!;
+    const introEg = bank.intro_eg?.trim() || topic.intro_eg;
+    return {
+      character: {
+        tl: fillNameSlot(lines.tl, opts?.learnerName),
+        ar: fillNameSlot(lines.ar, opts?.learnerName),
+      },
+      coach_intros: introEg
+        ? [{ item_id: topic.id, coach_intro_eg: introEg }]
+        : [],
+      card_ids: [],
+    };
+  }
+  if (bank && (opts?.lessonDay || bank.day)) {
+    // Lesson bank without authored opening: character greeting only (no open template).
     const introEg =
+      bank.intro_eg?.trim() ||
       topic.intro_eg ||
       (opts?.lessonDay
         ? `هنتكلم عن درس اليوم (يوم ${opts.lessonDay}).`
         : undefined);
     return {
-      character: { tl, ar },
+      character: {
+        tl: fillNameSlot(topic.opening_tl || 'Olá!', opts?.learnerName),
+        ar: fillNameSlot(topic.opening_ar || 'مرحباً!', opts?.learnerName),
+      },
       coach_intros: introEg
         ? [{ item_id: topic.id, coach_intro_eg: introEg }]
         : [],

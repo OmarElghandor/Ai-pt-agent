@@ -42,6 +42,9 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [titleTl, setTitleTl] = useState('');
   const [titleAr, setTitleAr] = useState('');
+  const [lessonDay, setLessonDay] = useState<number | null>(
+    day != null && day > 0 ? day : null,
+  );
   const [bubbles, setBubbles] = useState<TalkBubble[]>([]);
   const [busy, setBusy] = useState(false);
   const [metrics, setMetrics] = useState<TalkTurnMetrics | null>(null);
@@ -372,6 +375,7 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
           reopening?: { character_tl: string; pending_tl: string | null };
           title_tl?: string;
           title_ar?: string;
+          lesson_day?: number | null;
           current_frame?: {
             tl: string;
             eg: string;
@@ -385,7 +389,18 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
         setSessionId(data.session_id);
         setTitleTl(data.title_tl ?? '');
         setTitleAr(data.title_ar ?? '');
-        setOpenMode(Boolean(data.open_mode) || topicId === 'open');
+        const resolvedDay =
+          typeof data.lesson_day === 'number' && data.lesson_day > 0
+            ? data.lesson_day
+            : day != null && day > 0
+              ? day
+              : null;
+        setLessonDay(resolvedDay);
+        setOpenMode(
+          resolvedDay
+            ? false
+            : Boolean(data.open_mode) || topicId === 'open',
+        );
         if (data.character_id) setCharacterId(data.character_id);
         if (data.current_frame) setFrame(data.current_frame);
         const warm = (data.warm_lines ?? []).slice(0, 3);
@@ -464,12 +479,26 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
     }
   };
 
-  const isOpenTopic = openMode || topicId === 'open';
-  const topicLine = isOpenTopic
-    ? 'أي حاجة'
-    : titleTl && titleAr
+  const isLessonDay = lessonDay != null && lessonDay > 0;
+  const isOpenTopic = !isLessonDay && (openMode || topicId === 'open');
+  const titlesLine =
+    titleTl && titleAr
       ? `${titleTl} · ${titleAr}`
-      : titleTl || titleAr || 'أي حاجة';
+      : titleTl || titleAr || '';
+  const topicLine = isLessonDay
+    ? titlesLine || `يوم ${lessonDay}`
+    : isOpenTopic
+      ? 'أي حاجة'
+      : titlesLine || 'أي حاجة';
+  const headerTitle = isLessonDay
+    ? [partnerLabel(characterId), titlesLine].filter(Boolean).join(' · ')
+    : partnerLabel(characterId);
+  const headerSub = isLessonDay
+    ? `يوم ${lessonDay}${titleAr ? ` · ${titleAr}` : ''}`
+    : topicLine;
+  const chipLabel = isLessonDay
+    ? `يوم ${lessonDay}${titleAr ? ` · ${titleAr}` : ''}`
+    : topicLine;
   const partner = partnerLabel(characterId);
   const partnerInitial = partner.slice(0, 1).toUpperCase();
 
@@ -541,10 +570,10 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
 
         <div className="min-w-0 flex-1">
           <h1 className="truncate font-[family-name:var(--font-ft-ui)] text-[15px] font-semibold text-[var(--ft-ink)]">
-            {partner}
+            {headerTitle}
           </h1>
           <p className="truncate font-[family-name:var(--font-ft-ar)] text-[11px] text-[var(--ft-text-secondary)]">
-            {topicLine}
+            {headerSub}
           </p>
         </div>
 
@@ -573,10 +602,10 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4">
         <div className="flex flex-col gap-3.5">
-          {titleTl || titleAr ? (
+          {isLessonDay || titleTl || titleAr ? (
             <div className="flex justify-center">
               <span className="rounded-[var(--ft-radius-control)] bg-[var(--ft-mist)]/50 px-3 py-1 font-[family-name:var(--font-ft-ar)] text-[11px] text-[var(--ft-text-secondary)]">
-                الموضوع: {topicLine}
+                {isLessonDay ? chipLabel : `الموضوع: ${topicLine}`}
               </span>
             </div>
           ) : null}
