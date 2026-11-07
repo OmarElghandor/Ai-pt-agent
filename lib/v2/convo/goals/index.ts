@@ -37,3 +37,8 @@ export {
   stuckHelpForGoal,
   type SteerAction,
 } from './steer';
+export {
+  GOALS_DONE_COACH_EG,
+  goalsFromWeakSurfaces,
+  refillSessionGoals,
+} from './refill';

@@ -33,11 +33,14 @@ import {
   acceptModelReportedGoals,
   applyCompletedGoals,
   checkGoals,
+  GOALS_DONE_COACH_EG,
   isStuckHelpRequest,
   openGoalsFromSession,
+  refillSessionGoals,
   steerActionForTurns,
   stuckHelpForGoal,
 } from '@/lib/v2/convo/goals';
+import { loadSuggestedSurfacesForUser } from '@/lib/v2/convo/session/suggestedWords';
 import { getCharacter } from '@/lib/v2/characters/registry';
 import {
   appendConvoCorrectionError,
@@ -957,6 +960,57 @@ export async function runFreeConvoTurn(
       ...new Set([...codeCompleted, ...acceptedFromModel]),
     ];
     applyCompletedGoals(session, bank, completedIds);
+
+    // V6: all goals done → coach note + refill from weak items; chat continues.
+    if (
+      session.goals.length > 0 &&
+      session.goals.every((g) => g.status !== 'open')
+    ) {
+      const coachId = 'goals_done';
+      if (session.coach_recent_ids.at(-1) !== coachId) {
+        session.coach_recent_ids = [
+          ...session.coach_recent_ids,
+          coachId,
+        ].slice(-8);
+        emit({
+          type: 'coach',
+          id: coachId,
+          eg: GOALS_DONE_COACH_EG,
+          moment: 'summary',
+        });
+      }
+      const weak =
+        session.suggested_words.length > 0
+          ? session.suggested_words
+          : await loadSuggestedSurfacesForUser(session.user_id, 8);
+      const refill = refillSessionGoals({
+        existingStates: session.goals,
+        existingDefs: bank.goals,
+        weakSurfaces: weak.length
+          ? weak
+          : ['Tudo bem.', 'Obrigado.', 'Até logo.'],
+        topicSlug: topic.id,
+      });
+      if (refill.newGoals.length) {
+        session.goals = refill.states;
+        session.current_goal = refill.current_goal;
+        session.turns_on_goal = 0;
+        bank.goals.push(...refill.newGoals);
+        const next = refill.newGoals.find((g) => g.id === refill.current_goal);
+        if (next) {
+          session.pending_frame = {
+            tl: next.help.frame_tl,
+            eg: next.help.eg,
+            chips: [...next.help.chips],
+          };
+          session.pending_question = {
+            id: next.id,
+            kind: 'open',
+            item_id: next.id,
+          };
+        }
+      }
+    }
 
     if (modelOut.pt) {
       pushExchange(session, 'character', modelOut.pt);
