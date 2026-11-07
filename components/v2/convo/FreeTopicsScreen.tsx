@@ -13,6 +13,13 @@ type FreeTopicRow = {
   can_resume?: boolean;
 };
 
+type LessonDayRow = {
+  day: number;
+  title_tl: string;
+  title_ar: string;
+  character_id: string;
+};
+
 type Props = {
   /** Back link; practice picker uses /talk. */
   backHref?: string;
@@ -26,6 +33,7 @@ export function FreeTopicsScreen({
   subtitle = 'اختار موضوع أو اتكلم في أي حاجة',
 }: Props) {
   const [topics, setTopics] = useState<FreeTopicRow[] | null>(null);
+  const [lessonDays, setLessonDays] = useState<LessonDayRow[]>([]);
   const [openCanResume, setOpenCanResume] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,10 +46,12 @@ export function FreeTopicsScreen({
         const data = (await res.json()) as {
           topics: FreeTopicRow[];
           open_can_resume?: boolean;
+          lesson_days?: LessonDayRow[];
         };
         if (!cancelled) {
           setTopics(data.topics);
           setOpenCanResume(Boolean(data.open_can_resume));
+          setLessonDays(Array.isArray(data.lesson_days) ? data.lesson_days : []);
         }
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : 'failed');
@@ -87,6 +97,46 @@ export function FreeTopicsScreen({
           </p>
         </div>
       </header>
+
+      {lessonDays.length > 0 ? (
+        <section className="flex flex-col gap-2">
+          <h2 className="font-[family-name:var(--font-v2-display-ar)] text-base font-bold text-v2-primary">
+            دروسك
+          </h2>
+          <ul className="flex flex-col gap-2">
+            {lessonDays.map((row) => {
+              const avatar = row.character_id.slice(0, 1).toUpperCase();
+              return (
+                <li key={`day-${row.day}`}>
+                  <Link
+                    href={`/talk/free/${OPEN_TOPIC_ID}?day=${row.day}`}
+                    className="flex min-h-14 items-center gap-3 rounded-v2-row bg-v2-card px-4 py-3 shadow-[var(--shadow-v2-soft)]"
+                  >
+                    <span
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-v2-primary/10 font-[family-name:var(--font-v2-target)] text-sm font-bold text-v2-primary"
+                      aria-label={row.character_id}
+                    >
+                      {avatar}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span
+                        className="block font-[family-name:var(--font-v2-target)] text-base font-semibold text-v2-primary"
+                        dir="ltr"
+                      >
+                        {row.title_tl}
+                      </span>
+                      <span className="block font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
+                        {row.title_ar}
+                      </span>
+                    </span>
+                    <Icon name="arrow_back" size={20} className="text-v2-action" />
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ) : null}
 
       <ul className="flex flex-col gap-2">
         <li>

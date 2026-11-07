@@ -42,7 +42,10 @@ export class MemoryConvoSessionStore implements ConvoSessionStore {
         s.user_id === userId &&
         s.module === 'free' &&
         s.status === 'open' &&
-        s.topic_id
+        s.topic_id &&
+        // Lesson-day sessions keep topic_id "open" but must not light «أي حاجة».
+        !(typeof s.lesson_day === 'number' && s.lesson_day > 0) &&
+        s.pack_id === `free.${s.topic_id}`
       ) {
         ids.push(s.topic_id);
       }

@@ -45,6 +45,7 @@ export {
 
 export {
   freePackId,
+  isGenericOpenPackId,
   buildFreeOpeningBubbles,
   buildOpenOpeningBubbles,
   createFreeConvoSessionDoc,
@@ -58,6 +59,11 @@ export {
   startFreeConvoSession,
   type StartFreeConvoSessionOpts,
 } from './startFree';
+
+export {
+  listPracticeLessonDays,
+  type PracticeLessonDayRow,
+} from './lessonDaysForPractice';
 
 export {
   buildFreeReopening,

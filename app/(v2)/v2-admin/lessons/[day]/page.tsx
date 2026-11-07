@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { ReportErrorButton } from '@/components/v2';
 import { LessonImagesAdmin } from '@/components/v2/admin/LessonImagesAdmin';
+import { isRolePlayDay } from '@/lib/v2/convo/topics/rolePlay';
 
 type JobRow = {
   id: string;
@@ -487,7 +488,10 @@ export default function V2AdminLessonPage() {
             Generate conversation pack
           </button>
           <Link href={`/practice/${day}?dev=1`}>Open practice</Link>
-          <Link href={`/talk/pt-PT.day-${day}`}>Open talk</Link>
+          <Link href={`/talk/free/open?day=${day}`}>Open talk</Link>
+          {isRolePlayDay(day) ? (
+            <Link href={`/talk/pt-PT.day-${day}`}>Role-play</Link>
+          ) : null}
         </div>
       </header>
 

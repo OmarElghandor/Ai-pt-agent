@@ -193,13 +193,26 @@ export class MongoConvoSessionStore implements ConvoSessionStore {
         module: 'free',
         status: 'open',
         topic_id: { $ne: null },
+        // Lesson-day free talk uses free:day-N and must not light «أي حاجة».
+        $or: [
+          { lesson_day: null },
+          { lesson_day: { $exists: false } },
+          { lesson_day: { $lte: 0 } },
+        ],
       })
-      .select({ topic_id: 1 })
+      .select({ topic_id: 1, pack_id: 1, lesson_day: 1 })
       .lean();
     const ids: string[] = [];
     for (const d of docs) {
-      const tid = (d as { topic_id?: string | null }).topic_id;
-      if (tid) ids.push(tid);
+      const row = d as {
+        topic_id?: string | null;
+        pack_id?: string;
+      };
+      const tid = row.topic_id;
+      if (!tid) continue;
+      if (row.pack_id && row.pack_id.startsWith('free:day-')) continue;
+      if (row.pack_id && row.pack_id !== `free.${tid}`) continue;
+      ids.push(tid);
     }
     return ids;
   }

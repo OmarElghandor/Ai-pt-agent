@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
+import { isRolePlayDay } from '@/lib/v2/convo/topics/rolePlay';
 
 type ReviewItem = {
   day: number;
@@ -144,11 +145,19 @@ export default function V2AdminReviewPage() {
                   Lesson preview
                 </Link>
                 <Link
-                  href={`/talk/pt-PT.day-${item.day}`}
+                  href={`/talk/free/open?day=${item.day}`}
                   className="rounded-v2-chip border border-v2-rule px-3 py-1 text-xs"
                 >
-                  Convo preview
+                  Open talk
                 </Link>
+                {isRolePlayDay(item.day) ? (
+                  <Link
+                    href={`/talk/pt-PT.day-${item.day}`}
+                    className="rounded-v2-chip border border-v2-rule px-3 py-1 text-xs"
+                  >
+                    Role-play
+                  </Link>
+                ) : null}
                 {item.kind === 'auto_published' ? (
                   <button
                     type="button"

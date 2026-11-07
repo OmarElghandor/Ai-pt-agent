@@ -21,9 +21,23 @@ import {
 } from '@/lib/v2/convo/goals';
 import type { ConvoOpeningBubbles, ConvoSession } from './types';
 
-/** Synthetic pack_id for free-chat sessions (store uniqueness). */
-export function freePackId(topicId: string): string {
+/**
+ * Synthetic pack_id for free-chat sessions (store uniqueness).
+ * Lesson-day free talk uses `free:day-<N>` so it never shares a session with «أي حاجة».
+ */
+export function freePackId(
+  topicId: string,
+  lessonDay?: number | null,
+): string {
+  if (typeof lessonDay === 'number' && lessonDay > 0) {
+    return `free:day-${lessonDay}`;
+  }
   return `free.${topicId}`;
+}
+
+/** True when this pack_id is the generic «أي حاجة» session (not a lesson day). */
+export function isGenericOpenPackId(packId: string): boolean {
+  return packId === 'free.open';
 }
 
 /** Opening chips for «أي حاجة»: catalog titles + day. */
@@ -100,28 +114,36 @@ export function buildFreeOpeningBubbles(
       lessonDay: opts?.lessonDay,
     });
   const first = bank?.goals[0];
-  if (first?.seed_tl) {
+  if (bank) {
     const tl = composeOpeningBubbleTl({
       opening_tl: topic.opening_tl,
-      share_tl: first.seed_tl,
+      share_tl: first?.seed_tl ?? '',
       ask_tl: '',
       name: opts?.learnerName,
     });
     const ar = composeOpeningBubbleAr({
       opening_ar: topic.opening_ar,
-      share_ar: first.seed_ar ?? '',
+      share_ar: first?.seed_ar ?? '',
       ask_ar: '',
       name: opts?.learnerName,
     });
+    const introEg =
+      topic.intro_eg ||
+      (opts?.lessonDay
+        ? `هنتكلم عن درس اليوم (يوم ${opts.lessonDay}).`
+        : undefined);
     return {
       character: { tl, ar },
-      coach_intros: topic.intro_eg
-        ? [{ item_id: topic.id, coach_intro_eg: topic.intro_eg }]
+      coach_intros: introEg
+        ? [{ item_id: topic.id, coach_intro_eg: introEg }]
         : [],
       card_ids: [],
     };
   }
-  // Legacy fallback if no goal bank.
+  if (isOpenTopicId(topic.id)) {
+    return buildOpenOpeningBubbles({ topic, learnerName: opts?.learnerName });
+  }
+  // Thread-topic opening: greeting + share + ask.
   const doc = loadThreadTopic(topic.id);
   const line = openingNextLine(doc);
   const tl = composeOpeningBubbleTl({
@@ -200,7 +222,7 @@ export function createFreeConvoSessionDoc(opts: {
       id: opts.id,
       user_id: opts.userId,
       module: 'free',
-      pack_id: freePackId(opts.topic.id),
+      pack_id: freePackId(opts.topic.id, lesson_day),
       topic_id: opts.topic.id,
       character_id: opts.topic.character_id,
       thread_index: 0,
@@ -267,7 +289,7 @@ export function createFreeConvoSessionDoc(opts: {
     id: opts.id,
     user_id: opts.userId,
     module: 'free',
-    pack_id: freePackId(opts.topic.id),
+    pack_id: freePackId(opts.topic.id, lesson_day),
     topic_id: opts.topic.id,
     character_id: scene.character_id || opts.topic.character_id,
     thread_index: 0,

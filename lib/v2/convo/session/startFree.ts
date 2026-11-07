@@ -42,7 +42,16 @@ async function resumeFree(
     existing.paused_for_pack_id != null
       ? { ...existing, paused_for_pack_id: null }
       : existing;
-  if (cleared.pending_question && !isOpenTopicId(topic.id) && cleared.free_step.kind !== 'open') {
+  const lessonDay =
+    typeof cleared.lesson_day === 'number' && cleared.lesson_day > 0
+      ? cleared.lesson_day
+      : null;
+  if (
+    cleared.pending_question &&
+    !isOpenTopicId(topic.id) &&
+    cleared.free_step.kind !== 'open' &&
+    !lessonDay
+  ) {
     const doc = loadThreadTopic(topic.id);
     const pending = currentNextLine(
       doc,
@@ -63,7 +72,10 @@ async function resumeFree(
     cleared !== existing ? await store.save(cleared) : cleared;
   return {
     session,
-    opening: buildFreeOpeningBubbles(topic, { learnerName }),
+    opening: buildFreeOpeningBubbles(topic, {
+      learnerName,
+      lessonDay,
+    }),
     resumed: true,
   };
 }
@@ -78,11 +90,23 @@ export async function startFreeConvoSession(
   const topic = opts.topic ?? freeTopicById(opts.topicId);
   if (!topic) throw new Error(`Unknown free topic: ${opts.topicId}`);
 
-  const packId = freePackId(topic.id);
+  const requestedDay =
+    typeof opts.lessonDay === 'number' && opts.lessonDay > 0
+      ? opts.lessonDay
+      : null;
+  const packId = freePackId(topic.id, requestedDay);
   const learnerName =
     opts.learnerName !== undefined
       ? opts.learnerName
       : await getLangifyUserFirstName(opts.userId);
+
+  const lessonDayMatches = (session: ConvoSession): boolean => {
+    const stored =
+      typeof session.lesson_day === 'number' && session.lesson_day > 0
+        ? session.lesson_day
+        : null;
+    return stored === requestedDay;
+  };
 
   if (opts.sessionId) {
     const existing = await opts.store.findById(opts.sessionId);
@@ -90,14 +114,15 @@ export async function startFreeConvoSession(
       existing &&
       existing.user_id === opts.userId &&
       existing.module === 'free' &&
-      existing.topic_id === topic.id
+      existing.topic_id === topic.id &&
+      lessonDayMatches(existing)
     ) {
       return resumeFree(existing, topic, opts.store, learnerName);
     }
   }
 
   const open = await opts.store.findOpen(opts.userId, packId);
-  if (open && open.module === 'free') {
+  if (open && open.module === 'free' && lessonDayMatches(open)) {
     return resumeFree(open, topic, opts.store, learnerName);
   }
 

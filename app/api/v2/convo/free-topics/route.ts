@@ -2,11 +2,14 @@ import { NextResponse } from 'next/server';
 import { getCurrentUserId } from '@/lib/auth/currentUser';
 import { isV2Enabled } from '@/lib/v2/flags';
 import { loadFreeTopicsFile } from '@/lib/v2/convo/topics';
-import { MongoConvoSessionStore } from '@/lib/v2/convo/session';
+import {
+  listPracticeLessonDays,
+  MongoConvoSessionStore,
+} from '@/lib/v2/convo/session';
 
 export const runtime = 'nodejs';
 
-/** GET free-chat topics catalogue (09 §10 / Batch 10 D2). */
+/** GET free-chat topics catalogue (09 §10 / Batch 10 D2) + lesson-day cards. */
 export async function GET() {
   if (!isV2Enabled()) {
     return NextResponse.json({ error: 'v2 disabled' }, { status: 403 });
@@ -20,6 +23,7 @@ export async function GET() {
       const openIds = await store.findOpenFreeTopicIds(userId);
       for (const id of openIds) resumeIds.add(id);
     }
+    const lesson_days = await listPracticeLessonDays(userId);
     return NextResponse.json({
       target_lang: file.target_lang,
       topics: file.topics.map((t) => ({
@@ -30,6 +34,7 @@ export async function GET() {
         can_resume: resumeIds.has(t.id),
       })),
       open_can_resume: resumeIds.has('open'),
+      lesson_days,
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'load failed';
