@@ -70,3 +70,12 @@ export {
   topicSlugFromLabel,
   type GoalGenerator,
 } from './generate';
+export {
+  ensureLessonDayGoalBank,
+  getCachedLessonDayBank,
+  lessonDayExamplePath,
+  listCachedLessonDayBanks,
+  saveLessonDayBankCache,
+  stubGenerateLessonDayBank,
+  type LessonDayBankGenerator,
+} from './generateLessonDay';

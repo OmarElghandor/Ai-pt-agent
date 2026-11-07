@@ -7,6 +7,7 @@ import {
   type FreeTopic,
 } from '@/lib/v2/convo/topics';
 import { currentNextLine } from '@/lib/v2/convo/free/nextLine';
+import { ensureLessonDayGoalBank } from '@/lib/v2/convo/goals';
 import {
   buildFreeOpeningBubbles,
   createFreeConvoSessionDoc,
@@ -124,6 +125,11 @@ export async function startFreeConvoSession(
   const open = await opts.store.findOpen(opts.userId, packId);
   if (open && open.module === 'free' && lessonDayMatches(open)) {
     return resumeFree(open, topic, opts.store, learnerName);
+  }
+
+  // F5: hydrate generated lesson-day bank into memory/Mongo before create.
+  if (requestedDay != null) {
+    await ensureLessonDayGoalBank({ day: requestedDay });
   }
 
   const id = opts.newId?.() ?? randomUUID();

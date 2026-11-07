@@ -777,12 +777,14 @@ export function V2ConvoSessionModel(): Model<V2ConvoSessionDoc> {
   );
 }
 
-/** Cached generated free-talk goals per language × topic slug (v3 V7). */
+/** Cached generated free-talk goals per language × topic slug (v3 V7 + F5 lesson.day-N). */
 const v2ConvoGoalBankSchema = new Schema(
   {
     target_lang: { type: String, required: true, index: true },
     topic_slug: { type: String, required: true, index: true },
     goals: { type: Schema.Types.Mixed, required: true, default: [] },
+    /** Full lesson-day bank (opening, intro, asks, closing) when topic_slug is lesson.day-N. */
+    bank: { type: Schema.Types.Mixed, required: false },
   },
   { timestamps: true, collection: 'v2_convo_goal_banks' },
 );

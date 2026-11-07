@@ -17,8 +17,17 @@ type ReviewItem = {
   prepare_error_eg?: string;
 };
 
+type LessonDayBankRow = {
+  day: number;
+  title_tl: string;
+  title_ar: string;
+  goal_count: number;
+  source: string;
+};
+
 export default function V2AdminReviewPage() {
   const [items, setItems] = useState<ReviewItem[]>([]);
+  const [lessonBanks, setLessonBanks] = useState<LessonDayBankRow[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
@@ -34,6 +43,13 @@ export default function V2AdminReviewPage() {
       }
       const body = (await res.json()) as { items: ReviewItem[] };
       setItems(body.items ?? []);
+      const banksRes = await fetch('/api/v2/admin/convo/lesson-day-banks');
+      if (banksRes.ok) {
+        const banksBody = (await banksRes.json()) as {
+          items: LessonDayBankRow[];
+        };
+        setLessonBanks(banksBody.items ?? []);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'failed');
     }
@@ -42,6 +58,37 @@ export default function V2AdminReviewPage() {
   useEffect(() => {
     void refresh();
   }, [refresh]);
+
+  const generateLessonBanks = async (days?: number[]) => {
+    setBusy(days ? `gen:${days.join(',')}` : 'gen:2-5');
+    setMessage(null);
+    try {
+      const res = await fetch('/api/v2/admin/convo/lesson-day-banks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...(days ? { days } : { days: [2, 3, 4, 5] }),
+          force: true,
+        }),
+      });
+      const body = (await res.json()) as {
+        error?: string;
+        results?: Array<{ day: number; title_tl?: string }>;
+      };
+      if (!res.ok) {
+        setError(body.error ?? `generate ${res.status}`);
+        return;
+      }
+      setMessage(
+        `Generated lesson banks: ${(body.results ?? [])
+          .map((r) => r.day)
+          .join(', ')}`,
+      );
+      await refresh();
+    } finally {
+      setBusy(null);
+    }
+  };
 
   const act = async (
     action: 'mark_checked' | 'regenerate' | 'unpublish',
@@ -100,6 +147,60 @@ export default function V2AdminReviewPage() {
           {message}
         </p>
       ) : null}
+
+      <section className="space-y-3 rounded-v2-row border border-v2-rule bg-v2-card px-3 py-3">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <div>
+            <h2 className="font-semibold">Lesson-day free-talk banks</h2>
+            <p className="text-xs text-v2-ink-muted" dir="ltr">
+              Generated goals for days 2–5 (day 1 is authored on disk)
+            </p>
+          </div>
+          <button
+            type="button"
+            disabled={busy === 'gen:2-5'}
+            className="rounded-v2-chip bg-v2-action px-3 py-1 text-xs font-semibold text-white disabled:opacity-40"
+            onClick={() => void generateLessonBanks()}
+          >
+            Generate 2–5
+          </button>
+        </div>
+        {lessonBanks.length === 0 ? (
+          <p className="text-xs text-v2-ink-muted">No cached banks yet.</p>
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {lessonBanks.map((row) => (
+              <li
+                key={row.day}
+                className="flex flex-wrap items-center justify-between gap-2 text-sm"
+              >
+                <span>
+                  Day {row.day} · {row.title_tl} · {row.title_ar}{' '}
+                  <span className="text-xs text-v2-ink-muted" dir="ltr">
+                    ({row.goal_count} goals)
+                  </span>
+                </span>
+                <span className="flex gap-2">
+                  <Link
+                    href={`/talk/free/open?day=${row.day}`}
+                    className="rounded-v2-chip border border-v2-rule px-2 py-0.5 text-xs"
+                  >
+                    Open talk
+                  </Link>
+                  <button
+                    type="button"
+                    disabled={busy === `gen:${row.day}`}
+                    className="rounded-v2-chip border border-v2-rule px-2 py-0.5 text-xs disabled:opacity-40"
+                    onClick={() => void generateLessonBanks([row.day])}
+                  >
+                    Regenerate
+                  </button>
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       {items.length === 0 ? (
         <p className="text-sm text-v2-ink-muted">مفيش أيام في الطابور.</p>
