@@ -18,3 +18,11 @@ export {
   goalStatesFromBank,
   pendingFrameFromGoal,
 } from './sessionGoals';
+export {
+  acceptModelReportedGoals,
+  checkGoals,
+  fuzzyMatchesExample,
+  hasKeywordOverlap,
+  messageCompletesGoal,
+  type GoalCheckResult,
+} from './check';
