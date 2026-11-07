@@ -95,6 +95,7 @@ function buildGreetGoal(
   return {
     id: 'day.greet',
     intent_eg: 'يحيّي بالتحية المناسبة للوقت',
+    intent_en: 'greet with the right greeting for the time of day',
     examples_tl: examples,
     keywords: keywordsFromExamples([
       ...examples,
@@ -128,6 +129,7 @@ function day1Goals(
         ...phraseGoal(nameItem, ['Chamo-me Omar.', 'Chamo-me Ana.']),
         id: 'day.name',
         intent_eg: 'يقول اسمه',
+        intent_en: 'say their name',
         help: {
           frame_tl: 'Chamo-me ___.',
           eg: 'Chamo-me + اسمك',
@@ -142,6 +144,7 @@ function day1Goals(
     : {
         id: 'day.name',
         intent_eg: 'يقول اسمه',
+        intent_en: 'say their name',
         examples_tl: ['Chamo-me Omar.', 'Chamo-me Ana.'],
         keywords: ['chamo', 'omar', 'ana'],
         help: {
@@ -155,6 +158,7 @@ function day1Goals(
   const askName: ConvoGoal = {
     id: 'day.ask_name',
     intent_eg: 'يسألها عن اسمها',
+    intent_en: 'ask her name',
     examples_tl: [
       askItem?.tl ?? 'Como te chamas?',
       'E tu, como te chamas?',
@@ -183,10 +187,12 @@ function day1Goals(
         ...phraseGoal(niceItem),
         id: 'day.nice_to_meet',
         intent_eg: 'يقول Muito prazer',
+        intent_en: 'say nice to meet you (Muito prazer)',
       }
     : {
         id: 'day.nice_to_meet',
         intent_eg: 'يقول Muito prazer',
+        intent_en: 'say nice to meet you (Muito prazer)',
         examples_tl: ['Muito prazer!', 'Muito prazer.'],
         keywords: ['muito', 'prazer'],
         help: {
@@ -199,6 +205,7 @@ function day1Goals(
   const goodbye: ConvoGoal = {
     id: 'day.goodbye',
     intent_eg: 'يودّع',
+    intent_en: 'say goodbye',
     examples_tl: ['Adeus!', 'Tchau!', 'Até logo!', 'Até amanhã!'],
     keywords: keywordsFromExamples([
       'Adeus!',

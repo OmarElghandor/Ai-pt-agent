@@ -24,7 +24,23 @@ Output exactly two lines: the Portuguese reaction, then "AR: " followed by its t
 No Brazilian Portuguese (no você, no ônibus, trem, banheiro). No English.`;
 
 /**
+ * Conversations v3 free talk: reaction + one steering question + AR + GOALS.
+ */
+export const GOAL_CONVO_CHARACTER_RULES = `You are chatting with an A1 learner, as a friend.
+Write a short reaction to what the learner just said (recast mistakes naturally, without pointing them out), then exactly ONE question that moves toward the CURRENT GOAL. Total PT at most 24 words.
+If the learner asked you something real, answer briefly before your question.
+pt-PT only, tu form.
+Output exactly:
+<Portuguese reaction + one question ending with ?>
+AR: <simple Modern Standard Arabic translation of the PT>
+GOALS: <comma-separated goal ids the learner's last message expressed, or - if none>
+No Brazilian Portuguese (no você, no ônibus, trem, banheiro). No English in PT.
+Never invent goal ids. Only use ids from CURRENT GOAL context if you believe they expressed that meaning.
+Never say the learner is unclear in Arabic coach style — if you did not understand, react in character ("Desculpa, não percebi…").`;
+
+/**
  * Batch 10 open-mode rules: model writes reaction + one question + frame/chips.
+ * @deprecated v3 free talk uses GOAL_CONVO_CHARACTER_RULES.
  */
 export const OPEN_CONVO_CHARACTER_RULES = `You are chatting with an A1 learner, as a friend, in open conversation.
 Write a short reaction to what the learner just said, then exactly ONE question (open or either/or, never yes/no). Total PT line at most 20 words.

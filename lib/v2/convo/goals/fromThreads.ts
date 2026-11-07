@@ -32,6 +32,7 @@ function askToGoal(
   return {
     id,
     intent_eg: intentEg,
+    intent_en: `get the learner to answer: ${ask.tl.replace(/\?+$/, '').trim()}`,
     examples_tl: examples.slice(0, 4),
     keywords,
     seed_tl: thread.share.tl,

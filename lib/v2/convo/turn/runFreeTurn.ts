@@ -1,7 +1,9 @@
 import {
   buildFreeReactionPrompt,
+  buildGoalFreePrompt,
   buildOpenConvoPrompt,
   estimateConvoPromptTokens,
+  formatCurrentGoalLine,
   freePromptPartsToMessages,
 } from '@/lib/v2/convo/prompt';
 import {
@@ -15,6 +17,10 @@ import {
   visibleOpenStreamText,
 } from '@/lib/v2/convo/output/parseOpen';
 import {
+  parseGoalConvoTurn,
+  visibleGoalStreamText,
+} from '@/lib/v2/convo/output/parseGoal';
+import {
   freeTopicById,
   isOpenTopicId,
   loadThreadTopic,
@@ -22,6 +28,13 @@ import {
   type FreeTopic,
 } from '@/lib/v2/convo/topics';
 import type { ConvoSession, ConvoSessionStore } from '@/lib/v2/convo/session';
+import { resolveFreeGoalBank } from '@/lib/v2/convo/session/freeInit';
+import {
+  acceptModelReportedGoals,
+  applyCompletedGoals,
+  checkGoals,
+  openGoalsFromSession,
+} from '@/lib/v2/convo/goals';
 import { getCharacter } from '@/lib/v2/characters/registry';
 import {
   appendConvoCorrectionError,
@@ -323,8 +336,93 @@ async function callOpenModel(opts: {
   };
 }
 
+async function callGoalModel(opts: {
+  model: ConvoStreamModel;
+  system: string;
+  prompt: string;
+  emit: (event: ConvoTurnStreamEvent) => void;
+  knownWords?: string[];
+}): Promise<{
+  pt: string;
+  ar: string;
+  reported_goal_ids: string[];
+  unknownWords: string[];
+  metricsPartial: Pick<
+    ConvoTurnMetrics,
+    'ttft_ms' | 'input_tokens' | 'cached_input_tokens' | 'output_tokens'
+  >;
+}> {
+  const { model, system, prompt, emit } = opts;
+  let rawAcc = '';
+  let visibleAcc = '';
+  const onChunk = (chunk: string) => {
+    rawAcc += chunk;
+    const nextVisible = visibleGoalStreamText(rawAcc);
+    visibleAcc = emitVisibleStreamDelta({
+      nextVisible,
+      visibleAcc,
+      emit,
+    });
+  };
+
+  const streamFn = model.stream?.bind(model) ?? model.complete.bind(model);
+  let result = await streamFn({
+    system,
+    prompt,
+    maxTokens: 180,
+    onChunk,
+  });
+
+  let parsed = parseGoalConvoTurn(result.text, {
+    knownWords: opts.knownWords,
+  });
+  if (parsed.decision === 'regenerate' && parsed.regenerateReason) {
+    emit({ type: 'reaction_reset', text: '' });
+    rawAcc = '';
+    visibleAcc = '';
+    result = await streamFn({
+      system,
+      prompt,
+      maxTokens: 180,
+      regenerateReason: parsed.regenerateReason,
+      onChunk,
+    });
+    parsed = parseGoalConvoTurn(result.text, {
+      knownWords: opts.knownWords,
+    });
+    if (parsed.decision === 'regenerate') {
+      emit({ type: 'reaction_reset', text: '' });
+      parsed = { ...parsed, pt: '', ar: '', decision: 'drop' };
+    }
+  }
+
+  const inputTokens =
+    result.usage?.inputTokens ??
+    estimateConvoPromptTokens(`${system}\n${prompt}`);
+  const cachedInputTokens =
+    typeof result.usage?.cachedInputTokens === 'number'
+      ? result.usage.cachedInputTokens
+      : null;
+  const outputTokens =
+    result.usage?.outputTokens ?? estimateConvoPromptTokens(result.text);
+
+  const dropped = parsed.decision === 'drop';
+  return {
+    pt: dropped ? '' : parsed.pt,
+    ar: dropped ? '' : parsed.ar,
+    reported_goal_ids: dropped ? [] : parsed.reported_goal_ids,
+    unknownWords: parsed.unknownWords,
+    metricsPartial: {
+      ttft_ms: result.ttftMs,
+      input_tokens: inputTokens,
+      cached_input_tokens: cachedInputTokens,
+      output_tokens: outputTokens,
+    },
+  };
+}
+
 /**
- * One Module C free-chat turn (Batch 9 threads + Batch 10 open mode).
+ * One Module C free-chat turn (v3 goals, or legacy threads / open mode).
  */
 export async function runFreeConvoTurn(
   input: RunFreeConvoTurnInput,
@@ -345,9 +443,12 @@ export async function runFreeConvoTurn(
     session.character_id = input.characterId;
   }
 
+  const hasGoals = (session.goals?.length ?? 0) > 0;
   const inOpenMode =
-    isOpenTopicId(topic.id) || session.free_step.kind === 'open';
-  const threadDoc = inOpenMode ? null : loadThreadTopic(topic.id);
+    !hasGoals &&
+    (isOpenTopicId(topic.id) || session.free_step.kind === 'open');
+  const threadDoc =
+    inOpenMode || hasGoals ? null : loadThreadTopic(topic.id);
 
   const emit = input.emit;
   let metrics: ConvoTurnMetrics = {
@@ -476,21 +577,22 @@ export async function runFreeConvoTurn(
     }
     return finish(true);
   }
-  const pendingLine = inOpenMode
-    ? {
-        line_id: `${topic.id}.open`,
-        tl: '',
-        ar: '',
-        bubble_tl: '',
-        bubble_ar: '',
-        frame: session.pending_frame ?? undefined,
-      }
-    : currentNextLine(
-        threadDoc!,
-        session.thread_index,
-        session.free_step,
-        topic,
-      );
+  const pendingLine =
+    inOpenMode || hasGoals
+      ? {
+          line_id: session.current_goal ?? `${topic.id}.open`,
+          tl: '',
+          ar: '',
+          bubble_tl: '',
+          bubble_ar: '',
+          frame: session.pending_frame ?? undefined,
+        }
+      : currentNextLine(
+          threadDoc!,
+          session.thread_index,
+          session.free_step,
+          topic,
+        );
 
   if (
     sideKind === 'arabic_answer' ||
@@ -645,6 +747,154 @@ export async function runFreeConvoTurn(
         original: learnerText,
       };
     }
+  }
+
+  // —— v3 goal-directed free talk ——
+  if (hasGoals) {
+    const bank = resolveFreeGoalBank({
+      topic,
+      lessonDay: session.lesson_day,
+      timeOfDay: session.scene?.time_of_day,
+    });
+    if (!bank) {
+      return finish(false, 'goal bank missing');
+    }
+
+    let eventLine = learnerText
+      ? 'learner replied; continue toward the current goal'
+      : 'conversation started; steer toward the current goal';
+    if (learnerText && isLearnerQuestionToCharacter(learnerText)) {
+      eventLine =
+        'learner asked you a question; answer briefly then steer toward the current goal';
+    } else if (session.assisted) {
+      eventLine = 'learner used the help chips';
+    }
+
+    const openDefs = openGoalsFromSession(session, bank);
+    const codeCompleted = learnerText
+      ? checkGoals(learnerText, openDefs).completedIds
+      : [];
+    const acceptedFromModel: string[] = [];
+
+    if (learnerText) {
+      const practised = consumeCoachPhraseOnLearnerTurn(
+        session.coach_phrase,
+        learnerText,
+      );
+      session.coach_phrase = practised.next;
+      if (practised.eventLine) eventLine = practised.eventLine;
+      session.off_topic_streak = 0;
+      pushExchange(session, 'learner', learnerText);
+      session.learner_lines = pushLearnerLine(
+        session.learner_lines ?? [],
+        learnerText,
+      );
+      const fact = extractFreeFact({
+        learnerText,
+        hints: [
+          ...(session.pending_frame?.chips ?? []),
+          ...session.suggested_words.slice(0, 8),
+        ],
+      });
+      session.facts = pushFreeFact(session.facts, fact);
+    }
+
+    const currentDef = bank.goals.find((g) => g.id === session.current_goal);
+    const currentGoalLine = currentDef
+      ? formatCurrentGoalLine({
+          intentEn:
+            currentDef.intent_en ??
+            `get the learner to say: ${currentDef.examples_tl[0] ?? ''}`,
+          seedTl: currentDef.seed_tl,
+          goalId: currentDef.id,
+          turnsOnGoal: session.turns_on_goal ?? 0,
+          openGoalIds: openDefs.map((g) => g.id),
+        })
+      : '(no open goal — keep chatting naturally)';
+
+    const characterId = session.character_id ?? topic.character_id;
+    const persona = requirePersona(characterId);
+    const promptBuilt = buildGoalFreePrompt({
+      module: 'free',
+      pack: null,
+      freeTopicTitle: topic.title_tl,
+      freeTopicPlace: session.scene?.place,
+      sceneTimeOfDay: session.scene?.time_of_day,
+      facts: session.facts,
+      event: {
+        verdict: 'correct',
+        item_id: '',
+        question_id: session.pending_question?.id ?? '',
+        question_kind: 'open',
+        phase: session.phase,
+      },
+      eventLine,
+      candidates: [],
+      lastExchanges: session.last_exchanges,
+      learnerAnswer: learnerText || '(ready)',
+      personaJson: JSON.stringify(persona),
+      currentGoalLine,
+    });
+    const { system, prompt } = freePromptPartsToMessages(promptBuilt);
+    const modelOut = await callGoalModel({
+      model: input.model,
+      system,
+      prompt,
+      emit,
+      knownWords: session.suggested_words,
+    });
+    metrics = { ...metrics, ...modelOut.metricsPartial };
+
+    if (learnerText) {
+      acceptedFromModel.push(
+        ...acceptModelReportedGoals(
+          learnerText,
+          modelOut.reported_goal_ids,
+          openDefs,
+        ),
+      );
+    }
+    const completedIds = [
+      ...new Set([...codeCompleted, ...acceptedFromModel]),
+    ];
+    applyCompletedGoals(session, bank, completedIds);
+
+    if (modelOut.pt) {
+      pushExchange(session, 'character', modelOut.pt);
+      if (learnerText) {
+        const pair = maybeRecastPair(learnerText, modelOut.pt);
+        if (pair) {
+          session.recasts = [...(session.recasts ?? []), pair].slice(-8);
+        }
+      }
+    }
+
+    const lineId = session.current_goal ?? `${topic.id}.goal`;
+    emit({
+      type: 'bubble_ar',
+      ar: modelOut.ar || '',
+      pt: modelOut.pt,
+    });
+    emit({
+      type: 'question',
+      id: lineId,
+      tl: modelOut.pt,
+      kind: 'open',
+      item_id: lineId,
+      audio_key: `free:${topic.id}:${lineId}`,
+      ...(modelOut.unknownWords.length
+        ? { unknown_words: modelOut.unknownWords }
+        : {}),
+    });
+    if (session.pending_frame) {
+      emit({
+        type: 'free_frame',
+        tl: session.pending_frame.tl,
+        eg: session.pending_frame.eg,
+        chips: session.pending_frame.chips,
+      });
+    }
+    return finish(true);
   }
 
   // —— Open mode (أي حاجة / after threads) ——

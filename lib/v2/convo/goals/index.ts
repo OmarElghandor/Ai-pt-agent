@@ -26,3 +26,8 @@ export {
   messageCompletesGoal,
   type GoalCheckResult,
 } from './check';
+export {
+  applyCompletedGoals,
+  markGoalsDone,
+  openGoalsFromSession,
+} from './advance';

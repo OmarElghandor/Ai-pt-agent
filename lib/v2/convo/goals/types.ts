@@ -10,6 +10,8 @@ export type ConvoGoal = {
   id: string;
   /** What the learner should express, one Egyptian line. */
   intent_eg: string;
+  /** Short English steer line for the CURRENT GOAL prompt part. */
+  intent_en?: string;
   /** 2–4 accepted ways to say it. */
   examples_tl: string[];
   /** Content-word lemmas for plausibility checks. */

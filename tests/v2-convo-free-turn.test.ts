@@ -41,7 +41,7 @@ describe('v2 free chat · T7.2 prompt (superseded by C4)', () => {
 });
 
 describe('v2 free chat · 30-turn never ends without a question', () => {
-  it('appends next angle when the model omits a question', async () => {
+  it('goal-directed turns keep a steering question', async () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'free-u1',
@@ -51,11 +51,13 @@ describe('v2 free chat · 30-turn never ends without a question', () => {
     });
     let session = started.session;
     assert.equal(session.module, 'free');
+    assert.ok(session.goals.length > 0);
     assert.ok(session.pending_question);
 
-    // Stub never ends with ? → code must append angle
+    // v3: model writes reaction + one question (no authored_append).
     const model = createStubConvoStreamModel({
-      byCandidate: () => 'Que interessante!',
+      byCandidate: () =>
+        'Que interessante! E tu, o que comes?\nAR: رائع!\nGOALS: -',
     });
 
     for (let i = 0; i < 30; i++) {
@@ -68,12 +70,15 @@ describe('v2 free chat · 30-turn never ends without a question', () => {
         emit: (e) => events.push(e),
       });
       session = out.session;
+      assert.ok(
+        !events.some((e) => e.type === 'authored_append'),
+        `turn ${i + 1} must not authored_append`,
+      );
       const q = events.filter((e) => e.type === 'question');
       assert.ok(q.length >= 1, `turn ${i + 1} missing question event`);
       const lastQ = q[q.length - 1]!;
       assert.ok(
-        lastQ.type === 'question' &&
-          (lastQ.tl.includes('?') || endsWithQuestionOrInvitation(lastQ.tl)),
+        lastQ.type === 'question' && lastQ.tl.includes('?'),
         `turn ${i + 1} question text: ${lastQ.type === 'question' ? lastQ.tl : ''}`,
       );
     }

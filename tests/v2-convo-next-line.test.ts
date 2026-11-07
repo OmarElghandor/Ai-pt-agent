@@ -113,7 +113,7 @@ describe('v2 free chat · C2 nextLine machine', () => {
     assert.equal(advanced.next.line_id, 'casa.open');
   });
 
-  it('runFreeTurn advances thread cursor across answers', async () => {
+  it('runFreeTurn advances goals across answers (v3)', async () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'nl-u',
@@ -122,9 +122,11 @@ describe('v2 free chat · C2 nextLine machine', () => {
       newId: () => 'nl-sess',
     });
     let session = started.session;
+    assert.equal(session.current_goal, 'casa.t1.ask');
     assert.equal(session.pending_question?.id, 'casa.t1.ask');
     const model = createStubConvoStreamModel({
-      byCandidate: () => 'Que fixe!',
+      byCandidate: () =>
+        'Que fixe! É longe do centro?\nAR: رائع!\nGOALS: casa.t1.ask',
     });
 
     {
@@ -136,8 +138,12 @@ describe('v2 free chat · C2 nextLine machine', () => {
         emit: () => {},
       });
       session = out.session;
-      assert.equal(session.pending_question?.id, 'casa.t1.fu0');
-      assert.deepEqual(session.free_step, { kind: 'follow_up', n: 0 });
+      assert.equal(
+        session.goals.find((g) => g.id === 'casa.t1.ask')?.status,
+        'done',
+      );
+      assert.equal(session.current_goal, 'casa.t1.fu1');
+      assert.equal(session.pending_question?.id, 'casa.t1.fu1');
     }
 
     {
@@ -149,8 +155,11 @@ describe('v2 free chat · C2 nextLine machine', () => {
         emit: () => {},
       });
       session = out.session;
-      assert.equal(session.pending_question?.id, 'casa.t2.ask');
-      assert.equal(session.thread_index, 1);
+      assert.equal(
+        session.goals.find((g) => g.id === 'casa.t1.fu1')?.status,
+        'done',
+      );
+      assert.equal(session.current_goal, 'casa.t2.ask');
     }
   });
 });

@@ -49,3 +49,13 @@ export {
   type ParseOpenConvoResult,
   type OpenParseIssue,
 } from './parseOpen';
+
+export {
+  parseGoalConvoTurn,
+  splitGoalMarkers,
+  parseReportedGoalIds,
+  visibleGoalStreamText,
+  GOAL_CONVO_MAX_WORDS,
+  type ParseGoalConvoResult,
+  type GoalParseExtraIssue,
+} from './parseGoal';

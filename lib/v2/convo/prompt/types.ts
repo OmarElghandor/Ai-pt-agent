@@ -35,6 +35,10 @@ export type BuildConvoPromptInput = {
   taughtTls?: string[];
   /** Batch 9 free: authored next line the app will append. */
   nextLineTl?: string;
+  /** v3: CURRENT GOAL prompt line. */
+  currentGoalLine?: string;
+  /** v3: scene time of day (code-owned). */
+  sceneTimeOfDay?: string;
 };
 
 export type BuildConvoPromptResult = {
