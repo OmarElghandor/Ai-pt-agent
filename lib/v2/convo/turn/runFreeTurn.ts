@@ -33,6 +33,10 @@ import {
 import type { ConvoSession, ConvoSessionStore } from '@/lib/v2/convo/session';
 import { resolveFreeGoalBank } from '@/lib/v2/convo/session/freeInit';
 import {
+  sessionHasGoals,
+  sessionInOpenMode,
+} from '@/lib/v2/convo/turn/freeMode';
+import {
   acceptModelReportedGoals,
   applyCompletedGoals,
   checkGoals,
@@ -488,10 +492,8 @@ export async function runFreeConvoTurn(
     session.character_id = input.characterId;
   }
 
-  const hasGoals = (session.goals?.length ?? 0) > 0;
-  const inOpenMode =
-    !hasGoals &&
-    (isOpenTopicId(topic.id) || session.free_step.kind === 'open');
+  const hasGoals = sessionHasGoals(session);
+  const inOpenMode = sessionInOpenMode(session, topic);
   const threadDoc =
     inOpenMode || hasGoals ? null : loadThreadTopic(topic.id);
 

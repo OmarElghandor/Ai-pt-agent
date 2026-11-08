@@ -21,6 +21,10 @@ import {
   startFreeConvoSession,
 } from '@/lib/v2/convo/session';
 import { suggestedWordsForDay } from '@/lib/v2/convo/session/suggestedWords';
+import {
+  sessionHasGoals,
+  startResponseIsOpenMode,
+} from '@/lib/v2/convo/turn/freeMode';
 
 export const runtime = 'nodejs';
 /** Generation runs in the worker; start returns preparing immediately (P3). */
@@ -87,14 +91,16 @@ export async function POST(req: Request) {
           : {}),
       });
 
-      const hasGoals = (result.session.goals?.length ?? 0) > 0;
+      const hasGoals = sessionHasGoals(result.session);
       const isLessonDay =
         typeof result.session.lesson_day === 'number' &&
         result.session.lesson_day > 0;
-      const isOpen =
-        !hasGoals &&
-        ((isOpenTopicId(topic.id) && !isLessonDay) ||
-          result.session.free_step.kind === 'open');
+      const isOpen = startResponseIsOpenMode({
+        hasGoals,
+        topicId: topic.id,
+        isLessonDay,
+        freeStepKind: result.session.free_step.kind,
+      });
 
       const sessionPayload = {
         id: result.session.id,

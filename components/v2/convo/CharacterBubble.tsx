@@ -133,6 +133,11 @@ export function CharacterBubble({
     };
   }, [autoPlay, streaming, tl, playbackRate, onPlayStart, onPlayEnd]);
 
+  // v4 V1: never render a character bubble with empty PT (unless still streaming).
+  if (!tl.trim() && !streaming) {
+    return null;
+  }
+
   if (tone === 'calm') {
     return (
       <div className="flex max-w-[92%] flex-col items-start gap-1.5 self-start">

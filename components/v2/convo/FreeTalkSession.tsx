@@ -13,6 +13,8 @@ import { ConvoVoiceBar } from './ConvoVoiceBar';
 import { LearnerBubble } from './LearnerBubble';
 import { readConvoNdjson } from './readNdjson';
 import { TalkDevPanel, type TalkTurnMetrics } from './TalkDevPanel';
+import { reduceFreeTalkStream } from './freeTalkStreamReduce';
+import { freeTalkTopicHeaderLine } from '@/lib/v2/convo/ui/topicHeader';
 import type { TalkBubble } from './types';
 
 const PARTNERS = [
@@ -62,8 +64,14 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
   const [summary, setSummary] = useState<ConvoSessionSummary | null>(null);
   const [ending, setEnding] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const bubblesRef = useRef<TalkBubble[]>([]);
   const streamBubbleId = useRef<string | null>(null);
   const correctionCountRef = useRef(0);
+
+  const commitBubbles = useCallback((next: TalkBubble[]) => {
+    bubblesRef.current = next;
+    setBubbles(next);
+  }, []);
 
   const scrollToEnd = useCallback(() => {
     const el = scrollRef.current;
@@ -74,235 +82,86 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
     scrollToEnd();
   }, [bubbles, scrollToEnd]);
 
-  const applyEvent = useCallback((event: ConvoTurnStreamEvent) => {
-    if (event.type === 'cta') {
-      setLessonHref(event.href);
-      return;
-    }
-    if (event.type === 'cta_navigate') {
-      setLessonHref(null);
-      router.push(event.href);
-      return;
-    }
-    if (event.type === 'cta_dismissed') {
-      setLessonHref(null);
-      return;
-    }
-    if (event.type === 'coach') {
-      if (event.id === 'threads_done_open') {
-        setOpenMode(true);
-      }
-      setBubbles((prev) => [
-        ...prev,
-        {
-          id: newId('coach'),
-          role: 'coach',
-          eg: event.eg,
-          moment: event.moment,
-          ...(event.segments ? { segments: event.segments } : {}),
-        },
-      ]);
-      return;
-    }
-    if (event.type === 'reaction_reset') {
-      const sid = streamBubbleId.current;
-      if (!event.text) {
-        if (sid) {
-          setBubbles((prev) => prev.filter((b) => b.id !== sid));
-          streamBubbleId.current = null;
-        }
+  const applyEvent = useCallback(
+    (event: ConvoTurnStreamEvent) => {
+      if (event.type === 'cta') {
+        setLessonHref(event.href);
         return;
       }
-      if (sid) {
-        setBubbles((prev) =>
-          prev.map((b) =>
-            b.id === sid && b.role === 'character'
-              ? {
-                  ...b,
-                  tl: event.text,
-                  streaming: true,
-                  final: false,
-                  say: undefined,
-                  ttsEpoch: (b.ttsEpoch ?? 0) + 1,
-                }
-              : b,
-          ),
-        );
-      } else {
-        const nid = newId('char');
-        streamBubbleId.current = nid;
-        setBubbles((prev) => [
-          ...prev,
+      if (event.type === 'cta_navigate') {
+        setLessonHref(null);
+        router.push(event.href);
+        return;
+      }
+      if (event.type === 'cta_dismissed') {
+        setLessonHref(null);
+        return;
+      }
+      if (event.type === 'coach') {
+        if (event.id === 'threads_done_open') {
+          setOpenMode(true);
+        }
+        commitBubbles([
+          ...bubblesRef.current,
           {
-            id: nid,
-            role: 'character',
-            tl: event.text,
-            streaming: true,
-            ttsEpoch: 1,
+            id: newId('coach'),
+            role: 'coach',
+            eg: event.eg,
+            moment: event.moment,
+            ...(event.segments ? { segments: event.segments } : {}),
           },
         ]);
+        return;
       }
-      return;
-    }
-    if (event.type === 'reaction_delta') {
-      const id = streamBubbleId.current;
-      if (!id) {
-        const nid = newId('char');
-        streamBubbleId.current = nid;
-        setBubbles((prev) => [
-          ...prev,
-          { id: nid, role: 'character', tl: event.text, streaming: true },
-        ]);
-      } else {
-        setBubbles((prev) =>
-          prev.map((b) =>
-            b.id === id && b.role === 'character'
-              ? { ...b, tl: b.tl + event.text, streaming: true }
-              : b,
-          ),
-        );
-      }
-      return;
-    }
-    if (event.type === 'authored_append') {
-      const sid = streamBubbleId.current;
-      if (sid) {
-        setBubbles((prev) =>
-          prev.map((b) =>
-            b.id === sid && b.role === 'character'
-              ? {
-                  ...b,
-                  tl: `${b.tl}${b.tl.trim() ? ' ' : ''}${event.tl}`.trim(),
-                  // Keep streaming until bubble_ar/question finalizes (G3 TTS)
-                  streaming: true,
-                  ...(event.say ? { say: event.say } : {}),
-                }
-              : b,
-          ),
-        );
-      } else {
-        const nid = newId('char');
-        streamBubbleId.current = nid;
-        setBubbles((prev) => [
-          ...prev,
+      if (
+        event.type === 'reaction_reset' ||
+        event.type === 'reaction_delta' ||
+        event.type === 'authored_append' ||
+        event.type === 'bubble_ar' ||
+        event.type === 'question' ||
+        event.type === 'correction'
+      ) {
+        // Reduce synchronously so streamBubbleId is current before the next
+        // NDJSON event in the same read() chunk (TalkSession pattern).
+        const next = reduceFreeTalkStream(
           {
-            id: nid,
-            role: 'character',
-            tl: event.tl,
-            streaming: true,
-            ...(event.say ? { say: event.say } : {}),
+            bubbles: bubblesRef.current,
+            streamBubbleId: streamBubbleId.current,
+            correctionIndex: correctionCountRef.current,
           },
-        ]);
-      }
-      return;
-    }
-    if (event.type === 'bubble_ar') {
-      const sid = streamBubbleId.current;
-      if (sid) {
-        setBubbles((prev) =>
-          prev.map((b) =>
-            b.id === sid && b.role === 'character'
-              ? {
-                  ...b,
-                  ...(event.pt ? { tl: event.pt, final: true } : {}),
-                  ar: event.ar,
-                  // Stay streaming until question if no authoritative pt yet
-                  streaming: event.pt ? false : b.streaming,
-                  ...(event.say ? { say: event.say } : {}),
-                }
-              : b,
-          ),
+          event,
+          { newId },
         );
+        streamBubbleId.current = next.streamBubbleId;
+        correctionCountRef.current = next.correctionIndex;
+        commitBubbles(next.bubbles);
+        return;
       }
-      if (event.pt) streamBubbleId.current = null;
-      return;
-    }
-    if (event.type === 'question') {
-      const sid = streamBubbleId.current;
-      if (sid && event.tl) {
-        setBubbles((prev) =>
-          prev.map((b) =>
-            b.id === sid && b.role === 'character'
-              ? {
-                  ...b,
-                  // Open: question.tl is the full PT. Thread: may already include authored.
-                  tl:
-                    b.final || (b.tl.length > event.tl.length && b.tl.includes(event.tl))
-                      ? b.tl
-                      : event.tl,
-                  streaming: false,
-                  final: true,
-                  ...(event.say ? { say: event.say } : {}),
-                }
-              : b,
-          ),
-        );
-        streamBubbleId.current = null;
-      } else if (sid) {
-        setBubbles((prev) =>
-          prev.map((b) =>
-            b.id === sid && b.role === 'character'
-              ? {
-                  ...b,
-                  streaming: false,
-                  final: true,
-                  ...(event.say ? { say: event.say } : {}),
-                }
-              : b,
-          ),
-        );
-        streamBubbleId.current = null;
+      if (event.type === 'free_frame') {
+        setFrame({
+          tl: event.tl,
+          eg: event.eg,
+          chips: event.chips,
+        });
+        return;
       }
-      return;
-    }
-    if (event.type === 'free_frame') {
-      setFrame({
-        tl: event.tl,
-        eg: event.eg,
-        chips: event.chips,
-      });
-      return;
-    }
-    if (event.type === 'metrics') {
-      setMetrics({
-        input_tokens: event.input_tokens,
-        cached_input_tokens: event.cached_input_tokens,
-        output_tokens: event.output_tokens,
-        ttft_ms: event.ttft_ms,
-        total_ms: event.total_ms,
-      });
-      setTurnCount((n) => n + 1);
-      return;
-    }
-    if (event.type === 'correction') {
-      if (event.severity !== 'accent' && event.severity !== 'error') return;
-      const index = correctionCountRef.current;
-      correctionCountRef.current += 1;
-      setBubbles((prev) =>
-        prev.map((b) =>
-          b.id === event.learner_turn_id && b.role === 'learner'
-            ? {
-                ...b,
-                correction: {
-                  severity: event.severity,
-                  corrected_tl: event.corrected_tl,
-                  changes: event.changes,
-                  note_eg: event.note_eg,
-                  ar: event.ar,
-                  original: event.original,
-                  index,
-                },
-              }
-            : b,
-        ),
-      );
-      return;
-    }
-    if (event.type === 'done' && !event.ok) {
-      setError(event.error ?? 'turn failed');
-    }
-  }, [router]);
-
+      if (event.type === 'metrics') {
+        setMetrics({
+          input_tokens: event.input_tokens,
+          cached_input_tokens: event.cached_input_tokens,
+          output_tokens: event.output_tokens,
+          ttft_ms: event.ttft_ms,
+          total_ms: event.total_ms,
+        });
+        setTurnCount((n) => n + 1);
+        return;
+      }
+      if (event.type === 'done' && !event.ok) {
+        setError(event.error ?? 'turn failed');
+      }
+    },
+    [router, commitBubbles],
+  );
   const runTurn = useCallback(
     async (
       learnerText: string,
@@ -396,11 +255,9 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
               ? day
               : null;
         setLessonDay(resolvedDay);
-        setOpenMode(
-          resolvedDay
-            ? false
-            : Boolean(data.open_mode) || topicId === 'open',
-        );
+        // Trust API open_mode (false whenever goals.length > 0). Do not force
+        // open just because topicId === 'open' — that hid locked topic titles.
+        setOpenMode(resolvedDay ? false : Boolean(data.open_mode));
         if (data.character_id) setCharacterId(data.character_id);
         if (data.current_frame) setFrame(data.current_frame);
         const warm = (data.warm_lines ?? []).slice(0, 3);
@@ -427,14 +284,17 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
               moment: 'intro',
             });
           }
-          next.push({
-            id: newId('open'),
-            role: 'character',
-            tl: data.opening.character.tl,
-            ar: data.opening.character.ar,
-          });
+          const openTl = data.opening.character.tl?.trim() ?? '';
+          if (openTl) {
+            next.push({
+              id: newId('open'),
+              role: 'character',
+              tl: openTl,
+              ar: data.opening.character.ar,
+            });
+          }
         }
-        setBubbles(next);
+        commitBubbles(next);
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : 'start failed');
       } finally {
@@ -444,14 +304,14 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [topicId, day]);
+  }, [topicId, day, commitBubbles]);
 
   const sendPt = (t: string, opts?: { assisted?: boolean }) => {
     if (!t.trim() || busy) return;
     if (opts?.assisted) setAssisted(true);
     const learnerTurnId = newId('learner');
-    setBubbles((prev) => [
-      ...prev,
+    commitBubbles([
+      ...bubblesRef.current,
       { id: learnerTurnId, role: 'learner', tl: t.trim() },
     ]);
     void runTurn(t.trim(), {
@@ -480,16 +340,17 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
   };
 
   const isLessonDay = lessonDay != null && lessonDay > 0;
-  const isOpenTopic = !isLessonDay && (openMode || topicId === 'open');
   const titlesLine =
     titleTl && titleAr
       ? `${titleTl} · ${titleAr}`
       : titleTl || titleAr || '';
-  const topicLine = isLessonDay
-    ? titlesLine || `يوم ${lessonDay}`
-    : isOpenTopic
-      ? 'أي حاجة'
-      : titlesLine || 'أي حاجة';
+  const topicLine = freeTalkTopicHeaderLine({
+    lessonDay,
+    openMode,
+    topicId,
+    titleTl,
+    titleAr,
+  });
   const headerTitle = isLessonDay
     ? [partnerLabel(characterId), titlesLine].filter(Boolean).join(' · ')
     : partnerLabel(characterId);
@@ -581,7 +442,7 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
           topicId={topicId}
           day={day}
           onReloadStart={() => {
-            setBubbles([]);
+            commitBubbles([]);
             setSessionId(null);
             setLoading(true);
             setSummary(null);
@@ -612,6 +473,7 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
 
           {bubbles.map((b) => {
             if (b.role === 'character') {
+              if (!b.tl.trim() && !b.streaming) return null;
               return (
                 <CharacterBubble
                   key={b.id}
@@ -622,7 +484,7 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
                   meaningEg={b.ar}
                   ttsEpoch={b.ttsEpoch}
                   autoPlay={
-                    !b.streaming && Boolean(b.final) && Boolean(b.tl)
+                    !b.streaming && Boolean(b.final) && Boolean(b.tl.trim())
                   }
                 />
               );
@@ -718,15 +580,15 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
           onSend={(t, opts) => sendPt(t, { assisted: opts?.assisted })}
           onArabicSend={(t) => {
             const learnerTurnId = newId('learner');
-            setBubbles((prev) => [
-              ...prev,
+            commitBubbles([
+              ...bubblesRef.current,
               { id: learnerTurnId, role: 'learner', tl: t },
             ]);
             void runTurn(t, { learnerTurnId });
           }}
           onUnclearStt={() => {
-            setBubbles((prev) => [
-              ...prev,
+            commitBubbles([
+              ...bubblesRef.current,
               {
                 id: newId('coach'),
                 role: 'coach',
@@ -736,7 +598,7 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
             ]);
           }}
           onSurvival={(action) => {
-            const last = [...bubbles]
+            const last = [...bubblesRef.current]
               .reverse()
               .find((b) => b.role === 'character' && b.tl);
             if (!last || last.role !== 'character') return;

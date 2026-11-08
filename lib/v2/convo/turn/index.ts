@@ -16,6 +16,11 @@ export {
   type RunFreeConvoTurnInput,
 } from './runFreeTurn';
 export {
+  sessionHasGoals,
+  sessionInOpenMode,
+  startResponseIsOpenMode,
+} from './freeMode';
+export {
   createLiveConvoStreamModel,
   createStubConvoStreamModel,
 } from './streamModel';
