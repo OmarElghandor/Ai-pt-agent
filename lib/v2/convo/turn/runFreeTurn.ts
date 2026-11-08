@@ -69,6 +69,7 @@ import {
   allTierDone,
 } from '@/lib/v2/convo/goals/tiers';
 import { teachBeatForGoal } from '@/lib/v2/convo/goals/teach';
+import { checkReplyLevel } from '@/lib/v2/convo/guard/levelGuard';
 import { loadSuggestedSurfacesForUser } from '@/lib/v2/convo/session/suggestedWords';
 import { getCharacter } from '@/lib/v2/characters/registry';
 import {
@@ -1219,6 +1220,55 @@ export async function runFreeConvoTurn(
     metrics = { ...metrics, ...modelOut.metricsPartial };
     let replyPt = modelOut.pt;
     let replyAr = modelOut.ar;
+
+    // v4 V6 level guard: ≤2 off-level content words, else regen once then fallback.
+    {
+      const level = session.learner_level ?? 1;
+      const extraAllowed = [
+        ...(bank.required_items ?? []),
+        ...(bank.new_items_tl ?? []),
+        ...bank.goals.flatMap((g) => [
+          ...(g.examples_tl ?? []),
+          ...(g.keywords ?? []),
+          g.ask_tl ?? '',
+          g.teach?.tl ?? '',
+        ]),
+        ...session.suggested_words,
+      ];
+      let guard = checkReplyLevel({
+        text: replyPt,
+        level,
+        extraAllowed,
+      });
+      if (!guard.ok && replyPt.trim()) {
+        const regenSystem = `${system}\n\nLEVEL GUARD: do not use these words: ${guard.offLevel.join(', ')}. Stay within the learner's level.`;
+        const regen = await callGoalModel({
+          model: input.model,
+          system: regenSystem,
+          prompt,
+          emit,
+          knownWords: session.suggested_words,
+          allowFormal,
+          fallbackAsk: askLines,
+        });
+        metrics = { ...metrics, ...regen.metricsPartial };
+        replyPt = regen.pt;
+        replyAr = regen.ar;
+        guard = checkReplyLevel({
+          text: replyPt,
+          level,
+          extraAllowed,
+        });
+        if (!guard.ok) {
+          const fb = askLines?.tl?.trim() || currentDefEarly?.ask_tl || '';
+          if (fb) {
+            replyPt = `Ah, ok! ${fb}`;
+            replyAr = currentDefEarly?.ask_ar ?? replyAr;
+            emit({ type: 'reaction_reset', text: replyPt });
+          }
+        }
+      }
+    }
 
     if (learnerText) {
       acceptedFromModel.push(
