@@ -19,6 +19,7 @@ import {
   type ConvoGoalBank,
   type ConvoSceneTimeOfDay,
 } from '@/lib/v2/convo/goals';
+import { loadAuthoredTopicBank } from '@/lib/v2/convo/goals/loadTopicBank';
 import { oneChatOpeningFrame } from '@/lib/v2/convo/topics/openingChips';
 import type { ConvoOpeningBubbles, ConvoSession } from './types';
 
@@ -200,7 +201,13 @@ export function resolveFreeGoalBank(opts: {
   if (isOpenTopicId(opts.topic.id)) {
     return null;
   }
-  return loadGoalsForTopic(opts.topic.id);
+  const authored = loadAuthoredTopicBank(opts.topic.id);
+  if (authored) return authored;
+  try {
+    return loadGoalsForTopic(opts.topic.id);
+  } catch {
+    return null;
+  }
 }
 
 export function createFreeConvoSessionDoc(opts: {

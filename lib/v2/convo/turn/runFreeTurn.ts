@@ -27,6 +27,7 @@ import {
   freeTopicById,
   isOpenTopicId,
   loadThreadTopic,
+  OPEN_TOPIC_ID,
   requirePersona,
   type FreeTopic,
 } from '@/lib/v2/convo/topics';
@@ -499,7 +500,11 @@ export async function runFreeConvoTurn(
   const topicId = session.topic_id;
   if (!topicId) throw new Error('free session missing topic_id');
 
-  const topic = input.topic ?? freeTopicById(topicId);
+  // Locked catalog ids (day-1, direcoes, …) may have no free-topic file — fall back to open.
+  const topic =
+    input.topic ??
+    freeTopicById(topicId) ??
+    (session.topic_locked ? freeTopicById(OPEN_TOPIC_ID) : null);
   if (!topic) throw new Error(`Unknown free topic: ${topicId}`);
 
   if (
@@ -605,6 +610,53 @@ export async function runFreeConvoTurn(
     // Any other message: CTA consumed; continue normal path below.
   }
 
+  // —— v4 exit: خلّص / كفاية (before Arabic side-channel) ——
+  {
+    const exitText = input.learnerText.trim();
+    if (
+      (hasGoals || session.topic_locked) &&
+      exitText &&
+      isLearnerExitRequest(exitText)
+    ) {
+      const bank =
+        resolveFreeGoalBank({
+          topic,
+          lessonDay: session.lesson_day,
+          timeOfDay: session.scene?.time_of_day,
+        }) ??
+        loadAuthoredTopicBank(session.topic_id ?? '') ??
+        (session.topic_id === 'day-1' ? loadGoalsForDay(1) : null);
+      const summary = buildExitSummary({
+        goals: session.goals,
+        defs: bank?.goals ?? [],
+        suggestedWords: session.suggested_words,
+      });
+      const closingTl =
+        bank?.closing?.tl?.trim() || 'Ok! Foi um prazer falar contigo. Até logo!';
+      const closingAr =
+        bank?.closing?.ar?.trim() || 'حسناً! سررت بالحديث معك. إلى اللقاء!';
+      emit({ type: 'bubble_ar', ar: closingAr, pt: closingTl });
+      emit({
+        type: 'question',
+        id: 'exit.closing',
+        tl: closingTl,
+        kind: 'open',
+        item_id: 'exit',
+        audio_key: `free:${session.id}:exit`,
+      });
+      emit({
+        type: 'coach',
+        id: 'exit_summary',
+        eg: summary.coach_eg,
+        moment: 'summary',
+      });
+      session.status = 'done';
+      session.phase = 'closing';
+      session.topic_locked = false;
+      return finish(true);
+    }
+  }
+
   // V5: stuck help for goal sessions before Arabic side-channel handling.
   // Empty opening turn (no exchanges yet) is not "stuck" — the model must ask.
   const silenceIsStuck =
@@ -655,7 +707,8 @@ export async function runFreeConvoTurn(
   }
 
   const sideKind = classifySideChannel(input.learnerText);
-  if (sideKind === 'topic_request') {
+  // v4 one-chat: while unlocked, topic-naming goes to the router (below), not Learn CTA.
+  if (sideKind === 'topic_request' && session.topic_locked) {
     // Batch 10 D8: practice stays free — soft Learn CTA only, no forced pack jump.
     const matched = matchTopicRequest(input.learnerText);
     const coach = topicRequestCoachEg(matched);
@@ -863,43 +916,6 @@ export async function runFreeConvoTurn(
     }
   }
 
-  // —— v4 exit: خلّص / كفاية ——
-  if (hasGoals && learnerText && isLearnerExitRequest(learnerText)) {
-    const bank = resolveFreeGoalBank({
-      topic,
-      lessonDay: session.lesson_day,
-      timeOfDay: session.scene?.time_of_day,
-    });
-    const summary = buildExitSummary({
-      goals: session.goals,
-      defs: bank?.goals ?? [],
-      suggestedWords: session.suggested_words,
-    });
-    const closingTl =
-      bank?.closing?.tl?.trim() || 'Ok! Foi um prazer falar contigo. Até logo!';
-    const closingAr =
-      bank?.closing?.ar?.trim() || 'حسناً! سررت بالحديث معك. إلى اللقاء!';
-    emit({ type: 'bubble_ar', ar: closingAr, pt: closingTl });
-    emit({
-      type: 'question',
-      id: 'exit.closing',
-      tl: closingTl,
-      kind: 'open',
-      item_id: 'exit',
-      audio_key: `free:${session.id}:exit`,
-    });
-    emit({
-      type: 'coach',
-      id: 'exit_summary',
-      eg: summary.coach_eg,
-      moment: 'summary',
-    });
-    session.status = 'done';
-    session.phase = 'closing';
-    session.topic_locked = false;
-    return finish(true);
-  }
-
   // —— v4 router: unlocked one-chat (greetings + topic-naming only) ——
   if (
     !session.topic_locked &&
@@ -1001,6 +1017,9 @@ export async function runFreeConvoTurn(
       return finish(false, `goal bank missing for ${decision.topic_id}`);
     }
     session.topic_id = decision.topic_id;
+    if (decision.topic_id === 'day-1') {
+      session.lesson_day = 1;
+    }
     session.goals = goalStatesFromBank(bank);
     session.current_goal = firstOpenGoalId(session.goals);
     session.turns_on_goal = 0;
@@ -1014,15 +1033,34 @@ export async function runFreeConvoTurn(
     }
   }
 
+  // After a same-turn lock, resolve goals against the locked bank id.
+  const lockedTopicForBank =
+    session.topic_locked && session.topic_id
+      ? ({ id: session.topic_id } as FreeTopic)
+      : topic;
+
   const hasGoalsNow = sessionHasGoals(session);
 
   // —— v3 goal-directed free talk ——
   if (hasGoalsNow) {
-    const bank = resolveFreeGoalBank({
-      topic,
-      lessonDay: session.lesson_day,
-      timeOfDay: session.scene?.time_of_day,
-    });
+    const bank =
+      resolveFreeGoalBank({
+        topic: lockedTopicForBank,
+        lessonDay: session.lesson_day,
+        timeOfDay: session.scene?.time_of_day,
+      }) ??
+      (session.topic_id === 'day-1'
+        ? loadGoalsForDay(1)
+        : loadAuthoredTopicBank(session.topic_id ?? '') ??
+          (() => {
+            try {
+              return session.topic_id
+                ? loadGoalsForTopic(session.topic_id)
+                : null;
+            } catch {
+              return null;
+            }
+          })());
     if (!bank) {
       return finish(false, 'goal bank missing');
     }
