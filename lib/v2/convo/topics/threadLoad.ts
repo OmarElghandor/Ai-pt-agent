@@ -156,18 +156,13 @@ export function loadFreeTopicsFile(
   return file;
 }
 
-export function freeTopicById(
+/** Thread-file catalogue only (no authored / lesson / generated banks). */
+export function threadCatalogTopicById(
   topicId: string,
   file: FreeTopicsFile = loadFreeTopicsFile(),
 ): FreeTopic | null {
   if (isOpenTopicId(topicId)) return OPEN_TOPIC;
   return file.topics.find((t) => t.id === topicId) ?? null;
-}
-
-export function requireFreeTopic(topicId: string): FreeTopic {
-  const t = freeTopicById(topicId);
-  if (!t) throw new Error(`free topic not found: ${topicId}`);
-  return t;
 }
 
 /**

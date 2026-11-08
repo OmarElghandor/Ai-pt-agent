@@ -73,18 +73,22 @@ export type {
 export {
   clearFreeTopicsCache,
   freeTopicById,
+  freeTopicFromGoalBank,
   freeTopicFromThreadFile,
   listThreadTopicIdsFromFiles,
   loadFreeTopicsFile,
   loadThreadTopic,
   loadThreadTopicFromFile,
   loadTopicAngles,
+  parseLessonDayTopicId,
   requireFreeTopic,
   requireThreadTopic,
   requireTopicAngles,
+  resolveFreeTopic,
   threadsFilePath,
   topicAnglesFromThreads,
   wordSetFromThreadFile,
+  threadCatalogTopicById,
 } from './freeLoad';
 
 export {

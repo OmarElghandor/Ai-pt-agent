@@ -27,7 +27,6 @@ import {
   freeTopicById,
   isOpenTopicId,
   loadThreadTopic,
-  OPEN_TOPIC_ID,
   requirePersona,
   type FreeTopic,
 } from '@/lib/v2/convo/topics';
@@ -500,11 +499,8 @@ export async function runFreeConvoTurn(
   const topicId = session.topic_id;
   if (!topicId) throw new Error('free session missing topic_id');
 
-  // Locked catalog ids (day-1, direcoes, …) may have no free-topic file — fall back to open.
-  const topic =
-    input.topic ??
-    freeTopicById(topicId) ??
-    (session.topic_locked ? freeTopicById(OPEN_TOPIC_ID) : null);
+  // Catalog ids (day-1, direcoes, …) resolve via freeTopicById (threads ∪ banks).
+  const topic = input.topic ?? freeTopicById(topicId);
   if (!topic) throw new Error(`Unknown free topic: ${topicId}`);
 
   if (
