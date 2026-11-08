@@ -105,10 +105,13 @@ export function computeDayReadiness(
     lesson = 'published';
   } else if (snap.lesson) {
     const meta = (snap.lesson.meta ?? null) as PublishBlockMeta | null;
-    if (needsReviewForAutoPublish(meta)) {
+    const prepareErrorEg = snap.lesson.meta?.prepare_error_eg?.trim() || null;
+    if (needsReviewForAutoPublish(meta) || prepareErrorEg) {
+      // Publish/gate failure stores prepare_error_eg on the draft — treat as
+      // needs_review so Talk stops polling and shows the Egyptian copy.
       lesson = 'needs_review';
       error_eg =
-        snap.lesson.meta?.prepare_error_eg?.trim() ||
+        prepareErrorEg ||
         snap.prepare_error_eg?.trim() ||
         NEEDS_REVIEW_EG;
     } else if (runningLesson) {

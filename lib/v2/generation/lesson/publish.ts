@@ -33,11 +33,16 @@ export class PublishLessonError extends Error {
 /**
  * Sole path to `status: published`. Runs block gate, strict validate,
  * registry write, then demotes other published versions.
+ *
+ * `force: true` (dev / talk testing only): skip block gate, strict
+ * validation, and hard story readiness — still flips status + registry.
  */
 export async function publishLesson(opts: {
   day: number;
   targetLang?: string;
   version?: number;
+  /** Bypass blockers / strict validation (local testing). */
+  force?: boolean;
 }): Promise<{
   lesson: SavedLesson;
   registry: { written: number; conflicts: string[] };
@@ -47,6 +52,7 @@ export async function publishLesson(opts: {
   }
   await connectMongo();
   const target_lang = opts.targetLang ?? 'pt-PT';
+  const force = Boolean(opts.force);
 
   const lesson =
     opts.version != null
@@ -56,7 +62,10 @@ export async function publishLesson(opts: {
     throw new PublishLessonError('No lesson for day', 'not_found');
   }
 
-  if (isBlockedForPublish(lesson.meta as GenerationMeta | undefined)) {
+  if (
+    !force &&
+    isBlockedForPublish(lesson.meta as GenerationMeta | undefined)
+  ) {
     throw new PublishLessonError(
       'Cannot publish while flagged / blocked',
       'blocked',
@@ -64,35 +73,44 @@ export async function publishLesson(opts: {
     );
   }
 
-  const validation = validateLessonPack(lesson.data as LessonPack, {
-    mode: 'strict',
-  });
-  if (hasErrors(validation)) {
-    throw new PublishLessonError('Strict validation failed', 'validation', {
-      issues: validation.issues.filter((i) => i.severity === 'error'),
+  if (!force) {
+    const validation = validateLessonPack(lesson.data as LessonPack, {
+      mode: 'strict',
     });
+    if (hasErrors(validation)) {
+      throw new PublishLessonError('Strict validation failed', 'validation', {
+        issues: validation.issues.filter((i) => i.severity === 'error'),
+      });
+    }
   }
 
   const pack = lesson.data as LessonPack;
   const storyId = pack.lesson.story_id;
+  let storyReady = false;
   if (storyId) {
     const story = await getStoryVersion({
       day: opts.day,
       version: lesson.version,
       targetLang: lesson.target_lang,
     });
-    if (!story || story.id !== storyId) {
-      throw new PublishLessonError(
-        'Story document missing or id mismatch',
-        'story',
-        { storyId, story: story?.id },
-      );
-    }
-    if (story.status === 'failed' || !story.lines?.length) {
+    const ok =
+      Boolean(story) &&
+      story!.id === storyId &&
+      story!.status !== 'failed' &&
+      Boolean(story!.lines?.length);
+    if (!ok && !force) {
+      if (!story || story.id !== storyId) {
+        throw new PublishLessonError(
+          'Story document missing or id mismatch',
+          'story',
+          { storyId, story: story?.id },
+        );
+      }
       throw new PublishLessonError('Story is not ready to publish', 'story', {
         status: story.status,
       });
     }
+    storyReady = ok;
   }
 
   const registry = await publishItemsToRegistry({
@@ -100,7 +118,7 @@ export async function publishLesson(opts: {
     targetLang: lesson.target_lang,
     items: (pack.items as Item[]) ?? [],
   });
-  if (registry.conflicts.length) {
+  if (registry.conflicts.length && !force) {
     throw new PublishLessonError('Registry tl conflicts', 'registry', {
       conflicts: registry.conflicts,
     });
@@ -126,7 +144,7 @@ export async function publishLesson(opts: {
     { $set: { status: 'reviewed' } },
   );
 
-  if (storyId) {
+  if (storyId && storyReady) {
     await publishStoryVersion({
       day: opts.day,
       version: lesson.version,
@@ -135,6 +153,16 @@ export async function publishLesson(opts: {
   }
 
   doc.status = 'published';
+  if (force) {
+    const prev = ((doc as { meta?: GenerationMeta }).meta ??
+      {}) as GenerationMeta;
+    (doc as { meta?: GenerationMeta }).meta = {
+      ...prev,
+      flagged: false,
+      prepare_error_eg: undefined,
+    };
+    doc.markModified?.('meta');
+  }
   await doc.save();
 
   const { markPacksStaleForLesson } = await import(

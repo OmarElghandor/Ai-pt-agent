@@ -14,7 +14,10 @@ import type {
   ConvoSurvivalAction,
   ConvoTurnStreamEvent,
 } from '@/lib/v2/convo/turn';
-import type { DayReadiness } from '@/lib/v2/generation/prepare';
+import {
+  isTerminalPrepareFailure,
+  type DayReadiness,
+} from '@/lib/v2/generation/prepare/types';
 import {
   mapCharacterNode,
   mapHiddenForPhase,
@@ -610,6 +613,12 @@ export function TalkSession({ packId }: Props) {
           setError(body.error_eg);
           return;
         }
+        if (isTerminalPrepareFailure(body)) {
+          setPrepareFailed(true);
+          setReadyToast(false);
+          setError(body.error_eg);
+          return;
+        }
         if (body.ready) {
           setReadyToast(true);
           // Auto-open after a short beat so the toast can flash.
@@ -638,7 +647,7 @@ export function TalkSession({ packId }: Props) {
 
   const submitText = () => {
     const t = text.trim();
-    if (!t || busy || !pending) return;
+    if (!t) return;
     const learnerTurnId = newId('you');
     setBubbles((prev) => [
       ...prev,
@@ -806,6 +815,12 @@ export function TalkSession({ packId }: Props) {
   }, [done, snapshot, visual, packId, day, surfaceById]);
 
   if (preparing) {
+    const retryStart = () => {
+      setPrepareFailed(false);
+      setError(null);
+      setReadyToast(false);
+      setStartNonce((n) => n + 1);
+    };
     return (
       <PreparingDayScreen
         partnerName={partnerName}
@@ -814,7 +829,8 @@ export function TalkSession({ packId }: Props) {
         readyToast={readyToast}
         failed={prepareFailed}
         errorEg={error}
-        onOpen={() => setStartNonce((n) => n + 1)}
+        onOpen={retryStart}
+        onRetry={retryStart}
         onPracticeNow={() => {
           const q = day != null ? `?day=${day}` : '';
           router.push(`/talk/free/open${q}`);
@@ -1163,9 +1179,8 @@ export function TalkSession({ packId }: Props) {
                     <button
                       key={a}
                       type="button"
-                      disabled={busy}
                       onClick={() => setText((t) => t + a)}
-                      className="h-7 min-w-7 rounded-md border border-[color:var(--ft-sand,#C4A574)] bg-[color:var(--ft-surface,#FBF8F3)] px-1.5 font-[family-name:var(--font-ft-pt,var(--font-v2-target))] text-xs text-[color:var(--ft-ink,#202A25)] disabled:opacity-50"
+                      className="h-7 min-w-7 rounded-md border border-[color:var(--ft-sand,#C4A574)] bg-[color:var(--ft-surface,#FBF8F3)] px-1.5 font-[family-name:var(--font-ft-pt,var(--font-v2-target))] text-xs text-[color:var(--ft-ink,#202A25)]"
                     >
                       {a}
                     </button>
@@ -1174,7 +1189,6 @@ export function TalkSession({ packId }: Props) {
                 <input
                   dir="ltr"
                   value={text}
-                  disabled={busy || !pending}
                   onChange={(e) => setText(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
@@ -1182,15 +1196,14 @@ export function TalkSession({ packId }: Props) {
                       submitText();
                     }
                   }}
-                  placeholder={busy ? '…' : 'اكتب بالبرتغالي…'}
-                  className="w-full rounded-2xl border border-[color:var(--ft-border,#E5DED5)] bg-white px-3 py-2.5 text-start font-[family-name:var(--font-ft-pt,var(--font-v2-target))] text-sm text-[color:var(--ft-ink,#202A25)] outline-none focus:border-[color:var(--ft-sage,#6B7F6E)] disabled:opacity-50"
+                  placeholder="اكتب بالبرتغالي…"
+                  className="w-full rounded-2xl border border-[color:var(--ft-border,#E5DED5)] bg-white px-3 py-2.5 text-start font-[family-name:var(--font-ft-pt,var(--font-v2-target))] text-sm text-[color:var(--ft-ink,#202A25)] outline-none focus:border-[color:var(--ft-sage,#6B7F6E)]"
                 />
               </div>
               <button
                 type="button"
-                disabled={busy || !text.trim() || !pending}
                 onClick={submitText}
-                className="shrink-0 rounded-full bg-[color:var(--ft-sage,#6B7F6E)] px-4 py-2.5 font-[family-name:var(--font-ft-ar,var(--font-v2-arabic))] text-sm font-semibold text-white shadow-sm disabled:opacity-50"
+                className="shrink-0 rounded-full bg-[color:var(--ft-sage,#6B7F6E)] px-4 py-2.5 font-[family-name:var(--font-ft-ar,var(--font-v2-arabic))] text-sm font-semibold text-white shadow-sm"
               >
                 إرسال
               </button>

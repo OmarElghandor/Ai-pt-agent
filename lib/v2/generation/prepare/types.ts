@@ -57,3 +57,18 @@ export type DayReadinessSnapshot = {
   /** Failed prepare_day error, if the latest prepare job failed. */
   prepare_error_eg?: string | null;
 };
+
+/**
+ * True when prepare finished unsuccessfully: error copy, no running job,
+ * and the day is still not ready. Clients should stop polling and show retry.
+ * Lives here (not readiness.ts) so client components can import it without Mongo.
+ */
+export function isTerminalPrepareFailure(
+  readiness: Pick<DayReadiness, 'ready' | 'error_eg' | 'job_id'>,
+): boolean {
+  return (
+    !readiness.ready &&
+    Boolean(readiness.error_eg?.trim()) &&
+    !readiness.job_id
+  );
+}

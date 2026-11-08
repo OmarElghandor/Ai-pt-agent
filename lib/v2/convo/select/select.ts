@@ -263,9 +263,48 @@ function findFlowQuestion(
 }
 
 /**
- * Authored flow: first question id whose item still needs that rung (M3).
+ * Generated packs sometimes put item ids in `flow` instead of question ids.
+ * Map an item id to the rung-appropriate choice/open question.
+ */
+function candidateFromItemFlowEntry(
+  pack: ConvoPackData,
+  itemId: string,
+  rung: ConvoRung,
+  review: boolean,
+): ConvoSelectCandidate | null {
+  const bank = pack.items[itemId];
+  if (!bank) return null;
+
+  if (rung === 'taught' || rung === 'heard') {
+    const choice = bank.choice_questions[0];
+    if (!choice) return null;
+    return {
+      id: choice.id,
+      tl: choice.tl,
+      item_id: itemId,
+      qkind: 'choice',
+    };
+  }
+  if (
+    rung === 'understood' ||
+    (review && (rung === 'said' || rung === 'assisted'))
+  ) {
+    const open = bank.open_questions[0];
+    if (!open) return null;
+    return {
+      id: open.id,
+      tl: open.tl,
+      item_id: open.item_id || itemId,
+      qkind: 'open',
+    };
+  }
+  return null;
+}
+
+/**
+ * Authored/generated flow: first entry whose item still needs that rung (M3).
  * Returns a single candidate, or [] if flow is exhausted for the group.
- * null when the group has no flow (fall back to ranking).
+ * null when the group has no flow, or no flow entry resolves (fall back to ranking).
  */
 function candidatesFromFlow(
   pack: ConvoPackData,
@@ -280,22 +319,36 @@ function candidatesFromFlow(
       (r) => r === 'said' || r === 'assisted',
     );
 
-  for (const qid of group.flow) {
-    const cand = findFlowQuestion(pack, qid);
-    if (!cand) continue;
-    const rung = session.rungs[cand.item_id] ?? 'taught';
-
-    if (cand.qkind === 'choice') {
-      if (rung === 'taught' || rung === 'heard') return [cand];
+  let resolvedAny = false;
+  for (const entry of group.flow) {
+    const byQuestion = findFlowQuestion(pack, entry);
+    if (byQuestion) {
+      resolvedAny = true;
+      const rung = session.rungs[byQuestion.item_id] ?? 'taught';
+      if (byQuestion.qkind === 'choice') {
+        if (rung === 'taught' || rung === 'heard') return [byQuestion];
+        continue;
+      }
+      if (byQuestion.qkind === 'open') {
+        if (rung === 'understood') return [byQuestion];
+        if (review && (rung === 'said' || rung === 'assisted')) {
+          return [byQuestion];
+        }
+        continue;
+      }
       continue;
     }
-    if (cand.qkind === 'open') {
-      if (rung === 'understood') return [cand];
-      // Review mode may re-open said/assisted items.
-      if (review && (rung === 'said' || rung === 'assisted')) return [cand];
+
+    if (pack.items[entry]) {
+      resolvedAny = true;
+      const rung = session.rungs[entry] ?? 'taught';
+      const fromItem = candidateFromItemFlowEntry(pack, entry, rung, review);
+      if (fromItem) return [fromItem];
       continue;
     }
   }
+  // Nothing in flow looked like a question or item → ranking fallback.
+  if (!resolvedAny) return null;
   return [];
 }
 

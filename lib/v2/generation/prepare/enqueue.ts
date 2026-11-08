@@ -45,6 +45,36 @@ export function decidePrepareJoin(opts: {
 }
 
 /**
+ * Fire an inline prepare drain unless startWorker is explicitly false.
+ * `launch` is a test seam — production uses runWorkerUntilIdle.
+ */
+export function startPrepareWorkerIfRequested(
+  startWorker?: boolean,
+  launch?: () => void,
+): void {
+  if (startWorker === false) return;
+  if (launch) {
+    launch();
+    return;
+  }
+  void import('@/lib/v2/generation/jobs')
+    .then(({ runWorkerUntilIdle }) => {
+      const workerId = `prepare-${process.pid}-${Date.now().toString(36)}`;
+      return runWorkerUntilIdle(workerId, {
+        maxEmptyRounds: 5,
+        idleMs: 2000,
+        deadlineMs: 25 * 60 * 1000,
+      });
+    })
+    .catch((err) => {
+      console.error(
+        '[v2-prepare] worker failed',
+        err instanceof Error ? err.message : err,
+      );
+    });
+}
+
+/**
  * Idempotent: one prepare_day job at a time per language × day.
  * A second caller joins the running job via the TTL lock.
  */
@@ -124,6 +154,9 @@ export async function enqueueOrJoinPrepareDay(opts: {
       targetLang: target_lang,
       jobId: decision.jobId,
     });
+    // Restart drain even when joining — orphaned queued/running jobs after
+    // a next restart otherwise sit forever with no worker.
+    startPrepareWorkerIfRequested(opts.startWorker);
     return {
       jobId: decision.jobId,
       day,
@@ -163,6 +196,7 @@ export async function enqueueOrJoinPrepareDay(opts: {
     await V2JobModel().deleteOne({ _id: doc._id });
     const lock = await getPrepareLock(day, target_lang);
     if (lock) {
+      startPrepareWorkerIfRequested(opts.startWorker);
       return {
         jobId: lock.job_id,
         day,
@@ -174,20 +208,7 @@ export async function enqueueOrJoinPrepareDay(opts: {
     // Extremely unlikely — fall through as created.
   }
 
-  if (opts.startWorker !== false) {
-    const { runWorkerUntilIdle } = await import('@/lib/v2/generation/jobs');
-    const workerId = `prepare-${process.pid}-${Date.now().toString(36)}`;
-    void runWorkerUntilIdle(workerId, {
-      maxEmptyRounds: 5,
-      idleMs: 2000,
-      deadlineMs: 25 * 60 * 1000,
-    }).catch((err) => {
-      console.error(
-        '[v2-prepare] worker failed',
-        err instanceof Error ? err.message : err,
-      );
-    });
-  }
+  startPrepareWorkerIfRequested(opts.startWorker);
 
   return {
     jobId,

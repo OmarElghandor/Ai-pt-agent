@@ -55,13 +55,16 @@ export {
 
 export {
   loadConvoItemSurfaces,
+  resolveConvoItemSurfacesForPack,
   surfaceTlFor,
   clearConvoItemSurfacesCache,
 } from './surfaces';
 
 export {
   ensureConvoPackReady,
+  packUnusableResult,
   type EnsureConvoPackErrorCode,
   type EnsureConvoPackResult,
+  type EnsureConvoPackDeps,
 } from './ensure';
 // EnsureConvoPackResult now includes a non-blocking `preparing` branch (P3).

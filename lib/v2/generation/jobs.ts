@@ -215,10 +215,12 @@ export async function enqueueAndStartGenerateConvoPack(opts: {
 }> {
   const enqueued = await enqueueGenerateConvoPack(opts);
   const workerId = `admin-convo-${process.pid}-${Date.now().toString(36)}`;
+  // Match prepare's CONVO_WAIT_MS (10 min). A 3-min drain dies while the
+  // outer prepare_day job is blocked waiting for text_ready (concurrency=1).
   void runWorkerUntilIdle(workerId, {
     maxEmptyRounds: 3,
     idleMs: 1500,
-    deadlineMs: 180_000,
+    deadlineMs: 600_000,
   }).catch((err) => {
     console.error(
       '[v2-gen] convo worker failed',

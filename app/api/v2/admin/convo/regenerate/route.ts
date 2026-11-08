@@ -8,9 +8,9 @@ import { collectConvoSegments } from '@/lib/v2/generation/convo/warmAudio';
 import { warmConvoPackAudio } from '@/lib/v2/generation/convo/warmAudio';
 import {
   clearConvoItemSurfacesCache,
-  loadConvoItemSurfaces,
   packIdToDay,
   requireConvoPackAsync,
+  resolveConvoItemSurfacesForPack,
 } from '@/lib/v2/convo/pack';
 import { freePackId, MongoConvoSessionStore } from '@/lib/v2/convo/session';
 
@@ -96,7 +96,7 @@ export async function POST(req: Request) {
           preparing: false,
         });
       }
-      const surfaces = loadConvoItemSurfaces();
+      const surfaces = await resolveConvoItemSurfacesForPack(packId);
       let pack;
       try {
         pack = await requireConvoPackAsync(packId, { itemSurfaces: surfaces });
@@ -163,7 +163,7 @@ export async function POST(req: Request) {
       );
     }
     clearConvoItemSurfacesCache();
-    const surfaces = loadConvoItemSurfaces();
+    const surfaces = await resolveConvoItemSurfacesForPack(packId);
     const pack = await requireConvoPackAsync(packId, { itemSurfaces: surfaces });
     const segments = collectConvoSegments(pack);
     const cleared = clearCachedAudioForTexts(

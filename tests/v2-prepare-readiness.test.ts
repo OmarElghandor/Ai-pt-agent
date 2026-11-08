@@ -141,6 +141,20 @@ describe('computeDayReadiness', () => {
     );
     assert.equal(r.error_eg, 'فشل التوليد');
   });
+
+  it('treats lesson meta.prepare_error_eg as needs_review', () => {
+    const r = computeDayReadiness(
+      base({
+        lesson: {
+          status: 'draft',
+          meta: { prepare_error_eg: 'الدرس ده محتاج مراجعة قبل ما يتنشر 🙏 هيبقى جاهز قريب' },
+        },
+      }),
+    );
+    assert.equal(r.lesson, 'needs_review');
+    assert.match(r.error_eg ?? '', /محتاج مراجعة/);
+    assert.equal(r.ready, false);
+  });
 });
 
 describe('needsReviewForAutoPublish', () => {

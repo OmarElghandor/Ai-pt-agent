@@ -8,17 +8,19 @@ export {
   needsReviewForAutoPublish,
 } from './readiness';
 
-export type {
-  AudioReadiness,
-  DayReadiness,
-  DayReadinessSnapshot,
-  LessonReadiness,
-  PackReadiness,
+export {
+  isTerminalPrepareFailure,
+  type AudioReadiness,
+  type DayReadiness,
+  type DayReadinessSnapshot,
+  type LessonReadiness,
+  type PackReadiness,
 } from './types';
 
 export {
   decidePrepareJoin,
   enqueueOrJoinPrepareDay,
+  startPrepareWorkerIfRequested,
   type EnqueuePrepareDayResult,
 } from './enqueue';
 

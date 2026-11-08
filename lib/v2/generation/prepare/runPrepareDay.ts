@@ -1,6 +1,7 @@
 import type { LessonPack } from '@/lib/v2/content/lesson';
 import { getPublishedLesson } from '@/lib/v2/content/getPublishedLesson';
 import { convoPackFileExists } from '@/lib/v2/convo/pack/load';
+import { isV2DevAllowed } from '@/lib/v2/flags';
 import { connectMongo, mongoConfigured } from '@/lib/mongo';
 import { V2ConvoPackModel, V2JobModel } from '@/lib/v2/mongo/models';
 import { publishLesson } from '@/lib/v2/generation/lesson/publish';
@@ -56,6 +57,7 @@ export type PrepareDayDeps = {
     day: number;
     targetLang: string;
     version: number;
+    force?: boolean;
   }) => Promise<{ lesson: SavedLesson }>;
   updateMeta: (opts: {
     day: number;
@@ -75,6 +77,8 @@ export type PrepareDayDeps = {
   }) => Promise<boolean>;
   warmLesson: (pack: LessonPack) => Promise<unknown>;
   setProgress?: (progress: PrepareProgress) => Promise<void>;
+  /** Test seam; defaults to isV2DevAllowed(). */
+  isDevAllowed?: () => boolean;
 };
 
 function sleep(ms: number): Promise<void> {
@@ -131,10 +135,11 @@ export function createDefaultPrepareDeps(): PrepareDayDeps {
       const result = await generateLessonDraft({ day, skipImages });
       return { saved: result.saved, pack: result.pack };
     },
-    publish: async ({ day, targetLang, version }) => {
-      const out = await publishLesson({ day, targetLang, version });
+    publish: async ({ day, targetLang, version, force }) => {
+      const out = await publishLesson({ day, targetLang, version, force });
       return { lesson: out.lesson };
     },
+    isDevAllowed: isV2DevAllowed,
     updateMeta: async ({ day, targetLang, version, meta }) => {
       await updateDraft({
         day,
@@ -197,13 +202,11 @@ export async function runPrepareDayChain(opts: {
   let published = await deps.getPublished(opts.day);
   if (!published) {
     let latest = await deps.getLatest(opts.day, targetLang);
-    const usableDraft =
-      latest &&
-      latest.status !== 'published' &&
-      latest.meta?.text_ready === true &&
-      !needsReviewForAutoPublish(latest.meta);
+    // Reuse any existing draft — do not regenerate just because text_ready
+    // is missing. Gate + publish below decide if it's shippable.
+    const existingDraft = Boolean(latest && latest.status !== 'published');
 
-    if (!usableDraft) {
+    if (!existingDraft) {
       try {
         const generated = await withOneRetry(() =>
           deps.generateDraft({ day: opts.day, skipImages: true }),
@@ -241,7 +244,8 @@ export async function runPrepareDayChain(opts: {
     });
 
     latest = (await deps.getLatest(opts.day, targetLang)) ?? latest!;
-    if (needsReviewForAutoPublish(latest.meta)) {
+    const allowForce = (deps.isDevAllowed ?? isV2DevAllowed)();
+    if (needsReviewForAutoPublish(latest.meta) && !allowForce) {
       try {
         await deps.updateMeta({
           day: opts.day,
@@ -269,6 +273,7 @@ export async function runPrepareDayChain(opts: {
           day: opts.day,
           targetLang,
           version: latest!.version,
+          ...(allowForce ? { force: true } : {}),
         }),
       );
       await deps.updateMeta({
@@ -278,6 +283,8 @@ export async function runPrepareDayChain(opts: {
         meta: {
           auto_published: true,
           auto_published_checked: false,
+          flagged: false,
+          prepare_error_eg: undefined,
         },
       });
     } catch (err) {

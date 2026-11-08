@@ -48,6 +48,7 @@ function mockDeps(
   calls: {
     generate: number;
     publish: number;
+    publishForce: number;
     enqueueConvo: number;
     warm: number;
   };
@@ -56,6 +57,7 @@ function mockDeps(
   const calls = {
     generate: 0,
     publish: 0,
+    publishForce: 0,
     enqueueConvo: 0,
     warm: 0,
   };
@@ -77,8 +79,9 @@ function mockDeps(
       };
       return { saved: draft, pack: draft.data };
     },
-    publish: async () => {
+    publish: async (opts) => {
       calls.publish += 1;
+      if (opts.force) calls.publishForce += 1;
       published = true;
       draft = { ...draft, status: 'published' };
       return { lesson: draft };
@@ -104,6 +107,8 @@ function mockDeps(
     setProgress: async (p) => {
       progress.push({ ...p });
     },
+    // Prod-like default so gate tests stay stable under NODE_ENV=development.
+    isDevAllowed: () => false,
     ...overrides,
   };
 
@@ -112,26 +117,6 @@ function mockDeps(
 
 describe('runPrepareDayChain', () => {
   it('stops at needs_review on fatal assemble issues without publishing', async () => {
-    const { deps, calls } = mockDeps({
-      draftMeta: {
-        text_ready: true,
-        issues: [
-          {
-            rule: 'core_id_missing',
-            severity: 'error',
-            path: 'items',
-            message: 'missing',
-          },
-        ],
-      },
-      generateDraft: async () => {
-        throw new Error('should not generate when draft exists with text_ready');
-      },
-    });
-
-    // Override getLatest to return blocked draft; generate shouldn't run
-    // because usableDraft requires !needsReview — so it WILL try generate.
-    // Force generate to produce the blocked meta:
     const blocked = draftLesson(34, {
       text_ready: true,
       issues: [
@@ -144,19 +129,42 @@ describe('runPrepareDayChain', () => {
       ],
     });
     let generateCalls = 0;
-    deps.getLatest = async () => blocked;
-    deps.getPublished = async () => null;
-    deps.generateDraft = async () => {
-      generateCalls += 1;
-      return { saved: blocked, pack: blocked.data };
-    };
+    const { deps, calls } = mockDeps({
+      getLatest: async () => blocked,
+      getPublished: async () => null,
+      generateDraft: async () => {
+        generateCalls += 1;
+        return { saved: blocked, pack: blocked.data };
+      },
+    });
 
     const result = await runPrepareDayChain({ day: 34, deps });
     assert.equal(result.status, 'needs_review');
     assert.equal(calls.publish, 0);
     assert.equal(calls.enqueueConvo, 0);
     assert.ok(result.error_eg);
-    assert.equal(generateCalls, 1);
+    // Existing draft is reused; blockers surface at the gate.
+    assert.equal(generateCalls, 0);
+  });
+
+  it('reuses an existing draft without text_ready instead of regenerating', async () => {
+    const draft = draftLesson(1, { issues: [] }); // no text_ready
+    let generateCalls = 0;
+    const { deps, calls } = mockDeps({
+      authored: false,
+      getLatest: async () => draft,
+      getPublished: async () => null,
+      generateDraft: async () => {
+        generateCalls += 1;
+        throw new Error('should not regenerate existing draft');
+      },
+    });
+
+    const result = await runPrepareDayChain({ day: 1, deps });
+    assert.equal(result.status, 'ready');
+    assert.equal(generateCalls, 0);
+    assert.equal(calls.publish, 1);
+    assert.equal(calls.enqueueConvo, 1);
   });
 
   it('skips convo generation when an authored pack exists', async () => {
@@ -208,6 +216,33 @@ describe('runPrepareDayChain', () => {
     assert.equal(calls.publish, 0);
     assert.equal(calls.enqueueConvo, 0);
   });
+
+  it('force-publishes a blocked draft when isDevAllowed', async () => {
+    const blocked = draftLesson(1, {
+      text_ready: true,
+      issues: [
+        {
+          rule: 'core_id_missing',
+          severity: 'error',
+          path: 'items',
+          message: 'missing',
+        },
+      ],
+      prepare_error_eg: 'الدرس ده محتاج مراجعة',
+    });
+    const { deps, calls } = mockDeps({
+      authored: false,
+      getLatest: async () => blocked,
+      getPublished: async () => null,
+      isDevAllowed: () => true,
+    });
+
+    const result = await runPrepareDayChain({ day: 1, deps });
+    assert.equal(result.status, 'ready');
+    assert.equal(calls.publish, 1);
+    assert.equal(calls.publishForce, 1);
+    assert.equal(calls.enqueueConvo, 1);
+  });
 });
 
 describe('decidePrepareJoin', () => {
@@ -235,5 +270,49 @@ describe('decidePrepareJoin', () => {
     if (second.action === 'join') {
       assert.equal(second.jobId, 'job-abc');
     }
+  });
+});
+
+describe('startPrepareWorkerIfRequested', () => {
+  it('invokes launch when startWorker is true (join path)', async () => {
+    const { decidePrepareJoin, startPrepareWorkerIfRequested } = await import(
+      '@/lib/v2/generation/prepare/enqueue'
+    );
+    const decision = decidePrepareJoin({
+      ready: false,
+      needsReviewWithoutJob: false,
+      lockJobId: 'job-orphaned',
+      lockJobActive: true,
+      runningJobId: 'job-orphaned',
+    });
+    assert.equal(decision.action, 'join');
+
+    let launched = 0;
+    startPrepareWorkerIfRequested(true, () => {
+      launched += 1;
+    });
+    assert.equal(launched, 1);
+  });
+
+  it('invokes launch when startWorker is omitted (default)', async () => {
+    const { startPrepareWorkerIfRequested } = await import(
+      '@/lib/v2/generation/prepare/enqueue'
+    );
+    let launched = 0;
+    startPrepareWorkerIfRequested(undefined, () => {
+      launched += 1;
+    });
+    assert.equal(launched, 1);
+  });
+
+  it('does not launch when startWorker is false', async () => {
+    const { startPrepareWorkerIfRequested } = await import(
+      '@/lib/v2/generation/prepare/enqueue'
+    );
+    let launched = 0;
+    startPrepareWorkerIfRequested(false, () => {
+      launched += 1;
+    });
+    assert.equal(launched, 0);
   });
 });

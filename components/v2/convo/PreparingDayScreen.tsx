@@ -13,6 +13,8 @@ type Props = {
   failed?: boolean;
   errorEg?: string | null;
   onOpen?: () => void;
+  /** Re-enqueue prepare after a terminal failure. */
+  onRetry?: () => void;
   onPracticeNow: () => void;
   backHref?: string;
 };
@@ -77,6 +79,7 @@ export function PreparingDayScreen({
   failed,
   errorEg,
   onOpen,
+  onRetry,
   onPracticeNow,
   backHref = '/talk/learn',
 }: Props) {
@@ -115,10 +118,21 @@ export function PreparingDayScreen({
         </h1>
 
         {failed ? (
-          <p className="mt-4 rounded-2xl border border-amber-200/80 bg-amber-50/80 px-4 py-3 text-center font-[family-name:var(--font-ft-ar,var(--font-v2-arabic))] text-[14px] leading-relaxed text-[color:var(--ft-ink,#202A25)]">
-            {errorEg ||
-              'الدرس ده محتاج مراجعة قبل ما يتنشر 🙏 هيبقى جاهز قريب'}
-          </p>
+          <div className="mt-4 flex flex-col gap-3">
+            <p className="rounded-2xl border border-amber-200/80 bg-amber-50/80 px-4 py-3 text-center font-[family-name:var(--font-ft-ar,var(--font-v2-arabic))] text-[14px] leading-relaxed text-[color:var(--ft-ink,#202A25)]">
+              {errorEg ||
+                'الدرس ده محتاج مراجعة قبل ما يتنشر 🙏 هيبقى جاهز قريب'}
+            </p>
+            {onRetry ? (
+              <button
+                type="button"
+                onClick={onRetry}
+                className="mx-auto font-[family-name:var(--font-ft-ar,var(--font-v2-arabic))] text-[14px] font-semibold text-[color:var(--ft-sage,#6B7F6E)]"
+              >
+                حاول تاني
+              </button>
+            ) : null}
+          </div>
         ) : (
           <>
             <div className="mt-8 flex flex-col gap-4 px-2">
@@ -132,7 +146,8 @@ export function PreparingDayScreen({
           </>
         )}
 
-        {readyToast ? (
+        {/* Prefer failure copy over a false «جاهز» toast. */}
+        {readyToast && !failed ? (
           <div className="mt-6 rounded-2xl border border-[color:var(--ft-sage,#6B7F6E)]/30 bg-white px-4 py-3 text-center shadow-sm">
             <p className="font-[family-name:var(--font-ft-ar,var(--font-v2-arabic))] text-[15px] font-semibold text-[color:var(--ft-ink,#202A25)]">
               الدرس جاهز 🎉

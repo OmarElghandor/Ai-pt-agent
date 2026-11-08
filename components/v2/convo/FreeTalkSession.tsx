@@ -357,6 +357,7 @@ export function FreeTalkSession({
   };
 
   const isLessonDay = lessonDay != null && lessonDay > 0;
+  const isOpenTopic = openMode || topicId === 'open';
   const titlesLine =
     titleTl && titleAr
       ? `${titleTl} · ${titleAr}`
