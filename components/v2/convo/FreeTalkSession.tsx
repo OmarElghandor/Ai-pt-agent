@@ -160,6 +160,12 @@ export function FreeTalkSession({
         });
         return;
       }
+      if (event.type === 'topic_lock') {
+        setTitleTl(event.title_tl);
+        setTitleAr(event.title_ar);
+        setOpenMode(false);
+        return;
+      }
       if (event.type === 'metrics') {
         setMetrics({
           input_tokens: event.input_tokens,

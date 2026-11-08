@@ -77,4 +77,22 @@ describe('conversations v4 · V1 topic header', () => {
     });
     assert.equal(line, 'A casa · البيت');
   });
+
+  it('topic_lock titles switch chip to الاتجاهات', () => {
+    const lock = {
+      type: 'topic_lock' as const,
+      topic_id: 'direcoes',
+      title_tl: 'Direções',
+      title_ar: 'الاتجاهات',
+      teaching_mode: true,
+    };
+    const line = freeTalkTopicHeaderLine({
+      openMode: false,
+      topicId: lock.topic_id,
+      titleTl: lock.title_tl,
+      titleAr: lock.title_ar,
+    });
+    assert.match(line, /الاتجاهات/);
+    assert.doesNotMatch(line, /أي حاجة/);
+  });
 });
