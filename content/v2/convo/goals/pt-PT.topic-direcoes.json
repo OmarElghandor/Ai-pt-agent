@@ -367,12 +367,12 @@
       "intent_eg": "يقول فيه إشارة ولا لأ",
       "intent_en": "say whether there is a traffic light",
       "teach": {
-        "tl": "Combinado! 👍",
-        "ar": "اتفقنا!",
+        "tl": "Na minha rua há um semáforo. 🚦",
+        "ar": "في شارعي توجد إشارة مرور.",
         "meaning_eg": "o semáforo = الإشارة 🚦 · há = فيه"
       },
-      "ask_tl": "E depois? Há um semáforo? 🚦",
-      "ask_ar": "وبعد ذلك؟ هل هناك إشارة مرور؟",
+      "ask_tl": "E na tua rua? Há um semáforo?",
+      "ask_ar": "وفي شارعك؟ هل توجد إشارة مرور؟",
       "examples_tl": [
         "Sim, há um semáforo.",
         "Há um semáforo.",
@@ -399,12 +399,12 @@
       "intent_eg": "يقول يلف بعد الإشارة",
       "intent_en": "say to turn after the traffic light",
       "teach": {
-        "tl": "Ok! E viro antes ou depois do semáforo?",
-        "ar": "حسنًا! وهل أنعطف قبل الإشارة أم بعدها؟",
+        "tl": "Para a minha casa, viras depois do semáforo. 🚦➡️",
+        "ar": "إلى بيتي، تنعطف بعد الإشارة.",
         "meaning_eg": "depois de = بعد · de + o = do: depois do semáforo"
       },
-      "ask_tl": "Viro antes ou depois do semáforo?",
-      "ask_ar": "هل أنعطف قبل الإشارة أم بعدها؟",
+      "ask_tl": "E para a tua casa? Viro antes ou depois do semáforo?",
+      "ask_ar": "وإلى بيتك؟ هل أنعطف قبل الإشارة أم بعدها؟",
       "examples_tl": [
         "Depois do semáforo.",
         "Vira depois do semáforo."
@@ -429,12 +429,12 @@
       "intent_eg": "يقول البيت في آخر الشارع",
       "intent_en": "say the house is at the end of the street",
       "teach": {
-        "tl": "E a tua casa? Fica no meio ou ao fim da rua? 🏘️",
-        "ar": "وبيتك؟ هل هو في منتصف الشارع أم في آخره؟",
+        "tl": "A minha casa fica ao fim da rua. 🏠",
+        "ar": "بيتي في آخر الشارع.",
         "meaning_eg": "ao fim da rua = في آخر الشارع · no meio = في النص"
       },
-      "ask_tl": "A tua casa fica ao fim da rua?",
-      "ask_ar": "هل بيتك في آخر الشارع؟",
+      "ask_tl": "E a tua? Fica ao fim da rua ou no meio?",
+      "ask_ar": "وبيتك؟ هل هو في آخر الشارع أم في منتصفه؟",
       "examples_tl": [
         "Fica ao fim da rua.",
         "Sim, ao fim da rua.",
