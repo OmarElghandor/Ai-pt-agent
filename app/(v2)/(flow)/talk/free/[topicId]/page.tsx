@@ -5,7 +5,7 @@ export default async function FreeTalkPage({
   searchParams,
 }: {
   params: Promise<{ topicId: string }>;
-  searchParams: Promise<{ day?: string }>;
+  searchParams: Promise<{ day?: string; level?: string }>;
 }) {
   const { topicId: raw } = await params;
   const topicId = decodeURIComponent(raw);
@@ -13,5 +13,8 @@ export default async function FreeTalkPage({
   const dayRaw = sp.day ? Number(sp.day) : NaN;
   const day =
     Number.isInteger(dayRaw) && dayRaw > 0 ? dayRaw : null;
-  return <FreeTalkSession topicId={topicId} day={day} />;
+  const levelRaw = sp.level ? Number(sp.level) : NaN;
+  const level =
+    Number.isInteger(levelRaw) && levelRaw > 0 ? levelRaw : null;
+  return <FreeTalkSession topicId={topicId} day={day} level={level} />;
 }

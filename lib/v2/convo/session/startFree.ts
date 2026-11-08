@@ -29,6 +29,8 @@ export type StartFreeConvoSessionOpts = {
   suggestedWords?: string[];
   /** Lesson day → load that day's goals (v3). */
   lessonDay?: number | null;
+  /** Curriculum level for opening chips / gating (v4). */
+  learnerLevel?: number | null;
   /** Injected for tests; otherwise loaded from Langify users.name. */
   learnerName?: string | null;
 };
@@ -147,6 +149,7 @@ export async function startFreeConvoSession(
     topic,
     now: opts.now,
     lessonDay: opts.lessonDay,
+    learnerLevel: opts.learnerLevel,
     ...(suggestedWords ? { suggestedWords } : {}),
   });
   const session = await opts.store.create(created);

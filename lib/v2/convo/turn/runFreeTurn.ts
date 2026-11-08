@@ -37,6 +37,14 @@ import {
   sessionInOpenMode,
 } from '@/lib/v2/convo/turn/freeMode';
 import {
+  applyRouterLock,
+  isExplicitTopicRequest,
+  isGreetingOrSmallTalk,
+  routeTopic,
+} from '@/lib/v2/convo/router';
+import { loadAuthoredTopicBank } from '@/lib/v2/convo/goals/loadTopicBank';
+import { oneChatOpeningFrame } from '@/lib/v2/convo/topics/openingChips';
+import {
   acceptModelReportedGoals,
   applyCompletedGoals,
   checkGoals,
@@ -46,6 +54,8 @@ import {
   GOALS_DONE_COACH_EG,
   goalStatesFromBank,
   isStuckHelpRequest,
+  loadGoalsForDay,
+  loadGoalsForTopic,
   openGoalsFromSession,
   pendingFrameFromGoal,
   refillSessionGoals,
@@ -588,9 +598,15 @@ export async function runFreeConvoTurn(
   }
 
   // V5: stuck help for goal sessions before Arabic side-channel handling.
+  // Empty opening turn (no exchanges yet) is not "stuck" — the model must ask.
+  const silenceIsStuck =
+    input.learnerText.trim().length === 0 &&
+    (session.turns_on_goal > 0 || session.last_exchanges.length > 0);
   if (
     hasGoals &&
-    isStuckHelpRequest(input.learnerText.trim())
+    (silenceIsStuck ||
+      (input.learnerText.trim().length > 0 &&
+        isStuckHelpRequest(input.learnerText.trim())))
   ) {
     const bank = resolveFreeGoalBank({
       topic,
@@ -839,8 +855,124 @@ export async function runFreeConvoTurn(
     }
   }
 
+  // —— v4 router: unlocked one-chat (greetings + topic-naming only) ——
+  if (
+    !session.topic_locked &&
+    !hasGoals &&
+    (isOpenTopicId(topic.id) || session.free_step.kind === 'open') &&
+    learnerText &&
+    (isGreetingOrSmallTalk(learnerText) ||
+      isExplicitTopicRequest(learnerText))
+  ) {
+    const level = session.learner_level ?? 1;
+    const decision = await routeTopic({
+      message: learnerText,
+      level,
+    });
+
+    if (decision.kind === 'greeting' || decision.kind === 'chips') {
+      const frame = oneChatOpeningFrame(level);
+      const replyTl =
+        decision.kind === 'greeting'
+          ? 'Olá! 😊 Sobre o que queres falar hoje?'
+          : 'Sobre o que queres falar? Escolhe um tema.';
+      const replyAr =
+        decision.kind === 'greeting'
+          ? 'مرحباً! عن ماذا تريد أن تتحدث اليوم؟'
+          : 'عن ماذا تريد أن تتحدث؟ اختر موضوعاً.';
+      emit({ type: 'bubble_ar', ar: replyAr, pt: replyTl });
+      emit({
+        type: 'question',
+        id: 'open.topic',
+        tl: replyTl,
+        kind: 'open',
+        item_id: 'open.topic',
+        audio_key: `free:${session.id}:open.topic`,
+      });
+      emit({
+        type: 'free_frame',
+        tl: frame.tl,
+        eg: frame.eg,
+        chips: frame.chips,
+      });
+      if (decision.kind === 'greeting') {
+        emit({
+          type: 'coach',
+          id: 'topic_reask',
+          eg: 'قول عايز تتكلم عن إيه — أو دوس موضوع من تحت',
+          moment: 'nudge',
+        });
+      }
+      session.pending_frame = frame;
+      session.last_exchanges = [
+        ...session.last_exchanges,
+        { role: 'learner', tl: learnerText },
+        { role: 'character', tl: replyTl },
+      ].slice(-6);
+      return finish(true);
+    }
+
+    // Lock topic and load goals, then fall through to goal path.
+    applyRouterLock(session, decision, { learnerLevel: level });
+    const bank =
+      decision.topic_id === 'day-1'
+        ? loadGoalsForDay(1)
+        : (loadAuthoredTopicBank(decision.topic_id) ??
+          (() => {
+            try {
+              return loadGoalsForTopic(decision.topic_id);
+            } catch {
+              return null;
+            }
+          })());
+    if (!bank && decision.is_new) {
+      const frame = oneChatOpeningFrame(level);
+      const replyTl = 'Boa ideia! Sobre o que queres falar exactamente?';
+      emit({
+        type: 'bubble_ar',
+        ar: 'فكرة جيدة! عن ماذا تريد أن تتحدث بالضبط؟',
+        pt: replyTl,
+      });
+      emit({
+        type: 'question',
+        id: 'open.topic',
+        tl: replyTl,
+        kind: 'open',
+        item_id: 'open.topic',
+        audio_key: `free:${session.id}:open.topic`,
+      });
+      emit({
+        type: 'free_frame',
+        tl: frame.tl,
+        eg: frame.eg,
+        chips: frame.chips,
+      });
+      session.topic_locked = false;
+      session.teaching_mode = false;
+      session.pending_frame = frame;
+      return finish(true);
+    }
+    if (!bank) {
+      return finish(false, `goal bank missing for ${decision.topic_id}`);
+    }
+    session.topic_id = decision.topic_id;
+    session.goals = goalStatesFromBank(bank);
+    session.current_goal = firstOpenGoalId(session.goals);
+    session.turns_on_goal = 0;
+    session.scene = bank.scene ?? session.scene;
+    session.suggested_words = bank.suggested_words?.length
+      ? bank.suggested_words
+      : session.suggested_words;
+    const currentDef = bank.goals.find((g) => g.id === session.current_goal);
+    if (currentDef) {
+      session.pending_frame = pendingFrameFromGoal(currentDef);
+    }
+  }
+
+  const hasGoalsNow = sessionHasGoals(session);
+
   // —— v3 goal-directed free talk ——
-  if (hasGoals) {
+  if (hasGoalsNow) {
     const bank = resolveFreeGoalBank({
       topic,
       lessonDay: session.lesson_day,

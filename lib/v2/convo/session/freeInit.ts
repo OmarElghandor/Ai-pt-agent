@@ -19,6 +19,7 @@ import {
   type ConvoGoalBank,
   type ConvoSceneTimeOfDay,
 } from '@/lib/v2/convo/goals';
+import { oneChatOpeningFrame } from '@/lib/v2/convo/topics/openingChips';
 import type { ConvoOpeningBubbles, ConvoSession } from './types';
 
 /**
@@ -55,16 +56,12 @@ export const OPEN_MODE_OPENING_CHIPS = [
 ] as const;
 
 /** Default open-mode answer frame (also stored as pending_frame). */
-export function openModeOpeningFrame(): {
+export function openModeOpeningFrame(level = 1): {
   tl: string;
   eg: string;
   chips: string[];
 } {
-  return {
-    tl: 'Quero falar de ___.',
-    eg: 'قول عايز تتكلم عن إيه',
-    chips: [...OPEN_MODE_OPENING_CHIPS],
-  };
+  return oneChatOpeningFrame(level);
 }
 
 export function buildOpenOpeningBubbles(opts?: {
@@ -214,6 +211,8 @@ export function createFreeConvoSessionDoc(opts: {
   /** Lesson day for goal-directed free talk (v3). */
   lessonDay?: number | null;
   timeOfDay?: ConvoSceneTimeOfDay;
+  /** Curriculum level for opening chips (v4). */
+  learnerLevel?: number | null;
   now?: Date;
 }): ConvoSession {
   const now = (opts.now ?? new Date()).toISOString();
@@ -238,6 +237,10 @@ export function createFreeConvoSessionDoc(opts: {
     typeof opts.lessonDay === 'number' && opts.lessonDay > 0
       ? opts.lessonDay
       : null;
+  const learner_level =
+    typeof opts.learnerLevel === 'number' && opts.learnerLevel > 0
+      ? opts.learnerLevel
+      : 1;
 
   if (isOpenTopicId(opts.topic.id) && !bank) {
     const lineId = 'open.opening';
@@ -258,7 +261,7 @@ export function createFreeConvoSessionDoc(opts: {
       scene,
       lesson_day,
       topic_locked: false,
-      learner_level: null,
+      learner_level,
       teaching_mode: false,
       goal_tier: 'core',
       assisted: false,
@@ -274,7 +277,7 @@ export function createFreeConvoSessionDoc(opts: {
         kind: 'open',
         item_id: lineId,
       },
-      pending_frame: openModeOpeningFrame(),
+      pending_frame: openModeOpeningFrame(learner_level),
       facts: [],
       suggested_words: (opts.suggestedWords ?? [])
         .slice(0, 15)
@@ -329,7 +332,7 @@ export function createFreeConvoSessionDoc(opts: {
     scene,
     lesson_day,
     topic_locked: Boolean(bank && goals.length > 0 && !isOpenTopicId(opts.topic.id)),
-    learner_level: null,
+    learner_level,
     teaching_mode: false,
     goal_tier: 'core',
     assisted: false,

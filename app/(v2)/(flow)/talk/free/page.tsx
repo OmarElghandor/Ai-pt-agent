@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-/** Legacy free catalogue → practice picker (Batch 10). */
+/** Legacy free catalogue → one-chat open session (v4). */
 export default function FreeTopicsPage() {
-  redirect('/talk/practice');
+  redirect('/talk/free/open');
 }

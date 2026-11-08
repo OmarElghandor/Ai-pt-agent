@@ -35,10 +35,10 @@ const MODES: Array<{
 }> = [
   {
     id: 'practice',
-    href: '/talk/practice',
+    href: '/talk/free/open',
     emoji: '🗣️',
     title: 'اتكلّم',
-    subtitle: 'اتمرّن تتكلم في أي موضوع',
+    subtitle: 'محادثة واحدة — الروتر يختار الموضوع',
   },
   {
     id: 'learn',

@@ -35,9 +35,15 @@ type Props = {
   topicId: string;
   /** Seed open-mode suggested words from this day's core items (P4). */
   day?: number | null;
+  /** Dev-only curriculum level override (`?level=N`). */
+  level?: number | null;
 };
 
-export function FreeTalkSession({ topicId, day = null }: Props) {
+export function FreeTalkSession({
+  topicId,
+  day = null,
+  level = null,
+}: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -221,6 +227,7 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
             module: 'free',
             topic_id: topicId,
             ...(day != null ? { day } : {}),
+            ...(level != null ? { level } : {}),
           }),
         });
         if (!res.ok) throw new Error(`start ${res.status}`);
@@ -304,7 +311,7 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [topicId, day, commitBubbles]);
+  }, [topicId, day, level, commitBubbles]);
 
   const sendPt = (t: string, opts?: { assisted?: boolean }) => {
     if (!t.trim() || busy) return;
@@ -368,8 +375,8 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
       <div className="v2-free-talk mx-auto flex h-[100dvh] w-full max-w-[390px] flex-col overflow-y-auto">
         <ConvoSummaryCard
           summary={summary}
-          practiceHref="/talk/practice"
-          backHref="/talk/practice"
+          practiceHref="/talk/free/open"
+          backHref="/talk"
           showPracticeCta={false}
         />
       </div>
@@ -380,7 +387,7 @@ export function FreeTalkSession({ topicId, day = null }: Props) {
     <div className="v2-free-talk mx-auto flex h-[100dvh] w-full max-w-[390px] flex-col">
       <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-2 border-b border-[var(--ft-border)]/60 bg-[color-mix(in_srgb,var(--ft-ivory)_80%,transparent)] px-3 shadow-[0_1px_8px_rgba(0,0,0,0.03)] backdrop-blur-xl">
         <Link
-          href="/talk/practice"
+          href="/talk"
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[var(--ft-ink)]"
           aria-label="رجوع"
         >

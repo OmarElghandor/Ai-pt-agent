@@ -25,6 +25,11 @@ import {
   sessionHasGoals,
   startResponseIsOpenMode,
 } from '@/lib/v2/convo/turn/freeMode';
+import {
+  learnerConvoLevel,
+  levelOverrideFromBody,
+} from '@/lib/v2/convo/level/learnerLevel';
+import { openingChipsForLevel } from '@/lib/v2/convo/topics/openingChips';
 
 export const runtime = 'nodejs';
 /** Generation runs in the worker; start returns preparing immediately (P3). */
@@ -52,6 +57,8 @@ export async function POST(req: Request) {
     topic_id?: string;
     /** Open-mode bridge: seed suggested words from this day's core items. */
     day?: number;
+    /** Dev-only curriculum level override. */
+    level?: number;
   } | null;
 
   const store = new MongoConvoSessionStore();
@@ -79,6 +86,8 @@ export async function POST(req: Request) {
         dayHint != null && isOpenTopicId(topicId)
           ? suggestedWordsForDay(dayHint)
           : undefined;
+      const levelOverride = levelOverrideFromBody(body?.level);
+      const learnerLevel = await learnerConvoLevel(userId, levelOverride);
       const result = await startFreeConvoSession({
         userId,
         topicId,
@@ -86,6 +95,7 @@ export async function POST(req: Request) {
         topic,
         ...(body?.session_id ? { sessionId: body.session_id } : {}),
         ...(dayHint != null ? { lessonDay: dayHint } : {}),
+        learnerLevel,
         ...(dayWords && dayWords.length
           ? { suggestedWords: dayWords }
           : {}),
@@ -124,8 +134,10 @@ export async function POST(req: Request) {
 
       if (isOpen) {
         const openingTl = result.opening.character.tl;
+        const level =
+          result.session.learner_level ?? learnerLevel;
         const frame =
-          result.session.pending_frame ?? openModeOpeningFrame();
+          result.session.pending_frame ?? openModeOpeningFrame(level);
         return NextResponse.json({
           session_id: result.session.id,
           module: 'free',
@@ -142,6 +154,8 @@ export async function POST(req: Request) {
             eg: frame.eg,
             chips: frame.chips,
           },
+          opening_chips: openingChipsForLevel(level),
+          learner_level: level,
           warm_lines: [],
           open_mode: true,
           session: sessionPayload,
