@@ -11,7 +11,7 @@ export const OPEN_TOPIC: FreeTopic = {
   title_in_sentence_tl: 'qualquer coisa',
   character_id: 'ines',
   intro_eg: 'اتكلم في أي موضوع إنت عايزه — أنا معاكي.',
-  opening_tl: 'Olá {name}! 😊 Sobre o que queres falar hoje?',
+  opening_tl: 'Olá, {name}! 😊 Sobre o que queres falar hoje?',
   opening_ar: 'مرحباً {name}! 🙂 عن ماذا تريد أن تتحدث اليوم؟',
   related_topic_ids: [],
   word_set: [],

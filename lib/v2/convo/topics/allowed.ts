@@ -159,20 +159,23 @@ export function listAllowedTopics(
 }
 
 /**
- * Opening chips: allowed topics plus up to 2 above-level topics marked
- * «هنتعلمه», with directions (`direcoes`) first.
+ * Opening chips: exactly `maxTotal` (default 3) — fill with allowed first,
+ * then above-level topics marked «هنتعلمه» (directions first).
  */
 export function listOpeningChips(
   level: number,
   opts?: {
     targetLang?: string;
     generated?: ConvoTopicCatalogEntry[];
+    /** Total chips including above-level (default 3). */
+    maxTotal?: number;
+    /** @deprecated Prefer maxTotal — kept for call-site compat. */
     maxAllowed?: number;
+    /** @deprecated Prefer maxTotal. */
     maxAboveLevel?: number;
   },
 ): OpeningTopicChip[] {
-  const maxAllowed = opts?.maxAllowed ?? 3;
-  const maxAbove = opts?.maxAboveLevel ?? 2;
+  const maxTotal = opts?.maxTotal ?? 3;
   const catalog = listTopicCatalog(opts);
   const allowed = catalog.filter((t) => topicAllowedAtLevel(t, level));
   const above = catalog.filter((t) => !topicAllowedAtLevel(t, level));
@@ -188,10 +191,12 @@ export function listOpeningChips(
   });
 
   const chips: OpeningTopicChip[] = [];
-  for (const t of allowed.slice(0, maxAllowed)) {
+  for (const t of allowed) {
+    if (chips.length >= maxTotal) break;
     chips.push({ ...t, above_level: false });
   }
-  for (const t of above.slice(0, maxAbove)) {
+  for (const t of above) {
+    if (chips.length >= maxTotal) break;
     chips.push({
       ...t,
       above_level: true,

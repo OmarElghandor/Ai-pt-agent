@@ -72,7 +72,7 @@ export function buildOpenOpeningBubbles(opts?: {
   const topic = opts?.topic;
   const tl = fillNameSlot(
     topic?.opening_tl ??
-      'Olá {name}! 😊 Sobre o que queres falar hoje?',
+      'Olá, {name}! 😊 Sobre o que queres falar hoje?',
     opts?.learnerName,
   );
   const ar = fillNameSlot(
