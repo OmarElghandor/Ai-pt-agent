@@ -58,7 +58,6 @@ export {
   teachBeatForGoal,
 } from './teach';
 export type { LearnerGender, TeachBeat } from './teach';
-export type { TeachBeat } from './teach';
 export {
   findGoal,
   firstOpenGoalId,
