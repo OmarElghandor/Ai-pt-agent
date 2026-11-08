@@ -1,4 +1,4 @@
-/** Conversations v3 free-talk goal (batch-v3-two-modes + fix-1). */
+/** Conversations v3/v4 free-talk goal (batch-v3 + batch-v4). */
 
 export type ConvoGoalHelp = {
   frame_tl: string;
@@ -9,6 +9,15 @@ export type ConvoGoalHelp = {
 export type ConvoSceneTimeOfDay = 'morning' | 'afternoon' | 'evening' | 'night';
 
 export type ConvoSceneAddress = 'formal' | 'tu';
+
+export type ConvoGoalTier = 'core' | 'extended';
+
+/** Authored teaching beat (v4): character line → coach meaning → ask_tl. */
+export type ConvoGoalTeach = {
+  tl: string;
+  ar: string;
+  meaning_eg: string;
+};
 
 export type ConvoGoal = {
   id: string;
@@ -33,6 +42,12 @@ export type ConvoGoal = {
   ask_ar_f?: string;
   /** When this goal becomes current, scene time moves to it. */
   time_of_day?: ConvoSceneTimeOfDay;
+  /** v4: core (required) vs extended (optional). */
+  tier?: ConvoGoalTier;
+  /** Curriculum item ids this goal practices. */
+  item_ids?: string[];
+  /** v4 teaching beat — model never invents this. */
+  teach?: ConvoGoalTeach;
   help: ConvoGoalHelp;
 };
 
@@ -64,7 +79,7 @@ export type ConvoBankClosing = {
 };
 
 export type ConvoGoalBank = {
-  source: 'thread' | 'lesson' | 'generated';
+  source: 'thread' | 'lesson' | 'generated' | 'topic';
   topic_id?: string;
   day?: number;
   goals: ConvoGoal[];
@@ -76,8 +91,19 @@ export type ConvoGoalBank = {
   title_tl?: string;
   title_ar?: string;
   intro_eg?: string;
+  /** Egyptian scene for the topic (v4). */
+  scene_eg?: string;
   opening?: ConvoBankOpening;
   closing?: ConvoBankClosing;
+  /**
+   * Core curriculum items the topic needs (v4). Computed once and stored.
+   * A topic is allowed at level N when every id is introduced by day ≤ N.
+   */
+  required_items?: string[];
+  /** Surface forms outside the curriculum (teaching mode). */
+  new_items_tl?: string[];
+  /** @deprecated Prefer new_items_tl — accepted when loading topic banks. */
+  new_tl?: string[];
 };
 
 export type ConvoGoalIssue = {

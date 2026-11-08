@@ -7,7 +7,7 @@ import type {
   ConvoSceneAddress,
   ConvoSceneTimeOfDay,
 } from './types';
-import { validateLessonDayBank } from './validate';
+import { validateGoals, validateLessonDayBank } from './validate';
 
 const DEFAULT_GOALS_DIR = path.join(process.cwd(), 'content/v2/convo/goals');
 
@@ -67,6 +67,20 @@ function parseGoal(raw: Record<string, unknown>): ConvoGoal {
   if (typeof raw.ask_tl_f === 'string') goal.ask_tl_f = raw.ask_tl_f;
   if (typeof raw.ask_ar_f === 'string') goal.ask_ar_f = raw.ask_ar_f;
   if (isTimeOfDay(raw.time_of_day)) goal.time_of_day = raw.time_of_day;
+  if (raw.tier === 'core' || raw.tier === 'extended') goal.tier = raw.tier;
+  if (Array.isArray(raw.item_ids)) {
+    goal.item_ids = raw.item_ids.map((id) => String(id)).filter(Boolean);
+  }
+  const teachRaw = raw.teach;
+  if (teachRaw && typeof teachRaw === 'object') {
+    const t = teachRaw as Record<string, unknown>;
+    const tl = String(t.tl ?? '').trim();
+    const ar = String(t.ar ?? '').trim();
+    const meaning_eg = String(t.meaning_eg ?? '').trim();
+    if (tl && ar && meaning_eg) {
+      goal.teach = { tl, ar, meaning_eg };
+    }
+  }
   return goal;
 }
 
@@ -109,7 +123,9 @@ export function parseLessonDayBankJson(
         ? 'generated'
         : doc.source === 'thread'
           ? 'thread'
-          : 'lesson',
+          : doc.source === 'topic'
+            ? 'topic'
+            : 'lesson',
     day,
     goals: goalsRaw.map((g) =>
       parseGoal((g ?? {}) as Record<string, unknown>),
@@ -118,11 +134,26 @@ export function parseLessonDayBankJson(
       ? doc.suggested_words.map((w) => String(w))
       : [],
     scene: parseScene(doc.scene),
-    authored: doc.authored === true || doc.source === 'lesson',
+    authored:
+      doc.authored === true ||
+      doc.source === 'lesson' ||
+      doc.source === 'topic',
   };
+  if (typeof doc.topic_id === 'string') bank.topic_id = doc.topic_id;
   if (typeof doc.title_tl === 'string') bank.title_tl = doc.title_tl;
   if (typeof doc.title_ar === 'string') bank.title_ar = doc.title_ar;
   if (typeof doc.intro_eg === 'string') bank.intro_eg = doc.intro_eg;
+  if (typeof doc.scene_eg === 'string') bank.scene_eg = doc.scene_eg;
+  if (Array.isArray(doc.required_items)) {
+    bank.required_items = doc.required_items
+      .map((id) => String(id))
+      .filter(Boolean);
+  }
+  if (Array.isArray(doc.new_items_tl)) {
+    bank.new_items_tl = doc.new_items_tl.map((s) => String(s)).filter(Boolean);
+  } else if (Array.isArray(doc.new_tl)) {
+    bank.new_items_tl = doc.new_tl.map((s) => String(s)).filter(Boolean);
+  }
   if (openingRaw && typeof openingRaw === 'object') {
     bank.opening = {
       tl: String(openingRaw.tl ?? ''),
@@ -140,6 +171,19 @@ export function parseLessonDayBankJson(
       tl: String(closingRaw.tl ?? ''),
       ar: String(closingRaw.ar ?? ''),
     };
+  }
+
+  // Topic banks (v4) need goals + ask_tl, not a lesson opening.
+  if (bank.source === 'topic') {
+    const { ok, issues } = validateGoals(bank.goals, { requireAsk: true });
+    if (!ok) {
+      throw new Error(
+        `Invalid topic bank${bank.topic_id ? ` ${bank.topic_id}` : ''}: ${issues
+          .map((i) => `${i.path}: ${i.message}`)
+          .join('; ')}`,
+      );
+    }
+    return bank;
   }
 
   const { ok, issues } = validateLessonDayBank(bank);

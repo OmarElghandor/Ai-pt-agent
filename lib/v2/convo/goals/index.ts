@@ -31,6 +31,18 @@ export {
   setCachedLessonDayBankMemory,
 } from './loadLessonDay';
 export {
+  authoredTopicBankPath,
+  listAuthoredTopicBankIds,
+  loadAuthoredTopicBank,
+} from './loadTopicBank';
+export {
+  DAY1_REQUIRED_ITEMS,
+  THREAD_TOPIC_REQUIRED_ITEMS,
+  computeRequiredItems,
+  ensureBankRequiredItems,
+} from './requiredItems';
+export type { ConvoGoalTeach, ConvoGoalTier } from './types';
+export {
   findGoal,
   firstOpenGoalId,
   goalStatesFromBank,

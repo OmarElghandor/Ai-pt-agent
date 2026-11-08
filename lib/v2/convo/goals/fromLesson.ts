@@ -3,6 +3,7 @@ import { getCoreItemsDay } from '@/lib/v2/generation/lesson/coreItems';
 import { getDayPlan } from '@/lib/v2/generation/lesson/plan';
 import { keywordsFromExamples } from './keywords';
 import { resolveLessonDayBank } from './loadLessonDay';
+import { ensureBankRequiredItems } from './requiredItems';
 import type {
   ConvoGoal,
   ConvoGoalBank,
@@ -199,17 +200,20 @@ export function loadGoalsForDay(
     ...(opts?.baseDir ? { baseDir: opts.baseDir } : {}),
   });
   if (resolved) {
+    const withItems = ensureBankRequiredItems(resolved);
     if (
       opts?.timeOfDay &&
-      resolved.scene &&
-      !resolved.goals.some((g) => g.time_of_day)
+      withItems.scene &&
+      !withItems.goals.some((g) => g.time_of_day)
     ) {
       return {
-        ...resolved,
-        scene: { ...resolved.scene, time_of_day: opts.timeOfDay },
+        ...withItems,
+        scene: { ...withItems.scene, time_of_day: opts.timeOfDay },
       };
     }
-    return resolved;
+    return withItems;
   }
-  return loadGoalsForDayCore(day, { timeOfDay: opts?.timeOfDay });
+  return ensureBankRequiredItems(
+    loadGoalsForDayCore(day, { timeOfDay: opts?.timeOfDay }),
+  );
 }

@@ -6,6 +6,7 @@ import type {
 import { loadThreadTopicFromFile } from '@/lib/v2/convo/topics/threadLoad';
 import { keywordsFromExamples } from './keywords';
 import type { ConvoGoal, ConvoGoalBank } from './types';
+import { ensureBankRequiredItems } from './requiredItems';
 import { validateGoals } from './validate';
 
 function askToGoal(
@@ -87,7 +88,7 @@ export function loadGoalsForTopic(
   const doc = loadThreadTopicFromFile(topicId, {
     targetLang: opts?.targetLang,
   });
-  const bank = goalsFromThreadDoc(doc);
+  const bank = ensureBankRequiredItems(goalsFromThreadDoc(doc));
   const { ok, issues } = validateGoals(bank.goals);
   if (!ok) {
     throw new Error(
