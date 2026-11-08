@@ -7,7 +7,11 @@ import type { ConvoTurnStreamEvent } from '@/lib/v2/convo/turn';
 import type { ConvoSessionSummary } from '@/lib/v2/convo/result';
 import { CharacterBubble } from './CharacterBubble';
 import { CoachCard } from './CoachCard';
-import { ConvoDevMenu } from './ConvoDevMenu';
+import {
+  ConvoDevMenu,
+  readConvoModelChoice,
+  type ConvoModelChoice,
+} from './ConvoDevMenu';
 import { ConvoSummaryCard } from './ConvoSummaryCard';
 import { ConvoVoiceBar } from './ConvoVoiceBar';
 import { LearnerBubble } from './LearnerBubble';
@@ -67,8 +71,13 @@ export function FreeTalkSession({
   const [assisted, setAssisted] = useState(false);
   const [openMode, setOpenMode] = useState(topicId === 'open');
   const [characterId, setCharacterId] = useState('ines');
+  const [convoModel, setConvoModel] = useState<ConvoModelChoice>('qwen');
   const [summary, setSummary] = useState<ConvoSessionSummary | null>(null);
   const [ending, setEnding] = useState(false);
+
+  useEffect(() => {
+    setConvoModel(readConvoModelChoice());
+  }, []);
   const scrollRef = useRef<HTMLDivElement>(null);
   const bubblesRef = useRef<TalkBubble[]>([]);
   const streamBubbleId = useRef<string | null>(null);
@@ -189,6 +198,7 @@ export function FreeTalkSession({
           body: JSON.stringify({
             session_id: sessionId,
             text: learnerText,
+            convo_model: convoModel,
             ...(useAssisted ? { assisted: true } : {}),
             ...(openMode ? { character_id: characterId } : {}),
             ...(opts?.dismissCta ? { dismiss_cta: true } : {}),
@@ -211,7 +221,7 @@ export function FreeTalkSession({
         setBusy(false);
       }
     },
-    [sessionId, busy, applyEvent, assisted, openMode, characterId],
+    [sessionId, busy, applyEvent, assisted, openMode, characterId, convoModel],
   );
 
   useEffect(() => {
@@ -448,6 +458,7 @@ export function FreeTalkSession({
         <ConvoDevMenu
           topicId={topicId}
           day={day}
+          onConvoModelChange={setConvoModel}
           onReloadStart={() => {
             commitBubbles([]);
             setSessionId(null);

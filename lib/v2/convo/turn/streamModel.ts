@@ -1,6 +1,10 @@
 import { streamText } from 'ai';
-import { getChatModel } from '@/lib/model';
+import {
+  getConvoModel,
+  parseConvoModelSpec,
+} from '@/lib/model';
 import { estimateConvoPromptTokens } from '@/lib/v2/convo/prompt';
+import { estimateUsd } from '@/lib/v2/generation/lesson/prices';
 import type { ConvoStreamModel, ConvoStreamModelResult } from './types';
 
 function withRegen(prompt: string, reason?: string): string {
@@ -9,10 +13,13 @@ function withRegen(prompt: string, reason?: string): string {
 }
 
 /**
- * Live model streamer (AI SDK + env chat model).
+ * Live model streamer (AI SDK + `V2_CONVO_MODEL` / override).
  * Prefer `stream` for tag-early handling; `complete` buffers.
  */
-export function createLiveConvoStreamModel(): ConvoStreamModel {
+export function createLiveConvoStreamModel(opts?: {
+  modelOverride?: string | null;
+}): ConvoStreamModel {
+  const spec = parseConvoModelSpec(opts?.modelOverride);
   return {
     async complete(input) {
       return this.stream!({
@@ -24,7 +31,7 @@ export function createLiveConvoStreamModel(): ConvoStreamModel {
       let ttftMs = -1;
       let text = '';
       const result = streamText({
-        model: getChatModel(),
+        model: getConvoModel(opts?.modelOverride),
         system: input.system,
         prompt: withRegen(input.prompt, input.regenerateReason),
         temperature: 0.4,
@@ -39,13 +46,30 @@ export function createLiveConvoStreamModel(): ConvoStreamModel {
       if (ttftMs < 0) ttftMs = Date.now() - started;
 
       const usage = await result.usage;
+      const totalMs = Date.now() - started;
+      const usd = estimateUsd(spec.provider, spec.modelId, {
+        input_tokens: usage?.inputTokens,
+        output_tokens: usage?.outputTokens,
+      });
+      console.info(
+        JSON.stringify({
+          tag: 'v2_convo_turn_cost',
+          model: spec.modelId,
+          label: spec.label,
+          provider: spec.provider,
+          ttft_ms: ttftMs,
+          total_ms: totalMs,
+          input_tokens: usage?.inputTokens ?? null,
+          output_tokens: usage?.outputTokens ?? null,
+          usd_estimate: usd,
+        }),
+      );
       return {
         text,
         ttftMs,
         usage: {
           inputTokens: usage?.inputTokens,
           outputTokens: usage?.outputTokens,
-          // Provider may not report cache hits; fall back to estimate later.
           cachedInputTokens: undefined,
         },
       };

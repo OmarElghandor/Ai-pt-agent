@@ -5,12 +5,36 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 type RegenAction = 'reset' | 'reload_pack' | 'regenerate_day' | 'clear_audio';
 
+const CONVO_MODEL_KEY = 'v2.convo.model';
+
+export type ConvoModelChoice = 'qwen' | 'haiku';
+
+export function readConvoModelChoice(): ConvoModelChoice {
+  try {
+    const v = localStorage.getItem(CONVO_MODEL_KEY);
+    if (v === 'haiku' || v === 'qwen') return v;
+  } catch {
+    /* ignore */
+  }
+  return 'qwen';
+}
+
+export function writeConvoModelChoice(choice: ConvoModelChoice): void {
+  try {
+    localStorage.setItem(CONVO_MODEL_KEY, choice);
+  } catch {
+    /* ignore */
+  }
+}
+
 type Props = {
   packId?: string | null;
   topicId?: string | null;
   day?: number | null;
   onPreparing?: () => void;
   onReloadStart?: () => void;
+  /** Fired when the character model A/B switch changes. */
+  onConvoModelChange?: (choice: ConvoModelChoice) => void;
 };
 
 /**
@@ -23,11 +47,13 @@ export function ConvoDevMenu({
   day,
   onPreparing,
   onReloadStart,
+  onConvoModelChange,
 }: Props) {
   const [allowed, setAllowed] = useState(false);
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [convoModel, setConvoModel] = useState<ConvoModelChoice>('qwen');
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -43,6 +69,10 @@ export function ConvoDevMenu({
     return () => {
       cancelled = true;
     };
+  }, []);
+
+  useEffect(() => {
+    setConvoModel(readConvoModelChoice());
   }, []);
 
   useEffect(() => {
@@ -119,6 +149,40 @@ export function ConvoDevMenu({
           role="menu"
           className="absolute end-0 top-full z-50 mt-1 min-w-[220px] overflow-hidden rounded-2xl border border-[color:var(--ft-border,#E5DED5)] bg-white py-1 shadow-lg"
         >
+          <div className="border-b border-[color:var(--ft-border,#E5DED5)] px-4 py-2">
+            <p className="mb-1.5 font-[family-name:var(--font-ft-ar,var(--font-v2-arabic))] text-[11px] text-[color:var(--ft-text-secondary,#666963)]">
+              نموذج الشخصية (A/B)
+            </p>
+            <div className="flex gap-1">
+              {(
+                [
+                  ['qwen', 'Qwen'],
+                  ['haiku', 'Haiku'],
+                ] as const
+              ).map(([id, label]) => (
+                <button
+                  key={id}
+                  type="button"
+                  role="menuitemradio"
+                  aria-checked={convoModel === id}
+                  disabled={busy}
+                  onClick={() => {
+                    setConvoModel(id);
+                    writeConvoModelChoice(id);
+                    onConvoModelChange?.(id);
+                    setMsg(`نموذج: ${label}`);
+                  }}
+                  className={`flex-1 rounded-lg px-2 py-1.5 font-[family-name:var(--font-ft-ui,var(--font-v2-ui))] text-[12px] ${
+                    convoModel === id
+                      ? 'bg-[color:var(--ft-moss,#5C6B5E)] text-white'
+                      : 'bg-[color:var(--ft-mist,#D9E1D9)]/50 text-[color:var(--ft-ink,#202A25)]'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
           {(
             [
               ['reset', 'ابدأ من الأول'],

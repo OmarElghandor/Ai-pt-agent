@@ -1,8 +1,8 @@
 import { getCurrentUserId } from '@/lib/auth/currentUser';
 import { isV2Enabled } from '@/lib/v2/flags';
 import {
-  loadConvoItemSurfaces,
   requireConvoPackAsync,
+  resolveConvoItemSurfacesForPack,
 } from '@/lib/v2/convo/pack';
 import {
   MongoConvoSessionStore,
@@ -43,6 +43,8 @@ export async function POST(req: Request) {
     dismiss_cta?: boolean;
     via_voice?: boolean;
     learner_turn_id?: string;
+    /** Dev A/B: `qwen` | `haiku` | `anthropic:…` | `deepinfra:…`. */
+    convo_model?: string;
   } | null;
   const sessionId = body?.session_id?.trim();
   if (!sessionId) {
@@ -68,12 +70,15 @@ export async function POST(req: Request) {
         controller.enqueue(encoder.encode(encodeConvoTurnEvent(event)));
       };
       try {
+        const liveModel = createLiveConvoStreamModel({
+          modelOverride: body?.convo_model ?? null,
+        });
         if (session.module === 'free') {
           const { metrics } = await runFreeConvoTurn({
             session,
             learnerText: body?.text ?? '',
             store,
-            model: createLiveConvoStreamModel(),
+            model: liveModel,
             emit,
             ...(body?.assisted ? { assisted: true } : {}),
             ...(body?.character_id
@@ -86,7 +91,9 @@ export async function POST(req: Request) {
           });
           void metrics;
         } else {
-          const surfaces = loadConvoItemSurfaces();
+          const surfaces = await resolveConvoItemSurfacesForPack(
+            session.pack_id,
+          );
           const pack = await requireConvoPackAsync(session.pack_id, {
             itemSurfaces: surfaces,
           });
@@ -96,7 +103,7 @@ export async function POST(req: Request) {
             surfaces,
             learnerText: body?.text ?? '',
             store,
-            model: createLiveConvoStreamModel(),
+            model: liveModel,
             emit,
             progressWriter: createAnswersConvoProgressWriter(),
             ...(survival ? { survival } : {}),
