@@ -173,14 +173,38 @@ export function parseLessonDayBankJson(
     };
   }
 
-  // Topic banks (v4) need goals + ask_tl, not a lesson opening.
+  // Topic banks (v4) need goals + ask_tl; core goals need teach.
   if (bank.source === 'topic') {
-    const { ok, issues } = validateGoals(bank.goals, { requireAsk: true });
-    if (!ok) {
+    const askResult = validateGoals(bank.goals, { requireAsk: true });
+    const issues = [...askResult.issues];
+    bank.goals.forEach((g, i) => {
+      if ((g.tier ?? 'core') !== 'core') return;
+      const teach = g.teach;
+      if (
+        !teach?.tl?.trim() ||
+        !teach?.ar?.trim() ||
+        !teach?.meaning_eg?.trim()
+      ) {
+        issues.push({
+          path: `goals[${i}].teach`,
+          rule: 'ask',
+          message: 'core goal teach needs tl, ar, and meaning_eg',
+        });
+      }
+    });
+    if (issues.length) {
       throw new Error(
         `Invalid topic bank${bank.topic_id ? ` ${bank.topic_id}` : ''}: ${issues
           .map((i) => `${i.path}: ${i.message}`)
           .join('; ')}`,
+      );
+    }
+    const coreCount = bank.goals.filter(
+      (g) => (g.tier ?? 'core') === 'core',
+    ).length;
+    if (coreCount < 4) {
+      throw new Error(
+        `Invalid topic bank ${bank.topic_id ?? ''}: need at least 4 core goals (got ${coreCount})`,
       );
     }
     return bank;

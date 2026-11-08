@@ -44,6 +44,8 @@ import {
 } from '@/lib/v2/convo/router';
 import { loadAuthoredTopicBank } from '@/lib/v2/convo/goals/loadTopicBank';
 import { oneChatOpeningFrame } from '@/lib/v2/convo/topics/openingChips';
+import { isLearnerExitRequest } from '@/lib/v2/convo/exit/detect';
+import { buildExitSummary } from '@/lib/v2/convo/exit/summary';
 import {
   acceptModelReportedGoals,
   applyCompletedGoals,
@@ -62,6 +64,11 @@ import {
   steerActionForTurns,
   stuckHelpForGoal,
 } from '@/lib/v2/convo/goals';
+import {
+  CORE_DONE_COACH_EG,
+  allTierDone,
+} from '@/lib/v2/convo/goals/tiers';
+import { teachBeatForGoal } from '@/lib/v2/convo/goals/teach';
 import { loadSuggestedSurfacesForUser } from '@/lib/v2/convo/session/suggestedWords';
 import { getCharacter } from '@/lib/v2/characters/registry';
 import {
@@ -855,6 +862,43 @@ export async function runFreeConvoTurn(
     }
   }
 
+  // —— v4 exit: خلّص / كفاية ——
+  if (hasGoals && learnerText && isLearnerExitRequest(learnerText)) {
+    const bank = resolveFreeGoalBank({
+      topic,
+      lessonDay: session.lesson_day,
+      timeOfDay: session.scene?.time_of_day,
+    });
+    const summary = buildExitSummary({
+      goals: session.goals,
+      defs: bank?.goals ?? [],
+      suggestedWords: session.suggested_words,
+    });
+    const closingTl =
+      bank?.closing?.tl?.trim() || 'Ok! Foi um prazer falar contigo. Até logo!';
+    const closingAr =
+      bank?.closing?.ar?.trim() || 'حسناً! سررت بالحديث معك. إلى اللقاء!';
+    emit({ type: 'bubble_ar', ar: closingAr, pt: closingTl });
+    emit({
+      type: 'question',
+      id: 'exit.closing',
+      tl: closingTl,
+      kind: 'open',
+      item_id: 'exit',
+      audio_key: `free:${session.id}:exit`,
+    });
+    emit({
+      type: 'coach',
+      id: 'exit_summary',
+      eg: summary.coach_eg,
+      moment: 'summary',
+    });
+    session.status = 'done';
+    session.phase = 'closing';
+    session.topic_locked = false;
+    return finish(true);
+  }
+
   // —— v4 router: unlocked one-chat (greetings + topic-naming only) ——
   if (
     !session.topic_locked &&
@@ -1002,6 +1046,49 @@ export async function runFreeConvoTurn(
       : [];
     const acceptedFromModel: string[] = [];
 
+    // v4 teaching mode: authored teach → coach → ask (once per goal).
+    if (
+      session.teaching_mode &&
+      currentDefEarly &&
+      (session.turns_on_goal ?? 0) === 0 &&
+      !learnerText
+    ) {
+      const beat = teachBeatForGoal(currentDefEarly);
+      if (beat) {
+        emit({
+          type: 'bubble_ar',
+          ar: beat.character_ar,
+          pt: beat.character_tl,
+        });
+        emit({
+          type: 'coach',
+          id: `teach:${currentDefEarly.id}`,
+          eg: beat.coach_eg,
+          moment: 'intro',
+        });
+        emit({
+          type: 'question',
+          id: currentDefEarly.id,
+          tl: beat.ask_tl,
+          ar: beat.ask_ar || undefined,
+          kind: 'open',
+          item_id: currentDefEarly.id,
+          audio_key: `free:${session.id}:${currentDefEarly.id}`,
+        });
+        session.pending_frame = pendingFrameFromGoal(currentDefEarly);
+        session.pending_question = {
+          id: currentDefEarly.id,
+          kind: 'open',
+          item_id: currentDefEarly.id,
+        };
+        session.last_exchanges = [
+          ...session.last_exchanges,
+          { role: 'character', tl: `${beat.character_tl} ${beat.ask_tl}`.trim() },
+        ].slice(-6);
+        return finish(true);
+      }
+    }
+
     // V5 escalation before the model call (based on prior stuck turns).
     const turnsBefore = session.turns_on_goal ?? 0;
     const steer = steerActionForTurns(turnsBefore, currentDefEarly);
@@ -1147,6 +1234,38 @@ export async function runFreeConvoTurn(
     ];
     applyCompletedGoals(session, bank, completedIds);
 
+    // v4: core goals done → note + move to extended (no auto next-topic).
+    if (
+      session.goal_tier === 'core' &&
+      allTierDone(session.goals, bank.goals, 'core')
+    ) {
+      const coachId = 'core_goals_done';
+      if (session.coach_recent_ids.at(-1) !== coachId) {
+        session.coach_recent_ids = [
+          ...session.coach_recent_ids,
+          coachId,
+        ].slice(-8);
+        emit({
+          type: 'coach',
+          id: coachId,
+          eg: CORE_DONE_COACH_EG,
+          moment: 'summary',
+        });
+      }
+      session.goal_tier = 'extended';
+      const nextExt = bank.goals.find(
+        (g) =>
+          (g.tier === 'extended') &&
+          session.goals.some((s) => s.id === g.id && s.status === 'open'),
+      );
+      if (nextExt) {
+        session.current_goal = nextExt.id;
+        session.turns_on_goal = 0;
+      } else {
+        session.goal_tier = 'free';
+      }
+    }
+
     // V6: all goals done → closing line (F4) + coach note + refill; chat continues.
     if (
       session.goals.length > 0 &&
@@ -1171,6 +1290,7 @@ export async function runFreeConvoTurn(
           moment: 'summary',
         });
       }
+      session.goal_tier = 'free';
       const weak =
         session.suggested_words.length > 0
           ? session.suggested_words

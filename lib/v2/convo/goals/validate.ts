@@ -3,7 +3,7 @@ import type { ConvoGoal, ConvoGoalBank, ConvoGoalIssue } from './types';
 export function validateGoal(
   goal: ConvoGoal,
   pathPrefix = 'goal',
-  opts?: { requireAsk?: boolean },
+  opts?: { requireAsk?: boolean; requireTeach?: boolean },
 ): ConvoGoalIssue[] {
   const issues: ConvoGoalIssue[] = [];
   const p = `${pathPrefix}.${goal.id || '?'}`;
@@ -60,12 +60,26 @@ export function validateGoal(
       });
     }
   }
+  if (opts?.requireTeach) {
+    const teach = goal.teach;
+    if (
+      !teach?.tl?.trim() ||
+      !teach?.ar?.trim() ||
+      !teach?.meaning_eg?.trim()
+    ) {
+      issues.push({
+        path: `${p}.teach`,
+        rule: 'ask',
+        message: 'teach needs tl, ar, and meaning_eg',
+      });
+    }
+  }
   return issues;
 }
 
 export function validateGoals(
   goals: ConvoGoal[],
-  opts?: { requireAsk?: boolean },
+  opts?: { requireAsk?: boolean; requireTeach?: boolean },
 ): {
   ok: boolean;
   issues: ConvoGoalIssue[];

@@ -43,6 +43,16 @@ export {
 } from './requiredItems';
 export type { ConvoGoalTeach, ConvoGoalTier } from './types';
 export {
+  CORE_DONE_COACH_EG,
+  MIN_CORE_GOALS,
+  allTierDone,
+  coreGoals,
+  extendedGoals,
+  goalTier,
+} from './tiers';
+export { goalNeedsTeach, teachBeatForGoal } from './teach';
+export type { TeachBeat } from './teach';
+export {
   findGoal,
   firstOpenGoalId,
   goalStatesFromBank,
