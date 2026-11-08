@@ -1,7 +1,7 @@
 import { contentTokens } from '@/lib/v2/convo/free/offTopic';
 
 /** Stopwords that never count as goal keywords. */
-export const GOAL_KEYWORD_STOP = new Set([
+const STOP = new Set([
   'the',
   'and',
   'com',
@@ -51,7 +51,7 @@ export function keywordsFromExamples(examples: string[]): string[] {
   const out: string[] = [];
   const seen = new Set<string>();
   const push = (tok: string) => {
-    if (GOAL_KEYWORD_STOP.has(tok) || seen.has(tok)) return;
+    if (STOP.has(tok) || seen.has(tok)) return;
     seen.add(tok);
     out.push(tok);
   };

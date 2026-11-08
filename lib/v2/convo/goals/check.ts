@@ -1,6 +1,5 @@
 import { contentTokens } from '@/lib/v2/convo/free/offTopic';
 import { matchesAcceptedForm } from '@/lib/v2/convo/correction/shouldFire';
-import { GOAL_KEYWORD_STOP } from './keywords';
 import type { ConvoGoal } from './types';
 
 function normalizeTl(s: string): string {
@@ -13,18 +12,7 @@ function normalizeTl(s: string): string {
     .toLowerCase();
 }
 
-/** True when the whole message is only stopword(s) like «Sim» / «não». */
-function isStopwordOnlyMessage(msg: string): boolean {
-  const words = msg.split(/\s+/).filter(Boolean);
-  if (words.length === 0) return true;
-  return words.every((w) => GOAL_KEYWORD_STOP.has(w) || w.length <= 1);
-}
-
-/**
- * Fuzzy: exact accepted form, learner contains the example, or (when
- * substantial) the example contains the learner text. Never let a lone
- * stopword like «Sim» match «Sim, estou na estação.».
- */
+/** Fuzzy: exact accepted form, or example tokens mostly present in the message. */
 export function fuzzyMatchesExample(
   learnerText: string,
   example: string,
@@ -33,27 +21,14 @@ export function fuzzyMatchesExample(
   const msg = normalizeTl(learnerText);
   const ex = normalizeTl(example);
   if (!msg || !ex) return false;
-  // Learner said the full example (or more).
-  if (msg.includes(ex)) return true;
-  // Example contains learner text — only when the answer has enough substance.
-  // Blocks «Sim» / «Já» / «É» from matching longer «Sim, …» examples.
-  const msgWords = msg.split(/\s+/).filter(Boolean);
-  if (
-    ex.includes(msg) &&
-    !isStopwordOnlyMessage(msg) &&
-    msgWords.length >= 2
-  ) {
-    return true;
-  }
+  if (msg.includes(ex) || ex.includes(msg)) return true;
 
   const exTokens = contentTokens(example).filter((t) => t.length > 2);
   if (exTokens.length === 0) {
     // Short examples like "Olá!" — check raw token presence.
     const short = normalizeTl(example).split(/\s+/).filter(Boolean);
-    if (isStopwordOnlyMessage(msg)) return false;
     return short.length > 0 && short.every((t) => msg.includes(t));
   }
-  if (isStopwordOnlyMessage(msg)) return false;
   const msgSet = new Set(contentTokens(learnerText));
   const hits = exTokens.filter((t) => msgSet.has(t)).length;
   // Need most content words from the example (tolerate missing 1 if ≥3 tokens).
