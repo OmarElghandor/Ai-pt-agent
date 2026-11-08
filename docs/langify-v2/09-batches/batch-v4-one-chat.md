@@ -10,6 +10,33 @@ Decided by Omar on 2026-11-08 after the day-1 run. **This replaces the topic pic
 - **Two empty character bubbles** were rendered.
 - **The model can't hold a goal.** Qwen3.5-35B-A3B keeps drifting even with CURRENT GOAL in the prompt. The example conversations written in planning (the directions and casa transcripts) are what a stronger model does with the same goal list. **Test a stronger model for the character reply** (V7) before tuning prompts any further.
 
+## Update 2026-11-08 (Omar's review of the sample). Where this section disagrees with anything below, it wins
+
+1. **A greeting is not a topic.**
+   - The opening always asks what the learner wants to talk about («Sobre o que queres falar hoje?»), with a coach line in Egyptian and the allowed-topic chips.
+   - The learner can answer in Portuguese or Arabic («عايز أتعلم الاتجاهات»).
+   - The router only runs on a message that names a topic. Greetings and small talk («Ola bom dia», «tudo bem») get a short reply, then the same question again. Code detects these first, before any router call.
+2. **A topic above the learner's level means teaching mode, not a refusal.** The goal items the learner hasn't studied are **taught inside the conversation** before the learner is asked to use them:
+   - the character uses the item in a short line with an emoji;
+   - a coach line gives the meaning;
+   - the question that follows makes the learner say it.
+   - The ladder (taught → heard → picked → said) applies per goal. The level guard allows the topic's goal items and blocks other unstudied words.
+3. **Goals come in two tiers, and the conversation ends only when the learner exits:**
+   - **Core goals, 8–10**, in priority order. These are what the learner must say by the end (for directions: direita, esquerda, em frente, atrás de, ao lado de, a rua, o metro, a estação).
+   - **Extended goals, 5–10**: useful, but not required (perto/longe, à frente de, a esquina, o semáforo, depois de, ao fim da rua).
+   - **After the core goals:** a «الأهداف المهمة خلصت» note. The conversation continues with the extended goals, then with free flow on the same topic, reusing weak items.
+   - **The end:** «خلّص», or the learner saying «كفاية». Then the closing and a summary of the items said and the weak items.
+4. **Topic scenes are real situations.** For example, for directions: Inês guides the learner to her house by chat, step by step, and the learner reports where he is. Each topic bank has a `scene_eg` and an ordered core list.
+
+Golden 2 in V8 becomes **directions at level 1**:
+- «Ola bom dia» → the question again;
+- «عايز أتعلم الاتجاهات» → the directions topic in teaching mode;
+- every core goal taught, then said;
+- «جنب الصيدلية؟» in Arabic → the coach gives the Portuguese chip;
+- «كفاية» → the summary.
+
+The old golden 2 (casa) becomes golden 3, and futebol becomes golden 4.
+
 ## The design
 
 1. **One entry: «اتكلّم».**
