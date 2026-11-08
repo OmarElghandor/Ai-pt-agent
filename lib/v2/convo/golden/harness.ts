@@ -19,6 +19,14 @@ export type GoldenTurnCheck = {
   expectQuestion?: boolean;
   forbidOffLevel?: boolean;
   forbidTopicDrift?: string[];
+  /** Character teach.tl for this goal id must appear. */
+  expectTeachGoalId?: string;
+  /** Teach coach id `teach:<id>` must not appear again. */
+  expectNoTeachReplay?: string;
+  expectCurrentGoal?: string;
+  expectTeachShownFor?: string;
+  /** Goal id must be done after this turn. */
+  expectGoalDone?: string;
 };
 
 export type GoldenScript = {
@@ -40,6 +48,7 @@ export type GoldenTurnResult = {
   topic_id: string | null;
   topic_locked: boolean;
   teaching_mode: boolean;
+  teach_shown_for: string | null;
   current_goal: string | null;
   goals_done: number;
   goals_open: number;
@@ -63,6 +72,16 @@ function hasQuestion(events: ConvoTurnStreamEvent[]): boolean {
   return events.some((e) => e.type === 'question' && e.tl.includes('?'));
 }
 
+function teachCoachIds(events: ConvoTurnStreamEvent[]): string[] {
+  return events
+    .filter((e) => e.type === 'coach' && e.id.startsWith('teach:'))
+    .map((e) => (e.type === 'coach' ? e.id.slice('teach:'.length) : ''));
+}
+
+/**
+ * Play a golden script through startFree + runFreeTurn only.
+ * Never injects `input.topic` — the real freeTopicById resolver must work.
+ */
 export async function playGolden(
   script: GoldenScript,
 ): Promise<GoldenTurnResult[]> {
@@ -132,10 +151,47 @@ export async function playGolden(
     }
     if (check.expectQuestion !== false && !check.expectExit) {
       if (!hasQuestion(events) && tls.every((t) => !t.includes('?'))) {
-        // teach path may put ? in bubble; allow if any tl has ?
         if (!tls.some((t) => t.includes('?'))) {
           failures.push('missing question');
         }
+      }
+    }
+    if (check.expectTeachGoalId) {
+      const ids = teachCoachIds(events);
+      if (!ids.includes(check.expectTeachGoalId)) {
+        failures.push(
+          `expected teach for ${check.expectTeachGoalId}, got [${ids.join(',')}]`,
+        );
+      }
+    }
+    if (check.expectNoTeachReplay) {
+      const ids = teachCoachIds(events);
+      if (ids.includes(check.expectNoTeachReplay)) {
+        failures.push(
+          `teach replayed for ${check.expectNoTeachReplay}`,
+        );
+      }
+    }
+    if (
+      check.expectCurrentGoal &&
+      session.current_goal !== check.expectCurrentGoal
+    ) {
+      failures.push(
+        `current_goal expected ${check.expectCurrentGoal}, got ${session.current_goal}`,
+      );
+    }
+    if (
+      check.expectTeachShownFor &&
+      session.teach_shown_for !== check.expectTeachShownFor
+    ) {
+      failures.push(
+        `teach_shown_for expected ${check.expectTeachShownFor}, got ${session.teach_shown_for}`,
+      );
+    }
+    if (check.expectGoalDone) {
+      const g = session.goals.find((x) => x.id === check.expectGoalDone);
+      if (!g || g.status === 'open') {
+        failures.push(`expected goal ${check.expectGoalDone} done`);
       }
     }
     if (check.forbidOffLevel) {
@@ -156,8 +212,6 @@ export async function playGolden(
         failures.push(`topic drift: found «${bad}»`);
       }
     }
-    // reaction_reset with empty text is a stream clear, not a rendered bubble.
-    // bubble_ar without PT is allowed when AR meaning is present (coach path).
 
     results.push({
       learner: turn.learner,
@@ -165,6 +219,7 @@ export async function playGolden(
       topic_id: session.topic_id,
       topic_locked: session.topic_locked,
       teaching_mode: session.teaching_mode,
+      teach_shown_for: session.teach_shown_for ?? null,
       current_goal: session.current_goal,
       goals_done: session.goals.filter((g) => g.status !== 'open').length,
       goals_open: session.goals.filter((g) => g.status === 'open').length,

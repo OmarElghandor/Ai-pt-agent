@@ -66,26 +66,70 @@ const GOLDEN_1: GoldenScript = {
 const GOLDEN_2: GoldenScript = {
   id: 'g2-direcoes',
   level: 1,
+  // Start open — resolver must resolve direcoes after lock (no injected topic).
   turns: [
     {
-      learner: 'Ola bom dia',
-      check: { expectGreetingReask: true },
-    },
-    {
-      learner: 'عايز أتعلم الاتجاهات',
+      learner: 'عايز أتكلم عن الاتجاهات',
       check: {
         expectTopicId: 'direcoes',
         expectTeaching: true,
+        expectTeachGoalId: 'dir.metro',
+        expectTeachShownFor: 'dir.metro',
+        expectCurrentGoal: 'dir.metro',
+        expectQuestion: true,
       },
     },
     {
       learner: 'De metro.',
-      modelReply: 'Ótimo! Já estás na estação?\nAR: ممتاز!\nGOALS: dir.metro',
-      check: { expectTeaching: true, expectQuestion: true },
+      check: {
+        expectTeaching: true,
+        expectGoalDone: 'dir.metro',
+        expectTeachGoalId: 'dir.station',
+        expectTeachShownFor: 'dir.station',
+        expectCurrentGoal: 'dir.station',
+        expectQuestion: true,
+      },
     },
     {
-      learner: 'كفاية',
-      check: { expectExit: true },
+      learner: 'Estou na estação.',
+      check: {
+        expectGoalDone: 'dir.station',
+        expectTeachGoalId: 'dir.right',
+        expectCurrentGoal: 'dir.right',
+      },
+    },
+    {
+      learner: 'À direita.',
+      check: {
+        expectGoalDone: 'dir.right',
+        expectTeachGoalId: 'dir.straight',
+        expectCurrentGoal: 'dir.straight',
+      },
+    },
+    {
+      learner: 'Em frente.',
+      check: {
+        expectGoalDone: 'dir.straight',
+        expectTeachGoalId: 'dir.left',
+        expectTeachShownFor: 'dir.left',
+        expectCurrentGoal: 'dir.left',
+      },
+    },
+    {
+      learner: 'a direita?',
+      check: {
+        expectNoTeachReplay: 'dir.left',
+        expectTeachShownFor: 'dir.left',
+        expectCurrentGoal: 'dir.left',
+        expectQuestion: true,
+      },
+    },
+    {
+      learner: 'esquerda!',
+      check: {
+        expectGoalDone: 'dir.left',
+        expectNoTeachReplay: 'dir.left',
+      },
     },
   ],
 };
@@ -139,14 +183,26 @@ describe('conversations v4 · V8 golden conversations', () => {
     assert.ok(rows.some((r) => r.topic_id === 'day-1'));
   });
 
-  it('golden 2 · directions at level 1 teaching + كفاية exit', async () => {
+  it('golden 2 · directions teach through dir.left (wrong then correct)', async () => {
     const rows = await playGolden(GOLDEN_2);
     for (const r of rows) {
       assert.ok(r.ok, `${r.learner}: ${r.failures.join('; ')}`);
     }
-    const lock = rows.find((r) => r.topic_id === 'direcoes');
-    assert.ok(lock?.teaching_mode);
-    assert.equal(rows.at(-1)?.status, 'done');
+    assert.equal(rows[0]?.topic_id, 'direcoes');
+    assert.equal(rows[0]?.teaching_mode, true);
+    assert.ok(
+      rows[0]?.character_tls.some((t) => /Vens à minha casa/i.test(t)),
+    );
+    assert.ok(
+      rows[1]?.character_tls.some((t) => /Sais na estação Anjos/i.test(t)),
+    );
+    const wrong = rows.find((r) => r.learner === 'a direita?');
+    assert.ok(wrong);
+    assert.equal(wrong.current_goal, 'dir.left');
+    assert.equal(wrong.teach_shown_for, 'dir.left');
+    const leftDone = rows.at(-1);
+    assert.ok(leftDone?.ok);
+    assert.equal(leftDone?.current_goal !== 'dir.left' || leftDone.goals_done >= 5, true);
   });
 
   it('golden 3 · casa at 20 stays goal-driven', async () => {
