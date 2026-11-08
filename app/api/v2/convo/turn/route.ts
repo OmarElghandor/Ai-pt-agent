@@ -40,7 +40,6 @@ export async function POST(req: Request) {
     assisted?: boolean;
     survival?: 'repeat' | 'slow' | 'nao_percebi';
     character_id?: string;
-    dismiss_cta?: boolean;
     via_voice?: boolean;
     learner_turn_id?: string;
     /** Dev A/B: `qwen` | `haiku` | `anthropic:…` | `deepinfra:…`. */
@@ -84,7 +83,6 @@ export async function POST(req: Request) {
             ...(body?.character_id
               ? { characterId: body.character_id }
               : {}),
-            ...(body?.dismiss_cta ? { dismissCta: true } : {}),
             ...(body?.learner_turn_id
               ? { learnerTurnId: body.learner_turn_id }
               : {}),

@@ -40,10 +40,6 @@ type ConvoSessionDocLean = {
   survival_used?: number;
   learner_lines?: string[];
   recasts?: Array<{ original: string; corrected: string }>;
-  learn_suggest_group?: string | null;
-  learn_suggest_count?: number;
-  learn_suggest_done?: boolean;
-  pending_cta?: ConvoSession['pending_cta'];
   coach_phrase?: ConvoSession['coach_phrase'];
   open_turns?: number;
   open_fallbacks?: number;
@@ -93,10 +89,6 @@ function sessionFields(session: ConvoSession) {
     survival_used: session.survival_used,
     learner_lines: session.learner_lines,
     recasts: session.recasts,
-    learn_suggest_group: session.learn_suggest_group,
-    learn_suggest_count: session.learn_suggest_count,
-    learn_suggest_done: session.learn_suggest_done,
-    pending_cta: session.pending_cta,
     coach_phrase: session.coach_phrase,
     open_turns: session.open_turns,
     open_fallbacks: session.open_fallbacks,
@@ -162,10 +154,6 @@ function fromDoc(doc: ConvoSessionDocLean): ConvoSession {
     survival_used: doc.survival_used ?? 0,
     learner_lines: doc.learner_lines ?? [],
     recasts: Array.isArray(doc.recasts) ? doc.recasts : [],
-    learn_suggest_group: doc.learn_suggest_group ?? null,
-    learn_suggest_count: doc.learn_suggest_count ?? 0,
-    learn_suggest_done: doc.learn_suggest_done ?? false,
-    pending_cta: doc.pending_cta ?? null,
     coach_phrase: doc.coach_phrase ?? null,
     open_turns: doc.open_turns ?? 0,
     open_fallbacks: doc.open_fallbacks ?? 0,

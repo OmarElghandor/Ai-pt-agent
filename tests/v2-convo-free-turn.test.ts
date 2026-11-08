@@ -89,10 +89,10 @@ describe('v2 free chat · budget (T7.2 / T2.2 free run)', () => {
   async function playFreeBudgetTurns(n: number): Promise<number[]> {
     const inputTokens: number[] = [];
     const store = new MemoryConvoSessionStore();
-    // Open mode only — thread→open handoff changes CHARACTER size (E7 examples).
+    // Goal-directed topic — unlocked open only reasks and does not call the model.
     const started = await startFreeConvoSession({
       userId: 'free-budget',
-      topicId: 'open',
+      topicId: 'comida',
       store,
       newId: () => 'free-budget-sess',
       learnerName: 'Omar',
@@ -100,20 +100,14 @@ describe('v2 free chat · budget (T7.2 / T2.2 free run)', () => {
     let session = started.session;
     const model = createStubConvoStreamModel({
       byCandidate: () =>
-        [
-          'PT: Fixe! E que carros gostas?',
-          'AR: رائع! وما هي السيارات التي تحبها؟',
-          'FRAME: Gosto de ___.',
-          'HINT: قول نوع العربية',
-          'CHIPS: carros rápidos | carros clássicos | nenhum',
-        ].join('\n'),
+        'Que fixe! E tu, o que comes?\nAR: رائع!\nGOALS: -',
     });
 
     for (let i = 0; i < n; i++) {
       const events: ConvoTurnStreamEvent[] = [];
       const out = await runFreeConvoTurn({
         session,
-        learnerText: i === 0 ? '' : 'Gosto de carros.',
+        learnerText: i === 0 ? '' : 'Gosto de arroz.',
         store,
         model,
         emit: (e) => events.push(e),

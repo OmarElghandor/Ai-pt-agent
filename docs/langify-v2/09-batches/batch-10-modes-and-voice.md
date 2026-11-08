@@ -80,10 +80,7 @@ Test: "I like football did you watch Benfica" inside casa gets a normal reaction
   - in Learn: the existing result card.
 - Buttons: «اتكلم عنه دلوقتي» (Learn only → opens practice on the same topic, or open mode on it if it has no thread bank) and «رجوع».
 
-**D8 · One coach suggestion per session.**
-- In practice, if the learner sends 3 Arabic language questions about the same item group, the coach suggests once: «شكلك محتاج تفهم {topic} — تحب ندخل اتعلّم؟», with two buttons.
-- Matching is by items in the Module A packs, in code. If nothing matches, there's no suggestion.
-- "لأ" or ignoring it means the conversation continues, and there are no more suggestions in this session.
+**D8 · One coach suggestion per session.** ~~Cancelled (conversations v4).~~ Free talk never offers a Learn CTA or navigates to a role-play pack; every topic request goes through the v4 router.
 
 **D9 · Voice-first conversation screen** (all modes, Module A and C share it).
 - **Default input is voice.** A large mic button sits at the bottom centre: tap to talk, tap again to send, with a live level indicator and a timer. No hold-to-talk.

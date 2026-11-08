@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ConvoTurnStreamEvent } from '@/lib/v2/convo/turn';
 import type { ConvoSessionSummary } from '@/lib/v2/convo/result';
@@ -48,7 +47,6 @@ export function FreeTalkSession({
   day = null,
   level = null,
 }: Props) {
-  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [errorEg, setErrorEg] = useState<string | null>(null);
   const [failedLearnerId, setFailedLearnerId] = useState<string | null>(null);
@@ -62,7 +60,6 @@ export function FreeTalkSession({
   const [busy, setBusy] = useState(false);
   const [metrics, setMetrics] = useState<TalkTurnMetrics | null>(null);
   const [turnCount, setTurnCount] = useState(0);
-  const [lessonHref, setLessonHref] = useState<string | null>(null);
   const [frame, setFrame] = useState<{
     tl: string;
     eg: string;
@@ -100,19 +97,6 @@ export function FreeTalkSession({
 
   const applyEvent = useCallback(
     (event: ConvoTurnStreamEvent) => {
-      if (event.type === 'cta') {
-        setLessonHref(event.href);
-        return;
-      }
-      if (event.type === 'cta_navigate') {
-        setLessonHref(null);
-        router.push(event.href);
-        return;
-      }
-      if (event.type === 'cta_dismissed') {
-        setLessonHref(null);
-        return;
-      }
       if (event.type === 'coach') {
         if (event.id === 'threads_done_open') {
           setOpenMode(true);
@@ -182,7 +166,7 @@ export function FreeTalkSession({
         setErrorEg('حاول تاني');
       }
     },
-    [router, commitBubbles],
+    [commitBubbles],
   );
 
   const markLearnerFailed = useCallback(
@@ -226,7 +210,6 @@ export function FreeTalkSession({
       learnerText: string,
       opts?: {
         assisted?: boolean;
-        dismissCta?: boolean;
         learnerTurnId?: string;
       },
     ) => {
@@ -245,7 +228,6 @@ export function FreeTalkSession({
             convo_model: convoModel,
             ...(useAssisted ? { assisted: true } : {}),
             ...(openMode ? { character_id: characterId } : {}),
-            ...(opts?.dismissCta ? { dismiss_cta: true } : {}),
             ...(opts?.learnerTurnId
               ? { learner_turn_id: opts.learnerTurnId }
               : {}),
@@ -645,27 +627,6 @@ export function FreeTalkSession({
           })}
         </div>
       </div>
-
-      {lessonHref ? (
-        <div className="flex gap-2 px-4 pb-2">
-          <Link
-            href={lessonHref}
-            className="inline-flex min-h-11 flex-1 items-center justify-center gap-1 rounded-[var(--ft-radius-control)] bg-[var(--ft-sage)] px-4 py-2.5 font-[family-name:var(--font-ft-ar)] text-base font-semibold text-[var(--ft-on-sage)]"
-          >
-            يلا نتعلّم
-          </Link>
-          <button
-            type="button"
-            className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[var(--ft-radius-control)] border border-[var(--ft-line)] px-4 py-2.5 font-[family-name:var(--font-ft-ar)] text-base text-[var(--ft-text)]"
-            onClick={() => {
-              setLessonHref(null);
-              void runTurn('', { dismissCta: true });
-            }}
-          >
-            لأ، نكمّل
-          </button>
-        </div>
-      ) : null}
 
       {errorEg && !bubbles.some((b) => b.role === 'coach' && b.moment === 'turn_error') ? (
         <p className="px-4 pb-2 font-[family-name:var(--font-ft-ar)] text-sm text-[var(--ft-text-secondary)]">

@@ -15,23 +15,6 @@ export type ConvoTurnStreamEvent =
       /** Structured EG/TL segments (K6); preferred over parsing eg. */
       segments?: Array<{ type: 'eg' | 'tl'; text: string }>;
     }
-  /** Soft Learn CTA — two client buttons, no href-in-text (E9). */
-  | {
-      type: 'cta';
-      id: string;
-      label_eg: string;
-      href: string;
-      dismiss_eg?: string;
-    }
-  /** Learner accepted pending CTA — client should navigate (G4). */
-  | {
-      type: 'cta_navigate';
-      href: string;
-    }
-  /** Learner dismissed pending CTA (G4). */
-  | {
-      type: 'cta_dismissed';
-    }
   | {
       type: 'group_advance';
       group: number;

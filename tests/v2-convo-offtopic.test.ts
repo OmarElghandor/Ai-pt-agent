@@ -15,7 +15,7 @@ import {
 } from '@/lib/v2/convo/turn';
 
 describe('v2 free chat · no topic policing (Batch 10 D3)', () => {
-  it('football inside casa gets a normal reaction + next authored line, no topic change', async () => {
+  it('English chit-chat inside casa stays on casa (side channel, no topic switch)', async () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'ot-casa',
@@ -24,9 +24,10 @@ describe('v2 free chat · no topic policing (Batch 10 D3)', () => {
       newId: () => 'ot-casa-1',
     });
     let session = started.session;
-    assert.equal(session.pending_question?.id, 'casa.t1.ask');
+    const pendingBefore = session.pending_question?.id;
+    assert.equal(pendingBefore, 'casa.t1.ask');
     const model = createStubConvoStreamModel({
-      byCandidate: () => 'Que fixe!',
+      byCandidate: () => 'Que fixe!\nAR: رائع!\nGOALS: -',
     });
     const events: ConvoTurnStreamEvent[] = [];
     const out = await runFreeConvoTurn({
@@ -39,11 +40,13 @@ describe('v2 free chat · no topic policing (Batch 10 D3)', () => {
     session = out.session;
     assert.equal(session.topic_id, 'casa');
     assert.equal(session.off_topic_streak, 0);
-    assert.equal(session.pending_question?.id, 'casa.t1.fu0');
-    assert.ok(!events.some((e) => e.type === 'coach' && 'moment' in e && e.moment === 'topic_switch'));
-    const q = events.find((e) => e.type === 'question');
-    assert.ok(q && q.type === 'question');
-    assert.ok(!/Mas diz-me/i.test(q.tl));
+    assert.equal(session.pending_question?.id, pendingBefore);
+    assert.ok(
+      !events.some(
+        (e) => e.type === 'coach' && 'moment' in e && e.moment === 'topic_switch',
+      ),
+    );
+    assert.ok(events.some((e) => e.type === 'coach'));
   });
 
   it('keeps declining non-learning requests with a coach note only', async () => {

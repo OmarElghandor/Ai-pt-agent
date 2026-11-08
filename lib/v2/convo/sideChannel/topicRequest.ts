@@ -1,10 +1,6 @@
 import { connectMongo, mongoConfigured } from '@/lib/mongo';
 import { V2TopicRequestModel } from '@/lib/v2/mongo/models';
-import {
-  loadTopicsFile,
-  type TopicsFileTopic,
-} from '@/lib/v2/convo/topics';
-import { talkHrefForTopic } from '@/lib/v2/convo/topics/suggestion';
+import { loadTopicsFile } from '@/lib/v2/convo/topics';
 import { normalizeAr } from './normalizeAr';
 
 /**
@@ -42,39 +38,6 @@ export function isTopicRequestText(text: string): boolean {
   return false;
 }
 
-/**
- * Match an Arabic learning request against Module B topics (title_ar / title_tl).
- */
-export function matchTopicRequest(
-  text: string,
-): TopicsFileTopic | null {
-  const file = loadTopicsFile();
-  const norm = normalizeAr(text);
-  for (const theme of file.themes) {
-    for (const topic of theme.topics) {
-      const ar = normalizeAr(topic.title_ar);
-      const themeAr = normalizeAr(theme.title_ar);
-      if (ar && norm.includes(ar)) return topic;
-      if (themeAr && norm.includes(themeAr)) return topic;
-      const tl = topic.title_tl.toLowerCase();
-      if (tl && text.toLowerCase().includes(tl)) return topic;
-    }
-    // Theme-level keywords (e.g. الاتجاهات)
-    const themeAr = normalizeAr(theme.title_ar);
-    if (themeAr && norm.includes(themeAr) && theme.topics[0]) {
-      return theme.topics[0];
-    }
-  }
-  // Common aliases
-  if (/اتجاه|يمين|شمال|direc/i.test(text)) {
-    for (const theme of file.themes) {
-      const hit = theme.topics.find((t) => t.id.includes('directions'));
-      if (hit) return hit;
-    }
-  }
-  return null;
-}
-
 export async function logUnmatchedTopicRequest(opts: {
   userId: string;
   queryEg: string;
@@ -108,31 +71,4 @@ export function drainMemoryTopicRequests(): Array<{
   query_eg: string;
 }> {
   return memoryRequests.splice(0, memoryRequests.length);
-}
-
-export function topicRequestCoachEg(
-  matched: TopicsFileTopic | null,
-  opts?: { packReady?: boolean },
-): {
-  eg: string;
-  href: string | null;
-} {
-  if (matched) {
-    const href = talkHrefForTopic(matched);
-    // Unready days still link into /talk → preparing screen (P3/P5).
-    if (opts?.packReady === false) {
-      return {
-        eg: `تمام — هنجهّز ${matched.title_ar} دلوقتي، دوس هنا`,
-        href,
-      };
-    }
-    return {
-      eg: `تمام — افتح محادثة ${matched.title_ar}`,
-      href,
-    };
-  }
-  return {
-    eg: 'الموضوع ده لسه جاي قريب، هسجّله 🙂',
-    href: null,
-  };
 }

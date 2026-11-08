@@ -42,12 +42,6 @@ export { authoredLinesForWarm } from './warmAudio';
 export { fitFrameFromArabic } from './frameFit';
 
 export {
-  classifyCtaReply,
-  normalizeCtaReply,
-  type CtaReplyKind,
-} from './ctaReply';
-
-export {
   coachPhrasesEqual,
   consumeCoachPhraseOnLearnerTurn,
   extractCoachPhrase,
@@ -68,10 +62,3 @@ export {
   pickOpenFallback,
   type OpenFallbackQuestion,
 } from './openFallback';
-
-export {
-  learnSuggestCoachEg,
-  matchLearnSuggest,
-  packForFreeTopic,
-  type LearnSuggestHit,
-} from './learnSuggest';

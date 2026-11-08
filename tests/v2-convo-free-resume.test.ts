@@ -64,7 +64,7 @@ describe('v2 free chat · facts (T7.4)', () => {
 });
 
 describe('v2 free chat · resume (T7.4)', () => {
-  it('leave and return continues on the same angle', async () => {
+  it('leave and return continues on the same goal topic', async () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'resume-u',
@@ -74,9 +74,8 @@ describe('v2 free chat · resume (T7.4)', () => {
     });
     let session = started.session;
     const model = createStubConvoStreamModel({
-      byCandidate: () => 'Ok!',
+      byCandidate: () => 'Ok!\nAR: حسناً!\nGOALS: -',
     });
-    // One turn advances angle; keep pending from session
     {
       const out = await runFreeConvoTurn({
         session,
@@ -89,19 +88,16 @@ describe('v2 free chat · resume (T7.4)', () => {
     }
     const pendingId = session.pending_question?.id;
     assert.ok(pendingId);
-    const threadIndex = session.thread_index;
+    assert.equal(session.topic_id, 'comida');
 
-    // Simulate leave + reopen (same store, like after browser return)
     const resumed = await startFreeConvoSession({
       userId: 'resume-u',
       topicId: 'comida',
       store,
     });
     assert.equal(resumed.resumed, true);
-    assert.ok(resumed.reopening);
     assert.equal(resumed.session.pending_question?.id, pendingId);
-    assert.equal(resumed.session.thread_index, threadIndex);
-    assert.match(resumed.reopening!.character_tl, /Estávamos a falar|Falávamos|Sobre/);
-    assert.match(resumed.reopening!.character_tl, /comida|Comida/i);
+    assert.equal(resumed.session.topic_id, 'comida');
+    assert.equal(resumed.session.topic_locked, true);
   });
 });

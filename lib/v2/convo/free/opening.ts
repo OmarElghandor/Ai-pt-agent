@@ -27,7 +27,7 @@ export function fillNameSlot(
     return template.replace(/\{name\}/g, safe);
   }
   return template
-    .replace(/\s*\{name\}\s*,?/g, '')
+    .replace(/,?\s*\{name\}\s*,?/g, '')
     .replace(/  +/g, ' ')
     .replace(/\s+([!?.,])/g, '$1')
     .trim();

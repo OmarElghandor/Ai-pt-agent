@@ -19,6 +19,20 @@ describe('v2 free chat · C3 opening', () => {
       fillNameSlot('Olá {name}! 😊 Hoje vamos falar da casa?', null),
       'Olá! 😊 Hoje vamos falar da casa?',
     );
+    assert.equal(
+      fillNameSlot(
+        'Olá, {name}! 😊 Sobre o que queres falar hoje?',
+        null,
+      ),
+      'Olá! 😊 Sobre o que queres falar hoje?',
+    );
+    assert.equal(
+      fillNameSlot(
+        'Olá, {name}! 😊 Sobre o que queres falar hoje?',
+        'Omar',
+      ),
+      'Olá, Omar! 😊 Sobre o que queres falar hoje?',
+    );
   });
 
   it('rejects admin/test/user/dev/@/digits for {name} (G5)', () => {

@@ -20,7 +20,6 @@ async function collect(
   store: MemoryConvoSessionStore,
   text: string,
   model: ReturnType<typeof createLiveConvoStreamModel>,
-  opts?: { dismissCta?: boolean },
 ) {
   const events: ConvoTurnStreamEvent[] = [];
   const streamTexts: string[] = [];
@@ -40,7 +39,6 @@ async function collect(
         streamTexts.push(e.text);
       }
     },
-    ...(opts?.dismissCta ? { dismissCta: true } : {}),
   });
   return { session: out.session, events, metrics: out.metrics, visible, streamTexts };
 }
@@ -71,7 +69,6 @@ async function main() {
 
   if (!process.env.DEEPINFRA_API_KEY) {
     console.log('SKIP live scenarios: no DEEPINFRA_API_KEY');
-    // Still run CTA path with stub
     const model = createStubConvoStreamModel({
       byCandidate: () =>
         [
@@ -86,48 +83,26 @@ async function main() {
       userId: 'dw2-stub',
       topicId: 'open',
       store,
+      learnerLevel: 1,
       newId: () => 'dw2-stub-1',
       learnerName: 'Omar',
     });
-    let r = await collect(
+    const r = await collect(
       started.session,
       store,
       'عايز اتعلم عن الاتجاهات',
       model as ReturnType<typeof createLiveConvoStreamModel>,
     );
-    const cta = r.events.find((e) => e.type === 'cta');
-    console.log('stub S1 cta', cta?.type === 'cta' ? cta.href : null);
+    const lock = r.events.find((e) => e.type === 'topic_lock');
+    const cta = r.events.find((e) => String(e.type).startsWith('cta'));
+    console.log('stub S1 lock', lock?.type === 'topic_lock' ? lock.topic_id : null);
     results.push(
-      cta?.type === 'cta' && r.session.pending_cta ? 'S1 stub PASS' : 'S1 stub FAIL',
-    );
-
-    r = await collect(r.session, store, '', model as never, { dismissCta: true });
-    results.push(
-      r.events.some((e) => e.type === 'cta_dismissed') &&
-        r.session.learner_lines.length === 0
-        ? 'S2 stub PASS'
-        : 'S2 stub FAIL',
-    );
-
-    const started2 = await startFreeConvoSession({
-      userId: 'dw2-stub-yes',
-      topicId: 'open',
-      store,
-      newId: () => 'dw2-stub-2',
-      learnerName: 'Omar',
-    });
-    r = await collect(
-      started2.session,
-      store,
-      'عايز اتعلم عن الاتجاهات',
-      model as never,
-    );
-    const href = r.session.pending_cta?.href;
-    r = await collect(r.session, store, 'نعم', model as never);
-    results.push(
-      r.events.some((e) => e.type === 'cta_navigate' && e.href === href)
-        ? 'S4 stub PASS'
-        : 'S4 stub FAIL',
+      lock?.type === 'topic_lock' &&
+        lock.topic_id === 'direcoes' &&
+        !cta &&
+        r.session.topic_locked
+        ? 'S1 stub PASS'
+        : 'S1 stub FAIL',
     );
 
     console.log('--- summary ---');
@@ -137,13 +112,13 @@ async function main() {
 
   const model = createLiveConvoStreamModel();
 
-  console.log('--- S1: عايز اتعلم عن الاتجاهات ---');
-  let sessionAfterSuggest: ConvoSession | null = null;
+  console.log('--- S1: عايز اتعلم عن الاتجاهات → router lock ---');
   {
     const started = await startFreeConvoSession({
       userId: 'dw2-1',
       topicId: 'open',
       store,
+      learnerLevel: 1,
       newId: () => 'dw2-open-1',
       learnerName: 'Omar',
     });
@@ -153,42 +128,16 @@ async function main() {
       'عايز اتعلم عن الاتجاهات',
       model,
     );
-    const coach = r.events.find((e) => e.type === 'coach');
-    const cta = r.events.find((e) => e.type === 'cta');
-    console.log('coach', coach?.type === 'coach' ? coach.eg : null);
+    const lock = r.events.find((e) => e.type === 'topic_lock');
+    const cta = r.events.find((e) => String(e.type).startsWith('cta'));
+    console.log('lock', lock);
     console.log('cta', cta);
     const ok =
-      coach?.type === 'coach' &&
-      cta?.type === 'cta' &&
-      Boolean(cta.dismiss_eg) &&
-      Boolean(r.session.pending_cta);
+      lock?.type === 'topic_lock' &&
+      lock.topic_id === 'direcoes' &&
+      !cta &&
+      r.session.topic_locked;
     results.push(ok ? 'S1 PASS' : 'S1 FAIL');
-    console.log(results.at(-1));
-    sessionAfterSuggest = r.session;
-  }
-
-  console.log('--- S2: dismiss_cta (button) ---');
-  {
-    const started = await startFreeConvoSession({
-      userId: 'dw2-2',
-      topicId: 'open',
-      store,
-      newId: () => 'dw2-open-2',
-      learnerName: 'Omar',
-    });
-    let r = await collect(
-      started.session,
-      store,
-      'عايز اتعلم عن الاتجاهات',
-      model,
-    );
-    r = await collect(r.session, store, '', model, { dismissCta: true });
-    const ok =
-      r.events.some((e) => e.type === 'cta_dismissed') &&
-      r.session.pending_cta === null &&
-      r.session.learner_lines.length === 0 &&
-      r.session.last_exchanges.length === 0;
-    results.push(ok ? 'S2 PASS' : 'S2 FAIL');
     console.log(results.at(-1));
   }
 
@@ -267,33 +216,6 @@ async function main() {
     console.log(results.at(-1));
   }
 
-  console.log('--- S4: نعم → navigate ---');
-  {
-    const started = await startFreeConvoSession({
-      userId: 'dw2-4',
-      topicId: 'open',
-      store,
-      newId: () => 'dw2-open-4',
-      learnerName: 'Omar',
-    });
-    let r = await collect(
-      started.session,
-      store,
-      'عايز اتعلم عن الاتجاهات',
-      model,
-    );
-    const href = r.session.pending_cta?.href ?? '';
-    r = await collect(r.session, store, 'نعم', model);
-    const nav = r.events.find((e) => e.type === 'cta_navigate');
-    const ok =
-      nav?.type === 'cta_navigate' &&
-      nav.href === href &&
-      /talk|direc|day-33|day-18|اتجاه/i.test(href);
-    results.push(ok ? 'S4 PASS' : 'S4 FAIL');
-    console.log('href', href, 'nav', nav, results.at(-1));
-  }
-
-  void sessionAfterSuggest;
   console.log('--- summary ---');
   for (const line of results) console.log(line);
 }

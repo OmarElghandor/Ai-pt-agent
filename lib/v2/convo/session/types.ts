@@ -127,17 +127,6 @@ export type ConvoSession = {
   learner_lines: string[];
   /** Recast / free-text correction pairs (Batch 10 + K5). */
   recasts: Array<{ original: string; corrected: string; ar?: string }>;
-  /** Language-Q group key being counted toward a Learn suggestion (D8). */
-  learn_suggest_group: string | null;
-  /** Hits on learn_suggest_group this session. */
-  learn_suggest_count: number;
-  /** True after one Learn suggestion (or dismiss) — no more this session. */
-  learn_suggest_done: boolean;
-  /**
-   * Soft Learn CTA waiting for the learner's next message only (G4).
-   * Cleared on yes/no/any other message or dismiss_cta.
-   */
-  pending_cta: { href: string; pack_id: string } | null;
   /**
    * PT phrase from the free Arabic coach for the learner to practise (G6).
    * Expires after 2 learner PT turns without a match.

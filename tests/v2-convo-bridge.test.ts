@@ -1,15 +1,11 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import {
-  classifySideChannel,
-  drainMemoryTopicRequests,
-  matchTopicRequest,
-  topicRequestCoachEg,
-} from '@/lib/v2/convo/sideChannel';
+import { classifySideChannel } from '@/lib/v2/convo/sideChannel';
 import {
   freeTopicIdForPack,
   loadTopicsFile,
 } from '@/lib/v2/convo/topics';
+import { OPEN_TOPIC_ID } from '@/lib/v2/convo/topics/openTopic';
 import {
   MemoryConvoSessionStore,
   startConvoSession,
@@ -28,6 +24,10 @@ import {
 const pack = requireConvoPack('pt-PT.day-33', {
   itemSurfaces: loadConvoItemSurfaces(),
 });
+
+function hasCta(events: ConvoTurnStreamEvent[]): boolean {
+  return events.some((e) => String(e.type).startsWith('cta'));
+}
 
 describe('v2 free chat · topic request (T7.5)', () => {
   it('classifies عايز أتعلم as topic_request', () => {
@@ -63,61 +63,15 @@ describe('v2 free chat · topic request (T7.5)', () => {
     assert.equal(classifySideChannel('ازاي أقول مع رز؟'), 'language_question');
   });
 
-  it('matches directions from the topics catalogue', () => {
-    const matched = matchTopicRequest('عايز أتعلم الاتجاهات');
-    assert.ok(matched);
-    assert.equal(matched!.pack_id, 'pt-PT.day-33');
-    const coach = topicRequestCoachEg(matched);
-    assert.match(coach.eg, /الاتجاهات|المترو|فين المكان/);
-    assert.ok(coach.href?.includes('talk'));
-  });
-
-  it('matches directions for unhamzed عايز اعلم عن الاتجاهات (E1)', () => {
-    const matched = matchTopicRequest('عايز اعلم عن الاتجاهات');
-    assert.ok(matched);
-    assert.equal(matched!.pack_id, 'pt-PT.day-33');
-    assert.equal(classifySideChannel('عايز اعلم عن الاتجاهات'), 'topic_request');
-  });
-
-  it('logs unmatched requests in memory', async () => {
-    drainMemoryTopicRequests();
-    const store = new MemoryConvoSessionStore();
-    const started = await startFreeConvoSession({
-      userId: 'br-1',
-      topicId: 'comida',
-      store,
-      newId: () => 'br-sess-1',
-    });
-    const model = createStubConvoStreamModel({
-      byCandidate: () => 'nope',
-    });
-    const events: ConvoTurnStreamEvent[] = [];
-    await runFreeConvoTurn({
-      session: started.session,
-      learnerText: 'عايز أتعلم الكاراتيه الفضائي',
-      store,
-      model,
-      emit: (e) => events.push(e),
-    });
-    const logged = drainMemoryTopicRequests();
-    assert.equal(logged.length, 1);
-    assert.match(logged[0]!.query_eg, /كاراتيه/);
-    assert.ok(
-      events.some(
-        (e) => e.type === 'coach' && e.id === 'free_topic_request_unmatched',
-      ),
-    );
-  });
-
-  it('keeps free chat open and emits a soft Learn CTA (batch 10)', async () => {
+  it('routes عايز أتعلم الاتجاهات to direcoes with no CTA', async () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'br-2',
-      topicId: 'comida',
+      topicId: OPEN_TOPIC_ID,
       store,
+      learnerLevel: 1,
       newId: () => 'br-sess-2',
     });
-    const pendingBefore = started.session.pending_question?.id;
     const model = createStubConvoStreamModel({
       byCandidate: () => 'nope',
     });
@@ -129,22 +83,61 @@ describe('v2 free chat · topic request (T7.5)', () => {
       model,
       emit: (e) => events.push(e),
     });
-    // Soft CTA only — no forced pack jump
+    assert.equal(out.session.topic_id, 'direcoes');
+    assert.equal(out.session.topic_locked, true);
     assert.equal(out.session.paused_for_pack_id, null);
-    assert.equal(out.session.pending_question?.id, pendingBefore);
-    assert.equal(out.session.learn_suggest_done, true);
+    assert.ok(events.some((e) => e.type === 'topic_lock'));
+    assert.ok(!hasCta(events));
+  });
+
+  it('routes unhamzed عايز اعلم عن الاتجاهات to direcoes (E1)', async () => {
+    const store = new MemoryConvoSessionStore();
+    const started = await startFreeConvoSession({
+      userId: 'br-e1',
+      topicId: OPEN_TOPIC_ID,
+      store,
+      learnerLevel: 1,
+      newId: () => 'br-e1',
+    });
+    const events: ConvoTurnStreamEvent[] = [];
+    const out = await runFreeConvoTurn({
+      session: started.session,
+      learnerText: 'عايز اعلم عن الاتجاهات',
+      store,
+      model: createStubConvoStreamModel({ byCandidate: () => 'Ok!' }),
+      emit: (e) => events.push(e),
+    });
+    assert.equal(classifySideChannel('عايز اعلم عن الاتجاهات'), 'topic_request');
+    assert.equal(out.session.topic_id, 'direcoes');
+    assert.ok(!hasCta(events));
+  });
+
+  it('unknown topic request clarifies without Learn CTA', async () => {
+    const store = new MemoryConvoSessionStore();
+    const started = await startFreeConvoSession({
+      userId: 'br-1',
+      topicId: OPEN_TOPIC_ID,
+      store,
+      learnerLevel: 1,
+      newId: () => 'br-sess-1',
+    });
+    const events: ConvoTurnStreamEvent[] = [];
+    const out = await runFreeConvoTurn({
+      session: started.session,
+      learnerText: 'عايز أتعلم الكاراتيه الفضائي',
+      store,
+      model: createStubConvoStreamModel({ byCandidate: () => 'nope' }),
+      emit: (e) => events.push(e),
+    });
+    assert.ok(!hasCta(events));
+    assert.equal(out.session.topic_locked, false);
     assert.ok(
       events.some(
-        (e) => e.type === 'coach' && e.id === 'free_topic_request',
+        (e) =>
+          e.type === 'question' ||
+          (e.type === 'coach' && e.id === 'topic_reask'),
       ),
     );
-    const cta = events.find((e) => e.type === 'cta');
-    assert.ok(cta && cta.type === 'cta');
-    assert.equal(cta.label_eg, 'يلا نتعلّم');
-    assert.ok(cta.href.includes('talk'));
-    assert.equal(cta.dismiss_eg, 'لأ، نكمّل');
-    assert.ok(out.session.pending_cta?.href);
-    assert.equal(out.session.pending_cta?.href, cta.href);
   });
 });
 
@@ -159,32 +152,27 @@ describe('v2 free chat · lesson→free bridge (T7.5)', () => {
     assert.ok(pack.bridge.tl.length > 0);
   });
 
-  it('soft Learn CTA leaves free session resumable without pause', async () => {
+  it('topic lock does not block starting a role-play lesson', async () => {
     const store = new MemoryConvoSessionStore();
 
     const freeStart = await startFreeConvoSession({
       userId: 'loop-u',
-      topicId: 'comida',
+      topicId: OPEN_TOPIC_ID,
       store,
+      learnerLevel: 1,
       newId: () => 'loop-free',
     });
-    const pendingFree = freeStart.session.pending_question?.id;
-    assert.ok(pendingFree);
 
-    const model = createStubConvoStreamModel({
-      byCandidate: () => 'Ok!',
-    });
-    const afterSuggest = await runFreeConvoTurn({
+    const afterLock = await runFreeConvoTurn({
       session: freeStart.session,
       learnerText: 'عايز أتعلم الاتجاهات',
       store,
-      model,
+      model: createStubConvoStreamModel({ byCandidate: () => 'Ok!' }),
       emit: () => {},
     });
-    assert.equal(afterSuggest.session.paused_for_pack_id, null);
-    assert.equal(afterSuggest.session.learn_suggest_done, true);
+    assert.equal(afterLock.session.topic_id, 'direcoes');
+    assert.equal(afterLock.session.paused_for_pack_id, null);
 
-    // Learner can still open the directions lesson separately
     const lesson = await startConvoSession({
       userId: 'loop-u',
       pack,
@@ -193,22 +181,5 @@ describe('v2 free chat · lesson→free bridge (T7.5)', () => {
     });
     assert.equal(lesson.session.module, 'lesson');
     assert.equal(lesson.session.pack_id, 'pt-PT.day-33');
-
-    const doneLesson = {
-      ...lesson.session,
-      status: 'done' as const,
-      phase: 'closing' as const,
-    };
-    await store.save(doneLesson);
-
-    const resumed = await startFreeConvoSession({
-      userId: 'loop-u',
-      topicId: 'comida',
-      store,
-    });
-    assert.equal(resumed.resumed, true);
-    assert.equal(resumed.session.pending_question?.id, pendingFree);
-    assert.equal(resumed.session.paused_for_pack_id, null);
-    assert.ok(resumed.reopening);
   });
 });

@@ -31,11 +31,9 @@ export {
 export { handleLanguageQuestionCoachCall } from './handleCoachCall';
 export {
   isTopicRequestText,
-  matchTopicRequest,
   logUnmatchedTopicRequest,
   logUnmatchedTopicRequestSync,
   drainMemoryTopicRequests,
-  topicRequestCoachEg,
 } from './topicRequest';
 export {
   collectFreeContextCandidates,

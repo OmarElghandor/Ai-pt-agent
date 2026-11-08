@@ -59,9 +59,14 @@ async function main() {
       'عايز اعلم عن الاتجاهات',
       model,
     );
-    const cta = r.events.find((e) => e.type === 'cta');
+    const lock = r.events.find((e) => e.type === 'topic_lock');
+    const cta = r.events.find((e) => String(e.type).startsWith('cta'));
+    console.log('topic_lock', lock);
     console.log('cta', cta);
-    const ok = cta?.type === 'cta' && cta.label_eg === 'يلا نتعلّم';
+    const ok =
+      lock?.type === 'topic_lock' &&
+      lock.topic_id === 'direcoes' &&
+      !cta;
     results.push(ok ? 'S1 PASS' : 'S1 FAIL');
     console.log(results.at(-1));
   }
