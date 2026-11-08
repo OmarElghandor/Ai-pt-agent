@@ -754,6 +754,15 @@ const v2ConvoSessionSchema = new Schema(
     turns_on_goal: { type: Number, required: false, default: 0 },
     scene: { type: Schema.Types.Mixed, required: false, default: null },
     lesson_day: { type: Number, required: false, default: null },
+    topic_locked: { type: Boolean, required: false, default: false },
+    learner_level: { type: Number, required: false, default: null },
+    teaching_mode: { type: Boolean, required: false, default: false },
+    goal_tier: {
+      type: String,
+      required: false,
+      enum: ['core', 'extended', 'free'],
+      default: 'core',
+    },
   },
   { timestamps: true, collection: 'v2_convo_sessions', _id: false },
 );

@@ -75,6 +75,14 @@ export type ConvoSession = {
   scene: ConvoScene | null;
   /** When free talk was started from a lesson day (`?day=`). */
   lesson_day: number | null;
+  /** v4: topic locked by the router (no per-message reclassification). */
+  topic_locked: boolean;
+  /** v4: learner curriculum level at session start (dev may override). */
+  learner_level: number | null;
+  /** v4: above-level topic — use authored `teach` beats. */
+  teaching_mode: boolean;
+  /** v4: which goal band is active. */
+  goal_tier: 'core' | 'extended' | 'free';
   /** True when the learner used ساعدني أرد on the current question. */
   assisted: boolean;
   /** Consecutive off-topic learner turns (T7.3). */

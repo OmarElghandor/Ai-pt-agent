@@ -53,6 +53,10 @@ type ConvoSessionDocLean = {
   turns_on_goal?: number;
   scene?: ConvoSession['scene'];
   lesson_day?: number | null;
+  topic_locked?: boolean;
+  learner_level?: number | null;
+  teaching_mode?: boolean;
+  goal_tier?: ConvoSession['goal_tier'];
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -101,6 +105,10 @@ function sessionFields(session: ConvoSession) {
     turns_on_goal: session.turns_on_goal ?? 0,
     scene: session.scene ?? null,
     lesson_day: session.lesson_day ?? null,
+    topic_locked: session.topic_locked ?? false,
+    learner_level: session.learner_level ?? null,
+    teaching_mode: session.teaching_mode ?? false,
+    goal_tier: session.goal_tier ?? 'core',
   };
 }
 
@@ -121,6 +129,10 @@ function fromDoc(doc: ConvoSessionDocLean): ConvoSession {
     turns_on_goal: doc.turns_on_goal ?? 0,
     scene: doc.scene ?? null,
     lesson_day: doc.lesson_day ?? null,
+    topic_locked: doc.topic_locked ?? false,
+    learner_level: doc.learner_level ?? null,
+    teaching_mode: doc.teaching_mode ?? false,
+    goal_tier: doc.goal_tier ?? 'core',
     assisted: doc.assisted ?? false,
     off_topic_streak: doc.off_topic_streak ?? 0,
     paused_for_pack_id: doc.paused_for_pack_id ?? null,
