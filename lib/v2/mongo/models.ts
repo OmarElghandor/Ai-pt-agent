@@ -757,6 +757,7 @@ const v2ConvoSessionSchema = new Schema(
     topic_locked: { type: Boolean, required: false, default: false },
     learner_level: { type: Number, required: false, default: null },
     teaching_mode: { type: Boolean, required: false, default: false },
+    teach_shown_for: { type: String, required: false, default: null },
     goal_tier: {
       type: String,
       required: false,

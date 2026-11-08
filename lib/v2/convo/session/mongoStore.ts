@@ -56,6 +56,7 @@ type ConvoSessionDocLean = {
   topic_locked?: boolean;
   learner_level?: number | null;
   teaching_mode?: boolean;
+  teach_shown_for?: string | null;
   goal_tier?: ConvoSession['goal_tier'];
   createdAt?: Date;
   updatedAt?: Date;
@@ -108,6 +109,7 @@ function sessionFields(session: ConvoSession) {
     topic_locked: session.topic_locked ?? false,
     learner_level: session.learner_level ?? null,
     teaching_mode: session.teaching_mode ?? false,
+    teach_shown_for: session.teach_shown_for ?? null,
     goal_tier: session.goal_tier ?? 'core',
   };
 }
@@ -132,6 +134,7 @@ function fromDoc(doc: ConvoSessionDocLean): ConvoSession {
     topic_locked: doc.topic_locked ?? false,
     learner_level: doc.learner_level ?? null,
     teaching_mode: doc.teaching_mode ?? false,
+    teach_shown_for: doc.teach_shown_for ?? null,
     goal_tier: doc.goal_tier ?? 'core',
     assisted: doc.assisted ?? false,
     off_topic_streak: doc.off_topic_streak ?? 0,

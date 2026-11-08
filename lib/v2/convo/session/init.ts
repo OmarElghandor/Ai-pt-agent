@@ -98,6 +98,7 @@ export function createConvoSessionDoc(opts: {
     topic_locked: false,
     learner_level: null,
     teaching_mode: false,
+    teach_shown_for: null,
     goal_tier: 'core',
     assisted: false,
     off_topic_streak: 0,

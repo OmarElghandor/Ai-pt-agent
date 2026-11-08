@@ -81,6 +81,11 @@ export type ConvoSession = {
   learner_level: number | null;
   /** v4: above-level topic — use authored `teach` beats. */
   teaching_mode: boolean;
+  /**
+   * v4: goal id whose teach beat was already shown.
+   * Separate from turns_on_goal (escalation must not bump on teach).
+   */
+  teach_shown_for: string | null;
   /** v4: which goal band is active. */
   goal_tier: 'core' | 'extended' | 'free';
   /** True when the learner used ساعدني أرد on the current question. */

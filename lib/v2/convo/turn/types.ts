@@ -50,6 +50,14 @@ export type ConvoTurnStreamEvent =
       eg: string;
       chips: string[];
     }
+  /** v4: router locked a topic — client updates header/chip titles. */
+  | {
+      type: 'topic_lock';
+      topic_id: string;
+      title_tl: string;
+      title_ar: string;
+      teaching_mode: boolean;
+    }
   | {
       type: 'reaction_delta';
       text: string;

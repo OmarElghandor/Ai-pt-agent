@@ -78,7 +78,17 @@ function parseGoal(raw: Record<string, unknown>): ConvoGoal {
     const ar = String(t.ar ?? '').trim();
     const meaning_eg = String(t.meaning_eg ?? '').trim();
     if (tl && ar && meaning_eg) {
-      goal.teach = { tl, ar, meaning_eg };
+      goal.teach = {
+        tl,
+        ar,
+        meaning_eg,
+        ...(typeof t.tl_f === 'string' && t.tl_f.trim()
+          ? { tl_f: t.tl_f.trim() }
+          : {}),
+        ...(typeof t.ar_f === 'string' && t.ar_f.trim()
+          ? { ar_f: t.ar_f.trim() }
+          : {}),
+      };
     }
   }
   return goal;
@@ -170,6 +180,12 @@ export function parseLessonDayBankJson(
     bank.closing = {
       tl: String(closingRaw.tl ?? ''),
       ar: String(closingRaw.ar ?? ''),
+      ...(typeof closingRaw.tl_f === 'string'
+        ? { tl_f: closingRaw.tl_f }
+        : {}),
+      ...(typeof closingRaw.ar_f === 'string'
+        ? { ar_f: closingRaw.ar_f }
+        : {}),
     };
   }
 

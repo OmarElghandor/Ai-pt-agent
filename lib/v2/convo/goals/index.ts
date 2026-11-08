@@ -50,7 +50,14 @@ export {
   extendedGoals,
   goalTier,
 } from './tiers';
-export { goalNeedsTeach, teachBeatForGoal } from './teach';
+export {
+  emitAuthoredAsk,
+  emitTeachSequence,
+  goalNeedsTeach,
+  shouldShowTeachForGoal,
+  teachBeatForGoal,
+} from './teach';
+export type { LearnerGender, TeachBeat } from './teach';
 export type { TeachBeat } from './teach';
 export {
   findGoal,

@@ -68,7 +68,11 @@ import {
   CORE_DONE_COACH_EG,
   allTierDone,
 } from '@/lib/v2/convo/goals/tiers';
-import { teachBeatForGoal } from '@/lib/v2/convo/goals/teach';
+import {
+  emitAuthoredAsk,
+  emitTeachSequence,
+  shouldShowTeachForGoal,
+} from '@/lib/v2/convo/goals/teach';
 import { checkReplyLevel } from '@/lib/v2/convo/guard/levelGuard';
 import { loadSuggestedSurfacesForUser } from '@/lib/v2/convo/session/suggestedWords';
 import { getCharacter } from '@/lib/v2/characters/registry';
@@ -532,32 +536,35 @@ export async function runFreeConvoTurn(
     original: string;
   } | null = null;
 
-  const finish = async (ok: boolean, error?: string) => {
-    if (correctionJob) {
-      const job = correctionJob;
-      correctionJob = null;
-      const corr = await awaitAndEmitCorrection({
-        promise: job.promise,
-        learner_turn_id: job.learner_turn_id,
-        original: job.original,
-        emit,
+  const flushCorrection = async () => {
+    if (!correctionJob) return;
+    const job = correctionJob;
+    correctionJob = null;
+    const corr = await awaitAndEmitCorrection({
+      promise: job.promise,
+      learner_turn_id: job.learner_turn_id,
+      original: job.original,
+      emit,
+    });
+    if (corr.has_error && corr.severity === 'error' && corr.corrected_tl) {
+      session.recasts = [
+        ...(session.recasts ?? []),
+        {
+          original: job.original,
+          corrected: corr.corrected_tl,
+          ...(corr.ar ? { ar: corr.ar } : {}),
+        },
+      ].slice(-8);
+      void appendConvoCorrectionError({
+        userId: session.user_id,
+        correction: corr,
+        toolId: 'convo_free',
       });
-      if (corr.has_error && corr.severity === 'error' && corr.corrected_tl) {
-        session.recasts = [
-          ...(session.recasts ?? []),
-          {
-            original: job.original,
-            corrected: corr.corrected_tl,
-            ...(corr.ar ? { ar: corr.ar } : {}),
-          },
-        ].slice(-8);
-        void appendConvoCorrectionError({
-          userId: session.user_id,
-          correction: corr,
-          toolId: 'convo_free',
-        });
-      }
     }
+  };
+
+  const finish = async (ok: boolean, error?: string) => {
+    await flushCorrection();
     session.updated_at = new Date().toISOString();
     session = await input.store.save(session);
     metrics.total_ms = Date.now() - started;
@@ -969,7 +976,7 @@ export async function runFreeConvoTurn(
       return finish(true);
     }
 
-    // Lock topic and load goals, then fall through to goal path.
+    // Lock topic, load goals, play start sequence — do not grade the lock message.
     applyRouterLock(session, decision, { learnerLevel: level });
     const bank =
       decision.topic_id === 'day-1'
@@ -1019,14 +1026,72 @@ export async function runFreeConvoTurn(
     session.goals = goalStatesFromBank(bank);
     session.current_goal = firstOpenGoalId(session.goals);
     session.turns_on_goal = 0;
+    session.teach_shown_for = null;
     session.scene = bank.scene ?? session.scene;
     session.suggested_words = bank.suggested_words?.length
       ? bank.suggested_words
       : session.suggested_words;
+    const lockedTopic = freeTopicById(decision.topic_id);
+    const titleTl =
+      bank.title_tl?.trim() || lockedTopic?.title_tl || decision.topic_id;
+    const titleAr =
+      bank.title_ar?.trim() || lockedTopic?.title_ar || decision.topic_id;
+    emit({
+      type: 'topic_lock',
+      topic_id: decision.topic_id,
+      title_tl: titleTl,
+      title_ar: titleAr,
+      teaching_mode: session.teaching_mode,
+    });
     const currentDef = bank.goals.find((g) => g.id === session.current_goal);
     if (currentDef) {
       session.pending_frame = pendingFrameFromGoal(currentDef);
     }
+    pushExchange(session, 'learner', learnerText);
+    session.learner_lines = pushLearnerLine(
+      session.learner_lines ?? [],
+      learnerText,
+    );
+    const introEg = bank.intro_eg?.trim() || lockedTopic?.intro_eg || null;
+    if (currentDef && session.teaching_mode) {
+      if (
+        emitTeachSequence({
+          goal: currentDef,
+          session,
+          emit,
+          introEg,
+        })
+      ) {
+        if (session.pending_frame) {
+          emit({
+            type: 'free_frame',
+            tl: session.pending_frame.tl,
+            eg: session.pending_frame.eg,
+            chips: session.pending_frame.chips,
+          });
+        }
+        return finish(true);
+      }
+    }
+    // Non-teaching (or no teach beat): intro_eg once, then first ask_tl.
+    if (currentDef) {
+      emitAuthoredAsk({
+        goal: currentDef,
+        session,
+        emit,
+        introEg,
+      });
+      if (session.pending_frame) {
+        emit({
+          type: 'free_frame',
+          tl: session.pending_frame.tl,
+          eg: session.pending_frame.eg,
+          chips: session.pending_frame.chips,
+        });
+      }
+      return finish(true);
+    }
+    return finish(false, 'no current goal after lock');
   }
 
   // After a same-turn lock, resolve goals against the locked bank id.
@@ -1081,47 +1146,127 @@ export async function runFreeConvoTurn(
       : [];
     const acceptedFromModel: string[] = [];
 
-    // v4 teaching mode: authored teach → coach → ask (once per goal).
-    if (
-      session.teaching_mode &&
-      currentDefEarly &&
-      (session.turns_on_goal ?? 0) === 0 &&
-      !learnerText
-    ) {
-      const beat = teachBeatForGoal(currentDefEarly);
-      if (beat) {
-        emit({
-          type: 'bubble_ar',
-          ar: beat.character_ar,
-          pt: beat.character_tl,
-        });
-        emit({
-          type: 'coach',
-          id: `teach:${currentDefEarly.id}`,
-          eg: beat.coach_eg,
-          moment: 'intro',
-        });
-        emit({
-          type: 'question',
-          id: currentDefEarly.id,
-          tl: beat.ask_tl,
-          ar: beat.ask_ar || undefined,
-          kind: 'open',
-          item_id: currentDefEarly.id,
-          audio_key: `free:${session.id}:${currentDefEarly.id}`,
-        });
+    // v4 teaching mode: authored teach → coach → ask (once per goal via teach_shown_for).
+    if (shouldShowTeachForGoal(session, currentDefEarly)) {
+      if (
+        currentDefEarly &&
+        emitTeachSequence({
+          goal: currentDefEarly,
+          session,
+          emit,
+        })
+      ) {
         session.pending_frame = pendingFrameFromGoal(currentDefEarly);
-        session.pending_question = {
-          id: currentDefEarly.id,
-          kind: 'open',
-          item_id: currentDefEarly.id,
-        };
-        session.last_exchanges = [
-          ...session.last_exchanges,
-          { role: 'character', tl: `${beat.character_tl} ${beat.ask_tl}`.trim() },
-        ].slice(-6);
+        if (session.pending_frame) {
+          emit({
+            type: 'free_frame',
+            tl: session.pending_frame.tl,
+            eg: session.pending_frame.eg,
+            chips: session.pending_frame.chips,
+          });
+        }
         return finish(true);
       }
+    }
+
+    // Teaching: wrong / incomplete answer → authored re-ask only (never replay teach).
+    if (
+      session.teaching_mode &&
+      learnerText &&
+      currentDefEarly &&
+      session.teach_shown_for === currentDefEarly.id &&
+      !codeCompleted.includes(currentDefEarly.id)
+    ) {
+      pushExchange(session, 'learner', learnerText);
+      session.learner_lines = pushLearnerLine(
+        session.learner_lines ?? [],
+        learnerText,
+      );
+      // Escalation uses turns before this answer; then bump (not for teach).
+      const turnsBeforeWrong = session.turns_on_goal ?? 0;
+      const steerWrong = steerActionForTurns(turnsBeforeWrong, currentDefEarly);
+      session.turns_on_goal = turnsBeforeWrong + 1;
+      if (steerWrong.kind === 'coach_frame') {
+        emit({
+          type: 'coach',
+          id: `goal_steer_frame:${currentDefEarly.id}`,
+          eg: steerWrong.eg,
+          moment: 'help',
+        });
+        session.pending_frame = {
+          tl: steerWrong.frame_tl,
+          eg: steerWrong.eg,
+          chips: steerWrong.chips,
+        };
+      }
+      emitAuthoredAsk({ goal: currentDefEarly, session, emit });
+      if (session.pending_frame) {
+        emit({
+          type: 'free_frame',
+          tl: session.pending_frame.tl,
+          eg: session.pending_frame.eg,
+          chips: session.pending_frame.chips,
+        });
+      }
+      return finish(true);
+    }
+
+    // Teaching: correct answer → correction (async) then next teach; no model reaction.
+    if (
+      session.teaching_mode &&
+      learnerText &&
+      currentDefEarly &&
+      session.teach_shown_for === currentDefEarly.id &&
+      codeCompleted.includes(currentDefEarly.id)
+    ) {
+      pushExchange(session, 'learner', learnerText);
+      session.learner_lines = pushLearnerLine(
+        session.learner_lines ?? [],
+        learnerText,
+      );
+      applyCompletedGoals(session, bank, codeCompleted);
+      const nextDef = bank.goals.find((g) => g.id === session.current_goal);
+      if (shouldShowTeachForGoal(session, nextDef) && nextDef) {
+        await flushCorrection();
+        session.pending_frame = pendingFrameFromGoal(nextDef);
+        emitTeachSequence({ goal: nextDef, session, emit });
+        if (session.pending_frame) {
+          emit({
+            type: 'free_frame',
+            tl: session.pending_frame.tl,
+            eg: session.pending_frame.eg,
+            chips: session.pending_frame.chips,
+          });
+        }
+        return finish(true);
+      }
+      if (nextDef) {
+        await flushCorrection();
+        session.pending_frame = pendingFrameFromGoal(nextDef);
+        emitAuthoredAsk({ goal: nextDef, session, emit });
+        if (session.pending_frame) {
+          emit({
+            type: 'free_frame',
+            tl: session.pending_frame.tl,
+            eg: session.pending_frame.eg,
+            chips: session.pending_frame.chips,
+          });
+        }
+        return finish(true);
+      }
+      // All goals done while teaching — authored closing, no model.
+      await flushCorrection();
+      if (bank.closing?.tl?.trim()) {
+        const learnerName = await getLangifyUserFirstName(session.user_id);
+        const closingTl = fillNameSlot(bank.closing.tl, learnerName);
+        const closingAr = fillNameSlot(bank.closing.ar ?? '', learnerName);
+        emit({
+          type: 'bubble_ar',
+          ar: closingAr,
+          pt: closingTl,
+        });
+      }
+      return finish(true);
     }
 
     // V5 escalation before the model call (based on prior stuck turns).
@@ -1255,50 +1400,62 @@ export async function runFreeConvoTurn(
     let replyPt = modelOut.pt;
     let replyAr = modelOut.ar;
 
-    // v4 V6 level guard: ≤2 off-level content words, else regen once then fallback.
+    // v4 V6 level guard on model replies only — authored ask/teach/closing skip it.
     {
-      const level = session.learner_level ?? 1;
-      const extraAllowed = [
-        ...(bank.required_items ?? []),
-        ...(bank.new_items_tl ?? []),
-        ...bank.goals.flatMap((g) => [
-          ...(g.examples_tl ?? []),
-          ...(g.keywords ?? []),
-          g.ask_tl ?? '',
-          g.teach?.tl ?? '',
-        ]),
-        ...session.suggested_words,
-      ];
-      let guard = checkReplyLevel({
-        text: replyPt,
-        level,
-        extraAllowed,
-      });
-      if (!guard.ok && replyPt.trim()) {
-        const regenSystem = `${system}\n\nLEVEL GUARD: do not use these words: ${guard.offLevel.join(', ')}. Stay within the learner's level.`;
-        const regen = await callGoalModel({
-          model: input.model,
-          system: regenSystem,
-          prompt,
-          emit,
-          knownWords: session.suggested_words,
-          allowFormal,
-          fallbackAsk: askLines,
-        });
-        metrics = { ...metrics, ...regen.metricsPartial };
-        replyPt = regen.pt;
-        replyAr = regen.ar;
-        guard = checkReplyLevel({
+      const authoredAskTl = askLines?.tl?.trim() || '';
+      const authoredClosingTl = bank.closing?.tl?.trim() || '';
+      const isAuthoredLine =
+        (authoredAskTl &&
+          (replyPt.trim() === authoredAskTl ||
+            replyPt.trim().endsWith(authoredAskTl))) ||
+        (authoredClosingTl && replyPt.includes(authoredClosingTl));
+      if (!isAuthoredLine) {
+        const level = session.learner_level ?? 1;
+        const extraAllowed = [
+          ...(bank.required_items ?? []),
+          ...(bank.new_items_tl ?? []),
+          ...bank.goals.flatMap((g) => [
+            ...(g.examples_tl ?? []),
+            ...(g.keywords ?? []),
+            g.ask_tl ?? '',
+            g.ask_tl_f ?? '',
+            g.teach?.tl ?? '',
+            g.teach?.tl_f ?? '',
+          ]),
+          ...session.suggested_words,
+        ];
+        let guard = checkReplyLevel({
           text: replyPt,
           level,
           extraAllowed,
         });
-        if (!guard.ok) {
-          const fb = askLines?.tl?.trim() || currentDefEarly?.ask_tl || '';
-          if (fb) {
-            replyPt = `Ah, ok! ${fb}`;
-            replyAr = currentDefEarly?.ask_ar ?? replyAr;
-            emit({ type: 'reaction_reset', text: replyPt });
+        if (!guard.ok && replyPt.trim()) {
+          const regenSystem = `${system}\n\nLEVEL GUARD: do not use these words: ${guard.offLevel.join(', ')}. Stay within the learner's level.`;
+          const regen = await callGoalModel({
+            model: input.model,
+            system: regenSystem,
+            prompt,
+            emit,
+            knownWords: session.suggested_words,
+            allowFormal,
+            fallbackAsk: askLines,
+          });
+          metrics = { ...metrics, ...regen.metricsPartial };
+          replyPt = regen.pt;
+          replyAr = regen.ar;
+          guard = checkReplyLevel({
+            text: replyPt,
+            level,
+            extraAllowed,
+          });
+          if (!guard.ok) {
+            // Authored ask fallback — skip further level-guard checks.
+            const fb = askLines?.tl?.trim() || currentDefEarly?.ask_tl || '';
+            if (fb) {
+              replyPt = `Ah, ok! ${fb}`;
+              replyAr = askLines?.ar || currentDefEarly?.ask_ar || replyAr;
+              emit({ type: 'reaction_reset', text: replyPt });
+            }
           }
         }
       }
@@ -1357,8 +1514,18 @@ export async function runFreeConvoTurn(
     ) {
       if (bank.closing?.tl?.trim()) {
         const learnerName = await getLangifyUserFirstName(session.user_id);
-        replyPt = fillNameSlot(bank.closing.tl, learnerName);
-        replyAr = fillNameSlot(bank.closing.ar ?? '', learnerName);
+        // Authored closing — skip level guard; use _f when female (default m).
+        const gender: 'm' | 'f' = 'm';
+        const closingTl =
+          gender === 'f' && bank.closing.tl_f?.trim()
+            ? bank.closing.tl_f
+            : bank.closing.tl;
+        const closingAr =
+          gender === 'f' && bank.closing.ar_f?.trim()
+            ? bank.closing.ar_f
+            : (bank.closing.ar ?? '');
+        replyPt = fillNameSlot(closingTl, learnerName);
+        replyAr = fillNameSlot(closingAr, learnerName);
         emit({ type: 'reaction_reset', text: replyPt });
       }
       const coachId = 'goals_done';

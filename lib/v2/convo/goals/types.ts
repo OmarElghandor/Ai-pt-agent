@@ -17,6 +17,9 @@ export type ConvoGoalTeach = {
   tl: string;
   ar: string;
   meaning_eg: string;
+  /** Female learner variants (optional). */
+  tl_f?: string;
+  ar_f?: string;
 };
 
 export type ConvoGoal = {
@@ -76,6 +79,8 @@ export type ConvoBankOpening = {
 export type ConvoBankClosing = {
   tl: string;
   ar: string;
+  tl_f?: string;
+  ar_f?: string;
 };
 
 export type ConvoGoalBank = {
