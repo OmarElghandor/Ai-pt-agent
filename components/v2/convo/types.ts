@@ -22,6 +22,8 @@ export type TalkBubble =
       id: string;
       role: 'learner';
       tl: string;
+      /** Turn failed — keep the bubble and offer resend. */
+      failed?: boolean;
       correction?: {
         severity: 'accent' | 'error';
         corrected_tl: string;

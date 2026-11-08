@@ -50,7 +50,8 @@ export function FreeTalkSession({
 }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [errorEg, setErrorEg] = useState<string | null>(null);
+  const [failedLearnerId, setFailedLearnerId] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [titleTl, setTitleTl] = useState('');
   const [titleAr, setTitleAr] = useState('');
@@ -178,11 +179,48 @@ export function FreeTalkSession({
         return;
       }
       if (event.type === 'done' && !event.ok) {
-        setError(event.error ?? 'turn failed');
+        setErrorEg('حاول تاني');
       }
     },
     [router, commitBubbles],
   );
+
+  const markLearnerFailed = useCallback(
+    (learnerTurnId?: string) => {
+      const id =
+        learnerTurnId ??
+        [...bubblesRef.current]
+          .reverse()
+          .find((b) => b.role === 'learner')?.id;
+      if (!id) {
+        setErrorEg('حاول تاني');
+        return;
+      }
+      setFailedLearnerId(id);
+      setErrorEg('حاول تاني');
+      const marked = bubblesRef.current.map((b) =>
+        b.id === id && b.role === 'learner' ? { ...b, failed: true } : b,
+      );
+      const alreadyCoach = marked.some(
+        (b) => b.role === 'coach' && b.moment === 'turn_error',
+      );
+      commitBubbles(
+        alreadyCoach
+          ? marked
+          : [
+              ...marked,
+              {
+                id: newId('coach'),
+                role: 'coach',
+                eg: 'حاول تاني',
+                moment: 'turn_error',
+              },
+            ],
+      );
+    },
+    [commitBubbles],
+  );
+
   const runTurn = useCallback(
     async (
       learnerText: string,
@@ -194,7 +232,7 @@ export function FreeTalkSession({
     ) => {
       if (!sessionId || busy) return;
       setBusy(true);
-      setError(null);
+      setErrorEg(null);
       streamBubbleId.current = null;
       const useAssisted = opts?.assisted ?? assisted;
       try {
@@ -214,27 +252,43 @@ export function FreeTalkSession({
           }),
         });
         if (!res.ok || !res.body) {
-          throw new Error(`turn ${res.status}`);
+          throw new Error('turn_failed');
         }
+        let turnOk = true;
         for await (const event of readConvoNdjson(res.body)) {
+          if (event.type === 'done' && !event.ok) turnOk = false;
           applyEvent(event);
         }
-        setAssisted(false);
-        setHelpOpen(false);
-      } catch (e) {
-        setError(e instanceof Error ? e.message : 'turn failed');
+        if (!turnOk) {
+          markLearnerFailed(opts?.learnerTurnId);
+        } else {
+          setFailedLearnerId(null);
+          setAssisted(false);
+          setHelpOpen(false);
+        }
+      } catch {
+        markLearnerFailed(opts?.learnerTurnId);
       } finally {
         setBusy(false);
       }
     },
-    [sessionId, busy, applyEvent, assisted, openMode, characterId, convoModel],
+    [
+      sessionId,
+      busy,
+      applyEvent,
+      assisted,
+      openMode,
+      characterId,
+      convoModel,
+      markLearnerFailed,
+    ],
   );
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       setLoading(true);
-      setError(null);
+      setErrorEg(null);
       try {
         const res = await fetch('/api/v2/convo/start', {
           method: 'POST',
@@ -319,7 +373,7 @@ export function FreeTalkSession({
         }
         commitBubbles(next);
       } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e.message : 'start failed');
+        if (!cancelled) setErrorEg('حاول تاني');
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -356,7 +410,7 @@ export function FreeTalkSession({
       const data = (await res.json()) as { summary: ConvoSessionSummary };
       setSummary(data.summary);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'end failed');
+      setErrorEg('حاول تاني');
     } finally {
       setEnding(false);
     }
@@ -520,6 +574,32 @@ export function FreeTalkSession({
                   key={b.id}
                   tone="calm"
                   tl={b.tl}
+                  failed={b.failed}
+                  onResend={
+                    b.failed
+                      ? () => {
+                          const text = b.tl;
+                          commitBubbles(
+                            bubblesRef.current
+                              .filter(
+                                (x) =>
+                                  !(
+                                    x.role === 'coach' &&
+                                    x.moment === 'turn_error'
+                                  ),
+                              )
+                              .map((x) =>
+                                x.id === b.id && x.role === 'learner'
+                                  ? { ...x, failed: false }
+                                  : x,
+                              ),
+                          );
+                          setFailedLearnerId(null);
+                          setErrorEg(null);
+                          void runTurn(text, { learnerTurnId: b.id });
+                        }
+                      : undefined
+                  }
                   correction={b.correction ?? null}
                   onAddCard={(data) => {
                     void fetch('/api/v2/cards/custom', {
@@ -587,9 +667,9 @@ export function FreeTalkSession({
         </div>
       ) : null}
 
-      {error ? (
+      {errorEg && !bubbles.some((b) => b.role === 'coach' && b.moment === 'turn_error') ? (
         <p className="px-4 pb-2 font-[family-name:var(--font-ft-ar)] text-sm text-[var(--ft-text-secondary)]">
-          {error}
+          {errorEg}
         </p>
       ) : null}
 

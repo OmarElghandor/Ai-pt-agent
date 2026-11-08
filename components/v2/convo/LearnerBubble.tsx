@@ -9,6 +9,9 @@ type Props = {
   tone?: BubbleTone;
   /** Soft draft look (text-mode preview) — Calm only. */
   draft?: boolean;
+  /** Turn failed — show resend affordance. */
+  failed?: boolean;
+  onResend?: () => void;
   correction?: CorrectionHintData | null;
   onAddCard?: (data: CorrectionHintData) => void;
 };
@@ -17,9 +20,22 @@ export function LearnerBubble({
   tl,
   tone = 'warm',
   draft,
+  failed,
+  onResend,
   correction,
   onAddCard,
 }: Props) {
+  const resend =
+    failed && onResend ? (
+      <button
+        type="button"
+        onClick={onResend}
+        className="mt-1 font-[family-name:var(--font-ft-ar)] text-[12px] font-semibold text-[var(--ft-moss)] underline-offset-2 hover:underline"
+      >
+        ابعت تاني
+      </button>
+    ) : null;
+
   if (tone === 'calm') {
     return (
       <div className="flex max-w-[85%] flex-col items-end self-end">
@@ -28,7 +44,9 @@ export function LearnerBubble({
             'rounded-[20px] rounded-se-md px-3.5 py-2.5 shadow-[var(--ft-shadow-soft)]',
             draft
               ? 'bg-[var(--ft-success-soft)] text-[var(--ft-ink)] ring-1 ring-[var(--ft-border)]'
-              : 'bg-[var(--ft-sage)] text-[var(--ft-on-sage)]',
+              : failed
+                ? 'bg-[var(--ft-sage)]/70 text-[var(--ft-on-sage)] ring-1 ring-[var(--ft-border)]'
+                : 'bg-[var(--ft-sage)] text-[var(--ft-on-sage)]',
           ].join(' ')}
         >
           {draft ? (
@@ -44,6 +62,7 @@ export function LearnerBubble({
             {tl}
           </p>
         </div>
+        {resend}
         {correction ? (
           <CorrectionHint data={correction} onAddCard={onAddCard} />
         ) : null}
@@ -62,6 +81,7 @@ export function LearnerBubble({
           {tl}
         </p>
       </div>
+      {resend}
       {correction ? (
         <CorrectionHint data={correction} onAddCard={onAddCard} />
       ) : null}
