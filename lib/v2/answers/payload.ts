@@ -69,12 +69,32 @@ export type BeatAnswerPayload = {
   session_id?: string;
 };
 
+/** Conversation rung mirror (09 §3 / T1.12). */
+export type ConvoAnswerPayload = {
+  kind: 'convo';
+  answer_id: string;
+  day: number;
+  item_id: string;
+  /** Session rung just reached. */
+  rung: 'heard' | 'understood' | 'said' | 'assisted';
+  session_id?: string;
+  question_id?: string;
+};
+
 export type AnswerPayload =
   | PageAskPayload
   | PageQuizPayload
   | OpenAnswerPayload
   | ClosedSkillPayload
-  | BeatAnswerPayload;
+  | BeatAnswerPayload
+  | ConvoAnswerPayload;
+
+const CONVO_RUNGS = new Set([
+  'heard',
+  'understood',
+  'said',
+  'assisted',
+]);
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -214,6 +234,24 @@ export function parseAnswerPayload(body: unknown): AnswerPayload | null {
       switched_to_writing: body.switched_to_writing === true,
       session_id:
         typeof body.session_id === 'string' ? body.session_id : undefined,
+    };
+  }
+
+  if (body.kind === 'convo') {
+    if (typeof body.item_id !== 'string' || !body.item_id) return null;
+    if (typeof body.rung !== 'string' || !CONVO_RUNGS.has(body.rung)) {
+      return null;
+    }
+    return {
+      kind: 'convo',
+      answer_id,
+      day,
+      item_id: body.item_id,
+      rung: body.rung as ConvoAnswerPayload['rung'],
+      session_id:
+        typeof body.session_id === 'string' ? body.session_id : undefined,
+      question_id:
+        typeof body.question_id === 'string' ? body.question_id : undefined,
     };
   }
 

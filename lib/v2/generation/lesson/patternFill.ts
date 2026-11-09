@@ -210,9 +210,6 @@ export function fillPatternsInBank(
         (i as PatternItem).kind ?? kinds.get(i.id),
       ) === 'chamo_me',
   );
-<<<<<<< Updated upstream
-  if (!words.length && !coreFills.size && !hasChamoMe) return bank;
-=======
   /** Freeform patterns with empty/missing slots get a head + word hole. */
   const freeformSlots = (pattern: PatternItem): PatternSlot[] => {
     const tl =
@@ -252,7 +249,6 @@ export function fillPatternsInBank(
   if (!words.length && !coreFills.size && !hasChamoMe) {
     return bank.map(withFreeformSkeleton);
   }
->>>>>>> Stashed changes
 
   const derived: Item[] = [];
   const next = bank.map((item) => {
@@ -267,7 +263,9 @@ export function fillPatternsInBank(
         ? slotsForKind(kind)
         : ((pattern.slots ?? []) as PatternSlot[]);
 
-    if (!slots.length) return item;
+    if (!slots.length) {
+      slots = freeformSlots(pattern);
+    }
 
     // Name-slot patterns (Chamo-me + name) — no article, names not words
     if (kind === 'chamo_me') {

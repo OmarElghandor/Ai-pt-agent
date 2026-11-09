@@ -33,4 +33,18 @@ describe('publishLesson gate helpers', () => {
       /refuses 'published'|MongoDB not configured/,
     );
   });
+
+  it('publishLesson force option is accepted by the public signature', async () => {
+    const { publishLesson, PublishLessonError } = await import(
+      '../lib/v2/generation/lesson/publish'
+    );
+    // Without Mongo, both forced and normal paths fail the same way —
+    // this asserts `force` is a real option and does not throw earlier.
+    await assert.rejects(
+      () => publishLesson({ day: 1, force: true }),
+      (err: unknown) =>
+        err instanceof PublishLessonError ||
+        (err instanceof Error && /MongoDB not configured/.test(err.message)),
+    );
+  });
 });

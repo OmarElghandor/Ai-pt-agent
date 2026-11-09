@@ -579,7 +579,17 @@ export function validateLessonPack(
   for (const [i, item] of pack.items.entries()) {
     if (item.type !== 'pattern') continue;
     const path = `items[${i}]`;
-    for (const [si, slot] of item.slots.entries()) {
+    const slots = Array.isArray(item.slots) ? item.slots : [];
+    if (!slots.length) {
+      issues.push(
+        issue(
+          `${path}.slots`,
+          'item_schema',
+          `pattern ${item.id} missing slots`,
+        ),
+      );
+    }
+    for (const [si, slot] of slots.entries()) {
       // name slots hold literal names, not item ids
       if (
         'kind' in slot &&
@@ -612,7 +622,7 @@ export function validateLessonPack(
         );
       }
     }
-    const literals = item.slots
+    const literals = slots
       .filter((s): s is { tl: string } => 'tl' in s)
       .map((s) => s.tl);
     const firstEx = item.examples?.[0];

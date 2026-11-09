@@ -1,0 +1,53 @@
+export {
+  hasArabicScript,
+  isMixedScript,
+  isEnglishSideChannel,
+  needsSideChannel,
+  isArabicOnly,
+} from './detect';
+export { normalizeAr } from './normalizeAr';
+export { classifySideChannel, type SideChannelKind } from './classify';
+export { handleArabicAnswer } from './handleArabicAnswer';
+export {
+  matchPackItemQuestion,
+  type PackItemMatch,
+} from './matchPackItem';
+export { handleLanguageQuestionFromPack } from './handleLanguageQuestion';
+export {
+  COACH_CALL_FALLBACK_EG,
+  COACH_CALL_TIMEOUT_MS,
+  COACH_SIDE_SYSTEM,
+  COACH_SUFFIX_EG,
+  createLiveConvoCoachCaller,
+  createStubConvoCoachCaller,
+  finalizeCoachReply,
+  stripCoachSuffix,
+  validateCoachReply,
+  type CoachCallInput,
+  type CoachCallResult,
+  type CoachValidation,
+  type ConvoCoachCaller,
+} from './coachCall';
+export { handleLanguageQuestionCoachCall } from './handleCoachCall';
+export {
+  isTopicRequestText,
+  logUnmatchedTopicRequest,
+  logUnmatchedTopicRequestSync,
+  drainMemoryTopicRequests,
+} from './topicRequest';
+export {
+  collectFreeContextCandidates,
+  contextMatchCoachEg,
+  contextMatchCoachSegments,
+  expandLearnerSignals,
+  matchContextLine,
+  type ContextLine,
+  type ContextMatch,
+} from './matchContext';
+export {
+  flattenCoachSegments,
+  frameFallbackCoachSegments,
+  frameFitCoachSegments,
+  splitCoachEgToSegments,
+  type CoachSegment,
+} from './coachSegments';

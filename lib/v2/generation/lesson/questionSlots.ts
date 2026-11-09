@@ -460,13 +460,29 @@ export function planQuestionSlots(opts: {
     const item = bank.find((i) => i.id === id);
     return item?.type === 'word';
   });
-  const patterns = bank.filter((i) => i.type === 'pattern');
+  // 00 §7: grammar uses only today's patterns (priorityIds / core), never recycle.
+  const allPatterns = bank.filter(
+    (i) => i.type === 'pattern' && !/\.ex\.\d+$/.test(i.id),
+  );
+  const todayPatterns =
+    prioritySet.size > 0
+      ? allPatterns.filter((i) => prioritySet.has(i.id))
+      : allPatterns;
   const imageReady = opts.imageReady ?? (() => false);
   const preferBuild = new Set(opts.preferBuildSentenceFor ?? ['pattern.chamo_me']);
 
   const slots: PlannedSlot[] = [];
   const findImageIds = new Set(findImageTargetIds(bank));
   const addOpts = { maxTotal, bank, findImageIds };
+
+  const grammarCountForPattern = (patternId: string): number =>
+    slots.filter(
+      (s) =>
+        s.skill === 'grammar' &&
+        (s.tests === patternId ||
+          s.tests.startsWith(`${patternId}.`) ||
+          s.tests.replace(/\.ex\.\d+$/, '') === patternId),
+    ).length;
 
   /** Keep image types; attach fallback metadata instead of swapping the type. */
   const imageMeta = (
@@ -486,15 +502,16 @@ export function planQuestionSlots(opts: {
     };
   };
 
-  // 1) Grammar: ≥2 per pattern (fatal coverage later).
+  // 1) Grammar: ≥2 per today's pattern (fatal coverage later).
   // Always test pattern via .ex items — never remap to phrase.my_name_is.
-  for (const pattern of patterns) {
+  // Required pair ignores QUOTA.grammar.max so recycle cannot starve coverage.
+  for (const pattern of todayPatterns) {
     const page = introducedPage(pattern.id, outlinePages);
     const types: QuestionType[] = preferBuild.has(pattern.id)
       ? ['build_sentence', 'fill_blank_choice']
       : ['fill_blank_choice', 'build_sentence'];
     for (const type of types) {
-      if (countSkill(slots, 'grammar') >= QUOTA.grammar.max) break;
+      if (grammarCountForPattern(pattern.id) >= 2) break;
       const tests = grammarExampleId(
         pattern.id,
         bank,
@@ -512,9 +529,9 @@ export function planQuestionSlots(opts: {
     }
   }
 
-  // Ensure grammar min with any remaining pattern .ex
+  // Ensure grammar min with any remaining today-pattern .ex
   while (countSkill(slots, 'grammar') < QUOTA.grammar.min && slots.length < maxTotal) {
-    const candidate = patterns.find((p) => {
+    const candidate = todayPatterns.find((p) => {
       const t = grammarExampleId(p.id, bank, phrasesPageIds, false);
       return canAdd(slots, 'fill_blank_choice', t, { ...addOpts, forCoverage: true });
     });

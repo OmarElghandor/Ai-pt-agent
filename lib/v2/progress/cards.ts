@@ -20,7 +20,8 @@ export type BuildQueueInput = {
   candidates: CardCandidate[];
 };
 
-function isDue(state: ItemState, now: Date): boolean {
+/** Card/topic due: mastered → know-check; learning with no dueAt → due; else dueAt ≤ now. */
+export function isDue(state: ItemState, now: Date): boolean {
   if (state.card.masteryLevel === 'mastered') {
     return isKnowCheckDue(state, now);
   }

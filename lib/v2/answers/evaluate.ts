@@ -7,6 +7,7 @@ import {
   bumpLevelsForSkill,
   bumpSkill,
   createItemState,
+  endOfTomorrow,
   tryGraduate,
   type ItemState,
   type ProgressError,
@@ -16,15 +17,11 @@ import { isArabicOnly } from './arabicOnly';
 import { accentError, classifyMiss } from './classify';
 import { matchKnownNearMiss } from './knownNearMiss';
 import { matchAnswer } from './match';
-<<<<<<< Updated upstream
-import type { AnswerPayload } from './payload';
-=======
 import type {
   AnswerPayload,
   ConvoAnswerPayload,
   OpenAnswerPayload,
 } from './payload';
->>>>>>> Stashed changes
 import { resolveToolId } from './toolId';
 
 export type AnswerVerdict = {
@@ -136,9 +133,6 @@ export async function evaluateAnswer(
     });
   }
 
-<<<<<<< Updated upstream
-  // open
-=======
   if (payload.kind === 'convo') {
     return evaluateConvoRung(payload, ctx, now);
   }
@@ -160,7 +154,6 @@ async function evaluateOpenAnswer(
     errors?: ProgressError[];
   }) => AnswerVerdict,
 ): Promise<AnswerVerdict> {
->>>>>>> Stashed changes
   const skill = payload.skill;
   const tool_id =
     payload.tool_id ??
@@ -428,4 +421,67 @@ function updateStateCorrect(opts: {
     now,
   });
   return tryGraduate(imp.state);
+}
+
+/**
+ * Mirror a conversation rung to item levels (09 §3).
+ * assisted → understood (reading) + card due tomorrow, never said.
+ */
+function evaluateConvoRung(
+  payload: ConvoAnswerPayload,
+  ctx: EvaluateContext,
+  now: Date,
+): AnswerVerdict {
+  const skill: Skill =
+    payload.rung === 'heard'
+      ? 'listening'
+      : payload.rung === 'said'
+        ? 'speaking'
+        : 'reading';
+
+  let state =
+    ctx.itemState ??
+    createItemState({
+      user_id: ctx.user_id,
+      item_id: payload.item_id,
+      introducedDay: ctx.introducedDay ?? payload.day,
+    });
+
+  state = bumpLevelsForSkill(state, skill, true);
+  state = bumpSkill(state, skill, true, now);
+
+  if (payload.rung === 'assisted') {
+    // Tomorrow's card — due by end of next local day.
+    state = {
+      ...state,
+      card: {
+        ...state.card,
+        dueAt: endOfTomorrow(now).toISOString(),
+        interval: 0,
+        consecutiveCorrect: 0,
+        masteryLevel: 'learning',
+        face: 'recognize',
+        knowCheckDueAt: null,
+      },
+    };
+  } else {
+    const imp = applyImplicitCorrectUse(state, {
+      curriculumDay: payload.day,
+      localDate: ctx.localDate,
+      now,
+    });
+    state = tryGraduate(imp.state);
+  }
+
+  return {
+    ok: true,
+    verdict: 'correct',
+    correct: true,
+    accent_only: false,
+    skill,
+    item_id: payload.item_id,
+    called_grader: false,
+    item_state: state,
+    errors: [],
+  };
 }

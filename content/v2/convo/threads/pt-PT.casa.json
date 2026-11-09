@@ -1,0 +1,209 @@
+{
+  "target_lang": "pt-PT",
+  "version": 1,
+  "topic": {
+    "id": "casa",
+    "title_tl": "A casa",
+    "title_in_sentence_tl": "da casa",
+    "title_ar": "البيت",
+    "character_id": "ines",
+    "related": [
+      "familia",
+      "bairro"
+    ],
+    "intro_eg": "هنتكلم مع Inês عن البيت. اتكلم براحتك، ولو وقفت دوس «ساعدني أرد»، ولو عايز تسأل عن حاجة اكتبها بالعربي.",
+    "opening_tl": "Olá {name}! 😊 Hoje vamos falar da casa?",
+    "opening_ar": "مرحباً {name}! هل نتحدث اليوم عن البيت؟"
+  },
+  "threads": [
+    {
+      "id": "casa.t1",
+      "share": {
+        "tl": "Eu moro em Alfama, num apartamento pequeno.",
+        "ar": "أسكن في ألفاما، في شقة صغيرة."
+      },
+      "ask": {
+        "tl": "E tu, onde moras?",
+        "ar": "وأنت، أين تسكن؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Moro em ___.",
+          "eg": "قول ساكن فين: Moro em + المكان",
+          "chips": [
+            "Moro em Lisboa.",
+            "Moro em Amadora.",
+            "Moro em Almada.",
+            "Moro em Odivelas."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "É longe do centro?",
+          "ar": "هل هو بعيد عن وسط المدينة؟",
+          "kind": "either_or",
+          "frame": {
+            "tl": "É ___.",
+            "eg": "قريب = perto، بعيد = longe",
+            "chips": [
+              "É perto.",
+              "É longe.",
+              "Mais ou menos."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "casa.t2",
+      "share": {
+        "tl": "A minha casa é pequena, mas tem muita luz.",
+        "ar": "بيتي صغير، لكن فيه ضوء كثير."
+      },
+      "ask": {
+        "tl": "Como é a tua casa: grande ou pequena?",
+        "ar": "كيف هو بيتك: كبير أم صغير؟",
+        "kind": "either_or",
+        "frame": {
+          "tl": "A minha casa é ___.",
+          "eg": "قول بيتك شكله إيه: A minha casa é + الوصف",
+          "chips": [
+            "A minha casa é grande.",
+            "A minha casa é pequena.",
+            "A minha casa é bonita.",
+            "A minha casa é antiga."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Quantos quartos tem?",
+          "ar": "كم غرفة فيه؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Tem ___.",
+            "eg": "قول فيه كام أوضة: Tem + العدد",
+            "chips": [
+              "Tem um quarto.",
+              "Tem dois quartos.",
+              "Tem três quartos."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "casa.t3",
+      "share": {
+        "tl": "Eu moro com uma amiga e uma gata, a Pimenta. 🐱",
+        "ar": "أسكن مع صديقة وقطة اسمها بيمنتا."
+      },
+      "ask": {
+        "tl": "E tu, com quem moras?",
+        "ar": "وأنت، مع من تسكن؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Moro com ___.",
+          "eg": "قول ساكن مع مين: Moro com… ولو لوحدك: Moro sozinho",
+          "chips": [
+            "Moro com a minha mulher.",
+            "Moro com o meu marido.",
+            "Moro com amigos.",
+            "Moro com a minha família."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Há quanto tempo moras lá?",
+          "ar": "منذ متى تسكن هناك؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Há ___.",
+            "eg": "من إمتى: Há + المدة",
+            "chips": [
+              "Há seis meses.",
+              "Há um ano.",
+              "Há dois anos."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "casa.t4",
+      "share": {
+        "tl": "Eu passo muito tempo na cozinha. Adoro cozinhar!",
+        "ar": "أقضي وقتاً طويلاً في المطبخ. أحب الطبخ كثيراً!"
+      },
+      "ask": {
+        "tl": "E tu, onde passas mais tempo em casa?",
+        "ar": "وأنت، أين تقضي معظم وقتك في البيت؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Na ___.",
+          "eg": "قول فين: Na sala = في الصالة، No quarto = في الأوضة",
+          "chips": [
+            "Na sala.",
+            "No quarto.",
+            "Na cozinha.",
+            "Na varanda."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E o que fazes lá?",
+          "ar": "وماذا تفعل هناك؟",
+          "kind": "open",
+          "frame": {
+            "tl": "___.",
+            "eg": "قول بتعمل إيه",
+            "chips": [
+              "Vejo televisão.",
+              "Leio.",
+              "Durmo.",
+              "Cozinho."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "casa.t5",
+      "share": {
+        "tl": "Os meus vizinhos são muito simpáticos.",
+        "ar": "جيراني لطفاء جداً."
+      },
+      "ask": {
+        "tl": "E tu, conheces os teus vizinhos?",
+        "ar": "وأنت، هل تعرف جيرانك؟",
+        "kind": "yes_no",
+        "frame": {
+          "tl": "Sim, ___. / Não, ___.",
+          "eg": "قول عارفهم ولا لأ، وشكلهم إيه",
+          "chips": [
+            "Sim, são simpáticos.",
+            "Sim, conheço alguns.",
+            "Não, não conheço."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E no Egito, é diferente?",
+          "ar": "وفي مصر، هل الأمر مختلف؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "___.",
+            "eg": "في مصر الجيران بيتكلموا أكتر؟",
+            "chips": [
+              "Sim, no Egito falamos mais com os vizinhos.",
+              "Não, é igual."
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

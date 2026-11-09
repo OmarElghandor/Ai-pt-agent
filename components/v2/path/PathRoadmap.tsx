@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
+import { TopicsReviewCard } from '@/components/v2/convo/TopicsReviewCard';
 import { Icon } from '@/components/v2/Icon';
 import { readDonePages } from '@/components/v2/player/session';
 import type { PathDayRow } from '@/lib/v2/path';
@@ -168,6 +169,8 @@ export function PathRoadmap({
           </div>
         </div>
       ) : null}
+
+      <TopicsReviewCard />
 
       <div className="relative w-full overflow-hidden px-1 pb-4">
         <svg

@@ -1,0 +1,208 @@
+{
+  "target_lang": "pt-PT",
+  "version": 1,
+  "topic": {
+    "id": "ontem",
+    "title_tl": "Ontem",
+    "title_in_sentence_tl": "de ontem",
+    "title_ar": "عملت إيه إمبارح",
+    "character_id": "nour",
+    "related": [
+      "amanha",
+      "fim_de_semana"
+    ],
+    "intro_eg": "Nour هتسألك عملت إيه إمبارح، فهتتكلم بالماضي. متقلقش من الغلط، هي هتعيد كلامك صح. لو وقفت دوس «ساعدني أرد».",
+    "opening_tl": "Olá {name}! Então, o que fizeste ontem?",
+    "opening_ar": "مرحباً {name}! إذن، ماذا فعلت أمس؟"
+  },
+  "threads": [
+    {
+      "id": "ontem.t1",
+      "share": {
+        "tl": "Ontem acordei tarde, às dez! 😴",
+        "ar": "أمس استيقظت متأخرة، في العاشرة!"
+      },
+      "ask": {
+        "tl": "E tu, a que horas acordaste ontem?",
+        "ar": "وأنت، في أي ساعة استيقظت أمس؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Acordei às ___.",
+          "eg": "صحيت الساعة كام: Acordei às…",
+          "chips": [
+            "Acordei às sete.",
+            "Acordei às oito.",
+            "Acordei às nove."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E o que comeste ao pequeno-almoço?",
+          "ar": "وماذا أكلت في الفطور؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Comi ___.",
+            "eg": "فطرت إيه: Comi… ولو مافطرتش: Não comi nada",
+            "chips": [
+              "Comi pão com queijo.",
+              "Comi ovos.",
+              "Só bebi café.",
+              "Não comi nada."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "ontem.t2",
+      "share": {
+        "tl": "Ontem fui ao supermercado e comprei fruta.",
+        "ar": "أمس ذهبت إلى السوبرماركت واشتريت فاكهة."
+      },
+      "ask": {
+        "tl": "E tu, aonde foste ontem?",
+        "ar": "وأنت، إلى أين ذهبت أمس؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Fui ao ___. / Fiquei em casa.",
+          "eg": "روحت فين: Fui ao/à… ولو ماخرجتش: Fiquei em casa",
+          "chips": [
+            "Fui ao trabalho.",
+            "Fui ao ginásio.",
+            "Fui ao supermercado.",
+            "Fiquei em casa."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E foi bom?",
+          "ar": "وهل كان جيداً؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "Foi ___.",
+            "eg": "كان حلو؟",
+            "chips": [
+              "Sim, foi ótimo.",
+              "Foi normal."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "ontem.t3",
+      "share": {
+        "tl": "Ao jantar, cozinhei massa com frango.",
+        "ar": "على العشاء، طبخت مكرونة بالدجاج."
+      },
+      "ask": {
+        "tl": "O que jantaste ontem?",
+        "ar": "ماذا تعشيت أمس؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Jantei ___.",
+          "eg": "اتعشيت إيه: Jantei…",
+          "chips": [
+            "Jantei arroz com frango.",
+            "Jantei peixe.",
+            "Comi pizza.",
+            "Não jantei."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Foste tu que cozinhaste?",
+          "ar": "هل أنت من طبخ؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "___.",
+            "eg": "إنت اللي طبخت؟",
+            "chips": [
+              "Sim, cozinhei eu.",
+              "Não, comprei."
+            ]
+          },
+          "skip_if_negative": true
+        }
+      ]
+    },
+    {
+      "id": "ontem.t4",
+      "share": {
+        "tl": "À noite vi um filme no sofá. 🍿",
+        "ar": "في الليل شاهدت فيلماً على الأريكة."
+      },
+      "ask": {
+        "tl": "E à noite, o que fizeste?",
+        "ar": "وفي الليل، ماذا فعلت؟",
+        "kind": "open",
+        "frame": {
+          "tl": "___.",
+          "eg": "عملت إيه بالليل",
+          "chips": [
+            "Vi televisão.",
+            "Falei com a minha família.",
+            "Estudei português.",
+            "Dormi cedo."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E a que horas te deitaste?",
+          "ar": "وفي أي ساعة نمت؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Às ___.",
+            "eg": "نمت الساعة كام: Às…",
+            "chips": [
+              "Às onze.",
+              "À meia-noite.",
+              "Muito tarde! 😅"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "ontem.t5",
+      "share": {
+        "tl": "Ontem estava muito cansada.",
+        "ar": "أمس كنت متعبة جداً."
+      },
+      "ask": {
+        "tl": "E o teu dia ontem, como foi?",
+        "ar": "ويومك أمس، كيف كان؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Foi ___.",
+          "eg": "يومك كان عامل إزاي: Foi + الوصف",
+          "chips": [
+            "Foi bom.",
+            "Foi cansativo.",
+            "Foi tranquilo."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Porquê?",
+          "ar": "لماذا؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Porque ___.",
+            "eg": "ليه: Porque…",
+            "chips": [
+              "Porque trabalhei muito.",
+              "Porque dormi pouco.",
+              "Porque correu tudo bem."
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

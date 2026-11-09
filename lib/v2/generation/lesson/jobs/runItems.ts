@@ -3,6 +3,7 @@ import { ItemSchema, type Item } from '@/lib/v2/content/items';
 import { validateLessonPack } from '@/lib/v2/content/validate';
 import type { LessonBrief } from '../brief';
 import {
+  findCoreItemById,
   nonVerbCoreIds,
   verbCoreItems,
   type CoreItem,
@@ -284,9 +285,6 @@ function applyPatternKindsFromCore(
   });
 }
 
-<<<<<<< Updated upstream
-function mergeRecycleAndVerbs(
-=======
 /** Verb lemma cards (verb.go) — not conjugated form ids (verb.go:present:eu). */
 export function isVerbLemmaId(id: string): boolean {
   return /^verb\.[a-z_]+$/i.test(id) && !id.includes(':');
@@ -389,7 +387,6 @@ export function completePatternItem(item: Item, bank: Item[] = []): Item {
  * Every brief.recycle_ids entry is code-guaranteed when known or curriculum can resolve it.
  */
 export function mergeRecycleAndVerbs(
->>>>>>> Stashed changes
   modelItems: Item[],
   brief: LessonBrief,
   knownFull: Map<string, Item>,
@@ -398,20 +395,36 @@ export function mergeRecycleAndVerbs(
   const recycleSet = new Set(brief.recycle_ids);
   for (const id of brief.recycle_ids) {
     const known = knownFull.get(id);
-    const knownAr =
-      known && 'ar' in known && typeof known.ar === 'string' ? known.ar : '';
-    if (known && knownAr.trim()) {
-      byId.set(id, { ...known, extra: undefined } as Item);
+    if (known && knownHasMsaAr(known)) {
+      byId.set(id, completePatternItem({ ...known, extra: undefined } as Item));
     }
   }
   for (const item of modelItems) {
-    if (/^verb\.[a-z_]+$/i.test(item.id) && !item.id.includes(':')) continue;
+    if (isVerbLemmaId(item.id)) continue;
     // Registry/known recycle wins when it has MSA ar; else accept model recycle.
     if (recycleSet.has(item.id) && byId.has(item.id)) continue;
-    byId.set(item.id, item);
+    byId.set(item.id, completePatternItem(item));
   }
   for (const v of verbCoreItems(brief.core_items)) {
     byId.set(v.id, verbLemmaStub(v));
+  }
+  // Guarantee recycle ids (patterns/verbs/words/phrases) — never depend on the model.
+  for (const id of brief.recycle_ids) {
+    if (byId.has(id)) continue;
+    const known = knownFull.get(id);
+    if (known) {
+      byId.set(
+        id,
+        completePatternItem({ ...known, extra: undefined } as Item, [
+          ...byId.values(),
+        ]),
+      );
+      continue;
+    }
+    const core = findCoreItemById(id);
+    if (!core) continue;
+    const stub = coreItemStub(core, [...byId.values()]);
+    if (stub) byId.set(id, completePatternItem(stub, [...byId.values()]));
   }
   // Guarantee core ids: words/phrases/verbs first, then patterns (need examples).
   let bank = [...byId.values()];
@@ -428,14 +441,20 @@ export function mergeRecycleAndVerbs(
     if (core.kind !== 'pattern') continue;
     if (byId.has(core.id)) continue;
     const stub = coreItemStub(core, [...byId.values()]);
-    if (stub) byId.set(core.id, stub);
+    if (stub) byId.set(core.id, completePatternItem(stub, [...byId.values()]));
+  }
+  // Final pass: any thin pattern that slipped through (known seed, etc.).
+  for (const [id, item] of byId) {
+    if (item.type === 'pattern' && !patternHasSlots(item)) {
+      byId.set(id, completePatternItem(item, [...byId.values()]));
+    }
   }
   return fillPatternsInBank([...byId.values()], {
     coreItems: brief.core_items,
   });
 }
 
-function validateItemsRules(
+export function validateItemsRules(
   items: Item[],
   known: KnownIdTl[],
   presets: string[],
@@ -471,6 +490,7 @@ function validateItemsRules(
       fatals.push(fatal(id, 'recycle_missing', 'recycle id not in bank'));
       continue;
     }
+    if (!needsRecycleAr(row)) continue;
     const ar = 'ar' in row && typeof row.ar === 'string' ? row.ar.trim() : '';
     if (!ar || ar === '…') {
       fatals.push(fatal(id, 'recycle_ar', 'recycle needs MSA ar (not eg hint)'));
@@ -639,11 +659,11 @@ ${presets.includes('pattern') && !opts.brief.no_new_items ? 'REQUIRED: include �
 CORE_ITEMS (create exactly these non-verb ids; eg = hint only)
 ${formatCoreItemsBlock(opts.brief.core_items)}
 
-RECYCLE_IDS (prefer KNOWN payloads; if an id is listed under MISSING_RECYCLE below, CREATE it with MSA ar — never Egyptian eg as ar)
+RECYCLE_IDS (prefer KNOWN payloads; if an id is listed under MISSING_RECYCLE below, CREATE it with MSA ar — never Egyptian eg as ar. pattern.* and verb.* are code-filled — do not invent ar for them)
 ${opts.brief.recycle_ids.join(', ') || '(none)'}
 
-MISSING_RECYCLE (must write these with type + tl + MSA ar; do not copy eg hints)
-${opts.brief.recycle_ids.filter((id) => !knownFull.has(id) || !(knownFull.get(id) as { ar?: string })?.ar).join(', ') || '(none)'}
+MISSING_RECYCLE (word/phrase only — write type + tl + MSA ar; do not copy eg hints; skip pattern/verb — code owns those)
+${missingRecycleIdsForPrompt(opts.brief.recycle_ids, knownFull).join(', ') || '(none)'}
 
 KNOWN_ITEMS (selected matches + recycle only; reuse these ids and tl exactly; do not redefine known ones)
 ${knownLines}

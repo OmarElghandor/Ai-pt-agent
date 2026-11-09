@@ -1,3 +1,4 @@
+import { createAnthropic } from '@ai-sdk/anthropic';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import type { LanguageModel } from 'ai';
 
@@ -48,8 +49,6 @@ export function getChatModel(): LanguageModel {
 
   return deepinfra(modelId);
 }
-<<<<<<< Updated upstream
-=======
 
 export type ConvoModelSpec = {
   provider: 'deepinfra' | 'anthropic';
@@ -132,4 +131,3 @@ export function getCoachModel(): LanguageModel {
     'Qwen/Qwen3.5-35B-A3B';
   return deepinfra(modelId);
 }
->>>>>>> Stashed changes

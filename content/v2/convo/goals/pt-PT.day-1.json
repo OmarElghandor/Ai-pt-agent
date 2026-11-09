@@ -1,0 +1,166 @@
+{
+  "source": "lesson",
+  "authored": true,
+  "day": 1,
+  "target_lang": "pt-PT",
+  "title_tl": "Apresentar-se",
+  "title_ar": "تقديم نفسك",
+  "intro_eg": "أول يوم في الشغل. Inês زميلتك الجديدة هتسلّم عليك. رد عليها واتعرّفوا. لو وقفت دوس «ساعدني أرد».",
+  "scene": {
+    "character_id": "ines",
+    "place": "o escritório, primeiro dia de trabalho",
+    "time_of_day": "morning",
+    "address": "formal"
+  },
+  "opening": {
+    "tl": "Olá, bom dia! 😊 É o novo colega?",
+    "ar": "مرحباً، صباح الخير! هل أنت الزميل الجديد؟",
+    "tl_f": "Olá, bom dia! 😊 É a nova colega?",
+    "ar_f": "مرحباً، صباح الخير! هل أنتِ الزميلة الجديدة؟"
+  },
+  "goals": [
+    {
+      "id": "day.greet",
+      "intent_eg": "يرد التحية بالتحية المناسبة للصبح",
+      "intent_en": "greet back with the right greeting for the morning",
+      "ask_tl": "Olá, bom dia! 😊 É o novo colega?",
+      "ask_ar": "مرحباً، صباح الخير! هل أنت الزميل الجديد؟",
+      "examples_tl": [
+        "Bom dia!",
+        "Olá, bom dia!",
+        "Olá! Sim, sou o novo colega.",
+        "Bom dia! Sim."
+      ],
+      "keywords": [
+        "olá",
+        "ola",
+        "bom",
+        "dia"
+      ],
+      "help": {
+        "frame_tl": "Bom dia!",
+        "eg": "الصبح بنرد التحية بـ Bom dia",
+        "chips": [
+          "Bom dia!",
+          "Olá, bom dia!"
+        ]
+      },
+      "ask_tl_f": "Olá, bom dia! 😊 É a nova colega?",
+      "ask_ar_f": "مرحباً، صباح الخير! هل أنتِ الزميلة الجديدة؟"
+    },
+    {
+      "id": "day.name",
+      "intent_eg": "يقول اسمه",
+      "intent_en": "say their name",
+      "ask_tl": "Bem-vindo! Como se chama?",
+      "ask_ar": "أهلاً بك! ما اسمك؟",
+      "examples_tl": [
+        "Chamo-me Omar.",
+        "Chamo-me Ana.",
+        "O meu nome é Omar."
+      ],
+      "keywords": [
+        "chamo",
+        "chamo-me",
+        "nome"
+      ],
+      "help": {
+        "frame_tl": "Chamo-me ___.",
+        "eg": "قول اسمك: Chamo-me + اسمك",
+        "chips": [
+          "Chamo-me Omar.",
+          "Chamo-me Yassin.",
+          "Chamo-me Ana."
+        ]
+      },
+      "ask_tl_f": "Bem-vinda! Como se chama?",
+      "ask_ar_f": "أهلاً بكِ! ما اسمكِ؟"
+    },
+    {
+      "id": "day.ask_name",
+      "intent_eg": "يسأل عن اسمها",
+      "intent_en": "ask her name",
+      "ask_tl": "Ainda não sabe o meu nome! 😄",
+      "ask_ar": "ما زلت لا تعرف اسمي!",
+      "examples_tl": [
+        "Como se chama?",
+        "E a senhora, como se chama?",
+        "Como se chama a senhora?"
+      ],
+      "keywords": [
+        "como",
+        "chama"
+      ],
+      "help": {
+        "frame_tl": "Como se chama?",
+        "eg": "اسألها عن اسمها: Como se chama?",
+        "chips": [
+          "Como se chama?",
+          "E a senhora, como se chama?"
+        ]
+      }
+    },
+    {
+      "id": "day.nice",
+      "intent_eg": "يرد على «اتشرفنا» بـ Muito prazer أو Igualmente",
+      "intent_en": "answer 'nice to meet you' with Muito prazer or Igualmente",
+      "seed_tl": "Chamo-me Inês. Muito prazer!",
+      "seed_ar": "اسمي إينيس. تشرفنا!",
+      "ask_tl": "Chamo-me Inês. Muito prazer!",
+      "ask_ar": "اسمي إينيس. تشرفنا!",
+      "examples_tl": [
+        "Igualmente.",
+        "Muito prazer!",
+        "Igualmente, muito prazer!"
+      ],
+      "keywords": [
+        "igualmente",
+        "prazer"
+      ],
+      "help": {
+        "frame_tl": "Igualmente.",
+        "eg": "لما حد يقولك Muito prazer، رد بـ Igualmente (وأنا كمان)",
+        "chips": [
+          "Igualmente.",
+          "Muito prazer!"
+        ]
+      }
+    },
+    {
+      "id": "day.bye",
+      "intent_eg": "يودّعها آخر اليوم بـ Boa tarde",
+      "intent_en": "say goodbye at the end of the afternoon with Boa tarde",
+      "time_of_day": "afternoon",
+      "ask_tl": "Bom, vou para casa. Boa tarde!",
+      "ask_ar": "حسناً، سأذهب إلى البيت. مساء الخير!",
+      "examples_tl": [
+        "Boa tarde!",
+        "Boa tarde, Inês!",
+        "Obrigado, boa tarde!"
+      ],
+      "keywords": [
+        "boa",
+        "tarde"
+      ],
+      "help": {
+        "frame_tl": "Boa tarde!",
+        "eg": "بعد الضهر بنودّع بـ Boa tarde",
+        "chips": [
+          "Boa tarde!",
+          "Boa tarde, Inês!"
+        ]
+      }
+    }
+  ],
+  "suggested_words": [
+    "o nome",
+    "o trabalho",
+    "o prazer",
+    "a manhã"
+  ],
+  "closing": {
+    "tl": "Até amanhã, {name}! 👋",
+    "ar": "إلى الغد يا {name}!"
+  },
+  "note": "Fields beyond ConvoGoalBank (opening, intro_eg, title_*, ask_tl/ask_ar and *_f variants, per-goal time_of_day, closing, scene.address) are specified in batch-v3-fix-1.md."
+}

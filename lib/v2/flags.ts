@@ -33,3 +33,12 @@ export function isGenerateImagesEnabled(): boolean {
   if (!process.env.GENERATE_IMAGES?.trim()) return false;
   return envFlagTrue('GENERATE_IMAGES');
 }
+
+/**
+ * Learn (Module A) character reactions from the LLM.
+ * Default OFF — pack `reactions_correct` / near_miss templates / mistake
+ * consequence_tl are used instead (learn-fix-2 M1).
+ */
+export function isLearnModelReactionsEnabled(): boolean {
+  return envFlagTrue('V2_LEARN_MODEL_REACTIONS');
+}

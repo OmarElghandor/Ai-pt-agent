@@ -646,6 +646,195 @@ describe('day question set planner', () => {
     );
   });
 
+  it('grammar slots prefer today’s core pattern over recycle (day-33 style)', () => {
+    const corePhrase = {
+      type: 'phrase' as const,
+      id: 'phrase.where_is_station',
+      tl: 'Onde fica a estação?',
+      ar: 'أين تقع المحطة؟',
+      context_eg: 'في الشارع',
+      cloze: 'estação',
+    };
+    const items: Item[] = [
+      corePhrase,
+      {
+        type: 'phrase',
+        id: 'phrase.is_it_near',
+        tl: 'É perto?',
+        ar: 'هل هو قريب؟',
+        context_eg: 'لما تسأل',
+        cloze: 'perto',
+      },
+      {
+        type: 'phrase',
+        id: 'phrase.its_far',
+        tl: 'É longe.',
+        ar: 'إنه بعيد.',
+        context_eg: 'الرد',
+        cloze: 'longe',
+      },
+      {
+        type: 'word',
+        id: 'word.station',
+        tl: 'a estação',
+        gender: 'f',
+        ar: 'المحطة',
+      },
+      {
+        type: 'pattern',
+        id: 'pattern.onde_fica',
+        slots: [
+          { tl: 'Onde fica' },
+          { name_eg: 'مكان', kind: 'word' },
+        ],
+        examples: [
+          'pattern.onde_fica.ex.1',
+          'pattern.onde_fica.ex.2',
+        ],
+      } as Item,
+      {
+        type: 'phrase',
+        id: 'pattern.onde_fica.ex.1',
+        tl: 'Onde fica a estação?',
+        ar: 'أين تقع المحطة؟',
+        context_eg: 'مثال',
+        cloze: 'Onde',
+        derived: true,
+      },
+      {
+        type: 'phrase',
+        id: 'pattern.onde_fica.ex.2',
+        tl: 'Onde fica a rua?',
+        ar: 'أين يقع الشارع؟',
+        context_eg: 'مثال',
+        cloze: 'Onde',
+        derived: true,
+      },
+      // Recycle pattern — must not take grammar budget from today’s core.
+      {
+        type: 'pattern',
+        id: 'pattern.contractions',
+        slots: [
+          { tl: 'de+o=do' },
+          { name_eg: 'كلمة', kind: 'word' },
+        ],
+        examples: ['pattern.contractions.ex.1', 'pattern.contractions.ex.2'],
+      } as Item,
+      {
+        type: 'phrase',
+        id: 'pattern.contractions.ex.1',
+        tl: 'do centro',
+        ar: 'من الوسط',
+        context_eg: 'مثال',
+        cloze: 'do',
+        derived: true,
+      },
+      {
+        type: 'phrase',
+        id: 'pattern.contractions.ex.2',
+        tl: 'na estação',
+        ar: 'في المحطة',
+        context_eg: 'مثال',
+        cloze: 'na',
+        derived: true,
+      },
+    ];
+    const priorityIds = [
+      'phrase.where_is_station',
+      'phrase.is_it_near',
+      'phrase.its_far',
+      'word.station',
+      'pattern.onde_fica',
+    ];
+    const dayOutline: OutlineResult = {
+      items,
+      pages: [
+        {
+          index: 0,
+          page_id: 'p0',
+          preset: 'story',
+          mode: 'static',
+          role: 'intro',
+          title: 'قصة',
+          purpose: 'intro',
+          introduces: [],
+          assumes: [],
+          handoff: '',
+        },
+        {
+          index: 1,
+          page_id: 'p1',
+          preset: 'phrases',
+          mode: 'static',
+          title: 'جمل',
+          purpose: 'phrases',
+          introduces: [
+            'phrase.where_is_station',
+            'phrase.is_it_near',
+            'phrase.its_far',
+          ],
+          assumes: [],
+          handoff: '',
+        },
+        {
+          index: 2,
+          page_id: 'p2',
+          preset: 'pattern',
+          mode: 'sections',
+          title: 'Onde fica',
+          purpose: 'pattern',
+          introduces: ['pattern.onde_fica'],
+          assumes: [],
+          handoff: '',
+        },
+      ],
+    };
+
+    const { slots } = planQuestionSlots({
+      outline: dayOutline,
+      items,
+      priorityIds,
+    });
+
+    const grammar = slots.filter((s) => s.skill === 'grammar');
+    const ondeGrammar = grammar.filter(
+      (s) =>
+        s.tests === 'pattern.onde_fica' ||
+        s.tests.startsWith('pattern.onde_fica.'),
+    );
+    assert.ok(
+      ondeGrammar.length >= 2,
+      `onde_fica grammar=${ondeGrammar.length}; all=${grammar.map((s) => s.tests).join(',')}`,
+    );
+    assert.ok(
+      !grammar.some(
+        (s) =>
+          s.tests === 'pattern.contractions' ||
+          s.tests.startsWith('pattern.contractions.'),
+      ),
+      'recycle pattern.contractions must not get grammar slots',
+    );
+
+    const questions: Question[] = [];
+    for (const [i, slot] of slots.entries()) {
+      const built = assembleSlotQuestion(
+        slot,
+        { slot_id: slot.slot_id, prompt_eg: 'السؤال' },
+        { bank: items, index: i },
+      );
+      if (built.question) questions.push(built.question);
+    }
+    const result = validateDayQuestionQuotas(questions, priorityIds, {
+      items,
+    });
+    assert.equal(
+      result.fatals.filter((f) => f.includes('pattern.onde_fica') && f.includes('<2'))
+        .length,
+      0,
+      result.fatals.join('; '),
+    );
+  });
+
   it('detects arabic option near-dupes and variant context', () => {
     assert.equal(arabicOptionsAreNearDupes('صباح الخير', 'صباح'), true);
     assert.equal(arabicOptionsAreNearDupes('أهلاً', 'مع السلامة'), false);
