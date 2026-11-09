@@ -2,6 +2,7 @@ import type { ConvoSession } from '@/lib/v2/convo/session/types';
 import type { ConvoTurnStreamEvent } from '@/lib/v2/convo/turn/types';
 import { pickGoalAskLines } from '@/lib/v2/convo/prompt/buildGoalFree';
 import type { ConvoGoal } from './types';
+import { recastFromExample } from './recast';
 
 export type TeachBeat = {
   character_tl: string;
@@ -68,10 +69,16 @@ export type EmitTeachSequenceOpts = {
   /** Bank intro_eg — coach bubble before teach (lock only). */
   introEg?: string | null;
   gender?: LearnerGender;
+  /**
+   * Optional code-only recast from the just-completed goal's examples_tl[0].
+   * Emitted as its own character bubble before teach+ask.
+   */
+  recastTl?: string | null;
 };
 
 /**
- * Emit intro (optional) → teach.tl/ar → meaning_eg → ask_tl/ar.
+ * Emit intro (optional) → optional recast → one character bubble (teach.tl + ask_tl)
+ * with AR always shown and meaning_eg as coach_eg on the same bubble.
  * Sets teach_shown_for; does not bump turns_on_goal.
  */
 export function emitTeachSequence(opts: EmitTeachSequenceOpts): boolean {
@@ -89,17 +96,30 @@ export function emitTeachSequence(opts: EmitTeachSequenceOpts): boolean {
     });
   }
 
+  const recast = opts.recastTl?.trim();
+  if (recast) {
+    opts.emit({
+      type: 'bubble_ar',
+      ar: '',
+      pt: recast,
+    });
+  }
+
+  const mergedPt = `${beat.character_tl} ${beat.ask_tl}`.trim();
+  const mergedAr = [beat.character_ar, beat.ask_ar]
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .join(' ');
+
   opts.emit({
     type: 'bubble_ar',
-    ar: beat.character_ar,
-    pt: beat.character_tl,
+    ar: mergedAr,
+    pt: mergedPt,
+    coach_eg: beat.coach_eg,
+    teach_goal_id: opts.goal.id,
   });
-  opts.emit({
-    type: 'coach',
-    id: `teach:${opts.goal.id}`,
-    eg: beat.coach_eg,
-    moment: 'intro',
-  });
+  // Keep a question event for pending_question / frame wiring (no second bubble:
+  // client merges when pt is already on the teach bubble).
   opts.emit({
     type: 'question',
     id: opts.goal.id,
@@ -120,7 +140,7 @@ export function emitTeachSequence(opts: EmitTeachSequenceOpts): boolean {
     ...opts.session.last_exchanges,
     {
       role: 'character',
-      tl: `${beat.character_tl} ${beat.ask_tl}`.trim(),
+      tl: mergedPt,
     },
   ].slice(-6);
 
@@ -167,4 +187,20 @@ export function emitAuthoredAsk(opts: {
     { role: 'character', tl: ask.tl },
   ].slice(-6);
   return true;
+}
+
+/** Emit a standalone code-only recast bubble (no teach). */
+export function emitCodeRecast(opts: {
+  exampleTl: string | undefined | null;
+  emit: (e: ConvoTurnStreamEvent) => void;
+  session: ConvoSession;
+}): string | null {
+  const tl = recastFromExample(opts.exampleTl);
+  if (!tl) return null;
+  opts.emit({ type: 'bubble_ar', ar: '', pt: tl });
+  opts.session.last_exchanges = [
+    ...opts.session.last_exchanges,
+    { role: 'character', tl },
+  ].slice(-6);
+  return tl;
 }

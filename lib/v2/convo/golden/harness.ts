@@ -72,10 +72,19 @@ function hasQuestion(events: ConvoTurnStreamEvent[]): boolean {
   return events.some((e) => e.type === 'question' && e.tl.includes('?'));
 }
 
-function teachCoachIds(events: ConvoTurnStreamEvent[]): string[] {
-  return events
-    .filter((e) => e.type === 'coach' && e.id.startsWith('teach:'))
-    .map((e) => (e.type === 'coach' ? e.id.slice('teach:'.length) : ''));
+function teachGoalIds(events: ConvoTurnStreamEvent[]): string[] {
+  const out: string[] = [];
+  for (const e of events) {
+    if (e.type === 'bubble_ar' && e.teach_goal_id) {
+      out.push(e.teach_goal_id);
+      continue;
+    }
+    // Legacy coach id form (pre merge).
+    if (e.type === 'coach' && e.id.startsWith('teach:')) {
+      out.push(e.id.slice('teach:'.length));
+    }
+  }
+  return out;
 }
 
 /**
@@ -157,7 +166,7 @@ export async function playGolden(
       }
     }
     if (check.expectTeachGoalId) {
-      const ids = teachCoachIds(events);
+      const ids = teachGoalIds(events);
       if (!ids.includes(check.expectTeachGoalId)) {
         failures.push(
           `expected teach for ${check.expectTeachGoalId}, got [${ids.join(',')}]`,
@@ -165,7 +174,7 @@ export async function playGolden(
       }
     }
     if (check.expectNoTeachReplay) {
-      const ids = teachCoachIds(events);
+      const ids = teachGoalIds(events);
       if (ids.includes(check.expectNoTeachReplay)) {
         failures.push(
           `teach replayed for ${check.expectNoTeachReplay}`,

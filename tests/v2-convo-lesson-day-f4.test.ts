@@ -56,7 +56,7 @@ describe('conversations v3 fix F4 ask lines, time, closing', () => {
     assert.equal(started.session.scene?.time_of_day, 'afternoon');
   });
 
-  it('all goals done emits closing then goals-done coach', async () => {
+  it('all goals done emits goals-done coach, not authored closing', async () => {
     const store = new MemoryConvoSessionStore();
     const started = await startFreeConvoSession({
       userId: 'f4-close',
@@ -74,7 +74,7 @@ describe('conversations v3 fix F4 ask lines, time, closing', () => {
     await store.save(started.session);
 
     const events: ConvoTurnStreamEvent[] = [];
-    await runFreeConvoTurn({
+    const { session } = await runFreeConvoTurn({
       session: started.session,
       learnerText: 'Boa tarde!',
       store,
@@ -84,19 +84,13 @@ describe('conversations v3 fix F4 ask lines, time, closing', () => {
       emit: (e) => events.push(e),
     });
 
-    const resets = events.filter((e) => e.type === 'reaction_reset');
-    assert.ok(
-      resets.some(
-        (e) =>
-          e.type === 'reaction_reset' && /Até amanhã/.test(e.text),
-      ),
-      JSON.stringify(resets),
-    );
     const coach = events.find(
       (e) => e.type === 'coach' && e.id === 'goals_done',
     );
     assert.ok(coach && coach.type === 'coach');
     assert.equal(coach.eg, GOALS_DONE_COACH_EG);
+    // No auto-close — chat stays open for free flow / weak refill.
+    assert.equal(session.status, 'open');
   });
 
   it('two failed model checks fall back to ask_tl', async () => {

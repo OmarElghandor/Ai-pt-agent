@@ -185,6 +185,37 @@ describe('free-talk stream reduce · tip vanish fix', () => {
     assert.equal(state.streamBubbleId, chars[0]?.id);
   });
 
+  it('teach bubble_ar merges ask question into one character bubble', () => {
+    const state = applyAll(
+      { bubbles: [], streamBubbleId: null, correctionIndex: 0 },
+      [
+        {
+          type: 'bubble_ar',
+          ar: 'جيد! اخرج من المحطة.',
+          pt: 'Boa! Sais da estação e viras à direita. ➡️ Vais à direita?',
+          coach_eg: 'à direita = يمين',
+          teach_goal_id: 'dir.right',
+        },
+        {
+          type: 'question',
+          id: 'dir.right',
+          tl: 'Vais à direita?',
+          kind: 'open',
+          item_id: 'dir.right',
+          audio_key: 'free:x',
+        },
+      ],
+    );
+    const chars = state.bubbles.filter((b) => b.role === 'character');
+    assert.equal(chars.length, 1);
+    const c = chars[0]!;
+    assert.ok(c.role === 'character');
+    assert.ok(c.tl.includes('Vais à direita?'));
+    assert.equal(c.coachEg, 'à direita = يمين');
+    assert.equal(c.teachGoalId, 'dir.right');
+    assert.equal(c.coachRevealed, false);
+  });
+
   it('bubble_ar then question with same tl does not duplicate', () => {
     const state = applyAll(
       { bubbles: [], streamBubbleId: null, correctionIndex: 0 },

@@ -66,10 +66,12 @@ describe('conversations v4 · authored arabic verbatim', () => {
       emit: (e) => events.push(e),
     });
     const teachBubble = events.find(
-      (e) => e.type === 'bubble_ar' && e.pt === metro.teach!.tl,
+      (e) =>
+        e.type === 'bubble_ar' && e.teach_goal_id === 'dir.metro',
     );
     assert.ok(teachBubble && teachBubble.type === 'bubble_ar');
-    assert.equal(teachBubble.ar, metro.teach!.ar);
+    assert.ok(teachBubble.ar?.includes(metro.teach!.ar!));
+    assert.ok(teachBubble.pt?.includes(metro.teach!.tl));
     const ask = events.find(
       (e) => e.type === 'question' && e.tl === metro.ask_tl,
     );

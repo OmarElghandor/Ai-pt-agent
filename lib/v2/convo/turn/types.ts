@@ -65,6 +65,10 @@ export type ConvoTurnStreamEvent =
       say?: string;
       /** Authoritative PT — replaces streamed preview (G3). */
       pt?: string;
+      /** Teach meaning — client nests as coach strip inside the character bubble. */
+      coach_eg?: string;
+      /** Goal id when this bubble is a v4 teach+ask beat. */
+      teach_goal_id?: string;
     }
   | {
       type: 'visual';

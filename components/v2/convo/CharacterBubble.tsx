@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { AudioButton } from '@/components/v2/AudioButton';
+import { isolatePtInText } from '@/lib/v2/convo/ui/isolatePt';
 
 export type BubbleTone = 'warm' | 'calm';
 
@@ -12,6 +13,12 @@ type Props = {
   streaming?: boolean;
   /** Egyptian / MSA meaning — revealed via translate icon. */
   meaningEg?: string;
+  /** Teach coach strip inside the bubble. */
+  coachEg?: string;
+  /** Whether the coach strip is visible (paced reveal). */
+  coachRevealed?: boolean;
+  /** Typing indicator placeholder (… under avatar). */
+  typing?: boolean;
   /** Auto-play TTS when the line finishes streaming (Batch 10 D9). */
   autoPlay?: boolean;
   /** Playback rate (Mais devagar). */
@@ -69,10 +76,28 @@ function MeaningToggle({
   );
 }
 
+function CoachStrip({ eg, calm }: { eg: string; calm: boolean }) {
+  return (
+    <div
+      dir="rtl"
+      className={
+        calm
+          ? 'mt-2 rounded-xl bg-[color-mix(in_srgb,var(--ft-mist)_55%,transparent)] px-2.5 py-1.5 text-end font-[family-name:var(--font-ft-ar)] text-[12px] leading-snug text-[var(--ft-ink)]'
+          : 'mt-2 rounded-xl bg-v2-sand/80 px-2.5 py-1.5 text-end font-[family-name:var(--font-v2-arabic)] text-[12px] leading-snug text-v2-ink'
+      }
+    >
+      {isolatePtInText(eg)}
+    </div>
+  );
+}
+
 export function CharacterBubble({
   tl,
   streaming,
   meaningEg,
+  coachEg,
+  coachRevealed = true,
+  typing,
   autoPlay,
   playbackRate = 1,
   onPlayStart,
@@ -94,6 +119,7 @@ export function CharacterBubble({
   }, [ttsEpoch]);
 
   useEffect(() => {
+    if (typing) return;
     if (!autoPlay || streaming || !tl.trim()) return;
     if (playedRef.current === tl) return;
     playedRef.current = tl;
@@ -131,10 +157,10 @@ export function CharacterBubble({
       cancelled = true;
       audioRef.current?.pause();
     };
-  }, [autoPlay, streaming, tl, playbackRate, onPlayStart, onPlayEnd]);
+  }, [autoPlay, streaming, tl, playbackRate, onPlayStart, onPlayEnd, typing]);
 
-  // v4 V1: never render a character bubble with empty PT (unless still streaming).
-  if (!tl.trim() && !streaming) {
+  // v4 V1: never render a character bubble with empty PT (unless still streaming/typing).
+  if (!tl.trim() && !streaming && !typing) {
     return null;
   }
 
@@ -154,14 +180,14 @@ export function CharacterBubble({
                 <p className="font-[family-name:var(--font-ft-ui)] text-[12px] font-semibold text-[var(--ft-ink)]">
                   {partnerName}
                 </p>
-                {streaming || playing ? (
+                {typing || streaming || playing ? (
                   <p className="font-[family-name:var(--font-ft-ar)] text-[10px] text-[var(--ft-text-secondary)]">
-                    تتحدث الآن
+                    {typing ? '…' : 'نتحدث الآن'}
                   </p>
                 ) : null}
               </div>
             </div>
-            {(streaming || playing) && tl.trim() ? (
+            {(streaming || playing) && tl.trim() && !typing ? (
               <div
                 className="flex items-center gap-1 rounded-full bg-[color-mix(in_srgb,var(--ft-mist)_30%,transparent)] px-2.5 py-1"
                 aria-hidden
@@ -184,39 +210,54 @@ export function CharacterBubble({
             ) : null}
           </div>
 
-          <p
-            dir="ltr"
-            lang="pt"
-            className="text-start font-[family-name:var(--font-ft-pt)] text-[16px] font-semibold leading-snug tracking-tight text-[var(--ft-ink)]"
-          >
-            {tl}
-            {streaming ? (
-              <span className="ms-0.5 inline-block h-3 w-1 animate-pulse rounded-sm bg-[var(--ft-sage)] align-middle" />
-            ) : null}
-          </p>
-
-          {showMeaning && meaningEg ? (
+          {typing ? (
             <p
-              dir="rtl"
-              className="mt-2 border-t border-[var(--ft-border)] pt-2 text-end font-[family-name:var(--font-ft-ar)] text-[13px] text-[var(--ft-ink)]"
+              className="font-[family-name:var(--font-ft-ui)] text-[18px] tracking-widest text-[var(--ft-text-secondary)]"
+              aria-label="تكتب…"
             >
-              {meaningEg}
+              …
             </p>
-          ) : null}
+          ) : (
+            <>
+              <p
+                dir="ltr"
+                lang="pt"
+                className="text-start font-[family-name:var(--font-ft-pt)] text-[16px] font-semibold leading-snug tracking-tight text-[var(--ft-ink)]"
+              >
+                {tl}
+                {streaming ? (
+                  <span className="ms-0.5 inline-block h-3 w-1 animate-pulse rounded-sm bg-[var(--ft-sage)] align-middle" />
+                ) : null}
+              </p>
 
-          <div className="mt-2.5 flex items-center justify-between gap-2">
-            {tl.trim() ? (
-              <AudioButton text={tl} lang="pt" size="chip" label="استمع" />
-            ) : (
-              <span />
-            )}
-            <MeaningToggle
-              meaningEg={meaningEg}
-              showMeaning={showMeaning}
-              onToggle={() => setShowMeaning((v) => !v)}
-              calm
-            />
-          </div>
+              {showMeaning && meaningEg ? (
+                <p
+                  dir="rtl"
+                  className="mt-2 border-t border-[var(--ft-border)] pt-2 text-end font-[family-name:var(--font-ft-ar)] text-[13px] text-[var(--ft-ink)]"
+                >
+                  {meaningEg}
+                </p>
+              ) : null}
+
+              {coachEg && coachRevealed ? (
+                <CoachStrip eg={coachEg} calm />
+              ) : null}
+
+              <div className="mt-2.5 flex items-center justify-between gap-2">
+                {tl.trim() ? (
+                  <AudioButton text={tl} lang="pt" size="chip" label="استمع" />
+                ) : (
+                  <span />
+                )}
+                <MeaningToggle
+                  meaningEg={meaningEg}
+                  showMeaning={showMeaning}
+                  onToggle={() => setShowMeaning((v) => !v)}
+                  calm
+                />
+              </div>
+            </>
+          )}
         </div>
       </div>
     );
@@ -225,37 +266,48 @@ export function CharacterBubble({
   return (
     <div className="flex max-w-[85%] flex-col items-start gap-1 self-start">
       <div className="relative rounded-2xl rounded-br-md border border-white/80 bg-white/95 px-3.5 py-2.5 shadow-[var(--shadow-v2-soft)] ring-1 ring-v2-primary/10">
-        <p
-          dir="ltr"
-          lang="pt"
-          className="text-start font-[family-name:var(--font-v2-target)] text-[15px] font-semibold leading-snug tracking-tight text-v2-primary"
-        >
-          {tl}
-          {streaming ? (
-            <span className="ms-0.5 inline-block h-3 w-1 animate-pulse rounded-sm bg-v2-action align-middle" />
-          ) : null}
-        </p>
-        {showMeaning && meaningEg ? (
-          <p
-            dir="rtl"
-            className="mt-1 border-t border-v2-line/50 pt-1 text-end font-[family-name:var(--font-v2-arabic)] text-[12px] text-v2-ink"
-          >
-            {meaningEg}
+        {typing ? (
+          <p className="tracking-widest text-v2-ink-muted" aria-label="تكتب…">
+            …
           </p>
-        ) : null}
-        <div className="mt-1.5 flex items-center justify-between gap-2">
-          {tl.trim() ? (
-            <AudioButton text={tl} lang="pt" size="chip" label="اسمع" />
-          ) : (
-            <span />
-          )}
-          <MeaningToggle
-            meaningEg={meaningEg}
-            showMeaning={showMeaning}
-            onToggle={() => setShowMeaning((v) => !v)}
-            calm={false}
-          />
-        </div>
+        ) : (
+          <>
+            <p
+              dir="ltr"
+              lang="pt"
+              className="text-start font-[family-name:var(--font-v2-target)] text-[15px] font-semibold leading-snug tracking-tight text-v2-primary"
+            >
+              {tl}
+              {streaming ? (
+                <span className="ms-0.5 inline-block h-3 w-1 animate-pulse rounded-sm bg-v2-action align-middle" />
+              ) : null}
+            </p>
+            {showMeaning && meaningEg ? (
+              <p
+                dir="rtl"
+                className="mt-1 border-t border-v2-line/50 pt-1 text-end font-[family-name:var(--font-v2-arabic)] text-[12px] text-v2-ink"
+              >
+                {meaningEg}
+              </p>
+            ) : null}
+            {coachEg && coachRevealed ? (
+              <CoachStrip eg={coachEg} calm={false} />
+            ) : null}
+            <div className="mt-1.5 flex items-center justify-between gap-2">
+              {tl.trim() ? (
+                <AudioButton text={tl} lang="pt" size="chip" label="اسمع" />
+              ) : (
+                <span />
+              )}
+              <MeaningToggle
+                meaningEg={meaningEg}
+                showMeaning={showMeaning}
+                onToggle={() => setShowMeaning((v) => !v)}
+                calm={false}
+              />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

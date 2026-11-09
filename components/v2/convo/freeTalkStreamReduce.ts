@@ -128,6 +128,12 @@ export function reduceFreeTalkStream(
   }
 
   if (event.type === 'bubble_ar') {
+    const teachFields = {
+      ...(event.coach_eg ? { coachEg: event.coach_eg } : {}),
+      ...(event.teach_goal_id ? { teachGoalId: event.teach_goal_id } : {}),
+      // Coach strip starts hidden when paced; FreeTalkSession reveals it.
+      ...(event.coach_eg ? { coachRevealed: false } : {}),
+    };
     const sid = streamBubbleId;
     if (sid) {
       if (!event.pt?.trim()) {
@@ -144,6 +150,7 @@ export function reduceFreeTalkStream(
             ar: event.ar,
             streaming: false,
             final: true,
+            ...teachFields,
             ...(event.say ? { say: event.say } : {}),
           });
         }
@@ -157,6 +164,7 @@ export function reduceFreeTalkStream(
               final: true,
               ar: event.ar,
               streaming: false,
+              ...teachFields,
               ...(event.say ? { say: event.say } : {}),
             }
           : b,
@@ -179,6 +187,7 @@ export function reduceFreeTalkStream(
             ar: event.ar,
             streaming: false,
             final: true,
+            ...teachFields,
             ...(event.say ? { say: event.say } : {}),
           },
         ],
@@ -228,12 +237,15 @@ export function reduceFreeTalkStream(
       return { bubbles: next, streamBubbleId: null, correctionIndex };
     }
     if (event.tl?.trim()) {
-      // After bubble_ar(pt) the stream id is cleared; question often repeats
-      // the same tl — reuse the last finalized character bubble.
+      // After merged teach+ask bubble_ar, question repeats ask_tl — do not
+      // create a second character bubble when the last one already has it.
       for (let i = bubbles.length - 1; i >= 0; i--) {
         const b = bubbles[i];
         if (!b || b.role !== 'character') continue;
-        if (b.final && b.tl === event.tl) {
+        if (
+          b.final &&
+          (b.tl === event.tl || b.tl.includes(event.tl))
+        ) {
           if (!event.say && !event.ar) {
             return { bubbles, streamBubbleId: null, correctionIndex };
           }
@@ -243,7 +255,7 @@ export function reduceFreeTalkStream(
                 ? {
                     ...row,
                     ...(event.say ? { say: event.say } : {}),
-                    ...(event.ar ? { ar: event.ar } : {}),
+                    ...(event.ar && !row.ar ? { ar: event.ar } : {}),
                   }
                 : row,
             ),

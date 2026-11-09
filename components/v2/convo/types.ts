@@ -17,6 +17,14 @@ export type TalkBubble =
       /** True once authoritative final PT was applied (G3). */
       final?: boolean;
       meaningHidden?: boolean;
+      /** Teach meaning — inset coach strip inside the bubble. */
+      coachEg?: string;
+      /** Goal id for v4 teach+ask beat. */
+      teachGoalId?: string;
+      /** Pacing: coach strip visible (client). Default true when no delay. */
+      coachRevealed?: boolean;
+      /** Pacing: bubble is a typing placeholder. */
+      typing?: boolean;
     }
   | {
       id: string;

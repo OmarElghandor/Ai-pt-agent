@@ -43,11 +43,15 @@ import {
   isStuckHelpRequest,
   loadGoalsForDay,
   loadGoalsForTopic,
+  messageCompletesGoal,
   openGoalsFromSession,
   pendingFrameFromGoal,
+  recastFromExample,
   refillSessionGoals,
   steerActionForTurns,
   stuckHelpForGoal,
+  type ConvoGoal,
+  type ConvoGoalBank,
 } from '@/lib/v2/convo/goals';
 import {
   CORE_DONE_COACH_EG,
@@ -68,7 +72,11 @@ import {
   shouldFireFreeTextCorrection,
   startFreeTextCorrection,
 } from '@/lib/v2/convo/correction';
-import type { FreeTextCorrection, FreeTextGrader } from '@/lib/v2/grader';
+import {
+  FREE_TEXT_TIMEOUT_MS,
+  type FreeTextCorrection,
+  type FreeTextGrader,
+} from '@/lib/v2/grader';
 import {
   classifySideChannel,
   collectFreeContextCandidates,
@@ -284,7 +292,7 @@ export async function runFreeConvoTurn(
     original: string;
   } | null = null;
 
-  const flushCorrection = async () => {
+  const flushCorrection = async (waitMs?: number) => {
     if (!correctionJob) return;
     const job = correctionJob;
     correctionJob = null;
@@ -293,6 +301,7 @@ export async function runFreeConvoTurn(
       learner_turn_id: job.learner_turn_id,
       original: job.original,
       emit,
+      ...(waitMs != null ? { waitMs } : {}),
     });
     if (corr.has_error && corr.severity === 'error' && corr.corrected_tl) {
       session.recasts = [
@@ -309,6 +318,111 @@ export async function runFreeConvoTurn(
         toolId: 'convo_free',
       });
     }
+  };
+
+  /** Authored teach turns finish fast — give the grader the full timeout. */
+  const flushCorrectionAuthored = () =>
+    flushCorrection(FREE_TEXT_TIMEOUT_MS + 500);
+
+  const emitFrameIfAny = () => {
+    if (!session.pending_frame) return;
+    emit({
+      type: 'free_frame',
+      tl: session.pending_frame.tl,
+      eg: session.pending_frame.eg,
+      chips: session.pending_frame.chips,
+    });
+  };
+
+  /** After a teaching goal closes: code recast + next teach, or free-flow refill. */
+  const advanceTeachingAfterGoal = async (
+    bank: ConvoGoalBank,
+    completedGoal: ConvoGoal | undefined,
+  ): Promise<boolean> => {
+    const recastTl = recastFromExample(completedGoal?.examples_tl[0]);
+    const nextDef = bank.goals.find((g) => g.id === session.current_goal);
+
+    if (session.goal_tier === 'core' && allTierDone(session.goals, bank.goals, 'core')) {
+      const coachId = 'core_goals_done';
+      if (session.coach_recent_ids.at(-1) !== coachId) {
+        session.coach_recent_ids = [...session.coach_recent_ids, coachId].slice(-8);
+        emit({
+          type: 'coach',
+          id: coachId,
+          eg: CORE_DONE_COACH_EG,
+          moment: 'summary',
+        });
+      }
+      session.goal_tier = 'extended';
+      const nextExt = bank.goals.find(
+        (g) =>
+          g.tier === 'extended' &&
+          session.goals.some((s) => s.id === g.id && s.status === 'open'),
+      );
+      if (nextExt) {
+        session.current_goal = nextExt.id;
+        session.turns_on_goal = 0;
+      } else {
+        session.goal_tier = 'free';
+      }
+    }
+
+    const next =
+      bank.goals.find((g) => g.id === session.current_goal) ?? nextDef;
+
+    if (shouldShowTeachForGoal(session, next) && next) {
+      await flushCorrectionAuthored();
+      session.pending_frame = pendingFrameFromGoal(next);
+      emitTeachSequence({
+        goal: next,
+        session,
+        emit,
+        recastTl,
+      });
+      emitFrameIfAny();
+      return true;
+    }
+    if (next && next.id !== completedGoal?.id) {
+      await flushCorrectionAuthored();
+      if (recastTl) {
+        emit({ type: 'bubble_ar', ar: '', pt: recastTl });
+      }
+      session.pending_frame = pendingFrameFromGoal(next);
+      emitAuthoredAsk({ goal: next, session, emit });
+      emitFrameIfAny();
+      return true;
+    }
+
+    // All authored goals done → free flow (weak items); no closing.
+    await flushCorrectionAuthored();
+    if (recastTl) {
+      emit({ type: 'bubble_ar', ar: '', pt: recastTl });
+    }
+    session.goal_tier = 'free';
+    const weak =
+      session.suggested_words.length > 0
+        ? session.suggested_words
+        : await loadSuggestedSurfacesForUser(session.user_id, 8);
+    const defaults = ['esquerda', 'ao lado de', 'em frente'];
+    const refill = refillSessionGoals({
+      existingStates: session.goals,
+      existingDefs: bank.goals,
+      weakSurfaces: weak.length ? weak : defaults,
+      topicSlug: session.topic_id ?? 'direcoes',
+    });
+    if (refill.newGoals.length) {
+      session.goals = refill.states;
+      session.current_goal = refill.current_goal;
+      session.turns_on_goal = 0;
+      bank.goals.push(...refill.newGoals);
+      const askGoal = refill.newGoals.find((g) => g.id === refill.current_goal);
+      if (askGoal) {
+        session.pending_frame = pendingFrameFromGoal(askGoal);
+        emitAuthoredAsk({ goal: askGoal, session, emit });
+        emitFrameIfAny();
+      }
+    }
+    return true;
   };
 
   const finish = async (ok: boolean, error?: string) => {
@@ -778,8 +892,13 @@ export async function runFreeConvoTurn(
     }
 
     const openDefs = openGoalsFromSession(session, bank);
+    // Teaching mode: only the current goal may complete (bank order, no skips).
     const codeCompleted = learnerText
-      ? checkGoals(learnerText, openDefs).completedIds
+      ? session.teaching_mode && currentDefEarly
+        ? messageCompletesGoal(learnerText, currentDefEarly)
+          ? [currentDefEarly.id]
+          : []
+        : checkGoals(learnerText, openDefs).completedIds
       : [];
     const acceptedFromModel: string[] = [];
 
@@ -794,19 +913,12 @@ export async function runFreeConvoTurn(
         })
       ) {
         session.pending_frame = pendingFrameFromGoal(currentDefEarly);
-        if (session.pending_frame) {
-          emit({
-            type: 'free_frame',
-            tl: session.pending_frame.tl,
-            eg: session.pending_frame.eg,
-            chips: session.pending_frame.chips,
-          });
-        }
+        emitFrameIfAny();
         return finish(true);
       }
     }
 
-    // Teaching: wrong / incomplete answer → authored re-ask only (never replay teach).
+    // Teaching: wrong / incomplete → 1st miss: frame + model; 2nd miss: assisted + next.
     if (
       session.teaching_mode &&
       learnerText &&
@@ -814,42 +926,48 @@ export async function runFreeConvoTurn(
       session.teach_shown_for === currentDefEarly.id &&
       !codeCompleted.includes(currentDefEarly.id)
     ) {
-      pushExchange(session, 'learner', learnerText);
-      session.learner_lines = pushLearnerLine(
-        session.learner_lines ?? [],
-        learnerText,
-      );
-      // Escalation uses turns before this answer; then bump (not for teach).
       const turnsBeforeWrong = session.turns_on_goal ?? 0;
-      const steerWrong = steerActionForTurns(turnsBeforeWrong, currentDefEarly);
-      session.turns_on_goal = turnsBeforeWrong + 1;
-      if (steerWrong.kind === 'coach_frame') {
+
+      if (turnsBeforeWrong >= 1) {
+        // 2nd miss → assisted, then code recast + next teach.
+        session.turns_on_goal = turnsBeforeWrong + 1;
+        pushExchange(session, 'learner', learnerText);
+        session.learner_lines = pushLearnerLine(
+          session.learner_lines ?? [],
+          learnerText,
+        );
+        const help = stuckHelpForGoal(currentDefEarly);
         emit({
           type: 'coach',
-          id: `goal_steer_frame:${currentDefEarly.id}`,
-          eg: steerWrong.eg,
+          id: `goal_steer_give:${currentDefEarly.id}`,
+          eg: `قولها كده: ${help.chips[0] ?? help.frame_tl}`,
           moment: 'help',
         });
-        session.pending_frame = {
-          tl: steerWrong.frame_tl,
-          eg: steerWrong.eg,
-          chips: steerWrong.chips,
-        };
-      }
-      emitAuthoredAsk({ goal: currentDefEarly, session, emit });
-      if (session.pending_frame) {
-        emit({
-          type: 'free_frame',
-          tl: session.pending_frame.tl,
-          eg: session.pending_frame.eg,
-          chips: session.pending_frame.chips,
+        applyCompletedGoals(session, bank, [currentDefEarly.id], {
+          assisted: true,
         });
+        await advanceTeachingAfterGoal(bank, currentDefEarly);
+        return finish(true);
       }
-      return finish(true);
-    }
 
-    // Teaching: correct answer → correction (async) then next teach; no model reaction.
-    if (
+      // 1st miss → frame chip, then fall through for one model reply.
+      // turns_on_goal bumps later via applyCompletedGoals (empty completedIds).
+      const help = stuckHelpForGoal(currentDefEarly);
+      emit({
+        type: 'coach',
+        id: `goal_steer_frame:${currentDefEarly.id}`,
+        eg: help.eg,
+        moment: 'help',
+      });
+      session.pending_frame = {
+        tl: help.frame_tl,
+        eg: help.eg,
+        chips: help.chips,
+      };
+      emitFrameIfAny();
+      // Fall through to model (reaction + recast + ask_tl).
+    } else if (
+      // Teaching: correct answer → code recast + next teach; no model.
       session.teaching_mode &&
       learnerText &&
       currentDefEarly &&
@@ -862,47 +980,7 @@ export async function runFreeConvoTurn(
         learnerText,
       );
       applyCompletedGoals(session, bank, codeCompleted);
-      const nextDef = bank.goals.find((g) => g.id === session.current_goal);
-      if (shouldShowTeachForGoal(session, nextDef) && nextDef) {
-        await flushCorrection();
-        session.pending_frame = pendingFrameFromGoal(nextDef);
-        emitTeachSequence({ goal: nextDef, session, emit });
-        if (session.pending_frame) {
-          emit({
-            type: 'free_frame',
-            tl: session.pending_frame.tl,
-            eg: session.pending_frame.eg,
-            chips: session.pending_frame.chips,
-          });
-        }
-        return finish(true);
-      }
-      if (nextDef) {
-        await flushCorrection();
-        session.pending_frame = pendingFrameFromGoal(nextDef);
-        emitAuthoredAsk({ goal: nextDef, session, emit });
-        if (session.pending_frame) {
-          emit({
-            type: 'free_frame',
-            tl: session.pending_frame.tl,
-            eg: session.pending_frame.eg,
-            chips: session.pending_frame.chips,
-          });
-        }
-        return finish(true);
-      }
-      // All goals done while teaching — authored closing, no model.
-      await flushCorrection();
-      if (bank.closing?.tl?.trim()) {
-        const learnerName = await getLangifyUserFirstName(session.user_id);
-        const closingTl = fillNameSlot(bank.closing.tl, learnerName);
-        const closingAr = fillNameSlot(bank.closing.ar ?? '', learnerName);
-        emit({
-          type: 'bubble_ar',
-          ar: closingAr,
-          pt: closingTl,
-        });
-      }
+      await advanceTeachingAfterGoal(bank, currentDefEarly);
       return finish(true);
     }
 
@@ -1107,9 +1185,13 @@ export async function runFreeConvoTurn(
         ),
       );
     }
-    const completedIds = [
+    let completedIds = [
       ...new Set([...codeCompleted, ...acceptedFromModel]),
     ];
+    // Teaching: never complete a non-current goal out of bank order.
+    if (session.teaching_mode && session.current_goal) {
+      completedIds = completedIds.filter((id) => id === session.current_goal);
+    }
     applyCompletedGoals(session, bank, completedIds);
 
     // v4: core goals done → note + move to extended (no auto next-topic).
@@ -1144,27 +1226,11 @@ export async function runFreeConvoTurn(
       }
     }
 
-    // V6: all goals done → closing line (F4) + coach note + refill; chat continues.
+    // All goals done → coach note + weak refill; no authored closing (only on خلّص/كفاية).
     if (
       session.goals.length > 0 &&
       session.goals.every((g) => g.status !== 'open')
     ) {
-      if (bank.closing?.tl?.trim()) {
-        const learnerName = await getLangifyUserFirstName(session.user_id);
-        // Authored closing — skip level guard; use _f when female (default m).
-        const gender: 'm' | 'f' = 'm';
-        const closingTl =
-          gender === 'f' && bank.closing.tl_f?.trim()
-            ? bank.closing.tl_f
-            : bank.closing.tl;
-        const closingAr =
-          gender === 'f' && bank.closing.ar_f?.trim()
-            ? bank.closing.ar_f
-            : (bank.closing.ar ?? '');
-        replyPt = fillNameSlot(closingTl, learnerName);
-        replyAr = fillNameSlot(closingAr, learnerName);
-        emit({ type: 'reaction_reset', text: replyPt });
-      }
       const coachId = 'goals_done';
       if (session.coach_recent_ids.at(-1) !== coachId) {
         session.coach_recent_ids = [
@@ -1188,7 +1254,7 @@ export async function runFreeConvoTurn(
         existingDefs: bank.goals,
         weakSurfaces: weak.length
           ? weak
-          : ['Tudo bem.', 'Obrigado.', 'Até logo.'],
+          : ['esquerda', 'ao lado de', 'em frente'],
         topicSlug: topic.id,
       });
       if (refill.newGoals.length) {

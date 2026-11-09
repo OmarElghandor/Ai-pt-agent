@@ -8,7 +8,7 @@ export type {
   ConvoScene,
   ConvoSceneTimeOfDay,
 } from './types';
-export { keywordsFromExamples } from './keywords';
+export { GOAL_KEYWORD_STOP, keywordsFromExamples } from './keywords';
 export {
   validateGoal,
   validateGoals,
@@ -58,6 +58,7 @@ export {
   teachBeatForGoal,
 } from './teach';
 export type { LearnerGender, TeachBeat } from './teach';
+export { recastFromExample } from './recast';
 export {
   findGoal,
   firstOpenGoalId,

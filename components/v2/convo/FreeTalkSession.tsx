@@ -17,6 +17,7 @@ import { LearnerBubble } from './LearnerBubble';
 import { readConvoNdjson } from './readNdjson';
 import { TalkDevPanel, type TalkTurnMetrics } from './TalkDevPanel';
 import { reduceFreeTalkStream } from './freeTalkStreamReduce';
+import { usePacedBubbles } from './usePacedBubbles';
 import { freeTalkTopicHeaderLine } from '@/lib/v2/convo/ui/topicHeader';
 import type { TalkBubble } from './types';
 
@@ -56,7 +57,6 @@ export function FreeTalkSession({
   const [lessonDay, setLessonDay] = useState<number | null>(
     day != null && day > 0 ? day : null,
   );
-  const [bubbles, setBubbles] = useState<TalkBubble[]>([]);
   const [busy, setBusy] = useState(false);
   const [metrics, setMetrics] = useState<TalkTurnMetrics | null>(null);
   const [turnCount, setTurnCount] = useState(0);
@@ -80,11 +80,13 @@ export function FreeTalkSession({
   const bubblesRef = useRef<TalkBubble[]>([]);
   const streamBubbleId = useRef<string | null>(null);
   const correctionCountRef = useRef(0);
-
-  const commitBubbles = useCallback((next: TalkBubble[]) => {
-    bubblesRef.current = next;
-    setBubbles(next);
-  }, []);
+  const {
+    visible: pacedVisible,
+    syncAuthoritative,
+    flush: flushPace,
+    reset: resetPace,
+    commitImmediate,
+  } = usePacedBubbles();
 
   const scrollToEnd = useCallback(() => {
     const el = scrollRef.current;
@@ -93,7 +95,7 @@ export function FreeTalkSession({
 
   useEffect(() => {
     scrollToEnd();
-  }, [bubbles, scrollToEnd]);
+  }, [pacedVisible, scrollToEnd]);
 
   const applyEvent = useCallback(
     (event: ConvoTurnStreamEvent) => {
@@ -101,16 +103,22 @@ export function FreeTalkSession({
         if (event.id === 'threads_done_open') {
           setOpenMode(true);
         }
-        commitBubbles([
+        // Teach meanings ride on bubble_ar.coach_eg — skip legacy teach: coaches.
+        if (event.id.startsWith('teach:')) {
+          return;
+        }
+        const next = [
           ...bubblesRef.current,
           {
             id: newId('coach'),
-            role: 'coach',
+            role: 'coach' as const,
             eg: event.eg,
             moment: event.moment,
             ...(event.segments ? { segments: event.segments } : {}),
           },
-        ]);
+        ];
+        bubblesRef.current = next;
+        syncAuthoritative(next);
         return;
       }
       if (
@@ -134,7 +142,8 @@ export function FreeTalkSession({
         );
         streamBubbleId.current = next.streamBubbleId;
         correctionCountRef.current = next.correctionIndex;
-        commitBubbles(next.bubbles);
+        bubblesRef.current = next.bubbles;
+        syncAuthoritative(next.bubbles);
         return;
       }
       if (event.type === 'free_frame') {
@@ -166,7 +175,7 @@ export function FreeTalkSession({
         setErrorEg('حاول تاني');
       }
     },
-    [commitBubbles],
+    [syncAuthoritative],
   );
 
   const markLearnerFailed = useCallback(
@@ -188,21 +197,21 @@ export function FreeTalkSession({
       const alreadyCoach = marked.some(
         (b) => b.role === 'coach' && b.moment === 'turn_error',
       );
-      commitBubbles(
-        alreadyCoach
-          ? marked
-          : [
-              ...marked,
-              {
-                id: newId('coach'),
-                role: 'coach',
-                eg: 'حاول تاني',
-                moment: 'turn_error',
-              },
-            ],
-      );
+      const next = alreadyCoach
+        ? marked
+        : [
+            ...marked,
+            {
+              id: newId('coach'),
+              role: 'coach' as const,
+              eg: 'حاول تاني',
+              moment: 'turn_error',
+            },
+          ];
+      bubblesRef.current = next;
+      commitImmediate(next);
     },
-    [commitBubbles],
+    [commitImmediate],
   );
 
   const runTurn = useCallback(
@@ -353,7 +362,8 @@ export function FreeTalkSession({
             });
           }
         }
-        commitBubbles(next);
+        bubblesRef.current = next;
+        resetPace(next);
       } catch (e) {
         if (!cancelled) setErrorEg('حاول تاني');
       } finally {
@@ -363,16 +373,20 @@ export function FreeTalkSession({
     return () => {
       cancelled = true;
     };
-  }, [topicId, day, level, commitBubbles]);
+  }, [topicId, day, level, resetPace]);
 
   const sendPt = (t: string, opts?: { assisted?: boolean }) => {
     if (!t.trim() || busy) return;
+    // Learner send while bubbles queued → reveal remaining immediately.
+    flushPace();
     if (opts?.assisted) setAssisted(true);
     const learnerTurnId = newId('learner');
-    commitBubbles([
+    const next: TalkBubble[] = [
       ...bubblesRef.current,
       { id: learnerTurnId, role: 'learner', tl: t.trim() },
-    ]);
+    ];
+    bubblesRef.current = next;
+    commitImmediate(next);
     void runTurn(t.trim(), {
       assisted: opts?.assisted,
       learnerTurnId,
@@ -503,7 +517,8 @@ export function FreeTalkSession({
           day={day}
           onConvoModelChange={setConvoModel}
           onReloadStart={() => {
-            commitBubbles([]);
+            bubblesRef.current = [];
+            resetPace([]);
             setSessionId(null);
             setLoading(true);
             setSummary(null);
@@ -522,7 +537,15 @@ export function FreeTalkSession({
         </button>
       </header>
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4">
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto px-4 py-4"
+        onClick={() => flushPace()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') flushPace();
+        }}
+        role="presentation"
+      >
         <div className="flex flex-col gap-3.5">
           {isLessonDay || titleTl || titleAr ? (
             <div className="flex justify-center">
@@ -532,9 +555,9 @@ export function FreeTalkSession({
             </div>
           ) : null}
 
-          {bubbles.map((b) => {
+          {pacedVisible.map((b) => {
             if (b.role === 'character') {
-              if (!b.tl.trim() && !b.streaming) return null;
+              if (!b.tl.trim() && !b.streaming && !b.typing) return null;
               return (
                 <CharacterBubble
                   key={b.id}
@@ -543,9 +566,15 @@ export function FreeTalkSession({
                   tl={b.tl}
                   streaming={b.streaming}
                   meaningEg={b.ar}
+                  coachEg={b.coachEg}
+                  coachRevealed={b.coachRevealed !== false}
+                  typing={b.typing}
                   ttsEpoch={b.ttsEpoch}
                   autoPlay={
-                    !b.streaming && Boolean(b.final) && Boolean(b.tl.trim())
+                    !b.typing &&
+                    !b.streaming &&
+                    Boolean(b.final) &&
+                    Boolean(b.tl.trim())
                   }
                 />
               );
@@ -561,21 +590,21 @@ export function FreeTalkSession({
                     b.failed
                       ? () => {
                           const text = b.tl;
-                          commitBubbles(
-                            bubblesRef.current
-                              .filter(
-                                (x) =>
-                                  !(
-                                    x.role === 'coach' &&
-                                    x.moment === 'turn_error'
-                                  ),
-                              )
-                              .map((x) =>
-                                x.id === b.id && x.role === 'learner'
-                                  ? { ...x, failed: false }
-                                  : x,
-                              ),
-                          );
+                          const next = bubblesRef.current
+                            .filter(
+                              (x) =>
+                                !(
+                                  x.role === 'coach' &&
+                                  x.moment === 'turn_error'
+                                ),
+                            )
+                            .map((x) =>
+                              x.id === b.id && x.role === 'learner'
+                                ? { ...x, failed: false }
+                                : x,
+                            );
+                          bubblesRef.current = next;
+                          commitImmediate(next);
                           setFailedLearnerId(null);
                           setErrorEg(null);
                           void runTurn(text, { learnerTurnId: b.id });
@@ -628,7 +657,10 @@ export function FreeTalkSession({
         </div>
       </div>
 
-      {errorEg && !bubbles.some((b) => b.role === 'coach' && b.moment === 'turn_error') ? (
+      {errorEg &&
+      !pacedVisible.some(
+        (b) => b.role === 'coach' && b.moment === 'turn_error',
+      ) ? (
         <p className="px-4 pb-2 font-[family-name:var(--font-ft-ar)] text-sm text-[var(--ft-text-secondary)]">
           {errorEg}
         </p>
@@ -645,15 +677,18 @@ export function FreeTalkSession({
           onToggleHelp={() => setHelpOpen((v) => !v)}
           onSend={(t, opts) => sendPt(t, { assisted: opts?.assisted })}
           onArabicSend={(t) => {
+            flushPace();
             const learnerTurnId = newId('learner');
-            commitBubbles([
+            const next: TalkBubble[] = [
               ...bubblesRef.current,
               { id: learnerTurnId, role: 'learner', tl: t },
-            ]);
+            ];
+            bubblesRef.current = next;
+            commitImmediate(next);
             void runTurn(t, { learnerTurnId });
           }}
           onUnclearStt={() => {
-            commitBubbles([
+            const next: TalkBubble[] = [
               ...bubblesRef.current,
               {
                 id: newId('coach'),
@@ -661,7 +696,9 @@ export function FreeTalkSession({
                 eg: 'ما سمعتكش كويس 🎧 قولها تاني؟',
                 moment: 'stt_unclear',
               },
-            ]);
+            ];
+            bubblesRef.current = next;
+            commitImmediate(next);
           }}
           onSurvival={(action) => {
             const last = [...bubblesRef.current]
