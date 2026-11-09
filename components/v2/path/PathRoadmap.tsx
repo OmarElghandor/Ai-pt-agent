@@ -182,20 +182,20 @@ export function PathRoadmap({
         >
           <path
             d={roadPath(roadHeight - 48)}
-            stroke="#e4d9c8"
+            stroke="var(--color-v2-sand, #c9bdaf)"
             strokeLinecap="round"
             strokeWidth="48"
           />
           <path
             d={roadPath(roadHeight - 48)}
-            stroke="#f2e7d6"
+            stroke="var(--color-v2-paper-deep, #d9e1d9)"
             strokeLinecap="round"
             strokeWidth="40"
           />
           <path
             d={roadPath(roadHeight - 48)}
             opacity="0.95"
-            stroke="#ffffff"
+            stroke="var(--color-v2-card, #fbf8f3)"
             strokeDasharray="8 8"
             strokeLinecap="round"
             strokeWidth="3"

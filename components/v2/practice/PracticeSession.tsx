@@ -14,10 +14,10 @@ import { useMicRecorder } from '@/hooks/useMicRecorder';
 const ACCENTS = ['ã', 'õ', 'ç', 'á', 'é', 'í', 'ó', 'ú', 'â', 'ê', 'ô', 'à'];
 
 const SKILL_DOT: Record<string, string> = {
-  listening: 'bg-v2-primary',
-  reading: 'bg-[#6B3FC0]',
-  speaking: 'bg-v2-action',
-  writing: 'bg-[#C4AA30]',
+  listening: 'bg-v2-skill-listening',
+  reading: 'bg-v2-skill-reading',
+  speaking: 'bg-v2-skill-speaking',
+  writing: 'bg-v2-skill-writing',
 };
 
 type Bubble = {

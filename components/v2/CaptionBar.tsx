@@ -62,7 +62,7 @@ export function CaptionBar({
           </div>
         )}
 
-        <p dir="rtl" className="min-w-0 flex-1 text-start font-[family-name:var(--font-v2-arabic)] text-[13px] font-bold leading-snug text-v2-highlight-fill">
+        <p dir="rtl" className="min-w-0 flex-1 text-start font-[family-name:var(--font-v2-arabic)] text-[13px] font-bold leading-snug text-white">
           {tip?.length ? (
             <RichText segments={tip} tone="onDark" />
           ) : tipEg ? (
@@ -108,7 +108,7 @@ export function CaptionBar({
                   <div
                     className={[
                       'h-full rounded-full transition-[width]',
-                      fill > 0 ? 'bg-v2-highlight-border' : 'bg-transparent',
+                      fill > 0 ? 'bg-white' : 'bg-transparent',
                     ].join(' ')}
                     style={{ width: `${fill * 100}%` }}
                   />
@@ -164,7 +164,7 @@ function SoundWaveGlyph() {
       viewBox="0 0 28 20"
       fill="none"
       aria-hidden
-      className="shrink-0 text-v2-highlight-border"
+      className="shrink-0 text-white/85"
     >
       <rect x="2" y="7" width="2.5" height="6" rx="1" fill="currentColor" opacity="0.7" />
       <rect x="7" y="3" width="2.5" height="14" rx="1" fill="currentColor" />

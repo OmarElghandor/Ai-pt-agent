@@ -10,7 +10,7 @@ type Props = {
   className?: string;
 };
 
-/** Warm Editorial page header: pill + Newsreader title + Arabic subtitle. */
+/** Calm Kit page header: sage pill + ink title + Arabic subtitle. */
 export function TitleBlock({ pill, title, subtitle, className }: Props) {
   return (
     <header
@@ -21,7 +21,7 @@ export function TitleBlock({ pill, title, subtitle, className }: Props) {
           {pill}
         </span>
       ) : null}
-      <h1 className="mt-2 font-[family-name:var(--font-v2-target)] text-[32px] font-bold leading-10 text-v2-primary">
+      <h1 className="mt-2 font-[family-name:var(--font-v2-target)] text-[32px] font-bold leading-10 text-v2-ink">
         {title}
       </h1>
       {subtitle ? (

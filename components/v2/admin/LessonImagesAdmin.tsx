@@ -35,9 +35,9 @@ const SOURCE_LABEL: Record<ImageCard['source'], string> = {
 };
 
 const SOURCE_STYLE: Record<ImageCard['source'], { bg: string; color: string }> = {
-  authored: { bg: '#dbeafe', color: '#1d4ed8' },
-  generated: { bg: '#e5e7eb', color: '#374151' },
-  override: { bg: '#fef3c7', color: '#b45309' },
+  authored: { bg: '#e5e9df', color: '#4d6151' },
+  generated: { bg: '#d9e1d9', color: '#666963' },
+  override: { bg: '#efe7dc', color: '#7a5e30' },
 };
 
 const POLL_MS = 1500;

@@ -205,7 +205,7 @@ export function ConvoMap({
                       : isChecked
                         ? 'border-[color:var(--ft-sage,#6B7F6E)] bg-[color:var(--ft-success-soft,#E5E9DF)] text-[color:var(--ft-sage,#6B7F6E)]'
                       : isWrong
-                        ? 'border-[#C4A574] bg-[#F3E6D0] text-[#7A5C2E] ring-2 ring-[#C4A574]/50'
+                        ? 'border-[color:var(--ft-correction,#B8955A)] bg-[color:var(--ft-coach,#EFE7DC)] text-[color:var(--ft-correction-text,#7A5E30)] ring-2 ring-[color:var(--ft-correction,#B8955A)]/40'
                         : onEdge || pulse
                           ? 'border-[color:var(--ft-moss,#A7B8A7)] bg-white text-[color:var(--ft-sage,#6B7F6E)] ring-2 ring-[color:var(--ft-moss,#A7B8A7)]/50'
                           : 'border-[color:var(--ft-border,#E5DED5)] bg-white/95 text-[color:var(--ft-ink,#202A25)]',

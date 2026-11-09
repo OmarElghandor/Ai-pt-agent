@@ -1,4 +1,5 @@
-/* Langify v2 Warm Editorial tokens — hex values live only here and in globals.css @theme. */
+/* Langify v2 Calm Kit tokens — hex values live only here and in globals.css @theme. */
+/* Refs: design/calm-kit/ */
 
 .v2-shell {
   direction: rtl;
@@ -7,60 +8,69 @@
   --font-v2-display-ar: var(--font-v2-noto-ar), ui-sans-serif, system-ui, sans-serif;
   --font-v2-target: var(--font-v2-newsreader), ui-serif, Georgia, serif;
   --font-v2-arabic: var(--font-v2-noto-ar), ui-sans-serif, system-ui, sans-serif;
-  --font-v2-ui: var(--font-v2-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-v2-ui: var(--font-v2-manrope), var(--font-v2-inter), ui-sans-serif, system-ui, sans-serif;
 
-  --color-v2-paper: #fff8f2;
-  --color-v2-paper-deep: #fef2e1;
-  --color-v2-card: #ffffff;
-  --color-v2-line: #ece1d0;
-  --color-v2-rule: #ece1d0; /* alias: prefer line */
-  --color-v2-ink: #201b11;
-  --color-v2-ink-muted: #8c8c86;
+  /* Surfaces */
+  --color-v2-paper: #f4efe8;
+  --color-v2-paper-deep: #d9e1d9;
+  --color-v2-card: #fbf8f3;
+  --color-v2-line: #e5ded5;
+  --color-v2-rule: #e5ded5; /* alias: prefer line */
+  --color-v2-ink: #202a25;
+  --color-v2-ink-muted: #666963;
+  --color-v2-sand: #c9bdaf;
 
-  --color-v2-primary: #14545a;
-  --color-v2-primary-strong: #003c41;
-  --color-v2-primary-tint: #e6f4f5;
-  --color-v2-primary-fixed: #b2edf3;
+  /* Brand / chrome — sage */
+  --color-v2-primary: #6b7f6e;
+  --color-v2-primary-strong: #4d6151;
+  --color-v2-primary-tint: #d9e1d9;
+  --color-v2-primary-fixed: #e5e9df;
 
-  --color-v2-action: #f56d4e;
-  --color-v2-action-strong: #a9361d;
-  --color-v2-action-tint: #ffdad2;
+  /* Actions / progress / active — sage (retired coral CTA) */
+  --color-v2-action: #6b7f6e;
+  --color-v2-action-strong: #4d6151;
+  --color-v2-action-tint: #d9e1d9;
 
-  --color-v2-note: #fee263;
-  --color-v2-note-border: #e1c64a;
-  --color-v2-highlight-fill: #fee263;
-  --color-v2-highlight-border: #e1c64a;
+  /* Tips / selection — sand (retired mustard) */
+  --color-v2-note: #efe7dc;
+  --color-v2-note-border: #c9bdaf;
+  --color-v2-highlight-fill: #efe7dc;
+  --color-v2-highlight-border: #c9bdaf;
 
-  --color-v2-success: #1b5e20;
-  --color-v2-attention: #e8a13a;
+  /* Feedback */
+  --color-v2-success: #4d6151;
+  --color-v2-attention: #b8955a;
   --color-v2-danger: #ba1a1a;
 
-  --color-v2-group-a: #14545a;
-  --color-v2-group-b: #a9361d;
-  --color-v2-group-c: #6e5e00;
-  --color-v2-group-m: #14545a;
-  --color-v2-group-f: #a9361d;
-  --color-v2-group-verb: #003c41;
-  --color-v2-group-verb-bg: #e6f4f5;
-  --color-v2-group-prep: #6e5e00;
-  --color-v2-group-pron: #6b3fc0;
+  /* Semantic group hues — muted botanical, still distinct */
+  --color-v2-group-a: #4d6151;
+  --color-v2-group-b: #8a6b5c;
+  --color-v2-group-c: #7a6e45;
+  --color-v2-group-m: #4d6151;
+  --color-v2-group-f: #8a6b5c;
+  --color-v2-group-verb: #4d6151;
+  --color-v2-group-verb-bg: #e5e9df;
+  --color-v2-group-prep: #7a6e45;
+  --color-v2-group-pron: #6b5b7a;
   --color-v2-group-neg: #ba1a1a;
   --color-v2-group-neg-bg: #ffdad6;
-  --color-v2-group-neutral: #201b11;
+  --color-v2-group-neutral: #202a25;
 
-  --color-v2-verb-ar: #f56d4e;
-  --color-v2-verb-ar-text: #a9361d;
-  --color-v2-verb-er: #14545a;
-  --color-v2-verb-ir: #c4aa30;
+  /* Verb class — muted */
+  --color-v2-verb-ar: #8a6b5c;
+  --color-v2-verb-ar-text: #6b4f42;
+  --color-v2-verb-er: #4d6151;
+  --color-v2-verb-ir: #9a8a4a;
   --color-v2-verb-ir-text: #6e5e00;
-  --color-v2-verb-irregular: #6b3fc0;
+  --color-v2-verb-irregular: #6b5b7a;
 
-  --color-v2-skill-listening: #14545a;
-  --color-v2-skill-reading: #6b3fc0;
-  --color-v2-skill-speaking: #f56d4e;
-  --color-v2-skill-writing: #c4aa30;
+  /* Skills — muted botanical */
+  --color-v2-skill-listening: #4d6151;
+  --color-v2-skill-reading: #6b5b7a;
+  --color-v2-skill-speaking: #6b7f6e;
+  --color-v2-skill-writing: #9a8a4a;
 
-  --radius-v2-card: 22px;
+  --radius-v2-card: 28px;
   --radius-v2-row: 14px;
   --radius-v2-chip: 9999px;
 
@@ -71,7 +81,37 @@
   --space-v2-5: 24px;
   --space-v2-6: 32px;
 
-  --shadow-v2-soft: 0 8px 24px rgba(32, 50, 50, 0.08);
+  --shadow-v2-soft: 0 8px 24px rgba(32, 42, 37, 0.06);
+
+  /* Calm Kit aliases (formerly scoped to .v2-free-talk only) */
+  --ft-ivory: #f4efe8;
+  --ft-surface: #fbf8f3;
+  --ft-sage: #6b7f6e;
+  --ft-sage-dark: #4d6151;
+  --ft-moss: #a7b8a7;
+  --ft-mist: #d9e1d9;
+  --ft-sand: #c9bdaf;
+  --ft-ink: #202a25;
+  --ft-text-secondary: #666963;
+  --ft-border: #e5ded5;
+  --ft-coach: #efe7dc;
+  --ft-success-soft: #e5e9df;
+  --ft-highlight: #efe7dc;
+  --ft-correction: #b8955a;
+  --ft-correction-text: #7a5e30;
+  --ft-error-soft: #ffdad6;
+  --ft-error: #ba1a1a;
+  --ft-on-sage: #ffffff;
+  --ft-radius-card: 28px;
+  --ft-radius-control: 999px;
+  --ft-shadow-soft: 0 8px 24px rgba(32, 42, 37, 0.06);
+  --ft-shadow-sheet: 0 12px 40px -8px rgba(32, 42, 37, 0.12);
+  --ft-shadow-dock: 0 -8px 24px rgba(32, 42, 37, 0.06);
+  --ft-shadow-mic: 0 8px 24px rgba(77, 97, 81, 0.35);
+
+  --font-ft-ui: var(--font-v2-manrope), var(--font-v2-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-ft-pt: var(--font-v2-newsreader), ui-serif, Georgia, serif;
+  --font-ft-ar: var(--font-v2-noto-ar), ui-sans-serif, system-ui, sans-serif;
 
   width: 100%;
   min-height: 100dvh;
@@ -130,39 +170,8 @@
   animation: v2-pop 0.35s ease both;
 }
 
-/* ── Module C free talk · Calm Kit (scoped; Warm Editorial stays default) ── */
-/* Refs: design/calm-kit/ */
-
+/* Talk sessions — same Calm Kit tokens as shell; keep class for layout hooks */
 .v2-free-talk {
-  --ft-ivory: #f4efe8;
-  --ft-surface: #fbf8f3;
-  --ft-sage: #6b7f6e;
-  --ft-sage-dark: #4d6151;
-  --ft-moss: #a7b8a7;
-  --ft-mist: #d9e1d9;
-  --ft-sand: #c9bdaf;
-  --ft-ink: #202a25;
-  --ft-text-secondary: #666963;
-  --ft-border: #e5ded5;
-  --ft-coach: #efe7dc;
-  --ft-success-soft: #e5e9df;
-  --ft-highlight: #fff6d6;
-  --ft-correction: #b8955a;
-  --ft-correction-text: #7a5e30;
-  --ft-error-soft: #ffdad6;
-  --ft-error: #ba1a1a;
-  --ft-on-sage: #ffffff;
-  --ft-radius-card: 28px;
-  --ft-radius-control: 999px;
-  --ft-shadow-soft: 0 8px 24px rgba(32, 42, 37, 0.06);
-  --ft-shadow-sheet: 0 12px 40px -8px rgba(32, 42, 37, 0.12);
-  --ft-shadow-dock: 0 -8px 24px rgba(32, 42, 37, 0.06);
-  --ft-shadow-mic: 0 8px 24px rgba(77, 97, 81, 0.35);
-
-  --font-ft-ui: var(--font-v2-manrope), var(--font-v2-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-ft-pt: var(--font-v2-newsreader), ui-serif, Georgia, serif;
-  --font-ft-ar: var(--font-v2-noto-ar), ui-sans-serif, system-ui, sans-serif;
-
   background: var(--ft-ivory);
   color: var(--ft-ink);
   font-family: var(--font-ft-ar);

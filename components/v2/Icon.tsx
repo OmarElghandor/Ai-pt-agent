@@ -7,7 +7,7 @@ type Props = {
   className?: string;
 };
 
-/** Material Symbols Rounded — one family for all v2 UI icons. */
+/** Material Symbols Rounded — outline by default; fill only when active (Calm Kit glassy chrome). */
 export function Icon({ name, size = 24, fill = false, className }: Props) {
   return (
     <span
@@ -16,7 +16,9 @@ export function Icon({ name, size = 24, fill = false, className }: Props) {
         .join(' ')}
       style={{
         fontSize: size,
-        fontVariationSettings: fill ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24",
+        fontVariationSettings: fill
+          ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24"
+          : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24",
       }}
       aria-hidden
     >

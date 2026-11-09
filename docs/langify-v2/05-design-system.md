@@ -1,33 +1,26 @@
 # 05 · Design system
 
-> **Changed 2026-10-27:** v2 now uses the **Warm Editorial** look from the Stitch export `stitch_bilingual_grammar_notebook_app_5`. It replaces the earlier navy "Editorial Notebook" look. The old references are kept for history in `design/archive-v4/`. Don't copy colors from there. Phases 0–2 already built the components with the old tokens, so the switch is a token swap plus a few component changes (see "Migration from v4" at the end).
+> **Changed 2026-11-09:** v2 uses **Calm Kit** globally (path, lessons, cards, questions, talk, admin). Sage actions, ivory paper, sand tips, mist tracks, outline “glassy” Material icons. Tokens live in `app/(v2)/v2.css` and `app/globals.css` `@theme`. Refs: `design/calm-kit/`. Layout structure may still follow older Stitch screens in `design/reference/`, but **do not copy Warm Editorial teal/coral/mustard hex**.
 >
-> **Exception — voice sessions (2026-11-06):** Module C free talk (`/talk/free/[topicId]`) and Module A Learn `TalkSession` (`/talk/[packId]`) use **Calm Kit** (sage/ivory voice UI) scoped under `.v2-free-talk`. Tokens live in `app/(v2)/v2.css`; free-talk refs in `design/calm-kit/`; Learn map/session refs in `design/onde-fica/`. Grammar, cards, and day map stay Warm Editorial. Do not promote Calm Kit colors into the global v2 theme.
+> **History:** Warm Editorial (2026-10-27, Stitch v5) and the navy Editorial Notebook (v4, `design/archive-v4/`) are archived. The 2026-11-06 “Calm Kit for voice only” exception is **removed** — Calm Kit is the default theme; `.v2-free-talk` remains a layout hook that inherits the same shell tokens.
 
 ## The references
 
-- **Screens:** `design/reference/*.png`, numbered by screen (see `06`).
-- **HTML:** `design/stitch-html/*.html`, the Stitch HTML for every screen. Use it to read structure and spacing. Don't copy it: it's Tailwind CDN, LTR-first and full of English labels.
-  - Two screens exist only as HTML, because their PNG exports are broken: `04-compare-o-a.html` and `11-practice-conversation.html`.
-- **Design notes:** `design/stitch-DESIGN.md` has Stitch's own notes ("Warm Editorial Learning Mobile Experience").
-- **Free talk Calm Kit:** `design/calm-kit/` (`DESIGN.md`, `screen-1.png`…`screen-6.png`, matching HTML). Voice-session states only — idle, recording, help sheet, soft correction, Arabic coach, text mode.
-- **Main content page reference:** `01-content-page-possessives.png` (O MEU · A MINHA). It sets the visual style for every content page. `02-conjugation-endings.png` is the reference for verb pages.
+- **Calm Kit (visual source of truth):** `design/calm-kit/` (`DESIGN.md`, `screen-1.png`…`screen-6.png`, matching HTML).
+- **Screens (layout structure):** `design/reference/*.png`, numbered by screen (see `06`). Use for composition; recolor to Calm Kit.
+- **HTML:** `design/stitch-html/*.html` — structure and spacing only. Don't copy colors or LTR English labels.
+- **Learn map/session:** `design/onde-fica/` (map chrome already aligned with sage/ivory).
+- **Archived Warm Editorial notes:** `design/stitch-DESIGN.md` — history only.
 
-What makes these screens right, and must carry to every content page:
-- **Warm cream paper background.** Content sits on white cards with large radii and soft shadows. No heavy outlines.
-- **Header group:**
-  - a small pill label on top (القواعد · LIÇÃO DE GRAMÁTICA);
-  - a big serif title in deep teal (O MEU · A MINHA, AR · -ER · -IR);
-  - one Arabic subtitle line.
-- **Panels and columns with solid colored header strips:**
-  - AR coral, ER teal…;
-  - masculine teal, feminine coral.
-- **Pronoun chips row:** a selector pill row (eu · tu · ele/ela · nós · eles/elas). The active chip is filled deep teal.
-- **Active row:** pale-yellow fill with a gold border (the `nós` row in `02`). Rows not reached yet are faded.
-- **Deep-teal callout bar** for the key rule (✨ + one line + an ending chip).
-- **Mustard note card** for tips: 💡 icon, cream-yellow fill and a gold left border.
-- **Primary actions:** coral pill buttons with a soft warm shadow. Secondary actions are outlined pills.
-- **Illustration tiles:** rounded corners, inside the card, with a small caption chip.
+What makes screens right under Calm Kit:
+- **Ivory paper background** (`#F4EFE8`). Cards on warm surface (`#FBF8F3`) with large radii (~28px) and soft diffuse shadows.
+- **Header group:** small sage/mist pill; **ink** serif title; one Arabic subtitle.
+- **Panels:** muted botanical header strips (group/verb hues stay distinct but soft — not bright coral/teal).
+- **Active row / tips:** sand wash + sand border (not mustard).
+- **Callout bar:** solid **sage**.
+- **Primary actions:** sage pill, white label. Secondary: surface + thin border, ink label.
+- **Progress:** sage fill on mist track, pill ends.
+- **Icons:** Material Symbols, outline by default; fill only when active; glassy round chrome on sticky bars and tab items.
 
 ## Tokens
 
@@ -35,56 +28,56 @@ Colors live in one theme file and are referenced by role. Content JSON never car
 
 | Role | Value | Use |
 |---|---|---|
-| paper | #FFF8F2 | App background (warm cream) |
-| paper-deep | #FEF2E1 | Section fills, segmented-control track, header pill |
-| card | #FFFFFF | Cards, bubbles, example rows |
-| line | #ECE1D0 | Hairlines and inner dividers |
-| ink | #201B11 | Main text |
-| ink-muted | #8C8C86 | Secondary text, pronunciation |
-| primary | #14545A | Deep teal: titles, headers, active chips, the caption bar, dark hero cards |
-| primary-strong | #003C41 | Pressed teal, text on teal-tint fills |
-| primary-tint | #B2EDF3 / #E6F4F5 | Teal-tint fills (row bands, badges) |
-| action | #F56D4E | Coral: primary buttons, progress, "current" markers |
-| action-strong | #A9361D | Coral text on light fills |
-| action-tint | #FFDAD2 | Coral-tint fills |
-| note | #FEE263 | Mustard: active row fill (at 35%), tip cards, duration labels |
-| note-border | #E1C64A | Active row border, tip card border |
-| success | #1B5E20 | Correct, graduated |
-| attention | #E8A13A | Near-miss dot, the correction label (never red for learner mistakes) |
+| paper | #F4EFE8 | App background (ivory) |
+| paper-deep | #D9E1D9 | Mist tracks, section fills, header pills |
+| card | #FBF8F3 | Cards, bubbles, raised surfaces |
+| line | #E5DED5 | Hairlines and inner dividers |
+| ink | #202A25 | Main text, titles |
+| ink-muted | #666963 | Secondary text |
+| sand | #C9BDAF | Neutral accents, tip borders |
+| primary | #6B7F6E | Sage: headers, caption bar, active chrome |
+| primary-strong | #4D6151 | Pressed sage, text on soft fills |
+| primary-tint / fixed | #D9E1D9 / #E5E9DF | Soft green fills |
+| action | #6B7F6E | Primary buttons, progress, “current” markers |
+| action-strong | #4D6151 | Strong sage text |
+| action-tint | #D9E1D9 | Soft action wash |
+| note | #EFE7DC | Tip / coach surfaces |
+| note-border | #C9BDAF | Tip borders |
+| success | #4D6151 | Correct, graduated (on success-soft surfaces) |
+| attention | #B8955A | Near-miss / correction (never red for learner mistakes) |
 | danger | #BA1A1A | System errors only |
 
-**Group → color**
+**Group → color** (muted botanical; keep roles distinct)
 
 | group | Color | Meaning |
 |---|---|---|
-| a | primary #14545A | First side of a comparison (SER) |
-| b | action-strong #A9361D | Second side (ESTAR) |
-| c | #6E5E00 on note fill | Third side |
-| m | primary #14545A | Masculine (o, um, o meu) |
-| f | action-strong #A9361D | Feminine (a, uma, a minha) |
-| verb | primary-strong on primary-tint chip | The verb inside a sentence |
-| prep | #6E5E00 | Prepositions and contractions |
-| pron | #6B3FC0 | Pronouns |
-| neg | danger text on #FFDAD6 | Negation (não, nada, nunca) |
+| a | #4D6151 | First side of a comparison (SER) |
+| b | #8A6B5C | Second side (ESTAR) |
+| c | #7A6E45 | Third side |
+| m | #4D6151 | Masculine |
+| f | #8A6B5C | Feminine |
+| verb | #4D6151 on #E5E9DF | The verb inside a sentence |
+| prep | #7A6E45 | Prepositions and contractions |
+| pron | #6B5B7A | Pronouns (muted purple accent) |
+| neg | danger text on #FFDAD6 | Negation |
 | neutral | ink | Everything else |
 
-**Verb class colors** (column headers, endings, verb tiles):
-- -ar = coral #F56D4E header, ending text #A9361D.
-- -er = deep teal #14545A.
-- -ir = gold: header #C4AA30, ending text #6E5E00.
-  - **Not** a second teal. The Stitch screen uses #1E6670 for -IR, which is too close to -ER. Don't copy that.
-- **Irregular** forms stay purple #6B3FC0 with ⚡. It's the only purple in the app, so irregular forms stand out. The Stitch flashcard back draws `durmo` in coral; that's wrong.
+**Verb class colors** (column headers, endings, verb tiles) — muted:
+- -ar = #8A6B5C header / #6B4F42 text.
+- -er = #4D6151.
+- -ir = #9A8A4A / #6E5E00.
+- **Irregular** forms stay muted purple `#6B5B7A` with the `bolt` icon.
 - Regular forms are labeled "عادي" in ink-muted.
 
-**Skill colors** (practice step dots, result tiles): listening = primary teal · reading #6B3FC0 purple · speaking = action coral · writing = gold #C4AA30.
+**Skill colors:** listening `#4D6151` · reading `#6B5B7A` · speaking `#6B7F6E` · writing `#9A8A4A`.
 
 ## Type
 
 | Role | Font | Use |
 |---|---|---|
-| Display + target text | Newsreader (serif), 600–700 | Page titles (O MEU · A MINHA), big words (DORMIR, o queijo), Portuguese sentences |
-| Arabic (all) | Noto Sans Arabic, 400–700 | All Arabic text, including Arabic screen titles at 700. One size step larger than Latin at the same level |
-| UI Latin | Inter | Chips, labels, numbers, buttons |
+| Display + target text | Newsreader (serif), 600–700 | Page titles, big Portuguese words and sentences |
+| Arabic (all) | Noto Sans Arabic, 400–700 | All Arabic text |
+| UI Latin | Manrope (preferred) / Inter | Chips, labels, numbers, buttons, chrome |
 
 Scale (from `stitch-DESIGN.md`):
 - headline-lg 32/40
@@ -149,17 +142,15 @@ Every image slot has a fixed aspect ratio. The image fills it with `object-fit: 
 
 Image generation uses the same ratios: 1024×1024 for 1:1, 1536×1152 for 4:3, 1536×864 for 16:9. A slot of one ratio never shows an image of another.
 
-## Icons (added 2026-10-28)
+## Icons (updated 2026-11-09 · Calm Kit)
 
-- **One family:** Material Symbols Rounded, weight 400, fill 0 (fill 1 only for the active state), the same family as the Stitch HTML. No emoji in the UI (✨ 💡 ⚡ become icons). The only exception is the irregular-verb mark: it's the `bolt` icon in purple.
+- **One family:** Material Symbols Rounded, weight 400, **outline by default** (`FILL` 0); `FILL` 1 only when active/selected. No emoji in the UI (✨ 💡 ⚡ become icons). Irregular-verb mark: `bolt` in muted purple.
+- **Glassy chrome:** sticky headers and the TabBar use soft ivory/surface + `backdrop-blur`; icon buttons sit in round discs with mist wash; active tab may use a sage filled disc with white icon + a small sage indicator dot.
 - **Sizes:** 20 inside chips and rows, 24 in buttons and headers.
-- **Colors:** primary by default, white on teal or coral fills, ink-muted when disabled. Never black.
-- **Audio button:**
-  - one size, 40px, with a primary-tint fill (#E6F4F5) and a primary icon;
-  - 32px only inside chips;
-  - never a white circle on a white card.
-- **Rule rows** use the icon given in content (`icon`, a Material Symbols name). Without one, they show the number in a 32px primary-tint circle. Never use the same generic placeholder icon on every row.
-- **Image placeholders** use a small `image` icon (24) centered on a paper-deep block with the same radius as the real image. They never stand as a big icon tile next to text.
+- **Colors:** ink for inactive outline icons, sage when active, white on sage fills, ink-muted when disabled. Never pure black.
+- **Audio button:** 40px mist/primary-tint disc with sage icon; 32px inside chips.
+- **Rule rows** use the icon given in content (`icon`, a Material Symbols name). Without one, they show the number in a 32px mist circle.
+- **Image placeholders** use a small `image` icon (24) centered on a mist/paper-deep block with the same radius as the real image.
 
 ## Direction
 
@@ -181,13 +172,13 @@ Image generation uses the same ratios: 1024×1024 for 1:1, 1536×1152 for 4:3, 1
 - **TitleBlock:** the pill label, the serif title and the Arabic subtitle. It replaces v4's TitleBadge tiles.
 - **Panel**, with a solid colored header strip (class or gender color).
 - **RuleRow**, **ExampleRow** (white card, sentence with the key word colored, Arabic under it, speaker).
-- **CalloutBar:** the deep-teal key-rule bar.
-- **NoteCard:** the mustard tip card. It replaces StickyNote.
-- **CaptionBar:** a deep-teal bar with the tutor avatar, the Egyptian line, a waveform, pause, speed and chapter segments.
-- **ProgressDots**, colored by skill. **ProgressBar**: a thin coral bar.
-- **PrimaryButton** (coral pill) and **SecondaryButton** (outlined pill). **HeroCard**: a deep-teal card with a coral button (the "١٥ كارت · ٣ دقايق" card).
+- **CalloutBar:** the sage key-rule bar.
+- **NoteCard:** the sand tip / coach card. It replaces StickyNote.
+- **CaptionBar:** a sage bar with the tutor avatar, the Egyptian line, a waveform, pause, speed and chapter segments.
+- **ProgressDots**, colored by skill. **ProgressBar**: sage fill on a mist track (pill).
+- **PrimaryButton** (sage pill, optional trailing arrow) and **SecondaryButton** (surface + thin border). **HeroCard**: sage card with a sage CTA.
 - **TimelineStep:** a numbered marker, a title (Arabic + Portuguese italic), minutes and a status. It's used on the day map and the path.
-- **TabBar:** المسار · الكروت · المكتبة · أنا. White bar, teal active icon, coral dot for "today".
+- **TabBar:** المسار · الكروت · المكتبة · أنا. Glassy ivory bar, sage active disc + indicator dot.
 - **ItemViewer** (added 2026-10-30; replaces the CardCarousel on static pages; reference `design/stitch-html/05d-item-viewer.html`). Every static page with `cards` blocks (dictionary, phrases) shows **one word or phrase per screen**, full screen, without the tab bar.
   - **Top ~55% (hero):** the item's picture as a cover image (an ImageSlot until images exist), with a dark gradient at the top and bottom. Overlaid on it:
     - a back button;

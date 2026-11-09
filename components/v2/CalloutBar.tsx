@@ -8,18 +8,18 @@ type Props = {
   className?: string;
 };
 
-/** Deep-teal key-rule bar. */
+/** Sage key-rule bar (Calm Kit). */
 export function CalloutBar({ children, chip, className }: Props) {
   return (
     <div
       className={[
-        'flex items-center gap-2 rounded-v2-row bg-v2-primary px-4 py-3 text-white shadow-[var(--shadow-v2-soft)]',
+        'flex items-center gap-2 rounded-v2-card bg-v2-primary px-4 py-3 text-white shadow-[var(--shadow-v2-soft)]',
         className,
       ]
         .filter(Boolean)
         .join(' ')}
     >
-      <Icon name="auto_awesome" size={24} className="shrink-0 text-v2-note" />
+      <Icon name="auto_awesome" size={24} className="shrink-0 text-white/90" />
       <div
         dir="rtl"
         className="min-w-0 flex-1 text-start font-[family-name:var(--font-v2-arabic)] text-sm font-semibold leading-snug"

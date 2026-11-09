@@ -98,12 +98,12 @@ export function ChoiceQuestion({
               className={[
                 'relative rounded-v2-card border px-3 py-4 text-center font-[family-name:var(--font-v2-display)] text-lg',
                 showCorrect
-                  ? 'border-v2-success bg-v2-highlight-fill text-v2-primary'
+                  ? 'border-v2-success bg-v2-primary-fixed text-v2-primary-strong'
                   : showWrong
-                    ? 'v2-shake border-v2-attention bg-v2-action text-white'
+                    ? 'v2-shake border-v2-attention bg-v2-note text-v2-attention'
                     : chosen
                       ? 'border-v2-action bg-v2-action text-white'
-                      : 'border-v2-rule bg-v2-card text-v2-primary',
+                      : 'border-v2-rule bg-v2-card text-v2-ink',
               ].join(' ')}
               dir="ltr"
             >

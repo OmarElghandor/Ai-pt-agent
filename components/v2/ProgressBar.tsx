@@ -5,7 +5,7 @@ type Props = {
   label?: string;
 };
 
-/** Thin coral progress track. */
+/** Sage progress fill on a mist track (Calm Kit). */
 export function ProgressBar({ value, className, label }: Props) {
   const pct = Math.max(0, Math.min(1, value)) * 100;
   return (
@@ -17,7 +17,7 @@ export function ProgressBar({ value, className, label }: Props) {
       aria-valuemax={100}
       aria-label={label}
     >
-      <div className="h-1.5 overflow-hidden rounded-full bg-v2-paper-deep">
+      <div className="h-2.5 overflow-hidden rounded-full bg-v2-paper-deep">
         <div
           className="h-full rounded-full bg-v2-action transition-[width]"
           style={{ width: `${pct}%` }}

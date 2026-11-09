@@ -40,7 +40,7 @@ const inter = Inter({
   variable: '--font-v2-inter',
 });
 
-/** Calm Kit UI chrome for Module C free talk only. */
+/** Calm Kit UI chrome (global v2). */
 const manrope = Manrope({
   subsets: ['latin', 'latin-ext'],
   weight: ['400', '500', '600'],

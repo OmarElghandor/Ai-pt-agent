@@ -1182,7 +1182,7 @@ export function TalkSession({ packId }: Props) {
                       key={a}
                       type="button"
                       onClick={() => setText((t) => t + a)}
-                      className="h-7 min-w-7 rounded-md border border-[color:var(--ft-sand,#C4A574)] bg-[color:var(--ft-surface,#FBF8F3)] px-1.5 font-[family-name:var(--font-ft-pt,var(--font-v2-target))] text-xs text-[color:var(--ft-ink,#202A25)]"
+                      className="h-7 min-w-7 rounded-md border border-[color:var(--ft-sand,#C9BDAF)] bg-[color:var(--ft-surface,#FBF8F3)] px-1.5 font-[family-name:var(--font-ft-pt,var(--font-v2-target))] text-xs text-[color:var(--ft-ink,#202A25)]"
                     >
                       {a}
                     </button>

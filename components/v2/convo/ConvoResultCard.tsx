@@ -19,11 +19,11 @@ export function ConvoResultCard({
   freeTopicId,
 }: Props) {
   return (
-    <div className="mt-4 rounded-2xl border border-v2-line bg-v2-card px-4 py-5 shadow-[var(--shadow-v2-soft)]">
-      <p className="text-center font-[family-name:var(--font-v2-arabic)] text-base font-semibold text-v2-primary">
-        خلّصت المحادثة 👏
+    <div className="mt-4 rounded-v2-card border border-v2-line bg-v2-card px-4 py-5 shadow-[var(--shadow-v2-soft)]">
+      <p className="text-center font-[family-name:var(--font-v2-arabic)] text-base font-semibold text-v2-ink">
+        خلّصت المحادثة
       </p>
-      <p className="mt-2 text-center font-[family-name:var(--font-v2-arabic)] text-lg font-bold text-v2-action">
+      <p className="mt-2 text-center font-[family-name:var(--font-v2-arabic)] text-lg font-bold text-v2-primary">
         {stats.headline_eg}
       </p>
 

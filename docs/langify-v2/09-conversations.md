@@ -253,7 +253,7 @@ API (thin routes; logic in `lib/v2/convo`):
 - topics list with statuses;
 - free topics list.
 
-UI (Module A Learn + Module C free: **Calm Kit** under `.v2-free-talk` — see `05` exception, `design/calm-kit/`, and Learn screens in `design/onde-fica/`, 390px):
+UI (Module A Learn + Module C free: **Calm Kit** — global v2 theme; `.v2-free-talk` is a layout hook. See `05`, `design/calm-kit/`, and Learn screens in `design/onde-fica/`, 390px):
 
 - character bubbles: pt-PT, `say` line under it, "معناها؟" hidden translation, play button;
 - learner bubbles deep teal; coach as NoteCard (amber/yellow), never red;

@@ -36,7 +36,7 @@ export default function V2DevPage() {
           v2-dev
         </h1>
         <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-          معرض المكوّنات — Warm Editorial · مرجع: O MEU · A MINHA
+          معرض المكوّنات — Calm Kit · مرجع: design/calm-kit
         </p>
       </header>
 
