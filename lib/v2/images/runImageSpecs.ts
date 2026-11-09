@@ -685,6 +685,7 @@ export async function runImageSpecs(opts: {
             yesterday: null,
             yesterday_missing: false,
             micro_step: '',
+            authored_real_world: null,
             warnings: [],
           } as ReturnType<typeof buildLessonBrief>));
 

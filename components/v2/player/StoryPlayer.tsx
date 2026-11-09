@@ -73,10 +73,10 @@ function linesFromStory(story: StoryDoc): DialogueLine[] {
   return story.lines.map((l: StoryLine) => ({
     speaker: l.speaker,
     tl: l.tl,
-    ar: l.ar,
-    en: l.en,
-    ids: l.ids,
-    side: l.side,
+    ar: l.ar ?? undefined,
+    en: l.en ?? undefined,
+    ids: l.ids ?? undefined,
+    side: l.side ?? undefined,
   }));
 }
 

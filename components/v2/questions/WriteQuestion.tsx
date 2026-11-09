@@ -75,7 +75,7 @@ export function WriteQuestion({
   const isFillBlank = type === 'fill_blank_write';
   const hintText =
     typeof (question as { hint?: unknown }).hint === 'string'
-      ? String((question as { hint: string }).hint)
+      ? String((question as unknown as { hint: string }).hint)
       : '';
 
   function submit() {

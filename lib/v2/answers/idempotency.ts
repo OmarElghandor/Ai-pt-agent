@@ -23,14 +23,14 @@ export const defaultMemoryIdempotency = new MemoryIdempotencyStore();
  * Run evaluate once per answer_id. Duplicates return stored verdict without
  * calling `run` again.
  */
-export async function withIdempotency(
+export async function withIdempotency<T extends { duplicate?: boolean }>(
   answerId: string,
   store: {
-    get: (id: string) => Promise<AnswerVerdict | undefined> | AnswerVerdict | undefined;
-    set: (id: string, v: AnswerVerdict) => Promise<void> | void;
+    get: (id: string) => Promise<T | undefined> | T | undefined;
+    set: (id: string, v: T) => Promise<void> | void;
   },
-  run: () => Promise<AnswerVerdict>,
-): Promise<AnswerVerdict> {
+  run: () => Promise<T>,
+): Promise<T> {
   const existing = await store.get(answerId);
   if (existing) {
     return { ...existing, duplicate: true };

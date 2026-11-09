@@ -82,9 +82,9 @@ export function applyCommonMistakesToQuestions(
     const pairs = extractCommonMistakes(page.explain);
     if (!pairs.length) return page;
     const introduces = Array.isArray(
-      (page as { introduces?: string[] }).introduces,
+      (page as unknown as { introduces?: string[] }).introduces,
     )
-      ? ((page as { introduces: string[] }).introduces ?? [])
+      ? ((page as unknown as { introduces: string[] }).introduces ?? [])
       : [];
     // Also look at formula / examples block item refs
     const blockIds: string[] = [];
@@ -153,11 +153,15 @@ export function applyCommonMistakesToQuestions(
       return q;
     }
     const existing =
-      Array.isArray((q as { near_miss?: { tl: string; feedback_eg: string }[] })
-        .near_miss)
+      Array.isArray(
+        (q as unknown as { near_miss?: { tl: string; feedback_eg: string }[] })
+          .near_miss,
+      )
         ? [
             ...(
-              q as { near_miss: { tl: string; feedback_eg: string }[] }
+              q as unknown as {
+                near_miss: { tl: string; feedback_eg: string }[];
+              }
             ).near_miss,
           ]
         : [];

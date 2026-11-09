@@ -16,7 +16,15 @@ import { isArabicOnly } from './arabicOnly';
 import { accentError, classifyMiss } from './classify';
 import { matchKnownNearMiss } from './knownNearMiss';
 import { matchAnswer } from './match';
+<<<<<<< Updated upstream
 import type { AnswerPayload } from './payload';
+=======
+import type {
+  AnswerPayload,
+  ConvoAnswerPayload,
+  OpenAnswerPayload,
+} from './payload';
+>>>>>>> Stashed changes
 import { resolveToolId } from './toolId';
 
 export type AnswerVerdict = {
@@ -128,7 +136,31 @@ export async function evaluateAnswer(
     });
   }
 
+<<<<<<< Updated upstream
   // open
+=======
+  if (payload.kind === 'convo') {
+    return evaluateConvoRung(payload, ctx, now);
+  }
+
+  if (payload.kind === 'beat') {
+    throw new Error('beat answers use evaluateBeat');
+  }
+
+  // open (narrowed: remaining AnswerPayload member)
+  return evaluateOpenAnswer(payload, ctx, now, errors, finish);
+}
+
+async function evaluateOpenAnswer(
+  payload: OpenAnswerPayload,
+  ctx: EvaluateContext,
+  now: Date,
+  errors: ProgressError[],
+  finish: (partial: Omit<AnswerVerdict, 'ok' | 'errors'> & {
+    errors?: ProgressError[];
+  }) => AnswerVerdict,
+): Promise<AnswerVerdict> {
+>>>>>>> Stashed changes
   const skill = payload.skill;
   const tool_id =
     payload.tool_id ??

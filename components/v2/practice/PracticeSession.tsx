@@ -273,19 +273,20 @@ export function PracticeSession({
           خلّصت المشهد
         </h1>
         <div className="mt-4 grid grid-cols-2 gap-2">
-          {[
-            ['🎧 سمع', listen],
-            ['📖 قراءة', read],
-            ['🎤 كلام', speak],
-            ['✍️ كتابة', write],
-          ].map(([label, c]) => (
+          {(
+            [
+              ['🎧 سمع', listen],
+              ['📖 قراءة', read],
+              ['🎤 كلام', speak],
+              ['✍️ كتابة', write],
+            ] as [string, { correct: number; total: number }][]
+          ).map(([label, c]) => (
             <div
-              key={String(label)}
+              key={label}
               className="rounded-v2-card bg-v2-card p-3 shadow-[var(--shadow-v2-soft)]"
             >
               <p className="font-[family-name:var(--font-v2-arabic)] text-sm">
-                {label} {(c as { correct: number }).correct}/
-                {(c as { total: number }).total}
+                {label} {c.correct}/{c.total}
               </p>
             </div>
           ))}

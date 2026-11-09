@@ -171,8 +171,9 @@ export function PracticeLessonModel(): Model<PracticeLessonDoc> {
     const hasNeedsReview = statusPath?.enumValues?.includes('needs_review');
     const hasSource = Boolean(cached.schema.path('source'));
     if (!hasNeedsReview || !hasSource) {
-      delete mongoose.models.PracticeLessonOwned;
-      delete mongoose.connection.models.PracticeLessonOwned;
+      delete (mongoose.models as Record<string, unknown>).PracticeLessonOwned;
+      delete (mongoose.connection.models as Record<string, unknown>)
+        .PracticeLessonOwned;
     } else {
       return cached;
     }

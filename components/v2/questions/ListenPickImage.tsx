@@ -67,7 +67,7 @@ export function ListenPickImage(props: QuestionViewProps) {
   const promptRt = asRt(question.prompt);
   const fallbackType =
     typeof (question as { fallback_type?: unknown }).fallback_type === 'string'
-      ? String((question as { fallback_type: string }).fallback_type)
+      ? String((question as unknown as { fallback_type: string }).fallback_type)
       : 'listen_meaning';
 
   if (images.length < 2) {

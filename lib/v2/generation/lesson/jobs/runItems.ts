@@ -284,7 +284,112 @@ function applyPatternKindsFromCore(
   });
 }
 
+<<<<<<< Updated upstream
 function mergeRecycleAndVerbs(
+=======
+/** Verb lemma cards (verb.go) — not conjugated form ids (verb.go:present:eu). */
+export function isVerbLemmaId(id: string): boolean {
+  return /^verb\.[a-z_]+$/i.test(id) && !id.includes(':');
+}
+
+/** Patterns and verb lemmas are code-owned recycle — model must not invent MSA ar. */
+export function isCodeOwnedRecycleId(id: string): boolean {
+  return id.startsWith('pattern.') || isVerbLemmaId(id);
+}
+
+function knownHasMsaAr(item: Item | undefined): boolean {
+  if (!item || !('ar' in item) || typeof item.ar !== 'string') return false;
+  const ar = item.ar.trim();
+  return Boolean(ar) && ar !== '…';
+}
+
+/** Recycle ids the model must still author (word/phrase lacking MSA ar). */
+export function missingRecycleIdsForPrompt(
+  recycleIds: string[],
+  knownFull: Map<string, Item>,
+): string[] {
+  return recycleIds.filter((id) => {
+    if (isCodeOwnedRecycleId(id)) return false;
+    return !knownHasMsaAr(knownFull.get(id));
+  });
+}
+
+function needsRecycleAr(row: Item): boolean {
+  if (row.type === 'pattern') return false;
+  if (isVerbLemmaId(row.id)) return false;
+  if (
+    row.type === 'word' &&
+    (row as { pos?: string }).pos === 'verb'
+  ) {
+    return false;
+  }
+  return (
+    row.type === 'word' || row.type === 'phrase' || row.type === 'sentence'
+  );
+}
+
+function patternHasSlots(item: Item): boolean {
+  if (item.type !== 'pattern') return false;
+  const slots = (item as { slots?: unknown }).slots;
+  return Array.isArray(slots) && slots.length > 0;
+}
+
+/**
+ * Thin known/registry patterns are {type,id,tl} only. Ensure slots+examples
+ * before validateLessonPack (which calls slots.entries()).
+ */
+export function completePatternItem(item: Item, bank: Item[] = []): Item {
+  if (item.type !== 'pattern') return item;
+  const existingSlots = (item as { slots?: unknown[] }).slots;
+  const existingExamples = (item as { examples?: string[] }).examples;
+  const hasSlots = Array.isArray(existingSlots) && existingSlots.length > 0;
+  const hasExamples =
+    Array.isArray(existingExamples) && existingExamples.length > 0;
+  if (hasSlots && hasExamples) return item;
+
+  const tl =
+    typeof (item as unknown as { tl?: string }).tl === 'string'
+      ? (item as unknown as { tl: string }).tl
+      : '';
+  const core =
+    findCoreItemById(item.id) ??
+    ({
+      id: item.id,
+      kind: 'pattern',
+      tl: tl || item.id.replace(/^pattern\./, ''),
+      eg: '',
+    } as CoreItem);
+  const stub = coreItemStub(core, bank);
+  if (!stub || stub.type !== 'pattern') {
+    const head = (tl || item.id.replace(/^pattern\./, '')).split(/\s+/)[0] ?? '…';
+    return {
+      type: 'pattern',
+      id: item.id,
+      slots: [
+        { tl: head },
+        { name_eg: 'كلمة', kind: 'word' },
+      ],
+      examples: [`${item.id}.ex.1`],
+    } as Item;
+  }
+  return {
+    ...item,
+    type: 'pattern',
+    id: item.id,
+    ...(stub as { kind?: string }).kind
+      ? { kind: (stub as { kind: string }).kind }
+      : {},
+    slots: hasSlots ? existingSlots! : stub.slots,
+    examples: hasExamples ? existingExamples! : stub.examples,
+  } as Item;
+}
+
+/**
+ * Merge model bank with known/core recycle + today's verb/core stubs.
+ * Every brief.recycle_ids entry is code-guaranteed when known or curriculum can resolve it.
+ */
+export function mergeRecycleAndVerbs(
+>>>>>>> Stashed changes
   modelItems: Item[],
   brief: LessonBrief,
   knownFull: Map<string, Item>,
@@ -758,19 +863,13 @@ ${knownLines}
       if (it.type !== 'phrase') return it;
       const role = roleById.get(it.id);
       const rt = repliesById.get(it.id);
-      let next = it;
-      if (role) next = { ...next, role } as Item;
-      if (rt) next = { ...next, replies_to: rt } as Item;
+      let next: Extract<Item, { type: 'phrase' }> = it;
+      if (role) next = { ...next, role };
+      if (rt) next = { ...next, replies_to: rt };
       // Clear wrong reverse replies_to (heard must not reply to its said reply)
-      if (
-        role === 'heard' &&
-        'replies_to' in next &&
-        (next as { replies_to?: string }).replies_to
-      ) {
-        const { replies_to: _drop, ...rest } = next as Item & {
-          replies_to?: string;
-        };
-        next = rest as Item;
+      if (role === 'heard' && next.replies_to) {
+        const { replies_to: _drop, ...rest } = next;
+        next = rest;
       }
       return next;
     });

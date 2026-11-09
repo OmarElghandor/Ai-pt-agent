@@ -137,7 +137,13 @@ function ensureLearnerCast(
   const hasLearner = cast.some(
     (c) => c.role === 'learner' || c.id === 'learner',
   );
-  let next: StoryCastRow[] = cast.map(stamp);
+  let next: StoryCastRow[] = cast.map((entry) =>
+    stamp({
+      ...entry,
+      gender: entry.gender ?? undefined,
+      voice: entry.voice ?? undefined,
+    }),
+  );
   if (!hasLearner) {
     next = [
       stamp({ id: 'learner', name: 'أنت', role: 'learner' as const }),

@@ -74,16 +74,16 @@ export function collectReviewPayload(
     }
   }
   const plurals = items
-    .filter((i) => i.type === 'word' && pluralNeeded.has(i.id))
+    .filter(
+      (i): i is Extract<Item, { type: 'word' }> =>
+        i.type === 'word' && pluralNeeded.has(i.id),
+    )
     .map((i) => ({
       path: `items[${i.id}].plural_tl`,
       id: i.id,
       tl: i.tl,
-      plural_tl:
-        (i as { plural_tl?: string }).plural_tl ??
-        (i as { plural?: string }).plural ??
-        '',
-      gender: (i as { gender?: string }).gender,
+      plural_tl: i.plural_tl ?? i.plural ?? '',
+      gender: i.gender,
     }));
   const reading = opts?.readingTl?.trim()
     ? { path: 'story.reading.tl', tl: opts.readingTl.trim() }

@@ -151,7 +151,8 @@ export function buildPackFromLesson(opts: {
       const prompt = take(prompts, i);
       const expectedIds = [s.id];
       const expected_tl =
-        expectedTlFromIds(expectedIds, byId) || String(s.tl);
+        expectedTlFromIds(expectedIds, byId) ||
+        ('tl' in s ? String(s.tl) : '');
       beats.push({
         id: `${ns}.b${String(++bi).padStart(2, '0')}`,
         skill,

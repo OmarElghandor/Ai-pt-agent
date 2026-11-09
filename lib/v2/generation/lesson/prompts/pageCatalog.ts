@@ -87,6 +87,14 @@ export const PRESET_CATALOGS: Record<Preset, PresetCatalog> = {
       'TARGETS: b1 (dialogue), b1/item:i indexes dialogue lines[] (0-based). Each line: {speaker, ids:[itemIds]} — never raw TL-only lines. Intro story has no steps/asks.',
     modeRules: STATIC,
   },
+  real_world: {
+    preset: 'real_world',
+    defaultMode: 'static',
+    blocks:
+      'real_world payload (phrase_ids 3–5 + optional categories) — code-built; LLM does not author this page.',
+    targets: 'Targets N/A (static, code-owned).',
+    modeRules: STATIC,
+  },
 };
 
 export function buildPageSystemPrompt(preset: Preset, mode?: Mode): string {

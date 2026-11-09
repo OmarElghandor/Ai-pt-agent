@@ -64,7 +64,9 @@ export function validatePracticePack(
 
   const counts = { speaking: 0, listening: 0, reading: 0, writing: 0 };
   for (const beat of pack.beats) {
-    counts[beat.skill] += 1;
+    if (beat.skill !== 'grammar') {
+      counts[beat.skill] += 1;
+    }
     validateBeat(beat, byId, known, issues);
   }
 

@@ -41,6 +41,12 @@ function typeForSkill(skill: Skill): MechanicalQuestion['type'] {
       return 'recall_tl';
     case 'writing':
       return 'writing';
+    case 'grammar':
+      return 'read_meaning';
+    default: {
+      const _exhaustive: never = skill;
+      return _exhaustive;
+    }
   }
 }
 
