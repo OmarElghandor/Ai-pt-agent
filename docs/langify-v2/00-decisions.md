@@ -337,6 +337,7 @@ If any other doc disagrees with this file, this file wins. Each line is a decisi
 
 ## 9. Practice agent
 
+- **(new 2026-11-07) Conversations v3 — two modes only.** Free talk («اتكلّم») is goal-directed live dialogue: code owns goals and steering; the model writes every character line. Role-play («رول بلاي») is the Module A pack engine (task days only; day 33 is the reference). This replaces the «اتكلّم / اتعلّم» split and the free-chat threads / open-mode distinction from batches 9–10. Full rules: `09-batches/batch-v3-two-modes.md` — where it disagrees with `09-conversations.md` or earlier batches on mode shape, **that file wins**.
 - **(changed)** One answer route (`/api/v2/answers`) owns validation and progress writes. The grader and the reactor are pure modules (`lib/v2/grader`, `lib/v2/reactor`) that never write state.
 - **(new)** The grader uses Claude Haiku, non-streamed, with an 8s timeout. On a timeout, an error or invalid JSON, the verdict is `unclear` and it is never counted as a learner error. `arabic_only` is detected in code before any model call.
 - **(new)** Max 2 attempts per speaking or writing beat. After the second miss, the coach gives the correct sentence, the character continues, and the beat is recorded as wrong. The reactor returns non-streamed JSON: `character_tl`, `coach_eg`, `advance`.

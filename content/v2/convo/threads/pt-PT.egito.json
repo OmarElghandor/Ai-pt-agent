@@ -1,0 +1,209 @@
+{
+  "target_lang": "pt-PT",
+  "version": 1,
+  "topic": {
+    "id": "egito",
+    "title_tl": "O Egito",
+    "title_in_sentence_tl": "do Egito",
+    "title_ar": "مصر والغربة",
+    "character_id": "nour",
+    "related": [
+      "familia",
+      "comida"
+    ],
+    "intro_eg": "هنتكلم مع Nour عن مصر وعن الحياة هنا. Nour عدّت بنفس اللي بتعدّي بيه. لو وقفت دوس «ساعدني أرد».",
+    "opening_tl": "Olá {name}! Hoje vamos falar do Egito? 🇪🇬",
+    "opening_ar": "مرحباً {name}! هل نتحدث اليوم عن مصر؟"
+  },
+  "threads": [
+    {
+      "id": "egito.t1",
+      "share": {
+        "tl": "Eu sou de Alexandria. Tenho saudades do mar de lá. 🌊",
+        "ar": "أنا من الإسكندرية. أشتاق إلى بحرها."
+      },
+      "ask": {
+        "tl": "E tu, és de onde no Egito?",
+        "ar": "وأنت، من أين في مصر؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Sou de ___.",
+          "eg": "إنت منين: Sou de + المدينة",
+          "chips": [
+            "Sou do Cairo.",
+            "Sou de Alexandria.",
+            "Sou de Gizé.",
+            "Sou de Mansoura."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Como é a tua cidade?",
+          "ar": "كيف هي مدينتك؟",
+          "kind": "open",
+          "frame": {
+            "tl": "É ___.",
+            "eg": "مدينتك عاملة إزاي: É + الوصف",
+            "chips": [
+              "É grande.",
+              "É bonita.",
+              "É barulhenta.",
+              "É calma."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "egito.t2",
+      "share": {
+        "tl": "Para mim, aqui o mais diferente são os horários. Jantam muito cedo! 😂",
+        "ar": "بالنسبة لي، أكثر شيء مختلف هنا هو المواعيد. يتعشون مبكراً جداً!"
+      },
+      "ask": {
+        "tl": "Para ti, o que é mais diferente aqui?",
+        "ar": "بالنسبة لك، ما أكثر شيء مختلف هنا؟",
+        "kind": "open",
+        "frame": {
+          "tl": "___.",
+          "eg": "إيه أكتر حاجة مختلفة هنا",
+          "chips": [
+            "O tempo.",
+            "A comida.",
+            "As pessoas.",
+            "Os horários."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E gostas disso?",
+          "ar": "وهل يعجبك ذلك؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "___.",
+            "eg": "عاجبك ده؟",
+            "chips": [
+              "Sim, gosto.",
+              "Mais ou menos.",
+              "Não muito."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "egito.t3",
+      "share": {
+        "tl": "Em Lisboa o tempo é bom, mas no inverno chove muito. ☔",
+        "ar": "في لشبونة الجو جميل، لكن في الشتاء تمطر كثيراً."
+      },
+      "ask": {
+        "tl": "Preferes o tempo de Lisboa ou do Egito?",
+        "ar": "هل تفضل جو لشبونة أم جو مصر؟",
+        "kind": "either_or",
+        "frame": {
+          "tl": "Prefiro ___.",
+          "eg": "بتفضل جو أنهي: Prefiro o tempo de…",
+          "chips": [
+            "O de Lisboa.",
+            "O do Egito.",
+            "No verão, o de Lisboa! 😄"
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E gostas da chuva?",
+          "ar": "وهل تحب المطر؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "___.",
+            "eg": "بتحب المطر؟",
+            "chips": [
+              "Sim, gosto.",
+              "Não, não gosto nada! 😅"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "egito.t4",
+      "share": {
+        "tl": "Eu vim para Portugal há três anos.",
+        "ar": "جئت إلى البرتغال منذ ثلاث سنوات."
+      },
+      "ask": {
+        "tl": "E tu, há quanto tempo estás em Portugal?",
+        "ar": "وأنت، منذ متى أنت في البرتغال؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Há ___.",
+          "eg": "بقالك قد إيه هنا: Há + المدة",
+          "chips": [
+            "Há seis meses.",
+            "Há um ano.",
+            "Há dois anos.",
+            "Há três anos."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E gostas de viver aqui?",
+          "ar": "وهل تحب العيش هنا؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "___.",
+            "eg": "بتحب العيشة هنا؟ لسه بتتعود = ainda estou a habituar-me",
+            "chips": [
+              "Sim, gosto muito.",
+              "Mais ou menos.",
+              "Ainda estou a habituar-me."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "egito.t5",
+      "share": {
+        "tl": "Quando vou ao Egito, levo pastéis de nata para a família! 😂",
+        "ar": "عندما أذهب إلى مصر، آخذ باستيل دي ناتا للعائلة!"
+      },
+      "ask": {
+        "tl": "E tu, o que levas para a tua família?",
+        "ar": "وأنت، ماذا تأخذ لعائلتك؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Levo ___.",
+          "eg": "بتاخد لهم إيه: Levo…",
+          "chips": [
+            "Levo chocolate.",
+            "Levo azeite.",
+            "Levo presentes.",
+            "Levo pastéis de nata!"
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E o que trazes do Egito?",
+          "ar": "وماذا تُحضر من مصر؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Trago ___.",
+            "eg": "بتجيب إيه من مصر: Trago…",
+            "chips": [
+              "Trago especiarias.",
+              "Trago tâmaras.",
+              "Trago roupa."
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

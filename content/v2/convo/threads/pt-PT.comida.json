@@ -1,0 +1,208 @@
+{
+  "target_lang": "pt-PT",
+  "version": 1,
+  "topic": {
+    "id": "comida",
+    "title_tl": "A comida",
+    "title_in_sentence_tl": "da comida",
+    "title_ar": "الأكل",
+    "character_id": "ines",
+    "related": [
+      "compras",
+      "familia"
+    ],
+    "intro_eg": "هنتكلم مع Inês عن الأكل. Inês بتحب الطبخ جداً. لو وقفت دوس «ساعدني أرد».",
+    "opening_tl": "Olá {name}! 😋 Vamos falar de comida?",
+    "opening_ar": "مرحباً {name}! هل نتحدث عن الأكل؟"
+  },
+  "threads": [
+    {
+      "id": "comida.t1",
+      "share": {
+        "tl": "O meu prato preferido é bacalhau com natas. 😋",
+        "ar": "طبقي المفضل هو البكالاو بالكريمة."
+      },
+      "ask": {
+        "tl": "E qual é o teu prato preferido?",
+        "ar": "وما هو طبقك المفضل؟",
+        "kind": "open",
+        "frame": {
+          "tl": "O meu prato preferido é ___.",
+          "eg": "أكلتك المفضلة: O meu prato preferido é…",
+          "chips": [
+            "É o koshari.",
+            "É a molokhia.",
+            "É frango com arroz.",
+            "É pizza."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Sabes fazer esse prato?",
+          "ar": "هل تعرف كيف تطبخ هذا الطبق؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "___.",
+            "eg": "بتعرف تعملها؟",
+            "chips": [
+              "Sim, sei.",
+              "Não, só a minha mãe! 😄"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "comida.t2",
+      "share": {
+        "tl": "Ao almoço, como normalmente uma sopa e uma sandes.",
+        "ar": "في الغداء، آكل عادةً حساءً وشطيرة."
+      },
+      "ask": {
+        "tl": "E tu, o que comes normalmente ao almoço?",
+        "ar": "وأنت، ماذا تأكل عادةً في الغداء؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Normalmente como ___.",
+          "eg": "بتتغدى إيه عادة: Normalmente como…",
+          "chips": [
+            "Como arroz com frango.",
+            "Como uma sandes.",
+            "Como uma salada.",
+            "Como no restaurante."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Comes em casa ou fora?",
+          "ar": "هل تأكل في البيت أم في الخارج؟",
+          "kind": "either_or",
+          "frame": {
+            "tl": "___.",
+            "eg": "في البيت ولا برة",
+            "chips": [
+              "Em casa.",
+              "Fora.",
+              "Depende."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "comida.t3",
+      "share": {
+        "tl": "Como um pastel de nata quase todos os dias. É um problema! 😂",
+        "ar": "آكل باستيل دي ناتا كل يوم تقريباً. إنها مشكلة!"
+      },
+      "ask": {
+        "tl": "Já provaste a comida portuguesa?",
+        "ar": "هل جرّبت الأكل البرتغالي؟",
+        "kind": "yes_no",
+        "frame": {
+          "tl": "___.",
+          "eg": "جربت الأكل البرتغالي؟ لسه = ainda não",
+          "chips": [
+            "Sim, gosto muito.",
+            "Sim, mas prefiro a comida egípcia.",
+            "Ainda não."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Qual é o teu prato português preferido?",
+          "ar": "ما هو طبقك البرتغالي المفضل؟",
+          "kind": "open",
+          "frame": {
+            "tl": "___.",
+            "eg": "أكلتك البرتغالية المفضلة",
+            "chips": [
+              "O pastel de nata.",
+              "O bacalhau.",
+              "A francesinha.",
+              "As sardinhas."
+            ]
+          },
+          "skip_if_negative": true
+        }
+      ]
+    },
+    {
+      "id": "comida.t4",
+      "share": {
+        "tl": "Eu cozinho quase todos os dias.",
+        "ar": "أطبخ تقريباً كل يوم."
+      },
+      "ask": {
+        "tl": "E tu, cozinhas muito?",
+        "ar": "وأنت، هل تطبخ كثيراً؟",
+        "kind": "yes_no",
+        "frame": {
+          "tl": "___.",
+          "eg": "بتطبخ كتير؟",
+          "chips": [
+            "Sim, todos os dias.",
+            "Às vezes.",
+            "Não, não sei cozinhar. 😅"
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "O que cozinhas mais?",
+          "ar": "ماذا تطبخ أكثر شيء؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Cozinho ___.",
+            "eg": "بتطبخ إيه أكتر: Cozinho…",
+            "chips": [
+              "Cozinho arroz.",
+              "Cozinho massa.",
+              "Cozinho frango."
+            ]
+          },
+          "skip_if_negative": true
+        }
+      ]
+    },
+    {
+      "id": "comida.t5",
+      "share": {
+        "tl": "Eu adoro café. Bebo três por dia! ☕",
+        "ar": "أحب القهوة كثيراً. أشرب ثلاثة فناجين في اليوم!"
+      },
+      "ask": {
+        "tl": "Preferes café ou chá?",
+        "ar": "هل تفضل القهوة أم الشاي؟",
+        "kind": "either_or",
+        "frame": {
+          "tl": "Prefiro ___.",
+          "eg": "قهوة ولا شاي: Prefiro…",
+          "chips": [
+            "Café.",
+            "Chá.",
+            "Os dois!"
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Com açúcar?",
+          "ar": "بالسكر؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "___.",
+            "eg": "بسكر ولا من غير",
+            "chips": [
+              "Com açúcar.",
+              "Sem açúcar."
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,203 @@
+{
+  "target_lang": "pt-PT",
+  "version": 1,
+  "topic": {
+    "id": "bairro",
+    "title_tl": "O bairro",
+    "title_in_sentence_tl": "do bairro",
+    "title_ar": "الحي والشارع",
+    "character_id": "nour",
+    "related": [
+      "casa",
+      "compras"
+    ],
+    "intro_eg": "هنتكلم مع Nour عن الحي والشارع اللي ساكن فيه. لو وقفت دوس «ساعدني أرد».",
+    "opening_tl": "Olá {name}! Vamos falar do teu bairro?",
+    "opening_ar": "مرحباً {name}! هل نتحدث عن حيّك؟"
+  },
+  "threads": [
+    {
+      "id": "bairro.t1",
+      "share": {
+        "tl": "Eu moro perto do Martim Moniz. Na minha rua há muitas lojas.",
+        "ar": "أسكن قرب مارتيم مونيز. في شارعي محلات كثيرة."
+      },
+      "ask": {
+        "tl": "E na tua rua, o que há?",
+        "ar": "وفي شارعك، ماذا يوجد؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Na minha rua há ___.",
+          "eg": "في شارعك فيه إيه: Na minha rua há…",
+          "chips": [
+            "Há um café.",
+            "Há um supermercado.",
+            "Há uma farmácia.",
+            "Há uma padaria."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Vais lá muitas vezes?",
+          "ar": "هل تذهب إلى هناك كثيراً؟",
+          "kind": "open",
+          "frame": {
+            "tl": "___.",
+            "eg": "بتروح كتير؟",
+            "chips": [
+              "Sim, todos os dias.",
+              "Às vezes.",
+              "Quase nunca."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "bairro.t2",
+      "share": {
+        "tl": "Eu compro pão todas as manhãs na padaria da esquina. 🥖",
+        "ar": "أشتري الخبز كل صباح من المخبز الذي على الناصية."
+      },
+      "ask": {
+        "tl": "E tu, onde compras pão?",
+        "ar": "وأنت، من أين تشتري الخبز؟",
+        "kind": "open",
+        "frame": {
+          "tl": "No ___. / Na ___.",
+          "eg": "بتشتري عيش منين",
+          "chips": [
+            "No supermercado.",
+            "Na padaria.",
+            "No café."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E gostas do pão daqui?",
+          "ar": "وهل يعجبك الخبز هنا؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "___.",
+            "eg": "عاجبك العيش هنا؟",
+            "chips": [
+              "Sim, é muito bom.",
+              "Prefiro o pão egípcio! 😄"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "bairro.t3",
+      "share": {
+        "tl": "O meu bairro é barulhento à noite. 😩",
+        "ar": "حيّي مزعج في الليل."
+      },
+      "ask": {
+        "tl": "E o teu bairro, é calmo ou barulhento?",
+        "ar": "وحيّك، هل هو هادئ أم مزعج؟",
+        "kind": "either_or",
+        "frame": {
+          "tl": "É ___.",
+          "eg": "هادي = calmo، دوشة = barulhento",
+          "chips": [
+            "É calmo.",
+            "É barulhento.",
+            "Mais ou menos."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Gostas de morar lá?",
+          "ar": "هل تحب السكن هناك؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "___.",
+            "eg": "بتحب تسكن هناك؟",
+            "chips": [
+              "Sim, gosto.",
+              "Mais ou menos.",
+              "Não muito."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "bairro.t4",
+      "share": {
+        "tl": "Ontem perdi-me no Bairro Alto! 😂",
+        "ar": "أمس تُهتُ في بايرو ألتو!"
+      },
+      "ask": {
+        "tl": "E tu, já te perdeste em Lisboa?",
+        "ar": "وأنت، هل تهتَ في لشبونة من قبل؟",
+        "kind": "yes_no",
+        "frame": {
+          "tl": "___.",
+          "eg": "توهت قبل كده في لشبونة؟",
+          "chips": [
+            "Sim, muitas vezes! 😅",
+            "Não, nunca."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Usas o Google Maps?",
+          "ar": "هل تستخدم خرائط جوجل؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "___.",
+            "eg": "بتستخدم Google Maps؟",
+            "chips": [
+              "Sim, sempre.",
+              "Às vezes."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "bairro.t5",
+      "share": {
+        "tl": "Há um jardim perto da minha casa. Vou lá ao domingo.",
+        "ar": "توجد حديقة قرب بيتي. أذهب إليها يوم الأحد."
+      },
+      "ask": {
+        "tl": "Há algum jardim perto da tua casa?",
+        "ar": "هل توجد حديقة قرب بيتك؟",
+        "kind": "yes_no",
+        "frame": {
+          "tl": "Sim, há. / Não, não há.",
+          "eg": "فيه = há، مفيش = não há",
+          "chips": [
+            "Sim, há.",
+            "Não, não há."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E o que fazes lá?",
+          "ar": "وماذا تفعل هناك؟",
+          "kind": "open",
+          "frame": {
+            "tl": "___.",
+            "eg": "بتعمل إيه هناك",
+            "chips": [
+              "Passeio.",
+              "Corro.",
+              "Descanso."
+            ]
+          },
+          "skip_if_negative": true
+        }
+      ]
+    }
+  ]
+}

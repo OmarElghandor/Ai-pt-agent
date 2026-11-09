@@ -87,6 +87,14 @@ export const V2_JOB_KINDS = [
   'pack_critic',
   'pack_lang_check',
   'pack_assemble',
+  'convo_outline',
+  'convo_items',
+  'convo_critic',
+  'convo_lang_check',
+  'convo_assemble',
+  'topic_angles',
+  /** Orchestrates lesson → gate → convo → audio for one day. */
+  'prepare_day',
 ] as const;
 
 export type V2JobKind = (typeof V2_JOB_KINDS)[number];
@@ -532,6 +540,42 @@ export function V2PackModel(): Model<V2PackDoc> {
   );
 }
 
+const V2_CONVO_PACK_STATUSES = ['draft', 'reviewed', 'published'] as const;
+
+const v2ConvoPackSchema = new Schema(
+  {
+    day: { type: Number, required: true, index: true },
+    target_lang: { type: String, required: true, index: true },
+    version: { type: Number, required: true, min: 1 },
+    status: {
+      type: String,
+      required: true,
+      enum: V2_CONVO_PACK_STATUSES,
+      index: true,
+    },
+    data: { type: Schema.Types.Mixed, required: true },
+    meta: { type: Schema.Types.Mixed, required: false },
+  },
+  { timestamps: true, collection: 'v2_convo_packs' },
+);
+
+v2ConvoPackSchema.index(
+  { day: 1, target_lang: 1, version: 1 },
+  { unique: true },
+);
+v2ConvoPackSchema.index({ day: 1, target_lang: 1, status: 1 });
+
+export type V2ConvoPackDoc = InferSchemaType<typeof v2ConvoPackSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2ConvoPackModel(): Model<V2ConvoPackDoc> {
+  return (
+    (mongoose.models.V2ConvoPack as Model<V2ConvoPackDoc>) ||
+    mongoose.model<V2ConvoPackDoc>('V2ConvoPack', v2ConvoPackSchema)
+  );
+}
+
 const V2_STORY_STATUSES = ['draft', 'ready', 'published', 'failed'] as const;
 
 const v2StorySchema = new Schema(
@@ -635,6 +679,221 @@ export function V2ImageModel(): Model<V2ImageDoc> {
   return (
     (mongoose.models.V2Image as Model<V2ImageDoc>) ||
     mongoose.model<V2ImageDoc>('V2Image', v2ImageSchema)
+  );
+}
+
+/** Conversation sessions — separate from practice-shaped `v2_sessions` (09 §10). */
+const v2ConvoSessionSchema = new Schema(
+  {
+    _id: { type: String, required: true },
+    user_id: { type: String, required: true, index: true },
+    module: {
+      type: String,
+      required: true,
+      enum: ['lesson', 'free'],
+      default: 'lesson',
+    },
+    pack_id: { type: String, required: true, index: true },
+    topic_id: { type: String, required: false, default: null, index: true },
+    character_id: { type: String, required: false, default: null },
+    thread_index: { type: Number, required: false, default: 0 },
+    free_step: {
+      type: Schema.Types.Mixed,
+      required: false,
+      default: { kind: 'ask' },
+    },
+    threads_done: { type: [String], required: false, default: [] },
+    last_line_id: { type: String, required: false, default: null },
+    assisted: { type: Boolean, required: false, default: false },
+    off_topic_streak: { type: Number, required: false, default: 0 },
+    paused_for_pack_id: { type: String, required: false, default: null },
+    rungs: { type: Schema.Types.Mixed, required: true, default: {} },
+    help_ladder: {
+      type: Schema.Types.Mixed,
+      required: true,
+      default: { question_id: null, step: 0, attempts: 0 },
+    },
+    current_group: { type: Number, required: true, default: 1 },
+    candidate_history: { type: [String], default: [] },
+    last_exchanges: { type: Schema.Types.Mixed, default: [] },
+    pending_question: { type: Schema.Types.Mixed, default: null },
+    pending_frame: { type: Schema.Types.Mixed, required: false, default: null },
+    facts: { type: [String], default: [] },
+    suggested_words: { type: [String], default: [] },
+    status: {
+      type: String,
+      required: true,
+      enum: ['open', 'done'],
+      default: 'open',
+      index: true,
+    },
+    phase: {
+      type: String,
+      required: true,
+      enum: ['teaching', 'recap', 'closing'],
+      default: 'teaching',
+    },
+    correct_streak: { type: Number, required: true, default: 0 },
+    struggled: { type: Schema.Types.Mixed, required: true, default: {} },
+    said_once: { type: Schema.Types.Mixed, required: true, default: {} },
+    coach_recent_ids: { type: [String], required: true, default: [] },
+    recap_done_ids: { type: [String], required: true, default: [] },
+    survival_used: { type: Number, required: true, default: 0 },
+    learner_lines: { type: [String], required: false, default: [] },
+    recasts: { type: Schema.Types.Mixed, required: false, default: [] },
+    coach_phrase: { type: Schema.Types.Mixed, required: false, default: null },
+    open_turns: { type: Number, required: false, default: 0 },
+    open_fallbacks: { type: Number, required: false, default: 0 },
+    last_pack_reaction_tl: { type: String, required: false, default: null },
+    goals: { type: Schema.Types.Mixed, required: false, default: [] },
+    current_goal: { type: String, required: false, default: null },
+    turns_on_goal: { type: Number, required: false, default: 0 },
+    scene: { type: Schema.Types.Mixed, required: false, default: null },
+    lesson_day: { type: Number, required: false, default: null },
+    topic_locked: { type: Boolean, required: false, default: false },
+    learner_level: { type: Number, required: false, default: null },
+    teaching_mode: { type: Boolean, required: false, default: false },
+    teach_shown_for: { type: String, required: false, default: null },
+    goal_tier: {
+      type: String,
+      required: false,
+      enum: ['core', 'extended', 'free'],
+      default: 'core',
+    },
+  },
+  { timestamps: true, collection: 'v2_convo_sessions', _id: false },
+);
+
+v2ConvoSessionSchema.index(
+  { user_id: 1, pack_id: 1, status: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { status: 'open' },
+  },
+);
+
+export type V2ConvoSessionDoc = InferSchemaType<typeof v2ConvoSessionSchema> & {
+  _id: string;
+};
+
+export function V2ConvoSessionModel(): Model<V2ConvoSessionDoc> {
+  return (
+    (mongoose.models.V2ConvoSession as Model<V2ConvoSessionDoc>) ||
+    mongoose.model<V2ConvoSessionDoc>('V2ConvoSession', v2ConvoSessionSchema)
+  );
+}
+
+/** Cached generated free-talk goals per language × topic slug (v3 V7 + F5 lesson.day-N). */
+const v2ConvoGoalBankSchema = new Schema(
+  {
+    target_lang: { type: String, required: true, index: true },
+    topic_slug: { type: String, required: true, index: true },
+    goals: { type: Schema.Types.Mixed, required: true, default: [] },
+    /** Full lesson-day bank (opening, intro, asks, closing) when topic_slug is lesson.day-N. */
+    bank: { type: Schema.Types.Mixed, required: false },
+  },
+  { timestamps: true, collection: 'v2_convo_goal_banks' },
+);
+
+v2ConvoGoalBankSchema.index(
+  { target_lang: 1, topic_slug: 1 },
+  { unique: true },
+);
+
+export type V2ConvoGoalBankDoc = InferSchemaType<
+  typeof v2ConvoGoalBankSchema
+> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2ConvoGoalBankModel(): Model<V2ConvoGoalBankDoc> {
+  return (
+    (mongoose.models.V2ConvoGoalBank as Model<V2ConvoGoalBankDoc>) ||
+    mongoose.model<V2ConvoGoalBankDoc>(
+      'V2ConvoGoalBank',
+      v2ConvoGoalBankSchema,
+    )
+  );
+}
+
+/** Free-chat angle bank per language × topic (09 §10 / T7.1). */
+const v2TopicAnglesSchema = new Schema(
+  {
+    target_lang: { type: String, required: true, index: true },
+    topic_id: { type: String, required: true, index: true },
+    version: { type: Number, required: true, min: 1, default: 1 },
+    angles: { type: Schema.Types.Mixed, required: true, default: [] },
+  },
+  { timestamps: true, collection: 'v2_topic_angles' },
+);
+
+v2TopicAnglesSchema.index(
+  { target_lang: 1, topic_id: 1, version: 1 },
+  { unique: true },
+);
+
+export type V2TopicAnglesDoc = InferSchemaType<typeof v2TopicAnglesSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2TopicAnglesModel(): Model<V2TopicAnglesDoc> {
+  return (
+    (mongoose.models.V2TopicAngles as Model<V2TopicAnglesDoc>) ||
+    mongoose.model<V2TopicAnglesDoc>('V2TopicAngles', v2TopicAnglesSchema)
+  );
+}
+
+/** Topic requests — free unmatched (09) or Learn «موضوع جديد» (Batch 10 D6). */
+const v2TopicRequestSchema = new Schema(
+  {
+    user_id: { type: String, required: true, index: true },
+    query_eg: { type: String, required: true },
+    session_id: { type: String, required: false },
+    mode: {
+      type: String,
+      required: false,
+      enum: ['learn', 'practice', 'free'],
+      default: null,
+    },
+    created_at: { type: Date, required: true, default: Date.now },
+  },
+  { timestamps: true, collection: 'v2_topic_requests' },
+);
+
+export type V2TopicRequestDoc = InferSchemaType<typeof v2TopicRequestSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2TopicRequestModel(): Model<V2TopicRequestDoc> {
+  return (
+    (mongoose.models.V2TopicRequest as Model<V2TopicRequestDoc>) ||
+    mongoose.model<V2TopicRequestDoc>('V2TopicRequest', v2TopicRequestSchema)
+  );
+}
+
+/** Per-day prepare lock — second callers join the same prepare_day job. */
+const v2PrepareLockSchema = new Schema(
+  {
+    key: { type: String, required: true, unique: true, index: true },
+    day: { type: Number, required: true, index: true },
+    target_lang: { type: String, required: true },
+    job_id: { type: String, required: true },
+    /** TTL index field — lock expires so a stuck prepare can be retried. */
+    expires_at: { type: Date, required: true, index: true },
+  },
+  { timestamps: true, collection: 'v2_prepare_locks' },
+);
+
+v2PrepareLockSchema.index({ expires_at: 1 }, { expireAfterSeconds: 0 });
+
+export type V2PrepareLockDoc = InferSchemaType<typeof v2PrepareLockSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2PrepareLockModel(): Model<V2PrepareLockDoc> {
+  return (
+    (mongoose.models.V2PrepareLock as Model<V2PrepareLockDoc>) ||
+    mongoose.model<V2PrepareLockDoc>('V2PrepareLock', v2PrepareLockSchema)
   );
 }
 

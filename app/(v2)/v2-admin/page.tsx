@@ -119,6 +119,18 @@ export default function V2AdminPage() {
   const [mounted, setMounted] = useState(false);
   const [loadingList, setLoadingList] = useState(true);
   const pollAbort = useRef(false);
+  const [prepareFrom, setPrepareFrom] = useState(35);
+  const [prepareTo, setPrepareTo] = useState(40);
+  const [prepareRunId, setPrepareRunId] = useState<string | null>(null);
+  const [prepareProgress, setPrepareProgress] = useState<{
+    status: string;
+    cost_usd: number;
+    done_days: number[];
+    needs_review_days: number[];
+    failed_days: number[];
+    current: number[];
+    message?: string;
+  } | null>(null);
 
   const refresh = useCallback(async () => {
     setError(null);
@@ -154,6 +166,35 @@ export default function V2AdminPage() {
       pollAbort.current = true;
     };
   }, []);
+
+  useEffect(() => {
+    if (!prepareRunId) return;
+    let cancelled = false;
+    const tick = async () => {
+      const res = await fetch('/api/v2/admin/prepare/range');
+      if (!res.ok || cancelled) return;
+      const body = (await res.json()) as {
+        active?: Array<{
+          run_id: string;
+          status: string;
+          cost_usd: number;
+          done_days: number[];
+          needs_review_days: number[];
+          failed_days: number[];
+          current: number[];
+          message?: string;
+        }>;
+      };
+      const hit = (body.active ?? []).find((r) => r.run_id === prepareRunId);
+      if (hit) setPrepareProgress(hit);
+    };
+    void tick();
+    const id = window.setInterval(() => void tick(), 3000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(id);
+    };
+  }, [prepareRunId]);
 
   async function loadJobGraph(day: number) {
     const res = await fetch(`/api/v2/admin/lessons/${day}/generation`);
@@ -610,6 +651,8 @@ export default function V2AdminPage() {
           {' · '}
           <Link href="/v2-admin/reports">Reports</Link>
           {' · '}
+          <Link href="/v2-admin/review">Review queue</Link>
+          {' · '}
           <Link href="/v2-admin/characters">الشخصيات</Link>
           {' · '}
           open a day for the full job graph / timeline
@@ -674,6 +717,100 @@ export default function V2AdminPage() {
           {message}
         </p>
       ) : null}
+
+      <section className="space-y-3 rounded-v2-row border border-v2-rule bg-v2-card px-3 py-3">
+        <h2 className="font-[family-name:var(--font-v2-arabic)] text-base font-semibold text-v2-ink">
+          جهّز الأيام الجاية
+        </h2>
+        <p className="font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
+          prepare_day لكل يوم ناقص · concurrency 2 · يقف عند سقف التكلفة
+        </p>
+        <div className="flex flex-wrap items-end gap-2">
+          <label className="text-xs text-v2-ink-muted">
+            from
+            <input
+              type="number"
+              className="ml-1 w-16 rounded border border-v2-rule bg-v2-paper px-2 py-1 text-sm"
+              value={prepareFrom}
+              onChange={(e) => setPrepareFrom(Number(e.target.value))}
+            />
+          </label>
+          <label className="text-xs text-v2-ink-muted">
+            to
+            <input
+              type="number"
+              className="ml-1 w-16 rounded border border-v2-rule bg-v2-paper px-2 py-1 text-sm"
+              value={prepareTo}
+              onChange={(e) => setPrepareTo(Number(e.target.value))}
+            />
+          </label>
+          <button
+            type="button"
+            className="rounded-v2-chip bg-v2-action px-3 py-1.5 font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-white"
+            onClick={() => {
+              void (async () => {
+                const res = await fetch('/api/v2/admin/prepare/range', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    from: prepareFrom,
+                    to: prepareTo,
+                    concurrency: 2,
+                  }),
+                });
+                const body = (await res.json()) as {
+                  error?: string;
+                  run_id?: string;
+                  progress?: {
+                    status: string;
+                    cost_usd: number;
+                    done_days: number[];
+                    needs_review_days: number[];
+                    failed_days: number[];
+                    current: number[];
+                    message?: string;
+                  };
+                };
+                if (!res.ok) {
+                  setError(body.error ?? `prepare ${res.status}`);
+                  return;
+                }
+                setPrepareRunId(body.run_id ?? null);
+                setPrepareProgress(body.progress ?? null);
+                setMessage(`Prepare range started (${body.run_id})`);
+              })();
+            }}
+          >
+            جهّز
+          </button>
+          <button
+            type="button"
+            className="rounded-v2-chip border border-v2-rule px-3 py-1.5 font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink"
+            onClick={() => {
+              void (async () => {
+                await fetch('/api/v2/admin/prepare/stop', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ run_id: prepareRunId }),
+                });
+                setMessage('Stop requested');
+              })();
+            }}
+          >
+            وقف
+          </button>
+        </div>
+        {prepareProgress ? (
+          <p className="font-[family-name:var(--font-v2-ui)] text-xs text-v2-ink" dir="ltr">
+            status={prepareProgress.status} · cost=$
+            {prepareProgress.cost_usd.toFixed(2)} · done=
+            {prepareProgress.done_days.join(',') || '—'} · review=
+            {prepareProgress.needs_review_days.join(',') || '—'} · current=
+            {prepareProgress.current.join(',') || '—'}
+            {prepareProgress.message ? ` · ${prepareProgress.message}` : ''}
+          </p>
+        ) : null}
+      </section>
 
       {loadingList ? (
         <p className="text-sm text-v2-ink-muted">Loading days…</p>

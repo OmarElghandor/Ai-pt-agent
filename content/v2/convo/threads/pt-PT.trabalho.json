@@ -1,0 +1,205 @@
+{
+  "target_lang": "pt-PT",
+  "version": 1,
+  "topic": {
+    "id": "trabalho",
+    "title_tl": "O trabalho",
+    "title_in_sentence_tl": "do trabalho",
+    "title_ar": "الشغل",
+    "character_id": "nour",
+    "related": [
+      "amanha",
+      "ontem"
+    ],
+    "intro_eg": "هنتكلم مع Nour عن الشغل. Nour مصرية زيك وعايشة هنا من 3 سنين، وبتتكلم معاك برتغالي بس علشان تتمرن. لو وقفت دوس «ساعدني أرد».",
+    "opening_tl": "Olá {name}! Vamos falar do trabalho?",
+    "opening_ar": "مرحباً {name}! هل نتحدث عن العمل؟"
+  },
+  "threads": [
+    {
+      "id": "trabalho.t1",
+      "share": {
+        "tl": "Eu trabalho num hotel na Baixa, na receção.",
+        "ar": "أعمل في فندق في وسط المدينة، في الاستقبال."
+      },
+      "ask": {
+        "tl": "E tu, o que fazes?",
+        "ar": "وأنت، ماذا تعمل؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Sou ___. / Trabalho em ___.",
+          "eg": "قول شغلتك: Sou + الشغلانة. ولو بتدور على شغل: Estou à procura de trabalho",
+          "chips": [
+            "Sou programador.",
+            "Sou engenheiro.",
+            "Trabalho num restaurante.",
+            "Estou à procura de trabalho."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Gostas do teu trabalho?",
+          "ar": "هل تحب عملك؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "___.",
+            "eg": "بتحب شغلك؟",
+            "chips": [
+              "Sim, gosto muito.",
+              "Mais ou menos.",
+              "Não muito."
+            ]
+          },
+          "skip_if_negative": true
+        }
+      ]
+    },
+    {
+      "id": "trabalho.t2",
+      "share": {
+        "tl": "Eu começo às oito e saio às quatro.",
+        "ar": "أبدأ في الثامنة وأخرج في الرابعة."
+      },
+      "ask": {
+        "tl": "E tu, a que horas começas?",
+        "ar": "وأنت، في أي ساعة تبدأ؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Começo às ___.",
+          "eg": "قول بتبدأ الساعة كام: Começo às + الساعة",
+          "chips": [
+            "Começo às oito.",
+            "Começo às nove.",
+            "Começo às dez."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E a que horas sais?",
+          "ar": "وفي أي ساعة تخرج؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Saio às ___.",
+            "eg": "بتخلص الساعة كام: Saio às…",
+            "chips": [
+              "Saio às cinco.",
+              "Saio às seis.",
+              "Saio às sete."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "trabalho.t3",
+      "share": {
+        "tl": "Eu trabalho sempre no hotel, nunca em casa. 😅",
+        "ar": "أعمل دائماً في الفندق، أبداً من البيت."
+      },
+      "ask": {
+        "tl": "E tu, trabalhas em casa ou no escritório?",
+        "ar": "وأنت، هل تعمل من البيت أم في المكتب؟",
+        "kind": "either_or",
+        "frame": {
+          "tl": "Trabalho ___.",
+          "eg": "في البيت = em casa، في المكتب = no escritório",
+          "chips": [
+            "Trabalho em casa.",
+            "Trabalho no escritório.",
+            "Nos dois."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E o que preferes?",
+          "ar": "وماذا تفضّل؟",
+          "kind": "either_or",
+          "frame": {
+            "tl": "Prefiro ___.",
+            "eg": "بتفضّل إيه: Prefiro…",
+            "chips": [
+              "Prefiro trabalhar em casa.",
+              "Prefiro o escritório."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "trabalho.t4",
+      "share": {
+        "tl": "Os meus colegas são simpáticos. Almoçamos sempre juntos.",
+        "ar": "زملائي لطفاء. نتناول الغداء معاً دائماً."
+      },
+      "ask": {
+        "tl": "Como são os teus colegas?",
+        "ar": "كيف هم زملاؤك؟",
+        "kind": "open",
+        "frame": {
+          "tl": "São ___.",
+          "eg": "زمايلك عاملين إزاي: São + الوصف",
+          "chips": [
+            "São simpáticos.",
+            "São divertidos.",
+            "São muito sérios. 😅"
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Almoçam juntos?",
+          "ar": "هل تتناولون الغداء معاً؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "___.",
+            "eg": "بتتغدوا مع بعض؟",
+            "chips": [
+              "Sim, às vezes.",
+              "Não, almoço no escritório."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "trabalho.t5",
+      "share": {
+        "tl": "Hoje estou cansada, o hotel estava cheio! 😅",
+        "ar": "أنا متعبة اليوم، كان الفندق ممتلئاً!"
+      },
+      "ask": {
+        "tl": "E tu, como correu o trabalho hoje?",
+        "ar": "وأنت، كيف كان العمل اليوم؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Correu ___. / Foi ___.",
+          "eg": "الشغل كان عامل إزاي النهارده: Correu bem = عدّى كويس",
+          "chips": [
+            "Correu bem.",
+            "Correu mal.",
+            "Foi tranquilo.",
+            "Foi cansativo."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Porquê?",
+          "ar": "لماذا؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Porque ___.",
+            "eg": "ليه: Porque + السبب",
+            "chips": [
+              "Porque tive muito trabalho.",
+              "Porque correu tudo bem."
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

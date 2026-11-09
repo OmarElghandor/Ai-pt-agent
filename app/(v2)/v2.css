@@ -129,3 +129,86 @@
 .v2-pop {
   animation: v2-pop 0.35s ease both;
 }
+
+/* ── Module C free talk · Calm Kit (scoped; Warm Editorial stays default) ── */
+/* Refs: design/calm-kit/ */
+
+.v2-free-talk {
+  --ft-ivory: #f4efe8;
+  --ft-surface: #fbf8f3;
+  --ft-sage: #6b7f6e;
+  --ft-sage-dark: #4d6151;
+  --ft-moss: #a7b8a7;
+  --ft-mist: #d9e1d9;
+  --ft-sand: #c9bdaf;
+  --ft-ink: #202a25;
+  --ft-text-secondary: #666963;
+  --ft-border: #e5ded5;
+  --ft-coach: #efe7dc;
+  --ft-success-soft: #e5e9df;
+  --ft-highlight: #fff6d6;
+  --ft-correction: #b8955a;
+  --ft-correction-text: #7a5e30;
+  --ft-error-soft: #ffdad6;
+  --ft-error: #ba1a1a;
+  --ft-on-sage: #ffffff;
+  --ft-radius-card: 28px;
+  --ft-radius-control: 999px;
+  --ft-shadow-soft: 0 8px 24px rgba(32, 42, 37, 0.06);
+  --ft-shadow-sheet: 0 12px 40px -8px rgba(32, 42, 37, 0.12);
+  --ft-shadow-dock: 0 -8px 24px rgba(32, 42, 37, 0.06);
+  --ft-shadow-mic: 0 8px 24px rgba(77, 97, 81, 0.35);
+
+  --font-ft-ui: var(--font-v2-manrope), var(--font-v2-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-ft-pt: var(--font-v2-newsreader), ui-serif, Georgia, serif;
+  --font-ft-ar: var(--font-v2-noto-ar), ui-sans-serif, system-ui, sans-serif;
+
+  background: var(--ft-ivory);
+  color: var(--ft-ink);
+  font-family: var(--font-ft-ar);
+}
+
+@keyframes ft-moss-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  70% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+.ft-mic-halo::before,
+.ft-mic-halo::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 9999px;
+  border: 2px solid var(--ft-moss);
+  pointer-events: none;
+  animation: ft-moss-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.ft-mic-halo::after {
+  animation-delay: 0.75s;
+}
+
+@keyframes ft-wave {
+  0%,
+  100% { transform: scaleY(0.45); }
+  50% { transform: scaleY(1); }
+}
+
+.ft-wave-bar {
+  display: inline-block;
+  width: 3px;
+  border-radius: 9999px;
+  background: var(--ft-sage);
+  transform-origin: center;
+  animation: ft-wave 1s ease-in-out infinite;
+}

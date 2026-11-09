@@ -13,6 +13,11 @@ export const BUDGETS = {
   real_world: { system: 400, input: 800, output: 1500 },
   continuity: { system: 300, input: 800, output: 100 },
   lang_check: { system: 400, input: 2500, output: 800 },
+  convo_outline: { system: 500, input: 1200, output: 2000 },
+  convo_items: { system: 600, input: 1500, output: 2500 },
+  convo_critic: { system: 300, input: 2500, output: 400 },
+  convo_lang_check: { system: 400, input: 2500, output: 800 },
+  topic_angles: { system: 400, input: 800, output: 2000 },
 } as const;
 
 export type BudgetKind = keyof typeof BUDGETS;

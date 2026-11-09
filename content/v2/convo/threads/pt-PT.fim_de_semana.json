@@ -1,0 +1,209 @@
+{
+  "target_lang": "pt-PT",
+  "version": 1,
+  "topic": {
+    "id": "fim_de_semana",
+    "title_tl": "O fim de semana",
+    "title_in_sentence_tl": "do fim de semana",
+    "title_ar": "الويك إند",
+    "character_id": "tiago",
+    "related": [
+      "ontem",
+      "amanha"
+    ],
+    "intro_eg": "هنتكلم مع Tiago عن الويك إند. لو وقفت دوس «ساعدني أرد».",
+    "opening_tl": "Olá {name}! Então, o fim de semana? 😎",
+    "opening_ar": "مرحباً {name}! إذن، كيف عطلة نهاية الأسبوع؟"
+  },
+  "threads": [
+    {
+      "id": "fim_de_semana.t1",
+      "share": {
+        "tl": "No sábado joguei futebol com amigos. ⚽",
+        "ar": "يوم السبت لعبت كرة القدم مع أصدقاء."
+      },
+      "ask": {
+        "tl": "E tu, o que fizeste no fim de semana?",
+        "ar": "وأنت، ماذا فعلت في عطلة نهاية الأسبوع؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Fui ___. / Fiquei em casa.",
+          "eg": "عملت إيه: Fui à praia = روحت البحر، Fiquei em casa = قعدت في البيت",
+          "chips": [
+            "Fui à praia.",
+            "Fui passear.",
+            "Fiquei em casa.",
+            "Trabalhei."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E foi bom?",
+          "ar": "وهل كان جيداً؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "Foi ___.",
+            "eg": "كان حلو؟",
+            "chips": [
+              "Sim, foi ótimo!",
+              "Foi normal."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "fim_de_semana.t2",
+      "share": {
+        "tl": "Ao domingo gosto de ir à praia em Cascais. 🏖️",
+        "ar": "يوم الأحد أحب الذهاب إلى الشاطئ في كاشكايش."
+      },
+      "ask": {
+        "tl": "Gostas de praia?",
+        "ar": "هل تحب الشاطئ؟",
+        "kind": "yes_no",
+        "frame": {
+          "tl": "___.",
+          "eg": "بتحب البحر؟",
+          "chips": [
+            "Sim, adoro!",
+            "Mais ou menos.",
+            "Prefiro a montanha."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Qual é a tua praia preferida?",
+          "ar": "ما هو شاطئك المفضل؟",
+          "kind": "open",
+          "frame": {
+            "tl": "A minha praia preferida é ___.",
+            "eg": "بحرك المفضل",
+            "chips": [
+              "Cascais.",
+              "A Costa da Caparica.",
+              "Carcavelos.",
+              "Alexandria! 😄"
+            ]
+          },
+          "skip_if_negative": true
+        }
+      ]
+    },
+    {
+      "id": "fim_de_semana.t3",
+      "share": {
+        "tl": "Ao fim de semana durmo até tarde. 😴",
+        "ar": "في عطلة نهاية الأسبوع أنام حتى وقت متأخر."
+      },
+      "ask": {
+        "tl": "A que horas acordas ao sábado?",
+        "ar": "في أي ساعة تستيقظ يوم السبت؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Acordo às ___.",
+          "eg": "بتصحى الساعة كام يوم السبت: Acordo às…",
+          "chips": [
+            "Às oito.",
+            "Às dez.",
+            "Ao meio-dia! 😂"
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E ao domingo?",
+          "ar": "ويوم الأحد؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Às ___.",
+            "eg": "ويوم الحد",
+            "chips": [
+              "Às oito.",
+              "Às dez.",
+              "Também tarde."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "fim_de_semana.t4",
+      "share": {
+        "tl": "Às vezes vou ao cinema com a minha namorada.",
+        "ar": "أحياناً أذهب إلى السينما مع صديقتي."
+      },
+      "ask": {
+        "tl": "E tu, vais ao cinema às vezes?",
+        "ar": "وأنت، هل تذهب إلى السينما أحياناً؟",
+        "kind": "yes_no",
+        "frame": {
+          "tl": "___.",
+          "eg": "بتروح سينما؟",
+          "chips": [
+            "Sim, às vezes.",
+            "Não, vejo filmes em casa."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "De que filmes gostas?",
+          "ar": "ما نوع الأفلام التي تحبها؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Gosto de filmes de ___.",
+            "eg": "بتحب أفلام إيه: Gosto de filmes de…",
+            "chips": [
+              "De ação.",
+              "De comédia.",
+              "De terror.",
+              "De drama."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "fim_de_semana.t5",
+      "share": {
+        "tl": "No próximo fim de semana quero ir a Sintra.",
+        "ar": "في عطلة نهاية الأسبوع القادمة أريد الذهاب إلى سينترا."
+      },
+      "ask": {
+        "tl": "E tu, o que vais fazer no próximo fim de semana?",
+        "ar": "وأنت، ماذا ستفعل في عطلة نهاية الأسبوع القادمة؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Vou ___.",
+          "eg": "هتعمل إيه: Vou…",
+          "chips": [
+            "Vou descansar.",
+            "Vou à praia.",
+            "Vou estudar português.",
+            "Ainda não sei."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Com quem?",
+          "ar": "مع من؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Com ___.",
+            "eg": "مع مين",
+            "chips": [
+              "Com amigos.",
+              "Com a minha família.",
+              "Com a minha mulher."
+            ]
+          },
+          "skip_if_negative": true
+        }
+      ]
+    }
+  ]
+}

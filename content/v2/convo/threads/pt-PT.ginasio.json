@@ -1,0 +1,208 @@
+{
+  "target_lang": "pt-PT",
+  "version": 1,
+  "topic": {
+    "id": "ginasio",
+    "title_tl": "O ginásio",
+    "title_in_sentence_tl": "do ginásio",
+    "title_ar": "الجيم والرياضة",
+    "character_id": "tiago",
+    "related": [
+      "comida",
+      "fim_de_semana"
+    ],
+    "intro_eg": "هنتكلم مع Tiago عن الجيم والرياضة. لو وقفت دوس «ساعدني أرد».",
+    "opening_tl": "Olá {name}! Vamos falar de desporto? 💪",
+    "opening_ar": "مرحباً {name}! هل نتحدث عن الرياضة؟"
+  },
+  "threads": [
+    {
+      "id": "ginasio.t1",
+      "share": {
+        "tl": "Eu vou ao ginásio três vezes por semana. 💪",
+        "ar": "أذهب إلى النادي الرياضي ثلاث مرات في الأسبوع."
+      },
+      "ask": {
+        "tl": "E tu, fazes desporto?",
+        "ar": "وأنت، هل تمارس الرياضة؟",
+        "kind": "yes_no",
+        "frame": {
+          "tl": "Sim, ___. / Não muito.",
+          "eg": "بتلعب رياضة؟",
+          "chips": [
+            "Sim, vou ao ginásio.",
+            "Sim, corro.",
+            "Jogo futebol.",
+            "Não muito. 😅"
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Quantas vezes por semana?",
+          "ar": "كم مرة في الأسبوع؟",
+          "kind": "open",
+          "frame": {
+            "tl": "___ por semana.",
+            "eg": "كام مرة في الأسبوع",
+            "chips": [
+              "Uma vez por semana.",
+              "Duas vezes por semana.",
+              "Três vezes por semana."
+            ]
+          },
+          "skip_if_negative": true
+        }
+      ]
+    },
+    {
+      "id": "ginasio.t2",
+      "share": {
+        "tl": "Eu treino de manhã, antes do trabalho.",
+        "ar": "أتمرن في الصباح، قبل العمل."
+      },
+      "ask": {
+        "tl": "Preferes treinar de manhã ou à noite?",
+        "ar": "هل تفضل التمرين في الصباح أم في الليل؟",
+        "kind": "either_or",
+        "frame": {
+          "tl": "De ___.",
+          "eg": "الصبح = de manhã، بالليل = à noite",
+          "chips": [
+            "De manhã.",
+            "À noite."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Porquê?",
+          "ar": "لماذا؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Porque ___.",
+            "eg": "ليه: Porque…",
+            "chips": [
+              "Porque tenho mais energia.",
+              "Porque não tenho tempo de manhã."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "ginasio.t3",
+      "share": {
+        "tl": "Hoje treinei pernas. Amanhã vou ter dores! 😂",
+        "ar": "اليوم تمرنت على الأرجل. غداً سأشعر بالألم!"
+      },
+      "ask": {
+        "tl": "O que gostas de fazer no ginásio?",
+        "ar": "ماذا تحب أن تفعل في النادي؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Gosto de ___.",
+          "eg": "بتحب تعمل إيه: Gosto de + الفعل",
+          "chips": [
+            "Gosto de levantar pesos.",
+            "Gosto de correr.",
+            "Gosto de nadar.",
+            "Não vou ao ginásio."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E é difícil?",
+          "ar": "وهل هو صعب؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "___.",
+            "eg": "صعب؟",
+            "chips": [
+              "Sim, muito!",
+              "Não, é fácil."
+            ]
+          },
+          "skip_if_negative": true
+        }
+      ]
+    },
+    {
+      "id": "ginasio.t4",
+      "share": {
+        "tl": "O meu ginásio custa trinta euros por mês.",
+        "ar": "ناديّ يكلف ثلاثين يورو في الشهر."
+      },
+      "ask": {
+        "tl": "E o teu ginásio, quanto custa?",
+        "ar": "وناديك، كم يكلف؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Custa ___ euros.",
+          "eg": "بكام: Custa + السعر",
+          "chips": [
+            "Custa vinte euros.",
+            "Custa trinta euros.",
+            "Custa quarenta euros.",
+            "Não vou ao ginásio."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "É caro ou barato?",
+          "ar": "هل هو غالٍ أم رخيص؟",
+          "kind": "either_or",
+          "frame": {
+            "tl": "É ___.",
+            "eg": "غالي = caro، رخيص = barato",
+            "chips": [
+              "É caro.",
+              "É barato.",
+              "É normal."
+            ]
+          },
+          "skip_if_negative": true
+        }
+      ]
+    },
+    {
+      "id": "ginasio.t5",
+      "share": {
+        "tl": "Depois do treino, como sempre frango com arroz. 🍗",
+        "ar": "بعد التمرين، آكل دائماً دجاجاً بالأرز."
+      },
+      "ask": {
+        "tl": "E tu, o que comes depois do treino?",
+        "ar": "وأنت، ماذا تأكل بعد التمرين؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Como ___.",
+          "eg": "بتاكل إيه: Como…",
+          "chips": [
+            "Como frango.",
+            "Como ovos.",
+            "Como uma banana.",
+            "Não como nada."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E bebes muita água?",
+          "ar": "وهل تشرب الكثير من الماء؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "___.",
+            "eg": "بتشرب مية كتير؟",
+            "chips": [
+              "Sim, muita.",
+              "Não, devia beber mais! 😅"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

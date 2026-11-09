@@ -58,6 +58,12 @@ export type GenerationMeta = {
   lang_check?: unknown;
   /** Code-derived digests for dependents (`items`, `outline`, `page:0`, …). */
   handoffs?: Record<string, unknown>;
+  /** Set when prepare_day auto-publishes past the gate. */
+  auto_published?: boolean;
+  /** Admin marked the auto-published day as checked. */
+  auto_published_checked?: boolean;
+  /** Egyptian error shown on the preparing / needs_review screen. */
+  prepare_error_eg?: string;
 };
 
 export type SavedLesson = {

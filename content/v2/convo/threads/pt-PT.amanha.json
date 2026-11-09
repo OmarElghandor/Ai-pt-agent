@@ -1,0 +1,205 @@
+{
+  "target_lang": "pt-PT",
+  "version": 1,
+  "topic": {
+    "id": "amanha",
+    "title_tl": "Amanhã",
+    "title_in_sentence_tl": "de amanhã",
+    "title_ar": "هتعمل إيه بكرة",
+    "character_id": "nour",
+    "related": [
+      "ontem",
+      "fim_de_semana"
+    ],
+    "intro_eg": "Nour هتسألك هتعمل إيه بكرة. المستقبل سهل: Vou + الفعل، يعني Vou trabalhar = هشتغل. لو وقفت دوس «ساعدني أرد».",
+    "opening_tl": "Olá {name}! E amanhã, o que vais fazer?",
+    "opening_ar": "مرحباً {name}! وغداً، ماذا ستفعل؟"
+  },
+  "threads": [
+    {
+      "id": "amanha.t1",
+      "share": {
+        "tl": "Amanhã vou acordar cedo, tenho aula às nove.",
+        "ar": "غداً سأستيقظ مبكراً، عندي درس في التاسعة."
+      },
+      "ask": {
+        "tl": "E tu, o que vais fazer amanhã de manhã?",
+        "ar": "وأنت، ماذا ستفعل غداً في الصباح؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Vou ___.",
+          "eg": "هتعمل إيه: Vou + الفعل",
+          "chips": [
+            "Vou trabalhar.",
+            "Vou ao ginásio.",
+            "Vou estudar.",
+            "Vou descansar."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "A que horas vais sair de casa?",
+          "ar": "في أي ساعة ستخرج من البيت؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Às ___.",
+            "eg": "هتخرج الساعة كام",
+            "chips": [
+              "Às oito.",
+              "Às nove.",
+              "Não vou sair."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "amanha.t2",
+      "share": {
+        "tl": "Amanhã vou almoçar com uma amiga.",
+        "ar": "غداً سأتناول الغداء مع صديقة."
+      },
+      "ask": {
+        "tl": "E tu, com quem vais almoçar amanhã?",
+        "ar": "وأنت، مع من ستتناول الغداء غداً؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Com ___.",
+          "eg": "هتتغدى مع مين: Com…",
+          "chips": [
+            "Com os colegas.",
+            "Com um amigo.",
+            "Com a minha família."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Onde vão comer?",
+          "ar": "أين ستأكلون؟",
+          "kind": "open",
+          "frame": {
+            "tl": "___.",
+            "eg": "هتاكلوا فين",
+            "chips": [
+              "Num restaurante.",
+              "Em casa.",
+              "No trabalho."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "amanha.t3",
+      "share": {
+        "tl": "À tarde vou fazer compras.",
+        "ar": "بعد الظهر سأتسوق."
+      },
+      "ask": {
+        "tl": "E à tarde, vais trabalhar ou descansar?",
+        "ar": "وبعد الظهر، هل ستعمل أم سترتاح؟",
+        "kind": "either_or",
+        "frame": {
+          "tl": "Vou ___.",
+          "eg": "هتشتغل ولا هترتاح",
+          "chips": [
+            "Vou trabalhar.",
+            "Vou descansar.",
+            "Vou fazer compras."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E depois?",
+          "ar": "وبعد ذلك؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Depois vou ___.",
+            "eg": "وبعدين: Depois vou…",
+            "chips": [
+              "Depois vou para casa.",
+              "Depois vou ao café."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "amanha.t4",
+      "share": {
+        "tl": "Amanhã à noite vou ver o jogo do Benfica! ⚽",
+        "ar": "غداً في الليل سأشاهد مباراة بنفيكا!"
+      },
+      "ask": {
+        "tl": "Vais ver o jogo amanhã?",
+        "ar": "هل ستشاهد المباراة غداً؟",
+        "kind": "yes_no",
+        "frame": {
+          "tl": "___.",
+          "eg": "هتتفرج على الماتش؟",
+          "chips": [
+            "Sim, vou!",
+            "Não, não gosto de futebol."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "És do Benfica, do Sporting ou do Porto?",
+          "ar": "هل تشجع بنفيكا أم سبورتينغ أم بورتو؟",
+          "kind": "either_or",
+          "frame": {
+            "tl": "Sou do ___.",
+            "eg": "بتشجع مين: Sou do…",
+            "chips": [
+              "Sou do Benfica.",
+              "Sou do Sporting.",
+              "Sou do Al Ahly! 😄"
+            ]
+          },
+          "skip_if_negative": true
+        }
+      ]
+    },
+    {
+      "id": "amanha.t5",
+      "share": {
+        "tl": "No fim de semana vou visitar a minha tia em Coimbra.",
+        "ar": "في عطلة نهاية الأسبوع سأزور عمتي في كويمبرا."
+      },
+      "ask": {
+        "tl": "E no fim de semana, o que vais fazer?",
+        "ar": "وفي عطلة نهاية الأسبوع، ماذا ستفعل؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Vou ___.",
+          "eg": "هتعمل إيه في الويك إند: Vou…",
+          "chips": [
+            "Vou descansar.",
+            "Vou passear.",
+            "Vou visitar amigos.",
+            "Vou limpar a casa."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Vais sair de Lisboa?",
+          "ar": "هل ستخرج من لشبونة؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "___.",
+            "eg": "هتخرج برة لشبونة؟",
+            "chips": [
+              "Sim, vou a Sintra.",
+              "Não, vou ficar em Lisboa."
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

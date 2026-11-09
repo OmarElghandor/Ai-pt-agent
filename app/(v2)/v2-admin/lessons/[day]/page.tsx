@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { ReportErrorButton } from '@/components/v2';
 import { LessonImagesAdmin } from '@/components/v2/admin/LessonImagesAdmin';
+import { isRolePlayDay } from '@/lib/v2/convo/topics/rolePlay';
 
 type JobRow = {
   id: string;
@@ -314,6 +315,27 @@ export default function V2AdminLessonPage() {
     }
   }
 
+  async function generateConvoPack() {
+    setBusy(true);
+    setMessage(null);
+    setError(null);
+    try {
+      const res = await fetch(`/api/v2/admin/generate/convo/${day}`, {
+        method: 'POST',
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? res.statusText);
+      setMessage(
+        `Conversation pack enqueued ${json.pack_id} v${json.version} (lesson_version ${json.lesson_version})`,
+      );
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function publishPack() {
     setBusy(true);
     setMessage(null);
@@ -458,7 +480,18 @@ export default function V2AdminLessonPage() {
           >
             Publish pack
           </button>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => void generateConvoPack()}
+          >
+            Generate conversation pack
+          </button>
           <Link href={`/practice/${day}?dev=1`}>Open practice</Link>
+          <Link href={`/talk/free/open?day=${day}`}>Open talk</Link>
+          {isRolePlayDay(day) ? (
+            <Link href={`/talk/pt-PT.day-${day}`}>Role-play</Link>
+          ) : null}
         </div>
       </header>
 

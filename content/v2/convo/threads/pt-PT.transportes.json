@@ -1,0 +1,202 @@
+{
+  "target_lang": "pt-PT",
+  "version": 1,
+  "topic": {
+    "id": "transportes",
+    "title_tl": "Os transportes",
+    "title_in_sentence_tl": "dos transportes",
+    "title_ar": "المواصلات",
+    "character_id": "tiago",
+    "related": [
+      "trabalho",
+      "bairro"
+    ],
+    "intro_eg": "هنتكلم مع Tiago عن المواصلات. Tiago شاب من لشبونة، بيحب الكورة والجيم. لو وقفت دوس «ساعدني أرد».",
+    "opening_tl": "Olá {name}! Bora falar de transportes? 🚇",
+    "opening_ar": "مرحباً {name}! هيا نتحدث عن المواصلات؟"
+  },
+  "threads": [
+    {
+      "id": "transportes.t1",
+      "share": {
+        "tl": "Eu vou para o trabalho de metro. Demora vinte minutos.",
+        "ar": "أذهب إلى العمل بالمترو. يستغرق عشرين دقيقة."
+      },
+      "ask": {
+        "tl": "E tu, como vais para o trabalho?",
+        "ar": "وأنت، كيف تذهب إلى العمل؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Vou de ___.",
+          "eg": "بتروح إزاي: Vou de metro. ولو ماشي: Vou a pé",
+          "chips": [
+            "De metro.",
+            "De autocarro.",
+            "De comboio.",
+            "A pé."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Quanto tempo demora?",
+          "ar": "كم يستغرق من الوقت؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Demora ___.",
+            "eg": "بياخد قد إيه: Demora + المدة",
+            "chips": [
+              "Dez minutos.",
+              "Meia hora.",
+              "Uma hora. 😩"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "transportes.t2",
+      "share": {
+        "tl": "Eu tenho o passe Navegante. É barato.",
+        "ar": "عندي اشتراك نافيغانتي. إنه رخيص."
+      },
+      "ask": {
+        "tl": "E tu, tens passe?",
+        "ar": "وأنت، هل عندك اشتراك؟",
+        "kind": "yes_no",
+        "frame": {
+          "tl": "___.",
+          "eg": "عندك اشتراك؟ ولا بتشتري تذاكر = compro bilhetes",
+          "chips": [
+            "Sim, tenho.",
+            "Não, compro bilhetes."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Usas mais o metro ou o autocarro?",
+          "ar": "هل تستخدم المترو أكثر أم الحافلة؟",
+          "kind": "either_or",
+          "frame": {
+            "tl": "___.",
+            "eg": "مترو ولا أتوبيس",
+            "chips": [
+              "O metro.",
+              "O autocarro.",
+              "Os dois."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "transportes.t3",
+      "share": {
+        "tl": "De manhã, o metro está sempre cheio. 😩",
+        "ar": "في الصباح، يكون المترو مزدحماً دائماً."
+      },
+      "ask": {
+        "tl": "E no Cairo, os transportes são como aqui?",
+        "ar": "وفي القاهرة، هل المواصلات مثل هنا؟",
+        "kind": "yes_no",
+        "frame": {
+          "tl": "___.",
+          "eg": "المواصلات في القاهرة زي هنا؟",
+          "chips": [
+            "Não, no Cairo há muito trânsito.",
+            "O metro do Cairo está sempre cheio!",
+            "É muito diferente."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Preferes os transportes de Lisboa ou do Cairo?",
+          "ar": "هل تفضل مواصلات لشبونة أم القاهرة؟",
+          "kind": "either_or",
+          "frame": {
+            "tl": "Prefiro ___.",
+            "eg": "بتفضل أنهي: Prefiro os de Lisboa",
+            "chips": [
+              "Os de Lisboa.",
+              "Os do Cairo! 😄"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "transportes.t4",
+      "share": {
+        "tl": "Eu ando muito de trotinete, é rápido! 🛴",
+        "ar": "أتنقل كثيراً بالسكوتر، إنه سريع!"
+      },
+      "ask": {
+        "tl": "E tu, tens carro ou bicicleta?",
+        "ar": "وأنت، هل عندك سيارة أم دراجة؟",
+        "kind": "either_or",
+        "frame": {
+          "tl": "Tenho ___. / Não tenho.",
+          "eg": "عندك عربية = Tenho carro",
+          "chips": [
+            "Tenho carro.",
+            "Tenho bicicleta.",
+            "Não tenho."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E conduzes em Lisboa?",
+          "ar": "وهل تقود السيارة في لشبونة؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "___.",
+            "eg": "بتسوق في لشبونة؟ رخصة = carta",
+            "chips": [
+              "Sim.",
+              "Não, é difícil!",
+              "Ainda não tenho carta."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "transportes.t5",
+      "share": {
+        "tl": "Este fim de semana vou de comboio a Sintra.",
+        "ar": "في عطلة نهاية الأسبوع هذه سأذهب بالقطار إلى سينترا."
+      },
+      "ask": {
+        "tl": "Já foste a Sintra?",
+        "ar": "هل ذهبت إلى سينترا من قبل؟",
+        "kind": "yes_no",
+        "frame": {
+          "tl": "___.",
+          "eg": "روحت سينترا قبل كده؟ لسه = ainda não",
+          "chips": [
+            "Sim, já fui.",
+            "Ainda não."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Queres ir comigo um dia?",
+          "ar": "هل تريد أن تذهب معي يوماً ما؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "___.",
+            "eg": "عايز تيجي معاه؟",
+            "chips": [
+              "Sim, quero!",
+              "Talvez."
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

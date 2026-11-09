@@ -1,0 +1,207 @@
+{
+  "target_lang": "pt-PT",
+  "version": 1,
+  "topic": {
+    "id": "familia",
+    "title_tl": "A família",
+    "title_in_sentence_tl": "da família",
+    "title_ar": "العيلة",
+    "character_id": "ines",
+    "related": [
+      "egito",
+      "casa"
+    ],
+    "intro_eg": "هنتكلم مع Inês عن العيلة. لو وقفت دوس «ساعدني أرد».",
+    "opening_tl": "Olá {name}! 😊 Hoje quero conhecer a tua família!",
+    "opening_ar": "مرحباً {name}! اليوم أريد أن أتعرف على عائلتك!"
+  },
+  "threads": [
+    {
+      "id": "familia.t1",
+      "share": {
+        "tl": "Eu tenho um irmão. Ele mora no Porto.",
+        "ar": "عندي أخ. هو يسكن في بورتو."
+      },
+      "ask": {
+        "tl": "E tu, tens irmãos?",
+        "ar": "وأنت، هل عندك إخوة؟",
+        "kind": "yes_no",
+        "frame": {
+          "tl": "Sim, tenho ___. / Não, não tenho.",
+          "eg": "عندك إخوات؟ أخ = um irmão، أخت = uma irmã",
+          "chips": [
+            "Sim, tenho um irmão.",
+            "Sim, tenho duas irmãs.",
+            "Não, não tenho."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E onde moram?",
+          "ar": "وأين يسكنون؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Moram ___.",
+            "eg": "ساكنين فين: Moram no Egito",
+            "chips": [
+              "No Egito.",
+              "No Cairo.",
+              "Em Lisboa."
+            ]
+          },
+          "skip_if_negative": true
+        }
+      ]
+    },
+    {
+      "id": "familia.t2",
+      "share": {
+        "tl": "Os meus pais moram no Porto. Falo com a minha mãe todos os dias.",
+        "ar": "والداي يسكنان في بورتو. أتحدث مع أمي كل يوم."
+      },
+      "ask": {
+        "tl": "E a tua família, onde mora?",
+        "ar": "وعائلتك، أين تسكن؟",
+        "kind": "open",
+        "frame": {
+          "tl": "A minha família mora ___.",
+          "eg": "عيلتك ساكنة فين",
+          "chips": [
+            "No Egito.",
+            "No Cairo.",
+            "Em Alexandria.",
+            "Aqui em Lisboa."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Falas muito com eles?",
+          "ar": "هل تتحدث معهم كثيراً؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "___.",
+            "eg": "بتكلمهم كتير؟",
+            "chips": [
+              "Sim, todos os dias.",
+              "Uma vez por semana.",
+              "Não muito."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "familia.t3",
+      "share": {
+        "tl": "Tenho muitas saudades do meu irmão.",
+        "ar": "أشتاق كثيراً إلى أخي."
+      },
+      "ask": {
+        "tl": "E tu, tens saudades da tua família?",
+        "ar": "وأنت، هل تشتاق إلى عائلتك؟",
+        "kind": "yes_no",
+        "frame": {
+          "tl": "Sim, ___.",
+          "eg": "وحشاك عيلتك؟ وحشني = tenho saudades",
+          "chips": [
+            "Sim, muitas.",
+            "Sim, da minha mãe.",
+            "Sim, de todos."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Quando vais ao Egito?",
+          "ar": "متى ستذهب إلى مصر؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Vou ___.",
+            "eg": "هتسافر مصر إمتى: Vou no verão = في الصيف",
+            "chips": [
+              "No verão.",
+              "Em dezembro.",
+              "Ainda não sei."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "familia.t4",
+      "share": {
+        "tl": "Eu ainda não tenho filhos, mas tenho dois sobrinhos.",
+        "ar": "ليس عندي أطفال بعد، لكن عندي ابنا أخ."
+      },
+      "ask": {
+        "tl": "E tu, tens filhos?",
+        "ar": "وأنت، هل عندك أطفال؟",
+        "kind": "yes_no",
+        "frame": {
+          "tl": "Sim, tenho ___. / Não, não tenho.",
+          "eg": "عندك عيال؟ ابن = um filho، بنت = uma filha",
+          "chips": [
+            "Sim, tenho um filho.",
+            "Sim, tenho duas filhas.",
+            "Não, não tenho."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Quantos anos têm?",
+          "ar": "كم أعمارهم؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Têm ___ anos.",
+            "eg": "عندهم كام سنة: Tem/Têm + العمر + anos",
+            "chips": [
+              "Tem três anos.",
+              "Têm cinco e oito anos."
+            ]
+          },
+          "skip_if_negative": true
+        }
+      ]
+    },
+    {
+      "id": "familia.t5",
+      "share": {
+        "tl": "No Natal, a minha família come muito! 😂",
+        "ar": "في عيد الميلاد، تأكل عائلتي كثيراً!"
+      },
+      "ask": {
+        "tl": "E no Egito, quando é que a família se junta?",
+        "ar": "وفي مصر، متى تجتمع العائلة؟",
+        "kind": "open",
+        "frame": {
+          "tl": "No ___.",
+          "eg": "العيلة بتتلم إمتى: No Ramadão / No Eid",
+          "chips": [
+            "No Ramadão.",
+            "No Eid.",
+            "Às sextas-feiras."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E o que comem?",
+          "ar": "وماذا تأكلون؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Comemos ___.",
+            "eg": "بتاكلوا إيه: Comemos…",
+            "chips": [
+              "Comemos fatta.",
+              "Comemos muito arroz e carne.",
+              "Comemos doces!"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

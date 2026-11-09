@@ -1,0 +1,207 @@
+{
+  "target_lang": "pt-PT",
+  "version": 1,
+  "topic": {
+    "id": "compras",
+    "title_tl": "As compras",
+    "title_in_sentence_tl": "das compras",
+    "title_ar": "الشوبينج والسوبر ماركت",
+    "character_id": "nour",
+    "related": [
+      "comida",
+      "bairro"
+    ],
+    "intro_eg": "هنتكلم مع Nour عن الشوبينج والسوبر ماركت. لو وقفت دوس «ساعدني أرد».",
+    "opening_tl": "Olá {name}! Vamos falar de compras?",
+    "opening_ar": "مرحباً {name}! هل نتحدث عن التسوق؟"
+  },
+  "threads": [
+    {
+      "id": "compras.t1",
+      "share": {
+        "tl": "Eu faço compras no Pingo Doce, é perto de casa.",
+        "ar": "أتسوق في بينغو دوسي، إنه قريب من البيت."
+      },
+      "ask": {
+        "tl": "E tu, onde fazes compras?",
+        "ar": "وأنت، أين تتسوق؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Faço compras no ___.",
+          "eg": "بتشتري حاجتك منين: Faço compras no…",
+          "chips": [
+            "No Pingo Doce.",
+            "No Continente.",
+            "No Lidl.",
+            "No mercado."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Vais todas as semanas?",
+          "ar": "هل تذهب كل أسبوع؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "___.",
+            "eg": "بتروح كل أسبوع؟",
+            "chips": [
+              "Sim, todas as semanas.",
+              "Duas vezes por semana.",
+              "Não, só às vezes."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "compras.t2",
+      "share": {
+        "tl": "Aqui a fruta é cara, mas o peixe é muito bom.",
+        "ar": "هنا الفاكهة غالية، لكن السمك جيد جداً."
+      },
+      "ask": {
+        "tl": "O que compras mais?",
+        "ar": "ماذا تشتري أكثر شيء؟",
+        "kind": "open",
+        "frame": {
+          "tl": "Compro ___.",
+          "eg": "بتشتري إيه أكتر: Compro…",
+          "chips": [
+            "Compro fruta e legumes.",
+            "Compro carne.",
+            "Compro arroz.",
+            "Compro pão."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E é caro aqui?",
+          "ar": "وهل هو غالٍ هنا؟",
+          "kind": "either_or",
+          "frame": {
+            "tl": "___.",
+            "eg": "غالي هنا؟",
+            "chips": [
+              "Sim, é caro.",
+              "Não, é barato.",
+              "Mais ou menos."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "compras.t3",
+      "share": {
+        "tl": "Eu procuro sempre comida egípcia, mas é difícil encontrar.",
+        "ar": "أبحث دائماً عن أكل مصري، لكن من الصعب أن أجده."
+      },
+      "ask": {
+        "tl": "Encontras comida egípcia em Lisboa?",
+        "ar": "هل تجد أكلاً مصرياً في لشبونة؟",
+        "kind": "yes_no",
+        "frame": {
+          "tl": "___.",
+          "eg": "بتلاقي أكل مصري هنا؟",
+          "chips": [
+            "Sim, no Martim Moniz.",
+            "Não, é difícil.",
+            "Às vezes."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "De que comida tens mais saudades?",
+          "ar": "ما الأكل الذي تشتاق إليه أكثر؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Tenho saudades de ___.",
+            "eg": "وحشك أكل إيه: Tenho saudades de…",
+            "chips": [
+              "Do pão egípcio.",
+              "Das favas.",
+              "Do koshari.",
+              "Do feteer."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "compras.t4",
+      "share": {
+        "tl": "Ontem comprei uns sapatos novos! 👟",
+        "ar": "أمس اشتريت حذاءً جديداً!"
+      },
+      "ask": {
+        "tl": "Gostas de comprar roupa?",
+        "ar": "هل تحب شراء الملابس؟",
+        "kind": "yes_no",
+        "frame": {
+          "tl": "___.",
+          "eg": "بتحب تشتري هدوم؟",
+          "chips": [
+            "Sim, adoro!",
+            "Mais ou menos.",
+            "Não muito."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "Onde compras roupa?",
+          "ar": "من أين تشتري الملابس؟",
+          "kind": "open",
+          "frame": {
+            "tl": "Compro roupa ___.",
+            "eg": "بتشتري هدوم منين",
+            "chips": [
+              "No centro comercial.",
+              "Online.",
+              "Na Zara."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "compras.t5",
+      "share": {
+        "tl": "Eu pago sempre com MB Way.",
+        "ar": "أدفع دائماً بـ MB Way."
+      },
+      "ask": {
+        "tl": "E tu, pagas com cartão ou em dinheiro?",
+        "ar": "وأنت، هل تدفع بالبطاقة أم نقداً؟",
+        "kind": "either_or",
+        "frame": {
+          "tl": "Pago ___.",
+          "eg": "بتدفع إزاي: Pago com cartão / em dinheiro",
+          "chips": [
+            "Com cartão.",
+            "Em dinheiro.",
+            "Com MB Way."
+          ]
+        }
+      },
+      "follow_ups": [
+        {
+          "tl": "E no Egito, as pessoas pagam mais em dinheiro?",
+          "ar": "وفي مصر، هل يدفع الناس نقداً أكثر؟",
+          "kind": "yes_no",
+          "frame": {
+            "tl": "___.",
+            "eg": "في مصر الناس بتدفع كاش أكتر؟",
+            "chips": [
+              "Sim, mais em dinheiro.",
+              "Agora também com cartão."
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

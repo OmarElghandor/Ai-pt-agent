@@ -3,6 +3,7 @@ import { ItemSchema, type Item } from '@/lib/v2/content/items';
 import { validateLessonPack } from '@/lib/v2/content/validate';
 import type { LessonBrief } from '../brief';
 import {
+  findCoreItemById,
   nonVerbCoreIds,
   verbCoreItems,
   type CoreItem,
@@ -284,7 +285,108 @@ function applyPatternKindsFromCore(
   });
 }
 
-function mergeRecycleAndVerbs(
+/** Verb lemma cards (verb.go) — not conjugated form ids (verb.go:present:eu). */
+export function isVerbLemmaId(id: string): boolean {
+  return /^verb\.[a-z_]+$/i.test(id) && !id.includes(':');
+}
+
+/** Patterns and verb lemmas are code-owned recycle — model must not invent MSA ar. */
+export function isCodeOwnedRecycleId(id: string): boolean {
+  return id.startsWith('pattern.') || isVerbLemmaId(id);
+}
+
+function knownHasMsaAr(item: Item | undefined): boolean {
+  if (!item || !('ar' in item) || typeof item.ar !== 'string') return false;
+  const ar = item.ar.trim();
+  return Boolean(ar) && ar !== '…';
+}
+
+/** Recycle ids the model must still author (word/phrase lacking MSA ar). */
+export function missingRecycleIdsForPrompt(
+  recycleIds: string[],
+  knownFull: Map<string, Item>,
+): string[] {
+  return recycleIds.filter((id) => {
+    if (isCodeOwnedRecycleId(id)) return false;
+    return !knownHasMsaAr(knownFull.get(id));
+  });
+}
+
+function needsRecycleAr(row: Item): boolean {
+  if (row.type === 'pattern') return false;
+  if (isVerbLemmaId(row.id)) return false;
+  if (
+    row.type === 'word' &&
+    (row as { pos?: string }).pos === 'verb'
+  ) {
+    return false;
+  }
+  return (
+    row.type === 'word' || row.type === 'phrase' || row.type === 'sentence'
+  );
+}
+
+function patternHasSlots(item: Item): boolean {
+  if (item.type !== 'pattern') return false;
+  const slots = (item as { slots?: unknown }).slots;
+  return Array.isArray(slots) && slots.length > 0;
+}
+
+/**
+ * Thin known/registry patterns are {type,id,tl} only. Ensure slots+examples
+ * before validateLessonPack (which calls slots.entries()).
+ */
+export function completePatternItem(item: Item, bank: Item[] = []): Item {
+  if (item.type !== 'pattern') return item;
+  const existingSlots = (item as { slots?: unknown[] }).slots;
+  const existingExamples = (item as { examples?: string[] }).examples;
+  const hasSlots = Array.isArray(existingSlots) && existingSlots.length > 0;
+  const hasExamples =
+    Array.isArray(existingExamples) && existingExamples.length > 0;
+  if (hasSlots && hasExamples) return item;
+
+  const tl =
+    typeof (item as { tl?: string }).tl === 'string'
+      ? (item as { tl: string }).tl
+      : '';
+  const core =
+    findCoreItemById(item.id) ??
+    ({
+      id: item.id,
+      kind: 'pattern',
+      tl: tl || item.id.replace(/^pattern\./, ''),
+      eg: '',
+    } as CoreItem);
+  const stub = coreItemStub(core, bank);
+  if (!stub || stub.type !== 'pattern') {
+    const head = (tl || item.id.replace(/^pattern\./, '')).split(/\s+/)[0] ?? '…';
+    return {
+      type: 'pattern',
+      id: item.id,
+      slots: [
+        { tl: head },
+        { name_eg: 'كلمة', kind: 'word' },
+      ],
+      examples: [`${item.id}.ex.1`],
+    } as Item;
+  }
+  return {
+    ...item,
+    type: 'pattern',
+    id: item.id,
+    ...(stub as { kind?: string }).kind
+      ? { kind: (stub as { kind: string }).kind }
+      : {},
+    slots: hasSlots ? existingSlots! : stub.slots,
+    examples: hasExamples ? existingExamples! : stub.examples,
+  } as Item;
+}
+
+/**
+ * Merge model bank with known/core recycle + today's verb/core stubs.
+ * Every brief.recycle_ids entry is code-guaranteed when known or curriculum can resolve it.
+ */
+export function mergeRecycleAndVerbs(
   modelItems: Item[],
   brief: LessonBrief,
   knownFull: Map<string, Item>,
@@ -293,20 +395,36 @@ function mergeRecycleAndVerbs(
   const recycleSet = new Set(brief.recycle_ids);
   for (const id of brief.recycle_ids) {
     const known = knownFull.get(id);
-    const knownAr =
-      known && 'ar' in known && typeof known.ar === 'string' ? known.ar : '';
-    if (known && knownAr.trim()) {
-      byId.set(id, { ...known, extra: undefined } as Item);
+    if (known && knownHasMsaAr(known)) {
+      byId.set(id, completePatternItem({ ...known, extra: undefined } as Item));
     }
   }
   for (const item of modelItems) {
-    if (/^verb\.[a-z_]+$/i.test(item.id) && !item.id.includes(':')) continue;
+    if (isVerbLemmaId(item.id)) continue;
     // Registry/known recycle wins when it has MSA ar; else accept model recycle.
     if (recycleSet.has(item.id) && byId.has(item.id)) continue;
-    byId.set(item.id, item);
+    byId.set(item.id, completePatternItem(item));
   }
   for (const v of verbCoreItems(brief.core_items)) {
     byId.set(v.id, verbLemmaStub(v));
+  }
+  // Guarantee recycle ids (patterns/verbs/words/phrases) — never depend on the model.
+  for (const id of brief.recycle_ids) {
+    if (byId.has(id)) continue;
+    const known = knownFull.get(id);
+    if (known) {
+      byId.set(
+        id,
+        completePatternItem({ ...known, extra: undefined } as Item, [
+          ...byId.values(),
+        ]),
+      );
+      continue;
+    }
+    const core = findCoreItemById(id);
+    if (!core) continue;
+    const stub = coreItemStub(core, [...byId.values()]);
+    if (stub) byId.set(id, completePatternItem(stub, [...byId.values()]));
   }
   // Guarantee core ids: words/phrases/verbs first, then patterns (need examples).
   let bank = [...byId.values()];
@@ -323,14 +441,20 @@ function mergeRecycleAndVerbs(
     if (core.kind !== 'pattern') continue;
     if (byId.has(core.id)) continue;
     const stub = coreItemStub(core, [...byId.values()]);
-    if (stub) byId.set(core.id, stub);
+    if (stub) byId.set(core.id, completePatternItem(stub, [...byId.values()]));
+  }
+  // Final pass: any thin pattern that slipped through (known seed, etc.).
+  for (const [id, item] of byId) {
+    if (item.type === 'pattern' && !patternHasSlots(item)) {
+      byId.set(id, completePatternItem(item, [...byId.values()]));
+    }
   }
   return fillPatternsInBank([...byId.values()], {
     coreItems: brief.core_items,
   });
 }
 
-function validateItemsRules(
+export function validateItemsRules(
   items: Item[],
   known: KnownIdTl[],
   presets: string[],
@@ -366,6 +490,7 @@ function validateItemsRules(
       fatals.push(fatal(id, 'recycle_missing', 'recycle id not in bank'));
       continue;
     }
+    if (!needsRecycleAr(row)) continue;
     const ar = 'ar' in row && typeof row.ar === 'string' ? row.ar.trim() : '';
     if (!ar || ar === '…') {
       fatals.push(fatal(id, 'recycle_ar', 'recycle needs MSA ar (not eg hint)'));
@@ -534,11 +659,11 @@ ${presets.includes('pattern') && !opts.brief.no_new_items ? 'REQUIRED: include �
 CORE_ITEMS (create exactly these non-verb ids; eg = hint only)
 ${formatCoreItemsBlock(opts.brief.core_items)}
 
-RECYCLE_IDS (prefer KNOWN payloads; if an id is listed under MISSING_RECYCLE below, CREATE it with MSA ar — never Egyptian eg as ar)
+RECYCLE_IDS (prefer KNOWN payloads; if an id is listed under MISSING_RECYCLE below, CREATE it with MSA ar — never Egyptian eg as ar. pattern.* and verb.* are code-filled — do not invent ar for them)
 ${opts.brief.recycle_ids.join(', ') || '(none)'}
 
-MISSING_RECYCLE (must write these with type + tl + MSA ar; do not copy eg hints)
-${opts.brief.recycle_ids.filter((id) => !knownFull.has(id) || !(knownFull.get(id) as { ar?: string })?.ar).join(', ') || '(none)'}
+MISSING_RECYCLE (word/phrase only — write type + tl + MSA ar; do not copy eg hints; skip pattern/verb — code owns those)
+${missingRecycleIdsForPrompt(opts.brief.recycle_ids, knownFull).join(', ') || '(none)'}
 
 KNOWN_ITEMS (selected matches + recycle only; reuse these ids and tl exactly; do not redefine known ones)
 ${knownLines}
