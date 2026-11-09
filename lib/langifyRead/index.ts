@@ -14,6 +14,47 @@ import type { KnownProgress } from './types';
 
 export type { KnownProgress } from './types';
 
+/**
+ * Find a Langify user id by email (case-insensitive). Read-only.
+ * Returns null when Mongo is unset, email is empty, or no match.
+ */
+export async function findLangifyUserIdByEmail(
+  email: string,
+): Promise<string | null> {
+  const normalized = email.trim().toLowerCase();
+  if (!mongoConfigured() || !normalized) return null;
+  try {
+    await connectMongo();
+    const doc = await LangifyUserModel()
+      .findOne({ email: { $regex: new RegExp(`^${escapeRegex(normalized)}$`, 'i') } })
+      .select({ _id: 1 })
+      .lean<{ _id: mongoose.Types.ObjectId }>();
+    return doc?._id ? String(doc._id) : null;
+  } catch {
+    // Surface as thrown for auth link retry logic when caller wants it;
+    // this wrapper swallows — rethrow for A3 tests via findLangifyUserIdByEmailOrThrow.
+    return null;
+  }
+}
+
+/** Same as findLangifyUserIdByEmail but rethrows DB errors (for link retry / tests). */
+export async function findLangifyUserIdByEmailOrThrow(
+  email: string,
+): Promise<string | null> {
+  const normalized = email.trim().toLowerCase();
+  if (!mongoConfigured() || !normalized) return null;
+  await connectMongo();
+  const doc = await LangifyUserModel()
+    .findOne({ email: { $regex: new RegExp(`^${escapeRegex(normalized)}$`, 'i') } })
+    .select({ _id: 1 })
+    .lean<{ _id: mongoose.Types.ObjectId }>();
+  return doc?._id ? String(doc._id) : null;
+}
+
+function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 /** First word of Langify users.name, or null if unknown. Read-only. */
 export async function getLangifyUserFirstName(
   userId: string,

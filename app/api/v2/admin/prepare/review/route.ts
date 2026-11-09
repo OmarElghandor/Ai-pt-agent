@@ -12,7 +12,7 @@ import { connectMongo } from '@/lib/mongo';
 export const runtime = 'nodejs';
 
 export async function GET(req: Request) {
-  const denied = denyUnlessV2Admin();
+  const denied = await denyUnlessV2Admin();
   if (denied) return denied;
   if (!mongoConfigured()) {
     return NextResponse.json({ items: [] });
@@ -24,7 +24,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const denied = denyUnlessV2Admin();
+  const denied = await denyUnlessV2Admin();
   if (denied) return denied;
   if (!mongoConfigured()) {
     return NextResponse.json({ error: 'MongoDB not configured' }, { status: 503 });

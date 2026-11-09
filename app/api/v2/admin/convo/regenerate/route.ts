@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { clearCachedAudioForTexts } from '@/lib/audioCache';
-import { getCurrentUserId } from '@/lib/auth/currentUser';
+import { getCurrentV2UserId } from '@/lib/v2/auth/session';
 import { denyUnlessV2Admin } from '@/lib/v2/generation/adminGate';
 import { enqueueAndStartGenerateConvoPack } from '@/lib/v2/generation/jobs';
 import { enqueueOrJoinPrepareDay } from '@/lib/v2/generation/prepare';
@@ -41,10 +41,10 @@ function resolvePackId(body: {
  * Body: { pack_id | topic_id, action }
  */
 export async function POST(req: Request) {
-  const denied = denyUnlessV2Admin();
+  const denied = await denyUnlessV2Admin();
   if (denied) return denied;
 
-  const adminId = getCurrentUserId() ?? 'anonymous';
+  const adminId = (await getCurrentV2UserId()) ?? 'anonymous';
   const body = (await req.json().catch(() => null)) as {
     pack_id?: string;
     topic_id?: string;
@@ -74,7 +74,7 @@ export async function POST(req: Request) {
   });
 
   const store = new MongoConvoSessionStore();
-  const userId = getCurrentUserId();
+  const userId = await getCurrentV2UserId();
   if (!userId) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }

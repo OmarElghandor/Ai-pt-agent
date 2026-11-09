@@ -121,6 +121,8 @@ export type RunFreeConvoTurnInput = {
   learnerTurnId?: string;
   /** Injected free-text grader (tests). */
   freeTextGrader?: FreeTextGrader;
+  /** Learner gender for tl / tl_f ask lines; default m. */
+  learnerGender?: 'm' | 'f';
 };
 
 function pushExchange(
@@ -1058,7 +1060,7 @@ export async function runFreeConvoTurn(
 
     const currentDef = bank.goals.find((g) => g.id === session.current_goal);
     const askLines = currentDef
-      ? pickGoalAskLines(currentDef)
+      ? pickGoalAskLines(currentDef, input.learnerGender ?? 'm')
       : null;
     const currentGoalLine = currentDef
       ? formatCurrentGoalLine({

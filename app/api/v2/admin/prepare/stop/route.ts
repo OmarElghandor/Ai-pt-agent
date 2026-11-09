@@ -8,7 +8,7 @@ import {
 export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
-  const denied = denyUnlessV2Admin();
+  const denied = await denyUnlessV2Admin();
   if (denied) return denied;
 
   const body = (await req.json().catch(() => null)) as {

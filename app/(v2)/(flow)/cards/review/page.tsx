@@ -1,5 +1,5 @@
 import { ReviewSession } from '@/components/v2/cards/ReviewSession';
-import { getCurrentUserId } from '@/lib/auth/currentUser';
+import { getCurrentV2UserId } from '@/lib/v2/auth/session';
 import { hydrateCardFaces } from '@/lib/v2/decks';
 import {
   dayOverrideFromSearch,
@@ -17,7 +17,7 @@ export default async function CardsReviewPage({ searchParams }: Props) {
   const deckId = sp.deck ? decodeURIComponent(sp.deck) : undefined;
 
   let previewFace = null;
-  const userId = getCurrentUserId();
+  const userId = await getCurrentV2UserId();
   if (itemId && userId) {
     const day = await resolveLearnerDay(userId, dayOverride);
     const faces = await hydrateCardFaces([itemId], day);

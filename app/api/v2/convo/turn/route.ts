@@ -1,4 +1,8 @@
-import { getCurrentUserId } from '@/lib/auth/currentUser';
+import {
+  getCurrentV2User,
+  getCurrentV2UserId,
+  learnerGenderFromUser,
+} from '@/lib/v2/auth/session';
 import { isV2Enabled } from '@/lib/v2/flags';
 import {
   requireConvoPackAsync,
@@ -29,10 +33,12 @@ export async function POST(req: Request) {
     return Response.json({ error: 'v2 disabled' }, { status: 403 });
   }
 
-  const userId = getCurrentUserId();
+  const user = await getCurrentV2User();
+  const userId = user?.id ?? (await getCurrentV2UserId());
   if (!userId) {
     return Response.json({ error: 'unauthorized' }, { status: 401 });
   }
+  const learnerGender = learnerGenderFromUser(user);
 
   const body = (await req.json().catch(() => null)) as {
     session_id?: string;
@@ -79,6 +85,7 @@ export async function POST(req: Request) {
             store,
             model: liveModel,
             emit,
+            learnerGender,
             ...(body?.assisted ? { assisted: true } : {}),
             ...(body?.character_id
               ? { characterId: body.character_id }

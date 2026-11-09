@@ -45,7 +45,7 @@ function previewFinalPrompt(opts: {
 }
 
 export async function GET(req: Request) {
-  const denied = denyUnlessV2Admin();
+  const denied = await denyUnlessV2Admin();
   if (denied) return denied;
   if (!mongoConfigured()) {
     return NextResponse.json({ error: 'MongoDB not configured' }, { status: 503 });
@@ -184,7 +184,7 @@ export async function GET(req: Request) {
   });
 }
 export async function PATCH(req: Request) {
-  const denied = denyUnlessV2Admin();
+  const denied = await denyUnlessV2Admin();
   if (denied) return denied;
   if (!mongoConfigured()) {
     return NextResponse.json({ error: 'MongoDB not configured' }, { status: 503 });

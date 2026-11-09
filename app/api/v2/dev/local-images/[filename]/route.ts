@@ -53,7 +53,7 @@ export async function GET(
 
 /** Block accidental POSTs without admin. */
 export async function POST() {
-  const denied = denyUnlessV2Admin();
+  const denied = await denyUnlessV2Admin();
   if (denied) return denied;
   return NextResponse.json({ error: 'method not allowed' }, { status: 405 });
 }

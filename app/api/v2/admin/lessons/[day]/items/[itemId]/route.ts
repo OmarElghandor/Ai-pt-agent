@@ -18,7 +18,7 @@ export async function PATCH(
   req: Request,
   ctx: { params: Promise<{ day: string; itemId: string }> },
 ) {
-  const denied = denyUnlessV2Admin();
+  const denied = await denyUnlessV2Admin();
   if (denied) return denied;
 
   if (!mongoConfigured()) {

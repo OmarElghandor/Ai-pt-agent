@@ -24,7 +24,7 @@ type Body = {
  * Enqueue one content image job (async). Poll GET /api/v2/admin/images?day=.
  */
 export async function POST(req: Request) {
-  const denied = denyUnlessV2Admin();
+  const denied = await denyUnlessV2Admin();
   if (denied) return denied;
   if (!mongoConfigured()) {
     return NextResponse.json({ error: 'MongoDB not configured' }, { status: 503 });

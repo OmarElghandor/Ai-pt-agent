@@ -12,6 +12,7 @@ import {
   buildFreeOpeningBubbles,
   createFreeConvoSessionDoc,
   freePackId,
+  type LearnerGender,
 } from './freeInit';
 import { buildFreeReopening } from './reopenFree';
 import { loadSuggestedSurfacesForUser } from './suggestedWords';
@@ -33,6 +34,8 @@ export type StartFreeConvoSessionOpts = {
   learnerLevel?: number | null;
   /** Injected for tests; otherwise loaded from Langify users.name. */
   learnerName?: string | null;
+  /** Learner gender for tl / tl_f; default m. */
+  learnerGender?: LearnerGender;
 };
 
 async function resumeFree(
@@ -40,6 +43,7 @@ async function resumeFree(
   topic: FreeTopic,
   store: ConvoSessionStore,
   learnerName?: string | null,
+  learnerGender: LearnerGender = 'm',
 ): Promise<StartConvoResult> {
   const cleared =
     existing.paused_for_pack_id != null
@@ -78,6 +82,7 @@ async function resumeFree(
     opening: buildFreeOpeningBubbles(topic, {
       learnerName,
       lessonDay,
+      learnerGender,
     }),
     resumed: true,
   };
@@ -120,13 +125,25 @@ export async function startFreeConvoSession(
       existing.topic_id === topic.id &&
       lessonDayMatches(existing)
     ) {
-      return resumeFree(existing, topic, opts.store, learnerName);
+      return resumeFree(
+        existing,
+        topic,
+        opts.store,
+        learnerName,
+        opts.learnerGender ?? 'm',
+      );
     }
   }
 
   const open = await opts.store.findOpen(opts.userId, packId);
   if (open && open.module === 'free' && lessonDayMatches(open)) {
-    return resumeFree(open, topic, opts.store, learnerName);
+    return resumeFree(
+      open,
+      topic,
+      opts.store,
+      learnerName,
+      opts.learnerGender ?? 'm',
+    );
   }
 
   // F5: hydrate generated lesson-day bank into memory/Mongo before create.
@@ -158,6 +175,7 @@ export async function startFreeConvoSession(
     opening: buildFreeOpeningBubbles(topic, {
       learnerName,
       lessonDay: opts.lessonDay,
+      learnerGender: opts.learnerGender ?? 'm',
     }),
     resumed: false,
   };

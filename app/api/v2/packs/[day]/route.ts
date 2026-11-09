@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { isV2Enabled } from '@/lib/v2/flags';
 import { getPublishedPack } from '@/lib/v2/generation/pack/save';
 import { getPublishedLesson } from '@/lib/v2/content/getPublishedLesson';
+import { requireV2User } from '@/lib/v2/auth/session';
 
 export const runtime = 'nodejs';
 
@@ -9,6 +10,9 @@ export async function GET(
   _req: Request,
   ctx: { params: Promise<{ day: string }> },
 ) {
+  const __auth = await requireV2User();
+  if (__auth.error) return __auth.error;
+
   if (!isV2Enabled()) {
     return NextResponse.json({ error: 'v2 disabled' }, { status: 403 });
   }

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { connectMongo, mongoConfigured } from '@/lib/mongo';
 import { V2ImageModel } from '@/lib/v2/mongo/models';
+import { requireV2User } from '@/lib/v2/auth/session';
 
 export const runtime = 'nodejs';
 
@@ -11,6 +12,9 @@ export async function GET(
   _req: Request,
   ctx: { params: Promise<{ key: string }> },
 ) {
+  const __auth = await requireV2User();
+  if (__auth.error) return __auth.error;
+
   const { key: raw } = await ctx.params;
   const key = decodeURIComponent(raw);
   if (!key) {

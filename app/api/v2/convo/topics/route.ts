@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getCurrentUserId } from '@/lib/auth/currentUser';
+import { getCurrentV2UserId } from '@/lib/v2/auth/session';
 import { mongoConfigured } from '@/lib/mongo';
 import { listTopicsForUser } from '@/lib/v2/convo/topics';
 import { isV2Enabled } from '@/lib/v2/flags';
@@ -17,7 +17,7 @@ export async function GET(req: Request) {
   if (!mongoConfigured()) {
     return NextResponse.json({ error: 'MongoDB not configured' }, { status: 503 });
   }
-  const userId = getCurrentUserId();
+  const userId = await getCurrentV2UserId();
   if (!userId) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }

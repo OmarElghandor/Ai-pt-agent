@@ -26,6 +26,10 @@ This pack holds everything decided in design sessions for Langify v2: European P
 | `docs/langify-v2/06-screens.md` | Every screen and its states, with the reference image for each | English |
 | `docs/langify-v2/07-build-plan.md` | Phases, tasks, acceptance checks, Cursor prompts | English |
 | `docs/langify-v2/08-lesson-generation-prompts.md` | Live lesson-generation pipeline, steps, and the prompts the code sends | English |
+| `docs/langify-v2/09-conversations.md` | Character conversations: learn + free talk, grading, budget | English |
+| `docs/langify-v2/09a-conversations-tasks.md` | One-session task breakdown for conversations | English |
+| `docs/langify-v2/10-auth.md` | Google sign-in, v2 users, sessions, onboarding, deletion | English |
+| `docs/langify-v2/10-auth-tasks.md` | One-session task breakdown for auth (A0–A7) | English |
 | `examples/day06-example.json` | Gold ESTAR lesson (filename kept; `lesson.day` is **11** in the grammar-first order) | JSON |
 | `prototypes/ser-estar.html` | Working prototype of a guided (autoplay) page | HTML |
 | `prototypes/verb-endings.html` | Working prototype of an explore page (person dial, swap, build questions) | HTML |

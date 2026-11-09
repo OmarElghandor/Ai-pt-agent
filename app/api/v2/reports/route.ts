@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getCurrentUserId } from '@/lib/auth/currentUser';
+import { getCurrentV2UserId } from '@/lib/v2/auth/session';
 import { connectMongo, mongoConfigured } from '@/lib/mongo';
 import { isV2Enabled } from '@/lib/v2/flags';
 import { V2ReportModel } from '@/lib/v2/mongo/models';
@@ -31,14 +31,17 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
+  const userId = await getCurrentV2UserId();
+  if (!userId) {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
   await connectMongo();
-  const userId = getCurrentUserId();
   const doc = await V2ReportModel().create({
     item_id: body.item_id || undefined,
     question_id: body.question_id || undefined,
     day: body.day,
     note: body.note.trim().slice(0, 2000),
-    user_id: userId || undefined,
+    user_id: userId,
     status: 'open',
   });
   return NextResponse.json({ id: String(doc._id), ok: true });

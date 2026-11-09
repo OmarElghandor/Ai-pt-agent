@@ -7,10 +7,25 @@ If any other doc disagrees with this file, this file wins. Each line is a decisi
 - **Everything in v2 is built from scratch in one repo: `ai-agent-talk`** (folder `ai-pt-agent`). That covers content, renderer, cards, practice, the daily loop and generation.
   - Stack: Next.js 16 App Router, React 19, Tailwind 4, zod 4, Mongoose 9, the Anthropic SDK, plus the existing TTS and STT routes. Read the repo's `AGENTS.md` first, because this Next.js version differs from what models know.
 - v2 is a **mobile-first web app (PWA)**, RTL, designed at 390px width and centered on wider screens. The Stitch designs are the visual target.
-- The `langify` repo (Express backend plus the Expo app) is **legacy and frozen**. v2 reads only identity from it: Langify `users`, read-only, through `lib/langifyRead`, as today. v2 never writes Langify collections.
+- The `langify` repo (Express backend plus the Expo app) is **legacy and frozen**. **(changed 2026-11-09)** v2 owns its users and signs them in with Google (§0b). Langify `users` is read only once, at first sign-in, to link an existing account. v2 never writes Langify collections.
 - All v2 data lives in this repo's own collections, prefixed `v2_`.
 - The grader and the reactor are internal modules called by v2's own answer route. There is no cross-service HTTP and no shared secret.
 - The old `/lessons` and `/chat` pages keep working until v2 replaces them; then they're removed.
+
+## 0b. Accounts and sign-in (new, 2026-11-09)
+
+Full detail: `10-auth.md`. Tasks: `10-auth-tasks.md`.
+
+- **Sign-in:** Google only (openid email profile). No passwords. Better Auth + MongoDB adapter in this repo; Auth.js / NextAuth not used for new work. Next.js 16 uses `proxy` (not `middleware`) for the early redirect.
+- **Collections:** `v2_users`, `v2_auth_sessions`, `v2_auth_accounts`, `v2_auth_verifications`. `v2_users` holds name, email, email_verified, picture, `role` (learner | admin), `gender` (m | f | null), `onboarded_at`, `langify_user_id`, created and last-seen.
+- **Every learner document is keyed by the v2 user id.** A migration rekeys any docs still keyed by a Langify id (dry run, then idempotent real run).
+- **Langify link (once):** on first Google sign-in, if the email is verified and matches a Langify `users` email, store `langify_user_id` via `lib/langifyRead`. Never write Langify. A failed read never blocks sign-in.
+- **Who is the user:** one server helper from the session. The user id never comes from the request body, query or headers.
+- **Protection:** `/api/v2/*` (except auth + public health) and `(v2)` pages (except landing + sign-in) require a signed-in user. `proxy` only redirects early; the helper is the real guard. Admin pages/APIs need `role: admin` from `ADMIN_EMAILS` applied on sign-in.
+- **Sessions:** DB-backed, httpOnly Secure SameSite=Lax, 60 days rolling. Full-page Google redirect (no popup). Sign-out deletes the session.
+- **UI:** Calm Kit sign-in (RTL, Google branding on the button, privacy link). One-time onboarding: name, then gender (Egyptian reason line), then day 1. No guest mode for v1. Settings: name, gender, sign out, delete account.
+- **Deletion:** "امسح حسابي" deletes the v2 user, sessions, accounts, and every v2 document keyed by their id. Langify and shared content are untouched.
+- **Env (server only):** `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ADMIN_EMAILS`. Dev-only test sign-in route; must not be reachable in production.
 
 ## 1. Product shape
 
@@ -94,7 +109,7 @@ If any other doc disagrees with this file, this file wins. Each line is a decisi
     - **(new 2026-11-02) Gender and voice:** every cast entry has `gender` (m | f) and a `voice`. They are used for TTS and for gendered forms (obrigado / obrigada, cansado / cansada).
       - **Recurring characters** (yassin, ines, rita, manuel, sofia, carlos) take gender and voice from one character registry in code. A model value that disagrees is overwritten.
       - **New characters:** the model returns their gender, and code assigns a voice for that gender that isn't already used in the story.
-      - **The learner's gender** comes from the user profile, defaulting to m until it's set. Learner lines are stored with both forms when they differ (`tl` + `tl_f`), and the player picks one by the profile. The learner's voice follows the same gender.
+      - **The learner's gender** comes from `v2_users.gender` (set in onboarding / settings), defaulting to m until it's set. Learner lines are stored with both forms when they differ (`tl` + `tl_f`), and the player picks one by the profile. The learner's voice follows the same gender.
       - **Narrator:** a fixed neutral voice.
       - Each line's audio cache key includes the voice, so changing a voice never plays stale audio.
     - **Narration:** if it is needed, it uses the speaker `narrator`.
@@ -478,3 +493,7 @@ If any other doc disagrees with this file, this file wins. Each line is a decisi
 - Character sheets for rita, manuel, sofia and carlos.
 - Native review of weeks 1–2 before release.
 - Pilot: generate days 1–3 end to end before the rest.
+- Test Google sign-in in an installed iPhone PWA and Android before the pilot (`10-auth.md`).
+- Apple sign-in and email magic link: decide after the pilot.
+- Guest mode (try day 1 before signing in): decide after the pilot.
+- Langify users who signed up with an email that isn't a Google account: how they reach their old progress, if at all.

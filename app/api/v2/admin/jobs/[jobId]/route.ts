@@ -10,7 +10,7 @@ export async function GET(
   _req: Request,
   ctx: { params: Promise<{ jobId: string }> },
 ) {
-  const denied = denyUnlessV2Admin();
+  const denied = await denyUnlessV2Admin();
   if (denied) return denied;
   if (!mongoConfigured()) {
     return NextResponse.json({ error: 'MongoDB not configured' }, { status: 503 });

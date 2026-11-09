@@ -12,7 +12,7 @@ export async function POST(
   req: Request,
   ctx: { params: Promise<{ day: string }> },
 ) {
-  const denied = denyUnlessV2Admin();
+  const denied = await denyUnlessV2Admin();
   if (denied) return denied;
 
   const { day: dayStr } = await ctx.params;

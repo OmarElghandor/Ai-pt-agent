@@ -37,7 +37,7 @@ async function listLessonsOrEmpty(targetLang: string): Promise<{
 }
 
 export async function GET() {
-  const denied = denyUnlessV2Admin();
+  const denied = await denyUnlessV2Admin();
   if (denied) return denied;
 
   try {

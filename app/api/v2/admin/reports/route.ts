@@ -6,7 +6,7 @@ import { connectMongo, mongoConfigured } from '@/lib/mongo';
 export const runtime = 'nodejs';
 
 export async function GET() {
-  const denied = denyUnlessV2Admin();
+  const denied = await denyUnlessV2Admin();
   if (denied) return denied;
   if (!mongoConfigured()) {
     return NextResponse.json({ error: 'MongoDB not configured' }, { status: 503 });

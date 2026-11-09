@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getCurrentUserId } from '@/lib/auth/currentUser';
+import { getCurrentV2UserId } from '@/lib/v2/auth/session';
 import { connectMongo, mongoConfigured } from '@/lib/mongo';
 import { isV2Enabled } from '@/lib/v2/flags';
 import { V2TopicRequestModel } from '@/lib/v2/mongo/models';
@@ -13,7 +13,7 @@ export async function POST(req: Request) {
   if (!isV2Enabled()) {
     return NextResponse.json({ error: 'v2 disabled' }, { status: 403 });
   }
-  const userId = getCurrentUserId();
+  const userId = await getCurrentV2UserId();
   if (!userId) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }

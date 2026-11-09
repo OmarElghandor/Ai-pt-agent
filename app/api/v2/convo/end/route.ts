@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getCurrentUserId } from '@/lib/auth/currentUser';
+import { getCurrentV2UserId } from '@/lib/v2/auth/session';
 import { isV2Enabled } from '@/lib/v2/flags';
 import {
   MongoConvoSessionStore,
@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   if (!isV2Enabled()) {
     return NextResponse.json({ error: 'v2 disabled' }, { status: 403 });
   }
-  const userId = getCurrentUserId();
+  const userId = await getCurrentV2UserId();
   if (!userId) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }

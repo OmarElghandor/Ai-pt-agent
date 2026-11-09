@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { isV2DevAllowed, isV2Enabled } from '@/lib/v2/flags';
+import { denyUnlessV2Admin } from '@/lib/v2/generation/adminGate';
+import { isV2Enabled } from '@/lib/v2/flags';
 import {
   ensureLessonDayGoalBank,
   listCachedLessonDayBanks,
@@ -12,9 +13,8 @@ export async function GET() {
   if (!isV2Enabled()) {
     return NextResponse.json({ error: 'v2 disabled' }, { status: 403 });
   }
-  if (!isV2DevAllowed()) {
-    return NextResponse.json({ error: 'forbidden' }, { status: 403 });
-  }
+  const denied = await denyUnlessV2Admin();
+  if (denied) return denied;
   const items = await listCachedLessonDayBanks();
   return NextResponse.json({ items });
 }
@@ -23,9 +23,8 @@ export async function POST(req: Request) {
   if (!isV2Enabled()) {
     return NextResponse.json({ error: 'v2 disabled' }, { status: 403 });
   }
-  if (!isV2DevAllowed()) {
-    return NextResponse.json({ error: 'forbidden' }, { status: 403 });
-  }
+  const denied = await denyUnlessV2Admin();
+  if (denied) return denied;
   const body = (await req.json().catch(() => null)) as {
     day?: number;
     days?: number[];

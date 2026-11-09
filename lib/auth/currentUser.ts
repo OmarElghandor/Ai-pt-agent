@@ -1,9 +1,11 @@
 import { isObjectIdString } from '@/lib/mongo';
 
 /**
- * Single place for "current Langify user id".
- * Dev: DEV_LANGIFY_USER_ID (or legacy DEV_USER_PROGRESS_ID) / ObjectId session.
- * Later: verify Langify JWT here only.
+ * Legacy Langify id helper for practice_* / langifyRead only.
+ * v2 learner routes must use getCurrentV2User / getCurrentV2UserId from
+ * `lib/v2/auth/session` (session cookie). Never trust a client-supplied user id.
+ *
+ * Dev fallback: DEV_LANGIFY_USER_ID for legacy paths only.
  */
 export function getCurrentUserId(sessionHint?: string | null): string | null {
   if (sessionHint && isObjectIdString(sessionHint)) return sessionHint;

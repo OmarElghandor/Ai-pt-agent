@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
-import { getCurrentUserId } from '@/lib/auth/currentUser';
+import {
+  getCurrentV2User,
+  getCurrentV2UserId,
+  learnerGenderFromUser,
+} from '@/lib/v2/auth/session';
 import { isV2Enabled } from '@/lib/v2/flags';
 import {
   ensureConvoPackReady,
@@ -45,10 +49,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'v2 disabled' }, { status: 403 });
   }
 
-  const userId = getCurrentUserId();
+  const user = await getCurrentV2User();
+  const userId = user?.id ?? (await getCurrentV2UserId());
   if (!userId) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
+  const learnerGender = learnerGenderFromUser(user);
+  const learnerName = user?.name?.trim().split(/\s+/)[0] ?? null;
 
   const body = (await req.json().catch(() => null)) as {
     pack_id?: string;
@@ -96,6 +103,8 @@ export async function POST(req: Request) {
         ...(body?.session_id ? { sessionId: body.session_id } : {}),
         ...(dayHint != null ? { lessonDay: dayHint } : {}),
         learnerLevel,
+        learnerName,
+        learnerGender,
         ...(dayWords && dayWords.length
           ? { suggestedWords: dayWords }
           : {}),

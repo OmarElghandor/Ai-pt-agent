@@ -21,7 +21,7 @@ function cronEnabled(): boolean {
  * Behind V2_PREPARE_CRON=1 (or admin POST without the flag in non-prod).
  */
 export async function GET() {
-  const denied = denyUnlessV2Admin();
+  const denied = await denyUnlessV2Admin();
   if (denied) return denied;
   if (!cronEnabled()) {
     return NextResponse.json(
@@ -33,7 +33,7 @@ export async function GET() {
 }
 
 export async function POST() {
-  const denied = denyUnlessV2Admin();
+  const denied = await denyUnlessV2Admin();
   if (denied) return denied;
   return startKeepAhead();
 }

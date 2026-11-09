@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { TTSNotConfiguredError } from '@/lib/tts';
 import { ensureStoryLineAudio } from '@/lib/v2/storyAudio';
+import { requireV2User } from '@/lib/v2/auth/session';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -9,6 +10,9 @@ export async function POST(
   req: Request,
   ctx: { params: Promise<{ id: string; lineIndex: string }> },
 ) {
+  const __auth = await requireV2User();
+  if (__auth.error) return __auth.error;
+
   try {
     const { id, lineIndex: rawIndex } = await ctx.params;
     const lineIndex = Number(rawIndex);

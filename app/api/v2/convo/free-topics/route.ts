@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getCurrentUserId } from '@/lib/auth/currentUser';
+import { getCurrentV2UserId } from '@/lib/v2/auth/session';
 import { isV2Enabled } from '@/lib/v2/flags';
 import { loadFreeTopicsFile } from '@/lib/v2/convo/topics';
 import {
@@ -14,11 +14,14 @@ export async function GET() {
   if (!isV2Enabled()) {
     return NextResponse.json({ error: 'v2 disabled' }, { status: 403 });
   }
+  const userId = await getCurrentV2UserId();
+  if (!userId) {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
   try {
     const file = loadFreeTopicsFile();
     const resumeIds = new Set<string>();
-    const userId = getCurrentUserId();
-    if (userId) {
+    {
       const store = new MongoConvoSessionStore();
       const openIds = await store.findOpenFreeTopicIds(userId);
       for (const id of openIds) resumeIds.add(id);

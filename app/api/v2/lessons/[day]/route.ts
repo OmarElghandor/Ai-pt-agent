@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { requireV2User } from '@/lib/v2/auth/session';
 import {
   getLatestLessonPack,
   getPublishedLesson,
@@ -12,6 +13,9 @@ export async function GET(
   _req: Request,
   ctx: { params: Promise<{ day: string }> },
 ) {
+  const __auth = await requireV2User();
+  if (__auth.error) return __auth.error;
+
   const { day: dayRaw } = await ctx.params;
   const day = Number(dayRaw);
   if (!Number.isInteger(day) || day < 1) {

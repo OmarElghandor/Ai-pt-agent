@@ -11,7 +11,7 @@ export const maxDuration = 300;
  * Enqueue missing lesson images as queue jobs and drain in the background.
  */
 export async function POST(req: Request) {
-  const denied = denyUnlessV2Admin();
+  const denied = await denyUnlessV2Admin();
   if (denied) return denied;
   if (!mongoConfigured()) {
     return NextResponse.json({ error: 'MongoDB not configured' }, { status: 503 });

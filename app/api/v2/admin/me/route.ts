@@ -5,7 +5,7 @@ export const runtime = 'nodejs';
 
 /** Lightweight gate probe for the in-session ⋯ regenerate menu. */
 export async function GET() {
-  const denied = denyUnlessV2Admin();
+  const denied = await denyUnlessV2Admin();
   if (denied) return denied;
   return NextResponse.json({ ok: true });
 }

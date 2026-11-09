@@ -12,7 +12,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 - **Spec:** `docs/langify-v2/`. **`00-decisions.md` is the tie-breaker** if any other doc disagrees. Start with that file, then `01-architecture.md`. Build plan: `07-build-plan.md`.
 - **New code only under:** `app/(v2)`, `app/api/v2`, `lib/v2`, `components/v2`. Mongo collections for v2 are prefixed `v2_`.
-- **Langify repo is legacy.** Read identity only via `lib/langifyRead` / `getCurrentUserId()` in `lib/auth/currentUser.ts` (dev: `DEV_LANGIFY_USER_ID`). Never write Langify collections.
+- **Auth (v2):** Google via Better Auth (`lib/v2/auth`, `/api/auth/*`). Session helper `getCurrentV2User` / `getCurrentV2UserId` — user id never from the request. Spec: `docs/langify-v2/10-auth.md`.
+- **Langify repo is legacy.** Link once at first Google sign-in via `lib/langifyRead` (`langify_user_id`). Never write Langify collections. Legacy practice paths may still use `DEV_LANGIFY_USER_ID` / `lib/auth/currentUser.ts`.
 - **Progress:** only `POST /api/v2/answers` writes learner progress. `lib/v2/grader` and `lib/v2/reactor` are pure modules (no DB writes).
 - **Legacy UI stays** until cut-over: `/lessons`, `/chat`, and the old practice pipeline. Do not change them unless a task says so.
 - **Deprecated (do not extend):** `POST /api/grade`, `POST /api/react`, `lib/agentAuth`, and `docs/v2-agent-contract.md`. Phase 6 moves useful grader/reactor logic into `lib/v2/grader` and `lib/v2/reactor`, then deletes those HTTP routes.

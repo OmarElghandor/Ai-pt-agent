@@ -1,4 +1,4 @@
-import { getCurrentUserId } from '@/lib/auth/currentUser';
+import { getCurrentV2UserId } from '@/lib/v2/auth/session';
 import { connectMongo, mongoConfigured } from '@/lib/mongo';
 import type { Item } from '@/lib/v2/content/items';
 import { getPublishedLesson } from '@/lib/v2/content/getPublishedLesson';
@@ -340,7 +340,7 @@ export async function handleAnswerRequest(
   if (!mongoConfigured()) {
     return { status: 503, error: 'MongoDB not configured' };
   }
-  const userId = getCurrentUserId();
+  const userId = await getCurrentV2UserId();
   if (!userId) {
     return { status: 401, error: 'unauthorized' };
   }
