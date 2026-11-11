@@ -30,16 +30,21 @@ Full detail: `10-auth.md`. Tasks: `10-auth-tasks.md`.
 ## 1. Product shape
 
 - Audience: Egyptian Arabic speakers living in Portugal, A0–A1. Target language: European Portuguese (pt-PT). Later: English and German on the same engine.
-- **(changed 2026-11-01) Lesson size: at most 14 core items.** Bigger lessons are split into two lessons, one after the other. The plan is now **109 days**: phase 1 is days 1–49 (41 lessons, 7 stories, and the A1 test on day 49), and phases 2–3 are days 50–109. The old → new day mapping is in `04` ("تقسيم الدروس الكبيرة"). Day numbers elsewhere in the docs that were written before this date use the old numbering unless they've been updated; `04` and this file are current.
+- **(changed 2026-11-01) Lesson size: at most 14 core items.** Bigger lessons are split into two lessons, one after the other. **(changed 2026-11-11)** The plan is now **114 days**: phase 1 is days 1–54 (46 lessons, 7 stories, and the A1 test on day 54), and phases 2–3 are days 55–114. The old → new day mapping is in `04` ("تقسيم الدروس الكبيرة"). Day numbers elsewhere in the docs that were written before this date use the old numbering unless they've been updated; `04` and this file are current.
+- **(new 2026-11-11) Everyday words.** Phase 1 must teach the words people use in every conversation, not only the words of each situation: where (aqui · aí · ali · lá · em cima de…), describing (bom · caro · assim · como · igual), comparing (mais … do que · melhor), quantity (todos · ninguém · nada · cada), not knowing (Não sei · Acho que…) and conversation fillers (Então · Pois · Olha · Pronto).
+  - They're added to existing days as items or ready-made chunks only where the day stays at 14 items or fewer. Otherwise they get their own day: 44 Adjetivos 2, 47 Aqui e Ali, 48 Comparativos, 49 Saber e Conhecer, 51 Todos e Ninguém.
+  - Old → new: 44→45, 45→46, 46→50, 47→52, 48→53, 49→54, and every day from 50 to 109 moves up by 5. Days 1–43 keep their numbers.
+  - Fillers, occasions and polite requests are micro chains, not lesson items. Full list: `04` ("كلام كل يوم").
+  - These words are taught as items. They are **not** added to `function-words.json`, so the generator won't use them before they're taught.
 - **(changed 2026-10-25)** 90 days, ordered **grammar-first**. Each day is one grammar unit, following the unit order of Practice Portuguese A1: regular present -ar → -er → -ir, then ser/estar, then the irregulars, then the past. The unit is taught **inside a street situation** that needs it, and the situation supplies the phrases, the words and the character conversation.
   - Anything urgent for a resident (Queria…, O que é isto?, Fui ao…, Dói-me…) comes early as a **ready-made chunk**, and its rule comes later in its place in the order. Numbers are the one exception, with their own day (day 8).
-  - Each week ends with a story day (days 7, 14, 21, 29, 37, 44, 48 in phase 1). Full plan: `04-curriculum.md`.
+  - Each week ends with a story day (days 7, 14, 21, 29, 37, 45, 53 in phase 1). Full plan: `04-curriculum.md`.
 - **(new)** Lesson titles are the Portuguese unit titles (e.g. "Verbos -AR 1", "Possessivos"), shown with an Arabic translation and the situation under them.
   - When a day covers more than one of their units, the extra unit titles are listed on it.
-  - Story days, the second parts of split lessons, and day 47 have our own titles.
+  - Story days, the second parts of split lessons, and days 44, 47, 48, 49, 51 and 52 have our own titles.
   - We reuse only the topic order and names, never their content.
   - Plan fields: `title_tl`, `title_ar`, `situation_eg`, `example_tl`, `rule_eg`, `extra_units_tl`, `early_chunks_tl`.
-- **(new)** Days 1–49 are labeled **A1**, and phase 2 (from day 50) starts **A2**. This is aligned with the CIPLE A2 exam that residents need.
+- **(new)** Days 1–54 are labeled **A1**, and phase 2 (from day 55) starts **A2**. This is aligned with the CIPLE A2 exam that residents need.
 - SER vs ESTAR is now days 19–23. `examples/day06-example.json` is the ESTAR day, which is **day 22** in the new order. The file keeps its name, but its `day` is 22.
 - A normal day has these steps, about 10 minutes in all: see the place (words) → situation phrases → one small rule → self-test → conversation with a character → review. Each step is one or more **pages**.
 - The "Library" (المكتبة) is the book in its original order: rules, tenses, verb cards, picture dictionary, stories. A page unlocks there when the learner reaches it on the path.
@@ -100,7 +105,7 @@ Full detail: `10-auth.md`. Tasks: `10-auth-tasks.md`.
        - the meaning of one line.
      - It is not a separate generated page. The app reuses page 0 in test mode.
   4. Then questions, practice and micro as before.
-  - **Weekly story days (7, 14, 21, 29, 37, 44, 48)** stay as they are: a full story, with no detail pages.
+  - **Weekly story days (7, 14, 21, 29, 37, 45, 53)** stay as they are: a full story, with no detail pages.
 - **(new 2026-10-30) Story builder.** The story is generated by its own job, before the outline, and the rest of the day is built from it.
   - **Order:** brief → items → **story** → outline → pages / questions / micro / daily_use → critic → continuity → lang_check → assemble. The outline and the page jobs receive the story as input.
   - **Storage:** each day has one story document per language, in its own file or collection (for example `stories/pt-PT/day-03`), with its own version and status. The lesson does not copy the lines. Page 0 and the test replay point to it by `story_id`. The publish gate checks the story document together with the lesson.
@@ -239,6 +244,28 @@ Full detail: `10-auth.md`. Tasks: `10-auth-tasks.md`.
     - 8 phrases (we show 4–5);
     - "/" inside a phrase;
     - the broken image icon.
+
+- **(new 2026-11-09) One vocabulary flow, with micro checks.** The dictionary and phrases pages are merged into **one ItemViewer flow** for the day's words and phrases, so items never come all in a row with no time to think.
+  - **Order:** items follow their first appearance in the story. A phrase comes right after the words it uses, for example o café → o leite → "Queria um café com leite".
+  - **Chunks of 3:** after every 3 items there is a **micro check**, one quick question on what was just seen. A check never comes right after another check, and the flow always ends with one.
+  - **Micro check types (code-built, no model), rotating so no two in a row share a type:**
+    - `pick_image`: hear an item, tap 1 of 3 pictures (only when images are ready);
+    - `pick_meaning`: see the TL, pick 1 of 3 Arabic meanings;
+    - `pick_tl`: see the Arabic, pick 1 of 3 TL items;
+    - `choose_article`: o / a (or os / as) for a noun just seen;
+    - `complete_phrase`: the phrase just seen with one missing word, and 3 chips;
+    - `say_it`: say the item aloud (self-check until STT is live).
+
+    The distractors come only from items already seen in the flow or from earlier days.
+  - **Variety between steps.** The flow mixes three screen kinds, so it never feels like a list:
+    - an **item card** (word: 1:1 picture; phrase: 4:3 conversation picture with the story line under it);
+    - a **phrase in use** card, which shows the story line where the phrase is said, with the speaker's avatar and a play button;
+    - a **micro check**.
+
+    Long days (more than 9 items) get a halfway breather card: "شفت ٦ من ١٢ · كمّل", with the 6 items as small chips that play on tap.
+  - **Feedback:** each check gives an instant answer with a one-line why, and a wrong answer shows the item card again briefly. Checks never block. The first try is posted to `/api/v2/answers` as type `micro_check`, and it counts as an implicit review, not a test.
+  - **Pages:** the separate dictionary and phrases presets become one `vocab_flow` page in the outline. The "بيقولوها كده" page stays separate and keeps its place after this flow. Grammar comes after it, then "لاقي الصورة".
+  - Micro checks don't count toward the day's 12–15 questions, and the day question planner may still test the same items in other types.
 
 - **(new 2026-11-03) "لاقي الصورة" step.** A short listening game after the grammar page and before the story replay. The day order becomes: story → detail pages (dictionary, real-world phrases, phrases, grammar) → **لاقي الصورة** → the story again (test) → أسئلة اليوم.
   - **It never generates images.** It reuses lesson image links (`items[].image.url`, filled from ready `v2_images` on read), and never requests or queues generation.

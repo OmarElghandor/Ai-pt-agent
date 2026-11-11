@@ -1,7 +1,7 @@
 {
   "version": 1,
   "lang": "pt-PT",
-  "note": "core_items_tl per day. id namespaced; verb.* ids match v2_conjugations lemma. eg = hint for the generator, not final copy. plural_tl: os/as plural for countable nouns (null = mass/uncountable, no plural examples). singular_tl on plural-only entries. variant_group: alternatives of each other (story needs one; rest on phrases page). variant_tl: accepted alternatives, never shown with slashes. Max 14 core items per lesson (split 2026-11-01). is_test marks the phase test day. image: hand-authored image prompt per item {ratio, characters, prompt} — scene description only; code adds the style block and character reference sheets. story_image on a day = the story scene prompt.",
+  "note": "core_items_tl per day. id namespaced; verb.* ids match v2_conjugations lemma. eg = hint for the generator, not final copy. plural_tl: os/as plural for countable nouns (null = mass/uncountable, no plural examples). singular_tl on plural-only entries. variant_group: alternatives of each other (story needs one; rest on phrases page). variant_tl: accepted alternatives, never shown with slashes. Max 14 core items per lesson (split 2026-11-01). is_test marks the phase test day. image: hand-authored image prompt per item {ratio, characters, prompt} — scene description only; code adds the style block and character reference sheets. story_image on a day = the story scene prompt. 2026-11-11: everyday words added; new days 44, 47, 48, 49, 51; phase 1 = 1–54.",
   "days": [
     {
       "day": 1,
@@ -522,6 +522,18 @@
           "pattern_kind": "article_def",
           "tl": "o + مذكر · a + مؤنث",
           "eg": "الأداة مع الاسم"
+        },
+        {
+          "id": "phrase.its_over_there",
+          "kind": "phrase",
+          "tl": "Está ali.",
+          "eg": "هناك أهو (رد على Onde fica…?)"
+        },
+        {
+          "id": "phrase.at_the_back",
+          "kind": "phrase",
+          "tl": "Está lá atrás.",
+          "eg": "ورا خالص"
         }
       ],
       "recycle_ids": [
@@ -757,6 +769,18 @@
           "kind": "pattern",
           "tl": "Tenho + رقم + anos",
           "eg": "السن بـ ter مش بـ ser"
+        },
+        {
+          "id": "word.expensive_cheap",
+          "kind": "word",
+          "tl": "caro · barato",
+          "eg": "غالي · رخيص"
+        },
+        {
+          "id": "phrase.too_expensive",
+          "kind": "phrase",
+          "tl": "É muito caro!",
+          "eg": "غالي أوي!"
         }
       ],
       "recycle_ids": [
@@ -821,6 +845,12 @@
           "kind": "pattern",
           "tl": "Não + فعل",
           "eg": "النفي"
+        },
+        {
+          "id": "phrase.i_dont_know",
+          "kind": "phrase",
+          "tl": "Não sei.",
+          "eg": "مش عارف (جملة جاهزة، saber يوم 49)"
         }
       ],
       "recycle_ids": [
@@ -1039,6 +1069,12 @@
           "kind": "phrase",
           "tl": "Onde mora?",
           "eg": "ساكن فين؟"
+        },
+        {
+          "id": "phrase.near_here",
+          "kind": "phrase",
+          "tl": "Moro perto daqui.",
+          "eg": "ساكن قريب من هنا"
         }
       ],
       "recycle_ids": [
@@ -1599,6 +1635,36 @@
           "kind": "pattern",
           "tl": "ser = ثابت · estar = حالة",
           "eg": "الفرق"
+        },
+        {
+          "id": "word.good_bad",
+          "kind": "word",
+          "tl": "bom / boa · mau / má",
+          "eg": "كويس · وحش"
+        },
+        {
+          "id": "word.new_old",
+          "kind": "word",
+          "tl": "novo / nova · velho / velha",
+          "eg": "جديد · قديم"
+        },
+        {
+          "id": "word.easy_hard",
+          "kind": "word",
+          "tl": "fácil · difícil",
+          "eg": "سهل · صعب"
+        },
+        {
+          "id": "phrase.portuguese_is_hard",
+          "kind": "phrase",
+          "tl": "O português é difícil.",
+          "eg": "البرتغالي صعب"
+        },
+        {
+          "id": "phrase.good_idea",
+          "kind": "phrase",
+          "tl": "Boa ideia!",
+          "eg": "فكرة حلوة!"
         }
       ],
       "recycle_ids": [
@@ -1842,6 +1908,24 @@
           "kind": "phrase",
           "tl": "Está a chover.",
           "eg": "بتمطر"
+        },
+        {
+          "id": "word.always_sometimes",
+          "kind": "word",
+          "tl": "sempre · às vezes",
+          "eg": "دايماً · ساعات"
+        },
+        {
+          "id": "phrase.every_day",
+          "kind": "phrase",
+          "tl": "todos os dias",
+          "eg": "كل يوم"
+        },
+        {
+          "id": "phrase.sometimes_cold",
+          "kind": "phrase",
+          "tl": "Em Lisboa, às vezes está frio.",
+          "eg": "في لشبونة ساعات الجو بيبقى برد"
         }
       ],
       "recycle_ids": [
@@ -1964,6 +2048,36 @@
           "kind": "phrase",
           "tl": "Não posso, desculpa.",
           "eg": "مش هقدر، معلش"
+        },
+        {
+          "id": "phrase.i_think_so",
+          "kind": "phrase",
+          "tl": "Acho que sim.",
+          "eg": "أعتقد آه"
+        },
+        {
+          "id": "phrase.i_think_not",
+          "kind": "phrase",
+          "tl": "Acho que não.",
+          "eg": "أعتقد لأ"
+        },
+        {
+          "id": "phrase.maybe",
+          "kind": "phrase",
+          "tl": "Talvez.",
+          "eg": "يمكن"
+        },
+        {
+          "id": "phrase.perhaps",
+          "kind": "phrase",
+          "tl": "Se calhar.",
+          "eg": "يمكن / جايز (لشبونة)"
+        },
+        {
+          "id": "phrase.it_depends",
+          "kind": "phrase",
+          "tl": "Depende.",
+          "eg": "على حسب"
         }
       ],
       "recycle_ids": [
@@ -2061,6 +2175,12 @@
           "kind": "pattern",
           "tl": "أداة + فعل + ?",
           "eg": "السؤال"
+        },
+        {
+          "id": "phrase.do_you_know_where",
+          "kind": "phrase",
+          "tl": "Sabe onde fica o supermercado?",
+          "eg": "تعرف السوبر ماركت فين؟ (جملة جاهزة)"
         }
       ],
       "recycle_ids": [
@@ -2318,6 +2438,18 @@
           "kind": "phrase",
           "tl": "Fica ao lado do banco.",
           "eg": "جنب البنك"
+        },
+        {
+          "id": "phrase.far_from_here",
+          "kind": "phrase",
+          "tl": "É longe daqui?",
+          "eg": "بعيد من هنا؟"
+        },
+        {
+          "id": "phrase.right_there",
+          "kind": "phrase",
+          "tl": "É logo ali.",
+          "eg": "هناك أهو، قريب"
         }
       ],
       "recycle_ids": [
@@ -2448,6 +2580,30 @@
           "kind": "pattern",
           "tl": "dia + رقم + de + شهر",
           "eg": "التاريخ: dia 5 de março"
+        },
+        {
+          "id": "word.before_after",
+          "kind": "word",
+          "tl": "antes · depois",
+          "eg": "قبل · بعد"
+        },
+        {
+          "id": "phrase.not_yet",
+          "kind": "phrase",
+          "tl": "Ainda não.",
+          "eg": "لسه"
+        },
+        {
+          "id": "phrase.done",
+          "kind": "phrase",
+          "tl": "Já está!",
+          "eg": "خلاص، خلصت!"
+        },
+        {
+          "id": "phrase.in_two_days",
+          "kind": "phrase",
+          "tl": "daqui a dois dias",
+          "eg": "بعد يومين"
         }
       ],
       "recycle_ids": [
@@ -2965,6 +3121,24 @@
           "kind": "pattern",
           "tl": "-ão→-ões · -l→-is",
           "eg": "جمع -ão و-l"
+        },
+        {
+          "id": "phrase.smaller",
+          "kind": "phrase",
+          "tl": "Tem mais pequeno?",
+          "eg": "فيه أصغر؟"
+        },
+        {
+          "id": "phrase.bigger",
+          "kind": "phrase",
+          "tl": "Tem maior?",
+          "eg": "فيه أكبر؟"
+        },
+        {
+          "id": "phrase.cheaper",
+          "kind": "phrase",
+          "tl": "Tem mais barato?",
+          "eg": "فيه أرخص؟"
         }
       ],
       "recycle_ids": [
@@ -2977,6 +3151,105 @@
     },
     {
       "day": 44,
+      "title_tl": "Adjetivos 2",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.pretty_ugly",
+          "kind": "word",
+          "tl": "bonito / bonita · feio / feia",
+          "eg": "حلو · وحش (شكلاً)"
+        },
+        {
+          "id": "word.clean_dirty",
+          "kind": "word",
+          "tl": "limpo · sujo",
+          "eg": "نضيف · وسخ"
+        },
+        {
+          "id": "word.quiet_noisy",
+          "kind": "word",
+          "tl": "calmo · barulhento",
+          "eg": "هادي · دوشة"
+        },
+        {
+          "id": "word.neighbourhood",
+          "kind": "word",
+          "tl": "o bairro",
+          "eg": "الحي / المنطقة",
+          "plural_tl": "os bairros"
+        },
+        {
+          "id": "word.degree",
+          "kind": "word",
+          "tl": "bastante · demasiado · um bocado",
+          "eg": "كتير · زيادة عن اللزوم · شوية"
+        },
+        {
+          "id": "word.assim",
+          "kind": "word",
+          "tl": "assim",
+          "eg": "كده"
+        },
+        {
+          "id": "word.como_like",
+          "kind": "word",
+          "tl": "como",
+          "eg": "زي"
+        },
+        {
+          "id": "word.same_different",
+          "kind": "word",
+          "tl": "igual a · diferente de",
+          "eg": "زي (بالظبط) · مختلف عن"
+        },
+        {
+          "id": "word.similar",
+          "kind": "word",
+          "tl": "parecido com",
+          "eg": "شبه"
+        },
+        {
+          "id": "phrase.its_like_this",
+          "kind": "phrase",
+          "tl": "É assim.",
+          "eg": "هو كده"
+        },
+        {
+          "id": "phrase.like_in_cairo",
+          "kind": "phrase",
+          "tl": "É como no Cairo.",
+          "eg": "زي في القاهرة"
+        },
+        {
+          "id": "phrase.too_noisy",
+          "kind": "phrase",
+          "tl": "A rua é demasiado barulhenta.",
+          "eg": "الشارع دوشة زيادة"
+        },
+        {
+          "id": "phrase.a_bit_small",
+          "kind": "phrase",
+          "tl": "O quarto é um bocado pequeno.",
+          "eg": "الأوضة صغيرة شوية"
+        },
+        {
+          "id": "pattern.degree_adj",
+          "kind": "pattern",
+          "tl": "muito · bastante · demasiado · um bocado + صفة",
+          "eg": "قد إيه"
+        }
+      ],
+      "recycle_ids": [
+        "word.big_small",
+        "pattern.adj_agreement",
+        "word.good_bad",
+        "word.house",
+        "word.bedroom"
+      ]
+    },
+    {
+      "day": 45,
       "title_tl": "A Visita da Família",
       "is_story": true,
       "core_items": [],
@@ -2992,7 +3265,7 @@
       ]
     },
     {
-      "day": 45,
+      "day": 46,
       "title_tl": "Isto e Aquilo",
       "is_story": false,
       "core_items": [
@@ -3066,7 +3339,293 @@
       ]
     },
     {
-      "day": 46,
+      "day": 47,
+      "title_tl": "Aqui e Ali",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.here_there",
+          "kind": "word",
+          "tl": "aqui · aí · ali · lá",
+          "eg": "هنا · عندك · هناك · هناك بعيد"
+        },
+        {
+          "id": "word.on_under",
+          "kind": "word",
+          "tl": "em cima de · debaixo de",
+          "eg": "فوق · تحت"
+        },
+        {
+          "id": "word.in_out",
+          "kind": "word",
+          "tl": "dentro de · fora de",
+          "eg": "جوه · برا"
+        },
+        {
+          "id": "word.behind_front",
+          "kind": "word",
+          "tl": "atrás de · à frente de",
+          "eg": "ورا · قدام"
+        },
+        {
+          "id": "word.between",
+          "kind": "word",
+          "tl": "entre",
+          "eg": "بين"
+        },
+        {
+          "id": "phrase.where_is_phone",
+          "kind": "phrase",
+          "tl": "Onde está o telemóvel?",
+          "eg": "الموبايل فين؟"
+        },
+        {
+          "id": "phrase.on_the_table",
+          "kind": "phrase",
+          "tl": "Está em cima da mesa.",
+          "eg": "على الترابيزة"
+        },
+        {
+          "id": "phrase.right_by_you",
+          "kind": "phrase",
+          "tl": "Está aí, ao teu lado.",
+          "eg": "عندك أهو، جنبك"
+        },
+        {
+          "id": "phrase.behind_door",
+          "kind": "phrase",
+          "tl": "Está atrás da porta.",
+          "eg": "ورا الباب"
+        },
+        {
+          "id": "phrase.in_the_bag",
+          "kind": "phrase",
+          "tl": "Está dentro do saco.",
+          "eg": "جوه الكيس"
+        },
+        {
+          "id": "phrase.come_here",
+          "kind": "phrase",
+          "tl": "Anda cá!",
+          "eg": "تعالى هنا!"
+        },
+        {
+          "id": "pattern.distance_map",
+          "kind": "pattern",
+          "tl": "aqui = este · aí = esse · ali / lá = aquele",
+          "eg": "المكان والإشارة بنفس المسافة"
+        },
+        {
+          "id": "pattern.place_de",
+          "kind": "pattern",
+          "tl": "em cima / debaixo / dentro / atrás + de + o/a = do/da",
+          "eg": "حروف المكان + de"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.demonstratives",
+        "word.this_m_f",
+        "word.that_m_f",
+        "word.that_far_m_f",
+        "pattern.contractions",
+        "word.table",
+        "word.door",
+        "word.bag",
+        "word.mobile",
+        "phrase.next_to"
+      ]
+    },
+    {
+      "day": 48,
+      "title_tl": "Comparativos",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.more_less_than",
+          "kind": "word",
+          "tl": "mais … do que · menos … do que",
+          "eg": "أكتر من · أقل من"
+        },
+        {
+          "id": "word.as_as",
+          "kind": "word",
+          "tl": "tão … como",
+          "eg": "زي … بالظبط"
+        },
+        {
+          "id": "word.better_worse",
+          "kind": "word",
+          "tl": "melhor · pior",
+          "eg": "أحسن · أوحش"
+        },
+        {
+          "id": "word.bigger_smaller",
+          "kind": "word",
+          "tl": "maior · mais pequeno",
+          "eg": "أكبر · أصغر"
+        },
+        {
+          "id": "word.the_most",
+          "kind": "word",
+          "tl": "o mais … · a mais …",
+          "eg": "الأكتر …",
+          "plural_tl": null
+        },
+        {
+          "id": "word.other",
+          "kind": "word",
+          "tl": "o outro · a outra",
+          "eg": "التاني · التانية",
+          "plural_tl": "os outros · as outras"
+        },
+        {
+          "id": "word.apartment",
+          "kind": "word",
+          "tl": "o apartamento",
+          "eg": "الشقة",
+          "plural_tl": "os apartamentos"
+        },
+        {
+          "id": "word.rent",
+          "kind": "word",
+          "tl": "a renda",
+          "eg": "الإيجار",
+          "plural_tl": "as rendas"
+        },
+        {
+          "id": "phrase.cheaper_than",
+          "kind": "phrase",
+          "tl": "Este é mais barato do que aquele.",
+          "eg": "ده أرخص من ده"
+        },
+        {
+          "id": "phrase.as_big_as",
+          "kind": "phrase",
+          "tl": "É tão grande como o outro.",
+          "eg": "كبير زي التاني بالظبط"
+        },
+        {
+          "id": "phrase.which_better",
+          "kind": "phrase",
+          "tl": "Qual é melhor?",
+          "eg": "أنهي أحسن؟"
+        },
+        {
+          "id": "phrase.which_cheapest",
+          "kind": "phrase",
+          "tl": "Qual é o mais barato?",
+          "eg": "أنهي الأرخص؟"
+        },
+        {
+          "id": "pattern.comparative",
+          "kind": "pattern",
+          "tl": "mais / menos + صفة + do que",
+          "eg": "المقارنة"
+        }
+      ],
+      "recycle_ids": [
+        "word.expensive_cheap",
+        "word.big_small",
+        "word.good_bad",
+        "pattern.demonstratives",
+        "phrase.cheaper",
+        "phrase.bigger",
+        "word.q_which"
+      ]
+    },
+    {
+      "day": 49,
+      "title_tl": "Saber e Conhecer",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "verb.saber",
+          "kind": "verb",
+          "tl": "saber",
+          "eg": "يعرف (معلومة / إزاي)"
+        },
+        {
+          "id": "verb.conhecer",
+          "kind": "verb",
+          "tl": "conhecer",
+          "eg": "يعرف (شخص / مكان)"
+        },
+        {
+          "id": "word.se_if",
+          "kind": "word",
+          "tl": "se",
+          "eg": "لو / إذا"
+        },
+        {
+          "id": "phrase.dont_know_where",
+          "kind": "phrase",
+          "tl": "Não sei onde fica.",
+          "eg": "مش عارف فين"
+        },
+        {
+          "id": "phrase.know_if_open",
+          "kind": "phrase",
+          "tl": "Sabe se está aberto?",
+          "eg": "تعرف لو فاتح؟"
+        },
+        {
+          "id": "phrase.i_can_speak",
+          "kind": "phrase",
+          "tl": "Sei falar um pouco de português.",
+          "eg": "بعرف أتكلم برتغالي شوية"
+        },
+        {
+          "id": "phrase.know_lisbon",
+          "kind": "phrase",
+          "tl": "Conhece Lisboa?",
+          "eg": "تعرف لشبونة؟"
+        },
+        {
+          "id": "phrase.know_rita",
+          "kind": "phrase",
+          "tl": "Conheço a Rita.",
+          "eg": "أعرف ريتا"
+        },
+        {
+          "id": "phrase.of_course",
+          "kind": "phrase",
+          "tl": "Claro!",
+          "eg": "طبعاً!"
+        },
+        {
+          "id": "phrase.really",
+          "kind": "phrase",
+          "tl": "A sério?",
+          "eg": "بجد؟"
+        },
+        {
+          "id": "phrase.are_you_sure",
+          "kind": "phrase",
+          "tl": "Tem a certeza?",
+          "eg": "متأكد؟"
+        },
+        {
+          "id": "pattern.saber_vs_conhecer",
+          "kind": "pattern",
+          "tl": "saber = معلومة / مهارة · conhecer = شخص / مكان",
+          "eg": "الفرق"
+        },
+        {
+          "id": "pattern.saber_conj",
+          "kind": "pattern",
+          "tl": "sei · sabes · sabe · sabemos · sabem",
+          "eg": "تصريف saber"
+        }
+      ],
+      "recycle_ids": [
+        "phrase.i_dont_know",
+        "phrase.do_you_know_where",
+        "word.q_where",
+        "pattern.onde_fica"
+      ]
+    },
+    {
+      "day": 50,
       "title_tl": "Verbo Pôr",
       "is_story": false,
       "core_items": [
@@ -3162,7 +3721,100 @@
       ]
     },
     {
-      "day": 47,
+      "day": 51,
+      "title_tl": "Todos e Ninguém",
+      "is_story": false,
+      "core_items": [
+        {
+          "id": "word.all_everything",
+          "kind": "word",
+          "tl": "todos · tudo",
+          "eg": "كلهم · كل حاجة"
+        },
+        {
+          "id": "word.every",
+          "kind": "word",
+          "tl": "cada",
+          "eg": "كل (واحد لوحده)"
+        },
+        {
+          "id": "word.someone_noone",
+          "kind": "word",
+          "tl": "alguém · ninguém",
+          "eg": "حد · مفيش حد"
+        },
+        {
+          "id": "word.something_nothing",
+          "kind": "word",
+          "tl": "alguma coisa · nada",
+          "eg": "حاجة · ولا حاجة"
+        },
+        {
+          "id": "word.some_none",
+          "kind": "word",
+          "tl": "algum / alguma · nenhum / nenhuma",
+          "eg": "أي · ولا واحد"
+        },
+        {
+          "id": "word.people",
+          "kind": "word",
+          "tl": "as pessoas",
+          "eg": "الناس",
+          "singular_tl": "a pessoa",
+          "plural_tl": null
+        },
+        {
+          "id": "phrase.nobody_here",
+          "kind": "phrase",
+          "tl": "Não está ninguém.",
+          "eg": "مفيش حد هنا"
+        },
+        {
+          "id": "phrase.anyone_there",
+          "kind": "phrase",
+          "tl": "Está alguém?",
+          "eg": "فيه حد؟"
+        },
+        {
+          "id": "phrase.i_have_nothing",
+          "kind": "phrase",
+          "tl": "Não tenho nada.",
+          "eg": "معنديش حاجة"
+        },
+        {
+          "id": "phrase.all_good",
+          "kind": "phrase",
+          "tl": "Está tudo bem?",
+          "eg": "كله تمام؟"
+        },
+        {
+          "id": "phrase.all_at_lunch",
+          "kind": "phrase",
+          "tl": "Estão todos a almoçar.",
+          "eg": "كلهم بيتغدوا"
+        },
+        {
+          "id": "phrase.each_pays",
+          "kind": "phrase",
+          "tl": "Cada um paga o seu.",
+          "eg": "كل واحد يدفع بتاعه"
+        },
+        {
+          "id": "pattern.double_negative",
+          "kind": "pattern",
+          "tl": "Não + فعل + ninguém / nada / nenhum",
+          "eg": "النفي المزدوج"
+        }
+      ],
+      "recycle_ids": [
+        "pattern.nao_verb",
+        "pattern.estar_a_inf",
+        "word.office",
+        "phrase.anything_else"
+      ]
+    },
+    {
+      "day": 52,
       "title_tl": "O Que Fizeste Ontem?",
       "is_story": false,
       "core_items": [
@@ -3230,7 +3882,7 @@
       ]
     },
     {
-      "day": 48,
+      "day": 53,
       "title_tl": "Um Dia Normal",
       "is_story": true,
       "core_items": [],
@@ -3246,7 +3898,7 @@
       ]
     },
     {
-      "day": 49,
+      "day": 54,
       "title_tl": "Teste A1",
       "is_story": false,
       "core_items": [],

@@ -70,7 +70,7 @@ export type CoreItemsDay = {
   day: number;
   title_tl?: string;
   is_story: boolean;
-  /** Phase test day (A1 on day 49) — no new items. */
+  /** Phase test day (A1 on day 54) — no new items. */
   is_test?: boolean;
   core_items: CoreItem[];
   recycle_ids: string[];

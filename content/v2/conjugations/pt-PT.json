@@ -1,6 +1,6 @@
 {
   "target_lang": "pt-PT",
-  "verified_note": "verified:true for the reviewed core set (ser, estar, ir, ter, dormir, falar, querer, poder, fazer, dizer, ver, sair, ficar, chegar). Others remain false until checked.",
+  "verified_note": "verified:true for the reviewed core set (ser, estar, ir, ter, dormir, falar, querer, poder, fazer, dizer, ver, sair, ficar, chegar, saber, conhecer). Others remain false until checked.",
   "verbs": [
     {
       "lemma": "ser",
@@ -801,6 +801,83 @@
       "meaning_ar": "يحب / يعجبه",
       "verified": false,
       "overrides": {}
+    },
+    {
+      "lemma": "saber",
+      "class": "irregular",
+      "meaning_ar": "يعرف",
+      "verified": true,
+      "overrides": {
+        "pres": {
+          "eu": {
+            "tl": "sei",
+            "say": "ساي",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "sabes",
+            "say": "سابش",
+            "irregular": false
+          },
+          "ele": {
+            "tl": "sabe",
+            "say": "سابي",
+            "irregular": false
+          },
+          "nos": {
+            "tl": "sabemos",
+            "say": "سابيموش",
+            "irregular": false
+          },
+          "eles": {
+            "tl": "sabem",
+            "say": "سابين",
+            "irregular": false
+          }
+        },
+        "pret": {
+          "eu": {
+            "tl": "soube",
+            "say": "سوبي",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "soubeste",
+            "say": "سوبيشتي",
+            "irregular": true
+          },
+          "ele": {
+            "tl": "soube",
+            "say": "سوبي",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "soubemos",
+            "say": "سوبيموش",
+            "irregular": true
+          },
+          "eles": {
+            "tl": "souberam",
+            "say": "سوبيرام",
+            "irregular": true
+          }
+        }
+      }
+    },
+    {
+      "lemma": "conhecer",
+      "class": "er",
+      "meaning_ar": "يعرف (شخص / مكان)",
+      "verified": true,
+      "overrides": {
+        "pres": {
+          "eu": {
+            "tl": "conheço",
+            "say": "كونيسو",
+            "irregular": true
+          }
+        }
+      }
     }
   ]
 }
