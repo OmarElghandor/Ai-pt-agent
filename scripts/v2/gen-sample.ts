@@ -92,7 +92,7 @@ function parseDays(args: string[]): number[] {
   return raw
     .split(',')
     .map((s) => Number(s.trim()))
-    .filter((n) => Number.isInteger(n) && n >= 1 && n <= 109);
+    .filter((n) => Number.isInteger(n) && n >= 1 && n <= 114);
 }
 
 async function generateDay(day: number): Promise<DayRow> {

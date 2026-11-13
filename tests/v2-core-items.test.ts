@@ -24,12 +24,12 @@ describe('core-items file', () => {
     assert.ok(d3.core_items.some((c) => c.id === 'word.coffee'));
   });
 
-  it('story day 7 and A1 test day 49 have no new items', () => {
+  it('story day 7 and A1 test day 54 have no new items', () => {
     assert.equal(getCoreItemsDay(7).core_items.length, 0);
-    assert.equal(getCoreItemsDay(49).core_items.length, 0);
-    assert.equal(getCoreItemsDay(49).is_test, true);
+    assert.equal(getCoreItemsDay(54).core_items.length, 0);
+    assert.equal(getCoreItemsDay(54).is_test, true);
     assert.equal(buildLessonBrief(getDayPlan(7)).no_new_items, true);
-    assert.equal(buildLessonBrief(getDayPlan(49)).no_new_items, true);
+    assert.equal(buildLessonBrief(getDayPlan(54)).no_new_items, true);
   });
 
   it('passes validateCoreItemsFile (unique ids, ≤14/day, plural_tl on article nouns)', () => {

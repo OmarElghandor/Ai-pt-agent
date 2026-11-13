@@ -42,6 +42,8 @@ export type TopicRow = TopicsFileTopic & {
    * `preparing` = job running; `soon` = not ready yet.
    */
   ready_chip?: TopicReadyChip;
+  /** ISO time of last lesson conversation (doc 11 §6). */
+  last_practiced_at?: string | null;
 };
 
 export type ThemeWithTopics = {

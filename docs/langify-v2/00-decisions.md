@@ -30,16 +30,21 @@ Full detail: `10-auth.md`. Tasks: `10-auth-tasks.md`.
 ## 1. Product shape
 
 - Audience: Egyptian Arabic speakers living in Portugal, A0–A1. Target language: European Portuguese (pt-PT). Later: English and German on the same engine.
-- **(changed 2026-11-01) Lesson size: at most 14 core items.** Bigger lessons are split into two lessons, one after the other. The plan is now **109 days**: phase 1 is days 1–49 (41 lessons, 7 stories, and the A1 test on day 49), and phases 2–3 are days 50–109. The old → new day mapping is in `04` ("تقسيم الدروس الكبيرة"). Day numbers elsewhere in the docs that were written before this date use the old numbering unless they've been updated; `04` and this file are current.
+- **(changed 2026-11-01) Lesson size: at most 14 core items.** Bigger lessons are split into two lessons, one after the other. **(changed 2026-11-11)** The plan is now **114 days**: phase 1 is days 1–54 (46 lessons, 7 stories, and the A1 test on day 54), and phases 2–3 are days 55–114. The old → new day mapping is in `04` ("تقسيم الدروس الكبيرة"). Day numbers elsewhere in the docs that were written before this date use the old numbering unless they've been updated; `04` and this file are current.
+- **(new 2026-11-11) Everyday words.** Phase 1 must teach the words people use in every conversation, not only the words of each situation: where (aqui · aí · ali · lá · em cima de…), describing (bom · caro · assim · como · igual), comparing (mais … do que · melhor), quantity (todos · ninguém · nada · cada), not knowing (Não sei · Acho que…) and conversation fillers (Então · Pois · Olha · Pronto).
+  - They're added to existing days as items or ready-made chunks only where the day stays at 14 items or fewer. Otherwise they get their own day: 44 Adjetivos 2, 47 Aqui e Ali, 48 Comparativos, 49 Saber e Conhecer, 51 Todos e Ninguém.
+  - Old → new: 44→45, 45→46, 46→50, 47→52, 48→53, 49→54, and every day from 50 to 109 moves up by 5. Days 1–43 keep their numbers.
+  - Fillers, occasions and polite requests are micro chains, not lesson items. Full list: `04` ("كلام كل يوم").
+  - These words are taught as items. They are **not** added to `function-words.json`, so the generator won't use them before they're taught.
 - **(changed 2026-10-25)** 90 days, ordered **grammar-first**. Each day is one grammar unit, following the unit order of Practice Portuguese A1: regular present -ar → -er → -ir, then ser/estar, then the irregulars, then the past. The unit is taught **inside a street situation** that needs it, and the situation supplies the phrases, the words and the character conversation.
   - Anything urgent for a resident (Queria…, O que é isto?, Fui ao…, Dói-me…) comes early as a **ready-made chunk**, and its rule comes later in its place in the order. Numbers are the one exception, with their own day (day 8).
-  - Each week ends with a story day (days 7, 14, 21, 29, 37, 44, 48 in phase 1). Full plan: `04-curriculum.md`.
+  - Each week ends with a story day (days 7, 14, 21, 29, 37, 45, 53 in phase 1). Full plan: `04-curriculum.md`.
 - **(new)** Lesson titles are the Portuguese unit titles (e.g. "Verbos -AR 1", "Possessivos"), shown with an Arabic translation and the situation under them.
   - When a day covers more than one of their units, the extra unit titles are listed on it.
-  - Story days, the second parts of split lessons, and day 47 have our own titles.
+  - Story days, the second parts of split lessons, and days 44, 47, 48, 49, 51 and 52 have our own titles.
   - We reuse only the topic order and names, never their content.
   - Plan fields: `title_tl`, `title_ar`, `situation_eg`, `example_tl`, `rule_eg`, `extra_units_tl`, `early_chunks_tl`.
-- **(new)** Days 1–49 are labeled **A1**, and phase 2 (from day 50) starts **A2**. This is aligned with the CIPLE A2 exam that residents need.
+- **(new)** Days 1–54 are labeled **A1**, and phase 2 (from day 55) starts **A2**. This is aligned with the CIPLE A2 exam that residents need.
 - SER vs ESTAR is now days 19–23. `examples/day06-example.json` is the ESTAR day, which is **day 22** in the new order. The file keeps its name, but its `day` is 22.
 - A normal day has these steps, about 10 minutes in all: see the place (words) → situation phrases → one small rule → self-test → conversation with a character → review. Each step is one or more **pages**.
 - The "Library" (المكتبة) is the book in its original order: rules, tenses, verb cards, picture dictionary, stories. A page unlocks there when the learner reaches it on the path.
@@ -67,7 +72,7 @@ Full detail: `10-auth.md`. Tasks: `10-auth-tasks.md`.
   - `static`: everything visible.
 - Target addressing inside a page: `b2`, `b2/col:0`, `b2/row:3`, `b2/cell:r:c`, `b2/entry:col:i`, `b4/item:2`.
 - `cover` (the "غطّي" self-test) hides one of `meaning | tl | endings`.
-- Presets (block order per page type): phrases, compare, conjugation, pattern, dictionary, scene, story, free.
+- Presets (block order per page type): vocab_flow, phrases, compare, conjugation, pattern, dictionary, scene, story, real_world, free. `dictionary` and `phrases` remain valid for legacy packs; new days use `vocab_flow`.
 
 - **(new 2026-10-24)** Lesson generation runs in resumable stages, as a background job:
   1. **Outline:** item bank plus the page plan. This is the order contract: for each page, what it `introduces` and what it `assumes`, its purpose and its handoff.
@@ -100,7 +105,7 @@ Full detail: `10-auth.md`. Tasks: `10-auth-tasks.md`.
        - the meaning of one line.
      - It is not a separate generated page. The app reuses page 0 in test mode.
   4. Then questions, practice and micro as before.
-  - **Weekly story days (7, 14, 21, 29, 37, 44, 48)** stay as they are: a full story, with no detail pages.
+  - **Weekly story days (7, 14, 21, 29, 37, 45, 53)** stay as they are: a full story, with no detail pages.
 - **(new 2026-10-30) Story builder.** The story is generated by its own job, before the outline, and the rest of the day is built from it.
   - **Order:** brief → items → **story** → outline → pages / questions / micro / daily_use → critic → continuity → lang_check → assemble. The outline and the page jobs receive the story as input.
   - **Storage:** each day has one story document per language, in its own file or collection (for example `stories/pt-PT/day-03`), with its own version and status. The lesson does not copy the lines. Page 0 and the test replay point to it by `story_id`. The publish gate checks the story document together with the lesson.
@@ -212,7 +217,7 @@ Full detail: `10-auth.md`. Tasks: `10-auth-tasks.md`.
   - tu is for friends, family and people your age who offer it ("Podes tratar-me por tu").
 
 - **(new 2026-11-02) "بيقولوها كده" — real-world phrases.** Every lesson gets one extra page with **4–5 phrases people really say** in that situation in Lisbon, beyond the core items. For example, at the café: Uma bica e um pastel de nata · Pode trazer um copo de água? · A conta, se faz favor · Tem leite sem lactose?
-  - **Where it sits (changed 2026-11-03, Omar's override):** right after the dictionary page. On days without a dictionary page, it goes after the phrases page.
+  - **Where it sits (changed 2026-11-09):** right after the `vocab_flow` page. On legacy packs without `vocab_flow`, after the dictionary page, or after the phrases page when there is no dictionary.
   - **Exposure, not teaching:**
     - They don't count toward the 14 core items.
     - They're not in the story's MUST_COVER.
@@ -240,7 +245,29 @@ Full detail: `10-auth.md`. Tasks: `10-auth-tasks.md`.
     - "/" inside a phrase;
     - the broken image icon.
 
-- **(new 2026-11-03) "لاقي الصورة" step.** A short listening game after the grammar page and before the story replay. The day order becomes: story → detail pages (dictionary, real-world phrases, phrases, grammar) → **لاقي الصورة** → the story again (test) → أسئلة اليوم.
+- **(new 2026-11-09) One vocabulary flow, with micro checks.** The dictionary and phrases pages are merged into **one ItemViewer flow** for the day's words and phrases, so items never come all in a row with no time to think.
+  - **Order:** items follow their first appearance in the story. A phrase comes right after the words it uses, for example o café → o leite → "Queria um café com leite".
+  - **Chunks of 3:** after every 3 items there is a **micro check**, one quick question on what was just seen. A check never comes right after another check, and the flow always ends with one.
+  - **Micro check types (code-built, no model), rotating so no two in a row share a type:**
+    - `pick_image`: hear an item, tap 1 of 3 pictures (only when images are ready);
+    - `pick_meaning`: see the TL, pick 1 of 3 Arabic meanings;
+    - `pick_tl`: see the Arabic, pick 1 of 3 TL items;
+    - `choose_article`: o / a (or os / as) for a noun just seen;
+    - `complete_phrase`: the phrase just seen with one missing word, and 3 chips;
+    - `say_it`: say the item aloud (self-check until STT is live).
+
+    The distractors come only from items already seen in the flow or from earlier days.
+  - **Variety between steps.** The flow mixes three screen kinds, so it never feels like a list:
+    - an **item card** (word: 1:1 picture; phrase: 4:3 conversation picture with the story line under it);
+    - a **phrase in use** card, which shows the story line where the phrase is said, with the speaker's avatar and a play button;
+    - a **micro check**.
+
+    Long days (more than 9 items) get a halfway breather card: "شفت ٦ من ١٢ · كمّل", with the 6 items as small chips that play on tap.
+  - **Feedback:** each check gives an instant answer with a one-line why, and a wrong answer shows the item card again briefly. Checks never block. The first try is posted to `/api/v2/answers` as type `micro_check`, and it counts as an implicit review, not a test.
+  - **Pages:** the separate dictionary and phrases presets become one `vocab_flow` page in the outline. Legacy packs that still have `dictionary` / `phrases` keep those pages until regenerated. The "بيقولوها كده" page stays separate and keeps its place after this flow. Grammar comes after it, then "لاقي الصورة".
+  - Micro checks don't count toward the day's 12–15 questions, and the day question planner may still test the same items in other types.
+
+- **(new 2026-11-03) "لاقي الصورة" step.** A short listening game after the grammar page and before the story replay. The day order becomes: story → detail pages (vocab_flow, real-world phrases, grammar) → **لاقي الصورة** → the story again (test) → أسئلة اليوم.
   - **It never generates images.** It reuses lesson image links (`items[].image.url`, filled from ready `v2_images` on read), and never requests or queues generation.
   - **Built entirely by code, with no model call.** There are up to 6 rounds. Each round plays one of today's carded words or phrases (audio) and shows 4 picture slots, one right and three distractors, from today's (and recycled) carded items. A missing `url` shows the calm ImageSlot placeholder; once the link exists in the DB it appears on the next load. Items from the same `variant_group` can be distractors here, because the pictures differ by time of day.
   - **What it uses:** words (1:1 images) on vocabulary days, and phrases (4:3 conversation images) on phrase days. Day 1, for example, plays Bom dia / Boa tarde / Boa noite against the morning, afternoon and night scenes.
@@ -264,17 +291,32 @@ Full detail: `10-auth.md`. Tasks: `10-auth-tasks.md`.
 - **Daily cap: 15 cards**, about 3 minutes, made of 9 from the last 7 days, 4 from weak items and 2 older ones. If a slot can't be filled, it goes to recent items. Missed days never pile up into a backlog, and backlog counts are never shown.
 - A correct use of the item inside a lesson or practice counts as an implicit review.
 - **(changed 2026-10-28)** Buttons: **صعب** (= again: the card comes back later in this session and its interval resets) / **متوسط** (= hard) / **سهل** (= easy). The API values stay again | hard | easy | know; only the labels change. There is also a "عارفها" option that skips an item the learner already knows. After a hint, only صعب and متوسط are enabled.
-- Graduation: interval ≥ 21 days **and** correct use in 2 different situations (`usedCorrectlyIn`). Graduation maps to `masteryLevel: mastered`, and graduated cards leave review.
+- Graduation: for lesson / official items, interval ≥ 21 days **and** correct use in 2 different situations (`usedCorrectlyIn`). **(changed 2026-11-12)** Custom-only items (`source: custom`) graduate on interval ≥ 21 alone; the situations condition is dropped because lessons never use them. Official items keep the full rule even when reviewed from a custom deck. Graduation maps to `masteryLevel: mastered`, and graduated cards leave review.
 - **(new) Retrieval first.** The front shows only the target word plus audio: a speaker button and a slow (turtle) button. Audio does not autoplay on the front. "محتاج تلميح" shows the word inside a sentence with no Arabic, and using it forces the rating to صعبة. Flipping plays the word once. The back shows the answer first (meaning, pronunciation, picture), then details.
 - **(new) Verb card back** is a conjugation poster, 5 rows. Endings are colored by class: -ar orange, -er blue, -ir green. Irregular forms are purple with ⚡ (in pt-PT usually just `eu`, like DURMO). Regular forms are marked "عادي". Then examples and one tip.
 - **(new) Deck listing:**
-  - Hero card "مراجعة النهارده": 15 cards · 3 minutes, a breakdown line and an "ابدأ" button.
+  - Hero card "مراجعة النهارده": 15 cards · 3 minutes, a breakdown line and an "ابدأ" button. **(changed 2026-11-12)** The daily 15 stays curriculum-only; custom and official themed decks are separate sessions (§5b, `12`).
   - A "اللي بتغلط فيه" row.
-  - Tabs: المواقف (situation decks, auto-built per day, newest first, future ones locked with "يفتح Dia N") and الأفعال (verb tiles colored by class, ⚡ for irregular).
+  - **(changed 2026-11-12)** Tabs: المواقف (situation decks, auto-built per day, newest first, future ones locked with "يفتح Dia N") · الأفعال (verb tiles colored by class, ⚡ for irregular) · **مواضيع** (official themed decks) · **من المتعلمين** (learner-generated public decks).
   - A collapsed "اتخرّجت ✓ N" row.
   - Progress is shown as a count of graduated cards, never a percentage.
   - Deck detail lists items with no Arabic meanings, so the list itself works as a self-test.
-  - Users don't create decks.
+  - **(new 2026-11-13)** Deck detail has "ابدأ الديك من الأول": resets **this learner's** card SRS for that deck's items only (shared decks / other users untouched). Same control for situation, verb, weak, custom and official decks.
+  - **(changed 2026-11-12)** Learners can create decks from a topic ("اعمل ديك"); full rules in §5b and `12-custom-decks.md`.
+
+## 5b. Custom decks (new, 2026-11-12; images 2026-11-13)
+
+Full detail: `12-custom-decks.md`. Where that doc and this section disagree with older §5 deck notes or with §10 about custom-deck images, **12 and this section win**.
+
+- **Shared items, not copies.** Generated words live in `v2_custom_items` (one doc per language × normalised lemma × POS, id like `ugc.pt-PT.chuva.noun`). The same word in two decks is one item. Before creating a custom item, code checks official lesson banks; if the word already exists (`food.cheese`, `weather.rain`), the deck references that id. Card SRS stays in `v2_item_state` (`source: custom` for UGC). Promotion never migrates progress — official decks keep the same item ids.
+- **Item shape:** `tl` (nouns with article), optional `tl_f`, `pos`, `gender`, `ar` (simple MSA), optional `eg_note` (Egyptian), short `example_tl` / `example_ar`, `concept_en` (English slug for the image key only, never shown), and `image = { key, url }` when ready. Code adds `say` (`00` §2). Verbs show the infinitive only; conjugation poster only if the lemma is in the verified table.
+- **Generation:** Haiku via env (`CUSTOM_DECK_MODEL`), one non-streamed JSON call, 20 s timeout, one parse retry. Topic blocklist in code first; model may set `topic_ok: false` (sexual, insults, hate, violence, drugs, politics, real person). Checks drop bad words (Brazilian forms, `/` in `tl`, noun article/gender, Arabic `ar`, example rules, `concept_en` slug, duplicates); top-up once if under 15; fail under 15 after top-up without counting quota. Quotas via `customDeckQuota(user)` (env caps now; plans later). Failed / rejected / "ضيفه" don't count.
+- **Learner flow:** find existing public deck by title/tags first (no model) → generate → preview (remove only, ≥15 to save) → save to "ديكاتي" and publish to "من المتعلمين". Public by default; **no private switch in v1**.
+- **Review:** not mixed into the daily 15. Per-deck session: due first, then ≤10 new/day. Same card UI (picture or placeholder); ratings through `POST /api/v2/answers`. Custom items never feed weak spots by problem; curriculum / planner / distractors / known-items ignore them. A finished custom / official themed session with ≥10 cards rated counts for the streak (`11` §7.2).
+- **Public list:** sort by `added_count`, "الجديد", search titles/tags; tiles show titles, word count, "ضافوه N" (no creator name). Add/remove from "ديكاتي"; report (deck or wrong picture, optional item id) → auto-hide at 3 reports from different learners (adders keep it). Admin hide/delete/remove word.
+- **Images (`12` §2.10):** cheap model from env (`CUSTOM_DECK_IMAGE_MODEL`, start GPT Image 2) at **low** quality, 1:1, edits endpoint + style-anchor only — **no cast, no character sheets**. Nouns, verbs and adjectives only (phrases none). Specs from code templates using `concept_en`. Keys `word.<concept_en>` reused when ready. Auto-queue when `added_count` ≥ `CUSTOM_DECK_IMAGE_THRESHOLD` (start 5); **admin may generate for any deck at any time** after seeing missing count and estimated cost. Same Haiku QA + meaning check; Cloudinary; `v2_images.used_by` includes deck ids; deck `images_status` (none | queued | partial | ready); global daily image cap (`CUSTOM_DECK_IMAGE_DAILY_LIMIT`). Wrong-picture reports flag/hide the key. Learners never trigger images; image cost is separate from the deck quota.
+- **A5:** `v2_user_decks` and `v2_deck_reports` are user-keyed and deleted; public `v2_custom_decks` stay with `created_by` cleared. **Images are shared content and are never deleted with an account.**
+- **Promotion (`12` §6):** admin creates draft `v2_official_decks` on the same item ids; edit/reorder/add/rename; may regenerate images with the **lesson** pipeline's model and quality (same keys); publish → "مواضيع", items `status: official`, source deck `promoted` and leaves "من المتعلمين". **No native check before publish in v1.** No automatic language twins (pool is per language; images reuse global keys).
 
 ## 6. Daily loop and gaps
 
@@ -343,13 +385,30 @@ Full detail: `10-auth.md`. Tasks: `10-auth-tasks.md`.
 ## 8. Progress and errors
 
 - **(changed)** Progress lives in new v2 collections in `ai-agent-talk`, not in Langify's `UserProgress`. State per item is one document per user × item (`v2_item_state`): `introducedDay`, `usedCorrectlyIn`, the 4 levels, and SRS state per skill (plus the card SRS). This replaces the old embedded `flashcardProgress` array. Errors are a separate append-only collection (`v2_errors`). The error taxonomy below keeps the same top-level names as Langify's `errorTypes`.
-- Error taxonomy, two levels. The top level is the existing `errorTypes` enum:
-  - grammar: verb_form, agreement, sentence_structure, preposition
-  - vocabulary: forgot_word, wrong_word, brazilian
-  - spelling: accent, spelling
-  - pronunciation: sound
-- Code classifies first, then the LLM classifies the rest. The LLM may answer `unclear`.
-- Weak area: 3 errors with the same scope in the same tool within the last 10 attempts.
+- Error taxonomy, two levels. The **top level** stays the existing `errorTypes` enum:
+  - grammar | vocabulary | spelling | pronunciation
+- **(changed 2026-11-12)** The **second level is a closed problem list** (`content/v2/problems.<lang>.json`), not the old free scopes (verb_form, agreement, …). Full rules: §8b and `11-profile-progress.md`.
+- Code classifies first (accents, known common-mistake pairs, Brazilian forms), then a Qwen background job labels the rest. Special non-problems: `slip`, `unsure`. The answer route never waits on the classifier.
+- **(changed 2026-11-12)** Weak spots are **per problem**, not per tool scope. Open / improving / resolved rules live in §8b.
+
+## 8b. Learner progress (new, 2026-11-12)
+
+Full detail: `11-profile-progress.md`. Where that doc and this section disagree with older progress notes, **that doc and this section win**.
+
+- **Two writers only.**
+  - `POST /api/v2/answers` writes `v2_item_state` and `v2_errors`. The classifier job (after answers) only adds a problem label on the error and updates `v2_weak_spots` / `v2_problem_requests`.
+  - `POST /api/v2/progress/events` is the only writer of lesson progress, card-deck progress and activity days (idempotent `event_id`). Conversation routes keep their own session docs and report results through these two routes.
+- **User id from the session only.** No progress route reads a user id from body, query or headers.
+- **One local date:** `v2_users.timezone` (browser at sign-in, default Europe/Lisbon) decides "today" for unlocks, the daily deck, activity and the streak.
+- **Lesson progress** (`v2_lesson_progress`, one doc per user × language × day): status `locked | scheduled | available | in_progress | completed`; `opens_on` for scheduled; steps, resume, scores, practice fields, minutes.
+  - **Completed** = every day question answered once (right or wrong). Earlier steps do not block. No minimum score. Weekly story days: completed when the reading's questions are answered.
+  - **One new day per local day:** completing day N makes N+1 `scheduled` with `opens_on` = the next local date ("بكرة"); it never opens the same day. Day 1 is available after onboarding. Replays, cards, نواقصك, conversations on completed lessons and free chat are never limited.
+  - Content regeneration never breaks progress: completed stays completed; new items appear as new.
+- **Problems and weak spots.** Words are reviewed on cards (item SRS). Problems (rules/patterns) are reviewed in "نواقصك". One mistake can feed both. Weak slots in the daily card deck come from item misses, not problems.
+- **Daily deck** (`v2_card_decks`, one per user × local date): built once (9 recent / 4 weak items / 2 older); ratings go to answers (SRS) and to progress events (deck). No backlog.
+- **Activity** (`v2_activity_days`) and **streak** on `v2_users`: a day counts for the streak after a real learning action (lesson step, finished daily deck, نواقصك session, conversation with ≥5 learner turns, **or** a finished custom / official themed deck session with ≥10 cards rated — `12` / `11` §7.2). **Two grace days** in any rolling 7-day window; the shown count is active days only. Calm Kit, no flame. No Langify progress import — every learner starts at day 1.
+- **Summary:** `GET /api/v2/me/summary` for home, path and settings (indexed reads only; optional 60s cache). No percentages, no backlog counts.
+- New user-keyed collections join the account-deletion list (A5): `v2_lesson_progress`, `v2_weak_spots`, `v2_card_decks`, `v2_activity_days`, `v2_problem_requests`.
 
 ## 9. Practice agent
 
@@ -391,6 +450,7 @@ Full detail: `10-auth.md`. Tasks: `10-auth-tasks.md`.
 ## 10. Images and media
 
 - One style for everything: Warm Storybook plus an adult line, with no childish cues. Exact style block in `03`.
+- **(new 2026-11-13) Custom-deck images** follow `12` §2.10 / §5b: cheap model and **low** quality from env, 1:1, style-anchor only, **no cast sheets**, nouns/verbs/adjectives only, `word.<concept_en>` reuse, auto at popularity threshold, admin any time, own daily image cap. They do **not** use this section's lesson pipeline model, medium quality, cast rotation, lesson visual brief, or per-lesson admin tab. On promotion, an admin may regenerate those keys with the lesson pipeline.
 - **(changed 2026-11-02)** Recurring cast of nine, of mixed ages and backgrounds, in `content/v2/characters.json`: yassin (learner, late 20s), ines (28), tiago (24), nour (Egyptian friend, early 30s), sofia (35), rita (45), carlos (50), manuel (60), graca (Dona Graça, 72). Each has a reference sheet, a gender, a fixed voice and home places.
   - **Rotation:** a lesson uses 2–4 cast members chosen by place (office: ines, tiago, carlos, rita; home building: graca, carlos; café: manuel, nour, tiago; and so on).
   - **Image pairs rotate:** the same pair at most twice in a row. The learner (yassin) appears in at most about two thirds of a lesson's images; some images show two other cast members talking.

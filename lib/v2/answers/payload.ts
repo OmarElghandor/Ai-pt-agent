@@ -81,13 +81,25 @@ export type ConvoAnswerPayload = {
   question_id?: string;
 };
 
+/** Explicit flashcard rating from a custom/official deck session (12 §2.6). */
+export type CardReviewPayload = {
+  kind: 'card_review';
+  answer_id: string;
+  day: number;
+  item_id: string;
+  rating: 'again' | 'hard' | 'easy' | 'know';
+  deck_id?: string;
+  hint?: boolean;
+};
+
 export type AnswerPayload =
   | PageAskPayload
   | PageQuizPayload
   | OpenAnswerPayload
   | ClosedSkillPayload
   | BeatAnswerPayload
-  | ConvoAnswerPayload;
+  | ConvoAnswerPayload
+  | CardReviewPayload;
 
 const CONVO_RUNGS = new Set([
   'heard',
@@ -118,12 +130,33 @@ const CLOSED_SKILLS = new Set([
   'writing',
 ]);
 
+const CARD_RATINGS = new Set(['again', 'hard', 'easy', 'know']);
+
 export function parseAnswerPayload(body: unknown): AnswerPayload | null {
   if (!isRecord(body)) return null;
   if (!isUuid(body.answer_id)) return null;
+  const answer_id = body.answer_id;
+
+  if (body.kind === 'card_review') {
+    if (typeof body.item_id !== 'string' || !body.item_id) return null;
+    if (typeof body.rating !== 'string' || !CARD_RATINGS.has(body.rating)) {
+      return null;
+    }
+    const day = intField(body.day) ?? 1;
+    if (day < 1) return null;
+    return {
+      kind: 'card_review',
+      answer_id,
+      day,
+      item_id: body.item_id,
+      rating: body.rating as CardReviewPayload['rating'],
+      deck_id: typeof body.deck_id === 'string' ? body.deck_id : undefined,
+      hint: body.hint === true,
+    };
+  }
+
   const day = intField(body.day);
   if (day === null || day < 1) return null;
-  const answer_id = body.answer_id;
 
   if (body.kind === 'page_ask') {
     const optionIndex = intField(body.option_index);

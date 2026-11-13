@@ -2,8 +2,10 @@ import type { Item } from '@/lib/v2/content/items';
 import type { Skill } from '@/lib/v2/content/lesson';
 import { gradeAnswer, type GradeResponse } from '@/lib/v2/grader';
 import {
+  applyCardRating,
   applyImplicitCorrectUse,
   applyImplicitWrongUse,
+  applyKnow,
   bumpLevelsForSkill,
   bumpSkill,
   createItemState,
@@ -19,6 +21,7 @@ import { matchKnownNearMiss } from './knownNearMiss';
 import { matchAnswer } from './match';
 import type {
   AnswerPayload,
+  CardReviewPayload,
   ConvoAnswerPayload,
   OpenAnswerPayload,
 } from './payload';
@@ -133,6 +136,10 @@ export async function evaluateAnswer(
     });
   }
 
+  if (payload.kind === 'card_review') {
+    return evaluateCardReview(payload, ctx, now);
+  }
+
   if (payload.kind === 'convo') {
     return evaluateConvoRung(payload, ctx, now);
   }
@@ -143,6 +150,48 @@ export async function evaluateAnswer(
 
   // open (narrowed: remaining AnswerPayload member)
   return evaluateOpenAnswer(payload, ctx, now, errors, finish);
+}
+
+function evaluateCardReview(
+  payload: CardReviewPayload,
+  ctx: EvaluateContext,
+  now: Date,
+): AnswerVerdict {
+  let state =
+    ctx.itemState ??
+    createItemState({
+      user_id: ctx.user_id,
+      item_id: payload.item_id,
+      introducedDay: ctx.introducedDay ?? payload.day,
+    });
+  state = { ...state, opt_in_card: true };
+
+  if (payload.rating === 'know') {
+    state = applyKnow(state, now);
+  } else {
+    const rating =
+      payload.hint && payload.rating === 'easy' ? 'hard' : payload.rating;
+    state = {
+      ...state,
+      card: applyCardRating(state.card, rating, now),
+    };
+    state = tryGraduate(state);
+  }
+
+  // TODO(P11): when streak exists, a finished custom-deck session (≥10 ratings)
+  // should mark the activity day as counting for the streak.
+  void payload.deck_id;
+
+  return {
+    ok: true,
+    verdict: 'correct',
+    correct: payload.rating !== 'again',
+    accent_only: false,
+    item_id: payload.item_id,
+    called_grader: false,
+    item_state: state,
+    errors: [],
+  };
 }
 
 async function evaluateOpenAnswer(

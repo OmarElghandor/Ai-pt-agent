@@ -71,6 +71,14 @@ export const PRESET_CATALOGS: Record<Preset, PresetCatalog> = {
     targets: 'Targets N/A (static). ItemViewer opens each card.',
     modeRules: STATIC,
   },
+  vocab_flow: {
+    preset: 'vocab_flow',
+    defaultMode: 'static',
+    blocks:
+      'cards = today\'s words + phrases in story-first order (code overwrites). Optional tip. Micro checks / phrase-in-use / breather are built by code at play time — do not invent them as blocks.',
+    targets: 'Targets N/A (static). VocabFlowPlayer opens each card with micro checks.',
+    modeRules: STATIC,
+  },
   scene: {
     preset: 'scene',
     defaultMode: 'static',

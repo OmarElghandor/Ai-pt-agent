@@ -29,6 +29,8 @@ export function DeckDetailView({
   const [deck, setDeck] = useState<DeckDetail | null>(null);
   const [todayIds, setTodayIds] = useState<Set<string> | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -76,12 +78,90 @@ export function DeckDetailView({
     );
   }
 
+  const detail = deck;
+  const isUgC = detail.kind === 'custom' || detail.kind === 'official';
+  const bareId = detail.id.replace(/^(custom|official):/, '');
   const reviewLabel =
-    deck.kind === 'verb'
+    detail.kind === 'verb'
       ? 'راجع الفعل ده'
-      : deck.kind === 'weak'
+      : detail.kind === 'weak'
         ? 'راجعهم'
-        : 'راجع الموقف ده بس';
+        : isUgC
+          ? 'راجع الديك ده'
+          : 'راجع الموقف ده بس';
+
+  async function addDeck() {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const res = await fetch(
+        `/api/v2/custom-decks/${encodeURIComponent(bareId)}/add`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            deck_kind: detail.kind === 'official' ? 'official' : 'custom',
+          }),
+        },
+      );
+      if (!res.ok) throw new Error('add');
+      setDeck({ ...detail, added: true });
+      setMsg('اتضاف لديك ديكاتي');
+    } catch {
+      setMsg('ما قدرناش نضيف الديك');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function reportDeck() {
+    if (busy || detail.kind !== 'custom') return;
+    setBusy(true);
+    try {
+      const res = await fetch(
+        `/api/v2/custom-decks/${encodeURIComponent(bareId)}/report`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reason: 'wrong_word' }),
+        },
+      );
+      if (!res.ok) throw new Error('report');
+      setMsg('شكراً، بلّغنا عن الديك');
+    } catch {
+      setMsg('ما قدرناش نبلّغ دلوقتي');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function resetDeckProgress() {
+    if (busy) return;
+    const ok = window.confirm(
+      'هترجع كل كروت الديك ده جديد عندك من الأول. لو كلمة موجودة في ديك تاني عندك، هتتصفر هناك كمان. الديك نفسه مش هيتغيّر، ومش هيتأثر حد تاني.',
+    );
+    if (!ok) return;
+    setBusy(true);
+    setMsg(null);
+    try {
+      const res = await fetch(
+        `/api/v2/decks/${encodeURIComponent(deckId)}/reset${apiQuery(dayOverride)}`,
+        { method: 'POST' },
+      );
+      if (!res.ok) throw new Error('reset');
+      const refreshed = await fetch(
+        `/api/v2/decks/${encodeURIComponent(deckId)}${apiQuery(dayOverride)}`,
+      );
+      if (!refreshed.ok) throw new Error('refresh');
+      const data = (await refreshed.json()) as DeckDetail;
+      setDeck(data);
+      setMsg('اتصفّر الديك · تقدّر تبدأ من الأول');
+    } catch {
+      setMsg('ما قدرناش نصفر الديك دلوقتي');
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
     <main className="flex flex-1 flex-col gap-6 pb-8">
@@ -130,12 +210,49 @@ export function DeckDetailView({
         <Stat label="اتخرّج" value={deck.graduated} />
       </div>
 
+      {isUgC && !deck.added ? (
+        <PrimaryButton
+          type="button"
+          className="w-full"
+          disabled={busy}
+          onClick={() => void addDeck()}
+        >
+          ضيفه
+        </PrimaryButton>
+      ) : null}
+
       <PrimaryButton
         href={cardsHref('/cards/review', dayOverride, { deck: deckId })}
         className="w-full"
       >
         {reviewLabel}
       </PrimaryButton>
+
+      <button
+        type="button"
+        disabled={busy}
+        onClick={() => void resetDeckProgress()}
+        className="min-h-11 font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted underline"
+      >
+        ابدأ الديك من الأول
+      </button>
+
+      {msg ? (
+        <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
+          {msg}
+        </p>
+      ) : null}
+
+      {deck.reportable ? (
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => void reportDeck()}
+          className="min-h-11 font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted underline"
+        >
+          بلّغ عن الديك ده
+        </button>
+      ) : null}
 
       <ul className="flex flex-col gap-2">
         {deck.items.map((row) => (

@@ -70,7 +70,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "greetings and name"
           },
           {
@@ -149,7 +149,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "greetings and name"
           },
           {
@@ -240,11 +240,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "dictionary",
-            "focus": "café drinks and food"
-          },
-          {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "ordering politely"
           },
           {
@@ -328,11 +324,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "dictionary",
-            "focus": "café drinks and food"
-          },
-          {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "ordering politely"
           },
           {
@@ -355,7 +347,8 @@
       ],
       "early_chunks_tl": [
         "O que é isto?",
-        "Quanto custa isso?"
+        "Quanto custa isso?",
+        "Está ali."
       ],
       "book_pages": [
         "15",
@@ -401,7 +394,9 @@
           ],
           "phrases": [
             "Onde fica o leite?",
-            "O que é isto?"
+            "O que é isto?",
+            "Está ali.",
+            "Está lá atrás."
           ]
         },
         "recycle": [
@@ -415,11 +410,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "dictionary",
-            "focus": "food nouns with o/a"
-          },
-          {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "supermarket phrases"
           },
           {
@@ -495,11 +486,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "dictionary",
-            "focus": "food nouns with o/a"
-          },
-          {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "supermarket phrases"
           },
           {
@@ -568,7 +555,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "numbers and paying"
           },
           {
@@ -618,7 +605,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "numbers and paying"
           },
           {
@@ -630,14 +617,16 @@
           "words": [
             "o cartão",
             "o dinheiro",
-            "o troco"
+            "o troco",
+            "caro · barato"
           ],
           "phrases": [
             "Aceita cartão?",
             "Em dinheiro.",
             "Contribuinte?",
             "Quantos anos tem?",
-            "Tenho trinta e dois anos."
+            "Tenho trinta e dois anos.",
+            "É muito caro!"
           ]
         },
         "recycle": [],
@@ -661,7 +650,8 @@
       ],
       "early_chunks_tl": [
         "Desculpe",
-        "Pode repetir?"
+        "Pode repetir?",
+        "Não sei."
       ],
       "book_pages": [
         "18",
@@ -677,7 +667,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "neighbors and greetings"
           },
           {
@@ -699,7 +689,8 @@
             "Mais devagar, por favor.",
             "Não percebo.",
             "Fala português?",
-            "Falo um pouco."
+            "Falo um pouco.",
+            "Não sei."
           ]
         },
         "recycle": [],
@@ -733,7 +724,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "neighbors and greetings"
           },
           {
@@ -791,16 +782,12 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "dictionary",
-            "focus": "work and home"
+            "preset": "vocab_flow",
+            "focus": "where you work and live"
           },
           {
             "preset": "conjugation",
             "focus": "-ar present endings"
-          },
-          {
-            "preset": "phrases",
-            "focus": "where you work and live"
           }
         ],
         "new_items": {
@@ -846,16 +833,12 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "dictionary",
-            "focus": "work and home"
+            "preset": "vocab_flow",
+            "focus": "where you work and live"
           },
           {
             "preset": "conjugation",
             "focus": "-ar present endings"
-          },
-          {
-            "preset": "phrases",
-            "focus": "where you work and live"
           }
         ],
         "new_items": {
@@ -868,7 +851,8 @@
           ],
           "phrases": [
             "Moro em Lisboa.",
-            "Onde mora?"
+            "Onde mora?",
+            "Moro perto daqui."
           ]
         },
         "recycle": [],
@@ -942,16 +926,12 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "dictionary",
-            "focus": "food and drinks"
+            "preset": "vocab_flow",
+            "focus": "at the restaurant"
           },
           {
             "preset": "conjugation",
             "focus": "-er present endings"
-          },
-          {
-            "preset": "phrases",
-            "focus": "at the restaurant"
           }
         ],
         "new_items": {
@@ -999,16 +979,12 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "dictionary",
-            "focus": "food and drinks"
+            "preset": "vocab_flow",
+            "focus": "at the restaurant"
           },
           {
             "preset": "conjugation",
             "focus": "-er present endings"
-          },
-          {
-            "preset": "phrases",
-            "focus": "at the restaurant"
           }
         ],
         "new_items": {
@@ -1054,7 +1030,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "dictionary",
+            "preset": "vocab_flow",
             "focus": "home routine"
           },
           {
@@ -1104,7 +1080,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "dictionary",
+            "preset": "vocab_flow",
             "focus": "home routine"
           },
           {
@@ -1155,12 +1131,12 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "conjugation",
-            "focus": "SER present"
+            "preset": "vocab_flow",
+            "focus": "origin and job"
           },
           {
-            "preset": "phrases",
-            "focus": "origin and job"
+            "preset": "conjugation",
+            "focus": "SER present"
           }
         ],
         "new_items": {
@@ -1207,12 +1183,12 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "conjugation",
-            "focus": "SER present"
+            "preset": "vocab_flow",
+            "focus": "origin and job"
           },
           {
-            "preset": "phrases",
-            "focus": "origin and job"
+            "preset": "conjugation",
+            "focus": "SER present"
           }
         ],
         "new_items": {
@@ -1362,11 +1338,16 @@
           "words": [
             "feliz",
             "triste",
-            "ocupado / ocupada"
+            "ocupado / ocupada",
+            "bom / boa · mau / má",
+            "novo / nova · velho / velha",
+            "fácil · difícil"
           ],
           "phrases": [
             "Dói-me a cabeça.",
-            "Está bem?"
+            "Está bem?",
+            "O português é difícil.",
+            "Boa ideia!"
           ]
         },
         "recycle": [],
@@ -1400,7 +1381,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "phone calls"
           },
           {
@@ -1455,7 +1436,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "likes and dislikes"
           },
           {
@@ -1508,7 +1489,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "likes and dislikes"
           },
           {
@@ -1519,14 +1500,17 @@
         "new_items": {
           "words": [
             "o livro",
-            "a televisão"
+            "a televisão",
+            "sempre · às vezes"
           ],
           "phrases": [
             "Adoro a praia!",
             "Prefiro chá.",
             "Está calor.",
             "Está frio.",
-            "Está a chover."
+            "Está a chover.",
+            "todos os dias",
+            "Em Lisboa, às vezes está frio."
           ]
         },
         "recycle": [],
@@ -1559,12 +1543,12 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "conjugation",
-            "focus": "ter ir fazer querer poder present"
+            "preset": "vocab_flow",
+            "focus": "making plans"
           },
           {
-            "preset": "phrases",
-            "focus": "making plans"
+            "preset": "conjugation",
+            "focus": "ter ir fazer querer poder present"
           }
         ],
         "new_items": {
@@ -1594,7 +1578,10 @@
       "example_tl": "Queres vir?",
       "rule_eg": "querer / poder في المضارع",
       "extra_units_tl": [],
-      "early_chunks_tl": [],
+      "early_chunks_tl": [
+        "Acho que sim.",
+        "Acho que não."
+      ],
       "book_pages": [
         "14",
         "183",
@@ -1608,12 +1595,12 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "conjugation",
-            "focus": "ter ir fazer querer poder present"
+            "preset": "vocab_flow",
+            "focus": "making plans"
           },
           {
-            "preset": "phrases",
-            "focus": "making plans"
+            "preset": "conjugation",
+            "focus": "ter ir fazer querer poder present"
           }
         ],
         "new_items": {
@@ -1623,7 +1610,12 @@
           ],
           "phrases": [
             "Queres vir?",
-            "Não posso, desculpa."
+            "Não posso, desculpa.",
+            "Acho que sim.",
+            "Acho que não.",
+            "Talvez.",
+            "Se calhar.",
+            "Depende."
           ]
         },
         "recycle": [],
@@ -1678,7 +1670,9 @@
       "example_tl": "Onde? Quando? Porquê? Qual?",
       "rule_eg": "أدوات الاستفهام + Qual?",
       "extra_units_tl": [],
-      "early_chunks_tl": [],
+      "early_chunks_tl": [
+        "Sabe onde fica o supermercado?"
+      ],
       "book_pages": [
         "19",
         "78"
@@ -1691,7 +1685,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "question words"
           },
           {
@@ -1712,7 +1706,8 @@
           "phrases": [
             "Pode ajudar-me?",
             "Qual é o seu número?",
-            "Como se diz … em português?"
+            "Como se diz … em português?",
+            "Sabe onde fica o supermercado?"
           ]
         },
         "recycle": [],
@@ -1744,7 +1739,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "transport"
           },
           {
@@ -1794,7 +1789,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "transport"
           },
           {
@@ -1847,7 +1842,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "directions"
           },
           {
@@ -1899,7 +1894,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "directions"
           },
           {
@@ -1917,7 +1912,9 @@
           "phrases": [
             "Vire à esquerda.",
             "Siga em frente.",
-            "Fica ao lado do banco."
+            "Fica ao lado do banco.",
+            "É longe daqui?",
+            "É logo ali."
           ]
         },
         "recycle": [],
@@ -1948,7 +1945,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "days and parts of day"
           },
           {
@@ -1998,7 +1995,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "days and parts of day"
           },
           {
@@ -2009,12 +2006,16 @@
         "new_items": {
           "words": [
             "hoje · amanhã · ontem",
-            "janeiro, fevereiro, março … dezembro"
+            "janeiro, fevereiro, março … dezembro",
+            "antes · depois"
           ],
           "phrases": [
             "Pode ser na terça?",
             "Queria marcar uma consulta.",
-            "Que dia é hoje? — É dia cinco de março."
+            "Que dia é hoje? — É dia cinco de março.",
+            "Ainda não.",
+            "Já está!",
+            "daqui a dois dias"
           ]
         },
         "recycle": [],
@@ -2083,7 +2084,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "telling time"
           },
           {
@@ -2135,7 +2136,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "weekend plans"
           },
           {
@@ -2186,7 +2187,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "pharmacy"
           },
           {
@@ -2240,7 +2241,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "dictionary",
+            "preset": "vocab_flow",
             "focus": "family"
           },
           {
@@ -2299,7 +2300,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "dictionary",
+            "preset": "vocab_flow",
             "focus": "colors and clothes"
           },
           {
@@ -2337,7 +2338,11 @@
       "example_tl": "Tem noutro tamanho?",
       "rule_eg": "-ão→-ões · -l→-is",
       "extra_units_tl": [],
-      "early_chunks_tl": [],
+      "early_chunks_tl": [
+        "Tem mais pequeno?",
+        "Tem maior?",
+        "Tem mais barato?"
+      ],
       "book_pages": [
         "68",
         "76",
@@ -2351,7 +2356,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "dictionary",
+            "preset": "vocab_flow",
             "focus": "colors and clothes"
           },
           {
@@ -2367,7 +2372,68 @@
           ],
           "phrases": [
             "Tem noutro tamanho?",
-            "Tem noutra cor?"
+            "Tem noutra cor?",
+            "Tem mais pequeno?",
+            "Tem maior?",
+            "Tem mais barato?"
+          ]
+        },
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Adjetivos 2",
+          "eg": "توصف حاجة"
+        }
+      }
+    },
+    {
+      "day": 44,
+      "week": 6,
+      "title_tl": "Adjetivos 2",
+      "title_ar": "توصف حاجة",
+      "situation_eg": "بتوصف شقتك والحي لصاحبك",
+      "example_tl": "O quarto é um bocado pequeno. É como no Cairo.",
+      "rule_eg": "muito / bastante / demasiado / um bocado + صفة، وassim (كده) وcomo (زي) وigual a / diferente de / parecido com",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [],
+      "is_story": false,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "vocab_flow",
+            "focus": "describing a flat and a neighbourhood"
+          },
+          {
+            "preset": "pattern",
+            "focus": "degree words + adjective"
+          },
+          {
+            "preset": "compare",
+            "focus": "assim / como / igual / diferente"
+          }
+        ],
+        "new_items": {
+          "words": [
+            "bonito / bonita · feio / feia",
+            "limpo · sujo",
+            "calmo · barulhento",
+            "o bairro",
+            "bastante · demasiado · um bocado",
+            "assim",
+            "como",
+            "igual a · diferente de",
+            "parecido com",
+            "muito · bastante · demasiado · um bocado + صفة"
+          ],
+          "phrases": [
+            "É assim.",
+            "É como no Cairo.",
+            "A rua é demasiado barulhenta.",
+            "O quarto é um bocado pequeno."
           ]
         },
         "recycle": [],
@@ -2378,7 +2444,7 @@
       }
     },
     {
-      "day": 44,
+      "day": 45,
       "week": 6,
       "title_tl": "A Visita da Família",
       "title_ar": "قصة ٦",
@@ -2414,7 +2480,7 @@
       }
     },
     {
-      "day": 45,
+      "day": 46,
       "week": 7,
       "title_tl": "Isto e Aquilo",
       "title_ar": "ده وده",
@@ -2438,7 +2504,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "choosing in a shop"
           },
           {
@@ -2463,13 +2529,184 @@
         },
         "recycle": [],
         "tomorrow": {
+          "tl": "Aqui e Ali",
+          "eg": "هنا وهناك"
+        }
+      }
+    },
+    {
+      "day": 47,
+      "week": 7,
+      "title_tl": "Aqui e Ali",
+      "title_ar": "هنا وهناك",
+      "situation_eg": "بتدوّر على حاجاتك في البيت",
+      "example_tl": "Onde está o telemóvel? Está em cima da mesa.",
+      "rule_eg": "aqui · aí · ali · lá بنفس مسافة este · esse · aquele، وحروف المكان + de (em cima da mesa)، وestá للحاجة اللي بتتحرك وfica للمكان الثابت",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [],
+      "is_story": false,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "vocab_flow",
+            "focus": "places in the house"
+          },
+          {
+            "preset": "compare",
+            "focus": "aqui/aí/ali/lá next to este/esse/aquele"
+          },
+          {
+            "preset": "pattern",
+            "focus": "place word + de + article"
+          }
+        ],
+        "new_items": {
+          "words": [
+            "aqui · aí · ali · lá",
+            "em cima de · debaixo de",
+            "dentro de · fora de",
+            "atrás de · à frente de",
+            "entre",
+            "aqui = este · aí = esse · ali / lá = aquele",
+            "em cima / debaixo / dentro / atrás + de + o/a = do/da"
+          ],
+          "phrases": [
+            "Onde está o telemóvel?",
+            "Está em cima da mesa.",
+            "Está aí, ao teu lado.",
+            "Está atrás da porta.",
+            "Está dentro do saco.",
+            "Anda cá!"
+          ]
+        },
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Comparativos",
+          "eg": "المقارنة"
+        }
+      }
+    },
+    {
+      "day": 48,
+      "week": 7,
+      "title_tl": "Comparativos",
+      "title_ar": "المقارنة",
+      "situation_eg": "بتختار بين شقتين",
+      "example_tl": "Este é mais barato do que aquele. Qual é melhor?",
+      "rule_eg": "mais / menos … do que، tão … como، والشواذ melhor · pior · maior، وo mais …",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [],
+      "is_story": false,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "vocab_flow",
+            "focus": "comparing two flats"
+          },
+          {
+            "preset": "pattern",
+            "focus": "mais/menos … do que"
+          },
+          {
+            "preset": "compare",
+            "focus": "melhor/pior/maior vs mais + adj"
+          }
+        ],
+        "new_items": {
+          "words": [
+            "mais … do que · menos … do que",
+            "tão … como",
+            "melhor · pior",
+            "maior · mais pequeno",
+            "o mais … · a mais …",
+            "o outro · a outra",
+            "o apartamento",
+            "a renda",
+            "mais / menos + صفة + do que"
+          ],
+          "phrases": [
+            "Este é mais barato do que aquele.",
+            "É tão grande como o outro.",
+            "Qual é melhor?",
+            "Qual é o mais barato?"
+          ]
+        },
+        "recycle": [],
+        "tomorrow": {
+          "tl": "Saber e Conhecer",
+          "eg": "saber ولا conhecer"
+        }
+      }
+    },
+    {
+      "day": 49,
+      "week": 7,
+      "title_tl": "Saber e Conhecer",
+      "title_ar": "saber ولا conhecer",
+      "situation_eg": "بتسأل في الشارع وبتتكلم عن ناس تعرفهم",
+      "example_tl": "Não sei onde fica. Conhece Lisboa?",
+      "rule_eg": "saber (معلومة أو تعرف تعمل حاجة) ولا conhecer (شخص أو مكان)، وsei الشاذة، وse = لو",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [],
+      "is_story": false,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "vocab_flow",
+            "focus": "quick reactions"
+          },
+          {
+            "preset": "conjugation",
+            "focus": "saber and conhecer present"
+          },
+          {
+            "preset": "compare",
+            "focus": "saber vs conhecer"
+          }
+        ],
+        "new_items": {
+          "words": [
+            "saber",
+            "conhecer",
+            "se",
+            "saber = معلومة / مهارة · conhecer = شخص / مكان",
+            "sei · sabes · sabe · sabemos · sabem"
+          ],
+          "phrases": [
+            "Não sei onde fica.",
+            "Sabe se está aberto?",
+            "Sei falar um pouco de português.",
+            "Conhece Lisboa?",
+            "Conheço a Rita.",
+            "Claro!",
+            "A sério?",
+            "Tem a certeza?"
+          ]
+        },
+        "recycle": [],
+        "tomorrow": {
           "tl": "Verbo Pôr",
           "eg": "فعل pôr"
         }
       }
     },
     {
-      "day": 46,
+      "day": 50,
       "week": 7,
       "title_tl": "Verbo Pôr",
       "title_ar": "فعل pôr",
@@ -2490,12 +2727,12 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "conjugation",
-            "focus": "pôr present"
+            "preset": "vocab_flow",
+            "focus": "morning routine"
           },
           {
-            "preset": "phrases",
-            "focus": "morning routine"
+            "preset": "conjugation",
+            "focus": "pôr present"
           },
           {
             "preset": "pattern",
@@ -2519,13 +2756,70 @@
         },
         "recycle": [],
         "tomorrow": {
+          "tl": "Todos e Ninguém",
+          "eg": "الكل ومفيش حد"
+        }
+      }
+    },
+    {
+      "day": 51,
+      "week": 7,
+      "title_tl": "Todos e Ninguém",
+      "title_ar": "الكل ومفيش حد",
+      "situation_eg": "الصبح في المكتب ومفيش حد",
+      "example_tl": "Não está ninguém. Estão todos a almoçar.",
+      "rule_eg": "todos / tudo / cada، alguém / ninguém، alguma coisa / nada، algum / nenhum، والنفي المزدوج: Não está ninguém",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [],
+      "is_story": false,
+      "generation": {
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "vocab_flow",
+            "focus": "nobody and everybody at the office"
+          },
+          {
+            "preset": "pattern",
+            "focus": "double negative"
+          },
+          {
+            "preset": "compare",
+            "focus": "todos/tudo, alguém/ninguém"
+          }
+        ],
+        "new_items": {
+          "words": [
+            "todos · tudo",
+            "cada",
+            "alguém · ninguém",
+            "alguma coisa · nada",
+            "algum / alguma · nenhum / nenhuma",
+            "as pessoas",
+            "Não + فعل + ninguém / nada / nenhum"
+          ],
+          "phrases": [
+            "Não está ninguém.",
+            "Está alguém?",
+            "Não tenho nada.",
+            "Está tudo bem?",
+            "Estão todos a almoçar.",
+            "Cada um paga o seu."
+          ]
+        },
+        "recycle": [],
+        "tomorrow": {
           "tl": "O Que Fizeste Ontem?",
           "eg": "مقدمة الماضي"
         }
       }
     },
     {
-      "day": 47,
+      "day": 52,
       "week": 7,
       "title_tl": "O Que Fizeste Ontem?",
       "title_ar": "مقدمة الماضي",
@@ -2545,7 +2839,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "yesterday activities"
           },
           {
@@ -2574,7 +2868,7 @@
       }
     },
     {
-      "day": 48,
+      "day": 53,
       "week": 7,
       "title_tl": "Um Dia Normal",
       "title_ar": "قصة ٧",
@@ -2610,7 +2904,7 @@
       }
     },
     {
-      "day": 49,
+      "day": 54,
       "week": 7,
       "title_tl": "Teste A1",
       "title_ar": "اختبار المرحلة ١",
@@ -2630,7 +2924,7 @@
             "focus": "situation dialogue"
           },
           {
-            "preset": "phrases",
+            "preset": "vocab_flow",
             "focus": "phase 1 / A1 test"
           }
         ],

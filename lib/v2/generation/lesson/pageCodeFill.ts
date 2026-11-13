@@ -82,6 +82,8 @@ export function applyDeterminedBlocks(
     introduces: string[];
     allowedIds: string[];
     wordIds?: string[];
+    /** Ordered word+phrase ids for vocab_flow cards. */
+    vocabIds?: string[];
   },
 ): unknown {
   if (!hydrated || typeof hydrated !== 'object') return hydrated;
@@ -100,6 +102,17 @@ export function applyDeterminedBlocks(
     );
   } else if (opts.preset === 'dictionary') {
     blocks = withDictionaryCards(blocks, opts.wordIds ?? []);
+  } else if (opts.preset === 'vocab_flow') {
+    const ids =
+      opts.vocabIds?.length
+        ? opts.vocabIds
+        : opts.introduces.filter(
+            (id) =>
+              id.startsWith('word.') ||
+              id.startsWith('phrase.') ||
+              id.startsWith('verb.'),
+          );
+    blocks = withDictionaryCards(blocks, ids);
   } else if (opts.preset === 'pattern') {
     blocks = withPatternFormula(blocks, patternIdForFormula(opts.introduces));
   }
@@ -112,6 +125,15 @@ export function forcePhraseCards(page: Page, phraseIds: string[]): Page {
   return {
     ...page,
     blocks: withPhraseCards(page.blocks, phraseIds) as Page['blocks'],
+  };
+}
+
+/** Force vocab_flow cards to the ordered introduces list. */
+export function forceVocabFlowCards(page: Page, itemIds: string[]): Page {
+  if (page.preset !== 'vocab_flow' || !itemIds.length) return page;
+  return {
+    ...page,
+    blocks: withDictionaryCards(page.blocks, itemIds) as Page['blocks'],
   };
 }
 

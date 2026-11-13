@@ -62,7 +62,7 @@ export type DeckItemRow = {
 
 export type DeckDetail = {
   id: string;
-  kind: 'situation' | 'verb' | 'weak';
+  kind: 'situation' | 'verb' | 'weak' | 'custom' | 'official';
   day?: number;
   title_tl: string;
   title_ar: string;
@@ -71,6 +71,10 @@ export type DeckDetail = {
   today: number;
   graduated: number;
   items: DeckItemRow[];
+  /** Custom/official only */
+  added?: boolean;
+  added_count?: number;
+  reportable?: boolean;
 };
 
 export type DecksListing = {
@@ -395,6 +399,7 @@ export async function getDeckDetail(opts: {
     };
   }
 
+  // custom: / official: handled in lib/v2/decks/detail.ts via getAnyDeckDetail
   return null;
 }
 
@@ -417,10 +422,15 @@ export type CardFacePayload = {
   kind: 'word' | 'phrase' | 'verb';
   tl: string;
   ar: string;
+  /** Arabic-letter pronunciation; kept on payload for data but not shown on card back. */
   say?: string;
   gender?: 'm' | 'f' | 'n';
   plural?: string;
   example?: string;
+  /** Simple MSA translation of `example` (custom decks). */
+  example_ar?: string;
+  /** Ready custom/lesson image URL for the card back. */
+  image_url?: string;
   hint_tl?: string;
   context_eg?: string;
   role?: 'said' | 'heard';

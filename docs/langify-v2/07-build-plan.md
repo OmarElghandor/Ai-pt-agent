@@ -298,6 +298,24 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
 - A day with carded items but no ready urls still shows the step with placeholders.
 - A day with fewer than 4 carded words/phrases hides the step.
 
+### Phase 3 add-on · Vocabulary flow with micro checks (2026-11-09)
+
+**Read:** 00 §4 "One vocabulary flow, with micro checks".
+
+**Tasks**
+1. **Outline:** replace the dictionary and phrases pages with one `vocab_flow` page. Items are ordered by their first appearance in the story, and each phrase comes after the words it uses. "بيقولوها كده" follows the flow, then grammar, then "لاقي الصورة".
+2. **Flow builder (code only):**
+   - after every 3 items, insert a micro check;
+   - rotate the check types (pick_image only when images are ready; choose_article only for nouns; complete_phrase only right after a phrase);
+   - never put two checks in a row, and always end with a check;
+   - add a "phrase in use" card (the story line + speaker) after each phrase card;
+   - add a halfway breather card when there are more than 9 items.
+3. **Player:** ItemViewer cards, PhraseInUse card, MicroCheck card (instant feedback with a why line; a wrong answer briefly shows the item card again) and the breather card. The flow never blocks. Legacy packs without `vocab_flow` keep the separate dictionary + phrases ItemViewer pages.
+4. **Answers:** the first try goes to POST `/api/v2/answers` with type `micro_check`, as an implicit review. It isn't counted in the day question set.
+
+**Done when**
+- Day 3 shows: 3 items → check → 3 items → phrase in use → check …, with no two checks or two identical check types in a row, and it ends with a check.
+
 ---
 
 ## Phase 4 · Progress, SRS, answers, cards engine

@@ -1,4 +1,5 @@
 import type { PageAnswerPayload } from '@/lib/v2/render/answerPayload';
+import { postProgressEvent } from '@/lib/v2/progress/clientEvent';
 
 function key(day: number): string {
   return `v2-day-${day}-done`;
@@ -20,6 +21,12 @@ export function markPageDone(day: number, pageId: string): void {
   const next = new Set(readDonePages(day));
   next.add(pageId);
   sessionStorage.setItem(key(day), JSON.stringify([...next]));
+  postProgressEvent({
+    kind: 'step_done',
+    day,
+    step_id: pageId,
+    resume: { step_id: pageId },
+  });
 }
 
 function newAnswerId(): string {

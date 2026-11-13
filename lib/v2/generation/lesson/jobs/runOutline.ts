@@ -15,6 +15,7 @@ import {
   type TierIssue,
 } from '../tiers';
 import { fillEmptyDetailAssumes } from '../pageAllow';
+import { orderVocabFlowIds } from '@/lib/v2/vocabFlow/orderItems';
 import { callJobTool } from './call';
 
 /** Slim outline tool — code fills page_id + mode. */
@@ -120,6 +121,100 @@ function postProcessOutline(
     return true;
   });
 
+  // If vocab_flow is present, drop legacy dictionary/phrases siblings.
+  {
+    const hasVocab = pages.some((p) => p.preset === 'vocab_flow');
+    if (hasVocab) {
+      const before = pages.length;
+      pages = pages.filter((p) => {
+        if (p.preset === 'dictionary' || p.preset === 'phrases') {
+          fixes.push(
+            fix(
+              `pages[${p.index}]`,
+              'vocab_flow_replace',
+              `dropped ${p.preset} (vocab_flow present)`,
+            ),
+          );
+          return false;
+        }
+        return true;
+      });
+      if (pages.length !== before) {
+        // fall through
+      }
+    }
+  }
+
+  // Collapse dictionary + phrases into one vocab_flow (new days / PAGE_PLAN).
+  {
+    const dictPages = pages.filter((p) => p.preset === 'dictionary');
+    const phrasePages = pages.filter((p) => p.preset === 'phrases');
+    const hasVocab = pages.some((p) => p.preset === 'vocab_flow');
+    if (!hasVocab && (dictPages.length || phrasePages.length)) {
+      const firstIdx = Math.min(
+        ...[...dictPages, ...phrasePages].map((p) =>
+          pages.findIndex((x) => x === p),
+        ),
+      );
+      const mergedIntro = [
+        ...new Set([
+          ...dictPages.flatMap((p) => p.introduces ?? []),
+          ...phrasePages.flatMap((p) => p.introduces ?? []),
+        ]),
+      ];
+      const title =
+        phrasePages[0]?.title ||
+        dictPages[0]?.title ||
+        'الكلمات والجمل';
+      const purpose =
+        phrasePages[0]?.purpose ||
+        dictPages[0]?.purpose ||
+        'شوف كلمات وجمل اليوم';
+      const drop = new Set([...dictPages, ...phrasePages]);
+      const next: typeof pages = [];
+      let inserted = false;
+      for (let i = 0; i < pages.length; i++) {
+        const p = pages[i]!;
+        if (drop.has(p)) {
+          if (!inserted && i === firstIdx) {
+            next.push({
+              ...p,
+              preset: 'vocab_flow',
+              mode: modeForPreset('vocab_flow'),
+              title,
+              purpose,
+              introduces: mergedIntro,
+            });
+            inserted = true;
+          }
+          fixes.push(
+            fix(
+              `pages[${p.index}]`,
+              'vocab_flow_merge',
+              `collapsed ${p.preset} into vocab_flow`,
+            ),
+          );
+          continue;
+        }
+        next.push(p);
+      }
+      if (!inserted) {
+        next.splice(Math.max(0, firstIdx), 0, {
+          index: firstIdx,
+          page_id: 'p_vocab_flow',
+          preset: 'vocab_flow',
+          mode: modeForPreset('vocab_flow'),
+          title,
+          purpose,
+          introduces: mergedIntro,
+          assumes: [],
+          handoff: '',
+        });
+      }
+      pages = next;
+    }
+  }
+
   // Unique presets — keep first occurrence of each.
   const seen = new Set<string>();
   const deduped: typeof pages = [];
@@ -181,10 +276,12 @@ function postProcessOutline(
       : {}),
   }));
 
-  // early_chunks → phrases page introduces
+  // early_chunks → vocab_flow (preferred) or legacy phrases page
   if (opts.earlyChunks.length) {
-    const phrasesPage = pages.find((p) => p.preset === 'phrases');
-    if (phrasesPage) {
+    const target =
+      pages.find((p) => p.preset === 'vocab_flow') ??
+      pages.find((p) => p.preset === 'phrases');
+    if (target) {
       const chunkIds: string[] = [];
       for (const chunk of opts.earlyChunks) {
         const n = normTl(chunk);
@@ -195,21 +292,59 @@ function postProcessOutline(
         );
         if (hit) chunkIds.push(hit.id);
       }
-      const merged = [...new Set([...phrasesPage.introduces, ...chunkIds])];
-      if (merged.length !== phrasesPage.introduces.length) {
+      const merged = [...new Set([...target.introduces, ...chunkIds])];
+      if (merged.length !== target.introduces.length) {
         fixes.push(
           fix(
-            `pages[${phrasesPage.index}].introduces`,
+            `pages[${target.index}].introduces`,
             'early_chunks',
             `added ${chunkIds.join(', ')}`,
           ),
         );
       }
-      phrasesPage.introduces = merged;
+      target.introduces = merged;
     }
   }
 
-  // Dictionary introduces = every word.* from today's bank (never a subset)
+  // vocab_flow introduces = today's words + phrases, story-first (words before phrases that use them)
+  {
+    const vf = pages.find((p) => p.preset === 'vocab_flow');
+    if (vf) {
+      const wordIds = opts.items
+        .filter((it) => it.type === 'word')
+        .map((it) => it.id);
+      const phraseIds = opts.items
+        .filter((it) => it.type === 'phrase' || it.type === 'sentence')
+        .map((it) => it.id);
+      const candidateIds = [
+        ...new Set([...wordIds, ...phraseIds, ...vf.introduces]),
+      ];
+      const ordered = orderVocabFlowIds({
+        candidateIds,
+        items: opts.items.map((it) => ({
+          id: it.id,
+          type: it.type,
+          tl: it.tl,
+        })),
+        itemFirstIndex: opts.story?.item_first_index,
+      });
+      if (
+        ordered.length !== vf.introduces.length ||
+        ordered.some((id, i) => id !== vf.introduces[i])
+      ) {
+        fixes.push(
+          fix(
+            `pages[${vf.index}].introduces`,
+            'vocab_flow_order',
+            `set ${ordered.length} word+phrase ids (story-first)`,
+          ),
+        );
+      }
+      vf.introduces = ordered;
+    }
+  }
+
+  // Dictionary introduces = every word.* from today's bank (never a subset) — legacy packs
   {
     const dictPage = pages.find((p) => p.preset === 'dictionary');
     if (dictPage) {
@@ -240,7 +375,7 @@ function postProcessOutline(
     }
   }
 
-  // «بيقولوها كده»: after dictionary when present, else after phrases.
+  // «بيقولوها كده»: after vocab_flow, else dictionary, else phrases.
   // Skip on weekly story days (pages already emptied above).
   if (!opts.isStory) {
     pages = pages.filter((p) => {
@@ -267,11 +402,15 @@ function postProcessOutline(
       assumes: [] as string[],
       handoff: '',
     };
+    const vocabIdx = pages.findIndex((p) => p.preset === 'vocab_flow');
     const dictIdx = pages.findIndex((p) => p.preset === 'dictionary');
     const phrasesIdx = pages.findIndex((p) => p.preset === 'phrases');
     let insertAfter = -1;
     let insertNote = 'appended real_world as last detail';
-    if (dictIdx >= 0) {
+    if (vocabIdx >= 0) {
+      insertAfter = vocabIdx;
+      insertNote = 'inserted real_world after vocab_flow';
+    } else if (dictIdx >= 0) {
       insertAfter = dictIdx;
       insertNote = 'inserted real_world after dictionary';
     } else if (phrasesIdx >= 0) {

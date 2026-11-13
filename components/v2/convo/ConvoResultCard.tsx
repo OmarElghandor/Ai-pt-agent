@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useRef } from 'react';
 import type { ConvoResultStats } from '@/lib/v2/convo/result';
+import { postProgressEvent } from '@/lib/v2/progress/clientEvent';
 
 type Props = {
   day: number | null;
@@ -9,6 +11,7 @@ type Props = {
   /** Pack bridge line into free chat (09 §4.4 / T7.5). */
   bridgeTl?: string;
   freeTopicId?: string | null;
+  learnerTurns?: number;
 };
 
 /** End-of-lesson result card (09 §4.4): بتقول / بتفهم / extra. */
@@ -17,7 +20,21 @@ export function ConvoResultCard({
   stats,
   bridgeTl,
   freeTopicId,
+  learnerTurns = 5,
 }: Props) {
+  const sent = useRef(false);
+  useEffect(() => {
+    if (sent.current) return;
+    sent.current = true;
+    postProgressEvent({
+      kind: 'convo_finished',
+      day: day ?? undefined,
+      said: stats.said.length,
+      understood: stats.understood.length,
+      learner_turns: learnerTurns,
+    });
+  }, [day, stats.said.length, stats.understood.length, learnerTurns]);
+
   return (
     <div className="mt-4 rounded-v2-card border border-v2-line bg-v2-card px-4 py-5 shadow-[var(--shadow-v2-soft)]">
       <p className="text-center font-[family-name:var(--font-v2-arabic)] text-base font-semibold text-v2-ink">

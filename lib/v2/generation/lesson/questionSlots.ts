@@ -308,12 +308,16 @@ function pushSlot(
   });
 }
 
-/** Core phrase ids that appear on the phrases page (avoid for grammar .ex pick). */
+/** Core phrase ids on phrases or vocab_flow pages (avoid for grammar .ex pick). */
 function phrasesPageCoreIds(outlinePages: OutlinePagePlan[]): Set<string> {
   const out = new Set<string>();
   for (const p of outlinePages) {
-    if (p.preset !== 'phrases') continue;
-    for (const id of p.introduces ?? []) out.add(id);
+    if (p.preset !== 'phrases' && p.preset !== 'vocab_flow') continue;
+    for (const id of p.introduces ?? []) {
+      if (id.startsWith('phrase.') || /^pattern\..+\.ex\.\d+$/.test(id)) {
+        out.add(id);
+      }
+    }
   }
   return out;
 }

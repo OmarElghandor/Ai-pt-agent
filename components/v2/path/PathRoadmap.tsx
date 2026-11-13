@@ -6,8 +6,12 @@ import { TopicsReviewCard } from '@/components/v2/convo/TopicsReviewCard';
 import { Icon } from '@/components/v2/Icon';
 import { readDonePages } from '@/components/v2/player/session';
 import type { PathDayRow } from '@/lib/v2/path';
+import type { LearnerPathDay } from '@/lib/v2/progress/learnerPath';
 
-type NodeStatus = 'done' | 'current' | 'available' | 'locked';
+type NodeStatus = 'done' | 'current' | 'available' | 'locked' | 'bakra';
+
+type PathRoadDay = PathDayRow &
+  Partial<Pick<LearnerPathDay, 'learner_status' | 'bakra' | 'practised'>>;
 
 const DAY_ICONS = [
   'waving_hand',
@@ -51,7 +55,7 @@ export function PathRoadmap({
   currentDay: ssrCurrentDay,
 }: {
   week: number;
-  days: PathDayRow[];
+  days: PathRoadDay[];
   currentDay: number | null;
 }) {
   const [doneDays, setDoneDays] = useState<Set<number>>(() => new Set());
@@ -59,6 +63,10 @@ export function PathRoadmap({
   useEffect(() => {
     const next = new Set<number>();
     for (const row of days) {
+      if (row.learner_status === 'completed') {
+        next.add(row.day);
+        continue;
+      }
       if (row.status !== 'locked' && dayLooksDone(row.day)) next.add(row.day);
     }
     setDoneDays(next);
@@ -67,11 +75,27 @@ export function PathRoadmap({
   const nodes = useMemo(() => {
     let markedCurrent = false;
     return days.map((row) => {
-      if (row.status === 'locked' || !row.href) {
+      if (row.learner_status === 'completed' || doneDays.has(row.day)) {
+        return { row, status: 'done' as NodeStatus };
+      }
+      if (row.bakra || row.learner_status === 'scheduled') {
+        return { row, status: 'bakra' as NodeStatus };
+      }
+      if (
+        row.learner_status === 'locked' ||
+        row.status === 'locked' ||
+        !row.href
+      ) {
         return { row, status: 'locked' as NodeStatus };
       }
-      if (doneDays.has(row.day)) {
-        return { row, status: 'done' as NodeStatus };
+      if (
+        !markedCurrent &&
+        (row.day === ssrCurrentDay ||
+          row.learner_status === 'available' ||
+          row.learner_status === 'in_progress')
+      ) {
+        markedCurrent = true;
+        return { row, status: 'current' as NodeStatus };
       }
       if (!markedCurrent) {
         markedCurrent = true;
@@ -79,7 +103,7 @@ export function PathRoadmap({
       }
       return { row, status: 'available' as NodeStatus };
     });
-  }, [days, doneDays]);
+  }, [days, doneDays, ssrCurrentDay]);
 
   const current =
     nodes.find((n) => n.status === 'current')?.row ??
@@ -216,8 +240,9 @@ export function PathRoadmap({
             const cardOnStart = index % 2 === 0;
             const icon = DAY_ICONS[index % DAY_ICONS.length];
             const isCurrent = status === 'current';
-            const isLocked = status === 'locked';
+            const isLocked = status === 'locked' || status === 'bakra';
             const isDone = status === 'done';
+            const isBakra = status === 'bakra';
 
             const card = (
               <div
@@ -277,6 +302,13 @@ export function PathRoadmap({
                           <span className="h-2 w-2 animate-ping rounded-full bg-v2-action" />
                           الدرس الحالي
                         </span>
+                      ) : isBakra ? (
+                        <span className="flex items-center gap-1 text-v2-ink-muted">
+                          <Icon name="schedule" size={20} />
+                          <span className="font-[family-name:var(--font-v2-arabic)] text-[10px] font-semibold">
+                            بكرة
+                          </span>
+                        </span>
                       ) : isLocked ? (
                         <span className="flex items-center gap-1 text-v2-ink-muted">
                           <Icon name="lock" size={20} />
@@ -286,7 +318,7 @@ export function PathRoadmap({
                         </span>
                       ) : (
                         <span className="font-[family-name:var(--font-v2-arabic)] text-[10px] font-medium text-v2-ink-muted">
-                          متاح
+                          {row.practised ? 'اتمرّنت · متاح' : 'متاح'}
                         </span>
                       )}
                     </div>

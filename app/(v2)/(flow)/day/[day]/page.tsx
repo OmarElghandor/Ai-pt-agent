@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { DayMap, type DayMapStep } from '@/components/v2/player/DayMap';
+import { LessonProgressBootstrap } from '@/components/v2/player/LessonProgressBootstrap';
 import {
   getLatestLessonPack,
   getPublishedLesson,
@@ -123,15 +124,36 @@ export default async function DayMapPage({
     href: pack ? `/practice/${day}${devUnlock ? '?dev=1' : ''}` : null,
   });
 
+  const openSteps = steps.map((s) => ({
+    id: s.id,
+    present: s.id !== 'real_world' || Boolean(s.href),
+  }));
+  // Mark find_image absent when hidden; real_world pages already filtered by content.
+  if (!showFindImage) {
+    openSteps.push({ id: 'find_image', present: false });
+  }
+
+  const dayQuestionsTotal = Array.isArray(lessonPack.questions)
+    ? lessonPack.questions.length
+    : 0;
+
   return (
-    <DayMap
-      day={published.day}
-      situation={lessonPack.lesson.situation}
-      steps={steps}
-      lastPageId={unlockAfter}
-      practiceDevUnlock={devUnlock}
-      hasPublishedPack={Boolean(pack)}
-      questionsAfterId={questionsAfterId}
-    />
+    <>
+      <LessonProgressBootstrap
+        day={published.day}
+        steps={openSteps}
+        dayQuestionsTotal={dayQuestionsTotal}
+        lessonVersion={published.version}
+      />
+      <DayMap
+        day={published.day}
+        situation={lessonPack.lesson.situation}
+        steps={steps}
+        lastPageId={unlockAfter}
+        practiceDevUnlock={devUnlock}
+        hasPublishedPack={Boolean(pack)}
+        questionsAfterId={questionsAfterId}
+      />
+    </>
   );
 }

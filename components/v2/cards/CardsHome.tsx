@@ -23,7 +23,15 @@ type TodayRes = {
   cards: { item_id: string }[];
 };
 
-type Tab = 'situations' | 'verbs';
+type Tab = 'situations' | 'verbs' | 'themes' | 'learners';
+
+type PublicTile = {
+  id: string;
+  title_tl: string;
+  title_ar: string;
+  word_count: number;
+  added_count: number;
+};
 
 const VERB_TILE: Record<string, string> = {
   ar: 'text-v2-verb-ar-text',
@@ -37,6 +45,10 @@ export function CardsHome({ dayOverride }: { dayOverride: number | null }) {
   const [listing, setListing] = useState<DecksListing | null>(null);
   const [today, setToday] = useState<TodayRes | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [learnerDecks, setLearnerDecks] = useState<PublicTile[]>([]);
+  const [themeDecks, setThemeDecks] = useState<PublicTile[]>([]);
+  const [learnerSort, setLearnerSort] = useState<'popular' | 'new'>('popular');
+  const [learnerQ, setLearnerQ] = useState('');
 
   useEffect(() => {
     let cancelled = false;
@@ -63,6 +75,33 @@ export function CardsHome({ dayOverride }: { dayOverride: number | null }) {
       cancelled = true;
     };
   }, [dayOverride]);
+
+  useEffect(() => {
+    if (tab !== 'learners' && tab !== 'themes') return;
+    let cancelled = false;
+    (async () => {
+      try {
+        if (tab === 'learners') {
+          const params = new URLSearchParams({ sort: learnerSort });
+          if (learnerQ.trim()) params.set('q', learnerQ.trim());
+          const res = await fetch(`/api/v2/custom-decks/public?${params}`);
+          if (!res.ok) return;
+          const data = (await res.json()) as { decks?: PublicTile[] };
+          if (!cancelled) setLearnerDecks(data.decks ?? []);
+        } else {
+          const res = await fetch('/api/v2/custom-decks/official');
+          if (!res.ok) return;
+          const data = (await res.json()) as { decks?: PublicTile[] };
+          if (!cancelled) setThemeDecks(data.decks ?? []);
+        }
+      } catch {
+        /* quiet */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [tab, learnerSort, learnerQ]);
 
   if (error) {
     return (
@@ -152,11 +191,23 @@ export function CardsHome({ dayOverride }: { dayOverride: number | null }) {
         </p>
       )}
 
-      <div className="flex rounded-v2-chip bg-v2-paper-deep p-1">
+      <Link
+        href={cardsHref('/cards/create', dayOverride)}
+        className="flex min-h-11 items-center justify-between gap-3 rounded-v2-row bg-v2-card px-4 py-3 shadow-[var(--shadow-v2-soft)]"
+      >
+        <p className="font-[family-name:var(--font-v2-arabic)] text-base font-semibold text-v2-primary">
+          اعمل ديك
+        </p>
+        <Icon name="arrow_back" size={20} className="text-v2-primary" />
+      </Link>
+
+      <div className="flex flex-wrap rounded-v2-chip bg-v2-paper-deep p-1">
         {(
           [
             ['situations', 'المواقف'],
             ['verbs', 'الأفعال'],
+            ['themes', 'مواضيع'],
+            ['learners', 'من المتعلمين'],
           ] as const
         ).map(([id, label]) => (
           <button
@@ -164,7 +215,7 @@ export function CardsHome({ dayOverride }: { dayOverride: number | null }) {
             type="button"
             onClick={() => setTab(id)}
             className={[
-              'min-h-11 flex-1 rounded-v2-chip font-[family-name:var(--font-v2-arabic)] text-sm font-semibold',
+              'min-h-11 flex-1 rounded-v2-chip px-1 font-[family-name:var(--font-v2-arabic)] text-xs font-semibold sm:text-sm',
               tab === id
                 ? 'bg-v2-card text-v2-primary shadow-[var(--shadow-v2-soft)]'
                 : 'text-v2-ink-muted',
@@ -174,6 +225,76 @@ export function CardsHome({ dayOverride }: { dayOverride: number | null }) {
           </button>
         ))}
       </div>
+
+      {tab === 'learners' ? (
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setLearnerSort('popular')}
+              className={[
+                'min-h-11 flex-1 rounded-v2-chip font-[family-name:var(--font-v2-arabic)] text-sm',
+                learnerSort === 'popular'
+                  ? 'bg-v2-primary text-white'
+                  : 'bg-v2-card text-v2-ink',
+              ].join(' ')}
+            >
+              الأكثر
+            </button>
+            <button
+              type="button"
+              onClick={() => setLearnerSort('new')}
+              className={[
+                'min-h-11 flex-1 rounded-v2-chip font-[family-name:var(--font-v2-arabic)] text-sm',
+                learnerSort === 'new'
+                  ? 'bg-v2-primary text-white'
+                  : 'bg-v2-card text-v2-ink',
+              ].join(' ')}
+            >
+              الجديد
+            </button>
+          </div>
+          <input
+            value={learnerQ}
+            onChange={(e) => setLearnerQ(e.target.value)}
+            placeholder="دور…"
+            className="min-h-11 rounded-v2-row border border-v2-mist bg-v2-card px-4 font-[family-name:var(--font-v2-arabic)] text-sm outline-none"
+            dir="rtl"
+          />
+          <ul className="flex flex-col gap-3">
+            {learnerDecks.map((d) => (
+              <PublicDeckRow
+                key={d.id}
+                deck={d}
+                href={cardsHref(`/cards/deck/custom:${d.id}`, dayOverride)}
+              />
+            ))}
+            {learnerDecks.length === 0 ? (
+              <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
+                لسه مفيش ديكات من المتعلمين.
+              </p>
+            ) : null}
+          </ul>
+        </div>
+      ) : null}
+
+      {tab === 'themes' ? (
+        <ul className="flex flex-col gap-3">
+          {themeDecks.map((d) => (
+            <PublicDeckRow
+              key={d.id}
+              deck={d}
+              href={cardsHref(`/cards/deck/official:${d.id}`, dayOverride)}
+              hideAdded
+            />
+          ))}
+          {themeDecks.length === 0 ? (
+            <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
+              مفيش مواضيع رسمية لسه.
+            </p>
+          ) : null}
+        </ul>
+      ) : null}
 
       {tab === 'situations' ? (
         <ul className="flex flex-col gap-3">
@@ -186,17 +307,21 @@ export function CardsHome({ dayOverride }: { dayOverride: number | null }) {
             />
           ))}
         </ul>
-      ) : listing.verbs.length === 0 ? (
-        <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-          لسه ما قابلتش أفعال.
-        </p>
-      ) : (
-        <div className="grid grid-cols-2 gap-3">
-          {listing.verbs.map((v) => (
-            <VerbTile key={v.id} verb={v} dayOverride={dayOverride} />
-          ))}
-        </div>
-      )}
+      ) : null}
+
+      {tab === 'verbs' ? (
+        listing.verbs.length === 0 ? (
+          <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
+            لسه ما قابلتش أفعال.
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            {listing.verbs.map((v) => (
+              <VerbTile key={v.id} verb={v} dayOverride={dayOverride} />
+            ))}
+          </div>
+        )
+      ) : null}
 
       <details className="rounded-v2-row bg-v2-card px-4 py-3 shadow-[var(--shadow-v2-soft)]">
         <summary className="cursor-pointer font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-v2-primary">
@@ -316,6 +441,39 @@ function VerbTile({
         value={verb.total ? verb.graduated / verb.total : 0}
         label={verb.graduated ? 'اتخرّج' : 'لسه'}
       />
+    </Link>
+  );
+}
+
+function PublicDeckRow({
+  deck,
+  href,
+  hideAdded,
+}: {
+  deck: PublicTile;
+  href: string;
+  hideAdded?: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className="flex flex-col gap-1 rounded-v2-card bg-v2-card p-4 shadow-[var(--shadow-v2-soft)]"
+    >
+      <p className="font-[family-name:var(--font-v2-arabic)] text-base font-semibold text-v2-ink">
+        {deck.title_ar}
+      </p>
+      <p
+        dir="ltr"
+        className="font-[family-name:var(--font-v2-target)] text-sm text-v2-ink-muted"
+      >
+        {deck.title_tl}
+      </p>
+      <p className="font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
+        {toArDigits(deck.word_count)} كلمة
+        {hideAdded
+          ? null
+          : ` · ضافوه ${toArDigits(deck.added_count)}`}
+      </p>
     </Link>
   );
 }

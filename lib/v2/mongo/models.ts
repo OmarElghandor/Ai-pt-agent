@@ -352,6 +352,22 @@ export function V2ItemStateModel(): Model<V2ItemStateDoc> {
   );
 }
 
+const errorProblemLabelSchema = new Schema(
+  {
+    id: { type: String, required: true },
+    by: { type: String, required: true, enum: ['code', 'qwen'] },
+    model: { type: String, required: false },
+    confidence: {
+      type: String,
+      required: true,
+      enum: ['low', 'medium', 'high'],
+    },
+    at: { type: Date, required: true },
+    note_tl: { type: String, required: false },
+  },
+  { _id: false },
+);
+
 const v2ErrorSchema = new Schema(
   {
     user_id: { type: String, required: true, index: true },
@@ -363,6 +379,8 @@ const v2ErrorSchema = new Schema(
     wrong: { type: String, required: true },
     right: { type: String, required: true },
     at: { type: Date, required: true, default: () => new Date(), index: true },
+    /** Set once by the classifier job (doc 11 §4). */
+    problem: { type: errorProblemLabelSchema, required: false },
   },
   { timestamps: true, collection: 'v2_errors' },
 );
@@ -897,5 +915,543 @@ export function V2PrepareLockModel(): Model<V2PrepareLockDoc> {
   );
 }
 
+const lessonStepSchema = new Schema(
+  {
+    id: { type: String, required: true },
+    status: {
+      type: String,
+      required: true,
+      enum: ['not_started', 'done', 'skipped'],
+      default: 'not_started',
+    },
+    done_at: { type: Date, required: false },
+  },
+  { _id: false },
+);
+
+const lessonResumeSchema = new Schema(
+  {
+    step_id: { type: String, required: true },
+    page_index: { type: Number, required: false },
+    item_index: { type: Number, required: false },
+  },
+  { _id: false },
+);
+
+const lessonPracticeSchema = new Schema(
+  {
+    times: { type: Number, required: true, default: 0 },
+    last_at: { type: Date, required: false },
+    said: { type: Number, required: true, default: 0 },
+    understood: { type: Number, required: true, default: 0 },
+    best_said: { type: Number, required: true, default: 0 },
+  },
+  { _id: false },
+);
+
+const v2LessonProgressSchema = new Schema(
+  {
+    user_id: { type: String, required: true, index: true },
+    target_lang: { type: String, required: true, default: 'pt-PT' },
+    day: { type: Number, required: true },
+    status: {
+      type: String,
+      required: true,
+      enum: ['locked', 'scheduled', 'available', 'in_progress', 'completed'],
+      default: 'locked',
+      index: true,
+    },
+    opens_on: { type: String, required: false },
+    lesson_version: { type: Number, required: false },
+    steps: { type: [lessonStepSchema], default: [] },
+    resume: { type: lessonResumeSchema, required: false },
+    story_test: { type: Schema.Types.Mixed, required: false },
+    day_questions: {
+      total: { type: Number, required: true, default: 0 },
+      answered: { type: Number, required: true, default: 0 },
+      first_try_correct: { type: Number, required: true, default: 0 },
+      per_skill: { type: Schema.Types.Mixed, default: {} },
+    },
+    practice: {
+      type: lessonPracticeSchema,
+      required: true,
+      default: () => ({
+        times: 0,
+        said: 0,
+        understood: 0,
+        best_said: 0,
+      }),
+    },
+    started_at: { type: Date, required: false },
+    completed_at: { type: Date, required: false },
+    last_opened_at: { type: Date, required: false },
+    times_completed: { type: Number, required: true, default: 0 },
+    minutes: { type: Number, required: true, default: 0 },
+  },
+  { timestamps: true, collection: 'v2_lesson_progress' },
+);
+
+v2LessonProgressSchema.index(
+  { user_id: 1, target_lang: 1, day: 1 },
+  { unique: true },
+);
+v2LessonProgressSchema.index({ user_id: 1, status: 1 });
+
+export type V2LessonProgressDoc = InferSchemaType<
+  typeof v2LessonProgressSchema
+> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2LessonProgressModel(): Model<V2LessonProgressDoc> {
+  return (
+    (mongoose.models.V2LessonProgress as Model<V2LessonProgressDoc>) ||
+    mongoose.model<V2LessonProgressDoc>(
+      'V2LessonProgress',
+      v2LessonProgressSchema,
+    )
+  );
+}
+
+const weakSpotEvidenceSchema = new Schema(
+  {
+    error_ids: { type: [String], default: [] },
+    correct_ids: { type: [String], default: [] },
+  },
+  { _id: false },
+);
+
+const weakSpotExampleSchema = new Schema(
+  {
+    wrong: { type: String, required: true },
+    right: { type: String, required: true },
+  },
+  { _id: false },
+);
+
+const v2WeakSpotSchema = new Schema(
+  {
+    user_id: { type: String, required: true, index: true },
+    problem: { type: String, required: true, index: true },
+    status: {
+      type: String,
+      required: true,
+      enum: ['open', 'improving', 'resolved'],
+      default: 'open',
+      index: true,
+    },
+    evidence: { type: weakSpotEvidenceSchema, required: true },
+    examples: { type: [weakSpotExampleSchema], default: [] },
+    items_seen: { type: [String], default: [] },
+    opened_at: { type: Date, required: false },
+    last_error_at: { type: Date, required: false },
+    resolved_at: { type: Date, required: false },
+    label_history: { type: Schema.Types.Mixed, default: [] },
+    correct_history: { type: Schema.Types.Mixed, default: [] },
+  },
+  { timestamps: true, collection: 'v2_weak_spots' },
+);
+
+v2WeakSpotSchema.index({ user_id: 1, problem: 1 }, { unique: true });
+v2WeakSpotSchema.index({ user_id: 1, status: 1, last_error_at: -1 });
+
+export type V2WeakSpotDoc = InferSchemaType<typeof v2WeakSpotSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2WeakSpotModel(): Model<V2WeakSpotDoc> {
+  return (
+    (mongoose.models.V2WeakSpot as Model<V2WeakSpotDoc>) ||
+    mongoose.model<V2WeakSpotDoc>('V2WeakSpot', v2WeakSpotSchema)
+  );
+}
+
+const cardDeckCardSchema = new Schema(
+  {
+    item_id: { type: String, required: true },
+    slot: {
+      type: String,
+      required: true,
+      enum: ['recent', 'weak', 'older'],
+    },
+    rating: {
+      type: String,
+      required: false,
+      enum: ['again', 'hard', 'easy', 'know'],
+    },
+    hint: { type: Boolean, required: false },
+    rated_at: { type: Date, required: false },
+  },
+  { _id: false },
+);
+
+const v2CardDeckSchema = new Schema(
+  {
+    user_id: { type: String, required: true, index: true },
+    local_date: { type: String, required: true, index: true },
+    cards: { type: [cardDeckCardSchema], default: [] },
+    status: {
+      type: String,
+      required: true,
+      enum: ['open', 'done'],
+      default: 'open',
+    },
+    built_at: { type: Date, required: true, default: () => new Date() },
+    done_at: { type: Date, required: false },
+  },
+  { timestamps: true, collection: 'v2_card_decks' },
+);
+
+v2CardDeckSchema.index({ user_id: 1, local_date: 1 }, { unique: true });
+
+export type V2CardDeckDoc = InferSchemaType<typeof v2CardDeckSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2CardDeckModel(): Model<V2CardDeckDoc> {
+  return (
+    (mongoose.models.V2CardDeck as Model<V2CardDeckDoc>) ||
+    mongoose.model<V2CardDeckDoc>('V2CardDeck', v2CardDeckSchema)
+  );
+}
+
+const v2ActivityDaySchema = new Schema(
+  {
+    user_id: { type: String, required: true, index: true },
+    local_date: { type: String, required: true, index: true },
+    minutes: { type: Number, required: true, default: 0 },
+    lesson_steps_done: { type: Number, required: true, default: 0 },
+    cards_rated: { type: Number, required: true, default: 0 },
+    conversation_turns: { type: Number, required: true, default: 0 },
+    questions_answered: { type: Number, required: true, default: 0 },
+    counts_for_streak: { type: Boolean, required: true, default: false },
+  },
+  { timestamps: true, collection: 'v2_activity_days' },
+);
+
+v2ActivityDaySchema.index({ user_id: 1, local_date: 1 }, { unique: true });
+
+export type V2ActivityDayDoc = InferSchemaType<typeof v2ActivityDaySchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2ActivityDayModel(): Model<V2ActivityDayDoc> {
+  return (
+    (mongoose.models.V2ActivityDay as Model<V2ActivityDayDoc>) ||
+    mongoose.model<V2ActivityDayDoc>('V2ActivityDay', v2ActivityDaySchema)
+  );
+}
+
+const v2ProblemRequestSchema = new Schema(
+  {
+    user_id: { type: String, required: true, index: true },
+    wrong: { type: String, required: true },
+    right: { type: String, required: true },
+    note_tl: { type: String, required: false },
+    question_type: { type: String, required: false },
+    day: { type: Number, required: false },
+    at: { type: Date, required: true, default: () => new Date() },
+  },
+  { timestamps: true, collection: 'v2_problem_requests' },
+);
+
+v2ProblemRequestSchema.index({ user_id: 1, at: -1 });
+
+export type V2ProblemRequestDoc = InferSchemaType<
+  typeof v2ProblemRequestSchema
+> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2ProblemRequestModel(): Model<V2ProblemRequestDoc> {
+  return (
+    (mongoose.models.V2ProblemRequest as Model<V2ProblemRequestDoc>) ||
+    mongoose.model<V2ProblemRequestDoc>(
+      'V2ProblemRequest',
+      v2ProblemRequestSchema,
+    )
+  );
+}
+
+const v2ProgressEventIdempotencySchema = new Schema(
+  {
+    event_id: { type: String, required: true },
+    user_id: { type: String, required: true, index: true },
+    kind: { type: String, required: true },
+    result: { type: Schema.Types.Mixed, required: false },
+  },
+  { timestamps: true, collection: 'v2_progress_event_idempotency' },
+);
+
+v2ProgressEventIdempotencySchema.index(
+  { event_id: 1, user_id: 1 },
+  { unique: true },
+);
+
+export type V2ProgressEventIdempotencyDoc = InferSchemaType<
+  typeof v2ProgressEventIdempotencySchema
+> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2ProgressEventIdempotencyModel(): Model<V2ProgressEventIdempotencyDoc> {
+  return (
+    (mongoose.models.V2ProgressEventIdempotency as Model<V2ProgressEventIdempotencyDoc>) ||
+    mongoose.model<V2ProgressEventIdempotencyDoc>(
+      'V2ProgressEventIdempotency',
+      v2ProgressEventIdempotencySchema,
+    )
+  );
+}
+
+const v2CustomItemSchema = new Schema(
+  {
+    id: { type: String, required: true },
+    target_lang: { type: String, required: true, index: true },
+    lemma: { type: String, required: true },
+    pos: {
+      type: String,
+      required: true,
+      enum: ['noun', 'verb', 'adjective', 'phrase'],
+    },
+    tl: { type: String, required: true },
+    tl_f: { type: String, required: false },
+    gender: {
+      type: String,
+      required: false,
+      enum: ['m', 'f', 'n'],
+    },
+    ar: { type: String, required: true },
+    eg_note: { type: String, required: false },
+    example_tl: { type: String, required: true },
+    example_ar: { type: String, required: true },
+    say: { type: String, required: true },
+    /** English slug for global image key word.<concept_en> (12 §2.10). */
+    concept_en: { type: String, required: false, index: true },
+    image: { type: Schema.Types.Mixed, required: false },
+    status: {
+      type: String,
+      required: true,
+      enum: ['custom', 'official'],
+      default: 'custom',
+    },
+    reviewed: { type: Boolean, required: false, default: false },
+    deck_ids: { type: [String], default: [] },
+  },
+  { timestamps: true, collection: 'v2_custom_items' },
+);
+
+v2CustomItemSchema.index(
+  { target_lang: 1, lemma: 1, pos: 1 },
+  { unique: true },
+);
+v2CustomItemSchema.index({ id: 1 }, { unique: true });
+
+export type V2CustomItemDoc = InferSchemaType<typeof v2CustomItemSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2CustomItemModel(): Model<V2CustomItemDoc> {
+  return (
+    (mongoose.models.V2CustomItem as Model<V2CustomItemDoc>) ||
+    mongoose.model<V2CustomItemDoc>('V2CustomItem', v2CustomItemSchema)
+  );
+}
+
+const v2CustomDeckSchema = new Schema(
+  {
+    target_lang: { type: String, required: true, index: true },
+    title_tl: { type: String, required: true },
+    title_ar: { type: String, required: true },
+    tags: { type: [String], default: [] },
+    item_ids: { type: [String], default: [] },
+    topic: { type: String, required: false },
+    created_by: { type: String, required: false, default: null, index: true },
+    visibility: {
+      type: String,
+      required: true,
+      enum: ['public', 'hidden'],
+      default: 'public',
+    },
+    report_count: { type: Number, required: true, default: 0 },
+    added_count: { type: Number, required: true, default: 0 },
+    images_status: {
+      type: String,
+      required: true,
+      enum: ['none', 'queued', 'partial', 'ready'],
+      default: 'none',
+    },
+    status: {
+      type: String,
+      required: true,
+      enum: ['custom', 'promoted'],
+      default: 'custom',
+    },
+    promoted_to: { type: String, required: false },
+    generation_cost: { type: Schema.Types.Mixed, required: false },
+  },
+  { timestamps: true, collection: 'v2_custom_decks' },
+);
+
+v2CustomDeckSchema.index({ added_count: -1 });
+v2CustomDeckSchema.index({ visibility: 1, status: 1, added_count: -1 });
+v2CustomDeckSchema.index(
+  { title_tl: 'text', title_ar: 'text', tags: 'text' },
+  { name: 'custom_deck_text' },
+);
+
+export type V2CustomDeckDoc = InferSchemaType<typeof v2CustomDeckSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2CustomDeckModel(): Model<V2CustomDeckDoc> {
+  return (
+    (mongoose.models.V2CustomDeck as Model<V2CustomDeckDoc>) ||
+    mongoose.model<V2CustomDeckDoc>('V2CustomDeck', v2CustomDeckSchema)
+  );
+}
+
+const v2UserDeckSchema = new Schema(
+  {
+    user_id: { type: String, required: true, index: true },
+    deck_id: { type: String, required: true },
+    deck_kind: {
+      type: String,
+      required: true,
+      enum: ['custom', 'official'],
+      default: 'custom',
+    },
+    added_at: { type: Date, required: true, default: () => new Date() },
+    /** local_date → count of new cards introduced that day for this deck */
+    new_cards_by_day: { type: Schema.Types.Mixed, default: {} },
+  },
+  { timestamps: true, collection: 'v2_user_decks' },
+);
+
+v2UserDeckSchema.index({ user_id: 1, deck_id: 1 }, { unique: true });
+
+export type V2UserDeckDoc = InferSchemaType<typeof v2UserDeckSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2UserDeckModel(): Model<V2UserDeckDoc> {
+  return (
+    (mongoose.models.V2UserDeck as Model<V2UserDeckDoc>) ||
+    mongoose.model<V2UserDeckDoc>('V2UserDeck', v2UserDeckSchema)
+  );
+}
+
+const v2DeckReportSchema = new Schema(
+  {
+    user_id: { type: String, required: true, index: true },
+    deck_id: { type: String, required: true },
+    reason: {
+      type: String,
+      required: true,
+      enum: [
+        'wrong_word',
+        'brazilian',
+        'offensive',
+        'other',
+        'wrong_picture',
+      ],
+    },
+    /** Optional custom item id when reason is wrong_picture. */
+    item_id: { type: String, required: false, default: '' },
+  },
+  { timestamps: true, collection: 'v2_deck_reports' },
+);
+
+v2DeckReportSchema.index(
+  { user_id: 1, deck_id: 1, item_id: 1 },
+  { unique: true },
+);
+v2DeckReportSchema.index({ deck_id: 1 });
+v2DeckReportSchema.index({ item_id: 1, reason: 1 });
+
+export type V2DeckReportDoc = InferSchemaType<typeof v2DeckReportSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2DeckReportModel(): Model<V2DeckReportDoc> {
+  return (
+    (mongoose.models.V2DeckReport as Model<V2DeckReportDoc>) ||
+    mongoose.model<V2DeckReportDoc>('V2DeckReport', v2DeckReportSchema)
+  );
+}
+
+const v2CustomDeckJobSchema = new Schema(
+  {
+    user_id: { type: String, required: true, index: true },
+    local_date: { type: String, required: true, index: true },
+    status: {
+      type: String,
+      required: true,
+      enum: ['queued', 'running', 'done', 'failed'],
+      default: 'queued',
+    },
+    attempts: { type: Number, required: true, default: 0 },
+    topic: { type: String, required: false },
+    /** Preview payload for save (draft). */
+    preview: { type: Schema.Types.Mixed, required: false },
+    cost: { type: Schema.Types.Mixed, required: false },
+    latency_ms: { type: Number, required: false },
+    error: { type: String, required: false },
+    counts_for_quota: { type: Boolean, required: true, default: false },
+  },
+  { timestamps: true, collection: 'v2_custom_deck_jobs' },
+);
+
+v2CustomDeckJobSchema.index({ user_id: 1, local_date: 1, counts_for_quota: 1 });
+v2CustomDeckJobSchema.index({ local_date: 1, counts_for_quota: 1 });
+
+export type V2CustomDeckJobDoc = InferSchemaType<
+  typeof v2CustomDeckJobSchema
+> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2CustomDeckJobModel(): Model<V2CustomDeckJobDoc> {
+  return (
+    (mongoose.models.V2CustomDeckJob as Model<V2CustomDeckJobDoc>) ||
+    mongoose.model<V2CustomDeckJobDoc>(
+      'V2CustomDeckJob',
+      v2CustomDeckJobSchema,
+    )
+  );
+}
+
+const v2OfficialDeckSchema = new Schema(
+  {
+    target_lang: { type: String, required: true, index: true },
+    title_tl: { type: String, required: true },
+    title_ar: { type: String, required: true },
+    tags: { type: [String], default: [] },
+    item_ids: { type: [String], default: [] },
+    status: {
+      type: String,
+      required: true,
+      enum: ['draft', 'published'],
+      default: 'draft',
+    },
+    source_deck: { type: String, required: false },
+  },
+  { timestamps: true, collection: 'v2_official_decks' },
+);
+
+v2OfficialDeckSchema.index({ status: 1, target_lang: 1 });
+
+export type V2OfficialDeckDoc = InferSchemaType<typeof v2OfficialDeckSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2OfficialDeckModel(): Model<V2OfficialDeckDoc> {
+  return (
+    (mongoose.models.V2OfficialDeck as Model<V2OfficialDeckDoc>) ||
+    mongoose.model<V2OfficialDeckDoc>('V2OfficialDeck', v2OfficialDeckSchema)
+  );
+}
+
 void overrideFormSchema;
 void skillSrsSchema;
+void errorProblemLabelSchema;

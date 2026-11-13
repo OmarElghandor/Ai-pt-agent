@@ -40,6 +40,7 @@ export function estimateTokens(text: string): number {
 
 export function listPresetExampleFiles(): string[] {
   const names = [
+    'vocab_flow',
     'phrases',
     'compare',
     'conjugation',

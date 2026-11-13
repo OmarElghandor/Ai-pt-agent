@@ -16,6 +16,7 @@ import { forceDictionaryWordCards, coreWordIds } from '../dictionaryWords';
 import {
   forcePatternFormula,
   forcePhraseCards,
+  forceVocabFlowCards,
   orderPatternBlocks,
   patternIdForFormula,
   phraseIdsForCards,
@@ -376,6 +377,18 @@ export function runAssembleJob(opts: {
         ]),
       );
     }
+    if (page.preset === 'vocab_flow') {
+      const vocabIds = (entry?.introduces ?? []).filter(
+        (id) =>
+          id.startsWith('word.') ||
+          id.startsWith('phrase.') ||
+          (/^verb\.[a-z_]+$/i.test(id) && !id.includes(':')),
+      );
+      page = forceVocabFlowCards(
+        page,
+        vocabIds.length ? vocabIds : wordIds,
+      );
+    }
     if (page.preset === 'pattern') {
       const patternId = patternIdForFormula(entry?.introduces ?? []);
       if (patternId) page = forcePatternFormula(page, patternId);
@@ -655,17 +668,18 @@ export function runAssembleJob(opts: {
     }),
   };
 
-  // Dictionary cards: all day words (1–20); warn if empty or over hard cap
+  // Dictionary / vocab_flow cards: warn if empty or over hard cap
   for (const [pi, page] of pack.pages.entries()) {
-    if (page.preset !== 'dictionary') continue;
+    if (page.preset !== 'dictionary' && page.preset !== 'vocab_flow') continue;
     for (const [bi, block] of page.blocks.entries()) {
       if (block.type !== 'cards') continue;
       const n = block.items.length;
-      if (n < 1 || n > 20) {
+      const max = page.preset === 'vocab_flow' ? 28 : 20;
+      if (n < 1 || n > max) {
         warnings.push({
           path: `pages[${pi}].blocks[${bi}]`,
           rule: 'dictionary_cards',
-          message: `dictionary cards should be 1–20 (all day words), got ${n}`,
+          message: `${page.preset} cards should be 1–${max}, got ${n}`,
           severity: 'warning',
         });
       }

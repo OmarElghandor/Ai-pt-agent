@@ -4,10 +4,12 @@ import { auth } from './index';
 import {
   normalizeGender,
   normalizeRole,
+  normalizeStreak,
   type V2User,
   type V2UserGender,
   type V2UserRole,
 } from './types';
+import { DEFAULT_LEARNER_TIMEZONE } from '@/lib/v2/progress/lessonProgressTypes';
 
 function toV2User(raw: Record<string, unknown>): V2User {
   return {
@@ -20,6 +22,11 @@ function toV2User(raw: Record<string, unknown>): V2User {
     gender: normalizeGender(raw.gender),
     onboarded_at: (raw.onboarded_at as Date | string | null) ?? null,
     langify_user_id: (raw.langify_user_id as string | null) ?? null,
+    timezone:
+      typeof raw.timezone === 'string' && raw.timezone.trim()
+        ? raw.timezone
+        : DEFAULT_LEARNER_TIMEZONE,
+    streak: normalizeStreak(raw.streak),
     createdAt: (raw.createdAt as Date | string) ?? new Date(0),
     updatedAt: (raw.updatedAt as Date | string) ?? new Date(0),
   };
@@ -51,6 +58,11 @@ export async function getCurrentV2User(): Promise<V2User | null> {
         : null;
       user.image = (doc.picture as string | null) ?? user.image;
       user.emailVerified = Boolean(doc.email_verified ?? user.emailVerified);
+      user.timezone =
+        typeof doc.timezone === 'string' && doc.timezone.trim()
+          ? String(doc.timezone)
+          : DEFAULT_LEARNER_TIMEZONE;
+      user.streak = normalizeStreak(doc.streak);
     }
   } catch {
     // Session user is enough if Mongo is briefly unavailable.

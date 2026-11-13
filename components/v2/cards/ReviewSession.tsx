@@ -2,16 +2,14 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { AudioButton } from '@/components/v2/AudioButton';
 import { Icon } from '@/components/v2/Icon';
-import { DemoImageGenerate } from '@/components/v2/DemoImageGenerate';
-import { ImageSlot } from '@/components/v2/ImageSlot';
 import { PrimaryButton } from '@/components/v2/PrimaryButton';
-import { cloudinaryDisplayUrl } from '@/lib/v2/images/cloudinaryUrl';
 import { ProgressBar } from '@/components/v2/ProgressBar';
-import { ReportErrorButton } from '@/components/v2/ReportErrorButton';
-import { TargetWord } from '@/components/v2/cards/TargetWord';
-import { VerbPoster } from '@/components/v2/cards/VerbPoster';
+import {
+  BackFace,
+  FrontFace,
+  RateBtn,
+} from '@/components/v2/cards/CardFaces';
 import { apiQuery, cardsHref } from '@/components/v2/cards/href';
 import type { CardFacePayload, DeckDetail } from '@/lib/v2/decks';
 import { toArDigits } from '@/lib/v2/formatAr';
@@ -31,8 +29,41 @@ type TodayPayload = {
   cards: CardRow[];
 };
 
+type CustomSessionCard = {
+  item_id: string;
+  kind: 'due' | 'new';
+  face: CardFacePayload | null;
+};
+
+type CustomSessionPayload = {
+  deck_id: string;
+  title_tl: string;
+  title_ar: string;
+  cards: CustomSessionCard[];
+};
+
 type Face = 'front' | 'hint' | 'back';
 type Rating = 'again' | 'hard' | 'easy' | 'know';
+
+function isCustomOrOfficialDeck(deckId: string | undefined): deckId is string {
+  if (!deckId) return false;
+  return (
+    deckId.startsWith('custom:') ||
+    deckId.startsWith('official:') ||
+    /^[a-f0-9]{24}$/i.test(deckId)
+  );
+}
+
+function newAnswerId(): string {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
 
 export function ReviewSession({
   dayOverride,
@@ -45,27 +76,45 @@ export function ReviewSession({
   itemId?: string;
   previewFace?: CardFacePayload | null;
 }) {
+  const customMode = isCustomOrOfficialDeck(deckId);
+
   const [data, setData] = useState<TodayPayload | null>(null);
   const [deckMeta, setDeckMeta] = useState<DeckDetail | null | undefined>(
-    deckId ? undefined : null,
+    deckId && !customMode ? undefined : null,
   );
+  const [customSession, setCustomSession] = useState<CustomSessionPayload | null>(
+    null,
+  );
+  const [customIndex, setCustomIndex] = useState(0);
+  const [customRated, setCustomRated] = useState(0);
+  const [customDone, setCustomDone] = useState(false);
   const [face, setFace] = useState<Face>('front');
   const [hintUsed, setHintUsed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const playedOnFlip = useRef<string | null>(null);
 
-  const reload = useCallback(async () => {
+  const reloadToday = useCallback(async () => {
     const res = await fetch(`/api/v2/cards/today${apiQuery(dayOverride)}`);
     if (!res.ok) throw new Error(String(res.status));
     return (await res.json()) as TodayPayload;
   }, [dayOverride]);
 
+  const loadCustom = useCallback(async () => {
+    if (!deckId) throw new Error('missing_deck');
+    const res = await fetch(
+      `/api/v2/custom-decks/${encodeURIComponent(deckId)}/session`,
+    );
+    if (!res.ok) throw new Error(String(res.status));
+    return (await res.json()) as CustomSessionPayload;
+  }, [deckId]);
+
   useEffect(() => {
+    if (customMode) return;
     let cancelled = false;
     (async () => {
       try {
-        const payload = await reload();
+        const payload = await reloadToday();
         if (cancelled) return;
         setData(payload);
       } catch {
@@ -75,11 +124,29 @@ export function ReviewSession({
     return () => {
       cancelled = true;
     };
-  }, [reload]);
+  }, [customMode, reloadToday]);
 
   useEffect(() => {
-    if (!deckId) {
-      setDeckMeta(null);
+    if (!customMode || !deckId) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const session = await loadCustom();
+        if (cancelled) return;
+        setCustomSession(session);
+        if (session.cards.length === 0) setCustomDone(true);
+      } catch {
+        if (!cancelled) setError('failed');
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [customMode, deckId, loadCustom]);
+
+  useEffect(() => {
+    if (customMode || !deckId) {
+      if (!deckId) setDeckMeta(null);
       return;
     }
     let cancelled = false;
@@ -98,9 +165,9 @@ export function ReviewSession({
     return () => {
       cancelled = true;
     };
-  }, [deckId, dayOverride]);
+  }, [customMode, deckId, dayOverride]);
 
-  const deckIds = !deckId
+  const deckIds = !deckId || customMode
     ? new Set<string>()
     : deckMeta === undefined
       ? null
@@ -108,24 +175,39 @@ export function ReviewSession({
 
   const pool = (data?.cards ?? []).filter((row) => {
     if (itemId) return row.item_id === itemId;
-    if (deckId) return deckIds?.has(row.item_id) ?? false;
+    if (deckId && !customMode) return deckIds?.has(row.item_id) ?? false;
     return true;
   });
   const open = pool.filter((row) => !row.rating);
-  const card = open[0];
+  const curriculumCard = open[0];
+  const customCard = customSession?.cards[customIndex];
   const lookup =
+    !customMode &&
     Boolean(itemId) &&
     data != null &&
     !data.cards.some((c) => c.item_id === itemId);
-  const activeFace = card?.face ?? (lookup ? previewFace ?? null : null);
-  const playId = card?.item_id ?? (lookup ? itemId : undefined);
-  const total = itemId ? 1 : pool.length;
-  const ratedInPool = pool.filter((c) => c.rating).length;
+
+  const card = customMode ? customCard : curriculumCard;
+  const activeFace =
+    card?.face ?? (lookup ? previewFace ?? null : null);
+  const playId =
+    card?.item_id ?? (lookup ? itemId : undefined);
+
+  const total = customMode
+    ? (customSession?.cards.length ?? 0)
+    : itemId
+      ? 1
+      : pool.length;
+  const ratedInPool = customMode
+    ? customRated
+    : pool.filter((c) => c.rating).length;
   const fullDone =
+    !customMode &&
     data != null &&
     data.cards.length > 0 &&
     (data.status === 'done' || data.cards.every((c) => c.rating));
   const deckMiss =
+    !customMode &&
     Boolean(deckId) &&
     deckIds != null &&
     data != null &&
@@ -156,20 +238,49 @@ export function ReviewSession({
     if (hintUsed && (rating === 'easy' || rating === 'know')) return;
     setBusy(true);
     try {
-      const res = await fetch(
-        `/api/v2/cards/${encodeURIComponent(card.item_id)}/review`,
-        {
+      if (customMode && deckId) {
+        const res = await fetch('/api/v2/answers', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ rating }),
-        },
-      );
-      if (!res.ok) throw new Error(String(res.status));
-      const next = await reload();
-      setData(next);
-      setFace('front');
-      setHintUsed(false);
-      playedOnFlip.current = null;
+          body: JSON.stringify({
+            kind: 'card_review',
+            answer_id: newAnswerId(),
+            day: 1,
+            item_id: card.item_id,
+            rating,
+            deck_id: deckId,
+            hint: hintUsed,
+          }),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        const nextRated = customRated + 1;
+        setCustomRated(nextRated);
+        // TODO(P11): when nextRated >= 10, notify streak/progress events.
+        const nextIndex = customIndex + 1;
+        if (!customSession || nextIndex >= customSession.cards.length) {
+          setCustomDone(true);
+        } else {
+          setCustomIndex(nextIndex);
+          setFace('front');
+          setHintUsed(false);
+          playedOnFlip.current = null;
+        }
+      } else {
+        const res = await fetch(
+          `/api/v2/cards/${encodeURIComponent(card.item_id)}/review`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ rating }),
+          },
+        );
+        if (!res.ok) throw new Error(String(res.status));
+        const next = await reloadToday();
+        setData(next);
+        setFace('front');
+        setHintUsed(false);
+        playedOnFlip.current = null;
+      }
     } catch {
       setError('rate_failed');
     } finally {
@@ -177,7 +288,11 @@ export function ReviewSession({
     }
   }
 
-  if (error && !data) {
+  const loading = customMode
+    ? !customSession && !error
+    : !data || (Boolean(deckId) && deckMeta === undefined);
+
+  if (error && (customMode ? !customSession : !data)) {
     return (
       <p className="p-4 font-[family-name:var(--font-v2-arabic)] text-v2-ink-muted">
         مش قادرين نفتح المراجعة.
@@ -185,7 +300,7 @@ export function ReviewSession({
     );
   }
 
-  if (!data || (deckId && deckMeta === undefined)) {
+  if (loading) {
     return (
       <p className="p-4 font-[family-name:var(--font-v2-arabic)] text-v2-ink-muted">
         بنجهّز الجلسة…
@@ -193,11 +308,25 @@ export function ReviewSession({
     );
   }
 
+  if (customMode && customDone) {
+    return (
+      <main className="flex flex-1 flex-col items-center justify-center gap-6 px-4 py-12 text-center">
+        <Icon name="check_circle" size={32} className="text-v2-primary" />
+        <h1 className="font-[family-name:var(--font-v2-display-ar)] text-3xl font-bold text-v2-primary">
+          خلّصت {toArDigits(customRated)}
+        </h1>
+        <PrimaryButton href={cardsHref('/cards', dayOverride)}>
+          رجوع للكروت
+        </PrimaryButton>
+      </main>
+    );
+  }
+
   if (fullDone && !itemId && !deckId) {
     return (
       <EndScreen
-        total={data.progress.total}
-        tomorrow={data.tomorrow}
+        total={data!.progress.total}
+        tomorrow={data!.tomorrow}
         dayOverride={dayOverride}
       />
     );
@@ -216,7 +345,12 @@ export function ReviewSession({
     );
   }
 
-  if ((deckId || itemId) && !lookup && open.length === 0) {
+  if (
+    !customMode &&
+    (deckId || itemId) &&
+    !lookup &&
+    open.length === 0
+  ) {
     return (
       <main className="flex flex-1 flex-col items-center justify-center gap-6 px-4 py-12 text-center">
         <h1 className="font-[family-name:var(--font-v2-display-ar)] text-3xl font-bold text-v2-primary">
@@ -234,15 +368,24 @@ export function ReviewSession({
     ? 1
     : Math.min(ratedInPool + (card ? 1 : 0), Math.max(total, 1));
   const progressValue = total ? ratedInPool / total : 0;
-  const day = data.current_day ?? dayOverride ?? 1;
-  const headerTitle = reviewHeaderTitle(deckId, deckMeta);
+  const day = customMode
+    ? null
+    : (data?.current_day ?? dayOverride ?? 1);
+  const headerTitle = customMode
+    ? customSession?.title_tl?.trim() ||
+      customSession?.title_ar?.trim() ||
+      'راجع الديك ده'
+    : reviewHeaderTitle(deckId, deckMeta);
+  const closeHref = customMode && deckId
+    ? cardsHref(`/cards/deck/${encodeURIComponent(deckId)}`, dayOverride)
+    : cardsHref('/cards', dayOverride);
 
   return (
     <main className="flex min-h-dvh flex-1 flex-col px-4 pb-8 pt-4">
       <header className="mb-6 flex flex-col gap-2">
         <div className="flex items-center gap-2">
           <Link
-            href={cardsHref('/cards', dayOverride)}
+            href={closeHref}
             aria-label="قفل"
             className="flex h-11 w-11 items-center justify-center rounded-xl text-v2-primary"
           >
@@ -267,7 +410,12 @@ export function ReviewSession({
             }}
           />
         ) : (
-          <BackFace face={activeFace} hintUsed={hintUsed} day={day} />
+          <BackFace
+            face={activeFace}
+            hintUsed={hintUsed}
+            day={day}
+            deckId={customMode ? deckId : undefined}
+          />
         )}
       </article>
 
@@ -351,239 +499,5 @@ function EndScreen({
         رجوع للكروت
       </PrimaryButton>
     </main>
-  );
-}
-
-function FrontFace({
-  face,
-  showHint,
-  onFlip,
-  onHint,
-}: {
-  face: CardFacePayload | null;
-  showHint: boolean;
-  onFlip: () => void;
-  onHint: () => void;
-}) {
-  if (!face) {
-    return (
-      <p className="m-auto font-[family-name:var(--font-v2-arabic)] text-v2-ink-muted">
-        الكارت ناقص بيانات.
-      </p>
-    );
-  }
-
-  return (
-    <div className="flex min-h-[60dvh] flex-1 flex-col">
-      <div className="flex flex-[0_0_33%] flex-col items-center justify-start gap-5 pt-6">
-        <TargetWord tl={face.tl} gender={face.gender} size="xl" />
-        <AudioButton text={face.tl} showSlow label="اسمع" />
-        {showHint && face.hint_tl ? (
-          <p
-            dir="ltr"
-            className="max-w-full rounded-v2-row bg-v2-note/40 px-4 py-3 text-center font-[family-name:var(--font-v2-target)] text-xl font-semibold text-v2-primary"
-            style={{ unicodeBidi: 'isolate' }}
-          >
-            {face.hint_tl}
-          </p>
-        ) : null}
-      </div>
-      <div className="mt-auto flex w-full flex-col items-center gap-3 pb-1 pt-8">
-        <p className="text-center font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-          فاكر معناها؟ قولها في سرّك واقلب
-        </p>
-        <PrimaryButton className="w-full" onClick={onFlip}>
-          اقلب
-        </PrimaryButton>
-        {!showHint && face.hint_tl ? (
-          <button
-            type="button"
-            onClick={onHint}
-            className="min-h-11 font-[family-name:var(--font-v2-arabic)] text-sm text-v2-primary"
-          >
-            محتاج تلميح؟
-          </button>
-        ) : showHint ? (
-          <p className="font-[family-name:var(--font-v2-arabic)] text-xs text-v2-action">
-            استخدمت تلميح
-          </p>
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
-function BackFace({
-  face,
-  hintUsed,
-  day,
-}: {
-  face: CardFacePayload | null;
-  hintUsed: boolean;
-  day: number;
-}) {
-  const [imgSrc, setImgSrc] = useState<string | null>(null);
-  useEffect(() => {
-    setImgSrc(null);
-  }, [face?.item_id]);
-  if (!face) return null;
-
-  const showWordBlock =
-    face.kind === 'word' && Boolean(face.plural || face.example);
-
-  return (
-    <div className="flex h-auto flex-col gap-4">
-      <div className="space-y-1 text-center">
-        <TargetWord
-          tl={face.tl}
-          gender={face.gender}
-          size="lg"
-          nounTone="ink"
-        />
-        {face.ar ? (
-          <p className="font-[family-name:var(--font-v2-arabic)] text-xl text-v2-ink">
-            {face.ar}
-          </p>
-        ) : null}
-        {face.say ? (
-          <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-            {face.say}
-          </p>
-        ) : null}
-        {hintUsed ? (
-          <p className="font-[family-name:var(--font-v2-arabic)] text-xs text-v2-action">
-            استخدمت تلميح · التقييم مقفول على صعب أو متوسط
-          </p>
-        ) : null}
-      </div>
-
-      <div className="relative">
-        <ImageSlot variant="flashcard" src={imgSrc} />
-        <DemoImageGenerate
-          body={{ kind: 'item', day, item_id: face.item_id }}
-          label={imgSrc ? 'Regenerate' : 'Generate'}
-          onReady={(url) =>
-            setImgSrc(
-              cloudinaryDisplayUrl(url, { aspect: '4:3', width: 600 }),
-            )
-          }
-        />
-      </div>
-
-      {face.kind === 'verb' && face.conjugation ? (
-        <VerbPoster
-          lemma={face.lemma ?? face.tl}
-          verbClass={face.verbClass}
-          rows={face.conjugation}
-        />
-      ) : null}
-
-      {showWordBlock ? (
-        <div className="flex flex-col gap-3">
-          {face.plural ? (
-            <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink">
-              الجمع:{' '}
-              <span
-                dir="ltr"
-                className="font-[family-name:var(--font-v2-target)] font-semibold text-v2-ink"
-                style={{ unicodeBidi: 'isolate' }}
-              >
-                {face.plural}
-              </span>
-            </p>
-          ) : null}
-          {face.example ? (
-            <div className="flex items-center gap-2" dir="ltr">
-              <AudioButton text={face.example} label={`نطق ${face.example}`} />
-              <p
-                className="min-w-0 font-[family-name:var(--font-v2-target)] text-sm text-v2-ink"
-                style={{ unicodeBidi: 'isolate' }}
-              >
-                {face.example}
-              </p>
-            </div>
-          ) : null}
-        </div>
-      ) : null}
-
-      {face.kind === 'phrase' ? <PhraseBack face={face} /> : null}
-
-      <ReportErrorButton day={day} itemId={face.item_id} label="فيه غلط" />
-    </div>
-  );
-}
-
-function PhraseBack({ face }: { face: CardFacePayload }) {
-  const heard = face.role === 'heard';
-  const hasSaidContext = Boolean(face.context_eg || face.replies_to_tl);
-  const hasVariation = Boolean(face.variation_tl);
-  if (!heard && !hasSaidContext && !hasVariation) return null;
-
-  return (
-    <div className="flex flex-col gap-2">
-      {heard ? (
-        <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink">
-          هتسمعها
-        </p>
-      ) : (
-        <>
-          {face.context_eg ? (
-            <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink">
-              امتى تقولها: {face.context_eg}
-            </p>
-          ) : null}
-          {face.replies_to_tl ? (
-            <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink">
-              هتسمع:{' '}
-              <span
-                dir="ltr"
-                className="font-[family-name:var(--font-v2-target)] font-semibold text-v2-primary"
-                style={{ unicodeBidi: 'isolate' }}
-              >
-                {face.replies_to_tl}
-              </span>
-            </p>
-          ) : null}
-        </>
-      )}
-      {face.variation_tl ? (
-        <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink">
-          شكل تاني:{' '}
-          <span
-            dir="ltr"
-            className="font-[family-name:var(--font-v2-target)] font-semibold text-v2-primary"
-            style={{ unicodeBidi: 'isolate' }}
-          >
-            {face.variation_tl}
-          </span>
-        </p>
-      ) : null}
-    </div>
-  );
-}
-
-function RateBtn({
-  label,
-  icon,
-  onClick,
-  disabled,
-}: {
-  label: string;
-  icon: string;
-  onClick: () => void;
-  disabled?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      disabled={disabled}
-      onClick={onClick}
-      className="flex min-h-11 flex-col items-center justify-center rounded-xl bg-v2-paper-deep py-3 text-v2-primary disabled:opacity-40"
-    >
-      <Icon name={icon} size={24} />
-      <span className="mt-1 font-[family-name:var(--font-v2-arabic)] text-sm font-semibold">
-        {label}
-      </span>
-    </button>
   );
 }

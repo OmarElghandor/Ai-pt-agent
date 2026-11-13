@@ -186,6 +186,34 @@ export async function getOrCreateTodayCards(opts: {
     tz,
   });
 
+  // Mirror into v2_card_decks (doc 11) — build once per local date.
+  try {
+    const { randomUUID } = await import('node:crypto');
+    const { createMongoProgressStore, handleProgressEvent } = await import(
+      '@/lib/v2/progress/events'
+    );
+    await handleProgressEvent(
+      {
+        kind: 'deck_opened',
+        event_id: randomUUID(),
+        target_lang: 'pt-PT',
+        local_date,
+        cards: session.queue.map((q) => ({
+          item_id: q.item_id,
+          slot: q.bucket,
+        })),
+      },
+      {
+        userId: opts.user_id,
+        timezone: tz,
+        now,
+        store: createMongoProgressStore(),
+      },
+    );
+  } catch {
+    // Deck mirror is best-effort alongside legacy v2_sessions.
+  }
+
   return session;
 }
 
@@ -406,6 +434,31 @@ export async function reviewCard(opts: {
       },
     },
   );
+
+  try {
+    const { randomUUID } = await import('node:crypto');
+    const { createMongoProgressStore, handleProgressEvent } = await import(
+      '@/lib/v2/progress/events'
+    );
+    await handleProgressEvent(
+      {
+        kind: 'card_rated',
+        event_id: randomUUID(),
+        target_lang: 'pt-PT',
+        item_id: opts.item_id,
+        rating: opts.rating,
+        local_date,
+      },
+      {
+        userId: opts.user_id,
+        timezone: tz,
+        now,
+        store: createMongoProgressStore(),
+      },
+    );
+  } catch {
+    // Progress-events mirror is best-effort.
+  }
 
   return { session, state };
 }

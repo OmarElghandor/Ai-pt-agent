@@ -101,6 +101,8 @@ export function buildTopicsList(opts: {
   now?: Date;
   packAvailable?: (packId: string) => boolean;
   readinessByDay?: ReadonlyMap<number, DayReadiness>;
+  /** day → last practice ISO from v2_lesson_progress.practice.last_at */
+  practiceLastAtByDay?: ReadonlyMap<number, string>;
 }): TopicsListResult {
   const now = opts.now ?? new Date();
   const packAvailable = opts.packAvailable ?? convoPackFileExists;
@@ -129,6 +131,8 @@ export function buildTopicsList(opts: {
         opts.readinessByDay?.get(t.day),
         pack_available,
       );
+      const last_practiced_at =
+        opts.practiceLastAtByDay?.get(t.day) ?? null;
       const row: TopicRow = {
         ...t,
         unlocked,
@@ -137,6 +141,7 @@ export function buildTopicsList(opts: {
         status_glyph: statusGlyph(status),
         ...(character_name ? { character_name } : {}),
         ...(ready_chip ? { ready_chip } : {}),
+        last_practiced_at,
       };
       if (!suggestion && status === 'needs_review') {
         suggestion = row;
@@ -165,10 +170,35 @@ export async function listTopicsForUser(
   const file = loadTopicsFile();
   const currentDay =
     opts?.currentDay ?? (await learnerCurrentDay(userId));
-  const [statesById, weakIds] = await Promise.all([
+  const [statesById, weakIds, practiceDocs] = await Promise.all([
     loadStatesById(userId),
     loadWeakItemIds(userId),
+    (async () => {
+      try {
+        const { V2LessonProgressModel } = await import('@/lib/v2/mongo/models');
+        return V2LessonProgressModel()
+          .find({
+            user_id: userId,
+            'practice.times': { $gt: 0 },
+          })
+          .select({ day: 1, practice: 1 })
+          .lean();
+      } catch {
+        return [];
+      }
+    })(),
   ]);
+  const practiceLastAtByDay = new Map<number, string>();
+  for (const d of practiceDocs) {
+    const last = (d.practice as { last_at?: Date | string } | undefined)
+      ?.last_at;
+    if (last) {
+      practiceLastAtByDay.set(
+        d.day as number,
+        new Date(last).toISOString(),
+      );
+    }
+  }
 
   const packIds = [
     ...new Set(
@@ -199,5 +229,6 @@ export async function listTopicsForUser(
     now: opts?.now,
     packAvailable: (id) => available.has(id),
     readinessByDay,
+    practiceLastAtByDay,
   });
 }

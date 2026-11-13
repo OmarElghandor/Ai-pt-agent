@@ -30,6 +30,8 @@ This pack holds everything decided in design sessions for Langify v2: European P
 | `docs/langify-v2/09a-conversations-tasks.md` | One-session task breakdown for conversations | English |
 | `docs/langify-v2/10-auth.md` | Google sign-in, v2 users, sessions, onboarding, deletion | English |
 | `docs/langify-v2/10-auth-tasks.md` | One-session task breakdown for auth (A0–A7) | English |
+| `docs/langify-v2/11-profile-progress.md` | Lesson progress, problems/weak spots, daily deck, streak, profile summary (P0–P12) | English |
+| `docs/langify-v2/12-custom-decks.md` | Learner-generated flashcard decks, shared item pool, images (§2.10), public list, admin promotion (C0–C9) | English |
 | `examples/day06-example.json` | Gold ESTAR lesson (filename kept; `lesson.day` is **11** in the grammar-first order) | JSON |
 | `prototypes/ser-estar.html` | Working prototype of a guided (autoplay) page | HTML |
 | `prototypes/verb-endings.html` | Working prototype of an explore page (person dial, swap, build questions) | HTML |

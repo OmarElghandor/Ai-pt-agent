@@ -85,6 +85,12 @@ function createAuth() {
           required: false,
           input: false,
         },
+        timezone: {
+          type: 'string',
+          required: false,
+          defaultValue: 'Europe/Lisbon',
+          input: true,
+        },
       },
     },
     session: {

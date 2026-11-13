@@ -44,10 +44,13 @@ function storyDialogueIds(
 function dictionaryWordIds(pack: LessonPack): Set<string> {
   const ids = new Set<string>();
   for (const page of pack.pages) {
-    if (page.preset !== 'dictionary') continue;
+    if (page.preset !== 'dictionary' && page.preset !== 'vocab_flow') continue;
     for (const block of page.blocks) {
       if (block.type !== 'cards') continue;
-      for (const id of block.items) ids.add(id);
+      for (const id of block.items) {
+        if (id.startsWith('word.') || /^verb\.[a-z_]+$/i.test(id)) ids.add(id);
+        else if (page.preset === 'dictionary') ids.add(id);
+      }
     }
   }
   return ids;
@@ -56,10 +59,18 @@ function dictionaryWordIds(pack: LessonPack): Set<string> {
 function phrasesPageIds(pack: LessonPack): Set<string> {
   const ids = new Set<string>();
   for (const page of pack.pages) {
-    if (page.preset !== 'phrases') continue;
+    if (page.preset !== 'phrases' && page.preset !== 'vocab_flow') continue;
     for (const block of page.blocks) {
       if (block.type !== 'cards') continue;
-      for (const id of block.items) ids.add(id);
+      for (const id of block.items) {
+        if (
+          page.preset === 'phrases' ||
+          id.startsWith('phrase.') ||
+          /^pattern\..+\.ex\.\d+$/.test(id)
+        ) {
+          ids.add(id);
+        }
+      }
     }
   }
   return ids;

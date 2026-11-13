@@ -8,6 +8,7 @@ export const PresetSchema = z.enum([
   'conjugation',
   'pattern',
   'dictionary',
+  'vocab_flow',
   'scene',
   'story',
   'real_world',
@@ -29,6 +30,7 @@ export function modeForPreset(
     case 'story':
     case 'phrases':
     case 'dictionary':
+    case 'vocab_flow':
     case 'scene':
     case 'real_world':
     default:

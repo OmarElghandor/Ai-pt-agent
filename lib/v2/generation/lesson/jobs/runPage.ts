@@ -24,7 +24,7 @@ import {
   summarizePagePayload,
 } from '../schemas/page';
 import { allowIdsForPage, isIntroStoryPage } from '../pageAllow';
-import { applyDeterminedBlocks } from '../pageCodeFill';
+import { applyDeterminedBlocks, forceVocabFlowCards } from '../pageCodeFill';
 import {
   blockIndexForKey,
   mergeBlockRegen,
@@ -198,6 +198,15 @@ export async function runPageJob(opts: {
         ? coreWordIds(opts.brief.core_items)
         : bank.filter((item) => item.type === 'word').map((item) => item.id)
       : [];
+  const vocabIds =
+    preset === 'vocab_flow'
+      ? (effectiveEntry.introduces ?? []).filter(
+          (id) =>
+            id.startsWith('word.') ||
+            id.startsWith('phrase.') ||
+            (/^verb\.[a-z_]+$/i.test(id) && !id.includes(':')),
+        )
+      : [];
 
   const exampleText = formatPresetExampleForPrompt(preset);
   const exampleTokens = exampleText ? approxTokens(exampleText) : 0;
@@ -293,6 +302,9 @@ Return via submit_page.
     if (preset === 'dictionary') {
       next = forceDictionaryWordCards(next, wordIds);
     }
+    if (preset === 'vocab_flow' && vocabIds.length) {
+      next = forceVocabFlowCards(next, vocabIds);
+    }
     if (mode === 'sections') {
       const { steps: _drop, ...rest } = next;
       next = { ...rest, mode: 'sections' };
@@ -337,6 +349,7 @@ Return via submit_page.
       introduces: effectiveEntry.introduces ?? [],
       allowedIds: allowedIdList,
       wordIds,
+      vocabIds,
     });
     lastBlockCount = blockCountOf(filled);
     const parsed = toolSchema.safeParse(filled);

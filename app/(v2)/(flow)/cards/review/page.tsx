@@ -10,6 +10,15 @@ type Props = {
   searchParams: Promise<{ day?: string; deck?: string; item?: string }>;
 };
 
+function isCustomOrOfficialDeck(deckId: string | undefined): boolean {
+  if (!deckId) return false;
+  return (
+    deckId.startsWith('custom:') ||
+    deckId.startsWith('official:') ||
+    /^[a-f0-9]{24}$/i.test(deckId)
+  );
+}
+
 export default async function CardsReviewPage({ searchParams }: Props) {
   const sp = await searchParams;
   const dayOverride = sp.day != null ? dayOverrideFromSearch(sp.day) : null;
@@ -18,7 +27,7 @@ export default async function CardsReviewPage({ searchParams }: Props) {
 
   let previewFace = null;
   const userId = await getCurrentV2UserId();
-  if (itemId && userId) {
+  if (itemId && userId && !isCustomOrOfficialDeck(deckId)) {
     const day = await resolveLearnerDay(userId, dayOverride);
     const faces = await hydrateCardFaces([itemId], day);
     previewFace = faces.get(itemId) ?? null;

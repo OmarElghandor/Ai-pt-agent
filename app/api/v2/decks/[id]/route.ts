@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getCurrentV2UserId } from '@/lib/v2/auth/session';
 import { mongoConfigured } from '@/lib/mongo';
-import { getDeckDetail } from '@/lib/v2/decks';
+import { getAnyDeckDetail } from '@/lib/v2/decks/detail';
 import { isV2Enabled } from '@/lib/v2/flags';
 import {
   dayOverrideFromSearch,
@@ -34,7 +34,7 @@ export async function GET(
       : null,
   );
 
-  const detail = await getDeckDetail({
+  const detail = await getAnyDeckDetail({
     user_id: userId,
     deckId: decodeURIComponent(id),
     currentDay,

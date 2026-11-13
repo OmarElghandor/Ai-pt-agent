@@ -180,14 +180,18 @@ Exported 2026-10-19. Language: Egyptian Arabic with English field names.
 
 | preset | mode | البلوكات بالترتيب | بيستخدم لـ |
 |---|---|---|---|
-| phrases | static | cards (6، أيقونات) ← tip | جمل اليوم |
+| vocab_flow | static | cards (كلمات + جمل اليوم، مرتبة من القصة) ← tip | تدفق المفردات مع micro checks (جديد 2026-11-09؛ بدل dictionary + phrases) |
+| phrases | static | cards (6، أيقونات) ← tip | جمل اليوم (legacy packs) |
 | compare | guided | compare ← heading ← vs_pairs ← tip | SER/ESTAR، o/a، este/esse/aquele، por/para |
 | conjugation | explore | table ← practice ← examples ← tip | SER، ESTAR، IR، TER، النهايات، الماضي |
 | pattern | guided | formula ← examples ← practice ← tip | Queria +، ir + فعل، ترتيب الجملة، النفي |
-| dictionary | static | cards (8–12، صور) | الأكل، المواصلات، اللبس |
+| dictionary | static | cards (8–12، صور) | الأكل، المواصلات، اللبس (legacy packs) |
 | scene | static | scene | السوبرماركت، البيت، شجرة العيلة |
 | story | guided | panel × 4 | قصة الأسبوع |
+| real_world | static | (code-owned) | بيقولوها كده |
 | free | أي mode | أي بلوكات من الكتالوج | أي موضوع مش ماشي مع قالب |
+
+`dictionary` و `phrases` يفضلوا صالحين للباكات القديمة؛ الأيام الجديدة بتستخدم `vocab_flow`. Micro checks بتتبني بالكود وقت التشغيل ومش بلوكات في الـ JSON.
 
 ### صفحات الكتاب مبنية بالبلوكات دي
 

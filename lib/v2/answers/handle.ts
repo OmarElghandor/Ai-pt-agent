@@ -120,9 +120,12 @@ async function saveItemState(state: ItemState): Promise<void> {
   );
 }
 
-async function appendErrors(errors: ProgressError[]): Promise<void> {
+async function appendErrors(
+  errors: ProgressError[],
+  opts?: { learnerDay?: number; localDate?: string },
+): Promise<void> {
   if (!errors.length) return;
-  await V2ErrorModel().insertMany(
+  const inserted = await V2ErrorModel().insertMany(
     errors.map((e) => ({
       user_id: e.user_id,
       item_id: e.item_id,
@@ -135,6 +138,27 @@ async function appendErrors(errors: ProgressError[]): Promise<void> {
       at: new Date(e.at),
     })),
   );
+  try {
+    const { enqueueClassifyError } = await import(
+      '@/lib/v2/progress/classify/enqueue'
+    );
+    for (let i = 0; i < inserted.length; i++) {
+      const doc = inserted[i]!;
+      const e = errors[i]!;
+      enqueueClassifyError({
+        errorId: String(doc._id),
+        userId: e.user_id,
+        learnerDay: opts?.learnerDay ?? 1,
+        localDate: opts?.localDate ?? new Date().toISOString().slice(0, 10),
+        wrong: e.wrong,
+        right: e.right,
+        isBrazilian: e.scope === 'brazilian' || e.category === 'vocabulary',
+        itemIds: e.item_id ? [e.item_id] : [],
+      });
+    }
+  } catch {
+    // Classification is best-effort.
+  }
 }
 
 async function buildContext(
@@ -143,6 +167,27 @@ async function buildContext(
   tz: string,
 ): Promise<EvaluateContext> {
   const localDate = localDateString(new Date(), tz);
+
+  if (payload.kind === 'card_review') {
+    const ctx: EvaluateContext = {
+      user_id: userId,
+      localDate,
+      items: [],
+      grammarFocusId: null,
+    };
+    ctx.itemState = await loadItemState(userId, payload.item_id);
+    if (!ctx.itemState) {
+      ctx.introducedDay = payload.day;
+      ctx.itemState = createItemState({
+        user_id: userId,
+        item_id: payload.item_id,
+        introducedDay: payload.day,
+      });
+      ctx.itemState.opt_in_card = true;
+    }
+    return ctx;
+  }
+
   const published = await getPublishedLesson(payload.day);
   const items: Item[] = published?.pack.items ?? [];
   const grammarFocusId =
@@ -303,7 +348,10 @@ async function handleBeat(
     await saveItemState(st);
   }
   if (result.errors.length) {
-    await appendErrors(result.errors);
+    await appendErrors(result.errors, {
+      learnerDay: payload.day,
+      localDate: localDateString(new Date(), tz),
+    });
   }
 
   let skill_counts = session.skill_counts;
@@ -422,7 +470,10 @@ export async function handleAnswerRequest(
         await saveItemState(result.item_state);
       }
       if (!result.duplicate && result.errors.length) {
-        await appendErrors(result.errors);
+        await appendErrors(result.errors, {
+          learnerDay: payload.day,
+          localDate: ctx.localDate,
+        });
       }
       return result;
     });

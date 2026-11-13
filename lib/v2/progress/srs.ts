@@ -116,7 +116,11 @@ export function applySkillRating(
   };
 }
 
-/** Graduation: interval ≥ 21 AND usedCorrectlyIn in ≥2 situations. */
+/**
+ * Graduation:
+ * - Official / lesson items: interval ≥ 21 AND usedCorrectlyIn in ≥2 situations.
+ * - Custom-only items (`ugc.*`): interval ≥ 21 alone (12 §2.6 / 00 §5).
+ */
 export function tryGraduate(state: ItemState): ItemState {
   if (
     state.card.masteryLevel === 'mastered' &&
@@ -124,11 +128,12 @@ export function tryGraduate(state: ItemState): ItemState {
   ) {
     return state;
   }
-  if (
-    state.card.interval >= 21 &&
-    state.usedCorrectlyIn.length >= 2 &&
-    state.card.masteryLevel !== 'mastered'
-  ) {
+  if (state.card.masteryLevel === 'mastered') return state;
+
+  const customOnly = state.item_id.startsWith('ugc.');
+  const intervalOk = state.card.interval >= 21;
+  const situationsOk = state.usedCorrectlyIn.length >= 2;
+  if (intervalOk && (customOnly || situationsOk)) {
     return {
       ...state,
       card: {

@@ -103,13 +103,114 @@ export async function processImageSpecsJob(job: JobView): Promise<void> {
 export async function processImageJob(job: JobView): Promise<void> {
   await markJobStarted(job.id);
   try {
-    const input = (job.input ?? {}) as Partial<ImageJobInput>;
+    const input = (job.input ?? {}) as Partial<ImageJobInput> & {
+      source?: string;
+      deck_id?: string;
+      quality?: 'low' | 'medium' | 'high';
+      model?: string;
+    };
     const key = input.key;
     if (!key) {
       await finishJobFailed(job.id, 'image job missing key');
       return;
     }
     const force = Boolean(input.force);
+
+    // Custom-deck path: no lesson manifest; style-anchor only; cheap quality.
+    if (input.source === 'custom_deck') {
+      const existing = await getImageByKey(key);
+      let spec = (existing?.spec as ImageSpec | undefined) ?? undefined;
+      if (!spec) {
+        spec = {
+          type: 'object',
+          subject: key.replace(/^word\./, ''),
+          characters: [],
+          must_avoid: ['text', 'letters', 'numbers'],
+        };
+      }
+      spec = { ...spec, characters: [] };
+      const usedBy = [
+        ...(input.deck_id ? [`deck:${input.deck_id}`] : []),
+      ];
+      let result = await generateContentImage({
+        key,
+        spec,
+        usedBy,
+        force,
+        quality: input.quality ?? 'low',
+        ratio: '1:1',
+      });
+      if (result.skipped) {
+        await V2ImageModel().updateOne(
+          { key, status: { $in: ['generating', 'queued'] } },
+          {
+            $set: { status: 'failed', reason: 'reclaimed after lock skip' },
+            $unset: { generating_started_at: 1 },
+          },
+        );
+        result = await generateContentImage({
+          key,
+          spec,
+          usedBy,
+          force: true,
+          quality: input.quality ?? 'low',
+          ratio: '1:1',
+        });
+      }
+      if (result.skipped) {
+        await finishJobSkipped({
+          jobId: job.id,
+          reason: result.reason ?? 'lock skip',
+          output: {
+            key,
+            status: result.doc.status,
+            reason: result.reason ?? result.doc.reason,
+            skipped: true,
+            source: 'custom_deck',
+          },
+        });
+        return;
+      }
+      const status = result.doc.status;
+      if (status === 'blocked' || status === 'failed') {
+        await finishJobSkipped({
+          jobId: job.id,
+          reason: result.reason ?? status,
+          output: {
+            key,
+            status,
+            reason: result.reason ?? result.doc.reason,
+            skipped: false,
+            source: 'custom_deck',
+          },
+        });
+        return;
+      }
+      if (input.deck_id) {
+        try {
+          const { refreshDeckImagesStatus } = await import(
+            '@/lib/v2/decks/images'
+          );
+          await refreshDeckImagesStatus(input.deck_id);
+        } catch {
+          // best-effort status refresh
+        }
+      }
+      await finishJobSuccess({
+        jobId: job.id,
+        output: {
+          key,
+          status,
+          url: result.doc.url ?? null,
+          cost_usd: result.doc.cost_usd ?? null,
+          skipped: false,
+          reason: result.reason ?? null,
+          source: 'custom_deck',
+        },
+      });
+      return;
+    }
+
     const { lesson, story } = await loadLessonAndStoryForImages(job.day);
     const manifestSource = input.manifest_source ?? 'word';
 

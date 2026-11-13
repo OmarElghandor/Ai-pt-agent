@@ -117,6 +117,17 @@ export function QuestionSession({
       ? question.tests.map(String)
       : [];
     setStats((prev) => {
+      const answeredCount = prev.total + 1;
+      void import('@/lib/v2/progress/clientEvent').then(({ postProgressEvent }) => {
+        postProgressEvent({
+          kind: 'day_question_answered',
+          day,
+          skill,
+          first_try_correct: correct,
+          answered_count: answeredCount,
+          total: questions.length,
+        });
+      });
       const prevSkill = prev.bySkill[skill] ?? { correct: 0, total: 0 };
       const used =
         correct && tests[0] && !prev.usedCorrectly.includes(tests[0])

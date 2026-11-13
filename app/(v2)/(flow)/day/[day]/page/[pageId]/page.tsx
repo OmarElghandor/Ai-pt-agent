@@ -5,6 +5,7 @@ import { PagePlayer } from '@/components/v2/player/PagePlayer';
 import { RealWorldPlayer } from '@/components/v2/player/RealWorldPlayer';
 import { SectionsPage } from '@/components/v2/player/SectionsPage';
 import { StoryPlayer } from '@/components/v2/player/StoryPlayer';
+import { VocabFlowPlayer } from '@/components/v2/player/VocabFlowPlayer';
 import {
   getLatestLessonPack,
   getPublishedLesson,
@@ -102,6 +103,24 @@ export default async function LessonPlayerPage({
         situationEg={situationEg}
         titleTl={titleTl}
         nextHref={nextHref}
+      />
+    );
+  }
+
+  if (
+    page.preset === 'vocab_flow' &&
+    page.mode === 'static' &&
+    page.blocks.some((b) => b.type === 'cards')
+  ) {
+    return (
+      <VocabFlowPlayer
+        day={view.day}
+        page={page}
+        items={view.items}
+        situationEg={situationEg}
+        titleTl={titleTl}
+        nextHref={nextHref}
+        story={storyDoc}
       />
     );
   }

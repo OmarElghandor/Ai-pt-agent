@@ -182,6 +182,34 @@ export async function denormalizeReadyImage(opts: {
         { id, version },
         { $set: { image: link } },
       );
+    } else if (ref.startsWith('deck:') || ref.startsWith('official:')) {
+      const { V2CustomItemModel, V2CustomDeckModel } = await import(
+        '@/lib/v2/mongo/models'
+      );
+      const concept = opts.key.replace(/^word\./, '');
+      await V2CustomItemModel().updateMany(
+        {
+          $or: [
+            { concept_en: concept },
+            { 'image.key': opts.key },
+          ],
+        },
+        { $set: { image: link } },
+      );
+      if (ref.startsWith('deck:')) {
+        const deckId = ref.slice('deck:'.length);
+        try {
+          const { refreshDeckImagesStatus } = await import(
+            '@/lib/v2/decks/images'
+          );
+          await refreshDeckImagesStatus(deckId);
+        } catch {
+          await V2CustomDeckModel().updateOne(
+            { _id: deckId },
+            { $set: { images_status: 'partial' } },
+          );
+        }
+      }
     }
   }
 }

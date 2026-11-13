@@ -11,6 +11,15 @@ export const USER_KEYED_V2_COLLECTIONS = [
   'v2_answer_idempotency',
   'v2_reports',
   'v2_topic_requests',
+  'v2_lesson_progress',
+  'v2_weak_spots',
+  'v2_card_decks',
+  'v2_activity_days',
+  'v2_problem_requests',
+  'v2_progress_event_idempotency',
+  'v2_user_decks',
+  'v2_deck_reports',
+  'v2_custom_deck_jobs',
 ] as const;
 
 export type UserKeyedV2Collection = (typeof USER_KEYED_V2_COLLECTIONS)[number];
