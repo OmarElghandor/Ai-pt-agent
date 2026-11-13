@@ -7,6 +7,9 @@ import {
   mergeLearnerPath,
   resolveLearnerCurrentDay,
 } from '@/lib/v2/progress/learnerPath';
+import { getImageByKey } from '@/lib/v2/images';
+import { storySceneKey } from '@/lib/v2/images/keys';
+import { buildMeSummary } from '@/lib/v2/progress/summary';
 
 export default async function PathPage() {
   const { days } = await buildPathPayload();
@@ -25,6 +28,9 @@ export default async function PathPage() {
     bakra: false,
   }));
 
+  let deckLeft: number | null = null;
+  let deckTotal: number | null = null;
+
   if (user && mongoConfigured()) {
     await connectMongo();
     learnerDays = await mergeLearnerPath({
@@ -32,15 +38,39 @@ export default async function PathPage() {
       timezone: user.timezone,
       days,
     });
+    try {
+      const summary = await buildMeSummary(user);
+      deckLeft = summary.deck.left;
+      deckTotal = summary.deck.total;
+    } catch {
+      /* path stays usable without deck counts */
+    }
   }
 
   const weekNum = buildWeekPathPayload(days).week;
   const weekRows = weekDays(learnerDays, weekNum);
   const currentDay = resolveLearnerCurrentDay(learnerDays);
 
+  let coverUrl: string | null = null;
+  if (currentDay && mongoConfigured()) {
+    try {
+      const img = await getImageByKey(storySceneKey(currentDay));
+      if (img?.status === 'ready' && img.url) coverUrl = img.url;
+    } catch {
+      /* mint gradient placeholder */
+    }
+  }
+
   if (!weekRows.length) {
     return (
-      <main className="flex flex-1 flex-col gap-4">
+      <main className="relative -mx-4 -mt-4 flex flex-1 flex-col gap-4 px-4">
+        {user ? (
+          <HomeSummaryHeader
+            name={user.name}
+            image={user.image}
+            initialStreak={user.streak?.current ?? 0}
+          />
+        ) : null}
         <h1 className="font-[family-name:var(--font-v2-display-ar)] text-3xl text-v2-primary">
           المسار
         </h1>
@@ -52,12 +82,21 @@ export default async function PathPage() {
   }
 
   return (
-    <main className="flex flex-1 flex-col">
-      <HomeSummaryHeader />
+    <main className="relative -mx-4 -mt-4 flex flex-1 flex-col px-4">
+      {user ? (
+        <HomeSummaryHeader
+          name={user.name}
+          image={user.image}
+          initialStreak={user.streak?.current ?? 0}
+        />
+      ) : null}
       <PathRoadmap
         week={weekNum}
         days={weekRows}
         currentDay={currentDay}
+        coverUrl={coverUrl}
+        deckLeft={deckLeft}
+        deckTotal={deckTotal}
       />
     </main>
   );

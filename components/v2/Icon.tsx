@@ -4,14 +4,27 @@ type Props = {
   size?: 20 | 24 | 32;
   /** Fill 1 for active / selected states only */
   fill?: boolean;
+  /** Outlined matches Stitch path/home chrome; rounded is the default elsewhere. */
+  variant?: 'rounded' | 'outlined';
   className?: string;
 };
 
-/** Material Symbols Rounded — outline by default; fill only when active (Calm Kit glassy chrome). */
-export function Icon({ name, size = 24, fill = false, className }: Props) {
+/** Material Symbols — outline by default; fill only when active. */
+export function Icon({
+  name,
+  size = 24,
+  fill = false,
+  variant = 'rounded',
+  className,
+}: Props) {
+  const family =
+    variant === 'outlined'
+      ? 'material-symbols-outlined'
+      : 'material-symbols-rounded';
+
   return (
     <span
-      className={['material-symbols-rounded select-none leading-none', className]
+      className={[family, 'select-none leading-none', className]
         .filter(Boolean)
         .join(' ')}
       style={{

@@ -8,7 +8,9 @@ import { getSessionCookie } from 'better-auth/cookies';
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  const isRoot = pathname === '/';
   const isV2Page =
+    isRoot ||
     pathname.startsWith('/path') ||
     pathname.startsWith('/day') ||
     pathname.startsWith('/cards') ||
@@ -35,7 +37,10 @@ export function proxy(request: NextRequest) {
   if (!sessionCookie) {
     const url = request.nextUrl.clone();
     url.pathname = '/sign-in';
-    url.searchParams.set('next', pathname + request.nextUrl.search);
+    url.searchParams.set(
+      'next',
+      isRoot ? '/path' : pathname + request.nextUrl.search,
+    );
     return NextResponse.redirect(url);
   }
 
@@ -44,6 +49,7 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
+    '/',
     '/path/:path*',
     '/day/:path*',
     '/cards/:path*',
