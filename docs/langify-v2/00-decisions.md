@@ -4,6 +4,7 @@ If any other doc disagrees with this file, this file wins. Each line is a decisi
 
 ## 0. Platform (new, 2026-10-19)
 
+- **(new) Product brand:** the shipped app name is **A-Z Talkie** (PWA short name **Talkie**, npm package `a-z-talkie`). **Langify** in this pack means only the legacy Expo/Express product and its Mongo collections; do not use Langify as the current product name in UI, metadata, or learner-facing copy.
 - **Everything in v2 is built from scratch in one repo: `ai-agent-talk`** (folder `ai-pt-agent`). That covers content, renderer, cards, practice, the daily loop and generation.
   - Stack: Next.js 16 App Router, React 19, Tailwind 4, zod 4, Mongoose 9, the Anthropic SDK, plus the existing TTS and STT routes. Read the repo's `AGENTS.md` first, because this Next.js version differs from what models know.
 - v2 is a **mobile-first web app (PWA)**, RTL, designed at 390px width and centered on wider screens. The Stitch designs are the visual target.

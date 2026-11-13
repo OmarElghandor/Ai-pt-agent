@@ -129,7 +129,7 @@ export default function LessonsPage() {
 
         {clientReady && process.env.NODE_ENV !== 'production' ? (
           <div className="mb-3 rounded-xl border border-border/60 bg-surface/50 p-2">
-            <label className="block text-[10px] text-muted">Dev Langify user id</label>
+            <label className="block text-[10px] text-muted">Dev legacy user id</label>
             <div className="mt-1 flex gap-2">
               <input
                 dir="ltr"

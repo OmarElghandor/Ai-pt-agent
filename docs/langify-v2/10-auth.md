@@ -48,7 +48,7 @@ This section replaces the identity line in §0.
 **Google Cloud (checklist for Omar):**
 1. OAuth client type **Web application**.
 2. Redirect URIs: `http://localhost:3000/api/auth/callback/google`, plus production and preview URLs (`https://<host>/api/auth/callback/google`).
-3. Consent screen: app name Langify, logo, privacy link (`/privacy`), support email; **publish** before the pilot (not left in testing).
+3. Consent screen: app name A-Z Talkie, logo, privacy link (`/privacy`), support email; **publish** before the pilot (not left in testing).
 4. Put `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` in the server env (never on the client).
 
 **Device matrix** (fill after a deployed preview URL exists):

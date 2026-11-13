@@ -249,7 +249,7 @@ The Stitch screens use warm painted editorial illustrations: a Lisbon tram, a gr
   - "EDIÇÃO PORTUGAL · GUIA DE CONVERSAÇÃO · FALOU";
   - the brand name **"Falou"** in the onboarding.
 
-  Titles are Arabic (and Portuguese where it is the lesson content). The app name is **Langify**.
+  Titles are Arabic (and Portuguese where it is the lesson content). The app name is **A-Z Talkie**.
 - **More than one header or tab bar style.** There is one tab bar: المسار · الكروت · المكتبة · أنا.
 - **`04-compare-o-a.html` uses Stitch's blue "My Design System"** (#005CB8). Take its layout only. Its colors are wrong. The blue design system file is not part of the pack.
 - **-IR in a second teal.** Use gold.

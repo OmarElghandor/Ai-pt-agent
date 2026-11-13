@@ -5,7 +5,7 @@ All screens are routes under `app/(v2)/` in `ai-agent-talk`. Each screen lists i
 ## Tab: المسار (Path)
 
 ### S1 · Path / home
-- Reference: `13-learning-path.png`. Onboarding before first launch: `00-onboarding.png` (replace "Falou" with Langify).
+- Reference: `13-learning-path.png`. Onboarding before first launch: `00-onboarding.png` (replace "Falou" with A-Z Talkie).
 - Shows:
   - A greeting and "بتفهم N · بتقول M".
   - Today's day card with its situation illustration and a start button.

@@ -503,7 +503,7 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
   - the verb shelf = verbs met (Phase 5 rule), opening the verb poster;
   - stories open in the S3 player (static mode).
 - **/path (S1):** greeting, "بتفهم N · بتقول M", today's day card, the 3 micro units with done states, and the week map (story day marked).
-- **Onboarding:** one first-launch screen from `design/reference/00-onboarding.png` (with Langify, not "Falou"), then /path. No placement test for now.
+- **Onboarding:** one first-launch screen from `design/reference/00-onboarding.png` (with A-Z Talkie, not "Falou"), then /path. No placement test for now.
 - **Reminders:** in-app only (a banner on /path for undone micro units). No push in this phase.
 - **Design:** 05 (Warm Editorial, Spacing, Icons, ImageSlot). References: 13-learning-path, 06-day-map, 07-day-done, 00-onboarding. Checked at 390px.
 - **Done-when test:** a seed user goes Day 1 → Day 3 through the path. Micro units appear and complete, and the levels and gaps on /me change.

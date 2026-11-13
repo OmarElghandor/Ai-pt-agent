@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { BrandLogo } from '@/components/v2/BrandLogo';
 import { GoogleSignInButton } from '@/components/v2/auth/GoogleSignInButton';
 import { getCurrentV2User } from '@/lib/v2/auth/session';
 
@@ -18,10 +19,11 @@ export default async function SignInPage({ searchParams }: Props) {
 
   return (
     <main className="flex min-h-[100dvh] flex-col justify-center gap-8 px-5 py-10">
-      <div className="flex flex-col gap-2 text-center">
-        <p className="font-[family-name:var(--font-v2-manrope)] text-sm font-medium tracking-wide text-v2-sage">
-          Langify
-        </p>
+      <div className="flex flex-col items-center gap-2 text-center">
+        <BrandLogo
+          priority
+          className="mx-auto h-auto w-44 max-w-[70vw]"
+        />
         <h1 className="font-[family-name:var(--font-v2-display-ar)] text-3xl text-v2-ink">
           أهلاً بيك
         </h1>

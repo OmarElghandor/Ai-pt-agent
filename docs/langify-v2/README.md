@@ -1,6 +1,6 @@
-# Langify v2 · Cursor handoff pack
+# A-Z Talkie (v2) · Cursor handoff pack
 
-This pack holds everything decided in design sessions for Langify v2: European Portuguese for Egyptian Arabic speakers, with a book-like interactive page experience. **All of v2 is built from scratch in the `ai-agent-talk` repo** (folder `ai-pt-agent`, Next.js 16): a mobile-first web app (PWA). The old `langify` repo is legacy; v2 only reads users from it. Copy this pack into the root of `ai-agent-talk`. The `.cursor/rules` folder merges with the existing rules, and `docs/langify-v2` is new.
+This pack holds everything decided in design sessions for **A-Z Talkie** (product brand; technical pack path remains `docs/langify-v2`): European Portuguese for Egyptian Arabic speakers, with a book-like interactive page experience. **All of v2 is built from scratch in the `ai-agent-talk` repo** (folder `ai-pt-agent`, Next.js 16; npm package `a-z-talkie`): a mobile-first web app (PWA). The old `langify` repo is legacy; v2 only reads users from it. Copy this pack into the root of `ai-agent-talk`. The `.cursor/rules` folder merges with the existing rules, and `docs/langify-v2` is new.
 
 ## How to use it with Cursor
 

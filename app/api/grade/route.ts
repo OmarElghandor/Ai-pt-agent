@@ -6,7 +6,7 @@ export const runtime = 'nodejs';
 export const maxDuration = 30;
 
 /**
- * Stateless grader for Langify v2.
+ * Stateless grader for A-Z Talkie v2.
  * POST body: GradeRequest. Header: x-agent-secret.
  * Never writes learner progress. Rejects listening/reading skills (400).
  */
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
   if (parsed.data.skill === 'listening' || parsed.data.skill === 'reading') {
     return Response.json(
       {
-        error: 'listening and reading are graded by code in Langify; do not call /api/grade',
+        error: 'listening and reading are graded by code in A-Z Talkie; do not call /api/grade',
       },
       { status: 400 },
     );

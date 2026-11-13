@@ -1,12 +1,11 @@
 import Link from 'next/link';
+import { BrandLogo } from '@/components/v2/BrandLogo';
 
 export default function PrivacyPage() {
   return (
     <main className="flex flex-col gap-8 px-5 py-10" dir="rtl">
       <div>
-        <p className="font-[family-name:var(--font-v2-manrope)] text-sm text-v2-sage">
-          Langify
-        </p>
+        <BrandLogo className="mb-3 h-auto w-36" />
         <h1 className="font-[family-name:var(--font-v2-display-ar)] text-3xl text-v2-ink">
           الخصوصية
         </h1>
@@ -40,7 +39,7 @@ export default function PrivacyPage() {
       <section className="flex flex-col gap-3 font-[family-name:var(--font-v2-arabic)] text-v2-ink leading-relaxed">
         <h2 className="text-lg font-semibold">ازاي تمسح حسابك؟</h2>
         <p className="text-v2-ink-muted">
-          من صفحة «أنا» → «امسح حسابي». هنمسح بياناتك في Langify v2. مش بنلمس حسابك على Langify
+          من صفحة «أنا» → «امسح حسابي». هنمسح بياناتك في A-Z Talkie. مش بنلمس حسابك على Langify
           القديميم، ولا المحتوى المشترك (الدروس والصور).
         </p>
         <p
@@ -48,8 +47,8 @@ export default function PrivacyPage() {
           dir="ltr"
           lang="en"
         >
-          From Me → Delete my account. We delete your v2 data. We never write to legacy Langify
-          collections, and we never delete shared lessons or images.
+          From Me → Delete my account. We delete your A-Z Talkie data. We never write to legacy
+          Langify collections, and we never delete shared lessons or images.
         </p>
       </section>
 

@@ -8,8 +8,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-## Langify v2 (single repo)
+## A-Z Talkie v2 (single repo)
 
+- **Product brand:** **A-Z Talkie** (PWA short name Talkie; npm `a-z-talkie`). Spec pack path stays `docs/langify-v2/`. **Langify** = legacy Expo/Express only.
 - **Spec:** `docs/langify-v2/`. **`00-decisions.md` is the tie-breaker** if any other doc disagrees. Start with that file, then `01-architecture.md`. Build plan: `07-build-plan.md`.
 - **New code only under:** `app/(v2)`, `app/api/v2`, `lib/v2`, `components/v2`. Mongo collections for v2 are prefixed `v2_`.
 - **Auth (v2):** Google via Better Auth (`lib/v2/auth`, `/api/auth/*`). Session helper `getCurrentV2User` / `getCurrentV2UserId` — user id never from the request. Spec: `docs/langify-v2/10-auth.md`.

@@ -9,8 +9,9 @@ const ibmPlexArabic = IBM_Plex_Sans_Arabic({
 });
 
 export const metadata: Metadata = {
-  title: 'شريك البرتغالي — محادثة',
-  description: 'تمرين البرتغالي الأوروبي مع شريك محادثة ثنائي اللغة',
+  title: 'A-Z Talkie',
+  description: 'تعلّم البرتغالي الأوروبي مع A-Z Talkie',
+  applicationName: 'A-Z Talkie',
 };
 
 export default function RootLayout({

@@ -33,7 +33,7 @@ function createAuth() {
   const db = client.db();
 
   return betterAuth({
-    appName: 'Langify',
+    appName: 'A-Z Talkie',
     /**
      * Resolve baseURL from the incoming request host (must be in allowedHosts)
      * so OAuth redirect_uri and cookies match the browser origin. Fallback is

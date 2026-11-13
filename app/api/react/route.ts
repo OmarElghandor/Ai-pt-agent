@@ -6,7 +6,7 @@ export const runtime = 'nodejs';
 export const maxDuration = 30;
 
 /**
- * Stateless reactor for Langify v2.
+ * Stateless reactor for A-Z Talkie v2.
  * SOURCE is always code; never emits a hidden VERDICT; never writes progress.
  */
 export async function POST(req: Request) {
