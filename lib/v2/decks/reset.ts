@@ -97,11 +97,13 @@ export async function resetDeck(opts: {
   const blank = emptyCardSrs();
   const blankCard = {
     interval: blank.interval,
-    dueAt: blank.dueAt,
+    dueAt: blank.dueAt ? new Date(blank.dueAt) : null,
     masteryLevel: blank.masteryLevel,
     consecutiveCorrect: blank.consecutiveCorrect,
     face: blank.face,
-    knowCheckDueAt: blank.knowCheckDueAt,
+    knowCheckDueAt: blank.knowCheckDueAt
+      ? new Date(blank.knowCheckDueAt)
+      : null,
   };
 
   let reset_count = 0;

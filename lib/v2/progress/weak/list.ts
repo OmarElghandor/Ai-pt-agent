@@ -17,7 +17,7 @@ export async function listOpenWeakSpots(
   userId: string,
   opts?: { limit?: number; includeImproving?: boolean },
 ): Promise<WeakSpotView[]> {
-  const statuses = opts?.includeImproving
+  const statuses: WeakSpotView['status'][] = opts?.includeImproving
     ? ['open', 'improving']
     : ['open'];
   const docs = await V2WeakSpotModel()
