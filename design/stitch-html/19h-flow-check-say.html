@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>19h · سؤال سريع: قولها بصوتك (موبايل)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500;1,6..72,600&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg: #F8FAF9;
+      --card-bg: #FFFFFF;
+      --ink: #061F1C;
+      --ink-secondary: #3D4947;
+      --teal-primary: #00685F;
+      --teal-pressed: #008378;
+      --teal-soft: #D8F4ED;
+      --tip-wash: #DEFAF3;
+      --tip-border: #BCC9C6;
+      --correct: #006C4F;
+      --amber-warm: #B8955A;
+      --clay: #8A6B5C;
+      --f-serif: 'Newsreader', Georgia, serif;
+      --f-ar: 'Noto Sans Arabic', -apple-system, sans-serif;
+      --f-sans: 'Inter', system-ui, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: var(--f-ar);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
+
+    .font-serif-pt {
+      font-family: var(--f-serif);
+    }
+
+    .font-num {
+      font-family: var(--f-sans);
+    }
+
+    /* Ambient background orbs */
+    .orb-1 {
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, rgba(137, 245, 231, 0.28) 0%, rgba(137, 245, 231, 0) 70%);
+      pointer-events: none;
+      border-radius: 9999px;
+      z-index: 0;
+    }
+
+    .orb-2 {
+      position: absolute;
+      bottom: 80px;
+      left: -60px;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(123, 249, 202, 0.22) 0%, rgba(123, 249, 202, 0) 70%);
+      pointer-events: none;
+      border-radius: 9999px;
+      z-index: 0;
+    }
+
+    /* Custom sound waveform bars */
+    .waveform-bar {
+      width: 3.5px;
+      border-radius: 3px;
+      background-color: var(--teal-primary);
+      transition: height 0.2s ease;
+    }
+
+    /* Self-assessment pills */
+    .eval-pill {
+      border: 1.5px solid #D1DFDB;
+      background: #FFFFFF;
+      transition: all 0.2s ease;
+    }
+    .eval-pill:hover, .eval-pill:active {
+      border-color: var(--teal-primary);
+      background-color: var(--teal-soft);
+      color: var(--teal-primary);
+    }
+    .eval-pill.active {
+      border-color: var(--teal-primary);
+      background-color: var(--teal-primary);
+      color: #FFFFFF;
+    }
+
+    /* Pulse effect on mic button */
+    @keyframes subtle-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(0, 104, 95, 0.35); }
+      70% { box-shadow: 0 0 0 16px rgba(0, 104, 95, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 104, 95, 0); }
+    }
+    .mic-pulse {
+      animation: subtle-pulse 2.2s infinite;
+    }
+  </style>
+</head>
+<body class="flex justify-center min-h-screen">
+  <!-- Mobile Container (390px x 844px) -->
+  <div class="relative w-full max-w-[390px] min-h-[844px] bg-[#F8FAF9] flex flex-col justify-between overflow-hidden shadow-2xl border-x border-[#E2EFEA]">
+    
+    <!-- Ambient faint orbs -->
+    <div class="orb-1"></div>
+    <div class="orb-2"></div>
+
+    <!-- MAIN SCROLLABLE CONTENT -->
+    <div class="relative z-10 flex-1 overflow-y-auto px-5 pt-3 pb-6">
+
+      <!-- TOP APP BAR / HEADER -->
+      <div class="flex items-center justify-between py-2">
+        <button class="w-10 h-10 rounded-full flex items-center justify-center text-[#3D4947] hover:bg-black/5 active:scale-95 transition-all">
+          <span class="material-symbols-rounded text-2xl">close</span>
+        </button>
+
+        <h1 class="text-base font-bold text-[#061F1C] tracking-tight">
+          سؤال سريع · تدريب النطق
+        </h1>
+
+        <button class="w-10 h-10 rounded-full flex items-center justify-center text-[#3D4947] hover:bg-black/5 active:scale-95 transition-all">
+          <span class="material-symbols-rounded text-2xl">account_circle</span>
+        </button>
+      </div>
+
+      <!-- STEP META & PROGRESS BAR (Step 10 of 14) -->
+      <div class="mt-2 mb-4">
+        <div class="flex items-center justify-between text-xs mb-1.5">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D8F4ED] text-[#00685F] font-semibold text-[11px]">
+            <span class="material-symbols-rounded text-[14px]">calendar_today</span>
+            <span>Dia 3 · الكلمات والجمل</span>
+          </span>
+          <span class="font-num text-[#3D4947] font-medium text-xs tracking-wide">
+            ١٠ من ١٤
+          </span>
+        </div>
+
+        <!-- Custom Slim Progress Track with Micro-check dots -->
+        <div class="relative w-full h-1.5 bg-[#D8F4ED] rounded-full overflow-hidden flex items-center">
+          <!-- Filled Progress: 10/14 ≈ 71% -->
+          <div class="h-full bg-[#00685F] rounded-full" style="width: 71%;"></div>
+          <!-- Dots marking check steps at 4, 8, 12 -->
+          <div class="absolute w-2 h-2 rounded-full bg-[#00685F] top-1/2 -translate-y-1/2" style="left: 28.5%;"></div>
+          <div class="absolute w-2 h-2 rounded-full bg-[#00685F] top-1/2 -translate-y-1/2" style="left: 57%;"></div>
+          <div class="absolute w-2 h-2 rounded-full bg-[#D8F4ED] border border-[#00685F] top-1/2 -translate-y-1/2" style="left: 85.7%;"></div>
+        </div>
+      </div>
+
+      <!-- MAIN CARD: 19h · MICRO CHECK "قولها بصوتك" -->
+      <div class="bg-white rounded-[28px] border border-[#E2EFEA] p-5 shadow-[0_8px_24px_rgba(6,31,28,0.06)] flex flex-col gap-4">
+
+        <!-- Card Tag / Eyebrow -->
+        <div class="flex items-center justify-between">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D8F4ED] text-[#00685F] font-bold text-xs">
+            <span class="material-symbols-rounded text-sm">record_voice_over</span>
+            <span>سؤال سريع (تحدث)</span>
+          </span>
+          <span class="text-xs text-[#3D4947] flex items-center gap-1">
+            <span class="material-symbols-rounded text-sm text-[#00685F]">hearing</span>
+            <span>استمع وقارن</span>
+          </span>
+        </div>
+
+        <!-- Prompt Heading -->
+        <div class="text-center pt-1 pb-1">
+          <h2 class="text-xl font-bold text-[#061F1C] tracking-tight">
+            قولها بصوتك بالبرتغالي
+          </h2>
+          <p class="text-xs text-[#3D4947] mt-1 font-medium">
+            اطلب طلبك في الكافيه بطريقة طبيعية ومؤدبة
+          </p>
+        </div>
+
+        <!-- Arabic Target Phrase Cue (Centered & Prominent) -->
+        <div class="bg-[#F8FAF9] border border-[#E2EFEA] rounded-[20px] py-4 px-4 text-center">
+          <span class="text-[11px] font-semibold text-[#8A6B5C] uppercase tracking-wider block mb-1">
+            المعنى المطلوب
+          </span>
+          <p class="text-2xl font-bold text-[#061F1C] leading-snug">
+            "عايز قهوة، لو سمحت"
+          </p>
+          <div class="mt-2 inline-flex items-center gap-1.5 text-xs text-[#5A6865] bg-[#FFFFFF] px-3 py-1 rounded-full border border-[#E2EFEA]">
+            <span class="material-symbols-rounded text-sm text-[#B8955A]">lightbulb</span>
+            <span>تلميح: ابدأ بـ <span class="font-serif-pt font-semibold text-[#00685F] text-[13px] dir-ltr inline-block">Queria...</span></span>
+          </div>
+        </div>
+
+        <!-- STATE 1: LARGE ROUND MIC BUTTON (Default Prompt Action) -->
+        <div class="flex flex-col items-center justify-center py-2">
+          <button class="relative w-20 h-20 rounded-full bg-[#00685F] text-white flex items-center justify-center shadow-lg hover:bg-[#008378] active:scale-95 transition-all mic-pulse">
+            <span class="material-symbols-rounded text-4xl">mic</span>
+          </button>
+          <span class="text-xs font-bold text-[#00685F] mt-2.5">
+            اضغط واتكلم دلوقتي
+          </span>
+          <span class="text-[11px] text-[#71827F] mt-0.5">
+            هنسجّل نطقك ونقارنه بالبرتغالي الأصلي
+          </span>
+        </div>
+
+        <!-- DIVIDER (Visual Flow transition to Post-speaking Feedback state) -->
+        <div class="relative flex items-center justify-center my-1">
+          <div class="border-t border-dashed border-[#D1DFDB] w-full"></div>
+          <span class="bg-white px-3 text-[11px] font-bold text-[#71827F] shrink-0 flex items-center gap-1">
+            <span class="material-symbols-rounded text-xs text-[#00685F]">check_circle</span>
+            <span>بعد التسجيل والمقارنة</span>
+          </span>
+        </div>
+
+        <!-- STATE 2: POST-SPEAKING AUDIO COMPARISON ROWS -->
+        <div class="flex flex-col gap-2.5 bg-[#F8FAF9] p-3.5 rounded-[22px] border border-[#E2EFEA]">
+          
+          <!-- Learner's Recording Row -->
+          <div class="bg-white rounded-[16px] p-3 border border-[#E2EFEA] flex items-center justify-between gap-3 shadow-sm">
+            <div class="flex items-center gap-2.5">
+              <button class="w-9 h-9 rounded-full bg-[#DEFAF3] text-[#00685F] flex items-center justify-center hover:bg-[#00685F] hover:text-white transition-all shrink-0">
+                <span class="material-symbols-rounded text-xl">play_arrow</span>
+              </button>
+              <div>
+                <span class="text-xs font-bold text-[#061F1C] block leading-tight">صوتك إنت</span>
+                <span class="text-[10px] text-[#71827F]">تسجيل واضح</span>
+              </div>
+            </div>
+
+            <!-- Waveform Simulation -->
+            <div class="flex items-center gap-1 h-6 px-1">
+              <span class="waveform-bar h-2"></span>
+              <span class="waveform-bar h-4"></span>
+              <span class="waveform-bar h-5"></span>
+              <span class="waveform-bar h-3"></span>
+              <span class="waveform-bar h-6"></span>
+              <span class="waveform-bar h-4"></span>
+              <span class="waveform-bar h-2"></span>
+              <span class="waveform-bar h-5"></span>
+              <span class="waveform-bar h-3"></span>
+            </div>
+
+            <span class="font-num text-xs font-bold text-[#00685F] dir-ltr shrink-0">
+              0:03
+            </span>
+          </div>
+
+          <!-- Native Speaker Model Answer Row -->
+          <div class="bg-white rounded-[16px] p-3 border border-[#BCC9C6] bg-[#DEFAF3]/40 flex items-center justify-between gap-2 shadow-sm">
+            <div class="flex items-center gap-2.5 flex-1 min-w-0">
+              <button class="w-9 h-9 rounded-full bg-[#00685F] text-white flex items-center justify-center hover:bg-[#008378] transition-all shrink-0 shadow-sm">
+                <span class="material-symbols-rounded text-xl">volume_up</span>
+              </button>
+              <div class="min-w-0">
+                <span class="text-[10px] font-bold text-[#00685F] block">النطق النموذجي</span>
+                <p class="font-serif-pt text-[15px] font-bold text-[#061F1C] truncate dir-ltr text-right">
+                  Queria um café, por favor.
+                </p>
+              </div>
+            </div>
+            <span class="text-[11px] text-[#3D4947] font-medium shrink-0 bg-white px-2 py-0.5 rounded-full border border-[#E2EFEA]">
+              لشبونة
+            </span>
+          </div>
+
+          <!-- Self-Assessment Heading & 3 Equal Outlined Pills -->
+          <div class="pt-1.5">
+            <span class="text-xs font-bold text-[#061F1C] block text-center mb-2">
+              حاسس نطقك كان عامل إزاي مقارنة بالأصلي؟
+            </span>
+            <div class="grid grid-cols-3 gap-2">
+              <!-- Pill 1: لسه -->
+              <button class="eval-pill py-2.5 px-1 rounded-full text-center text-xs font-bold text-[#3D4947] active:scale-95 transition-all">
+                لسه 🔄
+              </button>
+              <!-- Pill 2: قريب (Active State Example) -->
+              <button class="eval-pill py-2.5 px-1 rounded-full text-center text-xs font-bold active active:scale-95 transition-all shadow-sm">
+                قريب 👍
+              </button>
+              <!-- Pill 3: زيه بالظبط -->
+              <button class="eval-pill py-2.5 px-1 rounded-full text-center text-xs font-bold text-[#3D4947] active:scale-95 transition-all">
+                زيّه بالظبط ✨
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Coach Tip / Language Nuance -->
+        <div class="bg-[#DEFAF3] border border-[#BCC9C6] rounded-[18px] p-3.5 flex items-start gap-3">
+          <span class="material-symbols-rounded text-[#00685F] text-xl shrink-0 mt-0.5">tips_and_updates</span>
+          <div class="text-xs leading-relaxed text-[#061F1C]">
+            <strong class="font-bold text-[#00685F] block mb-0.5">سر النطق في المقاهي:</strong>
+            في كلمة <span class="font-serif-pt font-bold text-[#00685F] dir-ltr inline-block">café</span> اضغط على الحرف الأخير بقوة (كافِـيهْ)، وكلمة <span class="font-serif-pt font-bold text-[#00685F] dir-ltr inline-block">favor</span> ما تنطقش حرف الواو زي الإنجليزي بل أقرب للـ "ڤاڤور".
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Quick Action: Try Again Voice link -->
+      <div class="text-center mt-3">
+        <button class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#00685F] hover:underline">
+          <span class="material-symbols-rounded text-sm">replay</span>
+          <span>سجّل نطقك مرة تانية</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- FIXED BOTTOM BAR (Always has Previous left + Next wide teal right) -->
+    <div class="relative z-20 bg-white/95 backdrop-blur-md border-t border-[#E2EFEA] px-5 py-3.5 flex items-center gap-3">
+      <!-- Outlined 'Previous' Button -->
+      <button class="h-12 px-5 rounded-full border border-[#BCC9C6] bg-white text-[#061F1C] font-bold text-sm flex items-center justify-center gap-1 hover:bg-black/5 active:scale-95 transition-all">
+        <span class="material-symbols-rounded text-lg">arrow_forward</span>
+        <span>السابق</span>
+      </button>
+
+      <!-- Filled Teal 'Next' Button (Wide) -->
+      <button class="flex-1 h-12 rounded-full bg-[#00685F] text-white font-bold text-sm flex items-center justify-center gap-1.5 shadow-[0_4px_16px_rgba(0,104,95,0.24)] hover:bg-[#008378] active:scale-95 transition-all">
+        <span>التالي</span>
+        <span class="material-symbols-rounded text-lg">arrow_back</span>
+      </button>
+    </div>
+
+  </div>
+</body>
+</html>

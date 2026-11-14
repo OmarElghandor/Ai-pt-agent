@@ -1421,6 +1421,53 @@ export function V2CustomDeckJobModel(): Model<V2CustomDeckJobDoc> {
   );
 }
 
+/** Durable pending flashcard ratings applied after the HTTP response. */
+const v2CardReviewJobSchema = new Schema(
+  {
+    user_id: { type: String, required: true, index: true },
+    local_date: { type: String, required: true, index: true },
+    item_id: { type: String, required: true },
+    rating: {
+      type: String,
+      required: true,
+      enum: ['again', 'hard', 'easy', 'know'],
+    },
+    tz: { type: String, required: false },
+    status: {
+      type: String,
+      required: true,
+      enum: ['queued', 'running', 'done', 'failed'],
+      default: 'queued',
+      index: true,
+    },
+    error: { type: String, required: false },
+    processed_at: { type: Date, required: false },
+  },
+  { timestamps: true, collection: 'v2_card_review_jobs' },
+);
+
+v2CardReviewJobSchema.index(
+  { user_id: 1, local_date: 1, item_id: 1 },
+  { unique: true },
+);
+v2CardReviewJobSchema.index({ status: 1, createdAt: 1 });
+
+export type V2CardReviewJobDoc = InferSchemaType<
+  typeof v2CardReviewJobSchema
+> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2CardReviewJobModel(): Model<V2CardReviewJobDoc> {
+  return (
+    (mongoose.models.V2CardReviewJob as Model<V2CardReviewJobDoc>) ||
+    mongoose.model<V2CardReviewJobDoc>(
+      'V2CardReviewJob',
+      v2CardReviewJobSchema,
+    )
+  );
+}
+
 const v2OfficialDeckSchema = new Schema(
   {
     target_lang: { type: String, required: true, index: true },

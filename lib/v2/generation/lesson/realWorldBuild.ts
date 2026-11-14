@@ -16,6 +16,8 @@ export type RealWorldPhraseRaw = {
   ar: string;
   eg_note: string;
   tag: string;
+  /** ≥1 of today's item ids this phrase builds on (required). */
+  uses?: string[];
 };
 
 export type RealWorldTipRaw = {
@@ -36,6 +38,8 @@ export type RealWorldPhraseBuilt = {
   say: string;
   cloze: string;
   audio?: string;
+  /** Today's item ids this phrase builds on (≥1). */
+  uses: string[];
 };
 
 export type RealWorldHandoff = {
@@ -51,24 +55,169 @@ const CATEGORY_LABELS: Record<string, string> = {
   pay: 'الدفع والحساب',
   polite: 'السؤال والطلب اللطيف',
   tip: 'نصيحة لشبونية',
-  ask: 'سؤال',
+  ask: 'سؤال وطلب مساعدة',
   other: 'تاني',
+  farewell: 'الوداع',
+  greeting: 'التحية',
 };
 
-/** Map an Egyptian tag to a stable category slug. */
-export function categoryFromTag(tag: string): string {
+/** Closed category lists per situation family (00: no café cats on an office day). */
+const SITUATION_CATEGORIES: Array<{
+  test: RegExp;
+  allowed: readonly string[];
+}> = [
+  {
+    test: /كافيه|قهوة|café|cafe|مطعم|restaurant|طلب|order|حساب/,
+    allowed: ['order', 'pay', 'polite', 'ask', 'tip', 'other'],
+  },
+  {
+    test: /سوبر|mercado|supermarket|بقالة/,
+    allowed: ['order', 'pay', 'ask', 'polite', 'tip', 'other'],
+  },
+  {
+    test: /شغل|مكتب|trabalho|escritório|escritorio|تعارف|تحية|اسم|apresent|greeting|وداع/,
+    allowed: ['greeting', 'ask', 'polite', 'tip', 'farewell', 'other'],
+  },
+  {
+    test: /سكن|بيت|vizinho|جار|شقة/,
+    allowed: ['greeting', 'ask', 'polite', 'tip', 'other'],
+  },
+];
+
+const DEFAULT_ALLOWED = [
+  'ask',
+  'polite',
+  'tip',
+  'greeting',
+  'farewell',
+  'other',
+] as const;
+
+/** Allowed category slugs for today's situation text. */
+export function allowedCategoriesForSituation(
+  situationEg?: string,
+  situationTl?: string,
+  titleTl?: string,
+): readonly string[] {
+  const hay = `${situationEg ?? ''} ${situationTl ?? ''} ${titleTl ?? ''}`.toLowerCase();
+  for (const row of SITUATION_CATEGORIES) {
+    if (row.test.test(hay)) return row.allowed;
+  }
+  return DEFAULT_ALLOWED;
+}
+
+/**
+ * Map an Egyptian tag (+ optional TL) to a stable category slug.
+ * Help requests (Pode ajudar-me) are ask, never order.
+ */
+export function categoryFromTag(tag: string, tl?: string): string {
   const t = tag.trim().toLowerCase();
+  const surface = `${t} ${tl ?? ''}`.toLowerCase();
+  if (/ajudar|ajuda|مساعدة|help/.test(surface)) return 'ask';
   if (/حساب|دفع|conta|فاتورة/.test(t)) return 'pay';
-  if (/مهذب|لطيف|polite|أدب|من فضلك/.test(t)) return 'polite';
-  if (/طلب|order|كافيه|قهوة|أكل|مشروب/.test(t)) return 'order';
+  if (/مهذب|لطيف|polite|أدب|من فضلك|se faz favor/.test(t)) return 'polite';
+  if (/وداع|adeus|até|ate amanha/.test(surface)) return 'farewell';
+  if (/تحية|greeting|أهلا|bom dia|boa tarde|olá/.test(surface)) {
+    return 'greeting';
+  }
+  if (/طلب|order|كافيه|قهوة|أكل|مشروب/.test(t) && !/مساعدة|ajudar/.test(surface)) {
+    return 'order';
+  }
   if (/نصيحة|لشبون|tip|عادة/.test(t)) return 'tip';
-  if (/سؤال|ask|\?/.test(t)) return 'ask';
+  if (/سؤال|ask|\?|help/.test(t)) return 'ask';
   return 'other';
 }
 
 export function categoryLabelEg(id: string): string {
   return CATEGORY_LABELS[id] ?? id;
 }
+
+/**
+ * Tip must be about today's situation — reject Quero→Queria on a day with no ordering.
+ */
+export function tipFitsSituation(
+  tip: RealWorldTipRaw,
+  opts: {
+    coreTls: string[];
+    phraseTls: string[];
+    situationEg?: string;
+    grammarFocus?: string;
+  },
+): { ok: boolean; reason?: string } {
+  const wrong = (tip.wrong_tl ?? '').trim();
+  const right = (tip.right_tl ?? '').trim();
+  const body = `${tip.title_eg} ${tip.body_eg} ${wrong} ${right}`.toLowerCase();
+  const pool = [
+    ...opts.coreTls,
+    ...opts.phraseTls,
+    opts.situationEg ?? '',
+    opts.grammarFocus ?? '',
+  ]
+    .join(' ')
+    .toLowerCase();
+
+  const isOrderingTip =
+    /\bquero\b/.test(body) ||
+    /\bqueria\b/.test(body) ||
+    /طلب|order|قائمة|كافيه/.test(body);
+  const dayHasOrdering =
+    /\bquer[oi]a?\b|bica|pastel|conta|ementa|pedir|طلب|كافيه|café/.test(pool);
+
+  if (isOrderingTip && !dayHasOrdering) {
+    return {
+      ok: false,
+      reason: 'tip is about ordering (Quero/Queria) but today has no ordering',
+    };
+  }
+
+  // Tip right/wrong should appear in today's phrases or be a close variant of them
+  const poolNorm = pool
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '');
+  if (right.length >= 3) {
+    const r = right
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/\p{M}/gu, '');
+    const mentioned =
+      poolNorm.includes(r) ||
+      opts.phraseTls.some((tl) =>
+        tl
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/\p{M}/gu, '')
+          .includes(r),
+      );
+    // Soft: if neither wrong nor right shows up in pool, reject
+    const w = wrong
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/\p{M}/gu, '');
+    const either =
+      mentioned ||
+      (w.length >= 3 && poolNorm.includes(w)) ||
+      opts.phraseTls.some((tl) => {
+        const n = tl
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/\p{M}/gu, '');
+        return n.includes(r) || (w.length >= 3 && n.includes(w));
+      });
+    if (!either && isOrderingTip) {
+      return { ok: false, reason: 'tip TL not grounded in today phrases/situation' };
+    }
+  }
+
+  return { ok: true };
+}
+
+/** Empty tip used when the authored tip is dropped. */
+export const EMPTY_TIP: RealWorldTipRaw = {
+  title_eg: '',
+  wrong_tl: '',
+  right_tl: '',
+  body_eg: '',
+};
 
 function normTl(tl: string): string {
   return tl
@@ -147,11 +296,23 @@ export function processRealWorldPhrases(opts: {
   maxWords: number;
   grammarFocusTl?: string;
   authored?: boolean;
+  situationEg?: string;
+  situationTl?: string;
+  titleTl?: string;
+  /** When false, tip is cleared (failed situation gate). */
+  keepTip?: boolean;
 }): RealWorldHandoff {
   const issues: string[] = [];
   const maxLen = opts.maxWords + 4;
   const known = knownTokenSet(opts.items, opts.coreTls);
   const coreNorm = new Set(opts.coreTls.map(normTl).filter(Boolean));
+  const allowed = new Set(
+    allowedCategoriesForSituation(
+      opts.situationEg,
+      opts.situationTl,
+      opts.titleTl,
+    ),
+  );
   const grammarTokens = new Set(
     opts.grammarFocusTl
       ? tokenizeTl(opts.grammarFocusTl).map(normToken).filter(Boolean)
@@ -165,6 +326,9 @@ export function processRealWorldPhrases(opts: {
   const kept: RealWorldPhraseBuilt[] = [];
   const usedIds = new Set<string>();
   const usedTl = new Set<string>();
+  const todayIds = new Set(
+    opts.items.map((it) => it.id).filter((id): id is string => Boolean(id)),
+  );
 
   for (const [i, p] of opts.raw.entries()) {
     const path = `phrases[${i}]`;
@@ -173,9 +337,23 @@ export function processRealWorldPhrases(opts: {
     const ar = (p.ar ?? '').trim();
     const eg_note = (p.eg_note ?? '').trim();
     const tag = (p.tag ?? '').trim();
+    const usesRaw = Array.isArray(p.uses) ? p.uses : [];
+    const uses = [
+      ...new Set(
+        usesRaw
+          .filter((id): id is string => typeof id === 'string' && id.length > 0)
+          .filter((id) => todayIds.has(id)),
+      ),
+    ];
 
     if (!tl || !ar || !eg_note || !tag) {
       issues.push(`${path}: dropped — missing tl/ar/eg_note/tag`);
+      continue;
+    }
+    if (uses.length < 1) {
+      issues.push(
+        `${path}: dropped — uses must cite ≥1 of today's item ids`,
+      );
       continue;
     }
     if (tl.includes('/')) {
@@ -226,6 +404,21 @@ export function processRealWorldPhrases(opts: {
     usedIds.add(id);
     usedTl.add(n);
 
+    let category = categoryFromTag(tag, tl);
+    if (!allowed.has(category)) {
+      const fallback = ['ask', 'polite', 'other', 'tip'].find((c) =>
+        allowed.has(c),
+      );
+      issues.push(
+        `${path}: category ${category} not allowed today → ${fallback ?? 'other'}`,
+      );
+      category = fallback && allowed.has(fallback) ? fallback : 'other';
+      if (!allowed.has(category)) {
+        // Still outside — keep as other only if allowed, else first allowed
+        category = [...allowed][0] ?? 'other';
+      }
+    }
+
     kept.push({
       id,
       tl,
@@ -233,10 +426,11 @@ export function processRealWorldPhrases(opts: {
       ar,
       eg_note,
       tag,
-      category: categoryFromTag(tag),
+      category,
       say: transliteratePtToSay(tl),
       cloze: pickCloze(tl),
       audio: `audio:${id}`,
+      uses,
     });
   }
 
@@ -276,9 +470,26 @@ export function processRealWorldPhrases(opts: {
     issues.push(`hide page — only ${kept.length} phrases remain (need ≥3)`);
   }
 
+  let tip = opts.tip;
+  if (opts.keepTip === false) {
+    tip = EMPTY_TIP;
+    issues.push('tip dropped — does not match today situation');
+  } else if (kept.length >= 3) {
+    const fit = tipFitsSituation(tip, {
+      coreTls: opts.coreTls,
+      phraseTls: kept.map((p) => p.tl),
+      situationEg: opts.situationEg,
+      grammarFocus: opts.grammarFocusTl,
+    });
+    if (!fit.ok) {
+      tip = EMPTY_TIP;
+      issues.push(`tip dropped — ${fit.reason ?? 'situation mismatch'}`);
+    }
+  }
+
   return {
     phrases: hide ? [] : kept,
-    tip: opts.tip,
+    tip,
     hide,
     issues,
     authored: Boolean(opts.authored),
@@ -325,6 +536,7 @@ export function realWorldPhrasesToItems(
     has_card: false,
     real_world: true,
     audio: p.audio,
+    uses: p.uses,
   }));
 }
 

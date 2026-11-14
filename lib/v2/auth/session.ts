@@ -3,8 +3,10 @@ import { NextResponse } from 'next/server';
 import { auth } from './index';
 import {
   normalizeGender,
+  normalizeNativeLang,
   normalizeRole,
   normalizeStreak,
+  normalizeTargetLang,
   type V2User,
   type V2UserGender,
   type V2UserRole,
@@ -20,6 +22,8 @@ function toV2User(raw: Record<string, unknown>): V2User {
     image: (raw.image ?? raw.picture ?? null) as string | null,
     role: normalizeRole(raw.role),
     gender: normalizeGender(raw.gender),
+    native_lang: normalizeNativeLang(raw.native_lang),
+    target_lang: normalizeTargetLang(raw.target_lang),
     onboarded_at: (raw.onboarded_at as Date | string | null) ?? null,
     langify_user_id: (raw.langify_user_id as string | null) ?? null,
     timezone:
@@ -58,6 +62,8 @@ export async function getCurrentV2User(): Promise<V2User | null> {
         : null;
       user.image = (doc.picture as string | null) ?? user.image;
       user.emailVerified = Boolean(doc.email_verified ?? user.emailVerified);
+      user.native_lang = normalizeNativeLang(doc.native_lang);
+      user.target_lang = normalizeTargetLang(doc.target_lang);
       user.timezone =
         typeof doc.timezone === 'string' && doc.timezone.trim()
           ? String(doc.timezone)

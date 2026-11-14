@@ -1,9 +1,12 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, after } from 'next/server';
 import { getCurrentV2UserId } from '@/lib/v2/auth/session';
 import { mongoConfigured } from '@/lib/mongo';
 import { isV2Enabled } from '@/lib/v2/flags';
 import type { CardRating } from '@/lib/v2/progress';
-import { reviewCard } from '@/lib/v2/progress/cardsStore';
+import {
+  enqueueCardReview,
+  processPendingCardReview,
+} from '@/lib/v2/progress/cards/enqueueReview';
 
 export const runtime = 'nodejs';
 
@@ -40,14 +43,14 @@ export async function POST(
   }
 
   const tz = req.headers.get('x-timezone') ?? 'UTC';
-  const result = await reviewCard({
+  const result = await enqueueCardReview({
     user_id: userId,
     item_id: itemId,
     rating: body.rating as CardRating,
     timeZone: tz,
   });
 
-  if ('error' in result) {
+  if (!result.ok) {
     const status =
       result.error === 'no_session'
         ? 404
@@ -57,15 +60,16 @@ export async function POST(
     return NextResponse.json({ error: result.error }, { status });
   }
 
-  return NextResponse.json({
-    ok: true,
-    status: result.session.status,
-    card: {
-      item_id: result.state.item_id,
-      interval: result.state.card.interval,
-      masteryLevel: result.state.card.masteryLevel,
-      knowCheckDueAt: result.state.card.knowCheckDueAt,
-      dueAt: result.state.card.dueAt,
-    },
-  });
+  if ('queued' in result && result.queued) {
+    const jobId = result.job_id;
+    after(() => {
+      void processPendingCardReview(jobId);
+    });
+    return NextResponse.json(
+      { ok: true, queued: true, job_id: jobId },
+      { status: 202 },
+    );
+  }
+
+  return NextResponse.json({ ok: true, already_done: true }, { status: 200 });
 }

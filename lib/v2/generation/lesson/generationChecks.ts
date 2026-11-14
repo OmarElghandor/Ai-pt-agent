@@ -167,5 +167,27 @@ function checkString(
         });
       }
     }
+    // Allowed sentence punctuation in ar: . ، ؟ ! — never U+06D4 ۔
+    if (/\u06D4/.test(value)) {
+      issues.push({
+        path,
+        rule: 'ar_punctuation',
+        message: 'ar uses U+06D4 (۔) — replace with ASCII period "."',
+        severity: 'warning',
+      });
+    }
+    const punctOnly = value.replace(
+      /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF0-9A-Za-zÀ-ÿ\s«»"'\-–—()]/gu,
+      '',
+    );
+    const disallowed = punctOnly.replace(/[.،؟!…]/g, '');
+    if (disallowed.length > 0) {
+      issues.push({
+        path,
+        rule: 'ar_punctuation',
+        message: `ar has unexpected punctuation — use only . ، ؟ !`,
+        severity: 'warning',
+      });
+    }
   }
 }

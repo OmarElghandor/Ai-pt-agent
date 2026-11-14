@@ -91,6 +91,18 @@ function createAuth() {
           defaultValue: 'Europe/Lisbon',
           input: true,
         },
+        native_lang: {
+          type: 'string',
+          required: false,
+          defaultValue: 'eg',
+          input: true,
+        },
+        target_lang: {
+          type: 'string',
+          required: false,
+          defaultValue: 'pt-PT',
+          input: true,
+        },
       },
     },
     session: {

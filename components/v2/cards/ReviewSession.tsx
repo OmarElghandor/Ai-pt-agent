@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Icon } from '@/components/v2/Icon';
 import { PrimaryButton } from '@/components/v2/PrimaryButton';
 import { ProgressBar } from '@/components/v2/ProgressBar';
+import { ScreenLoading } from '@/components/v2/ScreenLoading';
 import {
   BackFace,
   FrontFace,
@@ -93,6 +94,8 @@ export function ReviewSession({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const playedOnFlip = useRef<string | null>(null);
+  /** item_ids with a rating POST in flight — blocks double-tap, not the next card. */
+  const ratingInFlight = useRef(new Set<string>());
 
   const reloadToday = useCallback(async () => {
     const res = await fetch(`/api/v2/cards/today${apiQuery(dayOverride)}`);
@@ -233,59 +236,109 @@ export function ReviewSession({
       .catch(() => undefined);
   }, [face, playId, activeFace?.tl]);
 
-  async function rate(rating: Rating) {
+  function rate(rating: Rating) {
     if (!card || busy) return;
     if (hintUsed && (rating === 'easy' || rating === 'know')) return;
+    const itemIdRated = card.item_id;
+    if (ratingInFlight.current.has(itemIdRated)) return;
+    ratingInFlight.current.add(itemIdRated);
     setBusy(true);
-    try {
-      if (customMode && deckId) {
-        const res = await fetch('/api/v2/answers', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            kind: 'card_review',
-            answer_id: newAnswerId(),
-            day: 1,
-            item_id: card.item_id,
-            rating,
-            deck_id: deckId,
-            hint: hintUsed,
-          }),
-        });
-        if (!res.ok) throw new Error(String(res.status));
-        const nextRated = customRated + 1;
-        setCustomRated(nextRated);
-        // TODO(P11): when nextRated >= 10, notify streak/progress events.
-        const nextIndex = customIndex + 1;
-        if (!customSession || nextIndex >= customSession.cards.length) {
-          setCustomDone(true);
-        } else {
-          setCustomIndex(nextIndex);
-          setFace('front');
-          setHintUsed(false);
-          playedOnFlip.current = null;
-        }
+    setError(null);
+
+    if (customMode && deckId) {
+      const prevRated = customRated;
+      const prevIndex = customIndex;
+      const nextRated = customRated + 1;
+      const nextIndex = customIndex + 1;
+      setCustomRated(nextRated);
+      // TODO(P11): when nextRated >= 10, notify streak/progress events.
+      if (!customSession || nextIndex >= customSession.cards.length) {
+        setCustomDone(true);
       } else {
-        const res = await fetch(
-          `/api/v2/cards/${encodeURIComponent(card.item_id)}/review`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ rating }),
-          },
-        );
-        if (!res.ok) throw new Error(String(res.status));
-        const next = await reloadToday();
-        setData(next);
+        setCustomIndex(nextIndex);
         setFace('front');
         setHintUsed(false);
         playedOnFlip.current = null;
       }
-    } catch {
-      setError('rate_failed');
-    } finally {
       setBusy(false);
+
+      void fetch('/api/v2/answers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          kind: 'card_review',
+          answer_id: newAnswerId(),
+          day: 1,
+          item_id: itemIdRated,
+          rating,
+          deck_id: deckId,
+          hint: hintUsed,
+        }),
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error(String(res.status));
+        })
+        .catch(() => {
+          setCustomRated(prevRated);
+          setCustomIndex(prevIndex);
+          setCustomDone(false);
+          setFace('back');
+          setError('rate_failed');
+        })
+        .finally(() => {
+          ratingInFlight.current.delete(itemIdRated);
+        });
+      return;
     }
+
+    setData((cur) => {
+      if (!cur) return cur;
+      const cards = cur.cards.map((row) =>
+        row.item_id === itemIdRated ? { ...row, rating } : row,
+      );
+      const rated = cards.filter((c) => c.rating).length;
+      const allRated = cards.length > 0 && cards.every((c) => c.rating);
+      return {
+        ...cur,
+        cards,
+        progress: { ...cur.progress, rated },
+        status: allRated ? 'done' : cur.status,
+      };
+    });
+    setFace('front');
+    setHintUsed(false);
+    playedOnFlip.current = null;
+    setBusy(false);
+
+    // Do not reload /today after accept — job may not have applied yet.
+    void fetch(`/api/v2/cards/${encodeURIComponent(itemIdRated)}/review`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rating }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(String(res.status));
+      })
+      .catch(() => {
+        setData((cur) => {
+          if (!cur) return cur;
+          const cards = cur.cards.map((row) =>
+            row.item_id === itemIdRated ? { ...row, rating: null } : row,
+          );
+          const rated = cards.filter((c) => c.rating).length;
+          return {
+            ...cur,
+            cards,
+            progress: { ...cur.progress, rated },
+            status: 'open',
+          };
+        });
+        setFace('back');
+        setError('rate_failed');
+      })
+      .finally(() => {
+        ratingInFlight.current.delete(itemIdRated);
+      });
   }
 
   const loading = customMode
@@ -301,11 +354,7 @@ export function ReviewSession({
   }
 
   if (loading) {
-    return (
-      <p className="p-4 font-[family-name:var(--font-v2-arabic)] text-v2-ink-muted">
-        بنجهّز الجلسة…
-      </p>
-    );
+    return <ScreenLoading fullScreen label="بنجهّز الجلسة…" />;
   }
 
   if (customMode && customDone) {

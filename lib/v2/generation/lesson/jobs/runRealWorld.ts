@@ -4,7 +4,9 @@ import type { LessonBrief } from '../brief';
 import { getDayPlan } from '../plan';
 import { buildRealWorldSystemPrompt } from '../prompts';
 import {
+  EMPTY_TIP,
   processRealWorldPhrases,
+  tipFitsSituation,
   type RealWorldHandoff,
   type RealWorldPhraseRaw,
   type RealWorldTipRaw,
@@ -20,6 +22,7 @@ export const RealWorldToolSchema = z.object({
         ar: z.string().min(1),
         eg_note: z.string().min(1),
         tag: z.string().min(1),
+        uses: z.array(z.string().min(1)).min(1),
       }),
     )
     .min(3)
@@ -32,12 +35,17 @@ export const RealWorldToolSchema = z.object({
   }),
 });
 
-const DEFAULT_TIP: RealWorldTipRaw = {
-  title_eg: 'نصيحة',
-  wrong_tl: 'Quero',
-  right_tl: 'Queria',
-  body_eg: 'دي المهذبة في البرتغال.',
-};
+/** Neutral placeholder — never ship Quero/Queria as a default on non-ordering days. */
+const DEFAULT_TIP: RealWorldTipRaw = EMPTY_TIP;
+
+const TipOnlyToolSchema = z.object({
+  tip: z.object({
+    title_eg: z.string().min(1),
+    wrong_tl: z.string().min(1),
+    right_tl: z.string().min(1),
+    body_eg: z.string().min(1),
+  }),
+});
 
 function extractGrammarTl(brief: LessonBrief): string | undefined {
   const m = brief.grammar_focus.match(/^([^\s—]+)/);
@@ -88,11 +96,29 @@ export async function runRealWorldJob(opts: {
   }
 
   const coreTls = opts.brief.core_items.map((c) => c.tl);
-  const itemDigest = opts.items.map((i) => ({
-    id: i.id,
-    type: i.type,
-    tl: 'tl' in i && typeof i.tl === 'string' ? i.tl : '',
-  }));
+  const seenDigest = new Set<string>();
+  const itemDigest: Array<{ id: string; type?: string; tl?: string }> = [];
+  for (const i of opts.items) {
+    if (seenDigest.has(i.id)) continue;
+    seenDigest.add(i.id);
+    itemDigest.push({
+      id: i.id,
+      type: i.type,
+      tl: 'tl' in i && typeof i.tl === 'string' ? i.tl : '',
+    });
+  }
+  // Core ids always count for uses[] even if not yet in the item bank.
+  for (const c of opts.brief.core_items) {
+    if (seenDigest.has(c.id)) continue;
+    seenDigest.add(c.id);
+    itemDigest.push({ id: c.id, type: c.kind, tl: c.tl });
+  }
+
+  const situationOpts = {
+    situationEg: opts.brief.situation_eg,
+    situationTl: dayPlan.generation?.situation_tl,
+    titleTl: opts.brief.title_tl,
+  };
 
   // Authored override — skip model call
   if (opts.brief.authored_real_world?.length) {
@@ -104,6 +130,7 @@ export async function runRealWorldJob(opts: {
       maxWords: opts.brief.max_words,
       grammarFocusTl: extractGrammarTl(opts.brief),
       authored: true,
+      ...situationOpts,
     });
     return {
       handoff,
@@ -121,7 +148,8 @@ export async function runRealWorldJob(opts: {
 
   const user = `STAGE: REAL_WORLD ONLY
 Return { "phrases": [...], "tip": {...} } via submit_real_world.
-Write 4–5 Lisbon café/street phrases for THIS situation — beyond CORE items.
+Write 4–5 phrases people really say in THIS situation in Lisbon — beyond CORE items.
+The tip MUST be about today's situation only (never Quero→Queria unless today is ordering).
 
 SITUATION: ${opts.brief.situation_eg}
 TITLE: ${opts.brief.title_tl} / ${opts.brief.title_ar}
@@ -238,7 +266,50 @@ ${JSON.stringify(itemDigest)}
     };
   }
 
-  const tip: RealWorldTipRaw = parsed.data.tip ?? DEFAULT_TIP;
+  let tip: RealWorldTipRaw = parsed.data.tip ?? DEFAULT_TIP;
+  const phraseTls = parsed.data.phrases.map((p) => p.tl);
+  let tipFit = tipFitsSituation(tip, {
+    coreTls,
+    phraseTls,
+    situationEg: opts.brief.situation_eg,
+    grammarFocus: opts.brief.grammar_focus,
+  });
+
+  // One tip-only retry when the tip is about the wrong situation.
+  if (!tipFit.ok) {
+    try {
+      const tipRetry = await callJobTool({
+        kind: 'real_world',
+        label: 'real_world:tip_retry',
+        systemPrompt: buildRealWorldSystemPrompt(),
+        brief: opts.brief,
+        userBody: `${user}
+
+TIP ONLY RETRY: previous tip was rejected (${tipFit.reason}).
+Return a tip about TODAY's situation and phrases only via submit_real_world tip field.
+Do NOT use Quero/Queria unless today's CORE is about ordering.
+Previous tip: ${JSON.stringify(tip)}
+Today phrases: ${JSON.stringify(phraseTls)}`,
+        toolName: 'submit_real_world',
+        toolDescription: 'Submit a tip that matches today situation.',
+        schema: TipOnlyToolSchema,
+        systemModules,
+      });
+      const tipParsed = TipOnlyToolSchema.safeParse(tipRetry.data);
+      if (tipParsed.success) {
+        tip = tipParsed.data.tip;
+        tipFit = tipFitsSituation(tip, {
+          coreTls,
+          phraseTls,
+          situationEg: opts.brief.situation_eg,
+          grammarFocus: opts.brief.grammar_focus,
+        });
+      }
+    } catch {
+      // drop tip below
+    }
+  }
+
   const handoff = processRealWorldPhrases({
     raw: parsed.data.phrases,
     tip,
@@ -246,6 +317,8 @@ ${JSON.stringify(itemDigest)}
     coreTls,
     maxWords: opts.brief.max_words,
     grammarFocusTl: extractGrammarTl(opts.brief),
+    ...situationOpts,
+    keepTip: tipFit.ok,
   });
 
   return {

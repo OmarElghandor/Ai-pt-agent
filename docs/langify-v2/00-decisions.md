@@ -73,6 +73,7 @@ Full detail: `10-auth.md`. Tasks: `10-auth-tasks.md`.
   - `static`: everything visible.
 - Target addressing inside a page: `b2`, `b2/col:0`, `b2/row:3`, `b2/cell:r:c`, `b2/entry:col:i`, `b4/item:2`.
 - `cover` (the "غطّي" self-test) hides one of `meaning | tl | endings`.
+- **(changed 2026-11-13) No `scene` page in new lessons.** The outline never plans one; the story scene image stays in the StoryPlayer only. Legacy packs with a scene page skip it at render time.
 - Presets (block order per page type): vocab_flow, phrases, compare, conjugation, pattern, dictionary, scene, story, real_world, free. `dictionary` and `phrases` remain valid for legacy packs; new days use `vocab_flow`.
 
 - **(new 2026-10-24)** Lesson generation runs in resumable stages, as a background job:
@@ -218,7 +219,12 @@ Full detail: `10-auth.md`. Tasks: `10-auth-tasks.md`.
   - tu is for friends, family and people your age who offer it ("Podes tratar-me por tu").
 
 - **(new 2026-11-02) "بيقولوها كده" — real-world phrases.** Every lesson gets one extra page with **4–5 phrases people really say** in that situation in Lisbon, beyond the core items. For example, at the café: Uma bica e um pastel de nata · Pode trazer um copo de água? · A conta, se faz favor · Tem leite sem lactose?
-  - **Where it sits (changed 2026-11-09):** right after the `vocab_flow` page. On legacy packs without `vocab_flow`, after the dictionary page, or after the phrases page when there is no dictionary.
+  - **Where it sits (changed 2026-11-13): inside the `vocab_flow`, not on its own page.** The real-world phrases are woven into the middle of the flow:
+    - each one comes right after the core item or chunk it relates to (for example "Sou novo aqui" after "Chamo-me Omar"); if nothing relates, they spread evenly across the second half of the flow;
+    - each one is an item card with a small "بيقولوها كده" tag, using the same card as core phrases (no image unless it has one);
+    - they take part in the micro checks like any other item seen;
+    - the page's tip becomes a tip card inside the flow, placed right after the real-world phrase it explains. The tip must be about today's situation (no Quero → Queria tip on a day with no ordering).
+    - There is no separate `real_world` page in new lessons. Legacy packs that have one keep rendering it until regenerated.
   - **Exposure, not teaching:**
     - They don't count toward the 14 core items.
     - They're not in the story's MUST_COVER.
@@ -265,7 +271,16 @@ Full detail: `10-auth.md`. Tasks: `10-auth-tasks.md`.
 
     Long days (more than 9 items) get a halfway breather card: "شفت ٦ من ١٢ · كمّل", with the 6 items as small chips that play on tap.
   - **Feedback:** each check gives an instant answer with a one-line why, and a wrong answer shows the item card again briefly. Checks never block. The first try is posted to `/api/v2/answers` as type `micro_check`, and it counts as an implicit review, not a test.
-  - **Pages:** the separate dictionary and phrases presets become one `vocab_flow` page in the outline. Legacy packs that still have `dictionary` / `phrases` keep those pages until regenerated. The "بيقولوها كده" page stays separate and keeps its place after this flow. Grammar comes after it, then "لاقي الصورة".
+  - **Pages:** the separate dictionary and phrases presets become one `vocab_flow` page in the outline. Legacy packs that still have `dictionary` / `phrases` keep those pages until regenerated. The "بيقولوها كده" phrases are part of this flow (changed 2026-11-13). Grammar comes after it, then "لاقي الصورة".
+  - **Order: every sentence comes after the items it uses (2026-11-14).** The flow is a chain of small clusters: 1–3 words or short chunks, then a sentence that uses them (a core phrase or a real-world phrase). A sentence never comes before the items it uses, and there are never more than 3 items in a row without a sentence or a check.
+    - **Authored order wins:** a day in core-items may carry `flow: [...]`, an ordered list of item ids and `rw:N` references to that day's `real_world` entries. Patterns are not in the flow (they belong to the grammar page). When `flow` exists, code uses it as is and only inserts the micro checks.
+    - **Without `flow`, code builds the order:**
+      - every sentence (core phrase or real-world) has `uses` (the core item ids it builds on); for core phrases, code computes it from shared words and the authored value overrides;
+      - each sentence goes right after the last item it uses;
+      - items with no sentence are grouped by story order.
+    - **Every real-world phrase must have `uses`** (at least one of today's items). The `real_world` job must return it. A phrase without a valid `uses` is dropped, so no sentence ever sits in the flow without context.
+    - Real-world phrases are never grouped at the end of the flow.
+  - **"من القصة" on item cards (2026-11-13):** an item card shows the story line only when it adds something, meaning the normalized line is longer than the item itself (for example "Muito prazer, Omar!" for Muito prazer). If the line is just the item ("Boa noite!" on the Boa noite card), the "من القصة" block is hidden. The same item never appears twice in the flow.
   - Micro checks don't count toward the day's 12–15 questions, and the day question planner may still test the same items in other types.
 
 - **(new 2026-11-03) "لاقي الصورة" step.** A short listening game after the grammar page and before the story replay. The day order becomes: story → detail pages (vocab_flow, real-world phrases, grammar) → **لاقي الصورة** → the story again (test) → أسئلة اليوم.

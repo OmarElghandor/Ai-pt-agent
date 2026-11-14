@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Icon } from '@/components/v2/Icon';
 import { NoteCard } from '@/components/v2/NoteCard';
+import { ScreenLoading } from '@/components/v2/ScreenLoading';
 import { talkHrefForTopic } from '@/lib/v2/convo/topics/suggestion';
 import type { TopicRow, TopicsListResult } from '@/lib/v2/convo/topics/types';
 
@@ -104,11 +105,7 @@ export function LearnTopicsScreen() {
   }
 
   if (!listing) {
-    return (
-      <p className="font-[family-name:var(--font-v2-arabic)] text-v2-ink-muted">
-        بنجهّز المواضيع…
-      </p>
-    );
+    return <ScreenLoading fullScreen label="بنجهّز المواضيع…" />;
   }
 
   return (

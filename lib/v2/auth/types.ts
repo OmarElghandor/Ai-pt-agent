@@ -1,5 +1,9 @@
+import type { ProfileLangCode } from './languages';
+import { normalizeNativeLang, normalizeTargetLang } from './languages';
+
 export type V2UserRole = 'learner' | 'admin';
 export type V2UserGender = 'm' | 'f';
+export type { ProfileLangCode };
 
 export type V2UserStreak = {
   current: number;
@@ -16,6 +20,8 @@ export type V2User = {
   image: string | null;
   role: V2UserRole;
   gender: V2UserGender | null;
+  native_lang: ProfileLangCode;
+  target_lang: ProfileLangCode;
   onboarded_at: Date | string | null;
   langify_user_id: string | null;
   timezone: string | null;
@@ -56,3 +62,5 @@ export function normalizeGender(value: unknown): V2UserGender | null {
 export function normalizeRole(value: unknown): V2UserRole {
   return value === 'admin' ? 'admin' : 'learner';
 }
+
+export { normalizeNativeLang, normalizeTargetLang };

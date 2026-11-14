@@ -17,6 +17,7 @@ RULES
 4. For closed types (listen_*, read_meaning, fill_blank_choice, build_sentence): prompt_eg only; leave accepted_extra empty.
 5. If the item is in variant_group greeting.time_of_day and the slot needs to distinguish members, put the deciding time context in prompt_eg (e.g. الساعة ٩ بالليل).
 6. Do NOT write options, answer, tiles, accepted, audio_ref, image_ref, or why_wrong_eg — code builds those.
+7. For situation_choice slots: prompt_eg MUST be a concrete Egyptian situation describing when you'd say the phrase (e.g. "الجرسون سألك عايز حاجة تانية، ترد إزاي؟"). Never write "اختار الموقف" or any generic "choose the situation" prompt. Code builds the 3 TL options.
 
 FUNCTION_WORDS
 ${FUNCTION_WORDS}

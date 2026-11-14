@@ -543,13 +543,29 @@ export function assembleSlotQuestion(
       'context_eg' in tested && typeof tested.context_eg === 'string'
         ? tested.context_eg.trim()
         : '';
-    const frame =
-      egFrame ||
-      contextEg ||
-      'في الموقف ده، ترد إزاي؟';
+    // Prompt = Egyptian situation for when you'd say it — never «اختار الموقف».
+    const bannedPrompt =
+      /اختار الموقف|اختر الموقف|choose the situation|pick the situation/i;
+    let frame = (egFrame || contextEg || '').trim();
+    if (!frame || bannedPrompt.test(frame)) {
+      if (contextEg && !bannedPrompt.test(contextEg)) {
+        frame = contextEg;
+      } else {
+        const tl =
+          'tl' in tested && typeof tested.tl === 'string' ? tested.tl : '';
+        frame = tl
+          ? `إمتى تقول «${tl}»؟ اختار الجملة المناسبة.`
+          : 'في الموقف ده، ترد إزاي؟';
+        if (bannedPrompt.test(egFrame ?? '')) {
+          warnings.push(
+            warning(id, 'situation_prompt', 'rejected «اختار الموقف» prompt'),
+          );
+        }
+      }
+    }
     base.prompt = coerceToRt(frame, 'eg');
     const mcq = buildMcqOptions(tested, opts.bank, 'tl', egFrame);
-    // 3 TL options (correct + 2 distractors)
+    // Exactly 3 TL options (correct + 2 distractors)
     let options = mcq.options;
     let answer = mcq.answer;
     if (options.length > 3) {
@@ -558,6 +574,10 @@ export function assembleSlotQuestion(
       options = correct ? [correct, ...rest] : options.slice(0, 3);
       answer = 0;
     }
+    while (options.length < 3) {
+      options.push(coerceToRt('…', 'tl'));
+    }
+    options = options.slice(0, 3);
     base.options = options;
     base.answer = answer;
     for (const w of mcq.warnings) {
@@ -747,7 +767,8 @@ function defaultPrompt(type: QuestionType): string {
     case 'read_meaning':
       return 'معناها إيه؟';
     case 'situation_choice':
-      return 'في الموقف ده، ترد إزاي؟';
+      // Fallback only — assemble prefers LLM situation / item context_eg.
+      return 'حد كلّمك في الشارع، ترد إزاي؟';
     default:
       return 'جاوب';
   }

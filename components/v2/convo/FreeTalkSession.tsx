@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { ScreenLoading } from '@/components/v2/ScreenLoading';
 import type { ConvoTurnStreamEvent } from '@/lib/v2/convo/turn';
 import type { ConvoSessionSummary } from '@/lib/v2/convo/result';
 import { CharacterBubble } from './CharacterBubble';
@@ -445,6 +446,17 @@ export function FreeTalkSession({
           practiceHref="/talk/free/open"
           backHref="/talk"
           showPracticeCta={false}
+        />
+      </div>
+    );
+  }
+
+  if (loading && pacedVisible.length === 0) {
+    return (
+      <div className="v2-free-talk mx-auto flex h-[100dvh] w-full max-w-[390px] flex-col">
+        <ScreenLoading
+          className="h-full"
+          label="بنحضّر المحادثة…"
         />
       </div>
     );

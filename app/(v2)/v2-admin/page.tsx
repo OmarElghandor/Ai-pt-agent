@@ -651,7 +651,7 @@ export default function V2AdminPage() {
           {' · '}
           <Link href="/v2-admin/reports">Reports</Link>
           {' · '}
-          <Link href="/v2-admin/custom-decks">Custom decks</Link>
+          <Link href="/v2-admin/flashcards">Flashcards</Link>
           {' · '}
           <Link href="/v2-admin/review">Review queue</Link>
           {' · '}

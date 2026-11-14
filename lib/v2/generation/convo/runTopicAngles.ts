@@ -36,6 +36,7 @@ function stubBrief(topic: FreeTopic): LessonBrief {
     yesterday_missing: false,
     micro_step: '',
     authored_real_world: null,
+    authored_flow: null,
     warnings: [],
   };
 }

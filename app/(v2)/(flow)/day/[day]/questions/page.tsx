@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { PrimaryButton } from '@/components/v2/PrimaryButton';
 import { QuestionSession } from '@/components/v2/questions/QuestionSession';
+import { ScreenLoading } from '@/components/v2/ScreenLoading';
 import { markPageDone } from '@/components/v2/player/session';
 import type { Item } from '@/lib/v2/content/items';
 import type { Question } from '@/lib/v2/content/lesson';
@@ -65,14 +66,7 @@ export default function DayQuestionsPage() {
   }
 
   if (state.status === 'loading') {
-    return (
-      <main className="mx-auto max-w-[390px] px-4 py-8">
-        <Link href={`/day/${day}`} className="text-sm text-v2-ink">
-          رجوع
-        </Link>
-        <p className="mt-4 font-[family-name:var(--font-v2-arabic)]">…</p>
-      </main>
-    );
+    return <ScreenLoading fullScreen label="بنجهّز الأسئلة…" />;
   }
 
   if (state.status === 'missing') {

@@ -26,8 +26,14 @@ import { validateQuestionShapes } from '../questionChecks';
 import {
   buildRealWorldPage,
   realWorldPhrasesToItems,
+  tipToRt,
   type RealWorldHandoff,
 } from '../realWorldBuild';
+import { orderFlowContent } from '@/lib/v2/vocabFlow/orderItems';
+import {
+  ensureTambemAr,
+  normalizeArPunctuation,
+} from '../storyCodeEnrich';
 import {
   buildMcqOptions,
   dedupeTypeTests,
@@ -36,6 +42,90 @@ import {
   isPatternRootId,
   remapPatternTestId,
 } from './runQuestions';
+
+/** Merge RW phrase ids + tip into the vocab_flow page (new lessons). */
+function weaveRealWorldIntoVocabFlow(
+  pages: (Page | null | undefined)[],
+  outline: OutlineResult,
+  handoff: RealWorldHandoff,
+  opts?: {
+    flow?: string[] | null;
+    items?: Item[];
+  },
+): (Page | null | undefined)[] {
+  const vocabOutlineIdx = outline.pages.findIndex(
+    (p) => p.preset === 'vocab_flow',
+  );
+  if (vocabOutlineIdx < 0) return pages;
+  const next = [...pages];
+  while (next.length <= vocabOutlineIdx) next.push(null);
+  const page = next[vocabOutlineIdx];
+  if (!page || page.preset !== 'vocab_flow') return pages;
+
+  const rwIds = handoff.phrases.map((p) => p.id);
+  const blocks = page.blocks.map((b) => {
+    if (b.type !== 'cards') return b;
+    const existing = Array.isArray(b.items) ? [...b.items] : [];
+    const candidateIds = [...new Set([...existing, ...rwIds])];
+    const orderItems = (opts?.items ?? []).map((i) => ({
+      id: i.id,
+      type: i.type,
+      tl: 'tl' in i && typeof i.tl === 'string' ? i.tl : undefined,
+      uses: (i as { uses?: string[] }).uses,
+      real_world: Boolean((i as { real_world?: boolean }).real_world),
+    }));
+    for (const p of handoff.phrases) {
+      if (!orderItems.some((o) => o.id === p.id)) {
+        orderItems.push({
+          id: p.id,
+          type: 'phrase',
+          tl: p.tl,
+          uses: (p as { uses?: string[] }).uses,
+          real_world: true,
+        });
+      }
+    }
+    const ordered = orderFlowContent({
+      flow: opts?.flow?.length ? opts.flow : undefined,
+      rwIds,
+      candidateIds,
+      items: orderItems,
+    });
+    return { ...b, items: ordered.length ? ordered : candidateIds };
+  });
+
+  const withoutOldRwTip = blocks.filter(
+    (b) => !(b.type === 'tip' && b.id === 'tip_rw'),
+  );
+  const tip = handoff.tip;
+  const hasTip =
+    Boolean(tip.body_eg?.trim()) ||
+    Boolean(tip.wrong_tl?.trim() && tip.right_tl?.trim());
+  if (hasTip) {
+    const tipRt = tipToRt(tip);
+    const tipExplainsId =
+      handoff.phrases.find((p) => {
+        const n = p.tl.toLowerCase();
+        const wrong = tip.wrong_tl?.toLowerCase() ?? '';
+        const right = tip.right_tl?.toLowerCase() ?? '';
+        return (
+          (wrong && n.includes(wrong)) || (right && n.includes(right))
+        );
+      })?.id ?? handoff.phrases[handoff.phrases.length - 1]?.id;
+
+    withoutOldRwTip.push({
+      id: 'tip_rw',
+      type: 'tip' as const,
+      kind: 'culture' as const,
+      title: tipRt.title,
+      body: tipRt.body,
+      ...(tipExplainsId ? { after_item_id: tipExplainsId } : {}),
+    });
+  }
+
+  next[vocabOutlineIdx] = { ...page, blocks: withoutOldRwTip };
+  return next;
+}
 
 /** Optionally remap one listen_meaning slot onto a real-world phrase. */
 /** Strip or inject the code-built real_world page; merge rw items. */
@@ -47,6 +137,8 @@ export function applyRealWorldToAssemble(opts: {
   handoff: RealWorldHandoff | null | undefined;
   situationEg?: string;
   situationTl?: string;
+  /** Authored core-items flow (ids + rw:N). */
+  flow?: string[] | null;
 }): {
   outline: OutlineResult;
   pages: (Page | null | undefined)[];
@@ -56,6 +148,55 @@ export function applyRealWorldToAssemble(opts: {
 } {
   const warnings: Issue[] = [];
   const rwIdx = opts.outline.pages.findIndex((p) => p.preset === 'real_world');
+  const vocabIdx = opts.outline.pages.findIndex(
+    (p) => p.preset === 'vocab_flow',
+  );
+  const hide =
+    !opts.handoff || opts.handoff.hide || opts.handoff.phrases.length < 3;
+
+  // New lessons: weave into vocab_flow (no separate real_world page).
+  if (rwIdx < 0 && vocabIdx >= 0) {
+    if (hide) {
+      warnings.push({
+        path: 'pages',
+        rule: 'real_world_hidden',
+        message: 'real_world phrases skipped (<3 or job skipped)',
+        severity: 'warning',
+      });
+      return {
+        outline: opts.outline,
+        pages: opts.pages,
+        items: opts.items,
+        questions: opts.questions,
+        warnings,
+      };
+    }
+    const existing = new Set(opts.items.map((i) => i.id));
+    const rwItems = realWorldPhrasesToItems(opts.handoff!.phrases).filter(
+      (i) => !existing.has(i.id),
+    );
+    const items = [...opts.items, ...rwItems];
+    const pages = weaveRealWorldIntoVocabFlow(
+      opts.pages,
+      opts.outline,
+      opts.handoff!,
+      { flow: opts.flow, items },
+    );
+    warnings.push({
+      path: 'pages',
+      rule: 'real_world_woven',
+      message: `wove ${opts.handoff!.phrases.length} real_world phrases into vocab_flow`,
+      severity: 'warning',
+    });
+    return {
+      outline: opts.outline,
+      pages,
+      items,
+      questions: opts.questions,
+      warnings,
+    };
+  }
+
   if (rwIdx < 0) {
     return {
       outline: opts.outline,
@@ -66,7 +207,6 @@ export function applyRealWorldToAssemble(opts: {
     };
   }
 
-  const hide = !opts.handoff || opts.handoff.hide || opts.handoff.phrases.length < 3;
   if (hide) {
     const pagesPlan = opts.outline.pages.filter((p) => p.preset !== 'real_world');
     const renumbered = pagesPlan.map((p, i) => ({
@@ -335,6 +475,8 @@ export function runAssembleJob(opts: {
   realWorld?: RealWorldHandoff | null;
   situationEg?: string;
   situationTl?: string;
+  /** Authored core-items `flow` (ids + rw:N). */
+  flow?: string[] | null;
 }): {
   pack: LessonPack;
   issues: Issue[];
@@ -349,6 +491,7 @@ export function runAssembleJob(opts: {
     handoff: opts.realWorld,
     situationEg: opts.situationEg,
     situationTl: opts.situationTl,
+    flow: opts.flow,
   });
   const outline: OutlineResult = {
     ...rwApplied.outline,
@@ -384,9 +527,59 @@ export function runAssembleJob(opts: {
           id.startsWith('phrase.') ||
           (/^verb\.[a-z_]+$/i.test(id) && !id.includes(':')),
       );
+      const rwIds = rwApplied.items
+        .filter((i) => Boolean((i as { real_world?: boolean }).real_world))
+        .map((i) => i.id);
+      const existingCardIds = page.blocks.flatMap((b) =>
+        b.type === 'cards' && Array.isArray(b.items)
+          ? (b.items as string[])
+          : [],
+      );
+      const base = vocabIds.length ? vocabIds : wordIds;
+      const candidateIds = [
+        ...new Set([...existingCardIds, ...base, ...rwIds]),
+      ].filter((id) => {
+        if (base.includes(id) || rwIds.includes(id)) return true;
+        return Boolean(
+          (rwApplied.items.find((i) => i.id === id) as
+            | { real_world?: boolean }
+            | undefined)?.real_world,
+        );
+      });
+      // Prefer card order from weave (already flow-resolved); else compute.
+      const merged =
+        opts.flow?.length || existingCardIds.some((id) => rwIds.includes(id))
+          ? existingCardIds.length
+            ? existingCardIds.filter((id) => candidateIds.includes(id))
+            : orderFlowContent({
+                flow: opts.flow ?? undefined,
+                rwIds,
+                candidateIds,
+                items: rwApplied.items.map((i) => ({
+                  id: i.id,
+                  type: i.type,
+                  tl: 'tl' in i && typeof i.tl === 'string' ? i.tl : undefined,
+                  uses: (i as { uses?: string[] }).uses,
+                  real_world: Boolean(
+                    (i as { real_world?: boolean }).real_world,
+                  ),
+                })),
+              })
+          : orderFlowContent({
+              candidateIds,
+              items: rwApplied.items.map((i) => ({
+                id: i.id,
+                type: i.type,
+                tl: 'tl' in i && typeof i.tl === 'string' ? i.tl : undefined,
+                uses: (i as { uses?: string[] }).uses,
+                real_world: Boolean(
+                  (i as { real_world?: boolean }).real_world,
+                ),
+              })),
+            });
       page = forceVocabFlowCards(
         page,
-        vocabIds.length ? vocabIds : wordIds,
+        merged.length ? merged : base.length ? base : candidateIds,
       );
     }
     if (page.preset === 'pattern') {
@@ -463,6 +656,19 @@ export function runAssembleJob(opts: {
     storyId: opts.storyId,
   });
 
+  // Normalize ar punctuation (۔ → .) and também → أيضًا on item meanings.
+  pack = {
+    ...pack,
+    items: pack.items.map((item) => {
+      if (!('ar' in item) || typeof item.ar !== 'string') return item;
+      const tl = 'tl' in item && typeof item.tl === 'string' ? item.tl : '';
+      let ar = normalizeArPunctuation(item.ar);
+      ar = ensureTambemAr(tl, ar);
+      if (ar === item.ar) return item;
+      return { ...item, ar };
+    }),
+  };
+
   // Expand allowedIds with real_world phrase ids so refs aren't unknown.
   const allowedWithRw = new Set<string>([
     ...(opts.allowedIds ? [...opts.allowedIds] : []),
@@ -520,6 +726,8 @@ export function runAssembleJob(opts: {
     'ask_early',
     'ask_too_early',
     'real_world_hidden',
+    'real_world_woven',
+    'ar_punctuation',
   ]);
   const issues: Issue[] = [];
   const earlyWarnings: Issue[] = [...rwApplied.warnings];

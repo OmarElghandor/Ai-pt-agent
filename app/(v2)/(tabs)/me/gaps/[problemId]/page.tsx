@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { ScreenLoading } from '@/components/v2/ScreenLoading';
 import { postProgressEvent } from '@/lib/v2/progress/clientEvent';
 
 type Q = { id: string; type?: string; prompt?: unknown; tests?: string[] };
@@ -39,11 +40,7 @@ export default function ProblemPracticePage() {
   }
 
   if (loading) {
-    return (
-      <main className="px-4 py-8 font-[family-name:var(--font-v2-arabic)]">
-        بحمّل…
-      </main>
-    );
+    return <ScreenLoading label="بحمّل…" />;
   }
 
   if (done || !questions.length) {

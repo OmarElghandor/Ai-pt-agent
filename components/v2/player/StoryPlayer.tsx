@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DemoImageGenerate } from '@/components/v2/DemoImageGenerate';
 import { ImageSlot } from '@/components/v2/ImageSlot';
+import { ScreenLoading } from '@/components/v2/ScreenLoading';
 import type { Item } from '@/lib/v2/content/items';
 import type { Page } from '@/lib/v2/content/page';
 import type { StoryDoc, StoryLine } from '@/lib/v2/content/story';
@@ -380,11 +381,7 @@ export function StoryPlayer({
   }, [storyImageUrl]);
 
   if (resolvedStoryId && !story && !loadError && !linesFromPage(page).length) {
-    return (
-      <main className="px-4 py-8">
-        <p className="font-[family-name:var(--font-v2-arabic)]">بتحميل القصة…</p>
-      </main>
-    );
+    return <ScreenLoading fullScreen label="بتحميل القصة…" />;
   }
 
   if (!lines.length) {

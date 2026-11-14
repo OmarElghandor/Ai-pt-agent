@@ -1,8 +1,19 @@
 import { NextResponse } from 'next/server';
+import { createHMAC } from '@better-auth/utils/hmac';
 import { getAuthDb } from '@/lib/v2/auth/getAuthDb';
 import { isDevSignInEnabled } from '@/lib/v2/auth/devSignIn';
+import { assertAuthEnv } from '@/lib/v2/auth/env';
 
 export const runtime = 'nodejs';
+
+/** Match better-auth / better-call signed cookie: `value.hmac`. */
+async function signSessionCookie(token: string, secret: string): Promise<string> {
+  const signature = await createHMAC('SHA-256', 'base64urlnopad').sign(
+    secret,
+    token,
+  );
+  return `${token}.${signature}`;
+}
 
 /**
  * Dev/CI only: create a session for the fixed test user.
@@ -51,6 +62,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'user create failed' }, { status: 500 });
   }
 
+  if (!user.onboarded_at) {
+    await users.updateOne(
+      { id: user.id },
+      { $set: { onboarded_at: now, updatedAt: now } },
+    );
+  }
+
   // Prefer Better Auth internal sign-in when available; fall back to raw session cookie shape.
   const { auth } = await import('@/lib/v2/auth');
   try {
@@ -72,11 +90,13 @@ export async function POST(req: Request) {
       ok: true,
       user: { id: user.id, email, name, role },
     });
-    const secure = process.env.NODE_ENV === 'production';
+    const env = assertAuthEnv();
+    const secure = env.betterAuthUrl.startsWith('https://');
     const cookieName = secure
       ? '__Secure-better-auth.session_token'
       : 'better-auth.session_token';
-    res.cookies.set(cookieName, token, {
+    const signed = await signSessionCookie(token, env.betterAuthSecret);
+    res.cookies.set(cookieName, signed, {
       httpOnly: true,
       sameSite: 'lax',
       secure,

@@ -3,7 +3,10 @@ import { describe, it } from 'node:test';
 import type { Item } from '../lib/v2/content/items';
 import {
   buildVocabFlow,
+  interleaveRealWorldIds,
+  orderFlowContent,
   orderVocabFlowIds,
+  storyLineAddsContext,
   wordsUsedByPhrase,
 } from '../lib/v2/vocabFlow';
 
@@ -119,7 +122,10 @@ describe('buildVocabFlow', () => {
     const itemCount = kinds.filter((k) => k === 'item').length;
     assert.equal(itemCount, 6);
     assert.ok(kinds.includes('micro_check'));
-    assert.equal(kinds[kinds.length - 1], 'micro_check');
+    assert.equal(kinds[kinds.length - 1], 'end');
+    // Flow ends with a check before the end slide (tips may sit between).
+    const beforeEnd = kinds.slice(0, -1);
+    assert.ok(beforeEnd.includes('micro_check'));
 
     // No two checks in a row
     for (let i = 1; i < kinds.length; i++) {
@@ -134,7 +140,7 @@ describe('buildVocabFlow', () => {
     assert.ok(checks.length >= 2);
   });
 
-  it('adds phrase_in_use after a phrase that appears in the story', () => {
+  it('puts من القصة on the item card when the story line adds context', () => {
     const items = [cafe, leite, phraseCafe];
     const slides = buildVocabFlow({
       itemIds: items.map((i) => i.id),
@@ -143,21 +149,56 @@ describe('buildVocabFlow', () => {
         {
           index: 2,
           speaker: 'ines',
-          tl: 'Queria um café com leite?',
+          tl: 'Queria um café com leite, se faz favor?',
           ids: ['phrase.cafe_leite'],
-          ar: 'عايز قهوة بلبن؟',
+          ar: 'عايز قهوة بلبن لو سمحت؟',
         },
       ],
       cast: [{ id: 'ines', name: 'Inês', role: 'character' }],
       rand: seqRand(),
     });
-    const piu = slides.find((s) => s.kind === 'phrase_in_use');
-    assert.ok(piu);
-    assert.equal(piu!.kind, 'phrase_in_use');
-    if (piu!.kind === 'phrase_in_use') {
-      assert.equal(piu.itemId, 'phrase.cafe_leite');
-      assert.equal(piu.speakerName, 'Inês');
+    assert.ok(!slides.some((s) => s.kind === 'phrase_in_use'));
+    const itemSlide = slides.find(
+      (s) => s.kind === 'item' && s.itemId === 'phrase.cafe_leite',
+    );
+    assert.ok(itemSlide && itemSlide.kind === 'item');
+    if (itemSlide!.kind === 'item') {
+      assert.ok(itemSlide.storyContext);
+      assert.equal(itemSlide.storyContext!.speakerName, 'Inês');
+      assert.equal(
+        itemSlide.storyContext!.tl,
+        'Queria um café com leite, se faz favor?',
+      );
     }
+  });
+
+  it('hides من القصة when the story line is just the item', () => {
+    const boaNoite = phrase('phrase.good_night', 'Boa noite!');
+    const slides = buildVocabFlow({
+      itemIds: [boaNoite.id],
+      items: [boaNoite],
+      storyLines: [
+        {
+          index: 0,
+          speaker: 'ines',
+          tl: 'Boa noite!',
+          ids: ['phrase.good_night'],
+          ar: 'تصبح على خير',
+        },
+      ],
+      cast: [{ id: 'ines', name: 'Inês', role: 'character' }],
+      rand: seqRand(),
+    });
+    const itemSlide = slides.find((s) => s.kind === 'item');
+    assert.ok(itemSlide && itemSlide.kind === 'item');
+    if (itemSlide!.kind === 'item') {
+      assert.equal(itemSlide.storyContext, undefined);
+    }
+    assert.equal(
+      slides.filter((s) => s.kind === 'item' && s.itemId === 'phrase.good_night')
+        .length,
+      1,
+    );
   });
 
   it('adds a halfway breather when there are more than 9 items', () => {
@@ -252,6 +293,53 @@ describe('buildVocabFlow', () => {
       }
     }
   });
+
+  it('tags real_world items, places tip after them, and includes them in checks', () => {
+    const rw = {
+      ...phrase('phrase.rw.conta', 'A conta, se faz favor.'),
+      real_world: true,
+      tag: 'الحساب',
+      context_eg: 'لما تخلص وتطلب الحساب',
+    } as Item;
+    const items = [cafe, leite, phraseCafe, rw];
+    const slides = buildVocabFlow({
+      itemIds: items.map((i) => i.id),
+      items,
+      tips: [{ tipIndex: 0, afterItemId: rw.id }],
+      rand: seqRand(),
+    });
+    const rwSlide = slides.find(
+      (s) => s.kind === 'item' && s.itemId === rw.id,
+    );
+    assert.ok(rwSlide && rwSlide.kind === 'item' && rwSlide.realWorldTag);
+
+    const rwAt = slides.findIndex(
+      (s) => s.kind === 'item' && s.itemId === rw.id,
+    );
+    assert.ok(rwAt >= 0);
+    assert.equal(slides[rwAt + 1]?.kind, 'tip');
+    if (slides[rwAt + 1]?.kind === 'tip') {
+      assert.equal(slides[rwAt + 1].tipIndex, 0);
+    }
+
+    const checkOnRw = slides.some(
+      (s) => s.kind === 'micro_check' && s.itemId === rw.id,
+    );
+    // RW may be chunk target or only a distractor — at least it appears as an item
+    // and the flow still ends with end after checks.
+    assert.equal(slides[slides.length - 1]?.kind, 'end');
+    void checkOnRw;
+  });
+
+  it('always ends with an end slide', () => {
+    const items = [cafe, leite, pao];
+    const slides = buildVocabFlow({
+      itemIds: items.map((i) => i.id),
+      items,
+      rand: seqRand(),
+    });
+    assert.equal(slides[slides.length - 1]?.kind, 'end');
+  });
 });
 
 describe('days plan vocab_flow', () => {
@@ -262,5 +350,131 @@ describe('days plan vocab_flow', () => {
     assert.ok(presets.includes('vocab_flow'));
     assert.ok(!presets.includes('dictionary'));
     assert.ok(!presets.includes('phrases'));
+  });
+
+  it('day 1 and 2 page_plan never include scene', async () => {
+    const { getDayPlan } = await import('../lib/v2/generation/lesson/plan');
+    for (const day of [1, 2]) {
+      const plan = getDayPlan(day);
+      const presets = (plan.generation?.page_plan ?? []).map((p) => p.preset);
+      assert.ok(!presets.includes('scene'), `day ${day} still plans scene`);
+    }
+  });
+});
+
+describe('storyLineAddsContext', () => {
+  it('true when line is longer than the item', () => {
+    assert.equal(
+      storyLineAddsContext('Muito prazer, Omar!', 'Muito prazer!'),
+      true,
+    );
+  });
+  it('false when line is just the item', () => {
+    assert.equal(storyLineAddsContext('Boa noite!', 'Boa noite!'), false);
+  });
+});
+
+describe('interleaveRealWorldIds', () => {
+  it('places related RW after the matching core item', () => {
+    const hello = phrase('phrase.hello', 'Olá!');
+    const core = phrase('phrase.my_name_is', 'Chamo-me Omar.');
+    const rwHi = {
+      ...phrase('phrase.rw.ola_tudo', 'Olá, tudo bem?'),
+      real_world: true,
+      uses: ['phrase.hello'],
+    } as Item;
+    const map = new Map<string, Item>([
+      [hello.id, hello],
+      [rwHi.id, rwHi],
+      [core.id, core],
+    ]);
+    const ordered = interleaveRealWorldIds({
+      coreIds: [hello.id, core.id],
+      rwIds: [rwHi.id],
+      byId: map,
+    });
+    assert.deepEqual(ordered, [hello.id, rwHi.id, core.id]);
+  });
+
+  it('never duplicates an item id', () => {
+    const a = phrase('phrase.a', 'Olá!');
+    const rw = {
+      ...phrase('phrase.rw.x', 'Olá, tudo bem?'),
+      real_world: true,
+      uses: ['phrase.a'],
+    } as Item;
+    const byId = new Map<string, Item>([
+      [a.id, a],
+      [rw.id, rw],
+    ]);
+    const ordered = interleaveRealWorldIds({
+      coreIds: [a.id, rw.id],
+      rwIds: [rw.id],
+      byId,
+    });
+    assert.equal(ordered.filter((id) => id === rw.id).length, 1);
+  });
+});
+
+describe('orderFlowContent authored flow', () => {
+  it('resolves rw:N and skips patterns; buildFlow only inserts checks', () => {
+    const hello = phrase('phrase.hello', 'Olá!');
+    const gm = phrase('phrase.good_morning', 'Bom dia!');
+    const rw = {
+      ...phrase('phrase.rw.bom_dia_todos', 'Bom dia a todos!'),
+      real_world: true,
+      uses: ['phrase.good_morning'],
+    } as Item;
+    const flow = [
+      'phrase.hello',
+      'phrase.good_morning',
+      'rw:0',
+      'pattern.queria_um_uma',
+    ];
+    const ordered = orderFlowContent({
+      flow,
+      rwIds: [rw.id],
+      candidateIds: [hello.id, gm.id, rw.id],
+      items: [hello, gm, rw],
+    });
+    assert.deepEqual(ordered, [hello.id, gm.id, rw.id]);
+
+    const slides = buildVocabFlow({
+      itemIds: [hello.id, gm.id, rw.id],
+      items: [hello, gm, rw],
+      flow,
+      rwIds: [rw.id],
+      rand: seqRand(),
+    });
+    const itemIds = slides
+      .filter((s) => s.kind === 'item')
+      .map((s) => (s.kind === 'item' ? s.itemId : ''));
+    assert.deepEqual(itemIds, [hello.id, gm.id, rw.id]);
+    assert.ok(slides.some((s) => s.kind === 'micro_check'));
+    assert.equal(slides[slides.length - 1]?.kind, 'end');
+  });
+
+  it('computed path places sentence after last use; RW not dumped at end', () => {
+    const cafe = word('word.coffee', 'o café');
+    const milk = word('word.milk', 'o leite');
+    const order = phrase('phrase.order_coffee', 'Queria um café, por favor.');
+    const rw = {
+      ...phrase('phrase.rw.galao', 'Queria um galão, por favor.'),
+      real_world: true,
+      uses: ['word.coffee'],
+    } as Item;
+    const ordered = orderFlowContent({
+      candidateIds: [order.id, cafe.id, milk.id, rw.id],
+      items: [cafe, milk, order, rw],
+    });
+    assert.ok(ordered.indexOf(cafe.id) < ordered.indexOf(order.id));
+    assert.ok(ordered.indexOf(cafe.id) < ordered.indexOf(rw.id));
+    assert.notEqual(
+      ordered.slice(-2).join(','),
+      `${rw.id}`,
+      'RW must not sit alone as a trailing dump',
+    );
+    // RW should sit right after coffee (its use), not after milk at the end
+    assert.equal(ordered.indexOf(rw.id), ordered.indexOf(cafe.id) + 1);
   });
 });

@@ -15,7 +15,7 @@ import {
   type TierIssue,
 } from '../tiers';
 import { fillEmptyDetailAssumes } from '../pageAllow';
-import { orderVocabFlowIds } from '@/lib/v2/vocabFlow/orderItems';
+import { orderFlowContent } from '@/lib/v2/vocabFlow/orderItems';
 import { callJobTool } from './call';
 
 /** Slim outline tool — code fills page_id + mode. */
@@ -91,6 +91,8 @@ function postProcessOutline(
     isStory: boolean;
     items: KnownIdTl[];
     story?: StoryHandoff;
+    /** Authored core-items flow (ids + rw:N); rw refs stripped for outline. */
+    authoredFlow?: string[] | null;
   },
 ): { outline: OutlineResult; fixes: TierIssue[] } {
   const fixes: TierIssue[] = [];
@@ -116,6 +118,21 @@ function postProcessOutline(
   pages = pages.filter((p) => {
     if (p.preset === 'story') {
       fixes.push(fix(`pages[${p.index}]`, 'story_owned', 'dropped model story page'));
+      return false;
+    }
+    return true;
+  });
+
+  // No scene page in new lessons — story scene image stays in StoryPlayer only.
+  pages = pages.filter((p) => {
+    if (p.preset === 'scene') {
+      fixes.push(
+        fix(
+          `pages[${p.index}]`,
+          'scene_retired',
+          'dropped scene page (story image in StoryPlayer)',
+        ),
+      );
       return false;
     }
     return true;
@@ -306,7 +323,7 @@ function postProcessOutline(
     }
   }
 
-  // vocab_flow introduces = today's words + phrases, story-first (words before phrases that use them)
+  // vocab_flow introduces = authored flow (core ids) or computed uses order
   {
     const vf = pages.find((p) => p.preset === 'vocab_flow');
     if (vf) {
@@ -318,13 +335,21 @@ function postProcessOutline(
         .map((it) => it.id);
       const candidateIds = [
         ...new Set([...wordIds, ...phraseIds, ...vf.introduces]),
-      ];
-      const ordered = orderVocabFlowIds({
+      ].filter((id) => !id.startsWith('pattern.'));
+      // Authored flow may reference rw:N — outline only has core items; keep
+      // core ids in flow order and drop rw refs until assemble weaves them.
+      const flowCore = opts.authoredFlow?.length
+        ? opts.authoredFlow.filter((e) => !/^rw:\d+$/.test(e))
+        : undefined;
+      const ordered = orderFlowContent({
+        flow: flowCore,
         candidateIds,
         items: opts.items.map((it) => ({
           id: it.id,
           type: it.type,
           tl: it.tl,
+          uses: (it as { uses?: string[] }).uses,
+          real_world: Boolean((it as { real_world?: boolean }).real_world),
         })),
         itemFirstIndex: opts.story?.item_first_index,
       });
@@ -336,7 +361,9 @@ function postProcessOutline(
           fix(
             `pages[${vf.index}].introduces`,
             'vocab_flow_order',
-            `set ${ordered.length} word+phrase ids (story-first)`,
+            opts.authoredFlow?.length
+              ? `set ${ordered.length} ids from authored flow`
+              : `set ${ordered.length} word+phrase ids (uses order)`,
           ),
         );
       }
@@ -375,8 +402,9 @@ function postProcessOutline(
     }
   }
 
-  // «بيقولوها كده»: after vocab_flow, else dictionary, else phrases.
-  // Skip on weekly story days (pages already emptied above).
+  // «بيقولوها كده»: woven into vocab_flow for new lessons (00 2026-11-13).
+  // Legacy packs without vocab_flow still get a separate real_world page after
+  // dictionary/phrases. Skip on weekly story days (pages already emptied above).
   if (!opts.isStory) {
     pages = pages.filter((p) => {
       if (p.preset === 'real_world') {
@@ -391,42 +419,49 @@ function postProcessOutline(
       }
       return true;
     });
-    const rwEntry = {
-      index: 0,
-      page_id: 'p_real_world',
-      preset: 'real_world' as const,
-      mode: modeForPreset('real_world'),
-      title: 'بيقولوها كده',
-      purpose: 'عبارات الناس فعلاً بتقولها',
-      introduces: [] as string[],
-      assumes: [] as string[],
-      handoff: '',
-    };
-    const vocabIdx = pages.findIndex((p) => p.preset === 'vocab_flow');
-    const dictIdx = pages.findIndex((p) => p.preset === 'dictionary');
-    const phrasesIdx = pages.findIndex((p) => p.preset === 'phrases');
-    let insertAfter = -1;
-    let insertNote = 'appended real_world as last detail';
-    if (vocabIdx >= 0) {
-      insertAfter = vocabIdx;
-      insertNote = 'inserted real_world after vocab_flow';
-    } else if (dictIdx >= 0) {
-      insertAfter = dictIdx;
-      insertNote = 'inserted real_world after dictionary';
-    } else if (phrasesIdx >= 0) {
-      insertAfter = phrasesIdx;
-      insertNote = 'inserted real_world after phrases';
-    }
-    if (insertAfter >= 0) {
-      pages = [
-        ...pages.slice(0, insertAfter + 1),
-        rwEntry,
-        ...pages.slice(insertAfter + 1),
-      ];
+    const hasVocabFlow = pages.some((p) => p.preset === 'vocab_flow');
+    if (hasVocabFlow) {
+      fixes.push(
+        fix(
+          'pages',
+          'real_world_in_vocab_flow',
+          'real_world phrases weave into vocab_flow (no separate page)',
+        ),
+      );
     } else {
-      pages = [...pages, rwEntry];
+      const rwEntry = {
+        index: 0,
+        page_id: 'p_real_world',
+        preset: 'real_world' as const,
+        mode: modeForPreset('real_world'),
+        title: 'بيقولوها كده',
+        purpose: 'عبارات الناس فعلاً بتقولها',
+        introduces: [] as string[],
+        assumes: [] as string[],
+        handoff: '',
+      };
+      const dictIdx = pages.findIndex((p) => p.preset === 'dictionary');
+      const phrasesIdx = pages.findIndex((p) => p.preset === 'phrases');
+      let insertAfter = -1;
+      let insertNote = 'appended real_world as last detail';
+      if (dictIdx >= 0) {
+        insertAfter = dictIdx;
+        insertNote = 'inserted real_world after dictionary';
+      } else if (phrasesIdx >= 0) {
+        insertAfter = phrasesIdx;
+        insertNote = 'inserted real_world after phrases';
+      }
+      if (insertAfter >= 0) {
+        pages = [
+          ...pages.slice(0, insertAfter + 1),
+          rwEntry,
+          ...pages.slice(insertAfter + 1),
+        ];
+      } else {
+        pages = [...pages, rwEntry];
+      }
+      fixes.push(fix('pages', 'real_world_insert', insertNote));
     }
-    fixes.push(fix('pages', 'real_world_insert', insertNote));
     pages = pages.map((p, i) => ({
       ...p,
       index: i,
@@ -568,6 +603,7 @@ ${itemLines || '(none)'}
       isStory: Boolean(dayPlan.is_story),
       items: opts.items,
       story: opts.story,
+      authoredFlow: opts.brief.authored_flow,
     });
     fixes.push(...processed.fixes);
     const outline = processed.outline;

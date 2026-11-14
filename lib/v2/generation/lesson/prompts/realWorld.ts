@@ -14,9 +14,12 @@ Per phrase return:
 - ar: short MSA meaning.
 - eg_note: one Egyptian line — when/why to say it.
 - tag: short Egyptian label (أسلوب مهذب، نصيحة لشبونية، الحساب…).
+- uses: array of ≥1 of TODAY's core item ids this phrase builds on (e.g. ["word.coffee"]). Required — phrases without valid uses are dropped.
 
-Also return one tip that contrasts a common mistake with the local habit
-(e.g. Quero → Queria): { title_eg, wrong_tl, right_tl, body_eg }.
+Also return one tip that contrasts a common mistake with the local habit:
+{ title_eg, wrong_tl, right_tl, body_eg }.
+The tip MUST match TODAY's situation and phrases. Never write a Quero→Queria
+(or café-ordering) tip on a day that is not about ordering (e.g. first day at work).
 
 Rules:
 - pt-PT only (bica, não cafezinho; você face-to-face is rude — prefer se faz favor / o senhor).
@@ -24,10 +27,11 @@ Rules:
 - At most 2 content words that are not in CORE/KNOWN/FUNCTION_WORDS; if you use them, gloss them in eg_note.
 - Do not duplicate a core item's tl.
 - At least 2 phrases must reuse today's grammar or core words.
-- 4–5 phrases. Categories emerge from tags; code builds chips.
+- Every phrase must have uses citing ≥1 of today's item ids.
+- 4–5 phrases. Tags must fit the situation (no café "طلب/order" tags on an office day; help requests are سؤال/مساعدة not طلب).
 
 REQUIRED OUTPUT via submit_real_world:
-{ "phrases": [ { tl, tl_f?, ar, eg_note, tag } ], "tip": { title_eg, wrong_tl, right_tl, body_eg } }
+{ "phrases": [ { tl, tl_f?, ar, eg_note, tag, uses } ], "tip": { title_eg, wrong_tl, right_tl, body_eg } }
 
 FUNCTION_WORDS
 ${FUNCTION_WORDS}

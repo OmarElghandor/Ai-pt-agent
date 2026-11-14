@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { ItemViewer } from '@/components/v2/player/ItemViewer';
 import { PagePlayer } from '@/components/v2/player/PagePlayer';
 import { RealWorldPlayer } from '@/components/v2/player/RealWorldPlayer';
@@ -44,7 +44,29 @@ export default async function LessonPlayerPage({
   const pageIndex = view.pages.findIndex((entry) => entry.id === pageId);
   if (pageIndex < 0) notFound();
   const page = view.pages[pageIndex]!;
-  const nextPage = view.pages[pageIndex + 1];
+
+  // Legacy packs: skip scene pages (story image stays in StoryPlayer).
+  if (page.preset === 'scene') {
+    const withDevQs = (href: string) =>
+      sp.dev === '1'
+        ? href.includes('?')
+          ? `${href}&dev=1`
+          : `${href}?dev=1`
+        : href;
+    const next =
+      view.pages.slice(pageIndex + 1).find((p) => p.preset !== 'scene') ?? null;
+    if (next && next.role !== 'test') {
+      redirect(withDevQs(`/day/${day}/page/${next.id}`));
+    }
+    if (findImageStepVisible(view.items)) {
+      redirect(withDevQs(`/day/${day}/find-image`));
+    }
+    redirect(withDevQs(`/day/${day}/questions`));
+  }
+
+  const nextPage = view.pages
+    .slice(pageIndex + 1)
+    .find((p) => p.preset !== 'scene');
   const isLastPage = pageIndex >= view.pages.length - 1;
 
   const storyIntro = view.pages.find(

@@ -405,11 +405,54 @@ export function autoFixStoryLines(
     }
   }
 
-  // Remap replies_to from pre-split indexes → first piece in `out`, then drop invalids.
-  const remapped = out.map((line, i) => {
+  // Drop consecutive identical TL lines (e.g. Olá! / Olá! from different speakers).
+  const deduped: StoryLine[] = [];
+  const dedupeIndexMap: number[] = [];
+  for (let i = 0; i < out.length; i++) {
+    const line = out[i]!;
+    const prev = deduped[deduped.length - 1];
+    const norm = line.tl
+      .normalize('NFD')
+      .replace(/\p{M}/gu, '')
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}\s]/gu, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    const prevNorm = prev
+      ? prev.tl
+          .normalize('NFD')
+          .replace(/\p{M}/gu, '')
+          .toLowerCase()
+          .replace(/[^\p{L}\p{N}\s]/gu, '')
+          .replace(/\s+/g, ' ')
+          .trim()
+      : '';
+    if (prev && norm && norm === prevNorm) {
+      fixes.push(
+        fix(
+          `lines[${i}].tl`,
+          'duplicate_consecutive_tl',
+          `dropped consecutive identical "${line.tl}"`,
+        ),
+      );
+      dedupeIndexMap[i] = -1;
+      continue;
+    }
+    dedupeIndexMap[i] = deduped.length;
+    deduped.push(line);
+  }
+
+  // Remap firstPieceIndex through dedupe, then replies_to.
+  const remapped = deduped.map((line, i) => {
     if (line.replies_to == null) return line;
-    const mapped = firstPieceIndex[line.replies_to];
-    if (mapped == null || mapped >= i) {
+    const preSplit = line.replies_to;
+    // replies_to was already remapped to `out` indexes above via firstPieceIndex —
+    // but we haven't remapped yet; use firstPieceIndex then dedupeIndexMap.
+    // At this point replies_to still refers to pre-split indexes from the model.
+    const mappedOut = firstPieceIndex[preSplit];
+    const mapped =
+      mappedOut == null ? undefined : dedupeIndexMap[mappedOut];
+    if (mapped == null || mapped < 0 || mapped >= i) {
       fixes.push(
         fix(
           `lines[${i}].replies_to`,
@@ -420,7 +463,7 @@ export function autoFixStoryLines(
       const { replies_to: _drop, ...rest } = line;
       return rest;
     }
-    const targetLine = out[mapped];
+    const targetLine = deduped[mapped];
     if (!targetLine) {
       fixes.push(
         fix(

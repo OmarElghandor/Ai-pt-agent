@@ -31,6 +31,7 @@ function brief(partial: Partial<LessonBrief> & Pick<LessonBrief, 'recycle_ids'>)
     yesterday_missing: false,
     micro_step: '(none)',
     authored_real_world: null,
+    authored_flow: null,
     warnings: [],
     ...partial,
   };

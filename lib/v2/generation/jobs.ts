@@ -1851,6 +1851,7 @@ async function processLessonJobBody(
             | undefined,
           situationEg: brief.situation_eg,
           situationTl: dayPlan.generation?.situation_tl,
+          flow: brief.authored_flow,
         });
         // Persist fixed pages from assemble dialogue fix
         if (result.pack.pages?.length) {

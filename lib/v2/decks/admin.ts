@@ -3,7 +3,14 @@ import {
   V2CustomDeckJobModel,
   V2CustomDeckModel,
   V2CustomItemModel,
+  V2ImageModel,
+  V2OfficialDeckModel,
 } from '@/lib/v2/mongo/models';
+import { isCustomItemId } from './keys';
+import {
+  imageKeyForConcept,
+  posGetsImage,
+} from './images';
 
 export async function listAdminCustomDecks(opts?: {
   filter?: 'popular' | 'reported' | 'not_promoted' | 'all';
@@ -89,4 +96,85 @@ export async function costPerDay(local_date: string): Promise<{
     }),
   ]);
   return { jobs, quota_jobs };
+}
+
+/**
+ * Official themed decks for admin flashcards hub.
+ * missing_images = imageable custom items whose word.<concept_en> is not ready.
+ */
+export async function listAdminOfficialDecks(): Promise<
+  {
+    id: string;
+    title_tl: string;
+    title_ar: string;
+    status: string;
+    word_count: number;
+    source_deck: string | null;
+    missing_images: number;
+    images_status: 'none' | 'partial' | 'ready';
+  }[]
+> {
+  if (!mongoConfigured()) return [];
+  await connectMongo();
+  const docs = await V2OfficialDeckModel()
+    .find({})
+    .sort({ updatedAt: -1 })
+    .limit(200)
+    .lean();
+
+  const out: {
+    id: string;
+    title_tl: string;
+    title_ar: string;
+    status: string;
+    word_count: number;
+    source_deck: string | null;
+    missing_images: number;
+    images_status: 'none' | 'partial' | 'ready';
+  }[] = [];
+
+  for (const d of docs) {
+    const customIds = (d.item_ids ?? []).filter(isCustomItemId);
+    const items = customIds.length
+      ? await V2CustomItemModel()
+          .find({ id: { $in: customIds } })
+          .select({ id: 1, pos: 1, concept_en: 1 })
+          .lean()
+      : [];
+    const keys = new Set<string>();
+    for (const item of items) {
+      if (!posGetsImage(String(item.pos))) continue;
+      const concept = item.concept_en ? String(item.concept_en) : '';
+      if (!concept) continue;
+      keys.add(imageKeyForConcept(concept));
+    }
+    const keyList = [...keys];
+    let ready = 0;
+    if (keyList.length) {
+      ready = await V2ImageModel().countDocuments({
+        key: { $in: keyList },
+        status: 'ready',
+      });
+    }
+    const missing_images = Math.max(0, keyList.length - ready);
+    const images_status =
+      keyList.length === 0
+        ? 'none'
+        : missing_images === 0
+          ? 'ready'
+          : ready > 0
+            ? 'partial'
+            : 'none';
+    out.push({
+      id: String(d._id),
+      title_tl: d.title_tl,
+      title_ar: d.title_ar,
+      status: d.status,
+      word_count: (d.item_ids ?? []).length,
+      source_deck: d.source_deck ? String(d.source_deck) : null,
+      missing_images,
+      images_status,
+    });
+  }
+  return out;
 }

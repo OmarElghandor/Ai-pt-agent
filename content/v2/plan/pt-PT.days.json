@@ -76,10 +76,6 @@
           {
             "preset": "pattern",
             "focus": "Chamo-me + name"
-          },
-          {
-            "preset": "scene",
-            "focus": "first day at work"
           }
         ]
       }
@@ -155,10 +151,6 @@
           {
             "preset": "pattern",
             "focus": "Chamo-me + name"
-          },
-          {
-            "preset": "scene",
-            "focus": "first day at work"
           }
         ]
       }

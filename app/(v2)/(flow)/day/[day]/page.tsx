@@ -56,7 +56,10 @@ export default async function DayMapPage({
     pages.find((p) => p.preset === 'story' && p.role !== 'test') ??
     pages.find((p) => p.preset === 'story') ??
     pages[0];
-  const detailPages = pages.filter((p) => p.id !== storyIntro?.id);
+  // Legacy packs may still carry a scene page — skip it at render time (00 2026-11-13).
+  const detailPages = pages.filter(
+    (p) => p.id !== storyIntro?.id && p.preset !== 'scene',
+  );
   const lastDetailId = detailPages[detailPages.length - 1]?.id ?? null;
   const questionsId = 'day_questions';
   const findImageId = 'find_image';

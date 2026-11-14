@@ -135,6 +135,8 @@ const PhraseItemSchema = z.object({
   category: z.string().optional(),
   /** Real-world exposure phrase — not core; cards only after per-user opt-in. */
   real_world: z.boolean().optional(),
+  /** Item ids this phrase builds on (vocab-flow order / real_world uses). */
+  uses: z.array(z.string().min(1)).optional(),
   extra: ExtraFlag,
   has_card: HasCardFlag,
   introduced_on_page: IntroducedOnPage,

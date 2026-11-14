@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Icon } from '@/components/v2/Icon';
+import { ScreenLoading } from '@/components/v2/ScreenLoading';
 import { OPEN_TOPIC_ID } from '@/lib/v2/convo/topics/openTopic';
 
 type FreeTopicRow = {
@@ -71,11 +72,7 @@ export function FreeTopicsScreen({
   }
 
   if (!topics) {
-    return (
-      <p className="font-[family-name:var(--font-v2-arabic)] text-v2-ink-muted">
-        بنجهّز المواضيع…
-      </p>
-    );
+    return <ScreenLoading fullScreen label="بنجهّز المواضيع…" />;
   }
 
   return (

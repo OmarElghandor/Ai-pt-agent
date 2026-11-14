@@ -142,7 +142,50 @@
           "ines"
         ],
         "prompt": "Wide but intimate scene inside the entrance hall of a modern office on Yassin's first day: Yassin, on the left, just arrived with his backpack and a visitor badge, offers his hand; Inês, on the right, steps toward him from the reception area with a big welcoming smile, mid-introduction. Morning sun through tall windows, a few colleagues of different ages blurred in the background, warm hopeful first-day mood."
-      }
+      },
+      "real_world": [
+        {
+          "tl": "Bom dia a todos!",
+          "ar": "صباح الخير للجميع!",
+          "eg_note": "وانت داخل مكان فيه ناس كتير، زي المكتب الصبح",
+          "tag": "أول يوم",
+          "uses": [
+            "phrase.good_morning"
+          ]
+        },
+        {
+          "tl": "Sou novo aqui.",
+          "tl_f": "Sou nova aqui.",
+          "ar": "أنا جديد هنا.",
+          "eg_note": "بعد ما تقول اسمك، علشان يعرفوا إنك لسه جديد",
+          "tag": "أول يوم",
+          "uses": [
+            "phrase.my_name_is"
+          ]
+        },
+        {
+          "tl": "É o meu primeiro dia.",
+          "ar": "هذا أول يوم لي.",
+          "eg_note": "بعد التعارف، والناس بتبقى ألطف لما تعرف",
+          "tag": "أول يوم",
+          "uses": [
+            "phrase.likewise"
+          ]
+        }
+      ],
+      "flow": [
+        "phrase.hello",
+        "phrase.good_morning",
+        "rw:0",
+        "phrase.good_afternoon",
+        "phrase.good_night",
+        "phrase.whats_your_name",
+        "phrase.my_name_is",
+        "rw:1",
+        "phrase.nice_to_meet",
+        "phrase.likewise",
+        "rw:2"
+      ]
     },
     {
       "day": 2,
@@ -241,6 +284,47 @@
         "pattern.chamo_me",
         "phrase.hello",
         "phrase.good_morning"
+      ],
+      "real_world": [
+        {
+          "tl": "E tu?",
+          "ar": "وأنت؟",
+          "eg_note": "بعد ما ترد على Tudo bem، ترجع تسأله (لحد قد سنك)",
+          "tag": "بين الأصحاب",
+          "uses": [
+            "phrase.fine_thanks"
+          ]
+        },
+        {
+          "tl": "E o senhor?",
+          "tl_f": "E a senhora?",
+          "ar": "وحضرتك؟",
+          "eg_note": "نفس السؤال بس بأدب لحد أكبر منك",
+          "tag": "أسلوب مهذب",
+          "uses": [
+            "phrase.im_fine"
+          ]
+        },
+        {
+          "tl": "Até já!",
+          "ar": "أراك بعد قليل!",
+          "eg_note": "لما هتشوفه تاني بعد شوية، نفس اليوم",
+          "tag": "وداع",
+          "uses": [
+            "phrase.see_you_tomorrow"
+          ]
+        }
+      ],
+      "flow": [
+        "phrase.how_are_you",
+        "phrase.fine_thanks",
+        "rw:0",
+        "phrase.how_are_you_formal",
+        "phrase.im_fine",
+        "rw:1",
+        "phrase.see_you_tomorrow",
+        "rw:2",
+        "phrase.bye"
       ]
     },
     {
@@ -343,35 +427,67 @@
       ],
       "real_world": [
         {
-          "tl": "Uma bica e um pastel de nata.",
-          "ar": "إسبريسو وباستيل دي ناتا.",
-          "eg_note": "الطلب الكلاسيكي في كافيهات لشبونة — بيكا يعني إسبريسو صغير",
-          "tag": "نصيحة لشبونية"
+          "tl": "Queria um galão, por favor.",
+          "ar": "أريد غالاو، من فضلك.",
+          "eg_note": "جالون = قهوة بلبن في كوباية إزاز",
+          "tag": "الطلب",
+          "uses": [
+            "word.galao"
+          ]
+        },
+        {
+          "tl": "Tem leite sem lactose?",
+          "ar": "هل يوجد حليب بدون لاكتوز؟",
+          "eg_note": "لو اللبن العادي بيتعبك",
+          "tag": "سؤال",
+          "uses": [
+            "word.milk"
+          ]
         },
         {
           "tl": "Uma água, se faz favor.",
-          "ar": "مية، من فضلك.",
-          "eg_note": "طلب مية بسيط في الكافيه",
-          "tag": "أسلوب مهذب"
+          "ar": "ماء، من فضلك.",
+          "eg_note": "se faz favor هي اللي هتسمعها كتير في لشبونة",
+          "tag": "أسلوب مهذب",
+          "uses": [
+            "word.water"
+          ]
+        },
+        {
+          "tl": "Uma bica e um pastel de nata.",
+          "ar": "إسبريسو وفطيرة كريمة.",
+          "eg_note": "الطلب الكلاسيكي؛ bica = إسبريسو صغير",
+          "tag": "نصيحة لشبونية",
+          "uses": [
+            "word.pastel_de_nata"
+          ]
         },
         {
           "tl": "A conta, se faz favor.",
           "ar": "الحساب، من فضلك.",
-          "eg_note": "لما تخلّص وتطلب الحساب",
-          "tag": "الحساب"
-        },
-        {
-          "tl": "Tem leite sem lactose?",
-          "ar": "في لبن من غير لاكتوز؟",
-          "eg_note": "لما يكون عندك حساسية من اللبن العادي",
-          "tag": "سؤال"
-        },
-        {
-          "tl": "Queria um galão, por favor.",
-          "ar": "عايز جالون، من فضلك.",
-          "eg_note": "جالون = قهوة بلبن في كوباية زجاج",
-          "tag": "الطلب"
+          "eg_note": "لما تخلّص وعايز تدفع",
+          "tag": "الحساب",
+          "uses": [
+            "phrase.thats_all"
+          ]
         }
+      ],
+      "flow": [
+        "word.coffee",
+        "phrase.order_coffee",
+        "word.galao",
+        "rw:0",
+        "word.milk",
+        "phrase.with_milk",
+        "rw:1",
+        "word.water",
+        "rw:2",
+        "word.tea",
+        "word.pastel_de_nata",
+        "rw:3",
+        "phrase.anything_else",
+        "phrase.thats_all",
+        "rw:4"
       ]
     },
     {
@@ -448,6 +564,60 @@
         "phrase.hello",
         "phrase.good_morning",
         "phrase.fine_thanks"
+      ],
+      "real_world": [
+        {
+          "tl": "Uma torrada, se faz favor.",
+          "ar": "خبز محمص، من فضلك.",
+          "eg_note": "الفطار الخفيف المشهور في الكافيه",
+          "tag": "الطلب",
+          "uses": [
+            "word.toast"
+          ]
+        },
+        {
+          "tl": "Com açúcar ou sem açúcar?",
+          "ar": "بسكر أم بدون سكر؟",
+          "eg_note": "هتسمعها لما تطلب شاي أو قهوة",
+          "tag": "هتسمعها",
+          "uses": [
+            "word.sugar"
+          ]
+        },
+        {
+          "tl": "Um copo de sumo de laranja.",
+          "ar": "كوب عصير برتقال.",
+          "eg_note": "العصير الطبيعي، اطلبه بالكوباية",
+          "tag": "الطلب",
+          "uses": [
+            "word.juice",
+            "word.glass"
+          ]
+        },
+        {
+          "tl": "Pago com cartão.",
+          "ar": "أدفع بالبطاقة.",
+          "eg_note": "بعد ما يقولك الحساب كام",
+          "tag": "الحساب",
+          "uses": [
+            "phrase.how_much_is_it"
+          ]
+        }
+      ],
+      "flow": [
+        "word.toast",
+        "rw:0",
+        "word.sugar",
+        "rw:1",
+        "word.juice",
+        "word.glass",
+        "rw:2",
+        "word.cake",
+        "phrase.i_like_coffee",
+        "phrase.how_much_is_it",
+        "rw:3",
+        "phrase.youre_welcome",
+        "phrase.excuse_me_pass"
       ]
     },
     {
@@ -540,6 +710,62 @@
         "word.milk",
         "word.water",
         "phrase.order_coffee"
+      ],
+      "real_world": [
+        {
+          "tl": "Onde fica o pão?",
+          "ar": "أين الخبز؟",
+          "eg_note": "نفس سؤال Onde fica، غيّر الحاجة اللي بتدور عليها",
+          "tag": "سؤال",
+          "uses": [
+            "word.bread",
+            "phrase.where_is_x"
+          ]
+        },
+        {
+          "tl": "Queria meio quilo de queijo.",
+          "ar": "أريد نصف كيلو جبن.",
+          "eg_note": "عند كاونتر الجبنة واللحمة",
+          "tag": "الطلب",
+          "uses": [
+            "word.cheese"
+          ]
+        },
+        {
+          "tl": "Uma dúzia de ovos, por favor.",
+          "ar": "دستة بيض، من فضلك.",
+          "eg_note": "البيض بيتباع بالدستة أو بالنص",
+          "tag": "الطلب",
+          "uses": [
+            "word.egg"
+          ]
+        },
+        {
+          "tl": "Não preciso de saco.",
+          "ar": "لا أحتاج كيسًا.",
+          "eg_note": "الكيس بفلوس، فلو معاك كيس قولها",
+          "tag": "عند الكاشير",
+          "uses": [
+            "word.bag"
+          ]
+        }
+      ],
+      "flow": [
+        "word.supermarket",
+        "phrase.where_is_x",
+        "phrase.its_over_there",
+        "phrase.at_the_back",
+        "word.bread",
+        "rw:0",
+        "word.cheese",
+        "rw:1",
+        "phrase.what_is_this",
+        "word.apple",
+        "word.egg",
+        "rw:2",
+        "word.rice",
+        "word.bag",
+        "rw:3"
       ]
     },
     {
@@ -615,6 +841,58 @@
         "word.milk",
         "word.water",
         "phrase.order_coffee"
+      ],
+      "real_world": [
+        {
+          "tl": "Um quilo de laranjas, por favor.",
+          "ar": "كيلو برتقال، من فضلك.",
+          "eg_note": "الفاكهة بتتباع بالكيلو — لاحظ laranja ← laranjas",
+          "tag": "الطلب",
+          "uses": [
+            "word.orange"
+          ]
+        },
+        {
+          "tl": "Tem tomates?",
+          "ar": "هل عندكم طماطم؟",
+          "eg_note": "لما مش لاقي حاجة على الرف",
+          "tag": "سؤال",
+          "uses": [
+            "word.tomato"
+          ]
+        },
+        {
+          "tl": "As bananas estão maduras?",
+          "ar": "هل الموز ناضج؟",
+          "eg_note": "وانت بتختار فاكهة",
+          "tag": "سؤال",
+          "uses": [
+            "word.banana",
+            "word.fruit"
+          ]
+        },
+        {
+          "tl": "Não, obrigado. Tenho saco.",
+          "ar": "لا شكرًا، معي كيس.",
+          "eg_note": "رد على Precisa de saco? عند الكاشير",
+          "tag": "عند الكاشير",
+          "uses": [
+            "phrase.need_a_bag"
+          ]
+        }
+      ],
+      "flow": [
+        "word.orange",
+        "rw:0",
+        "word.tomato",
+        "word.potato",
+        "rw:1",
+        "word.banana",
+        "word.fruit",
+        "rw:2",
+        "phrase.how_much_does_it_cost",
+        "phrase.need_a_bag",
+        "rw:3"
       ]
     },
     {

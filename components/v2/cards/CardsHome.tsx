@@ -7,6 +7,7 @@ import { ImageSlot } from '@/components/v2/ImageSlot';
 import { PrimaryButton } from '@/components/v2/PrimaryButton';
 import { ProgressBar } from '@/components/v2/ProgressBar';
 import { RichText } from '@/components/v2/RichText';
+import { ScreenLoading } from '@/components/v2/ScreenLoading';
 import { apiQuery, cardsHref } from '@/components/v2/cards/href';
 import { toArDigits } from '@/lib/v2/formatAr';
 import type {
@@ -112,11 +113,7 @@ export function CardsHome({ dayOverride }: { dayOverride: number | null }) {
   }
 
   if (!listing || !today) {
-    return (
-      <p className="font-[family-name:var(--font-v2-arabic)] text-v2-ink-muted">
-        بنجهّز الكروت…
-      </p>
-    );
+    return <ScreenLoading label="بنجهّز الكروت…" />;
   }
 
   const total = today.progress.total;

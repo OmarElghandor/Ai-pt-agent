@@ -25,6 +25,9 @@ function ensureCloudinary(): void {
 }
 
 function folderForKey(key: string): string {
+  if (key.startsWith('avatar.')) {
+    return 'langify/v2/avatars';
+  }
   if (isCharacterKey(key) || key === STYLE_ANCHOR_KEY) {
     return 'langify/v2/characters';
   }

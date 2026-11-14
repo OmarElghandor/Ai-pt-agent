@@ -6,6 +6,7 @@ import { useEffect, useState, useTransition } from 'react';
 import { AudioButton } from '@/components/v2/AudioButton';
 import { Icon } from '@/components/v2/Icon';
 import { PrimaryButton } from '@/components/v2/PrimaryButton';
+import { ScreenLoading } from '@/components/v2/ScreenLoading';
 import { cardsHref } from '@/components/v2/cards/href';
 import { toArDigits } from '@/lib/v2/formatAr';
 
@@ -256,9 +257,7 @@ export function CreateDeckFlow({ dayOverride }: { dayOverride: number | null }) 
       ) : null}
 
       {step === 'generating' ? (
-        <p className="py-16 text-center font-[family-name:var(--font-v2-arabic)] text-base text-v2-ink-muted">
-          بنجهّز الكلمات…
-        </p>
+        <ScreenLoading className="py-16" label="بنجهّز الكلمات…" />
       ) : null}
 
       {step === 'preview' ? (

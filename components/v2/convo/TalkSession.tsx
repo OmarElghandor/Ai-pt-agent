@@ -22,6 +22,7 @@ import {
   mapCharacterNode,
   mapHiddenForPhase,
 } from '@/lib/v2/convo/visual';
+import { ScreenLoading } from '@/components/v2/ScreenLoading';
 import { CharacterBubble } from './CharacterBubble';
 import { CoachCard } from './CoachCard';
 import { ConvoDevMenu } from './ConvoDevMenu';
@@ -857,6 +858,17 @@ export function TalkSession({ packId }: Props) {
     );
   }
 
+  if (loading && bubbles.length === 0) {
+    return (
+      <main className="v2-free-talk mx-auto flex min-h-dvh w-full max-w-[390px] flex-col bg-[color:var(--ft-ivory,#F4EFE8)]">
+        <ScreenLoading
+          fullScreen
+          label="بنحضّر المحادثة… لو أول مرة، ممكن ناخد دقيقة نجهّزها"
+        />
+      </main>
+    );
+  }
+
   const currentGroup = snapshot?.current_group ?? 1;
 
   return (
@@ -956,11 +968,6 @@ export function TalkSession({ packId }: Props) {
         ref={scrollRef}
         className="flex flex-1 flex-col gap-3 overflow-y-auto px-3 py-4"
       >
-        {loading ? (
-          <p className="text-center font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-            بنحضّر المحادثة… لو أول مرة، ممكن ناخد دقيقة نجهّزها
-          </p>
-        ) : null}
         {error ? (
           <p className="rounded-v2-row border border-v2-action/30 bg-v2-action/10 px-3 py-2 font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink">
             {error}

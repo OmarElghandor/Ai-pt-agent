@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import { postProgressEvent } from '@/lib/v2/progress/clientEvent';
 
 type StepPresence = { id: string; present: boolean };
 
 /**
- * On day map mount: open lesson progress (skipped steps) and jump to resume.
+ * On day map mount: open lesson progress (skipped steps).
+ * Does not auto-navigate — resume is opt-in via the day map CTA.
  */
 export function LessonProgressBootstrap({
   day,
@@ -20,7 +20,6 @@ export function LessonProgressBootstrap({
   dayQuestionsTotal: number;
   lessonVersion?: number;
 }) {
-  const router = useRouter();
   const ran = useRef(false);
 
   useEffect(() => {
@@ -33,15 +32,7 @@ export function LessonProgressBootstrap({
       day_questions_total: dayQuestionsTotal,
       lesson_version: lessonVersion,
     });
-    void fetch(`/api/v2/progress/lesson/${day}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data: { resume_href?: string | null; status?: string } | null) => {
-        if (data?.status === 'in_progress' && data.resume_href) {
-          router.replace(data.resume_href);
-        }
-      })
-      .catch(() => {});
-  }, [day, steps, dayQuestionsTotal, lessonVersion, router]);
+  }, [day, steps, dayQuestionsTotal, lessonVersion]);
 
   return null;
 }

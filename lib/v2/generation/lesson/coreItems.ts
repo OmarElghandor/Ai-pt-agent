@@ -53,6 +53,11 @@ export type CoreItem = {
   context_eg?: string;
   /** Hand-authored image prompt (scene description). */
   image?: AuthoredImage;
+  /**
+   * Core phrase: item ids this sentence builds on (authored override).
+   * When absent, code computes uses from shared content words.
+   */
+  uses?: string[];
   /** @deprecated Prefer variant_tl — accepted on load then normalized. */
   variants?: string[];
 };
@@ -64,6 +69,8 @@ export type AuthoredRealWorldPhrase = {
   ar: string;
   eg_note: string;
   tag: string;
+  /** ≥1 of today's core item ids this phrase builds on (required). */
+  uses: string[];
 };
 
 export type CoreItemsDay = {
@@ -82,6 +89,12 @@ export type CoreItemsDay = {
    * is skipped and these are used verbatim (still checked/enriched by code).
    */
   real_world?: AuthoredRealWorldPhrase[];
+  /**
+   * Authored vocab-flow order: item ids and `rw:N` refs to `real_world`.
+   * Patterns are omitted (grammar page). When set, code uses it verbatim
+   * and only inserts micro checks (00 §4, 2026-11-14).
+   */
+  flow?: string[];
 };
 
 export type CoreItemsFile = {
@@ -188,6 +201,61 @@ export function validateCoreItemsFile(
         }
       }
     }
+
+    const todayIds = new Set((day.core_items ?? []).map((c) => c.id));
+    const usesOf = new Map<string, string[]>();
+    for (const item of day.core_items ?? []) {
+      if (item.uses?.length) usesOf.set(item.id, item.uses);
+    }
+
+    for (const [ri, rw] of (day.real_world ?? []).entries()) {
+      const rwPath = `days[${day.day}].real_world[${ri}]`;
+      const uses = Array.isArray(rw?.uses) ? rw.uses : [];
+      if (uses.length < 1) {
+        issues.push({
+          path: rwPath,
+          rule: 'real_world_uses_missing',
+          message: `real_world phrase "${rw?.tl ?? ri}" has no uses`,
+        });
+      } else {
+        const bad = uses.filter((id) => !todayIds.has(id));
+        if (bad.length) {
+          issues.push({
+            path: rwPath,
+            rule: 'real_world_uses_unknown',
+            message: `real_world uses unknown ids: ${bad.join(', ')}`,
+          });
+        }
+        usesOf.set(`rw:${ri}`, uses);
+      }
+    }
+
+    if (day.flow?.length) {
+      const flowIndex = new Map<string, number>();
+      day.flow.forEach((entry, i) => {
+        if (entry && !flowIndex.has(entry)) flowIndex.set(entry, i);
+      });
+      for (const [key, uses] of usesOf.entries()) {
+        const selfIdx = flowIndex.get(key);
+        if (selfIdx == null) continue; // not in flow — skip
+        for (const u of uses) {
+          const uIdx = flowIndex.get(u);
+          if (uIdx == null) {
+            issues.push({
+              path: `days[${day.day}].flow`,
+              rule: 'flow_uses_missing',
+              message: `${key} uses ${u} but ${u} is not in flow`,
+            });
+          } else if (uIdx > selfIdx) {
+            issues.push({
+              path: `days[${day.day}].flow`,
+              rule: 'flow_uses_after',
+              message: `${key} uses ${u} which appears after it in flow`,
+            });
+          }
+        }
+      }
+    }
   }
   return issues;
 }
@@ -267,6 +335,7 @@ export function getCoreItemsDay(
     ...(entry.real_world?.length
       ? { real_world: [...entry.real_world] }
       : {}),
+    ...(entry.flow?.length ? { flow: [...entry.flow] } : {}),
   };
 }
 

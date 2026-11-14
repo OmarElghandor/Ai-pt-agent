@@ -47,7 +47,7 @@ export function ChoiceQuestion({
         : type === 'read_meaning'
           ? 'معناها إيه؟'
           : type === 'situation_choice'
-            ? 'في الموقف ده، ترد إزاي؟'
+            ? 'حد كلّمك في الشارع، ترد إزاي؟'
             : 'جاوب';
 
   return (

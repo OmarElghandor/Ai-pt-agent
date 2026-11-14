@@ -87,12 +87,17 @@ function trailingTerminator(sentence: string): string {
   return m?.[0] ?? '.';
 }
 
-/** Map Latin terminator → Arabic punctuation where appropriate. */
+/** Map Latin terminator → allowed Arabic punctuation (. ، ؟ ! only — never U+06D4). */
 function arabicTerminator(terminator: string): string {
   if (terminator.includes('?')) return '؟';
   if (terminator.includes('!')) return '!';
   if (terminator.includes('…')) return '…';
-  return '۔';
+  return '.';
+}
+
+/** Replace Urdu/Persian danda U+06D4 with ASCII period everywhere in ar. */
+export function normalizeArPunctuation(ar: string): string {
+  return ar.replace(/\u06D4/g, '.');
 }
 
 /**
@@ -100,7 +105,9 @@ function arabicTerminator(terminator: string): string {
  * Keep vocatives inside the sentence (no split before يا).
  */
 function withTerminator(ar: string, terminator: string): string {
-  const stripped = ar.trim().replace(/[.!?…؟۔]+$/u, '');
+  const stripped = normalizeArPunctuation(ar)
+    .trim()
+    .replace(/[.!?…؟۔]+$/u, '');
   if (!stripped) return stripped;
   return `${stripped}${arabicTerminator(terminator)}`;
 }
@@ -147,10 +154,13 @@ export function buildLineArabic(
   const looksFragment =
     existing &&
     existing.length <= 6 &&
-    !/[؟!۔]/.test(existing) &&
+    !/[؟!.]/.test(existing) &&
     !(line.ids?.length);
   if (existing && !looksFragment) {
-    return existing.replace(/\?/g, '؟');
+    return ensureTambemAr(
+      line.tl,
+      normalizeArPunctuation(existing.replace(/\?/g, '؟')),
+    );
   }
 
   const pool = [...items, ...(knownItems ?? [])];
@@ -172,9 +182,12 @@ export function buildLineArabic(
       arParts.push(raw);
     }
     if (arParts.every(Boolean)) {
-      return arParts
-        .map((ar, i) => withTerminator(ar, trailingTerminator(sentences[i]!)))
-        .join(' ');
+      return ensureTambemAr(
+        line.tl,
+        arParts
+          .map((ar, i) => withTerminator(ar, trailingTerminator(sentences[i]!)))
+          .join(' '),
+      );
     }
     // Incomplete per-sentence AR on multi-sentence TL: do not collapse to one
     // hydrated blob (that triggers ar_sentence_mismatch). Leave empty so
@@ -183,7 +196,27 @@ export function buildLineArabic(
   }
 
   const parts = [hydrated.ar, ...extras].filter(Boolean);
-  return parts.join(' ').trim().replace(/\?/g, '؟');
+  return ensureTambemAr(
+    line.tl,
+    normalizeArPunctuation(parts.join(' ').trim().replace(/\?/g, '؟')),
+  );
+}
+
+/** TL with também → AR must include أيضًا (e.g. É o meu primeiro dia também). */
+export function ensureTambemAr(tl: string, ar: string): string {
+  if (!ar.trim()) return ar;
+  const hasTambem = /\btamb[eé]m\b/i.test(tl);
+  if (!hasTambem) return ar;
+  if (/أيضًا|أيضاً|أيضا|كمان/.test(ar)) {
+    // Prefer canonical أيضًا over كمان in MSA meanings
+    if (/كمان/.test(ar) && !/أيضًا|أيضاً|أيضا/.test(ar)) {
+      return ar.replace(/كمان/g, 'أيضًا');
+    }
+    return ar;
+  }
+  const stripped = ar.replace(/[.!?…؟۔]+$/u, '').trim();
+  const term = ar.match(/[.!?…؟۔]+$/u)?.[0] ?? '.';
+  return `${stripped} أيضًا${term === '۔' ? '.' : term}`;
 }
 
 function matchSentenceAr(

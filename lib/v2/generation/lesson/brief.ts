@@ -40,6 +40,11 @@ export type LessonBrief = {
    * Authored real-world phrases from core-items (when present, job is skipped).
    */
   authored_real_world: AuthoredRealWorldPhrase[] | null;
+  /**
+   * Authored vocab-flow order from core-items (`flow`: ids + `rw:N`).
+   * When set, outline/assemble use it verbatim (00 §4, 2026-11-14).
+   */
+  authored_flow: string[] | null;
   /** Admin-visible non-blocking warnings. */
   warnings: string[];
 };
@@ -99,6 +104,8 @@ export function buildLessonBrief(
       coreDay.real_world && coreDay.real_world.length > 0
         ? [...coreDay.real_world]
         : null,
+    authored_flow:
+      coreDay.flow && coreDay.flow.length > 0 ? [...coreDay.flow] : null,
     warnings,
   };
 }

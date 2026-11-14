@@ -158,7 +158,7 @@ export async function buildMeSummary(user: V2User): Promise<MeSummary> {
     name: user.name,
     gender: user.gender,
     onboarded: Boolean(user.onboarded_at),
-    target_lang: 'pt-PT',
+    target_lang: user.target_lang || 'pt-PT',
     current_day: currentDay,
     current_day_title_ar: currentRow?.title_ar ?? null,
     current_day_title_tl: currentRow?.title_tl ?? null,

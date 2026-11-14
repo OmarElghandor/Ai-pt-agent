@@ -257,7 +257,7 @@ export async function planDeckImages(opts: {
   });
 }
 
-async function countImagesGeneratedToday(): Promise<number> {
+export async function countImagesGeneratedToday(): Promise<number> {
   const start = new Date();
   start.setUTCHours(0, 0, 0, 0);
   return V2ImageModel().countDocuments({

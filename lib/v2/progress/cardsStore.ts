@@ -368,8 +368,12 @@ export async function reviewCard(opts: {
     tz,
   };
 
-  if (!session.queue.some((q) => q.item_id === opts.item_id)) {
+  const queueEntry = session.queue.find((q) => q.item_id === opts.item_id);
+  if (!queueEntry) {
     return { error: 'not_in_queue' };
+  }
+  if (queueEntry.rating) {
+    return { error: 'already_rated' };
   }
 
   let stateDoc = await V2ItemStateModel()

@@ -110,6 +110,8 @@ const TipBlockSchema = z.object({
   kind: z.enum(['rule', 'culture', 'warning']),
   title: RtSchema,
   body: RtSchema,
+  /** When set (vocab_flow RW tip), place this tip slide right after that item. */
+  after_item_id: z.string().min(1).optional(),
 });
 
 const RulesListBlockSchema = z.object({
