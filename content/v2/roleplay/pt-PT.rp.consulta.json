@@ -1,0 +1,409 @@
+{
+  "id": "rp.consulta",
+  "target_lang": "pt-PT",
+  "level": 4,
+  "order": 1,
+  "recommended_day": 38,
+  "emoji": "🩺",
+  "title_tl": "Marcar uma consulta",
+  "title_ar": "حجز ميعاد دكتور",
+  "place_eg": "مكالمة للمركز الصحي (Centro de Saúde). Rita على الاستقبال.",
+  "task_eg": "احجز ميعاد: قول عايز إيه، رقمك، بتشتكي من إيه، واتفقوا على يوم وساعة.",
+  "learner_role_eg": "إنت تعبان ومحتاج تشوف دكتور.",
+  "character": {
+    "id": "rita"
+  },
+  "address": "o senhor",
+  "new_tl": [
+    "o centro de saúde",
+    "o número de utente",
+    "Ainda não tenho.",
+    "Fica marcado.",
+    "Como se escreve o seu apelido?"
+  ],
+  "key_phrases": [
+    {
+      "tl": "Queria marcar uma consulta.",
+      "ar": "أريد حجز موعد."
+    },
+    {
+      "tl": "O número de utente é…",
+      "ar": "رقمي في النظام الصحي هو…"
+    },
+    {
+      "tl": "Ainda não tenho.",
+      "ar": "ليس لدي بعد."
+    },
+    {
+      "tl": "Tenho febre.",
+      "ar": "عندي حرارة."
+    },
+    {
+      "tl": "Pode ser na terça?",
+      "ar": "هل يمكن يوم الثلاثاء؟"
+    },
+    {
+      "tl": "Às nove e meia.",
+      "ar": "في التاسعة والنصف."
+    }
+  ],
+  "steps": [
+    {
+      "id": "book",
+      "min_tier": 1,
+      "says": {
+        "tl": "Centro de Saúde, bom dia.",
+        "ar": "المركز الصحي، صباح الخير."
+      },
+      "expects": {
+        "intent_eg": "يطلب يحجز ميعاد",
+        "examples_tl": [
+          "Bom dia. Queria marcar uma consulta, por favor.",
+          "Queria marcar uma consulta.",
+          "Bom dia! Uma consulta, por favor."
+        ],
+        "keywords": [
+          "marcar",
+          "consulta"
+        ]
+      },
+      "help": {
+        "frame_tl": "Queria marcar uma consulta, por favor.",
+        "eg": "قول عايز تحجز: Queria marcar uma consulta.",
+        "chips": [
+          "Bom dia. Queria marcar uma consulta, por favor.",
+          "Queria marcar uma consulta."
+        ]
+      },
+      "reply": {
+        "tl": "Com certeza. Qual é o seu número de utente?",
+        "ar": "بالتأكيد. ما هو رقمك في النظام الصحي؟"
+      }
+    },
+    {
+      "id": "utente",
+      "min_tier": 1,
+      "says": null,
+      "coach_eg": "número de utente = رقم المريض في المنظومة الصحية. لو لسه بتعمله: Ainda não tenho.",
+      "expects": {
+        "intent_eg": "يقول رقمه أو إنه لسه ما عندوش",
+        "examples_tl": [
+          "É o 123 456 789.",
+          "Ainda não tenho.",
+          "Não tenho, desculpe."
+        ],
+        "keywords": [
+          "é o",
+          "número",
+          "numero",
+          "ainda não",
+          "não tenho",
+          "nao tenho"
+        ],
+        "free_answer": true,
+        "slot": "utente",
+        "options": [
+          {
+            "value": "não",
+            "keywords": [
+              "ainda não",
+              "não tenho",
+              "nao tenho"
+            ],
+            "reply": {
+              "tl": "Não faz mal. Traga o passaporte, está bem?",
+              "ar": "لا بأس. أحضر جواز السفر، حسنًا؟"
+            }
+          },
+          {
+            "value": "sim",
+            "keywords": [
+              "é o",
+              "número",
+              "numero",
+              "0",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "7",
+              "8",
+              "9"
+            ],
+            "reply": {
+              "tl": "Obrigada.",
+              "ar": "شكرًا."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Ainda não tenho.",
+        "eg": "número de utente = رقمك في المنظومة الصحية (SNS). معندكش لسه؟ Ainda não tenho.",
+        "chips": [
+          "Ainda não tenho.",
+          "É o 123 456 789."
+        ]
+      }
+    },
+    {
+      "id": "reason",
+      "min_tier": 1,
+      "says": {
+        "tl": "É para quê?",
+        "ar": "لأي سبب؟"
+      },
+      "expects": {
+        "intent_eg": "يقول بيشتكي من إيه",
+        "examples_tl": [
+          "Tenho febre.",
+          "Dói-me a cabeça.",
+          "Tenho tosse e febre."
+        ],
+        "keywords": [
+          "febre",
+          "tosse",
+          "dói",
+          "doi",
+          "cabeça",
+          "cabeca",
+          "garganta",
+          "doente",
+          "gripe"
+        ]
+      },
+      "help": {
+        "frame_tl": "Tenho febre.",
+        "eg": "É para quê? = علشان إيه؟ قول: Tenho febre. أو Dói-me a cabeça.",
+        "chips": [
+          "Tenho febre.",
+          "Dói-me a cabeça."
+        ]
+      },
+      "reply": {
+        "tl": "Muito bem.",
+        "ar": "حسنًا."
+      }
+    },
+    {
+      "id": "when",
+      "min_tier": 1,
+      "says": {
+        "tl": "Pode ser na terça-feira, às nove e meia?",
+        "ar": "هل يناسبك يوم الثلاثاء، في التاسعة والنصف؟"
+      },
+      "expects": {
+        "intent_eg": "يوافق على الميعاد أو يرفض",
+        "examples_tl": [
+          "Sim, pode ser.",
+          "Não posso na terça, desculpe.",
+          "Sim, às nove e meia está bem."
+        ],
+        "keywords": [
+          "sim",
+          "pode",
+          "está bem",
+          "não",
+          "nao"
+        ],
+        "slot": "slot",
+        "options": [
+          {
+            "value": "no",
+            "keywords": [
+              "não",
+              "nao"
+            ],
+            "reply": {
+              "tl": "E na quinta, às duas da tarde?",
+              "ar": "وماذا عن الخميس، في الثانية ظهرًا؟"
+            }
+          },
+          {
+            "value": "yes",
+            "keywords": [
+              "sim",
+              "pode",
+              "está bem"
+            ],
+            "reply": {
+              "tl": "Então fica marcado: terça, às nove e meia.",
+              "ar": "إذن تم الحجز: الثلاثاء، في التاسعة والنصف."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Sim, pode ser.",
+        "eg": "terça = التلات · às nove e meia = 9 ونص. مناسب؟ Sim, pode ser.",
+        "chips": [
+          "Sim, pode ser.",
+          "Não posso na terça, desculpe."
+        ]
+      }
+    },
+    {
+      "id": "thursday",
+      "min_tier": 1,
+      "if_slot": {
+        "slot": "no"
+      },
+      "says": null,
+      "expects": {
+        "intent_eg": "يوافق على الخميس",
+        "examples_tl": [
+          "Sim, na quinta pode ser.",
+          "Está bem, na quinta.",
+          "Sim, às duas está bem."
+        ],
+        "keywords": [
+          "sim",
+          "pode",
+          "quinta",
+          "está bem"
+        ]
+      },
+      "help": {
+        "frame_tl": "Sim, na quinta pode ser.",
+        "eg": "quinta = الخميس. وافق: Sim, na quinta pode ser.",
+        "chips": [
+          "Sim, na quinta pode ser.",
+          "Está bem."
+        ]
+      },
+      "reply": {
+        "tl": "Então fica marcado: quinta, às duas.",
+        "ar": "إذن تم الحجز: الخميس، في الثانية."
+      }
+    },
+    {
+      "id": "early",
+      "min_tier": 2,
+      "says": {
+        "tl": "Chegue dez minutos antes, está bem?",
+        "ar": "تعالَ قبل الموعد بعشر دقائق، حسنًا؟",
+        "ar_f": "تعالي قبل الموعد بعشر دقائق، حسنًا؟"
+      },
+      "expects": {
+        "intent_eg": "يقول حاضر",
+        "examples_tl": [
+          "Está bem, obrigado.",
+          "Claro, dez minutos antes.",
+          "Está bem."
+        ],
+        "keywords": [
+          "está bem",
+          "claro",
+          "obrigad",
+          "antes"
+        ]
+      },
+      "help": {
+        "frame_tl": "Está bem, obrigado.",
+        "eg": "تعالى قبلها بعشر دقايق. قول: Está bem, obrigado.",
+        "chips": [
+          "Está bem, obrigado.",
+          "Claro!"
+        ],
+        "chips_f": [
+          "Está bem, obrigada.",
+          "Claro!"
+        ]
+      }
+    },
+    {
+      "id": "spell",
+      "min_tier": 3,
+      "says": {
+        "tl": "Ah, e como se escreve o seu apelido?",
+        "ar": "آه، وكيف يُكتب اسم عائلتك؟"
+      },
+      "coach_eg": "o apelido = اسم العيلة. الحروف بالبرتغالي في «رف النطق».",
+      "expects": {
+        "intent_eg": "يتهجّى اسم العيلة",
+        "examples_tl": [
+          "E-L-G-H-A-N-D-O-U-R.",
+          "É E, L, G, H…",
+          "Escreve-se E-L-G-H-A-N-D-O-U-R."
+        ],
+        "keywords": [],
+        "free_answer": true
+      },
+      "help": {
+        "frame_tl": "___ (حرف حرف)",
+        "eg": "o apelido = اسم العيلة. اتهجّاه حرف حرف بالبرتغالي.",
+        "chips": [
+          "Pode repetir, por favor?"
+        ]
+      },
+      "reply": {
+        "tl": "Perfeito, obrigada.",
+        "ar": "ممتاز، شكرًا."
+      }
+    },
+    {
+      "id": "bye",
+      "min_tier": 1,
+      "says": {
+        "tl": "Obrigada, até lá!",
+        "ar": "شكرًا، أراك حينها!"
+      },
+      "expects": {
+        "intent_eg": "يودّعها",
+        "examples_tl": [
+          "Obrigado! Bom dia!",
+          "Obrigada, até terça!",
+          "Muito obrigado!"
+        ],
+        "keywords": [
+          "obrigad",
+          "adeus",
+          "até",
+          "ate",
+          "boa tarde",
+          "bom dia",
+          "xau",
+          "igualmente",
+          "terça",
+          "quinta"
+        ]
+      },
+      "help": {
+        "frame_tl": "Obrigado! Bom dia!",
+        "eg": "ودّعها: Obrigado! Bom dia!",
+        "chips": [
+          "Obrigado! Bom dia!",
+          "Muito obrigado!"
+        ],
+        "chips_f": [
+          "Obrigada! Bom dia!",
+          "Muito obrigada!"
+        ]
+      }
+    }
+  ],
+  "closing": {
+    "tl": "Bom dia! 👋",
+    "ar": "يومًا سعيدًا!"
+  },
+  "summary_eg": "حجزت ميعاد دكتور في التليفون: رقمك، شكوتك، واليوم والساعة 🩺",
+  "authored": true,
+  "item_ids": [
+    "phrase.good_morning",
+    "phrase.can_you_repeat",
+    "phrase.excuse_me",
+    "phrase.no_problem",
+    "phrase.are_you_ok",
+    "phrase.my_head_hurts",
+    "phrase.how_is_it_written",
+    "word.number",
+    "phrase.whats_your_number",
+    "word.tuesday",
+    "phrase.appointment",
+    "phrase.can_it_be_tuesday",
+    "phrase.not_yet",
+    "phrase.at_nine"
+  ]
+}

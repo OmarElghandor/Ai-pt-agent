@@ -1,0 +1,534 @@
+{
+  "id": "rp.cafe",
+  "target_lang": "pt-PT",
+  "level": 1,
+  "order": 1,
+  "recommended_day": 9,
+  "emoji": "☕",
+  "title_tl": "Um café, por favor",
+  "title_ar": "في الكافيه",
+  "place_eg": "كافيه صغير في الحي الصبح. Manuel ورا البنك (الكاونتر).",
+  "task_eg": "اطلب مشروب وحاجة تاكلها، اسأل الحساب كام، وادفع.",
+  "learner_role_eg": "إنت زبون داخل تفطر.",
+  "character": {
+    "id": "manuel"
+  },
+  "address": "o senhor",
+  "item_ids": [
+    "phrase.good_morning",
+    "phrase.see_you_tomorrow",
+    "phrase.anything_else",
+    "phrase.order_coffee",
+    "phrase.thats_all",
+    "phrase.how_much_is_it",
+    "phrase.no_thanks",
+    "phrase.card_ok",
+    "phrase.cash",
+    "phrase.receipt_nif",
+    "word.card",
+    "word.change",
+    "phrase.excuse_me",
+    "phrase.are_you_ok"
+  ],
+  "new_tl": [
+    "Diga!",
+    "para levar",
+    "Aqui está."
+  ],
+  "key_phrases": [
+    {
+      "tl": "Diga!",
+      "ar": "تفضّل!"
+    },
+    {
+      "tl": "Queria um galão, por favor.",
+      "ar": "أريد غالاو من فضلك."
+    },
+    {
+      "tl": "Mais alguma coisa?",
+      "ar": "هل تريد شيئًا آخر؟"
+    },
+    {
+      "tl": "Só isto, obrigado.",
+      "ar": "هذا فقط، شكرًا.",
+      "tl_f": "Só isto, obrigada."
+    },
+    {
+      "tl": "Quanto é?",
+      "ar": "كم الحساب؟"
+    },
+    {
+      "tl": "Aceita cartão?",
+      "ar": "هل تقبل البطاقة؟"
+    }
+  ],
+  "steps": [
+    {
+      "id": "order_drink",
+      "min_tier": 1,
+      "says": {
+        "tl": "Bom dia! Diga.",
+        "ar": "صباح الخير! تفضّل."
+      },
+      "coach_eg": "Diga = «اؤمر / تفضّل». ده اللي بيقولوه ورا الكاونتر في البرتغال.",
+      "expects": {
+        "intent_eg": "يطلب مشروب",
+        "examples_tl": [
+          "Bom dia! Queria um galão, por favor.",
+          "Queria um café, por favor.",
+          "Um chá, por favor."
+        ],
+        "keywords": [
+          "queria",
+          "café",
+          "cafe",
+          "galão",
+          "galao",
+          "chá",
+          "cha",
+          "água",
+          "agua",
+          "bica"
+        ],
+        "slot": "drink",
+        "options": [
+          {
+            "value": "café",
+            "keywords": [
+              "café",
+              "cafe",
+              "bica",
+              "expresso"
+            ],
+            "reply": {
+              "tl": "Um café, muito bem.",
+              "ar": "قهوة، حسنًا."
+            }
+          },
+          {
+            "value": "galão",
+            "keywords": [
+              "galão",
+              "galao"
+            ],
+            "reply": {
+              "tl": "Um galão, muito bem.",
+              "ar": "غالاو، حسنًا."
+            }
+          },
+          {
+            "value": "chá",
+            "keywords": [
+              "chá",
+              "cha"
+            ],
+            "reply": {
+              "tl": "Um chá, muito bem.",
+              "ar": "شاي، حسنًا."
+            }
+          },
+          {
+            "value": "água",
+            "keywords": [
+              "água",
+              "agua"
+            ],
+            "reply": {
+              "tl": "Uma água, muito bem.",
+              "ar": "ماء، حسنًا."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Queria um ___, por favor.",
+        "eg": "Diga يعني «اؤمر». اطلب بـ Queria + المشروب + por favor",
+        "chips": [
+          "Queria um galão, por favor.",
+          "Queria um café, por favor."
+        ]
+      }
+    },
+    {
+      "id": "no_galao",
+      "min_tier": 3,
+      "if_slot": {
+        "drink": "galão"
+      },
+      "says": {
+        "tl": "Ai, desculpe… a máquina do leite está avariada. Pode ser um café?",
+        "ar": "آه، عذرًا… آلة الحليب معطّلة. هل يناسبك قهوة؟"
+      },
+      "expects": {
+        "intent_eg": "يقبل القهوة أو يطلب حاجة تانية",
+        "examples_tl": [
+          "Sim, pode ser.",
+          "Pode ser.",
+          "Não, obrigado. Um chá, por favor."
+        ],
+        "keywords": [
+          "sim",
+          "pode",
+          "não",
+          "nao",
+          "chá",
+          "cha",
+          "está bem"
+        ],
+        "slot": "drink",
+        "options": [
+          {
+            "value": "chá",
+            "keywords": [
+              "chá",
+              "cha"
+            ],
+            "reply": {
+              "tl": "Muito bem, um chá.",
+              "ar": "حسنًا، شاي."
+            }
+          },
+          {
+            "value": "café",
+            "keywords": [
+              "sim",
+              "pode",
+              "café",
+              "cafe",
+              "está bem"
+            ],
+            "reply": {
+              "tl": "Muito bem, um café.",
+              "ar": "حسنًا، قهوة."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Sim, pode ser.",
+        "eg": "ماكينة اللبن بايظة. موافق؟ Sim, pode ser. عايز حاجة تانية؟ Não, obrigado. Um chá.",
+        "chips": [
+          "Sim, pode ser.",
+          "Não, obrigado. Um chá, por favor."
+        ],
+        "chips_f": [
+          "Sim, pode ser.",
+          "Não, obrigada. Um chá, por favor."
+        ]
+      }
+    },
+    {
+      "id": "order_food",
+      "min_tier": 1,
+      "says": {
+        "tl": "Mais alguma coisa?",
+        "ar": "هل تريد شيئًا آخر؟"
+      },
+      "expects": {
+        "intent_eg": "يطلب أكل أو يقول بس كده",
+        "examples_tl": [
+          "Sim, um pastel de nata, por favor.",
+          "Só isto, obrigado.",
+          "Uma torrada, por favor."
+        ],
+        "keywords": [
+          "pastel",
+          "nata",
+          "torrada",
+          "bolo",
+          "só",
+          "isto",
+          "nada",
+          "não",
+          "nao"
+        ],
+        "examples_tl_f": [
+          "Só isto, obrigada."
+        ],
+        "slot": "food",
+        "options": [
+          {
+            "value": "pastel de nata",
+            "keywords": [
+              "pastel",
+              "nata"
+            ],
+            "reply": {
+              "tl": "Um pastel de nata. 😋",
+              "ar": "باستيل دي ناتا."
+            }
+          },
+          {
+            "value": "torrada",
+            "keywords": [
+              "torrada"
+            ],
+            "reply": {
+              "tl": "Uma torrada, está bem.",
+              "ar": "توست، حسنًا."
+            }
+          },
+          {
+            "value": "bolo",
+            "keywords": [
+              "bolo"
+            ],
+            "reply": {
+              "tl": "Um bolo, está bem.",
+              "ar": "كعكة، حسنًا."
+            }
+          },
+          {
+            "value": "nada",
+            "keywords": [
+              "só",
+              "isto",
+              "nada",
+              "não",
+              "nao"
+            ],
+            "reply": {
+              "tl": "Muito bem.",
+              "ar": "حسنًا."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Um pastel de nata, por favor.",
+        "eg": "عايز تاكل؟ اطلب. مش عايز؟ Só isto, obrigado.",
+        "chips": [
+          "Um pastel de nata, por favor.",
+          "Só isto, obrigado."
+        ],
+        "chips_f": [
+          "Um pastel de nata, por favor.",
+          "Só isto, obrigada."
+        ]
+      }
+    },
+    {
+      "id": "here_or_go",
+      "min_tier": 2,
+      "says": {
+        "tl": "É para comer aqui ou para levar?",
+        "ar": "هل هو للأكل هنا أم للأخذ؟"
+      },
+      "coach_eg": "aqui = هنا · para levar = تاخده معاك",
+      "expects": {
+        "intent_eg": "يقول هياكل هنا ولا تيك أواي",
+        "examples_tl": [
+          "Para comer aqui.",
+          "Aqui, por favor.",
+          "Para levar, por favor."
+        ],
+        "keywords": [
+          "aqui",
+          "levar"
+        ],
+        "slot": "where",
+        "options": [
+          {
+            "value": "aqui",
+            "keywords": [
+              "aqui"
+            ],
+            "reply": {
+              "tl": "Muito bem, sente-se. 😊",
+              "ar": "حسنًا، تفضّل بالجلوس."
+            }
+          },
+          {
+            "value": "levar",
+            "keywords": [
+              "levar"
+            ],
+            "reply": {
+              "tl": "Para levar, está bem.",
+              "ar": "للأخذ، حسنًا."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Para comer aqui.",
+        "eg": "aqui = هنا · para levar = تيك أواي",
+        "chips": [
+          "Para comer aqui.",
+          "Para levar, por favor."
+        ]
+      }
+    },
+    {
+      "id": "ask_price",
+      "min_tier": 1,
+      "says": {
+        "tl": "Aqui está! 😊",
+        "ar": "تفضّل!"
+      },
+      "expects": {
+        "intent_eg": "يسأل الحساب كام",
+        "examples_tl": [
+          "Obrigado! Quanto é?",
+          "Quanto é?",
+          "Quanto custa?"
+        ],
+        "keywords": [
+          "quanto"
+        ]
+      },
+      "help": {
+        "frame_tl": "Quanto é?",
+        "eg": "اسأل الحساب كام: Quanto é?",
+        "chips": [
+          "Quanto é?",
+          "Obrigado! Quanto é?"
+        ],
+        "chips_f": [
+          "Quanto é?",
+          "Obrigada! Quanto é?"
+        ]
+      },
+      "reply": {
+        "tl": "São dois euros e sessenta.",
+        "ar": "المجموع يوروان وستون سنتًا."
+      }
+    },
+    {
+      "id": "pay",
+      "min_tier": 1,
+      "says": null,
+      "expects": {
+        "intent_eg": "يدفع بالكارت أو كاش",
+        "examples_tl": [
+          "Aceita cartão?",
+          "Em dinheiro.",
+          "Posso pagar com cartão?"
+        ],
+        "keywords": [
+          "cartão",
+          "cartao",
+          "dinheiro",
+          "aqui tem",
+          "multibanco"
+        ],
+        "slot": "pay",
+        "options": [
+          {
+            "value": "cartão",
+            "keywords": [
+              "cartão",
+              "cartao",
+              "multibanco"
+            ],
+            "reply": {
+              "tl": "Claro! Pode passar o cartão.",
+              "ar": "بالطبع! يمكنك تمرير البطاقة."
+            }
+          },
+          {
+            "value": "dinheiro",
+            "keywords": [
+              "dinheiro",
+              "aqui tem",
+              "euros"
+            ],
+            "reply": {
+              "tl": "Obrigado. Aqui tem o troco.",
+              "ar": "شكرًا. تفضّل الباقي."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Aceita cartão?",
+        "eg": "بالكارت؟ اسأل: Aceita cartão? · كاش؟ قول: Em dinheiro.",
+        "chips": [
+          "Aceita cartão?",
+          "Em dinheiro."
+        ]
+      }
+    },
+    {
+      "id": "contribuinte",
+      "min_tier": 2,
+      "says": {
+        "tl": "Quer fatura com contribuinte?",
+        "ar": "هل تريد فاتورة برقمك الضريبي؟"
+      },
+      "coach_eg": "contribuinte = رقمك الضريبي (NIF). معظم الناس بيقولوا Não, obrigado في القهوة.",
+      "expects": {
+        "intent_eg": "يرد على سؤال رقم الضرايب",
+        "examples_tl": [
+          "Não, obrigado.",
+          "Sim, por favor.",
+          "Não, não é preciso."
+        ],
+        "keywords": [
+          "não",
+          "nao",
+          "sim"
+        ]
+      },
+      "help": {
+        "frame_tl": "Não, obrigado.",
+        "eg": "contribuinte = رقم الضرايب (NIF). مش محتاجه؟ Não, obrigado.",
+        "chips": [
+          "Não, obrigado.",
+          "Sim, por favor."
+        ],
+        "chips_f": [
+          "Não, obrigada.",
+          "Sim, por favor."
+        ]
+      },
+      "reply": {
+        "tl": "Muito bem.",
+        "ar": "حسنًا."
+      }
+    },
+    {
+      "id": "bye",
+      "min_tier": 1,
+      "says": {
+        "tl": "Obrigado! Bom dia!",
+        "ar": "شكرًا! يومًا سعيدًا!"
+      },
+      "expects": {
+        "intent_eg": "يودّعه",
+        "examples_tl": [
+          "Obrigado! Bom dia!",
+          "Até amanhã!",
+          "Obrigada, adeus!"
+        ],
+        "keywords": [
+          "obrigad",
+          "adeus",
+          "até",
+          "ate",
+          "bom dia",
+          "boa tarde",
+          "xau"
+        ]
+      },
+      "help": {
+        "frame_tl": "Obrigado! Até amanhã!",
+        "eg": "ودّعه. في لشبونة بيقولوا كتير Até amanhã للي بيشوفوه كل يوم",
+        "chips": [
+          "Obrigado! Bom dia!",
+          "Até amanhã!"
+        ],
+        "chips_f": [
+          "Obrigada! Bom dia!",
+          "Até amanhã!"
+        ]
+      }
+    }
+  ],
+  "closing": {
+    "tl": "Até amanhã! 👋",
+    "ar": "إلى الغد!"
+  },
+  "summary_eg": "طلبت وسألت الحساب ودفعت لوحدك في كافيه برتغالي ☕",
+  "authored": true
+}
