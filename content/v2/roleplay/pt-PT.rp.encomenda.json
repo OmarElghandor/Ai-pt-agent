@@ -77,8 +77,8 @@
     {
       "id": "sign",
       "says": {
-        "tl": "Preciso que assine aqui no ecrã, se faz favor.",
-        "ar": "أحتاج أن توقّع هنا على الشاشة من فضلك."
+        "tl": "Preciso que assine aqui no ecrã, se faz favor. Pode ser?",
+        "ar": "أحتاج أن توقّع هنا على الشاشة من فضلك. هل يمكن؟"
       },
       "do_eg": "قال جملة طويلة بسرعة. لو ما فهمتش، اطلب منه يعيد أو يبطّأ.",
       "learner_leads": true,
@@ -282,7 +282,8 @@
           "Obrigada! Boa tarde!",
           "Igualmente!"
         ]
-      }
+      },
+      "farewell": true
     }
   ],
   "closing": {

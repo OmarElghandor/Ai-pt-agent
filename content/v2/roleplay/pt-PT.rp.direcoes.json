@@ -81,11 +81,16 @@
         "tl": "O metro? Siga em frente e depois vire à esquerda. ⬆️⬅️",
         "ar": "المترو؟ امشِ إلى الأمام ثم انعطف يسارًا."
       },
-      "hint_eg": "Desculpe = لو سمحت (علشان توقف حد). Sabe onde fica…? = تعرف … فين؟"
+      "hint_eg": "Desculpe = لو سمحت (علشان توقف حد). Sabe onde fica…? = تعرف … فين؟",
+      "fact": true
     },
     {
       "id": "confirm",
-      "says": null,
+      "says": {
+        "tl": "Percebeu?",
+        "ar": "هل فهمت؟",
+        "ar_f": "هل فهمتِ؟"
+      },
       "do_eg": "وصفلك الطريق. أكّده علشان تتأكد إنك فاهم، أو اطلب يعيد.",
       "learner_leads": true,
       "expects": {
@@ -93,13 +98,16 @@
         "examples_tl": [
           "Em frente e depois à esquerda?",
           "Desculpe, pode repetir?",
-          "À esquerda?"
+          "À esquerda?",
+          "Sim, percebi. Em frente e depois à esquerda."
         ],
         "keywords": [
           "frente",
           "esquerda",
           "repetir",
-          "devagar"
+          "devagar",
+          "sim",
+          "percebi"
         ],
         "slot": "confirm",
         "options": [
@@ -107,7 +115,9 @@
             "value": "ok",
             "keywords": [
               "frente",
-              "esquerda"
+              "esquerda",
+              "sim",
+              "percebi"
             ],
             "reply": {
               "tl": "Isso! 👍",
@@ -140,7 +150,10 @@
     },
     {
       "id": "far",
-      "says": null,
+      "says": {
+        "tl": "Precisa de mais alguma coisa?",
+        "ar": "هل تحتاج شيئًا آخر؟"
+      },
       "do_eg": "اسأله المكان بعيد ولا قريب.",
       "learner_leads": true,
       "expects": {
@@ -167,13 +180,14 @@
       "reply": {
         "tl": "Não, é logo ali. Cinco minutos a pé.",
         "ar": "لا، إنه هناك تمامًا. خمس دقائق مشيًا."
-      }
+      },
+      "fact": true
     },
     {
       "id": "landmark",
       "says": {
-        "tl": "A estação fica ao lado do banco, na praça.",
-        "ar": "المحطة بجانب البنك، في الساحة."
+        "tl": "A estação fica ao lado do banco, na praça. Está a ver?",
+        "ar": "المحطة بجانب البنك، في الساحة. هل تراها؟"
       },
       "do_eg": "قالك المحطة جنب إيه. كرر علشان تتأكد واشكره.",
       "learner_leads": true,
@@ -189,7 +203,9 @@
           "lado",
           "praça",
           "praca",
-          "obrigad"
+          "obrigad",
+          "sim",
+          "estou a ver"
         ]
       },
       "help": {
@@ -207,7 +223,8 @@
       "reply": {
         "tl": "Exatamente.",
         "ar": "تمامًا."
-      }
+      },
+      "fact": true
     },
     {
       "id": "bye",
@@ -246,7 +263,8 @@
           "Muito obrigada! Bom dia!",
           "Obrigada!"
         ]
-      }
+      },
+      "farewell": true
     }
   ],
   "closing": {

@@ -292,8 +292,8 @@
     {
       "id": "ask_price",
       "says": {
-        "tl": "Aqui está! 😊",
-        "ar": "تفضّل!"
+        "tl": "Aqui está! 😊 É tudo?",
+        "ar": "تفضّل! هل هذا كل شيء؟"
       },
       "do_eg": "الطلب جه. اسأله الحساب كام.",
       "learner_leads": true,
@@ -302,10 +302,14 @@
         "examples_tl": [
           "Obrigado! Quanto é?",
           "Quanto é?",
-          "Quanto custa?"
+          "Quanto custa?",
+          "Sim, é tudo. Quanto é?"
         ],
         "keywords": [
-          "quanto"
+          "quanto",
+          "tudo",
+          "sim",
+          "só isto"
         ]
       },
       "help": {
@@ -323,11 +327,15 @@
       "reply": {
         "tl": "São dois euros e sessenta.",
         "ar": "المجموع يوروان وستون سنتًا."
-      }
+      },
+      "fact": true
     },
     {
       "id": "pay",
-      "says": null,
+      "says": {
+        "tl": "Cartão ou dinheiro?",
+        "ar": "بطاقة أم نقدًا؟"
+      },
       "do_eg": "قالك الحساب. ادفع بالكارت أو كاش.",
       "expects": {
         "intent_eg": "يدفع بالكارت أو كاش",
@@ -453,7 +461,8 @@
           "Obrigada! Bom dia!",
           "Até amanhã!"
         ]
-      }
+      },
+      "farewell": true
     }
   ],
   "closing": {

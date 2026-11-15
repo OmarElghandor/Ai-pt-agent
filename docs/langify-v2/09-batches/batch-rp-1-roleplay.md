@@ -93,16 +93,24 @@ What went wrong in the market run:
 
 Rules:
 1. **Every character turn opens the talk. It never closes it.** (Omar: «لازم دايمًا رد الإيجنت يفتح كلام، مش يوصل لموضوع مقفول».)
-   - Every turn ends with a question, or an invitation the learner can answer («São dois euros e sessenta. Cartão ou dinheiro?», «Aqui está! 😊 É tudo, ou mais alguma coisa?»). This also holds on `learner_leads` beats: the 💡 cue is extra, not a replacement.
-   - A turn that ends on a bare statement is rejected by the guards. The fallback is the file's line + a short open question built from the beat (its option values, or «E agora?» as the last resort).
-   - **After the last beat the conversation doesn't shut.** When the task is done, a small «المهمة خلصت ✓» note appears and the character keeps the talk open in the scene with one light question at a time («É novo aqui no bairro?», «Vem cá muitas vezes?»), at the learner's level. The end card appears only when the learner says goodbye or presses «خلّص».
-   - The only turn allowed to end without a question is the character's answer to the learner's goodbye.
+   - Every turn ends with a question or an answerable invitation («São dois euros e sessenta. Cartão ou dinheiro?», «Aqui está! 😊 É tudo?», «Diga.»).
+   - **The files now end open themselves:** every `says` (and every reply that acts as a prompt) ends with a question or an invitation. So the fallback is simply the file's lines, as they are. **Never glue «E agora?» or any generic tail** (the run of 19:51 showed «Bom dia E agora?» and «Pronto E agora?»: remove that code).
+   - A model turn that ends on a bare statement is rejected, and the file's lines are used.
+   - **The scene ends with its farewell beat** (`farewell: true`, always the last step). The character's goodbye and its answer to the learner's goodbye are the only turns without a question. After the learner's goodbye: `closing`, then the end card. **No talk after the goodbye** (remove the post-task small talk; it produced «E então, gosta daqui?» after «Bom dia»).
 2. **An open beat is never skipped.** If the beat isn't done, the character stays on it and helps: it reacts to what the learner said and narrows the choice using the beat's option values («Fruta, claro! Temos laranjas, maçãs, bananas… O que quer?»). It never says the next beat's line.
 3. **Beats where the learner must start** (`learner_leads: true` in the file: ask the price, ask about pork, invite the friend…) show a **small 💡 cue line under the character bubble automatically** with the beat's `do_eg` («اسأله بكام.»). One line, no chips, no card. Other beats show nothing unless the learner is stuck.
 4. **The model writes the whole turn; code doesn't glue.** When the beat is done, the model gets NEXT BEAT and writes the reaction and the next beat's line as one natural turn. Code appends the file's `says` only when the model's turn has no question and no cue for the next beat (and then it replaces the turn's ending rather than adding a third sentence).
 5. **Warm, not an echo.** The prompt tells the character: react like a person in a short phrase («Boa escolha!», «Claro!», «Ah, do Egito!»), never repeat the learner's sentence back («o senhor quer um quilo de laranjas»), then move on.
 6. **Open to talk.** If the learner says something extra inside the scene (a side question, a comment, small talk), the character answers it in one short sentence and then returns to the beat. Up to 2 such turns in a row are fine; they don't count as misses and don't trigger hints.
 7. **Coach and hint text is never clipped.** The card grows to fit its text.
+
+8. **Facts come from the file, word for word.** A step with `fact: true` has a reply that carries information (a price, a time, a direction, a place, a dose, what's included). For these, the turn is the file's reply + the next `says`, verbatim, with no model call. (In the 19:51 run the model answered «Quanto é?» with «Pode pagar com cartão ou dinheiro» and never said the price.)
+9. **No verbal tics.** The model must not open two turns in a row the same way (the run had «Ah! Claro!» four times). Pass the previous character turn's first 3 words in the prompt as «don't start like this», and if the new turn still starts with them, strip that opener in code.
+10. **Natural pt-PT only.** Lines like «Gosta de algo mais?» are wrong (the natural line is «Mais alguma coisa?»). Give the model the beat's suggested line as the default wording: «use this line unless you have a clearly natural reason to change it». Default the role-play actor to the stronger model in the A/B (Haiku) until Omar compares them.
+11. **Bugs seen in the 19:51 run:**
+    - no correction card appeared for «quero um cafe», «queria um galo», «Con cartão», «Nao perciso»; the card must run on every Portuguese message;
+    - the coach / hint cards are still clipped (the text is cut off);
+    - the `learner_leads` 💡 cue didn't show at `ask_price`.
 
 ## The engine (per learner message)
 
@@ -169,7 +177,10 @@ First, give me a short plan for R1–R5 and wait for my approval. Then implement
   9. **Open and directed (stub model):**
      - rp.mercado «quria frutas» → the beat stays open; the turn offers the fruit options and ends with a question; the next beat's line is not emitted;
      - a stub turn ending on a statement → rejected; the fallback ends with a question;
-     - after the last beat: the «المهمة خلصت ✓» note, then the next character turn ends with a question; «Adeus!» from the learner → the goodbye, then the end card;
+     - the farewell beat: the learner's goodbye → `closing`, then the end card, and no character turn after it;
+     - a `fact` step («Quanto é?» in rp.cafe) → the turn is exactly «São dois euros e sessenta. Cartão ou dinheiro?» with zero model calls;
+     - two stub turns starting «Ah! Claro!» → the second opener is stripped;
+     - no emitted turn ever contains «E agora?»;
      - `ask_price` shows the 💡 cue «اسأله بكام.» automatically; `order` shows no cue;
      - a side question at any beat → answered, the beat stays, no miss counted.
   10. **Live eval script (not CI):** play rp.cafe, rp.restaurante and rp.direcoes with scripted learner turns against Qwen and Haiku, and print the transcripts side by side for Omar.

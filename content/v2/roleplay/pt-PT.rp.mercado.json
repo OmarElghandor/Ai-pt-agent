@@ -150,8 +150,8 @@
     {
       "id": "ask_price",
       "says": {
-        "tl": "Aqui está! 😊",
-        "ar": "تفضّل!"
+        "tl": "Olhe, é tudo fresquinho! 😊 Quer saber o preço?",
+        "ar": "انظر، كل شيء طازج! هل تريد معرفة السعر؟"
       },
       "do_eg": "اسأله بكام.",
       "learner_leads": true,
@@ -160,10 +160,14 @@
         "examples_tl": [
           "Quanto custa?",
           "Quanto custa o quilo?",
-          "Quanto é?"
+          "Quanto é?",
+          "Sim, quanto custa?"
         ],
         "keywords": [
-          "quanto"
+          "quanto",
+          "sim",
+          "preço",
+          "preco"
         ]
       },
       "help": {
@@ -177,7 +181,8 @@
       "reply": {
         "tl": "É um euro e oitenta o quilo.",
         "ar": "الكيلو بيورو وثمانين سنتًا."
-      }
+      },
+      "fact": true
     },
     {
       "id": "anything_else",
@@ -290,8 +295,8 @@
     {
       "id": "pay",
       "says": {
-        "tl": "São três euros e vinte.",
-        "ar": "المجموع ثلاثة يوروهات وعشرون سنتًا."
+        "tl": "São três euros e vinte. Como quer pagar?",
+        "ar": "المجموع ثلاثة يوروهات وعشرون سنتًا. كيف تريد أن تدفع؟"
       },
       "do_eg": "قالك الحساب. ادفع.",
       "expects": {
@@ -340,7 +345,8 @@
           "Aqui tem.",
           "Aceita cartão?"
         ]
-      }
+      },
+      "fact": true
     },
     {
       "id": "cash_only",
@@ -348,8 +354,8 @@
         "pay": "cartão"
       },
       "says": {
-        "tl": "Desculpe, aqui só aceito dinheiro. 😕",
-        "ar": "عذرًا، أقبل النقود فقط هنا."
+        "tl": "Desculpe, aqui só aceito dinheiro. 😕 Tem dinheiro consigo?",
+        "ar": "عذرًا، أقبل النقود فقط هنا. هل معك نقود؟"
       },
       "do_eg": "بيقولك كاش بس. وافق وادفع كاش.",
       "expects": {
@@ -357,13 +363,16 @@
         "examples_tl": [
           "Está bem. Aqui tem.",
           "Não faz mal. Aqui tem.",
-          "Ah, está bem."
+          "Ah, está bem.",
+          "Sim, tenho. Aqui tem."
         ],
         "keywords": [
           "está bem",
           "aqui tem",
           "não faz mal",
-          "ok"
+          "ok",
+          "sim",
+          "tenho"
         ]
       },
       "help": {
@@ -415,7 +424,8 @@
           "Obrigada! Igualmente!",
           "Igualmente! Adeus!"
         ]
-      }
+      },
+      "farewell": true
     }
   ],
   "closing": {

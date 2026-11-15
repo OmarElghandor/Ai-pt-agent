@@ -35,7 +35,12 @@ export function createLiveRoleplayActor(opts?: {
   const timeoutMs = opts?.timeoutMs ?? ROLEPLAY_ACTOR_TIMEOUT_MS;
   const maxTokens = opts?.maxTokens ?? ROLEPLAY_ACTOR_MAX_TOKENS;
   const temperature = opts?.temperature ?? ROLEPLAY_ACTOR_TEMPERATURE;
-  const spec = parseConvoModelSpec(opts?.modelOverride);
+  // Role-play defaults to Haiku until A/B settles (dev menu can still pass qwen).
+  const modelOverride =
+    opts?.modelOverride != null && String(opts.modelOverride).trim() !== ''
+      ? opts.modelOverride
+      : 'haiku';
+  const spec = parseConvoModelSpec(modelOverride);
 
   return {
     async generate(prompt: string): Promise<RoleplayActorGenerateResult> {
@@ -47,7 +52,7 @@ export function createLiveRoleplayActor(opts?: {
 
       const run = (async () => {
         const result = streamText({
-          model: getConvoModel(opts?.modelOverride),
+          model: getConvoModel(modelOverride),
           system: ROLEPLAY_ACTOR_SYSTEM,
           prompt,
           temperature,

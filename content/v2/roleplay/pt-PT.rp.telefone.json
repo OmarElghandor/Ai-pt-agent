@@ -141,10 +141,11 @@
         ]
       },
       "reply": {
-        "tl": "Nada de especial. Estou a ver televisão. 📺",
-        "ar": "لا شيء مميز. أشاهد التلفاز."
+        "tl": "Nada de especial. Estou a ver televisão. 📺 E tu?",
+        "ar": "لا شيء مميز. أشاهد التلفاز. وأنت؟"
       },
-      "hint_eg": "Diz = «قول / اتفضّل». ده بيقولها لما مستنيك تقول عايز إيه."
+      "hint_eg": "Diz = «قول / اتفضّل». ده بيقولها لما مستنيك تقول عايز إيه.",
+      "fact": true
     },
     {
       "id": "invite",
@@ -284,7 +285,8 @@
           "Combinado! Xau!",
           "Até amanhã!"
         ]
-      }
+      },
+      "farewell": true
     }
   ],
   "closing": {

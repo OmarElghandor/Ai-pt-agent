@@ -101,7 +101,7 @@ export function CoachCard({
   return (
     <aside
       className={[
-        'relative self-stretch overflow-hidden rounded-[20px] px-4 py-3 shadow-[var(--ft-shadow-soft)]',
+        'relative self-stretch overflow-visible rounded-[20px] px-4 py-3 shadow-[var(--ft-shadow-soft)]',
         correction
           ? 'bg-[var(--ft-surface)]'
           : 'bg-[var(--ft-coach)]',

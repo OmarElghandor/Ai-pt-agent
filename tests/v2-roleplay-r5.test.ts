@@ -231,9 +231,10 @@ describe('roleplay R5 goldens', () => {
     assert.equal(bad.state.slots.drink, undefined);
   });
 
-  it('9 · open and directed (stub model)', async () => {
+  it('9 · farewell, facts, file fallback (stub model)', async () => {
     clearRoleplayLoadCache();
     const mercado = loadRoleplaySituation('rp.mercado');
+    const cafe = loadRoleplaySituation('rp.cafe');
 
     // quria frutas → beat stays open; offers fruit options; ends with ?; no next beat line
     const openActor = createStubRoleplayActor({
@@ -257,7 +258,7 @@ describe('roleplay R5 goldens', () => {
     assert.ok(!/Aqui está/i.test(openChar!.tl));
     assert.ok(/laranjas|maçãs|bananas|fruta/i.test(openChar!.tl));
 
-    // Statement ending → rejected; fallback ends with question
+    // Statement ending → rejected; file fallback as authored (opens)
     const closedActor = createStubRoleplayActor({
       reply: 'Olhe, é tudo fresquinho!\nAR: كله فريش\nBEAT: open',
     });
@@ -276,22 +277,9 @@ describe('roleplay R5 goldens', () => {
     assert.ok(closedChar && endsWithOpenTalk(closedChar.tl));
     assert.ok(!/^Olhe, é tudo fresquinho!?$/i.test(closedChar!.tl.trim()));
 
-    // After last beat: المهمة خلصت ✓; next turn ends with ?; Adeus → end card
-    const cafe = loadRoleplaySituation('rp.cafe');
-    const afterActor = createStubRoleplayActor({
-      reply: (prompt) => {
-        if (/task is done|keep a light/i.test(prompt)) {
-          return 'Gosta do café?\nAR: بتحب القهوة؟\nBEAT: open';
-        }
-        if (/goodbye|saying goodbye/i.test(prompt)) {
-          return 'Adeus! Bom dia!\nAR: مع السلامة!\nBEAT: open';
-        }
-        return 'Claro! Mais alguma coisa?\nAR: تمام!\nBEAT: done';
-      },
-    });
-    const scripted = await runRoleplayScript({
+    // Farewell beat → closing + end card; no post-task chat
+    const farewell = await runRoleplayScript({
       situation: cafe,
-      actor: afterActor,
       turns: [
         { text: 'Bom dia! Queria um galão, por favor.' },
         { text: 'Um pastel de nata, por favor.' },
@@ -302,36 +290,89 @@ describe('roleplay R5 goldens', () => {
         { text: 'Obrigado! Até amanhã!' },
       ],
     });
-    assert.equal(scripted.state.status, 'active');
-    assert.equal(scripted.state.task_done, true);
+    assert.equal(farewell.state.status, 'done');
+    assert.ok(farewell.events.some((e) => e.type === 'result'));
     assert.ok(
-      scripted.events.some(
+      farewell.events.some(
+        (e) => e.type === 'character' && /Até amanhã/i.test(e.tl),
+      ),
+    );
+    assert.ok(
+      !farewell.events.some(
         (e) => e.type === 'coach' && e.eg.includes('المهمة خلصت'),
       ),
     );
 
-    const chat = await runRoleplayTurn(
-      {
-        situation: cafe,
-        state: scripted.state,
-        learnerText: 'Sim, muito!',
-      },
-      { actor: afterActor },
+    // Fact step: Quanto é? → verbatim price + next says; zero model calls
+    const factActor = createStubRoleplayActor({
+      reply: 'SHOULD NOT RUN\nAR: x\nBEAT: done',
+    });
+    state = createRoleplaySessionState({
+      id: 'fact-price',
+      user_id: 'u',
+      situation_id: 'rp.cafe',
+      first_step_id: 'ask_price',
+    });
+    state = startRoleplayScene({ situation: cafe, state }).state;
+    const beforeCalls = state.model_calls;
+    const fact = await runRoleplayTurn(
+      { situation: cafe, state, learnerText: 'Quanto é?' },
+      { actor: factActor },
     );
-    assert.equal(chat.state.status, 'active');
-    const chatChar = chat.events.find((e) => e.type === 'character');
-    assert.ok(chatChar && endsWithOpenTalk(chatChar.tl));
+    assert.equal(fact.state.model_calls, beforeCalls);
+    const factChar = fact.events.find((e) => e.type === 'character');
+    assert.ok(factChar);
+    assert.match(
+      factChar!.tl,
+      /São dois euros e sessenta\.\s*Cartão ou dinheiro\?/i,
+    );
+    assert.equal(fact.state.current_step_id, 'pay');
 
-    const bye = await runRoleplayTurn(
-      {
-        situation: cafe,
-        state: chat.state,
-        learnerText: 'Adeus!',
-      },
-      { actor: afterActor },
+    // Two stub turns starting «Ah! Claro!» → second opener stripped
+    let stripState = createRoleplaySessionState({
+      id: 'strip-opener',
+      user_id: 'u',
+      situation_id: 'rp.mercado',
+      first_step_id: 'order',
+    });
+    stripState = startRoleplayScene({
+      situation: mercado,
+      state: stripState,
+    }).state;
+    const stripActor = createStubRoleplayActor({
+      reply: 'Ah! Claro! O que quer?\nAR: تمام!\nBEAT: open',
+    });
+    const firstStrip = await runRoleplayTurn(
+      { situation: mercado, state: stripState, learnerText: 'quria frutas' },
+      { actor: stripActor },
     );
-    assert.equal(bye.state.status, 'done');
-    assert.ok(bye.events.some((e) => e.type === 'result'));
+    assert.match(firstStrip.events.find((e) => e.type === 'character')!.tl, /^Ah!/i);
+    const secondStrip = await runRoleplayTurn(
+      {
+        situation: mercado,
+        state: firstStrip.state,
+        learnerText: 'frutas frescas?',
+      },
+      { actor: stripActor },
+    );
+    const secondTl = secondStrip.events.find((e) => e.type === 'character')!.tl;
+    assert.ok(!/^Ah!\s*Claro!/i.test(secondTl), secondTl);
+    assert.match(secondTl, /que quer\?/i);
+    assert.ok(endsWithOpenTalk(secondTl));
+
+    // No emitted turn contains «E agora?»
+    for (const e of [
+      ...open.events,
+      ...closed.events,
+      ...farewell.events,
+      ...fact.events,
+      ...firstStrip.events,
+      ...secondStrip.events,
+    ]) {
+      if (e.type === 'character') {
+        assert.ok(!/E agora\?/i.test(e.tl), e.tl);
+      }
+    }
 
     // ask_price shows 💡 cue; order shows no cue
     state = createRoleplaySessionState({
@@ -343,7 +384,6 @@ describe('roleplay R5 goldens', () => {
     const orderStart = startRoleplayScene({ situation: mercado, state });
     assert.ok(!orderStart.events.some((e) => e.type === 'cue'));
 
-    // Advance to ask_price via chips path
     state = orderStart.state;
     const toPrice = await runRoleplayTurn({
       situation: mercado,

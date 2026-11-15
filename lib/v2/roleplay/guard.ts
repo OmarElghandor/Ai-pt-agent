@@ -63,10 +63,6 @@ export function roleplayAllowedSurfaces(
   return out;
 }
 
-/**
- * Off-scene = OOV vs common words + scene items + new_tl (+ authored lines).
- * At most 2 content words outside that set. No extra model call.
- */
 export function checkRoleplayReplyVocab(opts: {
   text: string;
   situation: RoleplaySituation;
@@ -86,48 +82,21 @@ export function checkRoleplayReplyVocab(opts: {
 }
 
 /**
- * Every character turn must open the talk: question or answerable invitation.
- * (Except the answer to the learner's goodbye.)
+ * Every character turn must open the talk (except farewell / goodbye reply).
+ * Files already end open — we only reject bare statements from the model.
  */
 export function endsWithOpenTalk(text: string): boolean {
   const t = text.trim();
   if (!t) return false;
   if (/\?\s*$/u.test(t) || /\?\s*[😊🙂😉]?\s*$/u.test(t)) return true;
-  // Answerable invitations without a final ?
-  return /\b(mais alguma coisa|cart[aã]o ou dinheiro|o que (quer|deseja|vai ser)|e agora|precisa de|diga(-me)?|conta(-me)?|e tu)\b/iu.test(
+  return /\b(mais alguma coisa|cart[aã]o ou dinheiro|o que (quer|deseja|vai ser)|e agora|precisa de|diga(-me)?|conta(-me)?|e tu|e tudo)\b/iu.test(
     t,
   );
 }
 
-/** Short open question from beat options, or «E agora?». */
-export function openQuestionFromBeat(step: RoleplayStep | null): string {
-  const opts =
-    step?.expects.options?.map((o) => o.value.trim()).filter(Boolean) ?? [];
-  if (opts.length >= 2) {
-    const shown = opts.slice(0, 4);
-    if (shown.length === 2) return `${shown[0]} ou ${shown[1]}?`;
-    const last = shown[shown.length - 1]!;
-    return `${shown.slice(0, -1).join(', ')} ou ${last}?`;
-  }
-  if (opts.length === 1) return `${opts[0]}?`;
-  return 'E agora?';
-}
-
-/** Ensure PT ends with a question/invitation (replace trailing close if needed). */
-export function ensureOpensTalk(
-  tl: string,
-  step: RoleplayStep | null,
-): string {
-  const base = tl.trim();
-  if (!base) return openQuestionFromBeat(step);
-  if (endsWithOpenTalk(base)) return base;
-  const q = openQuestionFromBeat(step);
-  return `${base.replace(/[.!…😊🙂]+\s*$/u, '').trim()} ${q}`.trim();
-}
-
 /**
  * Reject empty / wrong script / too many sentences / OOV / closed statement.
- * Pass `allowClosed` for the goodbye reply only.
+ * Pass `allowClosed` for farewell goodbye replies only.
  */
 export function guardRoleplayActorTurn(opts: {
   tl: string;
@@ -140,8 +109,6 @@ export function guardRoleplayActorTurn(opts: {
   const script = checkPtScript(tl);
   if (script) return { ok: false, reason: 'script' };
 
-  // Prompt asks for ≤2 sentences; allow 3 short clauses so goldens like
-  // «Um café? Claro! Mais alguma coisa?» pass.
   if (countSentences(tl) > 3) return { ok: false, reason: 'sentences' };
 
   const vocab = checkRoleplayReplyVocab({
@@ -158,10 +125,6 @@ export function guardRoleplayActorTurn(opts: {
   return { ok: true };
 }
 
-/**
- * A "real attempt" may accept the model's BEAT: done.
- * Bare sim/não only counts when the beat's options are yes/no.
- */
 export function isRealRoleplayAttempt(
   text: string,
   step: RoleplayStep,
@@ -188,7 +151,6 @@ export function isRealRoleplayAttempt(
   return opts.some((o) => o === 'sim' || o === 'nao' || o === 'não');
 }
 
-/** Model slot must be one of the option values (accent-insensitive). */
 export function matchRoleplayOptionValue(
   step: RoleplayStep,
   raw: string | null | undefined,
@@ -208,11 +170,10 @@ export function matchRoleplayOptionValue(
   return null;
 }
 
-/** Learner is saying goodbye (triggers closing + end card after task_done). */
+/** Learner farewell / goodbye (completes farewell beat or closes after it). */
 export function isLearnerGoodbye(text: string): boolean {
   const t = normalizeRoleplayText(text);
   if (!t) return false;
-  // Clear farewells — not «Obrigado! Até amanhã!» which is often the last beat line.
   if (/\b(adeus|tchau|xau)\b/.test(t)) return true;
   if (
     /^(ate logo|ate amanha|ate ja|bom fim de semana|boa tarde|boa noite)[.!]*$/.test(
@@ -224,7 +185,6 @@ export function isLearnerGoodbye(text: string): boolean {
   return /^(muito )?obrigad[oa][.!]*$/.test(t);
 }
 
-/** In-scene side question / small talk (not a beat attempt). */
 export function looksLikeSideTalk(text: string): boolean {
   const raw = text.trim();
   if (!raw) return false;
@@ -233,4 +193,31 @@ export function looksLikeSideTalk(text: string): boolean {
   return /\b(bonito|fixe|interessante|por acaso|e ai|desculpe|com licenca|gostei|que calor|que frio)\b/.test(
     t,
   );
+}
+
+/** First N whitespace-separated words (for opener tic detection). */
+export function firstWords(text: string, n = 3): string {
+  return text
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, n)
+    .join(' ')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '');
+}
+
+/** Strip a repeated opener if the turn starts with the same first 3 words. */
+export function stripRepeatedOpener(
+  tl: string,
+  previousOpener: string | null | undefined,
+): string {
+  if (!previousOpener?.trim()) return tl.trim();
+  const words = tl.trim().split(/\s+/).filter(Boolean);
+  if (words.length < 3) return tl.trim();
+  const head = firstWords(tl, 3);
+  const prev = firstWords(previousOpener, 3);
+  if (!head || head !== prev) return tl.trim();
+  return words.slice(3).join(' ').trim() || tl.trim();
 }

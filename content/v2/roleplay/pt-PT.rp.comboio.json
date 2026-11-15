@@ -129,11 +129,15 @@
           "Só ida, por favor."
         ]
       },
-      "hint_eg": "só ida = رايح بس · ida e volta = رايح وراجع"
+      "hint_eg": "só ida = رايح بس · ida e volta = رايح وراجع",
+      "fact": true
     },
     {
       "id": "pay",
-      "says": null,
+      "says": {
+        "tl": "Cartão ou dinheiro?",
+        "ar": "بطاقة أم نقدًا؟"
+      },
       "do_eg": "قالتلك السعر. ادفع.",
       "expects": {
         "intent_eg": "يدفع",
@@ -164,7 +168,10 @@
     },
     {
       "id": "next_train",
-      "says": null,
+      "says": {
+        "tl": "Mais alguma coisa?",
+        "ar": "هل تريد شيئًا آخر؟"
+      },
       "do_eg": "معاك التذكرة. اسأل القطر الجاي إمتى.",
       "learner_leads": true,
       "expects": {
@@ -194,7 +201,8 @@
         "tl": "Às dez e vinte, na linha dois.",
         "ar": "في العاشرة وعشرين دقيقة، على الرصيف الثاني."
       },
-      "hint_eg": "o próximo comboio = القطر الجاي · a linha = الرصيف"
+      "hint_eg": "o próximo comboio = القطر الجاي · a linha = الرصيف",
+      "fact": true
     },
     {
       "id": "bye",
@@ -233,7 +241,8 @@
           "Obrigada! Bom dia!",
           "Muito obrigada!"
         ]
-      }
+      },
+      "farewell": true
     }
   ],
   "closing": {

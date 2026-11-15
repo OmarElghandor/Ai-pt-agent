@@ -76,7 +76,7 @@ export function RoleplaySession({
   );
   const [busy, setBusy] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
-  const [convoModel, setConvoModel] = useState<ConvoModelChoice>('qwen');
+  const [convoModel, setConvoModel] = useState<ConvoModelChoice>('haiku');
   const scrollRef = useRef<HTMLDivElement>(null);
   const bubblesRef = useRef<TalkBubble[]>(ui.bubbles);
   const {

@@ -91,7 +91,6 @@ export async function finishWithChips(opts: {
   while (
     state.status === 'active' &&
     state.current_step_id &&
-    !state.task_done &&
     turns < maxTurns
   ) {
     turns += 1;
@@ -112,16 +111,6 @@ export async function finishWithChips(opts: {
     });
     state = r.state;
     allEvents.push(...r.events);
-  }
-
-  if (state.status === 'active' && state.task_done) {
-    const bye = await runRoleplayTurn({
-      situation: opts.situation,
-      state,
-      learnerText: 'Adeus!',
-    });
-    state = bye.state;
-    allEvents.push(...bye.events);
   }
 
   return { state, events: allEvents, modelCalls: state.model_calls };

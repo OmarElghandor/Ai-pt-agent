@@ -72,9 +72,9 @@
         ]
       },
       "reply": {
-        "tl": "Entre, entre. Este é o quarto.",
-        "ar": "ادخل، ادخل. هذه هي الغرفة.",
-        "ar_f": "ادخلي، ادخلي. هذه هي الغرفة."
+        "tl": "Entre, entre. Este é o quarto. O que acha?",
+        "ar": "ادخل، ادخل. هذه هي الغرفة. ما رأيك؟",
+        "ar_f": "ادخلي، ادخلي. هذه هي الغرفة. ما رأيكِ؟"
       }
     },
     {
@@ -107,11 +107,15 @@
       "reply": {
         "tl": "São quatrocentos e cinquenta euros por mês.",
         "ar": "أربعمائة وخمسون يورو في الشهر."
-      }
+      },
+      "fact": true
     },
     {
       "id": "bills",
-      "says": null,
+      "says": {
+        "tl": "Tem alguma pergunta?",
+        "ar": "هل لديك أي سؤال؟"
+      },
       "do_eg": "اسأل المية والكهربا والنت داخلين في الإيجار ولا لأ.",
       "learner_leads": true,
       "expects": {
@@ -143,13 +147,14 @@
         "tl": "A água e a internet sim. A luz é à parte.",
         "ar": "الماء والإنترنت نعم. الكهرباء منفصلة."
       },
-      "hint_eg": "as despesas = فواتير المية والكهربا والنت. لازم تسأل دايمًا."
+      "hint_eg": "as despesas = فواتير المية والكهربا والنت. لازم تسأل دايمًا.",
+      "fact": true
     },
     {
       "id": "noisy",
       "says": {
-        "tl": "O quarto é maior do que o outro, mas é um bocado barulhento.",
-        "ar": "الغرفة أكبر من الأخرى، لكنها صاخبة قليلًا."
+        "tl": "O quarto é maior do que o outro, mas é um bocado barulhento. Faz-lhe diferença?",
+        "ar": "الغرفة أكبر من الأخرى، لكنها صاخبة قليلًا. هل يهمك ذلك؟"
       },
       "do_eg": "بيقولك الأوضة دي فيها دوشة. رد، أو اطلب تشوف التانية.",
       "expects": {
@@ -245,7 +250,8 @@
           "Tem contrato?"
         ]
       },
-      "hint_eg": "o contrato = العقد. مهم يكون فيه عقد وإيصالات (recibos)."
+      "hint_eg": "o contrato = العقد. مهم يكون فيه عقد وإيصالات (recibos).",
+      "fact": true
     },
     {
       "id": "decide",
@@ -340,7 +346,8 @@
           "Obrigada! Até amanhã!",
           "Boa tarde!"
         ]
-      }
+      },
+      "farewell": true
     }
   ],
   "closing": {

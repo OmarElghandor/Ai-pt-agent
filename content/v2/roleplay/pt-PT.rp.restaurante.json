@@ -109,8 +109,8 @@
     {
       "id": "menu",
       "says": {
-        "tl": "Aqui está a ementa. O prato do dia é carne de porco à alentejana.",
-        "ar": "هذه قائمة الطعام. طبق اليوم لحم خنزير على طريقة ألينتيجو."
+        "tl": "Aqui está a ementa. O prato do dia é carne de porco à alentejana. Pode ser?",
+        "ar": "هذه قائمة الطعام. طبق اليوم لحم خنزير على طريقة ألينتيجو. هل يناسبك؟"
       },
       "do_eg": "طبق اليوم فيه لحم خنزير. قوله إنك مش بتاكله، أو اطلب حاجة تانية.",
       "learner_leads": true,
@@ -182,14 +182,18 @@
           "Para mim, o frango, por favor."
         ]
       },
-      "hint_eg": "carne de porco = لحم خنزير. الجملة دي هتحتاجها كتير: Não como carne de porco."
+      "hint_eg": "carne de porco = لحم خنزير. الجملة دي هتحتاجها كتير: Não como carne de porco.",
+      "fact": true
     },
     {
       "id": "choose",
       "if_slot": {
         "food": "no_pork"
       },
-      "says": null,
+      "says": {
+        "tl": "O que prefere?",
+        "ar": "ماذا تفضّل؟"
+      },
       "do_eg": "قالك فيه فراخ أو سمك. اختار.",
       "expects": {
         "intent_eg": "يختار فراخ أو سمك",
@@ -238,8 +242,8 @@
     {
       "id": "soup",
       "says": {
-        "tl": "Para começar, a sopa do dia é caldo verde.",
-        "ar": "للبداية، حساء اليوم هو كالدو فيردي."
+        "tl": "Quer uma sopa para começar? Hoje é caldo verde.",
+        "ar": "هل تريد حساءً للبداية؟ اليوم كالدو فيردي."
       },
       "do_eg": "قالك شوربة اليوم. اسأل فيها خنزير ولا لأ.",
       "learner_leads": true,
@@ -255,7 +259,10 @@
           "chouriço",
           "chourico",
           "não",
-          "nao"
+          "nao",
+          "sim",
+          "quero",
+          "pode ser"
         ],
         "slot": "soup",
         "options": [
@@ -281,6 +288,18 @@
               "tl": "Muito bem.",
               "ar": "حسنًا."
             }
+          },
+          {
+            "value": "yes",
+            "keywords": [
+              "sim",
+              "quero",
+              "pode ser"
+            ],
+            "reply": {
+              "tl": "Muito bem, uma sopa.",
+              "ar": "حسنًا، حساء."
+            }
           }
         ]
       },
@@ -296,7 +315,8 @@
           "Não, obrigada."
         ]
       },
-      "hint_eg": "caldo verde = شوربة كرنب، وساعات بيحطوا فيها chouriço (سجق خنزير). اسأل دايمًا."
+      "hint_eg": "caldo verde = شوربة كرنب، وساعات بيحطوا فيها chouriço (سجق خنزير). اسأل دايمًا.",
+      "fact": true
     },
     {
       "id": "drink",
@@ -436,11 +456,15 @@
       "reply": {
         "tl": "Com certeza. São vinte e três euros.",
         "ar": "بالتأكيد. المجموع ثلاثة وعشرون يورو."
-      }
+      },
+      "fact": true
     },
     {
       "id": "pay",
-      "says": null,
+      "says": {
+        "tl": "Cartão ou dinheiro?",
+        "ar": "بطاقة أم نقدًا؟"
+      },
       "do_eg": "قالك الحساب. ادفع.",
       "expects": {
         "intent_eg": "يدفع",
@@ -503,7 +527,8 @@
           "Obrigada! Boa tarde!",
           "Até à próxima!"
         ]
-      }
+      },
+      "farewell": true
     }
   ],
   "closing": {

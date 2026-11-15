@@ -101,7 +101,8 @@
           "Não. Onde tiro a senha?"
         ]
       },
-      "hint_eg": "a senha = ورقة الدور اللي بتسحبها من الماكينة. أي مصلحة حكومية بتبدأ بيها."
+      "hint_eg": "a senha = ورقة الدور اللي بتسحبها من الماكينة. أي مصلحة حكومية بتبدأ بيها.",
+      "fact": true
     },
     {
       "id": "ask_nif",
@@ -243,16 +244,16 @@
     {
       "id": "done",
       "says": {
-        "tl": "Pronto, aqui tem o seu NIF. 📄",
-        "ar": "تفضّل، هذا رقمك الضريبي."
+        "tl": "Pronto, aqui tem o seu NIF. 📄 Mais alguma coisa?",
+        "ar": "تفضّل، هذا رقمك الضريبي. هل تريد شيئًا آخر؟"
       },
       "do_eg": "خلصت! اشكرها.",
       "expects": {
         "intent_eg": "يشكرها",
         "examples_tl": [
-          "Muito obrigado! Bom dia!",
-          "Obrigado pela ajuda!",
-          "Obrigada! Bom dia!"
+          "Não, muito obrigado! Bom dia!",
+          "Não, obrigado pela ajuda!",
+          "É tudo, obrigado!"
         ],
         "keywords": [
           "obrigad",
@@ -263,20 +264,24 @@
           "bom dia",
           "xau",
           "igualmente"
+        ],
+        "examples_tl_f": [
+          "Não, muito obrigada! Bom dia!"
         ]
       },
       "help": {
         "frame_tl": "Muito obrigado! Bom dia!",
         "eg": "خلصت! اشكرها: Muito obrigado! Bom dia!",
         "chips": [
-          "Muito obrigado! Bom dia!",
-          "Obrigado pela ajuda!"
+          "Não, muito obrigado! Bom dia!",
+          "É tudo, obrigado!"
         ],
         "chips_f": [
-          "Muito obrigada! Bom dia!",
-          "Obrigada pela ajuda!"
+          "Não, muito obrigada! Bom dia!",
+          "É tudo, obrigada!"
         ]
-      }
+      },
+      "farewell": true
     }
   ],
   "closing": {

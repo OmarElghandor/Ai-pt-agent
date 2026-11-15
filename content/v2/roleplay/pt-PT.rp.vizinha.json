@@ -88,7 +88,12 @@
     },
     {
       "id": "name",
-      "says": null,
+      "says": {
+        "tl": "E o senhor, como se chama?",
+        "ar": "وأنت، ما اسمك؟",
+        "tl_f": "E a senhora, como se chama?",
+        "ar_f": "وأنتِ، ما اسمكِ؟"
+      },
       "do_eg": "قالتلك اسمها. قول تشرفنا واسمك.",
       "expects": {
         "intent_eg": "يقول اسمه وتشرفنا",
@@ -279,7 +284,8 @@
           "Até logo!",
           "Até logo, Dona Graça!"
         ]
-      }
+      },
+      "farewell": true
     }
   ],
   "closing": {

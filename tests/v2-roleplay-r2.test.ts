@@ -160,17 +160,17 @@ describe('roleplay R2 matcher and engine', () => {
 
   it('miss with null says: one re-ask bubble (no Desculpe?)', async () => {
     clearRoleplayLoadCache();
-    const cafe = loadRoleplaySituation('rp.cafe');
-    const nullSays = cafe.steps.find((s) => s.says === null);
-    assert.ok(nullSays, 'cafe should have a null-says step');
-    const idx = cafe.steps.findIndex((s) => s.id === nullSays!.id);
-    const prev = cafe.steps[idx - 1];
+    const rest = loadRoleplaySituation('rp.restaurante');
+    const nullSays = rest.steps.find((s) => s.says === null);
+    assert.ok(nullSays, 'restaurante should have a null-says step');
+    const idx = rest.steps.findIndex((s) => s.id === nullSays!.id);
+    const prev = rest.steps[idx - 1];
     assert.ok(prev?.reply);
 
     let state = createRoleplaySessionState({
       id: 's-null',
       user_id: 'u1',
-      situation_id: 'rp.cafe',
+      situation_id: 'rp.restaurante',
       first_step_id: nullSays!.id,
     });
     const reply = pickLine(prev!.reply!, 'm')!;
@@ -183,7 +183,7 @@ describe('roleplay R2 matcher and engine', () => {
     });
 
     const r = await runRoleplayTurn({
-      situation: cafe,
+      situation: rest,
       state,
       learnerText: 'zzzz',
     });

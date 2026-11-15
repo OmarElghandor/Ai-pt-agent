@@ -231,8 +231,8 @@
         ]
       },
       "reply": {
-        "tl": "Então leve este. É muito bom. 💊",
-        "ar": "إذن خذ هذا. إنه جيد جدًا."
+        "tl": "Então leve este. É muito bom. 💊 Tem alguma dúvida?",
+        "ar": "إذن خذ هذا. إنه جيد جدًا. هل لديك أي سؤال؟"
       },
       "hint_eg": "سؤال مهم: عندك حساسية من أدوية؟ لو أيوه قول الاسم."
     },
@@ -283,11 +283,15 @@
           "Precisa de receita?",
           "Quanto custa?"
         ]
-      }
+      },
+      "fact": true
     },
     {
       "id": "dosage",
-      "says": null,
+      "says": {
+        "tl": "Mais alguma dúvida?",
+        "ar": "هل لديك سؤال آخر؟"
+      },
       "do_eg": "اسألها تاخده كام مرة في اليوم.",
       "learner_leads": true,
       "expects": {
@@ -315,7 +319,8 @@
       "reply": {
         "tl": "Três vezes por dia, depois das refeições.",
         "ar": "ثلاث مرات في اليوم، بعد الوجبات."
-      }
+      },
+      "fact": true
     },
     {
       "id": "bye",
@@ -354,7 +359,8 @@
           "Muito obrigada!"
         ]
       },
-      "hint_eg": "As melhoras! = «ألف سلامة». هتسمعها في أي صيدلية."
+      "hint_eg": "As melhoras! = «ألف سلامة». هتسمعها في أي صيدلية.",
+      "farewell": true
     }
   ],
   "closing": {

@@ -77,8 +77,8 @@
         ]
       },
       "reply": {
-        "tl": "Ah, olá, {name}! Diga.",
-        "ar": "آه، مرحبًا يا {name}! تفضّل."
+        "tl": "Ah, olá, {name}! O que se passa?",
+        "ar": "آه، مرحبًا يا {name}! ما الأمر؟"
       }
     },
     {
@@ -210,7 +210,8 @@
           "Sim, estou em casa.",
           "Não, de manhã trabalho."
         ]
-      }
+      },
+      "fact": true
     },
     {
       "id": "evening",
@@ -319,7 +320,8 @@
           "Obrigada, senhor Carlos. Até amanhã!",
           "Boa tarde!"
         ]
-      }
+      },
+      "farewell": true
     }
   ],
   "closing": {

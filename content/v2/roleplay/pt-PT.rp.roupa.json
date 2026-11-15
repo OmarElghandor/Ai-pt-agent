@@ -121,8 +121,8 @@
     {
       "id": "try",
       "says": {
-        "tl": "Então? Gosta desta camisola azul? É nova.",
-        "ar": "إذن؟ هل تعجبك هذه الكنزة الزرقاء؟ إنها جديدة."
+        "tl": "Então? Esta camisola azul é nova. Gosta?",
+        "ar": "إذن؟ هذه الكنزة الزرقاء جديدة. هل تعجبك؟"
       },
       "do_eg": "بتوريك بلوفر. اطلب تقيسه.",
       "expects": {
@@ -185,13 +185,14 @@
         "tl": "Tenho o L. Aqui está.",
         "ar": "لدي مقاس L. تفضّل."
       },
-      "hint_eg": "Que tal? = «إيه رأيك / عاملة إزاي؟»"
+      "hint_eg": "Que tal? = «إيه رأيك / عاملة إزاي؟»",
+      "fact": true
     },
     {
       "id": "colour",
       "says": {
-        "tl": "E a cor? Também temos em verde e em preto.",
-        "ar": "وماذا عن اللون؟ لدينا أيضًا الأخضر والأسود."
+        "tl": "Também temos em verde e em preto. Que cor prefere?",
+        "ar": "لدينا أيضًا الأخضر والأسود. أي لون تفضّل؟"
       },
       "do_eg": "بتسألك على اللون. اختار.",
       "expects": {
@@ -225,7 +226,10 @@
     },
     {
       "id": "price",
-      "says": null,
+      "says": {
+        "tl": "Mais alguma coisa?",
+        "ar": "هل تريد شيئًا آخر؟"
+      },
       "do_eg": "اسأل بكام.",
       "learner_leads": true,
       "expects": {
@@ -250,11 +254,16 @@
       "reply": {
         "tl": "Está em saldo: vinte e nove euros.",
         "ar": "إنها في التخفيضات: تسعة وعشرون يورو."
-      }
+      },
+      "fact": true
     },
     {
       "id": "decide",
-      "says": null,
+      "says": {
+        "tl": "Quer levar?",
+        "ar": "هل تريد أن تأخذها؟",
+        "ar_f": "هل تريدين أن تأخذيها؟"
+      },
       "do_eg": "قالتلك السعر. اشتري، أو قول غالية شوية.",
       "expects": {
         "intent_eg": "يشتري أو يقول غالية",
@@ -267,14 +276,18 @@
           "levo",
           "caro",
           "cara",
-          "barat"
+          "barat",
+          "sim",
+          "quero"
         ],
         "slot": "decide",
         "options": [
           {
             "value": "levo",
             "keywords": [
-              "levo"
+              "levo",
+              "sim",
+              "quero"
             ],
             "reply": {
               "tl": "Muito bem! Pode pagar na caixa.",
@@ -303,14 +316,19 @@
           "É um bocado cara…"
         ]
       },
-      "hint_eg": "em saldo = في الأوكازيون"
+      "hint_eg": "em saldo = في الأوكازيون",
+      "fact": true
     },
     {
       "id": "cheaper",
       "if_slot": {
         "decide": "caro"
       },
-      "says": null,
+      "says": {
+        "tl": "Que tal?",
+        "ar": "ما رأيك؟",
+        "ar_f": "ما رأيكِ؟"
+      },
       "do_eg": "ورتك واحدة أرخص. قول هتاخدها.",
       "expects": {
         "intent_eg": "يقرر ياخد الأرخص",
@@ -373,7 +391,8 @@
           "Obrigada! Boa tarde!",
           "Igualmente!"
         ]
-      }
+      },
+      "farewell": true
     }
   ],
   "closing": {

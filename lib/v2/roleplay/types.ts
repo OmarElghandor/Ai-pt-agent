@@ -63,6 +63,13 @@ export type RoleplayStep = {
    * 💡 cue (`do_eg`) under the character bubble automatically.
    */
   learner_leads?: boolean;
+  /**
+   * Reply carries a fact (price, time, place…). Turn = file reply + next says,
+   * verbatim, with no model call.
+   */
+  fact?: boolean;
+  /** Last step: learner goodbye → closing → end card. */
+  farewell?: boolean;
   /** What the learner must do now (EG); cue when learner_leads or stuck. */
   do_eg: string;
   /** Shown only when the learner is stuck (help). */

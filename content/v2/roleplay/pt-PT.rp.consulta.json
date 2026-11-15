@@ -49,8 +49,8 @@
     {
       "id": "book",
       "says": {
-        "tl": "Centro de Saúde, bom dia.",
-        "ar": "المركز الصحي، صباح الخير."
+        "tl": "Centro de Saúde, bom dia. Em que posso ajudar?",
+        "ar": "المركز الصحي، صباح الخير. كيف أستطيع المساعدة؟"
       },
       "do_eg": "بتتصل بالمركز الصحي وردّوا عليك. قول إنك عايز تحجز ميعاد 🩺",
       "expects": {
@@ -240,7 +240,8 @@
           "Sim, pode ser.",
           "Não posso na terça, desculpe."
         ]
-      }
+      },
+      "fact": true
     },
     {
       "id": "thursday",
@@ -274,7 +275,8 @@
       "reply": {
         "tl": "Então fica marcado: quinta, às duas.",
         "ar": "إذن تم الحجز: الخميس، في الثانية."
-      }
+      },
+      "fact": true
     },
     {
       "id": "early",
@@ -349,7 +351,8 @@
           "Obrigada! Bom dia!",
           "Muito obrigada!"
         ]
-      }
+      },
+      "farewell": true
     }
   ],
   "closing": {

@@ -154,20 +154,30 @@
       },
       "speaker": "pedro",
       "do_eg": "Pedro بيسألك محتاج مساعدة؟ اسأله حاجة مكانها فين 🛒",
-      "hint_eg": "Precisa de ajuda? = محتاج مساعدة؟ اسأله: Onde fica + الحاجة?"
+      "hint_eg": "Precisa de ajuda? = محتاج مساعدة؟ اسأله: Onde fica + الحاجة?",
+      "fact": true
     },
     {
       "id": "thanks",
-      "says": null,
+      "says": {
+        "tl": "Precisa de mais alguma coisa?",
+        "ar": "هل تحتاج شيئًا آخر؟"
+      },
       "expects": {
         "intent_eg": "يشكره",
         "examples_tl": [
           "Obrigado!",
           "Muito obrigado!",
-          "Obrigada!"
+          "Obrigada!",
+          "Não, obrigado!"
         ],
         "keywords": [
-          "obrigad"
+          "obrigad",
+          "não",
+          "nao"
+        ],
+        "examples_tl_f": [
+          "Não, obrigada!"
         ]
       },
       "help": {
@@ -350,8 +360,8 @@
     {
       "id": "pay",
       "says": {
-        "tl": "São doze euros e cinquenta.",
-        "ar": "المجموع اثنا عشر يورو وخمسون سنتًا."
+        "tl": "São doze euros e cinquenta. Cartão ou dinheiro?",
+        "ar": "المجموع اثنا عشر يورو وخمسون سنتًا. بطاقة أم نقدًا؟"
       },
       "expects": {
         "intent_eg": "يدفع",
@@ -403,7 +413,8 @@
         ]
       },
       "speaker": "carla",
-      "do_eg": "قالتلك الحساب. ادفع."
+      "do_eg": "قالتلك الحساب. ادفع.",
+      "fact": true
     },
     {
       "id": "bye",
@@ -442,7 +453,8 @@
         ]
       },
       "speaker": "carla",
-      "do_eg": "خلصت! ودّعها."
+      "do_eg": "خلصت! ودّعها.",
+      "farewell": true
     }
   ],
   "closing": {

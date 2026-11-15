@@ -173,6 +173,18 @@ export function validateRoleplaySituation(
     }
   }
 
+  // Report-only: last step should be the farewell beat.
+  const last = situation.steps[situation.steps.length - 1];
+  if (last && !last.farewell) {
+    issues.push(
+      issue(
+        id,
+        `steps[${situation.steps.length - 1}](${last.id}).farewell`,
+        'last step should have farewell: true',
+      ),
+    );
+  }
+
   return issues;
 }
 

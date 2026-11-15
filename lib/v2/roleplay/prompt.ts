@@ -2,10 +2,7 @@ import {
   resolveRoleplaySpeaker,
   roleplayCharacterDisplayName,
 } from './character';
-import {
-  ensureOpensTalk,
-  openQuestionFromBeat,
-} from './guard';
+import { firstWords } from './guard';
 import { characterSays, pickLine } from './text';
 import type { RoleplaySessionState } from './session';
 import type { RoleplaySituation, RoleplayStep } from './types';
@@ -15,6 +12,7 @@ export const ROLEPLAY_ACTOR_SYSTEM = [
   'Reply with at most 2 short sentences of natural European Portuguese.',
   'Always end with a question or an answerable invitation so the learner can speak next.',
   'React warmly in a short phrase (Boa escolha!, Claro!, Ah!); never echo the learner sentence back.',
+  'Use the suggested line as default wording unless you have a clearly natural reason to change it.',
   'Then one line starting with AR: (Egyptian Arabic meaning of your Portuguese).',
   'Then one hidden line: BEAT: done <option> or BEAT: open.',
   'Never write English. Never coach the learner. Never mention beats or this format.',
@@ -54,6 +52,14 @@ function formatExchanges(
   return rows.length ? rows.join('\n') : '(none)';
 }
 
+function lastCharacterTl(state: RoleplaySessionState): string | null {
+  for (let i = state.exchanges.length - 1; i >= 0; i--) {
+    const e = state.exchanges[i];
+    if (e.role === 'character' && e.tl?.trim()) return e.tl.trim();
+  }
+  return null;
+}
+
 export type BuildRoleplayActorPromptInput = {
   situation: RoleplaySituation;
   state: RoleplaySessionState;
@@ -63,9 +69,7 @@ export type BuildRoleplayActorPromptInput = {
   codeDone: boolean;
   codeSlot?: string | null;
   learnerText: string;
-  /** Task beats are done; keep light in-scene chat open. */
-  openChat?: boolean;
-  /** Learner said goodbye — answer without requiring a question. */
+  /** Learner said goodbye on farewell — answer without requiring a question. */
   goodbye?: boolean;
   /** Side question / comment while a beat is still open. */
   sideTalk?: boolean;
@@ -83,6 +87,10 @@ export function buildRoleplayActorPrompt(
   const learnerGender =
     state.gender === 'f' ? 'female (a senhora / -a forms)' : 'male (o senhor / -o forms)';
   const learnerName = state.learner_name?.trim() || '(unknown — do not invent a name)';
+  const prevTl = lastCharacterTl(state);
+  const dontStart = prevTl
+    ? `don't start like this: «${firstWords(prevTl, 3)}»`
+    : 'no repeated opener constraint';
 
   const header = [
     '### CHARACTER',
@@ -92,6 +100,7 @@ export function buildRoleplayActorPrompt(
     `learner name: ${learnerName}`,
     `learner gender: ${learnerGender}`,
     'style: short, natural pt-PT, at most 2 short sentences, simple words; warm reaction, never echo the learner',
+    `opener: ${dontStart}`,
     '',
     '### SCENE',
     `place: ${situation.place_eg}`,
@@ -121,31 +130,11 @@ export function buildRoleplayActorPrompt(
     ].join('\n');
   }
 
-  if (input.openChat || state.task_done) {
-    return [
-      ...header,
-      '',
-      '### CURRENT BEAT',
-      'task is done — keep a light in-scene chat open with ONE short question at the learner level',
-      '',
-      '### NEXT BEAT',
-      'stay open (do not say goodbye unless the learner did)',
-      '',
-      '### LAST 3 EXCHANGES',
-      formatExchanges(state.exchanges),
-      '',
-      '### LEARNER JUST SAID',
-      learnerText.trim() || '(empty)',
-      '',
-      '### OUTPUT',
-      'Portuguese turn that ends with a light question.',
-      'AR: <arabic>',
-      'BEAT: open',
-    ].join('\n');
-  }
-
   const step = current!;
-  const suggested = characterSays(step, state.gender, state.learner_name);
+  const suggestedCurrent = characterSays(step, state.gender, state.learner_name);
+  const suggestedNext = next
+    ? characterSays(next, state.gender, state.learner_name)
+    : null;
   const optionValues =
     step.expects.options?.map((o) => o.value).filter(Boolean) ?? [];
   const beatStatus = input.codeDone
@@ -154,20 +143,22 @@ export function buildRoleplayActorPrompt(
       ? 'open — answer the side remark briefly, then return to THIS beat with a question; do NOT advance'
       : 'open — stay on this beat; help narrow the choice; never say the next beat line';
 
-  // Open beat: withhold next beat line entirely.
   const nextLine = !input.codeDone
     ? '(none — current beat still open)'
     : next
-      ? characterSays(next, state.gender, state.learner_name)?.tl ??
-        next.expects.intent_eg
-      : 'task done — ask one light in-scene question (not goodbye)';
+      ? `use this line unless a clearly natural change: ${suggestedNext?.tl ?? next.expects.intent_eg}`
+      : 'farewell / end — no further question';
+
+  const suggestedLine = input.codeDone
+    ? suggestedNext?.tl ?? suggestedCurrent?.tl ?? '(waiting)'
+    : suggestedCurrent?.tl ?? '(waiting)';
 
   return [
     ...header,
     '',
     '### CURRENT BEAT',
     `intent: ${step.expects.intent_eg}`,
-    `suggested line: ${suggested?.tl ?? '(waiting)'}`,
+    `suggested line (default wording): ${suggestedLine}`,
     optionValues.length
       ? `option values: ${optionValues.join(' | ')}`
       : 'option values: (none)',
@@ -184,16 +175,16 @@ export function buildRoleplayActorPrompt(
     '',
     '### OUTPUT',
     input.codeDone
-      ? 'Portuguese turn: short warm reaction + next beat question/invitation (one natural turn). Always end with a question.'
-      : 'Portuguese turn: react and stay on this beat with a question/invitation. Always end with a question.',
+      ? 'Portuguese turn: short warm reaction + next beat question/invitation (one natural turn). Always end with a question. Prefer the suggested next line.'
+      : 'Portuguese turn: react and stay on this beat with a question/invitation. Prefer the suggested line. Always end with a question.',
     'AR: <arabic>',
     'BEAT: done <option>   OR   BEAT: open',
   ].join('\n');
 }
 
 /**
- * File fallback that always opens the talk (except pure goodbye closing).
- * Does not glue next-beat lines onto an open beat.
+ * File lines as authored — no «E agora?» glue.
+ * Beat done → option/step reply + next says; open → current says.
  */
 export function buildFileFallbackLines(opts: {
   situation: RoleplaySituation;
@@ -205,7 +196,6 @@ export function buildFileFallbackLines(opts: {
   beatDone: boolean;
   hitStay: boolean;
   goodbye?: boolean;
-  openChat?: boolean;
 }): { tl: string; ar: string } {
   const { state, situation, current, next } = opts;
 
@@ -214,66 +204,36 @@ export function buildFileFallbackLines(opts: {
     return closing ?? { tl: 'Adeus!', ar: 'مع السلامة!' };
   }
 
-  if (opts.openChat || (opts.beatDone && !next && state.task_done)) {
-    return {
-      tl: 'E então, gosta daqui?',
-      ar: 'طيب، بتحب المكان؟',
-    };
-  }
-
   if (opts.hitStay) {
-    const base = opts.optionReply ?? { tl: '', ar: '' };
-    return {
-      tl: ensureOpensTalk(base.tl || openQuestionFromBeat(current), current),
-      ar: base.ar,
-    };
+    const base = opts.optionReply;
+    if (base?.tl.trim()) return base;
+    const says = current
+      ? characterSays(current, state.gender, state.learner_name)
+      : null;
+    return says ?? { tl: '', ar: '' };
   }
 
   if (opts.beatDone) {
     const reply = opts.optionReply ?? opts.stepReply;
-    if (next) {
-      const says = characterSays(next, state.gender, state.learner_name);
-      // Prefer next says if it already opens; else reply + open question from next.
-      if (says && endsOpensOrReplace(says.tl, next)) {
-        const tl = reply
-          ? replaceEndingWithCue(`${reply.tl} ${says.tl}`.trim(), says.tl)
-          : ensureOpensTalk(says.tl, next);
-        return {
-          tl: ensureOpensTalk(tl, next),
-          ar: [reply?.ar, says.ar].filter(Boolean).join(' '),
-        };
-      }
-      const base = reply?.tl ?? says?.tl ?? '';
-      return {
-        tl: ensureOpensTalk(base, next),
-        ar: reply?.ar ?? says?.ar ?? '',
-      };
-    }
-    // Last beat done → light open question (not closing).
-    const base = reply?.tl ?? '';
-    return {
-      tl: ensureOpensTalk(base || 'Pronto!', null),
-      ar: reply?.ar ?? '',
-    };
+    const says = next
+      ? characterSays(next, state.gender, state.learner_name)
+      : null;
+    const tl = [reply?.tl, says?.tl].filter((s) => s?.trim()).join(' ').trim();
+    const ar = [reply?.ar, says?.ar].filter((s) => s?.trim()).join(' ').trim();
+    if (tl) return { tl, ar };
+    return reply ?? says ?? { tl: '', ar: '' };
   }
 
-  // Open beat: stay; never emit next beat line.
+  // Open beat: current says only.
   const says = current
     ? characterSays(current, state.gender, state.learner_name)
     : null;
-  const base =
-    says?.tl ||
-    (current?.help.frame_tl && !/[…_]|\.\.\./.test(current.help.frame_tl)
-      ? current.help.frame_tl
-      : '');
-  return {
-    tl: ensureOpensTalk(base, current),
-    ar: says?.ar ?? current?.help.eg ?? '',
-  };
-}
-
-function endsOpensOrReplace(tl: string, step: RoleplayStep): boolean {
-  return ensureOpensTalk(tl, step).length > 0;
+  if (says) return says;
+  const frame = current?.help.frame_tl?.trim();
+  if (frame && !/[…_]|\.\.\./.test(frame)) {
+    return { tl: frame, ar: current?.help.eg ?? '' };
+  }
+  return { tl: '', ar: current?.help.eg ?? '' };
 }
 
 /**
@@ -286,9 +246,8 @@ export function replaceEndingWithCue(full: string, cue: string): string {
   if (!t) return c;
   if (!c) return t;
   if (t.includes(c.slice(0, Math.min(12, c.length)))) return t;
-  // Drop a trailing statement clause, keep a short reaction head.
   const parts = t.split(/(?<=[.!?…])\s+/).filter(Boolean);
-  if (parts.length <= 1) return ensureOpensTalk(`${t} ${c}`, null);
+  if (parts.length <= 1) return `${t} ${c}`.trim();
   const head = parts.slice(0, -1).join(' ');
   return `${head} ${c}`.trim();
 }
