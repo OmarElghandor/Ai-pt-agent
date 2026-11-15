@@ -104,7 +104,7 @@ describe('roleplay R2 matcher and engine', () => {
     assert.equal(chars[0].tl, 'Bom dia! Diga.');
   });
 
-  it('miss 1 shows Desculpe + chips; miss 2 waits; sending sentence assists', async () => {
+  it('miss 1 shows hint + chips; miss 2 waits; sending sentence assists', async () => {
     clearRoleplayLoadCache();
     const cafe = loadRoleplaySituation('rp.cafe');
     let state = createRoleplaySessionState({
@@ -123,7 +123,10 @@ describe('roleplay R2 matcher and engine', () => {
     state = miss1.state;
     assert.equal(state.current_step_id, 'order_drink');
     assert.equal(state.pending_assist, null);
-    assert.ok(miss1.events.some((e) => e.type === 'character' && e.tl === 'Desculpe?'));
+    // One character bubble (file re-ask) — no Desculpe? ladder.
+    const chars1 = miss1.events.filter((e) => e.type === 'character');
+    assert.equal(chars1.length, 1);
+    assert.ok(!chars1.some((e) => e.tl === 'Desculpe?'));
     assert.ok(miss1.events.some((e) => e.type === 'help' && e.chips.length === 2));
     assert.ok(miss1.events.some((e) => e.type === 'coach' && e.moment === 'hint'));
 
@@ -155,10 +158,9 @@ describe('roleplay R2 matcher and engine', () => {
     assert.equal(state.model_calls, 0);
   });
 
-  it('help miss 1 with null says repeats previous reply prompt', async () => {
+  it('miss with null says: one re-ask bubble (no Desculpe?)', async () => {
     clearRoleplayLoadCache();
     const cafe = loadRoleplaySituation('rp.cafe');
-    // Find a step whose says is null.
     const nullSays = cafe.steps.find((s) => s.says === null);
     assert.ok(nullSays, 'cafe should have a null-says step');
     const idx = cafe.steps.findIndex((s) => s.id === nullSays!.id);
@@ -171,7 +173,6 @@ describe('roleplay R2 matcher and engine', () => {
       situation_id: 'rp.cafe',
       first_step_id: nullSays!.id,
     });
-    // Seed the previous reply as the prompt the learner saw.
     const reply = pickLine(prev!.reply!, 'm')!;
     state.exchanges.push({
       role: 'character',
@@ -187,11 +188,12 @@ describe('roleplay R2 matcher and engine', () => {
       learnerText: 'zzzz',
     });
     const chars = r.events.filter((e) => e.type === 'character');
-    assert.ok(chars.some((e) => e.tl === 'Desculpe?'));
-    assert.ok(chars.some((e) => e.tl === reply.tl));
+    assert.equal(chars.length, 1);
+    assert.ok(!chars.some((e) => e.tl === 'Desculpe?'));
+    assert.ok(r.events.some((e) => e.type === 'help'));
   });
 
-  it('side channel language question makes zero model calls', async () => {
+  it('side channel language question skips the actor', async () => {
     clearRoleplayLoadCache();
     const cafe = loadRoleplaySituation('rp.cafe');
     const state = createRoleplaySessionState({
@@ -200,28 +202,29 @@ describe('roleplay R2 matcher and engine', () => {
       situation_id: 'rp.cafe',
       first_step_id: 'order_drink',
     });
-    let modelCalls = 0;
+    let actorCalls = 0;
+    const { createStubRoleplayActor } = await import('../lib/v2/roleplay/actor');
+    const actor = createStubRoleplayActor({
+      reply: () => {
+        actorCalls += 1;
+        return 'Oi!\nAR: مرحبا\nBEAT: open';
+      },
+    });
     const r = await runRoleplayTurn(
       {
         situation: cafe,
         state,
         learnerText: 'يعني إيه Diga؟',
       },
-      {
-        modelReactionsEnabled: true,
-        modelReaction: async () => {
-          modelCalls += 1;
-          return 'x';
-        },
-      },
+      { actor },
     );
-    assert.equal(modelCalls, 0);
+    assert.equal(actorCalls, 0);
     assert.equal(r.state.model_calls, 0);
     assert.equal(r.state.current_step_id, 'order_drink');
     assert.ok(r.events.some((e) => e.type === 'coach'));
   });
 
-  it('matched turn advances with zero model calls', async () => {
+  it('matched turn advances with file fallback when no actor', async () => {
     clearRoleplayLoadCache();
     const cafe = loadRoleplaySituation('rp.cafe');
     const state = createRoleplaySessionState({
@@ -238,6 +241,39 @@ describe('roleplay R2 matcher and engine', () => {
     assert.equal(r.state.slots.drink, 'galão');
     assert.notEqual(r.state.current_step_id, 'order_drink');
     assert.equal(r.state.model_calls, 0);
+    const chars = r.events.filter((e) => e.type === 'character');
+    assert.equal(chars.length, 1);
+  });
+
+  it('stub actor: one bubble, BEAT done sets slot when code did not match', async () => {
+    clearRoleplayLoadCache();
+    const cafe = loadRoleplaySituation('rp.cafe');
+    const state = createRoleplaySessionState({
+      id: 's-actor',
+      user_id: 'u1',
+      situation_id: 'rp.cafe',
+      first_step_id: 'order_drink',
+    });
+    const { createStubRoleplayActor } = await import('../lib/v2/roleplay/actor');
+    const actor = createStubRoleplayActor({
+      reply:
+        'Um café? Claro! Mais alguma coisa?\nAR: قهوة؟ طبعاً!\nBEAT: done café',
+    });
+    const r = await runRoleplayTurn(
+      {
+        situation: cafe,
+        state,
+        learnerText: 'quero um coffee',
+      },
+      { actor },
+    );
+    assert.equal(r.state.model_calls, 1);
+    assert.equal(r.state.slots.drink, 'café');
+    const chars = r.events.filter((e) => e.type === 'character');
+    assert.equal(chars.length, 1);
+    assert.ok(chars[0].tl.includes('café') || chars[0].tl.includes('Café'));
+    assert.ok(!chars[0].tl.includes('BEAT:'));
+    assert.ok(!chars[0].tl.includes('AR:'));
   });
 
   it('applies {name} and drops it with its comma when unknown', () => {

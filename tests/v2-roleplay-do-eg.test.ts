@@ -9,8 +9,8 @@ import {
   startRoleplayScene,
 } from '../lib/v2/roleplay';
 
-describe('roleplay do_eg · intro · character · resume', () => {
-  it('rp.cafe fresh start: intro card → Manuel line → do_eg; no resume note', () => {
+describe('roleplay hints-only · character · resume', () => {
+  it('rp.cafe fresh start: Manuel line only — no intro card, no do strip', () => {
     clearRoleplayLoadCache();
     const cafe = loadRoleplaySituation('rp.cafe');
     const state = createRoleplaySessionState({
@@ -31,45 +31,21 @@ describe('roleplay do_eg · intro · character · resume', () => {
       ),
       'fresh start must never emit the resume note',
     );
-
-    const meaningful = started.events.filter(
-      (e) =>
-        e.type === 'coach' ||
-        e.type === 'character' ||
-        e.type === 'do',
+    assert.ok(
+      !started.events.some((e) => e.type === 'coach' && e.moment === 'intro'),
     );
-    assert.ok(meaningful.length >= 3);
+    assert.ok(!started.events.some((e) => e.type === 'do'));
 
-    const intro = meaningful[0];
-    assert.equal(intro?.type, 'coach');
-    if (intro?.type === 'coach') {
-      assert.equal(intro.moment, 'intro');
-      assert.ok(intro.eg.includes(cafe.place_eg));
-      assert.ok(intro.eg.includes(cafe.learner_role_eg));
-      assert.ok(intro.eg.includes(cafe.task_eg));
-      assert.ok(intro.eg.includes('دورك'));
-      assert.ok(intro.eg.includes('المهمة'));
-    }
-
-    const line = meaningful[1];
-    assert.equal(line?.type, 'character');
+    const line = started.events.find((e) => e.type === 'character');
+    assert.ok(line);
     if (line?.type === 'character') {
       assert.equal(line.tl, 'Bom dia! Diga.');
       assert.equal(line.name, 'Manuel');
       assert.equal(line.character_id, 'manuel');
     }
-
-    const doEvt = meaningful[2];
-    assert.equal(doEvt?.type, 'do');
-    if (doEvt?.type === 'do') {
-      assert.equal(
-        doEvt.eg,
-        'Manuel بيقولك «اؤمر». اطلب مشروب ☕',
-      );
-    }
   });
 
-  it('after Queria um galão the do strip moves to order_food', async () => {
+  it('after Queria um galão advances to order_food without a do event', async () => {
     clearRoleplayLoadCache();
     const cafe = loadRoleplaySituation('rp.cafe');
     let state = createRoleplaySessionState({
@@ -90,16 +66,10 @@ describe('roleplay do_eg · intro · character · resume', () => {
       learnerText: 'Queria um galão',
     });
 
-    const orderFood = cafe.steps.find((s) => s.id === 'order_food')!;
-    const doEvents = turn.events.filter((e) => e.type === 'do');
-    assert.ok(doEvents.length >= 1);
-    const lastDo = doEvents[doEvents.length - 1];
-    assert.equal(lastDo?.type, 'do');
-    if (lastDo?.type === 'do') {
-      assert.equal(lastDo.eg, orderFood.do_eg);
-      assert.equal(lastDo.step_id, 'order_food');
-    }
+    assert.ok(!turn.events.some((e) => e.type === 'do'));
     assert.equal(turn.state.current_step_id, 'order_food');
+    const chars = turn.events.filter((e) => e.type === 'character');
+    assert.equal(chars.length, 1);
   });
 
   it('scene character is Manuel for rp.cafe — never a default', () => {

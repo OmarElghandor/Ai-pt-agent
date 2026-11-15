@@ -1,3 +1,4 @@
+import type { RoleplayActor } from './actor';
 import { runRoleplayTurn, startRoleplayScene } from './engine';
 import { playableSteps } from './playable';
 import {
@@ -23,14 +24,13 @@ export type ScriptResult = {
 
 /**
  * Run a scripted sequence of learner turns (delays are 0 — engine has none).
- * Asserts zero model calls when modelReactionsEnabled is false (default).
+ * Pass `actor` for stub-model goldens; omit for file-fallback path.
  */
 export async function runRoleplayScript(opts: {
   situation: RoleplaySituation;
   turns: ScriptTurn[];
   gender?: 'm' | 'f';
-  modelReaction?: (input: unknown) => Promise<string | null>;
-  modelReactionsEnabled?: boolean;
+  actor?: RoleplayActor;
 }): Promise<ScriptResult> {
   const playable = playableSteps(opts.situation, {});
   let state = createRoleplaySessionState({
@@ -57,10 +57,7 @@ export async function runRoleplayScript(opts: {
         assisted: turn.assisted,
       },
       {
-        modelReactionsEnabled: Boolean(opts.modelReactionsEnabled),
-        modelReaction: opts.modelReaction
-          ? async (input) => opts.modelReaction!(input)
-          : undefined,
+        ...(opts.actor ? { actor: opts.actor } : {}),
       },
     );
     state = r.state;
@@ -120,4 +117,14 @@ export function characterStepIds(events: RoleplayTurnEvent[]): string[] {
     .filter((e): e is Extract<RoleplayTurnEvent, { type: 'character' }> => e.type === 'character')
     .map((e) => e.step_id)
     .filter((id): id is string => Boolean(id));
+}
+
+/** Character bubbles only (one per learner turn after start). */
+export function characterBubbles(
+  events: RoleplayTurnEvent[],
+): Array<Extract<RoleplayTurnEvent, { type: 'character' }>> {
+  return events.filter(
+    (e): e is Extract<RoleplayTurnEvent, { type: 'character' }> =>
+      e.type === 'character',
+  );
 }
