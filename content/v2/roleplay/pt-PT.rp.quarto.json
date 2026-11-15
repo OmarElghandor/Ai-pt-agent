@@ -1,0 +1,401 @@
+{
+  "id": "rp.quarto",
+  "target_lang": "pt-PT",
+  "level": 5,
+  "order": 1,
+  "recommended_day": 49,
+  "emoji": "🏠",
+  "title_tl": "Ver um quarto para alugar",
+  "title_ar": "معاينة أوضة للإيجار",
+  "place_eg": "شقة في Arroios. Carlos صاحب الشقة بيفرّجك على الأوضة.",
+  "task_eg": "اسأل عن الإيجار والمصاريف، قارن، واتفاوض على التأمين.",
+  "learner_role_eg": "إنت بتدوّر على أوضة تسكن فيها.",
+  "character": {
+    "id": "carlos"
+  },
+  "address": "o senhor",
+  "new_tl": [
+    "as despesas",
+    "estão incluídas",
+    "à parte",
+    "a caução",
+    "Posso pensar?"
+  ],
+  "key_phrases": [
+    {
+      "tl": "Quanto é a renda?",
+      "ar": "كم الإيجار؟"
+    },
+    {
+      "tl": "As despesas estão incluídas?",
+      "ar": "هل المصاريف مشمولة؟"
+    },
+    {
+      "tl": "Quem mora aqui?",
+      "ar": "من يسكن هنا؟"
+    },
+    {
+      "tl": "É possível só um mês?",
+      "ar": "هل يمكن شهر واحد فقط؟"
+    },
+    {
+      "tl": "Posso pensar até amanhã?",
+      "ar": "هل يمكنني التفكير حتى الغد؟"
+    }
+  ],
+  "steps": [
+    {
+      "id": "arrive",
+      "min_tier": 1,
+      "says": {
+        "tl": "Boa tarde! Veio ver o quarto, não é?",
+        "ar": "مساء الخير! جئت لرؤية الغرفة، أليس كذلك؟",
+        "ar_f": "مساء الخير! جئتِ لرؤية الغرفة، أليس كذلك؟"
+      },
+      "expects": {
+        "intent_eg": "يسلّم ويعرّف نفسه",
+        "examples_tl": [
+          "Sim, boa tarde! Sou o Omar.",
+          "Boa tarde! Sim, sou o Omar.",
+          "Sim, sou eu."
+        ],
+        "keywords": [
+          "sim",
+          "boa tarde",
+          "sou"
+        ]
+      },
+      "help": {
+        "frame_tl": "Boa tarde! Sim, sou o ___.",
+        "eg": "سلّم وعرّف نفسك: Boa tarde! Sim, sou o + اسمك",
+        "chips": [
+          "Sim, boa tarde! Sou o Omar.",
+          "Sim, sou eu."
+        ]
+      },
+      "reply": {
+        "tl": "Entre, entre. Este é o quarto.",
+        "ar": "ادخل، ادخل. هذه هي الغرفة.",
+        "ar_f": "ادخلي، ادخلي. هذه هي الغرفة."
+      }
+    },
+    {
+      "id": "rent",
+      "min_tier": 1,
+      "says": null,
+      "expects": {
+        "intent_eg": "يسأل الإيجار كام",
+        "examples_tl": [
+          "Quanto é a renda?",
+          "Quanto custa por mês?",
+          "Qual é a renda?"
+        ],
+        "keywords": [
+          "renda",
+          "quanto",
+          "mês",
+          "mes"
+        ]
+      },
+      "help": {
+        "frame_tl": "Quanto é a renda?",
+        "eg": "a renda = الإيجار. اسأل: Quanto é a renda?",
+        "chips": [
+          "Quanto é a renda?",
+          "Quanto custa por mês?"
+        ]
+      },
+      "reply": {
+        "tl": "São quatrocentos e cinquenta euros por mês.",
+        "ar": "أربعمائة وخمسون يورو في الشهر."
+      }
+    },
+    {
+      "id": "bills",
+      "min_tier": 1,
+      "says": null,
+      "coach_eg": "as despesas = فواتير المية والكهربا والنت. لازم تسأل دايمًا.",
+      "expects": {
+        "intent_eg": "يسأل المصاريف داخلة ولا لأ",
+        "examples_tl": [
+          "As despesas estão incluídas?",
+          "A água e a luz estão incluídas?",
+          "E a internet?"
+        ],
+        "keywords": [
+          "despesas",
+          "incluíd",
+          "incluid",
+          "água",
+          "agua",
+          "luz",
+          "internet"
+        ]
+      },
+      "help": {
+        "frame_tl": "As despesas estão incluídas?",
+        "eg": "as despesas = المياه والكهربا والنت. اسأل: As despesas estão incluídas?",
+        "chips": [
+          "As despesas estão incluídas?",
+          "A água e a luz estão incluídas?"
+        ]
+      },
+      "reply": {
+        "tl": "A água e a internet sim. A luz é à parte.",
+        "ar": "الماء والإنترنت نعم. الكهرباء منفصلة."
+      }
+    },
+    {
+      "id": "noisy",
+      "min_tier": 2,
+      "says": {
+        "tl": "O quarto é maior do que o outro, mas é um bocado barulhento.",
+        "ar": "الغرفة أكبر من الأخرى، لكنها صاخبة قليلًا."
+      },
+      "expects": {
+        "intent_eg": "يرد أو يطلب يشوف التانية",
+        "examples_tl": [
+          "Não faz mal.",
+          "Posso ver o outro?",
+          "Prefiro um quarto calmo."
+        ],
+        "keywords": [
+          "faz mal",
+          "ver",
+          "outro",
+          "prefiro",
+          "calmo"
+        ]
+      },
+      "help": {
+        "frame_tl": "Posso ver o outro?",
+        "eg": "barulhento = دوشة. عايز تشوف التانية؟ Posso ver o outro? · مش فارق؟ Não faz mal.",
+        "chips": [
+          "Posso ver o outro?",
+          "Não faz mal."
+        ]
+      },
+      "reply": {
+        "tl": "Claro. O outro é mais pequeno, mas mais calmo.",
+        "ar": "بالطبع. الأخرى أصغر، لكنها أهدأ."
+      }
+    },
+    {
+      "id": "questions",
+      "min_tier": 1,
+      "says": {
+        "tl": "Tem mais alguma pergunta?",
+        "ar": "هل لديك سؤال آخر؟"
+      },
+      "coach_eg": "o contrato = العقد. مهم يكون فيه عقد وإيصالات (recibos).",
+      "expects": {
+        "intent_eg": "يسأل سؤال عن البيت",
+        "examples_tl": [
+          "Quem mora aqui?",
+          "Quando posso entrar?",
+          "Tem contrato?"
+        ],
+        "keywords": [
+          "quem",
+          "quando",
+          "contrato",
+          "recibo",
+          "entrar"
+        ],
+        "slot": "q",
+        "options": [
+          {
+            "value": "quem",
+            "keywords": [
+              "quem"
+            ],
+            "reply": {
+              "tl": "Dois estudantes, muito calmos. 😊",
+              "ar": "طالبان، هادئان جدًا."
+            }
+          },
+          {
+            "value": "contrato",
+            "keywords": [
+              "contrato",
+              "recibo"
+            ],
+            "reply": {
+              "tl": "Sim, com contrato e recibos.",
+              "ar": "نعم، بعقد وإيصالات."
+            }
+          },
+          {
+            "value": "quando",
+            "keywords": [
+              "quando",
+              "entrar"
+            ],
+            "reply": {
+              "tl": "Pode entrar no dia um.",
+              "ar": "يمكنك الدخول في اليوم الأول من الشهر."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Quem mora aqui?",
+        "eg": "اسأل سؤال: Quem mora aqui? (مين ساكن) أو Tem contrato? (فيه عقد؟)",
+        "chips": [
+          "Quem mora aqui?",
+          "Tem contrato?"
+        ]
+      }
+    },
+    {
+      "id": "deposit",
+      "min_tier": 3,
+      "says": {
+        "tl": "Preciso de dois meses de caução, está bem?",
+        "ar": "أحتاج تأمين شهرين، حسنًا؟"
+      },
+      "coach_eg": "a caução = مبلغ التأمين. التفاوض عليه عادي هنا.",
+      "expects": {
+        "intent_eg": "يتفاوض على التأمين",
+        "examples_tl": [
+          "É possível só um mês?",
+          "Dois meses é muito… Um mês?",
+          "Está bem."
+        ],
+        "keywords": [
+          "possível",
+          "possivel",
+          "um mês",
+          "um mes",
+          "muito",
+          "está bem",
+          "sim"
+        ]
+      },
+      "help": {
+        "frame_tl": "É possível só um mês?",
+        "eg": "a caução = التأمين. حاول تقلله: É possível só um mês?",
+        "chips": [
+          "É possível só um mês?",
+          "Está bem."
+        ]
+      },
+      "reply": {
+        "tl": "Hmm… pronto, pode ser um mês. 🤝",
+        "ar": "همم… حسنًا، يمكن شهر واحد."
+      }
+    },
+    {
+      "id": "decide",
+      "min_tier": 1,
+      "says": {
+        "tl": "Então, gosta do quarto?",
+        "ar": "إذن، هل تعجبك الغرفة؟"
+      },
+      "expects": {
+        "intent_eg": "يقرر أو يطلب يفكر",
+        "examples_tl": [
+          "Gosto muito. Posso pensar até amanhã?",
+          "Sim, fico com ele!",
+          "Posso pensar?"
+        ],
+        "keywords": [
+          "gosto",
+          "pensar",
+          "fico",
+          "sim",
+          "amanhã",
+          "amanha"
+        ],
+        "slot": "decide",
+        "options": [
+          {
+            "value": "think",
+            "keywords": [
+              "pensar"
+            ],
+            "reply": {
+              "tl": "Claro. Ligue-me amanhã.",
+              "ar": "بالطبع. اتصل بي غدًا.",
+              "ar_f": "بالطبع. اتصلي بي غدًا."
+            }
+          },
+          {
+            "value": "yes",
+            "keywords": [
+              "fico",
+              "sim"
+            ],
+            "reply": {
+              "tl": "Ótimo! Então falamos do contrato.",
+              "ar": "ممتاز! إذن نتحدث عن العقد."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Posso pensar até amanhã?",
+        "eg": "عايز تفكر؟ Posso pensar até amanhã? · موافق؟ Sim, fico com ele!",
+        "chips": [
+          "Posso pensar até amanhã?",
+          "Sim, fico com ele!"
+        ]
+      }
+    },
+    {
+      "id": "bye",
+      "min_tier": 1,
+      "says": {
+        "tl": "Até amanhã, então.",
+        "ar": "إلى الغد إذن."
+      },
+      "expects": {
+        "intent_eg": "يودّعه",
+        "examples_tl": [
+          "Obrigado! Até amanhã!",
+          "Muito obrigado, boa tarde!",
+          "Até amanhã!"
+        ],
+        "keywords": [
+          "obrigad",
+          "adeus",
+          "até",
+          "ate",
+          "boa tarde",
+          "bom dia",
+          "xau",
+          "igualmente"
+        ]
+      },
+      "help": {
+        "frame_tl": "Obrigado! Até amanhã!",
+        "eg": "ودّعه: Obrigado! Até amanhã!",
+        "chips": [
+          "Obrigado! Até amanhã!",
+          "Boa tarde!"
+        ],
+        "chips_f": [
+          "Obrigada! Até amanhã!",
+          "Boa tarde!"
+        ]
+      }
+    }
+  ],
+  "closing": {
+    "tl": "Até amanhã! 👋",
+    "ar": "إلى الغد!"
+  },
+  "summary_eg": "سألت عن الإيجار والمصاريف والعقد، واتفاوضت على التأمين 🏠",
+  "authored": true,
+  "item_ids": [
+    "phrase.good_afternoon",
+    "phrase.see_you_tomorrow",
+    "word.water",
+    "phrase.how_much_is_it",
+    "phrase.no_problem",
+    "word.bedroom",
+    "phrase.are_you_ok",
+    "word.q_when",
+    "word.rent"
+  ]
+}

@@ -1,0 +1,378 @@
+{
+  "id": "rp.avaria",
+  "target_lang": "pt-PT",
+  "level": 5,
+  "order": 2,
+  "recommended_day": 52,
+  "emoji": "🔧",
+  "title_tl": "A máquina de lavar avariou",
+  "title_ar": "الغسالة باظت",
+  "place_eg": "مكالمة لـ Carlos صاحب الشقة. الغسالة باظت وفيه مية على الأرض.",
+  "task_eg": "اشرح المشكلة، حدّد ميعاد للفني، واعترض بأدب لو قالك إنت اللي تدفع.",
+  "learner_role_eg": "إنت ساكن في الشقة.",
+  "character": {
+    "id": "carlos"
+  },
+  "address": "o senhor",
+  "new_tl": [
+    "a máquina de lavar",
+    "não funciona",
+    "avariou",
+    "o técnico",
+    "a lavandaria",
+    "Já estava assim."
+  ],
+  "key_phrases": [
+    {
+      "tl": "A máquina de lavar não funciona.",
+      "ar": "الغسالة لا تعمل."
+    },
+    {
+      "tl": "Ontem fez um barulho e parou.",
+      "ar": "أمس أصدرت صوتًا وتوقفت."
+    },
+    {
+      "tl": "Tem água no chão.",
+      "ar": "هناك ماء على الأرض."
+    },
+    {
+      "tl": "Amanhã de manhã estou em casa.",
+      "ar": "غدًا صباحًا سأكون في البيت."
+    },
+    {
+      "tl": "Eu não fiz nada. Já estava assim.",
+      "ar": "لم أفعل شيئًا. كانت هكذا من قبل."
+    }
+  ],
+  "steps": [
+    {
+      "id": "hello",
+      "min_tier": 1,
+      "says": {
+        "tl": "Estou? Sim?",
+        "ar": "ألو؟ نعم؟"
+      },
+      "expects": {
+        "intent_eg": "يسلّم ويعرّف نفسه",
+        "examples_tl": [
+          "Olá, senhor Carlos. É o Omar, do segundo esquerdo.",
+          "Boa tarde! É o Omar.",
+          "Olá! Sou o Omar, o inquilino."
+        ],
+        "keywords": [
+          "é o",
+          "e o",
+          "sou o",
+          "é a",
+          "sou a",
+          "carlos",
+          "olá",
+          "boa tarde"
+        ]
+      },
+      "help": {
+        "frame_tl": "Olá, senhor Carlos. É o ___.",
+        "eg": "عرّف نفسك: É o + اسمك, do segundo esquerdo.",
+        "chips": [
+          "Olá, senhor Carlos. É o Omar.",
+          "Boa tarde! É o Omar, do segundo esquerdo."
+        ]
+      },
+      "reply": {
+        "tl": "Ah, olá, {name}! Diga.",
+        "ar": "آه، مرحبًا يا {name}! تفضّل."
+      }
+    },
+    {
+      "id": "problem",
+      "min_tier": 1,
+      "says": null,
+      "coach_eg": "avariou = باظت · não funciona = مش شغالة",
+      "expects": {
+        "intent_eg": "يقول المشكلة",
+        "examples_tl": [
+          "A máquina de lavar não funciona.",
+          "A máquina de lavar avariou.",
+          "Tenho um problema com a máquina de lavar."
+        ],
+        "keywords": [
+          "máquina",
+          "maquina",
+          "lavar",
+          "não funciona",
+          "avariou",
+          "avariada",
+          "problema"
+        ]
+      },
+      "help": {
+        "frame_tl": "A máquina de lavar não funciona.",
+        "eg": "a máquina de lavar = الغسالة · não funciona = مش شغالة",
+        "chips": [
+          "A máquina de lavar não funciona.",
+          "A máquina de lavar avariou."
+        ]
+      },
+      "reply": {
+        "tl": "Ai… outra vez? O que aconteceu?",
+        "ar": "آه… مرة أخرى؟ ماذا حدث؟"
+      }
+    },
+    {
+      "id": "details",
+      "min_tier": 1,
+      "says": null,
+      "expects": {
+        "intent_eg": "يوصف اللي حصل",
+        "examples_tl": [
+          "Ontem fez um barulho e parou.",
+          "Não liga.",
+          "Tem água no chão."
+        ],
+        "keywords": [
+          "barulho",
+          "parou",
+          "liga",
+          "água",
+          "agua",
+          "chão",
+          "chao",
+          "ontem"
+        ],
+        "free_answer": true
+      },
+      "help": {
+        "frame_tl": "Ontem fez um barulho e parou.",
+        "eg": "O que aconteceu? = إيه اللي حصل؟ وصف: Ontem fez um barulho e parou.",
+        "chips": [
+          "Ontem fez um barulho e parou.",
+          "Tem água no chão."
+        ]
+      },
+      "reply": {
+        "tl": "Está bem, eu percebo.",
+        "ar": "حسنًا، أفهم."
+      }
+    },
+    {
+      "id": "visit",
+      "min_tier": 1,
+      "says": {
+        "tl": "Posso mandar o técnico amanhã de manhã. Está em casa?",
+        "ar": "يمكنني إرسال الفني غدًا صباحًا. هل ستكون في البيت؟",
+        "ar_f": "يمكنني إرسال الفني غدًا صباحًا. هل ستكونين في البيت؟"
+      },
+      "expects": {
+        "intent_eg": "يقول هيكون موجود ولا لأ",
+        "examples_tl": [
+          "Sim, estou em casa.",
+          "Não, de manhã trabalho.",
+          "Amanhã de manhã não posso."
+        ],
+        "keywords": [
+          "sim",
+          "estou",
+          "não",
+          "nao",
+          "trabalho",
+          "posso"
+        ],
+        "slot": "visit",
+        "options": [
+          {
+            "value": "no",
+            "keywords": [
+              "não",
+              "nao",
+              "trabalho",
+              "não posso"
+            ],
+            "reply": {
+              "tl": "Então à tarde, depois das seis?",
+              "ar": "إذن بعد الظهر، بعد السادسة؟"
+            }
+          },
+          {
+            "value": "yes",
+            "keywords": [
+              "sim",
+              "estou"
+            ],
+            "reply": {
+              "tl": "Ótimo. Ele vai às dez.",
+              "ar": "ممتاز. سيأتي في العاشرة."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Sim, estou em casa.",
+        "eg": "o técnico = الفني. هتكون موجود الصبح؟ Sim, estou em casa. · لأ: De manhã trabalho.",
+        "chips": [
+          "Sim, estou em casa.",
+          "Não, de manhã trabalho."
+        ]
+      }
+    },
+    {
+      "id": "evening",
+      "min_tier": 1,
+      "if_slot": {
+        "visit": "no"
+      },
+      "says": null,
+      "expects": {
+        "intent_eg": "يوافق على الميعاد التاني",
+        "examples_tl": [
+          "Sim, depois das seis pode ser.",
+          "Está bem, à tarde.",
+          "Sim, às seis e meia."
+        ],
+        "keywords": [
+          "sim",
+          "pode",
+          "seis",
+          "tarde",
+          "está bem"
+        ]
+      },
+      "help": {
+        "frame_tl": "Sim, depois das seis pode ser.",
+        "eg": "بعد الساعة 6؟ Sim, depois das seis pode ser.",
+        "chips": [
+          "Sim, depois das seis pode ser.",
+          "Está bem."
+        ]
+      },
+      "reply": {
+        "tl": "Combinado.",
+        "ar": "اتفقنا."
+      }
+    },
+    {
+      "id": "meanwhile",
+      "min_tier": 2,
+      "says": {
+        "tl": "Entretanto, não use a máquina, está bem?",
+        "ar": "في الأثناء، لا تستعمل الغسالة، حسنًا؟",
+        "ar_f": "في الأثناء، لا تستعملي الغسالة، حسنًا؟"
+      },
+      "expects": {
+        "intent_eg": "يوافق ويسأل عن الغسيل",
+        "examples_tl": [
+          "Está bem. E a roupa?",
+          "Claro. Onde posso lavar a roupa?",
+          "Está bem."
+        ],
+        "keywords": [
+          "está bem",
+          "claro",
+          "roupa",
+          "lavar",
+          "onde"
+        ]
+      },
+      "help": {
+        "frame_tl": "Está bem. E a roupa?",
+        "eg": "ما تستعملش الغسالة. اسأل: E a roupa? = طب والهدوم؟",
+        "chips": [
+          "Está bem. E a roupa?",
+          "Onde posso lavar a roupa?"
+        ]
+      },
+      "reply": {
+        "tl": "Há uma lavandaria na esquina. 😅",
+        "ar": "هناك مغسلة عند الناصية."
+      }
+    },
+    {
+      "id": "who_pays",
+      "min_tier": 3,
+      "says": {
+        "tl": "Ah, e se foi mau uso, quem paga é o inquilino…",
+        "ar": "آه، وإذا كان سوء استعمال، فالمستأجر هو من يدفع…"
+      },
+      "coach_eg": "o inquilino = الساكن (المستأجر). Já estava assim = كانت كده من الأول.",
+      "expects": {
+        "intent_eg": "يعترض بأدب",
+        "examples_tl": [
+          "Eu não fiz nada. Já estava assim.",
+          "Não é culpa minha. A máquina é muito velha.",
+          "Desculpe, mas eu não fiz nada."
+        ],
+        "keywords": [
+          "não fiz",
+          "nao fiz",
+          "já estava",
+          "ja estava",
+          "velha",
+          "culpa"
+        ]
+      },
+      "help": {
+        "frame_tl": "Eu não fiz nada. Já estava assim.",
+        "eg": "بيلمّح إنك تدفع. اعترض بأدب: Eu não fiz nada. Já estava assim.",
+        "chips": [
+          "Eu não fiz nada. Já estava assim.",
+          "A máquina é muito velha."
+        ]
+      },
+      "reply": {
+        "tl": "Pronto, pronto. O técnico vê isso. 😊",
+        "ar": "حسنًا، حسنًا. الفني سيرى ذلك."
+      }
+    },
+    {
+      "id": "bye",
+      "min_tier": 1,
+      "says": {
+        "tl": "Pronto, então até amanhã.",
+        "ar": "حسنًا، إلى الغد إذن."
+      },
+      "expects": {
+        "intent_eg": "يشكره ويقفل",
+        "examples_tl": [
+          "Obrigado, senhor Carlos. Até amanhã!",
+          "Muito obrigado! Até amanhã.",
+          "Obrigado, boa tarde!"
+        ],
+        "keywords": [
+          "obrigad",
+          "adeus",
+          "até",
+          "ate",
+          "boa tarde",
+          "bom dia",
+          "xau",
+          "igualmente"
+        ]
+      },
+      "help": {
+        "frame_tl": "Obrigado! Até amanhã!",
+        "eg": "اقفل: Obrigado, senhor Carlos. Até amanhã!",
+        "chips": [
+          "Obrigado, senhor Carlos. Até amanhã!",
+          "Boa tarde!"
+        ],
+        "chips_f": [
+          "Obrigada, senhor Carlos. Até amanhã!",
+          "Boa tarde!"
+        ]
+      }
+    }
+  ],
+  "closing": {
+    "tl": "Até amanhã! 👋",
+    "ar": "إلى الغد!"
+  },
+  "summary_eg": "شرحت عطل في البيت، وحددت ميعاد، ودافعت عن نفسك بأدب 🔧",
+  "authored": true,
+  "item_ids": [
+    "phrase.good_afternoon",
+    "phrase.see_you_tomorrow",
+    "phrase.excuse_me",
+    "phrase.are_you_ok",
+    "phrase.phone_hello",
+    "phrase.i_did_nothing"
+  ]
+}

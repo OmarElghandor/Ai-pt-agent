@@ -1,0 +1,334 @@
+{
+  "id": "rp.financas",
+  "target_lang": "pt-PT",
+  "level": 5,
+  "order": 3,
+  "recommended_day": 54,
+  "emoji": "🏛️",
+  "title_tl": "Pedir o NIF nas Finanças",
+  "title_ar": "طلب الـ NIF في Finanças",
+  "place_eg": "مكتب Finanças (مصلحة الضرايب). Rita على الشباك.",
+  "task_eg": "اطلب رقم ضريبي (NIF): سحب الدور، الورق، العنوان، ومدة إقامتك.",
+  "learner_role_eg": "إنت لسه واصل البرتغال ومحتاج NIF.",
+  "character": {
+    "id": "rita"
+  },
+  "address": "o senhor",
+  "new_tl": [
+    "a senha",
+    "pedir o NIF",
+    "o passaporte",
+    "a morada",
+    "o sistema está em baixo",
+    "daqui a uma hora"
+  ],
+  "key_phrases": [
+    {
+      "tl": "Onde tiro a senha?",
+      "ar": "من أين آخذ رقم الانتظار؟"
+    },
+    {
+      "tl": "Queria pedir o NIF, por favor.",
+      "ar": "أريد طلب الرقم الضريبي من فضلك."
+    },
+    {
+      "tl": "Aqui está o passaporte.",
+      "ar": "هذا جواز السفر."
+    },
+    {
+      "tl": "Moro na Rua dos Anjos, número doze.",
+      "ar": "أسكن في شارع أنجوش، رقم اثني عشر."
+    },
+    {
+      "tl": "Há seis meses.",
+      "ar": "منذ ستة أشهر."
+    }
+  ],
+  "steps": [
+    {
+      "id": "ticket",
+      "min_tier": 1,
+      "says": {
+        "tl": "Bom dia. Tem senha?",
+        "ar": "صباح الخير. هل لديك رقم انتظار؟"
+      },
+      "coach_eg": "a senha = ورقة الدور اللي بتسحبها من الماكينة. أي مصلحة حكومية بتبدأ بيها.",
+      "expects": {
+        "intent_eg": "يرد معاه دور ولا لأ",
+        "examples_tl": [
+          "Sim, aqui está.",
+          "Não. Onde tiro a senha?",
+          "Sim, tenho."
+        ],
+        "keywords": [
+          "sim",
+          "aqui",
+          "tenho",
+          "não",
+          "nao",
+          "onde"
+        ],
+        "slot": "senha",
+        "options": [
+          {
+            "value": "não",
+            "keywords": [
+              "não",
+              "nao",
+              "onde"
+            ],
+            "reply": {
+              "tl": "É na máquina, à entrada. 👉 … Pronto, diga.",
+              "ar": "إنها في الآلة، عند المدخل… حسنًا، تفضّل."
+            }
+          },
+          {
+            "value": "sim",
+            "keywords": [
+              "sim",
+              "aqui",
+              "tenho"
+            ],
+            "reply": {
+              "tl": "Muito bem. Diga.",
+              "ar": "حسنًا. تفضّل."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Não. Onde tiro a senha?",
+        "eg": "a senha = رقم الدور من الماكينة. معاكش؟ Onde tiro a senha?",
+        "chips": [
+          "Sim, aqui está.",
+          "Não. Onde tiro a senha?"
+        ]
+      }
+    },
+    {
+      "id": "ask_nif",
+      "min_tier": 1,
+      "says": null,
+      "coach_eg": "NIF = número de contribuinte = رقمك الضريبي. محتاجه في كل حاجة هنا.",
+      "expects": {
+        "intent_eg": "يطلب NIF",
+        "examples_tl": [
+          "Queria pedir o NIF, por favor.",
+          "Preciso de um NIF.",
+          "Queria um número de contribuinte."
+        ],
+        "keywords": [
+          "nif",
+          "contribuinte",
+          "pedir"
+        ]
+      },
+      "help": {
+        "frame_tl": "Queria pedir o NIF, por favor.",
+        "eg": "قول طلبك: Queria pedir o NIF, por favor.",
+        "chips": [
+          "Queria pedir o NIF, por favor.",
+          "Preciso de um NIF."
+        ]
+      },
+      "reply": {
+        "tl": "Muito bem. Tem o passaporte?",
+        "ar": "حسنًا. هل معك جواز السفر؟"
+      }
+    },
+    {
+      "id": "passport",
+      "min_tier": 1,
+      "says": null,
+      "expects": {
+        "intent_eg": "يدّيها الباسبور",
+        "examples_tl": [
+          "Sim, aqui está.",
+          "Aqui está o passaporte.",
+          "Sim, tenho."
+        ],
+        "keywords": [
+          "sim",
+          "aqui",
+          "passaporte",
+          "tenho"
+        ]
+      },
+      "help": {
+        "frame_tl": "Sim, aqui está.",
+        "eg": "o passaporte = الباسبور. Sim, aqui está.",
+        "chips": [
+          "Sim, aqui está.",
+          "Aqui está o passaporte."
+        ]
+      },
+      "reply": {
+        "tl": "Obrigada. E qual é a sua morada?",
+        "ar": "شكرًا. وما هو عنوانك؟"
+      }
+    },
+    {
+      "id": "address",
+      "min_tier": 1,
+      "says": null,
+      "coach_eg": "a morada = العنوان. الشكل: Rua + الاسم, número + رقم, الدور + الشقة.",
+      "expects": {
+        "intent_eg": "يقول عنوانه",
+        "examples_tl": [
+          "Moro na Rua dos Anjos, número doze.",
+          "Rua dos Anjos, doze, segundo esquerdo.",
+          "Moro na Avenida Almirante Reis."
+        ],
+        "keywords": [
+          "rua",
+          "avenida",
+          "número",
+          "numero",
+          "moro",
+          "travessa",
+          "largo"
+        ],
+        "free_answer": true
+      },
+      "help": {
+        "frame_tl": "Moro na Rua ___, número ___.",
+        "eg": "a morada = العنوان. Moro na Rua … número …",
+        "chips": [
+          "Moro na Rua dos Anjos, número doze.",
+          "Rua dos Anjos, doze, segundo esquerdo."
+        ]
+      },
+      "reply": {
+        "tl": "Muito bem.",
+        "ar": "حسنًا."
+      }
+    },
+    {
+      "id": "how_long",
+      "min_tier": 2,
+      "says": {
+        "tl": "Mora em Portugal há quanto tempo?",
+        "ar": "منذ متى تسكن في البرتغال؟",
+        "ar_f": "منذ متى تسكنين في البرتغال؟"
+      },
+      "expects": {
+        "intent_eg": "يقول بقاله قد إيه",
+        "examples_tl": [
+          "Há seis meses.",
+          "Há um ano.",
+          "Há duas semanas."
+        ],
+        "keywords": [
+          "há",
+          "ha",
+          "meses",
+          "mês",
+          "ano",
+          "anos",
+          "semanas",
+          "dias"
+        ]
+      },
+      "help": {
+        "frame_tl": "Há seis meses.",
+        "eg": "há quanto tempo = بقالك قد إيه. Há seis meses. = بقالي 6 شهور",
+        "chips": [
+          "Há seis meses.",
+          "Há um ano."
+        ]
+      },
+      "reply": {
+        "tl": "Muito bem.",
+        "ar": "حسنًا."
+      }
+    },
+    {
+      "id": "system_down",
+      "min_tier": 3,
+      "says": {
+        "tl": "Ai… o sistema está em baixo. Pode voltar daqui a uma hora?",
+        "ar": "آه… النظام متوقف. هل يمكنك العودة بعد ساعة؟",
+        "ar_f": "آه… النظام متوقف. هل يمكنكِ العودة بعد ساعة؟"
+      },
+      "coach_eg": "o sistema está em baixo = السيستم واقع. بيحصل، فخلّيك هادي.",
+      "expects": {
+        "intent_eg": "يرد على وقوع السيستم",
+        "examples_tl": [
+          "Está bem, volto daqui a uma hora.",
+          "Posso esperar aqui?",
+          "A sério? Está bem."
+        ],
+        "keywords": [
+          "volto",
+          "está bem",
+          "esperar",
+          "posso",
+          "sério",
+          "serio"
+        ]
+      },
+      "help": {
+        "frame_tl": "Posso esperar aqui?",
+        "eg": "السيستم واقع! تستنى؟ Posso esperar aqui? · ترجع؟ Volto daqui a uma hora.",
+        "chips": [
+          "Posso esperar aqui?",
+          "Está bem, volto daqui a uma hora."
+        ]
+      },
+      "reply": {
+        "tl": "Ah, espere… já voltou! Que sorte. 😅",
+        "ar": "آه، انتظر… لقد عاد! يا للحظ."
+      }
+    },
+    {
+      "id": "done",
+      "min_tier": 1,
+      "says": {
+        "tl": "Pronto, aqui tem o seu NIF. 📄",
+        "ar": "تفضّل، هذا رقمك الضريبي."
+      },
+      "expects": {
+        "intent_eg": "يشكرها",
+        "examples_tl": [
+          "Muito obrigado! Bom dia!",
+          "Obrigado pela ajuda!",
+          "Obrigada! Bom dia!"
+        ],
+        "keywords": [
+          "obrigad",
+          "adeus",
+          "até",
+          "ate",
+          "boa tarde",
+          "bom dia",
+          "xau",
+          "igualmente"
+        ]
+      },
+      "help": {
+        "frame_tl": "Muito obrigado! Bom dia!",
+        "eg": "خلصت! اشكرها: Muito obrigado! Bom dia!",
+        "chips": [
+          "Muito obrigado! Bom dia!",
+          "Obrigado pela ajuda!"
+        ],
+        "chips_f": [
+          "Muito obrigada! Bom dia!",
+          "Obrigada pela ajuda!"
+        ]
+      }
+    }
+  ],
+  "closing": {
+    "tl": "Bom dia! 👋",
+    "ar": "يومًا سعيدًا!"
+  },
+  "summary_eg": "خلّصت أول ورقة حكومية بالبرتغالي: الدور، الباسبور، العنوان، ومدة الإقامة 🏛️",
+  "authored": true,
+  "item_ids": [
+    "phrase.good_morning",
+    "phrase.receipt_nif",
+    "phrase.are_you_ok",
+    "phrase.really"
+  ]
+}

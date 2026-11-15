@@ -1,0 +1,410 @@
+{
+  "id": "rp.farmacia",
+  "target_lang": "pt-PT",
+  "level": 4,
+  "order": 2,
+  "recommended_day": 40,
+  "emoji": "💊",
+  "title_tl": "Na farmácia",
+  "title_ar": "في الصيدلية",
+  "place_eg": "صيدلية الحي. Sofia الصيدلانية.",
+  "task_eg": "قول عندك إيه، رد على أسئلتها، واسأل محتاج روشتة ولا لأ وتاخده إزاي.",
+  "learner_role_eg": "إنت عندك كحة أو صداع.",
+  "character": {
+    "id": "sofia"
+  },
+  "address": "o senhor",
+  "new_tl": [
+    "Em que posso ajudar?",
+    "desde ontem",
+    "há dois dias",
+    "a alergia",
+    "depois das refeições",
+    "As melhoras!"
+  ],
+  "key_phrases": [
+    {
+      "tl": "Queria algo para a tosse.",
+      "ar": "أريد شيئًا للسعال."
+    },
+    {
+      "tl": "Dói-me a cabeça.",
+      "ar": "رأسي يؤلمني."
+    },
+    {
+      "tl": "Desde ontem.",
+      "ar": "منذ أمس."
+    },
+    {
+      "tl": "Precisa de receita?",
+      "ar": "هل يحتاج إلى وصفة؟"
+    },
+    {
+      "tl": "Quantas vezes por dia?",
+      "ar": "كم مرة في اليوم؟"
+    },
+    {
+      "tl": "As melhoras!",
+      "ar": "أتمنى لك الشفاء!"
+    }
+  ],
+  "steps": [
+    {
+      "id": "problem",
+      "min_tier": 1,
+      "says": {
+        "tl": "Boa tarde! Em que posso ajudar?",
+        "ar": "مساء الخير! كيف أستطيع المساعدة؟"
+      },
+      "coach_eg": "Em que posso ajudar? = أقدر أساعدك في إيه؟",
+      "expects": {
+        "intent_eg": "يقول عنده إيه",
+        "examples_tl": [
+          "Queria algo para a tosse.",
+          "Dói-me a cabeça.",
+          "Boa tarde. Tenho tosse."
+        ],
+        "keywords": [
+          "tosse",
+          "cabeça",
+          "cabeca",
+          "febre",
+          "garganta",
+          "dói",
+          "doi",
+          "gripe",
+          "algo para"
+        ],
+        "slot": "problem",
+        "options": [
+          {
+            "value": "tosse",
+            "keywords": [
+              "tosse"
+            ],
+            "reply": {
+              "tl": "Para a tosse…",
+              "ar": "للسعال…"
+            }
+          },
+          {
+            "value": "cabeça",
+            "keywords": [
+              "cabeça",
+              "cabeca"
+            ],
+            "reply": {
+              "tl": "Dói-lhe a cabeça…",
+              "ar": "رأسك يؤلمك…"
+            }
+          },
+          {
+            "value": "garganta",
+            "keywords": [
+              "garganta"
+            ],
+            "reply": {
+              "tl": "A garganta…",
+              "ar": "الحلق…"
+            }
+          },
+          {
+            "value": "febre",
+            "keywords": [
+              "febre",
+              "gripe"
+            ],
+            "reply": {
+              "tl": "Hmm…",
+              "ar": "همم…"
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Queria algo para a ___.",
+        "eg": "Em que posso ajudar? = أساعدك في إيه؟ Queria algo para a tosse.",
+        "chips": [
+          "Queria algo para a tosse.",
+          "Dói-me a cabeça."
+        ]
+      }
+    },
+    {
+      "id": "fever",
+      "min_tier": 1,
+      "says": {
+        "tl": "Tem febre?",
+        "ar": "هل لديك حرارة؟"
+      },
+      "expects": {
+        "intent_eg": "يرد عنده حرارة ولا لأ",
+        "examples_tl": [
+          "Sim, um pouco.",
+          "Não, não tenho.",
+          "Não."
+        ],
+        "keywords": [
+          "sim",
+          "não",
+          "nao",
+          "pouco",
+          "tenho"
+        ]
+      },
+      "help": {
+        "frame_tl": "Não, não tenho.",
+        "eg": "a febre = الحرارة. Sim, um pouco. · Não, não tenho.",
+        "chips": [
+          "Sim, um pouco.",
+          "Não, não tenho."
+        ]
+      },
+      "reply": {
+        "tl": "Está bem.",
+        "ar": "حسنًا."
+      }
+    },
+    {
+      "id": "since",
+      "min_tier": 2,
+      "says": {
+        "tl": "Desde quando?",
+        "ar": "منذ متى؟"
+      },
+      "coach_eg": "desde ontem = من امبارح · há dois dias = بقالي يومين",
+      "expects": {
+        "intent_eg": "يقول من إمتى",
+        "examples_tl": [
+          "Desde ontem.",
+          "Há dois dias.",
+          "Desde hoje de manhã."
+        ],
+        "keywords": [
+          "ontem",
+          "dias",
+          "desde",
+          "há",
+          "hoje",
+          "semana"
+        ]
+      },
+      "help": {
+        "frame_tl": "Desde ontem.",
+        "eg": "Desde quando? = من إمتى؟ Desde ontem. = من امبارح",
+        "chips": [
+          "Desde ontem.",
+          "Há dois dias."
+        ]
+      },
+      "reply": {
+        "tl": "Muito bem.",
+        "ar": "حسنًا."
+      }
+    },
+    {
+      "id": "allergy",
+      "min_tier": 1,
+      "says": {
+        "tl": "Tem alguma alergia a medicamentos?",
+        "ar": "هل لديك أي حساسية من الأدوية؟"
+      },
+      "coach_eg": "سؤال مهم: عندك حساسية من أدوية؟ لو أيوه قول الاسم.",
+      "expects": {
+        "intent_eg": "يرد على سؤال الحساسية",
+        "examples_tl": [
+          "Não, não tenho.",
+          "Sim, à penicilina.",
+          "Não."
+        ],
+        "keywords": [
+          "não",
+          "nao",
+          "sim",
+          "alergia",
+          "penicilina"
+        ]
+      },
+      "help": {
+        "frame_tl": "Não, não tenho.",
+        "eg": "a alergia = حساسية. مهم ترد صح: Não, não tenho.",
+        "chips": [
+          "Não, não tenho.",
+          "Sim, à penicilina."
+        ]
+      },
+      "reply": {
+        "tl": "Então leve este. É muito bom. 💊",
+        "ar": "إذن خذ هذا. إنه جيد جدًا."
+      }
+    },
+    {
+      "id": "prescription",
+      "min_tier": 1,
+      "says": null,
+      "expects": {
+        "intent_eg": "يسأل عن الروشتة أو السعر",
+        "examples_tl": [
+          "Precisa de receita?",
+          "Quanto custa?",
+          "É preciso receita?"
+        ],
+        "keywords": [
+          "receita",
+          "quanto"
+        ],
+        "slot": "ask",
+        "options": [
+          {
+            "value": "receita",
+            "keywords": [
+              "receita"
+            ],
+            "reply": {
+              "tl": "Não, não precisa. Custa seis euros e noventa.",
+              "ar": "لا، لا يحتاج. سعره ستة يوروهات وتسعون سنتًا."
+            }
+          },
+          {
+            "value": "preço",
+            "keywords": [
+              "quanto"
+            ],
+            "reply": {
+              "tl": "Seis euros e noventa. E não precisa de receita.",
+              "ar": "ستة يوروهات وتسعون سنتًا. ولا يحتاج إلى وصفة."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Precisa de receita?",
+        "eg": "اسأل: Precisa de receita? = محتاج روشتة؟",
+        "chips": [
+          "Precisa de receita?",
+          "Quanto custa?"
+        ]
+      }
+    },
+    {
+      "id": "dosage",
+      "min_tier": 1,
+      "says": null,
+      "expects": {
+        "intent_eg": "يسأل ياخده كام مرة",
+        "examples_tl": [
+          "Quantas vezes por dia?",
+          "Como tomo?",
+          "Quantas vezes por dia tomo?"
+        ],
+        "keywords": [
+          "quantas",
+          "vezes",
+          "como tomo",
+          "tomo"
+        ]
+      },
+      "help": {
+        "frame_tl": "Quantas vezes por dia?",
+        "eg": "اسأل: Quantas vezes por dia? = كام مرة في اليوم؟",
+        "chips": [
+          "Quantas vezes por dia?",
+          "Como tomo?"
+        ]
+      },
+      "reply": {
+        "tl": "Três vezes por dia, depois das refeições.",
+        "ar": "ثلاث مرات في اليوم، بعد الوجبات."
+      }
+    },
+    {
+      "id": "doctor",
+      "min_tier": 3,
+      "says": {
+        "tl": "Se não melhorar em três dias, vá ao médico, está bem?",
+        "ar": "إذا لم تتحسن خلال ثلاثة أيام، اذهب إلى الطبيب، حسنًا؟",
+        "ar_f": "إذا لم تتحسني خلال ثلاثة أيام، اذهبي إلى الطبيب، حسنًا؟"
+      },
+      "expects": {
+        "intent_eg": "يقول حاضر",
+        "examples_tl": [
+          "Está bem, obrigado.",
+          "Está bem. Obrigado pela ajuda!",
+          "Claro."
+        ],
+        "keywords": [
+          "está bem",
+          "obrigad",
+          "claro"
+        ]
+      },
+      "help": {
+        "frame_tl": "Está bem, obrigado.",
+        "eg": "لو ما اتحسنتش في 3 أيام روح للدكتور. قول: Está bem, obrigado.",
+        "chips": [
+          "Está bem, obrigado.",
+          "Obrigado pela ajuda!"
+        ],
+        "chips_f": [
+          "Está bem, obrigada.",
+          "Obrigada pela ajuda!"
+        ]
+      }
+    },
+    {
+      "id": "bye",
+      "min_tier": 1,
+      "says": {
+        "tl": "As melhoras!",
+        "ar": "أتمنى لك الشفاء!"
+      },
+      "coach_eg": "As melhoras! = «ألف سلامة». هتسمعها في أي صيدلية.",
+      "expects": {
+        "intent_eg": "يشكرها",
+        "examples_tl": [
+          "Obrigado! Boa tarde!",
+          "Muito obrigado!",
+          "Obrigada!"
+        ],
+        "keywords": [
+          "obrigad",
+          "adeus",
+          "até",
+          "ate",
+          "boa tarde",
+          "bom dia",
+          "xau",
+          "igualmente"
+        ]
+      },
+      "help": {
+        "frame_tl": "Obrigado! Boa tarde!",
+        "eg": "As melhoras! = ألف سلامة. رد: Obrigado!",
+        "chips": [
+          "Obrigado! Boa tarde!",
+          "Muito obrigado!"
+        ],
+        "chips_f": [
+          "Obrigada! Boa tarde!",
+          "Muito obrigada!"
+        ]
+      }
+    }
+  ],
+  "closing": {
+    "tl": "As melhoras! 👋",
+    "ar": "أتمنى لك الشفاء!"
+  },
+  "summary_eg": "شرحت تعبك ورديت على الحساسية وعرفت الجرعة. الجمل دي ممكن تحتاجها بجد 💊",
+  "authored": true,
+  "item_ids": [
+    "phrase.good_afternoon",
+    "phrase.are_you_ok",
+    "phrase.my_head_hurts",
+    "word.q_when",
+    "phrase.need_prescription",
+    "phrase.something_for_cough",
+    "phrase.three_times_a_day",
+    "word.cough"
+  ]
+}

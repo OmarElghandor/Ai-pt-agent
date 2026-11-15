@@ -1,0 +1,297 @@
+{
+  "id": "rp.comboio",
+  "target_lang": "pt-PT",
+  "level": 3,
+  "order": 2,
+  "recommended_day": 32,
+  "emoji": "🚆",
+  "title_tl": "Um bilhete para Sintra",
+  "title_ar": "تذكرة قطر لسينترا",
+  "place_eg": "شباك التذاكر في محطة Rossio الصبح.",
+  "task_eg": "اشتري تذكرة لسينترا، اختار رايح بس ولا رايح جاي، وادفع، واسأل القطر الجاي إمتى.",
+  "learner_role_eg": "إنت رايح تتفسّح في سينترا.",
+  "character": {
+    "id": null,
+    "name": "Paula",
+    "gender": "f",
+    "role_eg": "موظفة الشباك"
+  },
+  "address": "o senhor",
+  "new_tl": [
+    "só ida",
+    "ida e volta",
+    "o próximo comboio",
+    "a linha",
+    "a greve",
+    "Boa viagem!"
+  ],
+  "key_phrases": [
+    {
+      "tl": "Um bilhete para Sintra, por favor.",
+      "ar": "تذكرة إلى سينترا من فضلك."
+    },
+    {
+      "tl": "Ida e volta.",
+      "ar": "ذهاب وعودة."
+    },
+    {
+      "tl": "Só ida.",
+      "ar": "ذهاب فقط."
+    },
+    {
+      "tl": "A que horas é o próximo comboio?",
+      "ar": "متى القطار القادم؟"
+    },
+    {
+      "tl": "Boa viagem!",
+      "ar": "رحلة سعيدة!"
+    }
+  ],
+  "steps": [
+    {
+      "id": "ticket",
+      "min_tier": 1,
+      "says": {
+        "tl": "Bom dia. Diga.",
+        "ar": "صباح الخير. تفضّل."
+      },
+      "expects": {
+        "intent_eg": "يطلب تذكرة لسينترا",
+        "examples_tl": [
+          "Um bilhete para Sintra, por favor.",
+          "Bom dia! Queria um bilhete para Sintra.",
+          "Para Sintra, por favor."
+        ],
+        "keywords": [
+          "bilhete",
+          "sintra"
+        ]
+      },
+      "help": {
+        "frame_tl": "Um bilhete para Sintra, por favor.",
+        "eg": "اطلب: Um bilhete para Sintra, por favor.",
+        "chips": [
+          "Um bilhete para Sintra, por favor.",
+          "Queria um bilhete para Sintra."
+        ]
+      },
+      "reply": {
+        "tl": "Só ida ou ida e volta?",
+        "ar": "ذهاب فقط أم ذهاب وعودة؟"
+      }
+    },
+    {
+      "id": "return",
+      "min_tier": 1,
+      "says": null,
+      "coach_eg": "só ida = رايح بس · ida e volta = رايح وراجع",
+      "expects": {
+        "intent_eg": "يختار رايح بس أو رايح جاي",
+        "examples_tl": [
+          "Ida e volta, por favor.",
+          "Só ida.",
+          "Ida e volta."
+        ],
+        "keywords": [
+          "ida",
+          "volta",
+          "só"
+        ],
+        "slot": "trip",
+        "options": [
+          {
+            "value": "ida e volta",
+            "keywords": [
+              "volta"
+            ],
+            "reply": {
+              "tl": "Ida e volta… são quatro euros e oitenta.",
+              "ar": "ذهاب وعودة… المجموع أربعة يوروهات وثمانون سنتًا."
+            }
+          },
+          {
+            "value": "só ida",
+            "keywords": [
+              "só ida",
+              "so ida",
+              "só",
+              "ida"
+            ],
+            "reply": {
+              "tl": "Só ida… são dois euros e quarenta.",
+              "ar": "ذهاب فقط… المجموع يوروان وأربعون سنتًا."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Ida e volta, por favor.",
+        "eg": "só ida = رايح بس · ida e volta = رايح جاي",
+        "chips": [
+          "Ida e volta, por favor.",
+          "Só ida, por favor."
+        ]
+      }
+    },
+    {
+      "id": "pay",
+      "min_tier": 1,
+      "says": null,
+      "expects": {
+        "intent_eg": "يدفع",
+        "examples_tl": [
+          "Aceita cartão?",
+          "Com cartão, por favor.",
+          "Em dinheiro. Aqui tem."
+        ],
+        "keywords": [
+          "cartão",
+          "cartao",
+          "dinheiro",
+          "aqui tem"
+        ]
+      },
+      "help": {
+        "frame_tl": "Aceita cartão?",
+        "eg": "Aceita cartão? أو Em dinheiro.",
+        "chips": [
+          "Aceita cartão?",
+          "Em dinheiro."
+        ]
+      },
+      "reply": {
+        "tl": "Sim, pode passar. Aqui tem o bilhete. 🎫",
+        "ar": "نعم، يمكنك تمرير البطاقة. هذه تذكرتك."
+      }
+    },
+    {
+      "id": "next_train",
+      "min_tier": 2,
+      "says": null,
+      "coach_eg": "o próximo comboio = القطر الجاي · a linha = الرصيف",
+      "expects": {
+        "intent_eg": "يسأل القطر الجاي إمتى",
+        "examples_tl": [
+          "A que horas é o próximo comboio?",
+          "Quando é o próximo comboio?",
+          "A que horas sai?"
+        ],
+        "keywords": [
+          "que horas",
+          "quando",
+          "próximo",
+          "proximo",
+          "sai"
+        ]
+      },
+      "help": {
+        "frame_tl": "A que horas é o próximo comboio?",
+        "eg": "اسأل القطر الجاي إمتى: A que horas é o próximo comboio?",
+        "chips": [
+          "A que horas é o próximo comboio?",
+          "Quando é o próximo?"
+        ]
+      },
+      "reply": {
+        "tl": "Às dez e vinte, na linha dois.",
+        "ar": "في العاشرة وعشرين دقيقة، على الرصيف الثاني."
+      }
+    },
+    {
+      "id": "strike",
+      "min_tier": 3,
+      "says": {
+        "tl": "Ah, atenção: hoje há greve. Há poucos comboios.",
+        "ar": "آه، انتبه: اليوم هناك إضراب. القطارات قليلة."
+      },
+      "coach_eg": "greve = إضراب. بيحصل في المواصلات هنا، فاسأل دايمًا.",
+      "expects": {
+        "intent_eg": "يرد على خبر الإضراب",
+        "examples_tl": [
+          "A sério? Obrigado pela informação.",
+          "Ai, que chatice! Obrigado.",
+          "Está bem, obrigado."
+        ],
+        "keywords": [
+          "sério",
+          "serio",
+          "obrigad",
+          "está bem",
+          "chatice"
+        ]
+      },
+      "help": {
+        "frame_tl": "A sério? Obrigado!",
+        "eg": "a greve = إضراب (بيحصل كتير!). قول: A sério? Obrigado!",
+        "chips": [
+          "A sério? Obrigado!",
+          "Que chatice! Obrigado."
+        ],
+        "chips_f": [
+          "A sério? Obrigada!",
+          "Que chatice! Obrigada."
+        ]
+      },
+      "reply": {
+        "tl": "De nada.",
+        "ar": "عفوًا."
+      }
+    },
+    {
+      "id": "bye",
+      "min_tier": 1,
+      "says": {
+        "tl": "Boa viagem!",
+        "ar": "رحلة سعيدة!"
+      },
+      "expects": {
+        "intent_eg": "يشكرها ويمشي",
+        "examples_tl": [
+          "Obrigado! Bom dia!",
+          "Obrigada!",
+          "Muito obrigado!"
+        ],
+        "keywords": [
+          "obrigad",
+          "adeus",
+          "até",
+          "ate",
+          "boa tarde",
+          "bom dia",
+          "xau",
+          "igualmente",
+          "combinado"
+        ]
+      },
+      "help": {
+        "frame_tl": "Obrigado! Bom dia!",
+        "eg": "Boa viagem = رحلة سعيدة. رد: Obrigado!",
+        "chips": [
+          "Obrigado! Bom dia!",
+          "Muito obrigado!"
+        ],
+        "chips_f": [
+          "Obrigada! Bom dia!",
+          "Muito obrigada!"
+        ]
+      }
+    }
+  ],
+  "closing": {
+    "tl": "Boa viagem! 🚆",
+    "ar": "رحلة سعيدة!"
+  },
+  "summary_eg": "اشتريت تذكرة قطر واخترت النوع وسألت عن الميعاد والرصيف 🚆",
+  "authored": true,
+  "item_ids": [
+    "phrase.good_morning",
+    "phrase.youre_welcome",
+    "phrase.card_ok",
+    "phrase.cash",
+    "phrase.are_you_ok",
+    "word.q_when",
+    "word.ticket",
+    "phrase.ticket_to",
+    "phrase.really"
+  ]
+}

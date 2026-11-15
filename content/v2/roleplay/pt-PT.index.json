@@ -1,0 +1,282 @@
+{
+  "target_lang": "pt-PT",
+  "tiers": [
+    {
+      "tier": 1,
+      "name_eg": "خطوة بخطوة",
+      "desc_eg": "الترجمة ظاهرة، والاختيارات قدامك، والكوتش بيشرح كل جملة"
+    },
+    {
+      "tier": 2,
+      "name_eg": "لوحدك",
+      "desc_eg": "الترجمة مخفية، والاختيارات بتظهر بس لو وقفت، ومواقف أكتر"
+    },
+    {
+      "tier": 3,
+      "name_eg": "زي الحقيقة",
+      "desc_eg": "من غير ترجمة، وبسرعة عادية، ومفاجآت زي الحياة"
+    }
+  ],
+  "levels": [
+    {
+      "level": 1,
+      "name_eg": "أول خطوات",
+      "name_en": "First steps",
+      "scenarios": [
+        {
+          "id": "rp.cafe",
+          "level": 1,
+          "order": 1,
+          "recommended_day": 9,
+          "emoji": "☕",
+          "title_tl": "Um café, por favor",
+          "title_ar": "في الكافيه",
+          "steps": 8,
+          "steps_by_tier": [
+            5,
+            7,
+            8
+          ]
+        },
+        {
+          "id": "rp.mercado",
+          "level": 1,
+          "order": 2,
+          "recommended_day": 9,
+          "emoji": "🍊",
+          "title_tl": "Na banca do mercado",
+          "title_ar": "في فرشة السوق",
+          "steps": 8,
+          "steps_by_tier": [
+            7,
+            7,
+            8
+          ]
+        },
+        {
+          "id": "rp.supermercado",
+          "level": 1,
+          "order": 3,
+          "recommended_day": 9,
+          "emoji": "🛒",
+          "title_tl": "No supermercado",
+          "title_ar": "في السوبر ماركت",
+          "steps": 8,
+          "steps_by_tier": [
+            6,
+            7,
+            8
+          ]
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "name_eg": "الناس اللي حواليك",
+      "name_en": "People around you",
+      "scenarios": [
+        {
+          "id": "rp.encomenda",
+          "level": 2,
+          "order": 1,
+          "recommended_day": 11,
+          "emoji": "📦",
+          "title_tl": "A encomenda",
+          "title_ar": "الطرد على الباب",
+          "steps": 5,
+          "steps_by_tier": [
+            4,
+            5,
+            5
+          ]
+        },
+        {
+          "id": "rp.restaurante",
+          "level": 2,
+          "order": 2,
+          "recommended_day": 16,
+          "emoji": "🍽️",
+          "title_tl": "Almoço no restaurante",
+          "title_ar": "غدا في مطعم",
+          "steps": 10,
+          "steps_by_tier": [
+            8,
+            9,
+            10
+          ]
+        },
+        {
+          "id": "rp.vizinha",
+          "level": 2,
+          "order": 3,
+          "recommended_day": 20,
+          "emoji": "🏢",
+          "title_tl": "A vizinha do primeiro andar",
+          "title_ar": "الجارة على السلم",
+          "steps": 7,
+          "steps_by_tier": [
+            5,
+            6,
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "name_eg": "تتحرك في المدينة",
+      "name_en": "Getting around",
+      "scenarios": [
+        {
+          "id": "rp.telefone",
+          "level": 3,
+          "order": 1,
+          "recommended_day": 30,
+          "emoji": "📞",
+          "title_tl": "Vamos ao cinema?",
+          "title_ar": "مكالمة لصاحبك",
+          "steps": 7,
+          "steps_by_tier": [
+            6,
+            7,
+            7
+          ]
+        },
+        {
+          "id": "rp.comboio",
+          "level": 3,
+          "order": 2,
+          "recommended_day": 32,
+          "emoji": "🚆",
+          "title_tl": "Um bilhete para Sintra",
+          "title_ar": "تذكرة قطر لسينترا",
+          "steps": 6,
+          "steps_by_tier": [
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "id": "rp.direcoes",
+          "level": 3,
+          "order": 3,
+          "recommended_day": 34,
+          "emoji": "🧭",
+          "title_tl": "Onde fica o metro?",
+          "title_ar": "تايه في وسط البلد",
+          "steps": 6,
+          "steps_by_tier": [
+            4,
+            5,
+            6
+          ]
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "name_eg": "مواعيد وصحة وتسوّق",
+      "name_en": "Appointments, health, shopping",
+      "scenarios": [
+        {
+          "id": "rp.consulta",
+          "level": 4,
+          "order": 1,
+          "recommended_day": 38,
+          "emoji": "🩺",
+          "title_tl": "Marcar uma consulta",
+          "title_ar": "حجز ميعاد دكتور",
+          "steps": 8,
+          "steps_by_tier": [
+            6,
+            7,
+            8
+          ]
+        },
+        {
+          "id": "rp.farmacia",
+          "level": 4,
+          "order": 2,
+          "recommended_day": 40,
+          "emoji": "💊",
+          "title_tl": "Na farmácia",
+          "title_ar": "في الصيدلية",
+          "steps": 8,
+          "steps_by_tier": [
+            6,
+            7,
+            8
+          ]
+        },
+        {
+          "id": "rp.roupa",
+          "level": 4,
+          "order": 3,
+          "recommended_day": 46,
+          "emoji": "👕",
+          "title_tl": "Na loja de roupa",
+          "title_ar": "في محل هدوم",
+          "steps": 9,
+          "steps_by_tier": [
+            7,
+            8,
+            9
+          ]
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "name_eg": "الحياة هنا",
+      "name_en": "Living here",
+      "scenarios": [
+        {
+          "id": "rp.quarto",
+          "level": 5,
+          "order": 1,
+          "recommended_day": 49,
+          "emoji": "🏠",
+          "title_tl": "Ver um quarto para alugar",
+          "title_ar": "معاينة أوضة للإيجار",
+          "steps": 8,
+          "steps_by_tier": [
+            6,
+            7,
+            8
+          ]
+        },
+        {
+          "id": "rp.avaria",
+          "level": 5,
+          "order": 2,
+          "recommended_day": 52,
+          "emoji": "🔧",
+          "title_tl": "A máquina de lavar avariou",
+          "title_ar": "الغسالة باظت",
+          "steps": 8,
+          "steps_by_tier": [
+            6,
+            7,
+            8
+          ]
+        },
+        {
+          "id": "rp.financas",
+          "level": 5,
+          "order": 3,
+          "recommended_day": 54,
+          "emoji": "🏛️",
+          "title_tl": "Pedir o NIF nas Finanças",
+          "title_ar": "طلب الـ NIF في Finanças",
+          "steps": 7,
+          "steps_by_tier": [
+            5,
+            6,
+            7
+          ]
+        }
+      ]
+    }
+  ]
+}

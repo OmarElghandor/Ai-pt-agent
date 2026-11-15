@@ -1,0 +1,436 @@
+{
+  "id": "rp.roupa",
+  "target_lang": "pt-PT",
+  "level": 4,
+  "order": 3,
+  "recommended_day": 46,
+  "emoji": "👕",
+  "title_tl": "Na loja de roupa",
+  "title_ar": "في محل هدوم",
+  "place_eg": "محل هدوم في وسط البلد، وقت الأوكازيون. Joana البيّاعة.",
+  "task_eg": "قيس حاجة، اطلب مقاس أو لون تاني، اسأل السعر، واشتري.",
+  "learner_role_eg": "إنت بتشتري هدوم شتوي.",
+  "character": {
+    "id": null,
+    "name": "Joana",
+    "gender": "f",
+    "role_eg": "البيّاعة"
+  },
+  "address": "o senhor",
+  "new_tl": [
+    "Estou só a ver.",
+    "Esteja à vontade!",
+    "o provador",
+    "Que tal?",
+    "em saldo",
+    "o talão de oferta"
+  ],
+  "key_phrases": [
+    {
+      "tl": "Estou só a ver, obrigado.",
+      "ar": "أنا أتفرّج فقط، شكرًا.",
+      "tl_f": "Estou só a ver, obrigada."
+    },
+    {
+      "tl": "Posso experimentar?",
+      "ar": "هل يمكنني تجربته؟"
+    },
+    {
+      "tl": "Tem noutro tamanho?",
+      "ar": "هل لديك مقاس آخر؟"
+    },
+    {
+      "tl": "Quanto custa esta?",
+      "ar": "بكم هذه؟"
+    },
+    {
+      "tl": "Levo esta.",
+      "ar": "سآخذ هذه."
+    }
+  ],
+  "steps": [
+    {
+      "id": "browse",
+      "min_tier": 1,
+      "says": {
+        "tl": "Olá, boa tarde! Está à procura de alguma coisa?",
+        "ar": "مرحبًا، مساء الخير! هل تبحث عن شيء ما؟",
+        "ar_f": "مرحبًا، مساء الخير! هل تبحثين عن شيء ما؟"
+      },
+      "coach_eg": "Estou só a ver = «بتفرّج بس». أشهر جملة في المحلات هنا.",
+      "expects": {
+        "intent_eg": "يقول بيتفرج أو عايز حاجة",
+        "examples_tl": [
+          "Estou só a ver, obrigado.",
+          "Sim, queria uma camisola.",
+          "Boa tarde! Só a ver."
+        ],
+        "keywords": [
+          "só a ver",
+          "so a ver",
+          "ver",
+          "camisola",
+          "casaco",
+          "calças",
+          "camisa",
+          "queria"
+        ],
+        "examples_tl_f": [
+          "Estou só a ver, obrigada."
+        ],
+        "slot": "browse",
+        "options": [
+          {
+            "value": "ver",
+            "keywords": [
+              "ver"
+            ],
+            "reply": {
+              "tl": "Esteja à vontade! 😊",
+              "ar": "خذ راحتك!",
+              "ar_f": "خذي راحتك!"
+            }
+          },
+          {
+            "value": "quer",
+            "keywords": [
+              "camisola",
+              "casaco",
+              "calças",
+              "camisa",
+              "queria"
+            ],
+            "reply": {
+              "tl": "Claro, estão ali. 👉",
+              "ar": "بالطبع، إنها هناك."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Estou só a ver, obrigado.",
+        "eg": "بتسألك بتدوّر على حاجة؟ لو بتتفرج: Estou só a ver, obrigado.",
+        "chips": [
+          "Estou só a ver, obrigado.",
+          "Sim, queria uma camisola."
+        ],
+        "chips_f": [
+          "Estou só a ver, obrigada.",
+          "Sim, queria uma camisola."
+        ]
+      }
+    },
+    {
+      "id": "try",
+      "min_tier": 1,
+      "says": {
+        "tl": "Então? Gosta desta camisola azul? É nova.",
+        "ar": "إذن؟ هل تعجبك هذه الكنزة الزرقاء؟ إنها جديدة."
+      },
+      "expects": {
+        "intent_eg": "يطلب يقيسها",
+        "examples_tl": [
+          "Sim! Posso experimentar?",
+          "Gosto. Posso experimentar esta?",
+          "Posso experimentar?"
+        ],
+        "keywords": [
+          "experimentar",
+          "provador",
+          "gosto",
+          "sim"
+        ]
+      },
+      "help": {
+        "frame_tl": "Posso experimentar?",
+        "eg": "عايز تقيس؟ Posso experimentar?",
+        "chips": [
+          "Posso experimentar?",
+          "Gosto! Posso experimentar?"
+        ]
+      },
+      "reply": {
+        "tl": "Claro! O provador é ali. 👉",
+        "ar": "بالطبع! غرفة القياس هناك."
+      }
+    },
+    {
+      "id": "size",
+      "min_tier": 1,
+      "says": {
+        "tl": "Então, que tal?",
+        "ar": "إذن، كيف هي؟"
+      },
+      "coach_eg": "Que tal? = «إيه رأيك / عاملة إزاي؟»",
+      "expects": {
+        "intent_eg": "يقول المقاس مش مظبوط ويطلب غيره",
+        "examples_tl": [
+          "É pequena. Tem noutro tamanho?",
+          "Tem maior?",
+          "É um bocado grande. Tem mais pequeno?"
+        ],
+        "keywords": [
+          "tamanho",
+          "maior",
+          "pequen",
+          "grande"
+        ]
+      },
+      "help": {
+        "frame_tl": "Tem noutro tamanho?",
+        "eg": "Que tal? = إيه رأيك؟ لو المقاس مش مظبوط: Tem noutro tamanho?",
+        "chips": [
+          "É pequena. Tem noutro tamanho?",
+          "Tem maior?"
+        ]
+      },
+      "reply": {
+        "tl": "Tenho o L. Aqui está.",
+        "ar": "لدي مقاس L. تفضّل."
+      }
+    },
+    {
+      "id": "colour",
+      "min_tier": 2,
+      "says": {
+        "tl": "E a cor? Também temos em verde e em preto.",
+        "ar": "وماذا عن اللون؟ لدينا أيضًا الأخضر والأسود."
+      },
+      "expects": {
+        "intent_eg": "يختار لون",
+        "examples_tl": [
+          "Prefiro preto.",
+          "Azul está bem.",
+          "Tem noutra cor? Preto?"
+        ],
+        "keywords": [
+          "prefiro",
+          "preto",
+          "verde",
+          "azul",
+          "cor",
+          "está bem"
+        ]
+      },
+      "help": {
+        "frame_tl": "Prefiro preto.",
+        "eg": "Prefiro = بفضّل. Prefiro preto.",
+        "chips": [
+          "Prefiro preto.",
+          "Azul está bem."
+        ]
+      },
+      "reply": {
+        "tl": "Boa escolha!",
+        "ar": "اختيار جيد!"
+      }
+    },
+    {
+      "id": "price",
+      "min_tier": 1,
+      "says": null,
+      "expects": {
+        "intent_eg": "يسأل السعر",
+        "examples_tl": [
+          "Quanto custa esta?",
+          "Quanto é?",
+          "Quanto custa?"
+        ],
+        "keywords": [
+          "quanto"
+        ]
+      },
+      "help": {
+        "frame_tl": "Quanto custa esta?",
+        "eg": "اسأل: Quanto custa esta?",
+        "chips": [
+          "Quanto custa esta?",
+          "Quanto é?"
+        ]
+      },
+      "reply": {
+        "tl": "Está em saldo: vinte e nove euros.",
+        "ar": "إنها في التخفيضات: تسعة وعشرون يورو."
+      }
+    },
+    {
+      "id": "decide",
+      "min_tier": 1,
+      "says": null,
+      "coach_eg": "em saldo = في الأوكازيون",
+      "expects": {
+        "intent_eg": "يشتري أو يقول غالية",
+        "examples_tl": [
+          "Levo esta.",
+          "É um bocado cara…",
+          "Está bem, levo esta!"
+        ],
+        "keywords": [
+          "levo",
+          "caro",
+          "cara",
+          "barat"
+        ],
+        "slot": "decide",
+        "options": [
+          {
+            "value": "levo",
+            "keywords": [
+              "levo"
+            ],
+            "reply": {
+              "tl": "Muito bem! Pode pagar na caixa.",
+              "ar": "رائع! يمكنك الدفع عند الصندوق."
+            }
+          },
+          {
+            "value": "caro",
+            "keywords": [
+              "caro",
+              "cara",
+              "barat"
+            ],
+            "reply": {
+              "tl": "Esta aqui é mais barata: quinze euros.",
+              "ar": "هذه أرخص: خمسة عشر يورو."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Levo esta.",
+        "eg": "em saldo = عليها خصم. هتشتري؟ Levo esta. · غالية؟ É um bocado cara…",
+        "chips": [
+          "Levo esta.",
+          "É um bocado cara…"
+        ]
+      }
+    },
+    {
+      "id": "cheaper",
+      "min_tier": 1,
+      "if_slot": {
+        "decide": "caro"
+      },
+      "says": null,
+      "expects": {
+        "intent_eg": "يقرر ياخد الأرخص",
+        "examples_tl": [
+          "Levo esta, então.",
+          "Está bem, levo a mais barata.",
+          "Então levo esta."
+        ],
+        "keywords": [
+          "levo",
+          "está bem"
+        ]
+      },
+      "help": {
+        "frame_tl": "Levo esta, então.",
+        "eg": "اختار: Levo esta, então.",
+        "chips": [
+          "Levo esta, então.",
+          "Levo a mais barata."
+        ]
+      },
+      "reply": {
+        "tl": "Muito bem! Pode pagar na caixa.",
+        "ar": "رائع! يمكنك الدفع عند الصندوق."
+      }
+    },
+    {
+      "id": "gift",
+      "min_tier": 3,
+      "says": {
+        "tl": "Quer talão de oferta?",
+        "ar": "هل تريد إيصال هدية؟",
+        "ar_f": "هل تريدين إيصال هدية؟"
+      },
+      "coach_eg": "talão de oferta = وصل هدية من غير سعر، علشان اللي هياخدها يقدر يبدّل.",
+      "expects": {
+        "intent_eg": "يرد على إيصال الهدية",
+        "examples_tl": [
+          "Não, é para mim.",
+          "Sim, é uma prenda.",
+          "Não, obrigado."
+        ],
+        "keywords": [
+          "não",
+          "nao",
+          "sim",
+          "para mim",
+          "prenda"
+        ]
+      },
+      "help": {
+        "frame_tl": "Não, é para mim.",
+        "eg": "talão de oferta = إيصال هدية (علشان يبدّلوها). Não, é para mim.",
+        "chips": [
+          "Não, é para mim.",
+          "Sim, é uma prenda."
+        ]
+      },
+      "reply": {
+        "tl": "Muito bem.",
+        "ar": "حسنًا."
+      }
+    },
+    {
+      "id": "bye",
+      "min_tier": 1,
+      "says": {
+        "tl": "Obrigada! Boa tarde!",
+        "ar": "شكرًا! مساءً سعيدًا!"
+      },
+      "expects": {
+        "intent_eg": "يودّعها",
+        "examples_tl": [
+          "Obrigado! Boa tarde!",
+          "Boa tarde!",
+          "Obrigada, igualmente!"
+        ],
+        "keywords": [
+          "obrigad",
+          "adeus",
+          "até",
+          "ate",
+          "boa tarde",
+          "bom dia",
+          "xau",
+          "igualmente"
+        ]
+      },
+      "help": {
+        "frame_tl": "Obrigado! Boa tarde!",
+        "eg": "ودّعها: Obrigado! Boa tarde!",
+        "chips": [
+          "Obrigado! Boa tarde!",
+          "Igualmente!"
+        ],
+        "chips_f": [
+          "Obrigada! Boa tarde!",
+          "Igualmente!"
+        ]
+      }
+    }
+  ],
+  "closing": {
+    "tl": "Boa tarde! 👋",
+    "ar": "مساءً سعيدًا!"
+  },
+  "summary_eg": "قست وطلبت مقاس ولون واتفاوضت على حاجة أرخص 👕",
+  "authored": true,
+  "item_ids": [
+    "phrase.good_afternoon",
+    "phrase.likewise",
+    "phrase.how_much_is_it",
+    "phrase.no_thanks",
+    "phrase.are_you_ok",
+    "phrase.bigger",
+    "phrase.other_colour",
+    "phrase.other_size",
+    "phrase.smaller",
+    "phrase.how_much_this_one",
+    "word.fitting_room"
+  ]
+}

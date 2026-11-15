@@ -1,0 +1,314 @@
+{
+  "id": "rp.encomenda",
+  "target_lang": "pt-PT",
+  "level": 2,
+  "order": 1,
+  "recommended_day": 11,
+  "emoji": "📦",
+  "title_tl": "A encomenda",
+  "title_ar": "الطرد على الباب",
+  "place_eg": "جرس الباب. عامل التوصيل بيتكلم بسرعة ومستعجل.",
+  "task_eg": "استلم الطرد. لو ما فهمتش، اطلب منه يعيد أو يتكلم أبطأ.",
+  "learner_role_eg": "إنت في البيت وطلبت حاجة أونلاين.",
+  "character": {
+    "id": null,
+    "name": "Rui",
+    "gender": "m",
+    "role_eg": "عامل التوصيل"
+  },
+  "address": "o senhor",
+  "new_tl": [
+    "Sou eu.",
+    "a encomenda",
+    "assinar",
+    "o ecrã",
+    "Pode ficar com ela?"
+  ],
+  "key_phrases": [
+    {
+      "tl": "Sou eu.",
+      "ar": "إنه أنا."
+    },
+    {
+      "tl": "Desculpe, pode repetir?",
+      "ar": "عذرًا، هل يمكنك أن تعيد؟"
+    },
+    {
+      "tl": "Mais devagar, por favor.",
+      "ar": "أبطأ من فضلك."
+    },
+    {
+      "tl": "Não percebo.",
+      "ar": "لا أفهم."
+    },
+    {
+      "tl": "Falo um pouco.",
+      "ar": "أتكلم قليلًا."
+    }
+  ],
+  "steps": [
+    {
+      "id": "its_me",
+      "min_tier": 1,
+      "says": {
+        "tl": "Boa tarde! Encomenda para {name}?",
+        "ar": "مساء الخير! طرد باسم {name}؟"
+      },
+      "says_alt": [
+        {
+          "tl": "Boa tarde, tenho aqui uma encomenda para {name}, é aqui?",
+          "ar": "مساء الخير، معي طرد باسم {name}، هل هو هنا؟"
+        }
+      ],
+      "coach_eg": "a encomenda = الطرد. Sou eu = أنا (هو ده أنا).",
+      "expects": {
+        "intent_eg": "يقول ده هو",
+        "examples_tl": [
+          "Sim, sou eu.",
+          "Boa tarde! Sou eu.",
+          "Sim, sim!"
+        ],
+        "keywords": [
+          "sim",
+          "sou eu"
+        ]
+      },
+      "help": {
+        "frame_tl": "Sim, sou eu.",
+        "eg": "بيسأل الطرد ده بتاعك؟ قول: Sim, sou eu. = أيوه أنا",
+        "chips": [
+          "Sim, sou eu.",
+          "Boa tarde! Sou eu."
+        ]
+      }
+    },
+    {
+      "id": "sign",
+      "min_tier": 1,
+      "says": {
+        "tl": "Preciso que assine aqui no ecrã, se faz favor.",
+        "ar": "أحتاج أن توقّع هنا على الشاشة من فضلك."
+      },
+      "coach_eg": "ما فهمتش؟ ده أهم موقف: اطلب يعيد. البرتغاليين بيتكلموا بسرعة ومش هيزعلوا.",
+      "expects": {
+        "intent_eg": "يطلب يعيد أو يوافق",
+        "examples_tl": [
+          "Desculpe, pode repetir?",
+          "Mais devagar, por favor.",
+          "Está bem."
+        ],
+        "keywords": [
+          "repetir",
+          "devagar",
+          "percebo",
+          "desculpe",
+          "está bem",
+          "sim",
+          "claro"
+        ],
+        "slot": "understood",
+        "options": [
+          {
+            "value": "repeat",
+            "keywords": [
+              "repetir",
+              "devagar",
+              "percebo",
+              "desculpe"
+            ],
+            "reply": {
+              "tl": "Claro! Assine… aqui. ✍️",
+              "ar": "بالطبع! وقّع… هنا."
+            }
+          },
+          {
+            "value": "ok",
+            "keywords": [
+              "está bem",
+              "sim",
+              "claro",
+              "ok"
+            ],
+            "reply": {
+              "tl": "Obrigado.",
+              "ar": "شكرًا."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Desculpe, pode repetir?",
+        "eg": "مش فاهم؟ عادي جدًا! قول: Desculpe, pode repetir? أو Mais devagar, por favor.",
+        "chips": [
+          "Desculpe, pode repetir?",
+          "Mais devagar, por favor."
+        ]
+      }
+    },
+    {
+      "id": "speak_pt",
+      "min_tier": 1,
+      "says": {
+        "tl": "O senhor fala português?",
+        "ar": "هل تتكلم البرتغالية؟",
+        "tl_f": "A senhora fala português?",
+        "ar_f": "هل تتكلمين البرتغالية؟"
+      },
+      "expects": {
+        "intent_eg": "يقول بيتكلم شوية",
+        "examples_tl": [
+          "Falo um pouco.",
+          "Sim, um pouco.",
+          "Falo um pouco, desculpe."
+        ],
+        "keywords": [
+          "falo",
+          "pouco",
+          "sim",
+          "não",
+          "nao"
+        ]
+      },
+      "help": {
+        "frame_tl": "Falo um pouco.",
+        "eg": "Falo um pouco = بتكلم شوية",
+        "chips": [
+          "Falo um pouco.",
+          "Sim, um pouco."
+        ]
+      },
+      "reply": {
+        "tl": "Fala muito bem! 😄",
+        "ar": "تتكلم جيدًا جدًا!",
+        "tl_f": "Fala muito bem! 😄",
+        "ar_f": "تتكلمين جيدًا جدًا!"
+      }
+    },
+    {
+      "id": "neighbour_parcel",
+      "min_tier": 2,
+      "says": {
+        "tl": "Olhe, tenho outra para o vizinho do segundo esquerdo. Pode ficar com ela?",
+        "ar": "انظر، معي طرد آخر لجار الطابق الثاني يسار. هل يمكنك الاحتفاظ به؟"
+      },
+      "coach_eg": "ده بيحصل كتير هنا: الجيران بيستلموا لبعض. segundo esquerdo = الدور التاني، الشقة الشمال.",
+      "expects": {
+        "intent_eg": "يوافق يستلم طرد جاره أو يعتذر",
+        "examples_tl": [
+          "Sim, pode ser.",
+          "Não, desculpe.",
+          "Desculpe, não percebo."
+        ],
+        "keywords": [
+          "sim",
+          "pode",
+          "não",
+          "nao",
+          "desculpe",
+          "percebo"
+        ],
+        "slot": "neighbour",
+        "options": [
+          {
+            "value": "sim",
+            "keywords": [
+              "sim",
+              "pode"
+            ],
+            "reply": {
+              "tl": "Muito obrigado! Aqui está. 📦",
+              "ar": "شكرًا جزيلًا! تفضّل."
+            }
+          },
+          {
+            "value": "não",
+            "keywords": [
+              "não",
+              "nao"
+            ],
+            "reply": {
+              "tl": "Não faz mal.",
+              "ar": "لا بأس."
+            }
+          },
+          {
+            "value": "lost",
+            "keywords": [
+              "percebo",
+              "repetir"
+            ],
+            "reply": {
+              "tl": "Para o vizinho. Pode ficar com ela? Sim ou não? 😊",
+              "ar": "للجار. هل يمكنك الاحتفاظ به؟ نعم أم لا؟"
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Sim, pode ser.",
+        "eg": "عايزك تستلم طرد جارك. موافق؟ Sim, pode ser. · لأ: Não, desculpe.",
+        "chips": [
+          "Sim, pode ser.",
+          "Não, desculpe."
+        ]
+      }
+    },
+    {
+      "id": "bye",
+      "min_tier": 1,
+      "says": {
+        "tl": "Obrigado e boa tarde!",
+        "ar": "شكرًا ومساءً سعيدًا!"
+      },
+      "expects": {
+        "intent_eg": "يودّعه",
+        "examples_tl": [
+          "Obrigado! Boa tarde!",
+          "Boa tarde!",
+          "Obrigada! Igualmente!"
+        ],
+        "keywords": [
+          "obrigad",
+          "adeus",
+          "até",
+          "ate",
+          "boa tarde",
+          "bom dia",
+          "xau",
+          "igualmente"
+        ]
+      },
+      "help": {
+        "frame_tl": "Obrigado! Boa tarde!",
+        "eg": "ودّعه: Obrigado! Boa tarde!",
+        "chips": [
+          "Obrigado! Boa tarde!",
+          "Igualmente!"
+        ],
+        "chips_f": [
+          "Obrigada! Boa tarde!",
+          "Igualmente!"
+        ]
+      }
+    }
+  ],
+  "closing": {
+    "tl": "Boa tarde! 👋",
+    "ar": "مساءً سعيدًا!"
+  },
+  "summary_eg": "لما ما فهمتش، طلبت يعيد ويبطّأ بدل ما تسكت. دي أهم مهارة في الأول 📦",
+  "authored": true,
+  "item_ids": [
+    "phrase.good_afternoon",
+    "phrase.likewise",
+    "phrase.a_little",
+    "phrase.can_you_repeat",
+    "phrase.do_you_speak_pt",
+    "phrase.excuse_me",
+    "phrase.i_dont_understand",
+    "phrase.slower",
+    "phrase.no_problem",
+    "word.neighbour_m",
+    "phrase.are_you_ok"
+  ]
+}

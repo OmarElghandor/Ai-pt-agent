@@ -1,0 +1,567 @@
+{
+  "id": "rp.restaurante",
+  "target_lang": "pt-PT",
+  "level": 2,
+  "order": 2,
+  "recommended_day": 16,
+  "emoji": "🍽️",
+  "title_tl": "Almoço no restaurante",
+  "title_ar": "غدا في مطعم",
+  "place_eg": "مطعم شعبي بالضهر. Manuel الجرسون.",
+  "task_eg": "خد ترابيزة، اطلب أكل من غير خنزير، اطلب مشروب، واطلب الحساب.",
+  "learner_role_eg": "إنت خارج تتغدى.",
+  "character": {
+    "id": "manuel"
+  },
+  "address": "o senhor",
+  "new_tl": [
+    "Quantas pessoas?",
+    "a carne de porco",
+    "Não como carne de porco.",
+    "Isto tem porco?",
+    "Estava tudo bem?",
+    "natural ou com gás"
+  ],
+  "key_phrases": [
+    {
+      "tl": "Uma mesa para dois, por favor.",
+      "ar": "طاولة لشخصين من فضلك."
+    },
+    {
+      "tl": "Não como carne de porco.",
+      "ar": "لا آكل لحم الخنزير."
+    },
+    {
+      "tl": "Isto tem porco?",
+      "ar": "هل في هذا خنزير؟"
+    },
+    {
+      "tl": "Para mim, o frango.",
+      "ar": "لي الدجاج."
+    },
+    {
+      "tl": "A conta, por favor.",
+      "ar": "الحساب من فضلك."
+    }
+  ],
+  "steps": [
+    {
+      "id": "table",
+      "min_tier": 1,
+      "says": {
+        "tl": "Boa tarde! Quantas pessoas?",
+        "ar": "مساء الخير! كم شخصًا؟"
+      },
+      "coach_eg": "Quantas pessoas? = كام فرد؟",
+      "expects": {
+        "intent_eg": "يطلب ترابيزة",
+        "examples_tl": [
+          "Uma mesa para dois, por favor.",
+          "Para uma pessoa.",
+          "Somos dois."
+        ],
+        "keywords": [
+          "mesa",
+          "dois",
+          "duas",
+          "uma",
+          "um",
+          "pessoa",
+          "somos"
+        ],
+        "slot": "people",
+        "options": [
+          {
+            "value": "2",
+            "keywords": [
+              "dois",
+              "duas",
+              "somos"
+            ],
+            "reply": {
+              "tl": "Para dois. Venham comigo. 😊",
+              "ar": "لشخصين. تعالا معي."
+            }
+          },
+          {
+            "value": "1",
+            "keywords": [
+              "uma",
+              "um",
+              "sozinho",
+              "sozinha",
+              "só eu"
+            ],
+            "reply": {
+              "tl": "Para um. Venha comigo. 😊",
+              "ar": "لشخص واحد. تعال معي."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Uma mesa para dois, por favor.",
+        "eg": "Quantas pessoas? = كام واحد؟ قول: Uma mesa para dois, por favor.",
+        "chips": [
+          "Uma mesa para dois, por favor.",
+          "Para uma pessoa, por favor."
+        ]
+      }
+    },
+    {
+      "id": "menu",
+      "min_tier": 1,
+      "says": {
+        "tl": "Aqui está a ementa. O prato do dia é carne de porco à alentejana.",
+        "ar": "هذه قائمة الطعام. طبق اليوم لحم خنزير على طريقة ألينتيجو."
+      },
+      "coach_eg": "carne de porco = لحم خنزير. الجملة دي هتحتاجها كتير: Não como carne de porco.",
+      "expects": {
+        "intent_eg": "يقول مش بياكل خنزير أو يطلب حاجة تانية",
+        "examples_tl": [
+          "Não como carne de porco.",
+          "Para mim, o frango, por favor.",
+          "Queria o peixe, por favor."
+        ],
+        "keywords": [
+          "porco",
+          "não como",
+          "frango",
+          "peixe",
+          "salada",
+          "sopa"
+        ],
+        "slot": "food",
+        "options": [
+          {
+            "value": "no_pork",
+            "keywords": [
+              "porco",
+              "não como"
+            ],
+            "reply": {
+              "tl": "Sem problema! Temos frango ou peixe.",
+              "ar": "لا مشكلة! لدينا دجاج أو سمك."
+            }
+          },
+          {
+            "value": "frango",
+            "keywords": [
+              "frango"
+            ],
+            "reply": {
+              "tl": "O frango, muito bem.",
+              "ar": "الدجاج، حسنًا."
+            }
+          },
+          {
+            "value": "peixe",
+            "keywords": [
+              "peixe"
+            ],
+            "reply": {
+              "tl": "O peixe, muito bem.",
+              "ar": "السمك، حسنًا."
+            }
+          },
+          {
+            "value": "salada",
+            "keywords": [
+              "salada"
+            ],
+            "reply": {
+              "tl": "A salada, muito bem.",
+              "ar": "السلطة، حسنًا."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Não como carne de porco.",
+        "eg": "carne de porco = لحم خنزير. قول: Não como carne de porco.",
+        "chips": [
+          "Não como carne de porco.",
+          "Para mim, o frango, por favor."
+        ]
+      }
+    },
+    {
+      "id": "choose",
+      "min_tier": 1,
+      "if_slot": {
+        "food": "no_pork"
+      },
+      "says": null,
+      "expects": {
+        "intent_eg": "يختار فراخ أو سمك",
+        "examples_tl": [
+          "O frango, por favor.",
+          "Para mim, o peixe.",
+          "Queria o frango."
+        ],
+        "keywords": [
+          "frango",
+          "peixe"
+        ],
+        "slot": "food",
+        "options": [
+          {
+            "value": "frango",
+            "keywords": [
+              "frango"
+            ],
+            "reply": {
+              "tl": "Muito bem, o frango.",
+              "ar": "حسنًا، الدجاج."
+            }
+          },
+          {
+            "value": "peixe",
+            "keywords": [
+              "peixe"
+            ],
+            "reply": {
+              "tl": "Muito bem, o peixe.",
+              "ar": "حسنًا، السمك."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Para mim, o frango.",
+        "eg": "اختار: Para mim, o frango. أو o peixe.",
+        "chips": [
+          "Para mim, o frango.",
+          "Para mim, o peixe."
+        ]
+      }
+    },
+    {
+      "id": "soup",
+      "min_tier": 2,
+      "says": {
+        "tl": "Para começar, a sopa do dia é caldo verde.",
+        "ar": "للبداية، حساء اليوم هو كالدو فيردي."
+      },
+      "coach_eg": "caldo verde = شوربة كرنب، وساعات بيحطوا فيها chouriço (سجق خنزير). اسأل دايمًا.",
+      "expects": {
+        "intent_eg": "يسأل الشوربة فيها خنزير ولا لأ",
+        "examples_tl": [
+          "Isto tem porco?",
+          "A sopa tem porco?",
+          "Não, obrigado."
+        ],
+        "keywords": [
+          "porco",
+          "chouriço",
+          "chourico",
+          "não",
+          "nao"
+        ],
+        "slot": "soup",
+        "options": [
+          {
+            "value": "ask",
+            "keywords": [
+              "porco",
+              "chouriço",
+              "chourico"
+            ],
+            "reply": {
+              "tl": "Tem uma rodela de chouriço… mas posso tirar! 👍",
+              "ar": "فيها شريحة نقانق… لكن يمكنني إزالتها!"
+            }
+          },
+          {
+            "value": "no",
+            "keywords": [
+              "não",
+              "nao"
+            ],
+            "reply": {
+              "tl": "Muito bem.",
+              "ar": "حسنًا."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Isto tem porco?",
+        "eg": "الكالدو فيردي ساعات فيه شريحة chouriço (خنزير). اسأل: Isto tem porco?",
+        "chips": [
+          "Isto tem porco?",
+          "Não, obrigado."
+        ],
+        "chips_f": [
+          "Isto tem porco?",
+          "Não, obrigada."
+        ]
+      }
+    },
+    {
+      "id": "drink",
+      "min_tier": 1,
+      "says": {
+        "tl": "E para beber?",
+        "ar": "وماذا تشرب؟"
+      },
+      "expects": {
+        "intent_eg": "يطلب مشروب",
+        "examples_tl": [
+          "Uma água, por favor.",
+          "Um sumo de laranja, por favor.",
+          "Água, por favor."
+        ],
+        "keywords": [
+          "água",
+          "agua",
+          "sumo",
+          "chá",
+          "cha",
+          "café"
+        ],
+        "slot": "drink",
+        "options": [
+          {
+            "value": "água",
+            "keywords": [
+              "água",
+              "agua"
+            ],
+            "reply": {
+              "tl": "Uma água, muito bem.",
+              "ar": "ماء، حسنًا."
+            }
+          },
+          {
+            "value": "sumo",
+            "keywords": [
+              "sumo"
+            ],
+            "reply": {
+              "tl": "Um sumo, muito bem.",
+              "ar": "عصير، حسنًا."
+            }
+          },
+          {
+            "value": "outro",
+            "keywords": [
+              "chá",
+              "cha",
+              "café"
+            ],
+            "reply": {
+              "tl": "Muito bem.",
+              "ar": "حسنًا."
+            }
+          }
+        ]
+      },
+      "help": {
+        "frame_tl": "Uma água, por favor.",
+        "eg": "para beber = تشرب إيه. Uma água, por favor.",
+        "chips": [
+          "Uma água, por favor.",
+          "Um sumo de laranja, por favor."
+        ]
+      }
+    },
+    {
+      "id": "water_type",
+      "min_tier": 3,
+      "if_slot": {
+        "drink": "água"
+      },
+      "says": {
+        "tl": "Natural ou com gás?",
+        "ar": "عادية أم غازية؟"
+      },
+      "expects": {
+        "intent_eg": "يختار مية عادية أو فوار",
+        "examples_tl": [
+          "Natural, por favor.",
+          "Com gás, por favor.",
+          "Natural."
+        ],
+        "keywords": [
+          "natural",
+          "gás",
+          "gas",
+          "fresca"
+        ]
+      },
+      "help": {
+        "frame_tl": "Natural, por favor.",
+        "eg": "natural = عادية · com gás = فوّار",
+        "chips": [
+          "Natural, por favor.",
+          "Com gás, por favor."
+        ]
+      },
+      "reply": {
+        "tl": "Muito bem.",
+        "ar": "حسنًا."
+      }
+    },
+    {
+      "id": "all_good",
+      "min_tier": 1,
+      "says": {
+        "tl": "Então, estava tudo bem?",
+        "ar": "إذن، هل كان كل شيء جيدًا؟"
+      },
+      "expects": {
+        "intent_eg": "يقول الأكل كان حلو",
+        "examples_tl": [
+          "Sim, muito bom!",
+          "Sim, obrigado! Muito bom.",
+          "Sim, delicioso!"
+        ],
+        "keywords": [
+          "sim",
+          "bom",
+          "boa",
+          "ótimo",
+          "otimo",
+          "delicioso"
+        ]
+      },
+      "help": {
+        "frame_tl": "Sim, muito bom!",
+        "eg": "Estava tudo bem? = كله كان تمام؟ قول: Sim, muito bom!",
+        "chips": [
+          "Sim, muito bom!",
+          "Sim, obrigado! Muito bom."
+        ],
+        "chips_f": [
+          "Sim, muito bom!",
+          "Sim, obrigada! Muito bom."
+        ]
+      },
+      "reply": {
+        "tl": "Ainda bem! 😊 Uma sobremesa? Um café?",
+        "ar": "يسعدني! حلوى؟ قهوة؟"
+      }
+    },
+    {
+      "id": "bill",
+      "min_tier": 1,
+      "says": null,
+      "expects": {
+        "intent_eg": "يطلب الحساب",
+        "examples_tl": [
+          "Não, obrigado. A conta, por favor.",
+          "A conta, por favor.",
+          "Só a conta, por favor."
+        ],
+        "keywords": [
+          "conta"
+        ]
+      },
+      "help": {
+        "frame_tl": "A conta, por favor.",
+        "eg": "مش عايز حاجة تانية؟ Não, obrigado. A conta, por favor.",
+        "chips": [
+          "A conta, por favor.",
+          "Não, obrigado. A conta, por favor."
+        ],
+        "chips_f": [
+          "A conta, por favor.",
+          "Não, obrigada. A conta, por favor."
+        ]
+      },
+      "reply": {
+        "tl": "Com certeza. São vinte e três euros.",
+        "ar": "بالتأكيد. المجموع ثلاثة وعشرون يورو."
+      }
+    },
+    {
+      "id": "pay",
+      "min_tier": 1,
+      "says": null,
+      "expects": {
+        "intent_eg": "يدفع",
+        "examples_tl": [
+          "Aceita cartão?",
+          "Em dinheiro.",
+          "Com cartão, por favor."
+        ],
+        "keywords": [
+          "cartão",
+          "cartao",
+          "dinheiro",
+          "aqui tem"
+        ]
+      },
+      "help": {
+        "frame_tl": "Aceita cartão?",
+        "eg": "Aceita cartão? أو Em dinheiro.",
+        "chips": [
+          "Aceita cartão?",
+          "Em dinheiro."
+        ]
+      },
+      "reply": {
+        "tl": "Claro. Obrigado e volte sempre! 😄",
+        "ar": "بالطبع. شكرًا، وعُد دائمًا!"
+      }
+    },
+    {
+      "id": "bye",
+      "min_tier": 1,
+      "says": null,
+      "expects": {
+        "intent_eg": "يودّعه",
+        "examples_tl": [
+          "Obrigado! Boa tarde!",
+          "Obrigada! Até à próxima!",
+          "Boa tarde!"
+        ],
+        "keywords": [
+          "obrigad",
+          "adeus",
+          "até",
+          "ate",
+          "boa tarde",
+          "bom dia",
+          "xau",
+          "igualmente",
+          "próxima"
+        ]
+      },
+      "help": {
+        "frame_tl": "Obrigado! Boa tarde!",
+        "eg": "ودّعه: Obrigado! Boa tarde!",
+        "chips": [
+          "Obrigado! Boa tarde!",
+          "Até à próxima!"
+        ],
+        "chips_f": [
+          "Obrigada! Boa tarde!",
+          "Até à próxima!"
+        ]
+      }
+    }
+  ],
+  "closing": {
+    "tl": "Até à próxima! 👋",
+    "ar": "إلى المرة القادمة!"
+  },
+  "summary_eg": "طلبت ترابيزة وأكل من غير خنزير وسألت عن الشوربة، وطلبت الحساب 🍽️",
+  "authored": true,
+  "item_ids": [
+    "phrase.good_afternoon",
+    "phrase.how_are_you",
+    "phrase.no_thanks",
+    "phrase.card_ok",
+    "phrase.cash",
+    "phrase.table_for_two",
+    "word.dish_of_day",
+    "word.fish",
+    "word.menu",
+    "word.soup",
+    "phrase.the_bill",
+    "word.chicken",
+    "word.salad"
+  ]
+}
