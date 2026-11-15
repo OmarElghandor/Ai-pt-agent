@@ -12,3 +12,4 @@ export * from './progress';
 export * from './engine';
 export * from './start';
 export * from './store';
+export * from './catalog';

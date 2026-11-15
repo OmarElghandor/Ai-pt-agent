@@ -42,10 +42,10 @@ const MODES: Array<{
   },
   {
     id: 'learn',
-    href: '/talk/learn',
+    href: '/roleplay',
     emoji: '🗺️',
     title: 'رول بلاي',
-    subtitle: 'مشهد بمهمة واضحة — زي توصّل Inês على الخريطة',
+    subtitle: 'مواقف حقيقية في لشبونة — كافيه، محطة، Finanças',
   },
 ];
 
