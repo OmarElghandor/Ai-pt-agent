@@ -344,7 +344,11 @@ async function advanceAfterStep(opts: {
     return;
   }
 
-  if (!assisted && !state.alone_steps.includes(step.id)) {
+  if (assisted) {
+    if (!state.assisted_steps.includes(step.id)) {
+      state.assisted_steps.push(step.id);
+    }
+  } else if (!state.alone_steps.includes(step.id)) {
     state.alone_steps.push(step.id);
   }
 
@@ -394,8 +398,12 @@ async function advanceAfterStep(opts: {
     slots,
     lastStep.id,
   );
-  // remaining starts at lastStep — skip it and any already completed.
-  const completed = new Set([...state.alone_steps, ...state.assisted_steps]);
+  // remaining starts at lastStep — always skip it and any already completed.
+  const completed = new Set([
+    ...state.alone_steps,
+    ...state.assisted_steps,
+    lastStep.id,
+  ]);
   const next = remaining.find((s) => !completed.has(s.id));
 
   if (!next) {

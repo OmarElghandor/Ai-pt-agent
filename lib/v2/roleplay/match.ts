@@ -166,6 +166,90 @@ export function matchRoleplayStep(
   return null;
 }
 
+function matchedKeywordsForHit(
+  learnerText: string,
+  hit: RoleplayMatchHit,
+  step: RoleplayStep,
+): string[] {
+  const pool =
+    hit.option?.keywords ??
+    step.expects.keywords ??
+    [];
+  return pool.filter((kw) => normalizedContains(learnerText, kw));
+}
+
+/**
+ * Look-ahead match: full example containment, unused option/keyword evidence,
+ * or free_answer. Skips loose fuzzy overlap and reused keywords from earlier
+ * hits in the same message (e.g. «porco» matching both menu and soup).
+ */
+export function matchRoleplayStepLookahead(
+  learnerText: string,
+  step: RoleplayStep,
+  consumedKeywords: Set<string>,
+): RoleplayMatchHit | null {
+  const t = learnerText.trim();
+  if (!t) return null;
+  const exp = step.expects;
+  const options = exp.options ?? [];
+  const msg = normalizeRoleplayText(t);
+
+  const unused = (keywords: string[]): string[] =>
+    keywords.filter((kw) => {
+      const n = normalizeRoleplayText(kw);
+      return n && !consumedKeywords.has(n) && normalizedContains(t, kw);
+    });
+
+  if (options.length > 0) {
+    for (const opt of options) {
+      const hits = unused(opt.keywords ?? []);
+      if (hits.length === 0) continue;
+      return {
+        step_id: step.id,
+        option: opt,
+        stay: Boolean(opt.stay),
+        slot: exp.slot ?? null,
+        slot_value: opt.value,
+        via: 'option',
+      };
+    }
+    return null;
+  }
+
+  const examples = [
+    ...(exp.examples_tl ?? []),
+    ...(exp.examples_tl_f ?? []),
+  ];
+  for (const ex of examples) {
+    const n = normalizeRoleplayText(ex);
+    if (!n || roleplayWords(ex).length < 2) continue;
+    if (msg.includes(n) || matchesAcceptedForm(t, [ex])) {
+      return {
+        step_id: step.id,
+        option: null,
+        stay: false,
+        slot: null,
+        slot_value: null,
+        via: 'example',
+      };
+    }
+  }
+
+  const kwHits = unused(exp.keywords ?? []);
+  if (kwHits.length > 0) {
+    return {
+      step_id: step.id,
+      option: null,
+      stay: false,
+      slot: null,
+      slot_value: null,
+      via: 'keyword',
+    };
+  }
+
+  return null;
+}
+
 /**
  * Match the current step, then look-ahead: the same message may also
  * complete following playable steps (when not `stay`).
@@ -176,14 +260,23 @@ export function matchRoleplayWithLookahead(
 ): RoleplayMatchHit[] {
   if (!playableSteps.length) return [];
   const hits: RoleplayMatchHit[] = [];
+  const consumed = new Set<string>();
   for (let i = 0; i < playableSteps.length; i++) {
     const step = playableSteps[i];
-    // Look-ahead only after the first step is matched; first must match.
-    if (i > 0 && hits.length === 0) break;
-    const hit = matchRoleplayStep(learnerText, step);
+    const hit =
+      i === 0
+        ? matchRoleplayStep(learnerText, step)
+        : matchRoleplayStepLookahead(learnerText, step, consumed);
     if (!hit) {
       if (i === 0) return [];
       break;
+    }
+    for (const kw of matchedKeywordsForHit(learnerText, hit, step)) {
+      const n = normalizeRoleplayText(kw);
+      if (!n) continue;
+      consumed.add(n);
+      // Also consume each word so «não» from «não como» blocks later «não» options.
+      for (const w of n.split(/\s+/).filter(Boolean)) consumed.add(w);
     }
     hits.push(hit);
     if (hit.stay) break;

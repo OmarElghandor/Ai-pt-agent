@@ -1,0 +1,126 @@
+import { runRoleplayTurn, startRoleplayScene } from './engine';
+import { playableSteps } from './playable';
+import {
+  createRoleplaySessionState,
+  type RoleplaySessionState,
+} from './session';
+import { pickChips } from './text';
+import type { RoleplaySituation, RoleplayTier } from './types';
+import type { RoleplayTurnEvent } from './events';
+
+export type ScriptTurn = {
+  text: string;
+  help?: boolean;
+  assisted?: boolean;
+};
+
+export type ScriptResult = {
+  state: RoleplaySessionState;
+  events: RoleplayTurnEvent[];
+  modelCalls: number;
+};
+
+/**
+ * Run a scripted sequence of learner turns (delays are 0 — engine has none).
+ * Asserts zero model calls when modelReactionsEnabled is false (default).
+ */
+export async function runRoleplayScript(opts: {
+  situation: RoleplaySituation;
+  tier: RoleplayTier;
+  turns: ScriptTurn[];
+  gender?: 'm' | 'f';
+  modelReaction?: (input: unknown) => Promise<string | null>;
+  modelReactionsEnabled?: boolean;
+}): Promise<ScriptResult> {
+  const playable = playableSteps(opts.situation, opts.tier, {});
+  let state = createRoleplaySessionState({
+    id: `script-${opts.situation.id}-t${opts.tier}`,
+    user_id: 'script',
+    situation_id: opts.situation.id,
+    tier: opts.tier,
+    first_step_id: playable[0].id,
+    gender: opts.gender ?? 'm',
+  });
+  const started = startRoleplayScene({
+    situation: opts.situation,
+    state,
+  });
+  state = started.state;
+  const allEvents: RoleplayTurnEvent[] = [...started.events];
+
+  for (const turn of opts.turns) {
+    const r = await runRoleplayTurn(
+      {
+        situation: opts.situation,
+        state,
+        learnerText: turn.text,
+        help: turn.help,
+        assisted: turn.assisted,
+      },
+      {
+        modelReactionsEnabled: Boolean(opts.modelReactionsEnabled),
+        modelReaction: opts.modelReaction
+          ? async (input) => opts.modelReaction!(input)
+          : undefined,
+      },
+    );
+    state = r.state;
+    allEvents.push(...r.events);
+  }
+
+  return {
+    state,
+    events: allEvents,
+    modelCalls: state.model_calls,
+  };
+}
+
+/** Finish a situation at a tier using only the first help chip each step. */
+export async function finishWithChips(opts: {
+  situation: RoleplaySituation;
+  tier: RoleplayTier;
+  maxTurns?: number;
+}): Promise<ScriptResult> {
+  const maxTurns = opts.maxTurns ?? 40;
+  const playable = playableSteps(opts.situation, opts.tier, {});
+  let state = createRoleplaySessionState({
+    id: `chips-${opts.situation.id}-t${opts.tier}`,
+    user_id: 'chips',
+    situation_id: opts.situation.id,
+    tier: opts.tier,
+    first_step_id: playable[0].id,
+  });
+  state = startRoleplayScene({ situation: opts.situation, state }).state;
+  const allEvents: RoleplayTurnEvent[] = [];
+  let turns = 0;
+
+  while (state.status === 'active' && state.current_step_id && turns < maxTurns) {
+    turns += 1;
+    const step = opts.situation.steps.find((s) => s.id === state.current_step_id);
+    if (!step) break;
+    const chips = pickChips(step.help.chips ?? [], step.help.chips_f, 'm');
+    let text = chips[0];
+    if (!text) {
+      if (step.expects.free_answer) text = 'Omar';
+      else if (step.expects.examples_tl[0]) text = step.expects.examples_tl[0];
+      else text = 'Sim.';
+    }
+    const r = await runRoleplayTurn({
+      situation: opts.situation,
+      state,
+      learnerText: text,
+      assisted: true,
+    });
+    state = r.state;
+    allEvents.push(...r.events);
+  }
+
+  return { state, events: allEvents, modelCalls: state.model_calls };
+}
+
+export function characterStepIds(events: RoleplayTurnEvent[]): string[] {
+  return events
+    .filter((e): e is Extract<RoleplayTurnEvent, { type: 'character' }> => e.type === 'character')
+    .map((e) => e.step_id)
+    .filter((id): id is string => Boolean(id));
+}

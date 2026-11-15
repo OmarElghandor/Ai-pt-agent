@@ -14,3 +14,4 @@ export * from './start';
 export * from './store';
 export * from './catalog';
 export * from './modelReaction';
+export * from './script';
