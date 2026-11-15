@@ -2,20 +2,23 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
   buildRoleplayCatalog,
+  characterBubbles,
   characterStepIds,
   clearRoleplayLoadCache,
+  createStubRoleplayActor,
   finishWithChips,
   loadAllRoleplaySituations,
   loadRoleplayIndex,
   loadRoleplaySituation,
   runRoleplayScript,
+  runRoleplayTurn,
   startRoleplayScene,
   createRoleplaySessionState,
   validateAllRoleplaySituations,
 } from '../lib/v2/roleplay';
 
 describe('roleplay R5 goldens', () => {
-  it('1 · rp.cafe full path → closing; zero model calls', async () => {
+  it('1 · rp.cafe full path → closing (file fallback)', async () => {
     clearRoleplayLoadCache();
     const cafe = loadRoleplaySituation('rp.cafe');
     const r = await runRoleplayScript({
@@ -124,29 +127,114 @@ describe('roleplay R5 goldens', () => {
     assert.equal(r.state.status, 'done');
   });
 
-  it('6 · whole run makes zero model calls', async () => {
+  it('6 · stub model: quero um coffee → BEAT done café, one bubble, no hint', async () => {
     clearRoleplayLoadCache();
     const cafe = loadRoleplaySituation('rp.cafe');
-    let liveCalls = 0;
+    const actor = createStubRoleplayActor({
+      reply:
+        'Um café? Claro! Mais alguma coisa?\nAR: قهوة؟ طبعا!\nBEAT: done café',
+    });
     const r = await runRoleplayScript({
       situation: cafe,
-      modelReactionsEnabled: false,
-      modelReaction: async () => {
-        liveCalls += 1;
-        return 'nope';
-      },
-      turns: [
-        { text: 'Bom dia! Queria um café, por favor.' },
-        { text: 'Um pastel de nata, por favor.' },
-        { text: 'Para comer aqui.' },
-        { text: 'Quanto é?' },
-        { text: 'Em dinheiro.' },
-        { text: 'Não, obrigado.' },
-        { text: 'Obrigado! Bom dia!' },
-      ],
+      actor,
+      turns: [{ text: 'quero um coffee' }],
     });
-    assert.equal(liveCalls, 0);
-    assert.equal(r.modelCalls, 0);
+    assert.equal(r.state.model_calls, 1);
+    assert.equal(r.state.slots.drink, 'café');
+    assert.notEqual(r.state.current_step_id, 'order_drink');
+    const chars = characterBubbles(r.events).filter(
+      (e) => e.step_id === 'order_drink' || e.tl.includes('café') || e.tl.includes('Café'),
+    );
+    // Start says + one actor bubble for the turn.
+    const turnChars = r.events.filter(
+      (e) => e.type === 'character' && e.tl !== 'Bom dia! Diga.',
+    );
+    assert.equal(turnChars.length, 1);
+    assert.ok(!turnChars[0]!.tl.includes('BEAT:'));
+    assert.ok(!turnChars[0]!.tl.includes('AR:'));
+    assert.ok(!r.events.some((e) => e.type === 'help'));
+    assert.ok(!r.events.some((e) => e.type === 'coach' && e.moment === 'hint'));
+    assert.ok(chars.length >= 1);
+  });
+
+  it('7 · fallback: empty / Chinese / 4 sentences / timeout → file lines', async () => {
+    clearRoleplayLoadCache();
+    const cafe = loadRoleplaySituation('rp.cafe');
+
+    async function oneTurn(reply: string | { timeout: true }) {
+      const actor =
+        typeof reply === 'string'
+          ? createStubRoleplayActor({ reply })
+          : createStubRoleplayActor({ reply: 'x', timeout: true });
+      let state = createRoleplaySessionState({
+        id: `fb-${Math.random()}`,
+        user_id: 'u',
+        situation_id: 'rp.cafe',
+        first_step_id: 'order_drink',
+      });
+      state = startRoleplayScene({ situation: cafe, state }).state;
+      const r = await runRoleplayTurn(
+        {
+          situation: cafe,
+          state,
+          learnerText: 'Bom dia! Queria um galão, por favor.',
+        },
+        { actor },
+      );
+      assert.equal(r.state.slots.drink, 'galão');
+      assert.notEqual(r.state.current_step_id, 'order_drink');
+      const chars = r.events.filter((e) => e.type === 'character');
+      assert.equal(chars.length, 1);
+      // File fallback includes next says (order_food).
+      assert.ok(chars[0]!.tl.length > 0);
+      assert.ok(!chars[0]!.tl.includes('你好'));
+      return r;
+    }
+
+    await oneTurn('');
+    await oneTurn('你好世界朋友同事\nAR: x\nBEAT: done galão');
+    await oneTurn('One. Two. Three. Four.\nAR: x\nBEAT: done galão');
+    await oneTurn({ timeout: true });
+  });
+
+  it('8 · state: BEAT done on sim rejected; invalid slot rejected', async () => {
+    clearRoleplayLoadCache();
+    const cafe = loadRoleplaySituation('rp.cafe');
+
+    const simActor = createStubRoleplayActor({
+      reply: 'Um café?\nAR: قهوة؟\nBEAT: done café',
+    });
+    let state = createRoleplaySessionState({
+      id: 'sim-reject',
+      user_id: 'u',
+      situation_id: 'rp.cafe',
+      first_step_id: 'order_drink',
+    });
+    state = startRoleplayScene({ situation: cafe, state }).state;
+    const sim = await runRoleplayTurn(
+      { situation: cafe, state, learnerText: 'sim' },
+      { actor: simActor },
+    );
+    assert.equal(sim.state.current_step_id, 'order_drink');
+    assert.equal(sim.state.slots.drink, undefined);
+    assert.ok(sim.events.some((e) => e.type === 'help' || e.type === 'coach'));
+
+    const badSlot = createStubRoleplayActor({
+      reply: 'Ok!\nAR: تمام\nBEAT: done pizza',
+    });
+    state = createRoleplaySessionState({
+      id: 'bad-slot',
+      user_id: 'u',
+      situation_id: 'rp.cafe',
+      first_step_id: 'order_drink',
+    });
+    state = startRoleplayScene({ situation: cafe, state }).state;
+    const bad = await runRoleplayTurn(
+      { situation: cafe, state, learnerText: 'quero um coffee' },
+      { actor: badSlot },
+    );
+    assert.equal(bad.state.current_step_id, 'order_drink');
+    assert.equal(bad.state.slots.drink, undefined);
   });
 
   it('every situation finishes via chips alone', async () => {

@@ -23,7 +23,8 @@
     "v2:seed-conjugations": "tsx scripts/v2/seed-conjugations.ts",
     "v2:seed-cards": "tsx scripts/v2/seed-cards.ts",
     "v2:seed-pack": "tsx scripts/v2/seed-pack-day.ts",
-    "v2:validate-core-items": "tsx scripts/v2/validate-core-items.ts"
+    "v2:validate-core-items": "tsx scripts/v2/validate-core-items.ts",
+    "v2:roleplay-model-ab": "tsx scripts/v2/roleplay-model-ab.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.99",

@@ -42,11 +42,3 @@ export function isGenerateImagesEnabled(): boolean {
 export function isLearnModelReactionsEnabled(): boolean {
   return envFlagTrue('V2_LEARN_MODEL_REACTIONS');
 }
-
-/**
- * Role-play optional in-character model reaction for off-script answers.
- * Default OFF — normal path is pure matcher/help ladder (tier 3 only when on).
- */
-export function isRoleplayModelReactionsEnabled(): boolean {
-  return envFlagTrue('V2_ROLEPLAY_MODEL_REACTIONS');
-}
