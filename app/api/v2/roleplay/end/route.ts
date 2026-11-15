@@ -33,18 +33,25 @@ export async function POST(req: Request) {
   }
 
   const store = new MongoRoleplaySessionStore();
-  const state = await store.get(sessionId, userId);
-  if (!state) {
-    return NextResponse.json({ error: 'session not found' }, { status: 404 });
+  try {
+    const state = await store.get(sessionId, userId);
+    if (!state) {
+      return NextResponse.json({ error: 'session not found' }, { status: 404 });
+    }
+
+    // Keep active + step pointer for resume.
+    state.updated_at = new Date().toISOString();
+    await store.save(state);
+
+    return NextResponse.json({
+      session_id: state.id,
+      status: state.status,
+      current_step_id: state.current_step_id,
+    });
+  } catch (err) {
+    if (err instanceof Error && err.message === 'mongo_unavailable') {
+      return NextResponse.json({ error: 'mongo_unavailable' }, { status: 503 });
+    }
+    throw err;
   }
-
-  // Keep active + step pointer for resume.
-  state.updated_at = new Date().toISOString();
-  await store.save(state);
-
-  return NextResponse.json({
-    session_id: state.id,
-    status: state.status,
-    current_step_id: state.current_step_id,
-  });
 }

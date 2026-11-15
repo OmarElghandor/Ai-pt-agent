@@ -1,6 +1,14 @@
 import { randomUUID } from 'node:crypto';
+import { connectMongo, mongoConfigured } from '@/lib/mongo';
 import { V2RoleplaySessionModel } from '@/lib/v2/mongo/roleplayModels';
 import type { RoleplaySessionState } from './session';
+
+async function ensureRoleplayMongo(): Promise<void> {
+  if (!mongoConfigured()) {
+    throw new Error('mongo_unavailable');
+  }
+  await connectMongo();
+}
 
 export type RoleplaySessionStore = {
   get(sessionId: string, userId: string): Promise<RoleplaySessionState | null>;
@@ -119,6 +127,7 @@ export class MongoRoleplaySessionStore implements RoleplaySessionStore {
     sessionId: string,
     userId: string,
   ): Promise<RoleplaySessionState | null> {
+    await ensureRoleplayMongo();
     const doc = await V2RoleplaySessionModel()
       .findOne({
         _id: sessionId,
@@ -130,6 +139,7 @@ export class MongoRoleplaySessionStore implements RoleplaySessionStore {
   }
 
   async save(state: RoleplaySessionState): Promise<void> {
+    await ensureRoleplayMongo();
     await V2RoleplaySessionModel().findOneAndUpdate(
       { _id: state.id, user_id: state.user_id },
       {
@@ -160,6 +170,7 @@ export class MongoRoleplaySessionStore implements RoleplaySessionStore {
     userId: string,
     situationId: string,
   ): Promise<RoleplaySessionState | null> {
+    await ensureRoleplayMongo();
     const doc = await V2RoleplaySessionModel()
       .findOne({
         user_id: userId,
@@ -172,6 +183,7 @@ export class MongoRoleplaySessionStore implements RoleplaySessionStore {
   }
 
   async listFinishedSituationIds(userId: string): Promise<string[]> {
+    await ensureRoleplayMongo();
     const docs = await V2RoleplaySessionModel()
       .find({ user_id: userId, status: 'done' })
       .select({ situation_id: 1 })
@@ -182,6 +194,7 @@ export class MongoRoleplaySessionStore implements RoleplaySessionStore {
   async listActiveBySituation(
     userId: string,
   ): Promise<Record<string, RoleplaySessionState>> {
+    await ensureRoleplayMongo();
     const docs = await V2RoleplaySessionModel()
       .find({ user_id: userId, status: 'active' })
       .lean();

@@ -47,26 +47,33 @@ export async function POST(req: Request) {
   const gender = learnerGenderFromUser(user);
   const learnerName = user?.name?.trim().split(/\s+/)[0] ?? null;
 
-  const result = await startRoleplaySession({
-    userId,
-    situationId,
-    gender,
-    learnerName,
-    sessionId: body?.session_id?.trim(),
-    resume: typeof body?.resume === 'boolean' ? body.resume : undefined,
-    store,
-  });
+  try {
+    const result = await startRoleplaySession({
+      userId,
+      situationId,
+      gender,
+      learnerName,
+      sessionId: body?.session_id?.trim(),
+      resume: typeof body?.resume === 'boolean' ? body.resume : undefined,
+      store,
+    });
 
-  return NextResponse.json({
-    session_id: result.state.id,
-    situation_id: result.state.situation_id,
-    resumed: result.resumed,
-    events: result.events,
-    session: {
-      id: result.state.id,
-      current_step_id: result.state.current_step_id,
-      status: result.state.status,
-      slots: result.state.slots,
-    },
-  });
+    return NextResponse.json({
+      session_id: result.state.id,
+      situation_id: result.state.situation_id,
+      resumed: result.resumed,
+      events: result.events,
+      session: {
+        id: result.state.id,
+        current_step_id: result.state.current_step_id,
+        status: result.state.status,
+        slots: result.state.slots,
+      },
+    });
+  } catch (err) {
+    if (err instanceof Error && err.message === 'mongo_unavailable') {
+      return NextResponse.json({ error: 'mongo_unavailable' }, { status: 503 });
+    }
+    throw err;
+  }
 }

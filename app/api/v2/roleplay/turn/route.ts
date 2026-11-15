@@ -2,13 +2,13 @@ import {
   getCurrentV2User,
   getCurrentV2UserId,
 } from '@/lib/v2/auth/session';
-import { isRoleplayModelReactionsEnabled, isV2Enabled } from '@/lib/v2/flags';
+import { isV2Enabled } from '@/lib/v2/flags';
 import { createAnswersConvoProgressWriter } from '@/lib/v2/convo/progress';
 import { awaitAndEmitCorrection } from '@/lib/v2/convo/correction';
 import { noFreeTextCorrection } from '@/lib/v2/grader';
+import { createLiveRoleplayActor } from '@/lib/v2/roleplay/actor';
 import { loadRoleplaySituation } from '@/lib/v2/roleplay/load';
 import { runRoleplayTurn } from '@/lib/v2/roleplay/engine';
-import { createLiveRoleplayModelReaction } from '@/lib/v2/roleplay/modelReaction';
 import {
   encodeRoleplayTurnEvent,
   MongoRoleplaySessionStore,
@@ -18,9 +18,10 @@ import type { RoleplayTurnEvent } from '@/lib/v2/roleplay/events';
 export const runtime = 'nodejs';
 
 /**
- * One streamed role-play turn.
- * Body: { session_id, text, help?, assisted?, learner_turn_id? }
- * Response: text/x-ndjson
+ * One role-play turn (NDJSON events).
+ * Character text is buffered server-side (typing indicator on client),
+ * then one bubble is emitted after guards.
+ * Body: { session_id, text, help?, assisted?, learner_turn_id?, convo_model? }
  */
 export async function POST(req: Request) {
   if (!isV2Enabled()) {
@@ -39,6 +40,8 @@ export async function POST(req: Request) {
     help?: boolean;
     assisted?: boolean;
     learner_turn_id?: string;
+    /** Dev A/B: `qwen` | `haiku` | `anthropic:…` | `deepinfra:…`. */
+    convo_model?: string;
   } | null;
 
   const sessionId = body?.session_id?.trim();
@@ -47,13 +50,24 @@ export async function POST(req: Request) {
   }
 
   const store = new MongoRoleplaySessionStore();
-  const state = await store.get(sessionId, userId);
+  let state;
+  try {
+    state = await store.get(sessionId, userId);
+  } catch (err) {
+    if (err instanceof Error && err.message === 'mongo_unavailable') {
+      return Response.json({ error: 'mongo_unavailable' }, { status: 503 });
+    }
+    throw err;
+  }
   if (!state) {
     return Response.json({ error: 'session not found' }, { status: 404 });
   }
 
   const situation = loadRoleplaySituation(state.situation_id);
   const progressWriter = createAnswersConvoProgressWriter();
+  const actor = createLiveRoleplayActor({
+    modelOverride: body?.convo_model ?? null,
+  });
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream<Uint8Array>({
@@ -62,7 +76,6 @@ export async function POST(req: Request) {
         controller.enqueue(encoder.encode(encodeRoleplayTurnEvent(event)));
       };
       try {
-        const modelOn = isRoleplayModelReactionsEnabled();
         const result = await runRoleplayTurn(
           {
             situation,
@@ -74,10 +87,7 @@ export async function POST(req: Request) {
           },
           {
             progressWriter,
-            modelReactionsEnabled: modelOn,
-            ...(modelOn
-              ? { modelReaction: createLiveRoleplayModelReaction() }
-              : {}),
+            actor,
           },
         );
 

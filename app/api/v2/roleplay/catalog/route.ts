@@ -22,14 +22,21 @@ export async function GET() {
   }
 
   const store = new MongoRoleplaySessionStore();
-  const [finishedIds, activeBySituation] = await Promise.all([
-    store.listFinishedSituationIds(userId),
-    store.listActiveBySituation(userId),
-  ]);
-  const catalog = buildRoleplayCatalog({
-    finishedIds,
-    activeBySituation,
-    activeSituationIds: Object.keys(activeBySituation),
-  });
-  return NextResponse.json(catalog);
+  try {
+    const [finishedIds, activeBySituation] = await Promise.all([
+      store.listFinishedSituationIds(userId),
+      store.listActiveBySituation(userId),
+    ]);
+    const catalog = buildRoleplayCatalog({
+      finishedIds,
+      activeBySituation,
+      activeSituationIds: Object.keys(activeBySituation),
+    });
+    return NextResponse.json(catalog);
+  } catch (err) {
+    if (err instanceof Error && err.message === 'mongo_unavailable') {
+      return NextResponse.json({ error: 'mongo_unavailable' }, { status: 503 });
+    }
+    throw err;
+  }
 }
