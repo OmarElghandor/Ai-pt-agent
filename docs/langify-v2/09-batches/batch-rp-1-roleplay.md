@@ -17,7 +17,7 @@ This replaces the role-play side of batch v3 (the day-33 Module A pack in the ro
    - every character line shows the Portuguese; a tap shows the Arabic;
    - the learner answers by voice or text;
    - a correction card appears under the learner's message when there's a mistake (async, batch-corrections);
-   - when the learner is stuck: see «Help» below;
+   - when the learner is stuck: a small 💡 hint (see «Light guidance» below);
    - the «ساعدني» button is always there.
 4. **The end:**
    - the closing line;
@@ -68,40 +68,54 @@ The path goes in order, scene after scene. A scene is never locked.
 - `{name}` is the learner's name; drop it with its comma when the name is unknown.
 - When the learner is female, use the `_f` fields.
 
-## Always show what to do (fix 2026-11-15: the conversation was unclear)
+## The scene file is a guide, the model is the actor (Omar, 2026-11-15). This section wins over anything below
 
-The learner must never wonder what to do.
+The conversation should feel like the first call we designed: a real person who reacts to what the learner actually said, while the scene moves forward. **The file is the script outline, not a fixed text.**
+- The steps give the order of the beats, what each beat is about (`intent_eg`), a suggested line (`says`), typical answers (`examples_tl`, `options`) and help.
+- **The character's words are written live by the model,** guided by the current beat. The model may reword, react, joke a little, answer a side question, and then move on.
+- **Code still owns the state:** which beat we are on, when a beat is done, slots, hints and the end. The model never decides the order.
 
-1. **Scene intro.** Before the character's first line, show one coach card, built from the file:
-   - 📍 `place_eg`;
-   - 👤 دورك: `learner_role_eg`;
-   - 🎯 المهمة: `task_eg`.
-   It is shown on a fresh start only. The «كنا فين — نكمّل من هنا» note is for resume only, never on a fresh start.
-2. **«دورك» strip.** Under the latest character bubble, a small strip shows the current step's `do_eg`. It updates on every step, stays visible until the learner answers, and is never hidden. Tapping it shows `hint_eg` (if any).
-3. **Character identity.** The bubble name, avatar and voice come from `character` / `speaker`: `manuel` → Manuel, an inline person → their `name`. **Never a default character** (the café showed «Inês»: that's a bug).
+**Guidance: hints only.**
+- No intro card, no «دورك» strip, no instructions by default. The header (character name + scene title) is enough.
+- When the learner is stuck («مش عارف», «ساعدني», or 2 turns on the same beat without progress): one 💡 hint line (`hint_eg`, or else `do_eg`) + 2 chips from `help`. On the next miss, the full sentence as a chip; the beat is marked assisted.
+- The character's name, avatar and voice come from `character` / `speaker`. The resume note is for resume only.
+
+**Answers: there is no model answer.**
+- Anything that does what the beat asks counts, with mistakes, other words, or an English or Arabic word inside («quero um coffee» = an order for a café).
+- The character answers naturally, with a short recast when there's a mistake («Um café? Claro!»). The correction card shows the better form under the learner's message.
 
 ## The engine (per learner message)
 
-1. **Side channel first** (existing modules).
-   - An Arabic or English language question gets a coach answer from the current step's lines and `key_phrases`. The character waits.
-   - «مش عارف» or «ساعدني» → help.
-2. **Match the current step:**
-   - normalize the message (case, accents, punctuation);
-   - the step is done if the message contains a keyword, fuzzy-matches an example of at least 2 words, or (with `free_answer`) is a real non-empty answer;
-   - the first matching option sets the slot.
-   - **Look-ahead:** one message can also complete the next step(s).
-3. **Done:**
-   - the reply;
-   - then the next step's `says`, skipping steps whose `if_slot` doesn't match;
-   - the correction card (async);
-   - progress credit for the matched items through the existing answers writer.
-4. **Help (not matched, or «ساعدني»):**
-   - **First time:** the character says a short «Desculpe?» and repeats `says`, and the coach shows `hint_eg` (if any) + `help.eg` + the 2 chips.
-   - **Second time:** the coach gives the full sentence (`frame_tl` or the first chip). The learner says or sends it, and the step is marked assisted.
-   - There's never a dead end, and never «مش واضح» for typed text.
-5. **No model on this path.** `V2_ROLEPLAY_MODEL_REACTIONS` (off by default) may later allow one short in-character model reaction to off-script answers.
-6. **Pacing:** the typing indicator and bubble delays from the free-talk pacing fix. Delays are 0 in tests.
-7. **Resume:** if the learner leaves mid-scene, the same button says «كمّل المكالمة» and resumes at the current step.
+1. **Side channel first** (existing modules). An Arabic or English language question gets a coach answer from the current beat and `key_phrases`, and the character waits. «مش عارف» / «ساعدني» → the hint.
+2. **Code check (fast).** The existing matcher (normalize, keywords, fuzzy examples, `free_answer`, options in order, look-ahead) marks the beat done when it's sure, and sets the slot.
+3. **One model call writes the character's turn (streamed).** The prompt has a constant size, made of labelled parts:
+   - **CHARACTER:** name, role in this scene, address (o senhor / tu), style: «short, natural pt-PT, at most 2 short sentences, simple words».
+   - **SCENE:** `place_eg` in English, the task.
+   - **CURRENT BEAT:** `intent_eg` (in English), the suggested line, the option values. If code already marked it done: «done, slot = galão».
+   - **NEXT BEAT:** its suggested line, or «end: say goodbye» when it's the last.
+   - **LAST 3 EXCHANGES.**
+   - **LEARNER JUST SAID.**
+
+   **Output contract:**
+   - the Portuguese turn: a reaction to what the learner said (+ a recast if there was a mistake), then, if the beat is done, the next beat's question (reworded or not); if not, a natural re-ask;
+   - then the `AR:` line;
+   - then a hidden line `BEAT: done <option>` or `BEAT: open`.
+4. **Code decides the state:**
+   - the beat is done if code said so, or if the model says done and the message is a real attempt (not empty, not only «sim/não» unless the beat's options are yes/no);
+   - a slot from the model must be one of the option values.
+   - If the beat is done but the model's turn didn't move on, code appends the next beat's `says`.
+5. **Guards, then fallback to the file.** Reject the model's turn if it:
+   - is empty or uses a wrong script;
+   - is longer than 2 sentences;
+   - has more than 2 content words outside (scene items + `new_tl` + the common-words list);
+   - asks about something outside the scene.
+
+   On reject or timeout (4 s): use the file's lines (option / step reply + next `says`). The learner never waits on a dead end.
+6. **The end:** after the last beat, the model says goodbye in character (or the file's `closing` as fallback), then the end card.
+7. **Model:** `V2_CONVO_MODEL` (the same switch as free talk; A/B Qwen vs Haiku in the dev menu). One call per learner turn. Log cost and latency.
+8. **Pacing and resume:** as before (the typing indicator; on resume, replay the last character bubble).
+
+**Chat structure:** one character bubble per turn (one audio, Arabic on tap). Never an empty coach bubble.
 
 ## Prompt to paste into Cursor
 
@@ -129,7 +143,10 @@ First, give me a short plan for R1–R5 and wait for my approval. Then implement
   3. **rp.mercado:** «Aceita cartão?» at `pay` → `cash_only` plays → «Está bem. Aqui tem.»
   4. **rp.restaurante:** «Não como carne de porco.» → `choose` plays → «O frango.» → the soup step → «Isto tem porco?» → the chouriço reply.
   5. **rp.direcoes:** «Pode repetir?» at `confirm` → the reply, and the step stays open → «Em frente e depois à esquerda?» → done.
-  6. **Any scene:** zero model calls on the whole run (asserted).
+  6. **rp.cafe with a stub model:** «quero um coffee» → the stub returns «Um café? Claro! Mais alguma coisa?» + `BEAT: done café` → one bubble, slot = café, a correction card, no hint.
+  7. **Fallback:** the stub returns an empty turn / Chinese text / 4 sentences / a timeout → the file's lines are used, and the scene continues.
+  8. **State:** the stub says `BEAT: done` for «sim» at `order_drink` → rejected (not a real attempt); for a slot that isn't an option value → rejected.
+  9. **Live eval script (not CI):** play rp.cafe, rp.restaurante and rp.direcoes with scripted learner turns against Qwen and Haiku, and print the transcripts side by side for Omar.
 
 ## Done when
 
