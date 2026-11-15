@@ -159,13 +159,16 @@ export function RoleplaySession({
 
   const lastCharacterIndex = (() => {
     for (let i = pacedVisible.length - 1; i >= 0; i--) {
-      if (pacedVisible[i]?.role === 'character') return i;
+      if (pacedVisible[i]?.role === 'character' && !pacedVisible[i]?.typing) {
+        return i;
+      }
     }
     return -1;
   })();
 
   const partnerName = ui.partnerName;
   const headerTitle = partnerName || titleTl;
+  const showDoStrip = Boolean(ui.do_eg && !ui.result && !busy);
 
   return (
     <div className="flex h-[100dvh] max-h-[100dvh] flex-col bg-v2-paper">
@@ -225,8 +228,9 @@ export function RoleplaySession({
           if (b.role === 'character') {
             const skipAuto =
               firstLineAlreadyPlayed &&
-              i === 0 &&
-              pacedVisible.findIndex((x) => x.role === 'character') === i;
+              pacedVisible.findIndex(
+                (x) => x.role === 'character' && !x.typing,
+              ) === i;
             const isLatest = i === lastCharacterIndex;
             return (
               <div key={b.id} className="flex flex-col items-start">
@@ -238,7 +242,7 @@ export function RoleplaySession({
                   partnerName={b.partnerName || partnerName || undefined}
                   voice={b.voice || ui.partnerVoice || undefined}
                 />
-                {isLatest && ui.do_eg && !ui.result ? (
+                {isLatest && showDoStrip && ui.do_eg ? (
                   <RoleplayDoStrip
                     eg={ui.do_eg.eg}
                     hintEg={ui.do_eg.hint_eg}
@@ -268,6 +272,11 @@ export function RoleplaySession({
           }
           return null;
         })}
+
+        {/* Fallback: strip after the thread when no character bubble is visible yet. */}
+        {showDoStrip && ui.do_eg && lastCharacterIndex < 0 ? (
+          <RoleplayDoStrip eg={ui.do_eg.eg} hintEg={ui.do_eg.hint_eg} />
+        ) : null}
 
         {ui.help ? (
           <div className="rounded-v2-card bg-v2-note px-3 py-3 ring-1 ring-v2-note-border/50">
