@@ -657,6 +657,8 @@ export default function V2AdminPage() {
           {' · '}
           <Link href="/v2-admin/characters">الشخصيات</Link>
           {' · '}
+          <Link href="/v2-admin/library">المكتبة</Link>
+          {' · '}
           open a day for the full job graph / timeline
         </p>
         <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">

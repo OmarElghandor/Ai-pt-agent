@@ -1,0 +1,89 @@
+{
+  "target_lang": "pt-PT",
+  "number": 12,
+  "slug": "ginasio-dia",
+  "type": "story",
+  "target_level": 3,
+  "intro_eg": "يوم عادي في الجيم بعد الشغل، والجيم زحمة.",
+  "cast": [
+    {
+      "voice_key": "yassin",
+      "role_eg": "المتعلم",
+      "learner": true
+    },
+    {
+      "voice_key": "tiago",
+      "role_eg": "واحد بيتمرن",
+      "learner": false
+    },
+    {
+      "voice_key": "pool_f_3",
+      "role_eg": "المدربة",
+      "learner": false
+    },
+    {
+      "voice_key": "pool_m_4",
+      "role_eg": "واحد تاني بيتمرن",
+      "learner": false
+    }
+  ],
+  "places": [
+    "gym"
+  ],
+  "beats": [
+    "اللوكرز.",
+    "تسخين.",
+    "يروح لجهاز عليه حد.",
+    "يشاركوا الجهاز.",
+    "الأوزان الحرة.",
+    "يخلّص ويسلّم."
+  ],
+  "must_have_phrases": [],
+  "moments": [
+    {
+      "id": "ginasio-dia_m1",
+      "eg": "فين اللوكرز، ومحتاج قفل؟",
+      "direction": "يسأل",
+      "must_say": "",
+      "bank_id": null
+    },
+    {
+      "id": "ginasio-dia_m2",
+      "eg": "محتاج الوزن ده؟",
+      "direction": "يسأل",
+      "must_say": "",
+      "bank_id": null
+    },
+    {
+      "id": "ginasio-dia_m3",
+      "eg": "ينفع أشاركك على الجهاز؟",
+      "direction": "يسأل",
+      "must_say": "",
+      "bank_id": null
+    },
+    {
+      "id": "ginasio-dia_m4",
+      "eg": "باقيلك كام جولة؟",
+      "direction": "يسأل",
+      "must_say": "",
+      "bank_id": null
+    },
+    {
+      "id": "ginasio-dia_m5",
+      "eg": "خلصت من البنش؟",
+      "direction": "يتسأل",
+      "must_say": "",
+      "bank_id": null
+    },
+    {
+      "id": "ginasio-dia_m6",
+      "eg": "المدربة بتقول لحد يرجّع الأوزان مكانها.",
+      "direction": "يسمع",
+      "must_say": "",
+      "bank_id": null
+    }
+  ],
+  "linked_episode": null,
+  "notes_admin": "tu between people the same age is normal here. 3 scenes: lockers, machines, free weights.",
+  "sort_order": 12
+}

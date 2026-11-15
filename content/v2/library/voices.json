@@ -1,0 +1,186 @@
+{
+  "target_lang": "pt-PT",
+  "global": {
+    "model": "<<ELEVENLABS_MODEL_ID>>",
+    "language": "Portuguese",
+    "output_format": "<<OUTPUT_FORMAT>>",
+    "monthly_char_limit": "<<MONTHLY_CHAR_LIMIT>>"
+  },
+  "speed_by_level": {
+    "1": "<<SPEED_L1>>",
+    "2": "<<SPEED_L2>>",
+    "3": "<<SPEED_L3>>",
+    "4": "<<SPEED_L4>>",
+    "5": "<<SPEED_L5>>"
+  },
+  "cast": [
+    {
+      "key": "yassin",
+      "who": "the learner (male version)",
+      "gender": "m",
+      "elevenlabs_voice_id": "<<VOICE_ID_YASSIN>>",
+      "stability": "<<S>>",
+      "similarity": "<<SIM>>",
+      "style": "<<STY>>",
+      "approved": false
+    },
+    {
+      "key": "learner_f",
+      "who": "the learner (female version, for tl_f lines)",
+      "gender": "f",
+      "elevenlabs_voice_id": "<<VOICE_ID_LEARNER_F>>",
+      "stability": "<<S>>",
+      "similarity": "<<SIM>>",
+      "style": "<<STY>>",
+      "approved": false
+    },
+    {
+      "key": "ines",
+      "who": "colleague, 28",
+      "gender": "f",
+      "elevenlabs_voice_id": "<<VOICE_ID_INES>>",
+      "stability": "<<S>>",
+      "similarity": "<<SIM>>",
+      "style": "<<STY>>",
+      "approved": false
+    },
+    {
+      "key": "tiago",
+      "who": "young man, 24",
+      "gender": "m",
+      "elevenlabs_voice_id": "<<VOICE_ID_TIAGO>>",
+      "stability": "<<S>>",
+      "similarity": "<<SIM>>",
+      "style": "<<STY>>",
+      "approved": false
+    },
+    {
+      "key": "nour",
+      "who": "Egyptian friend, early 30s",
+      "gender": "m",
+      "elevenlabs_voice_id": "<<VOICE_ID_NOUR>>",
+      "stability": "<<S>>",
+      "similarity": "<<SIM>>",
+      "style": "<<STY>>",
+      "approved": false
+    },
+    {
+      "key": "sofia",
+      "who": "35",
+      "gender": "f",
+      "elevenlabs_voice_id": "<<VOICE_ID_SOFIA>>",
+      "stability": "<<S>>",
+      "similarity": "<<SIM>>",
+      "style": "<<STY>>",
+      "approved": false
+    },
+    {
+      "key": "rita",
+      "who": "45",
+      "gender": "f",
+      "elevenlabs_voice_id": "<<VOICE_ID_RITA>>",
+      "stability": "<<S>>",
+      "similarity": "<<SIM>>",
+      "style": "<<STY>>",
+      "approved": false
+    },
+    {
+      "key": "carlos",
+      "who": "50",
+      "gender": "m",
+      "elevenlabs_voice_id": "<<VOICE_ID_CARLOS>>",
+      "stability": "<<S>>",
+      "similarity": "<<SIM>>",
+      "style": "<<STY>>",
+      "approved": false
+    },
+    {
+      "key": "manuel",
+      "who": "60",
+      "gender": "m",
+      "elevenlabs_voice_id": "<<VOICE_ID_MANUEL>>",
+      "stability": "<<S>>",
+      "similarity": "<<SIM>>",
+      "style": "<<STY>>",
+      "approved": false
+    },
+    {
+      "key": "graca",
+      "who": "Dona Graça, 72",
+      "gender": "f",
+      "elevenlabs_voice_id": "<<VOICE_ID_GRACA>>",
+      "stability": "<<S>>",
+      "similarity": "<<SIM>>",
+      "style": "<<STY>>",
+      "approved": false
+    },
+    {
+      "key": "narrator",
+      "who": "neutral narrator",
+      "gender": "m",
+      "elevenlabs_voice_id": "<<VOICE_ID_NARRATOR>>",
+      "stability": "<<S>>",
+      "similarity": "<<SIM>>",
+      "style": "<<STY>>",
+      "approved": false
+    }
+  ],
+  "pool": [
+    {
+      "key": "pool_m_1",
+      "gender": "m",
+      "age_feel": "30s",
+      "elevenlabs_voice_id": "<<VOICE_ID_POOL_M_1>>",
+      "approved": false
+    },
+    {
+      "key": "pool_m_2",
+      "gender": "m",
+      "age_feel": "20s",
+      "elevenlabs_voice_id": "<<VOICE_ID_POOL_M_2>>",
+      "approved": false
+    },
+    {
+      "key": "pool_m_3",
+      "gender": "m",
+      "age_feel": "50s",
+      "elevenlabs_voice_id": "<<VOICE_ID_POOL_M_3>>",
+      "approved": false
+    },
+    {
+      "key": "pool_m_4",
+      "gender": "m",
+      "age_feel": "40s",
+      "elevenlabs_voice_id": "<<VOICE_ID_POOL_M_4>>",
+      "approved": false
+    },
+    {
+      "key": "pool_f_1",
+      "gender": "f",
+      "age_feel": "30s",
+      "elevenlabs_voice_id": "<<VOICE_ID_POOL_F_1>>",
+      "approved": false
+    },
+    {
+      "key": "pool_f_2",
+      "gender": "f",
+      "age_feel": "20s",
+      "elevenlabs_voice_id": "<<VOICE_ID_POOL_F_2>>",
+      "approved": false
+    },
+    {
+      "key": "pool_f_3",
+      "gender": "f",
+      "age_feel": "50s",
+      "elevenlabs_voice_id": "<<VOICE_ID_POOL_F_3>>",
+      "approved": false
+    },
+    {
+      "key": "pool_f_4",
+      "gender": "f",
+      "age_feel": "40s",
+      "elevenlabs_voice_id": "<<VOICE_ID_POOL_F_4>>",
+      "approved": false
+    }
+  ]
+}

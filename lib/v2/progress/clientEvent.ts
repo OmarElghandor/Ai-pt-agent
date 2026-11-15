@@ -11,12 +11,27 @@ function newEventId(): string {
   });
 }
 
+/** `?dev=1` on the current page — only honored server-side for admin sessions. */
+function clientDevFlag(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    return new URLSearchParams(window.location.search).get('dev') === '1';
+  } catch {
+    return false;
+  }
+}
+
 export function postProgressEvent(
   body: Record<string, unknown> & { kind: string },
 ): string {
   const event_id =
     typeof body.event_id === 'string' ? body.event_id : newEventId();
-  const payload = { target_lang: 'pt-PT', ...body, event_id };
+  const payload = {
+    target_lang: 'pt-PT',
+    ...body,
+    event_id,
+    ...(clientDevFlag() ? { dev: true } : {}),
+  };
   if (typeof fetch === 'undefined') return event_id;
   void fetch('/api/v2/progress/events', {
     method: 'POST',

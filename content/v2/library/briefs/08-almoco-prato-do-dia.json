@@ -1,0 +1,77 @@
+{
+  "target_lang": "pt-PT",
+  "number": 8,
+  "slug": "almoco-prato-do-dia",
+  "type": "story",
+  "target_level": 2,
+  "intro_eg": "الغدا مع زميلتك في مطعم صغير جنب الشغل.",
+  "cast": [
+    {
+      "voice_key": "yassin",
+      "role_eg": "المتعلم",
+      "learner": true
+    },
+    {
+      "voice_key": "ines",
+      "role_eg": "زميلة",
+      "learner": false
+    },
+    {
+      "voice_key": "pool_m_1",
+      "role_eg": "الجرسون",
+      "learner": false
+    }
+  ],
+  "places": [
+    "restaurant"
+  ],
+  "beats": [
+    "يدخلوا ويطلبوا ترابيزة لاتنين.",
+    "الجرسون يقول طبق اليوم.",
+    "أسئلة عن الأكل.",
+    "يطلبوا أكل ومشروب.",
+    "الأكل يوصل.",
+    "الحساب."
+  ],
+  "must_have_phrases": [],
+  "moments": [
+    {
+      "id": "almoco-prato-do-dia_m1",
+      "eg": "الأكل ده حار؟",
+      "direction": "يسأل",
+      "must_say": "",
+      "bank_id": null
+    },
+    {
+      "id": "almoco-prato-do-dia_m2",
+      "eg": "فيه أوبشن نباتي؟ (ines هي اللي نباتية)",
+      "direction": "يسأل",
+      "must_say": "",
+      "bank_id": null
+    },
+    {
+      "id": "almoco-prato-do-dia_m3",
+      "eg": "ده فيه لحم خنزير؟",
+      "direction": "يسأل",
+      "must_say": "",
+      "bank_id": null
+    },
+    {
+      "id": "almoco-prato-do-dia_m4",
+      "eg": "العيش والزيتون اللي على الترابيزة بفلوس؟",
+      "direction": "يسأل",
+      "must_say": "",
+      "bank_id": null
+    },
+    {
+      "id": "almoco-prato-do-dia_m5",
+      "eg": "كله تمام؟",
+      "direction": "يتسأل",
+      "must_say": "",
+      "bank_id": null
+    }
+  ],
+  "linked_episode": null,
+  "notes_admin": "five moments on purpose. Each one stays 1–3 lines so the length still fits level 2.",
+  "sort_order": 8
+}

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Icon } from '@/components/v2/Icon';
 import { readDonePages } from './session';
 
@@ -12,6 +12,8 @@ export type DayMapStep = {
   subtitle?: string;
   minutes: number;
   href: string | null;
+  /** When false, excluded from محطات counts (practice). Default: kind !== practice. */
+  counted?: boolean;
 };
 
 type Status = 'done' | 'current' | 'locked';
@@ -24,6 +26,11 @@ function arPad(n: number): string {
     .split('')
     .map((c) => EASTERN[Number(c)] ?? c)
     .join('');
+}
+
+function isCounted(step: DayMapStep): boolean {
+  if (typeof step.counted === 'boolean') return step.counted;
+  return step.kind !== 'practice';
 }
 
 function stepIcon(kind: DayMapStep['kind'], status: Status): string {
@@ -43,6 +50,8 @@ export function DayMap({
   practiceDevUnlock = false,
   hasPublishedPack = false,
   questionsAfterId = null,
+  serverDoneIds = [],
+  nextStepId = null,
 }: {
   day: number;
   situation?: { tl: string; eg: string };
@@ -52,11 +61,22 @@ export function DayMap({
   hasPublishedPack?: boolean;
   /** Page that must be done before questions unlock. */
   questionsAfterId?: string | null;
+  /** Done step ids from v2_lesson_progress (server truth on load). */
+  serverDoneIds?: string[];
+  /** Next counted step id from step view (current station). */
+  nextStepId?: string | null;
 }) {
-  const [done, setDone] = useState<string[]>([]);
+  const [localDone, setLocalDone] = useState<string[]>([]);
   useEffect(() => {
-    setDone(readDonePages(day));
+    setLocalDone(readDonePages(day));
   }, [day]);
+
+  // Server is truth on load; local echo only adds ticks from this tab's finishes.
+  const done = useMemo(() => {
+    const set = new Set<string>(serverDoneIds);
+    for (const id of localDone) set.add(id);
+    return [...set];
+  }, [serverDoneIds, localDone]);
 
   const doneSet = new Set(done);
   const gateDone = lastPageId ? doneSet.has(lastPageId) : false;
@@ -72,10 +92,19 @@ export function DayMap({
       if (!practiceUnlocked || !step.href) {
         return { step, status: 'locked' as Status };
       }
-      if (!markedCurrent) {
+      if (nextStepId === step.id || !markedCurrent) {
         markedCurrent = true;
         return { step, status: 'current' as Status };
       }
+      return { step, status: 'current' as Status };
+    }
+
+    if (doneSet.has(step.id)) {
+      return { step, status: 'done' as Status };
+    }
+
+    if (nextStepId && step.id === nextStepId) {
+      markedCurrent = true;
       return { step, status: 'current' as Status };
     }
 
@@ -101,7 +130,6 @@ export function DayMap({
       }
     }
 
-    if (doneSet.has(step.id)) return { step, status: 'done' as Status };
     if (!markedCurrent && (prevDone || practiceDevUnlock || i === 0)) {
       markedCurrent = true;
       return { step, status: 'current' as Status };
@@ -116,22 +144,22 @@ export function DayMap({
     return { step, status: 'locked' as Status };
   });
 
-  const doneCount = rows.filter((r) => r.status === 'done').length;
+  const countedSteps = steps.filter(isCounted);
+  const countedDone = countedSteps.filter((s) => doneSet.has(s.id)).length;
+  const countedTotal = countedSteps.length;
   const currentIndex = rows.findIndex((r) => r.status === 'current');
   const currentRow = currentIndex >= 0 ? rows[currentIndex] : null;
-  const totalMinutes = steps.reduce((sum, s) => sum + s.minutes, 0);
+  const totalMinutes = countedSteps.reduce((sum, s) => sum + s.minutes, 0);
   const remainingMinutes = rows
-    .filter((r) => r.status !== 'done')
+    .filter((r) => r.status !== 'done' && isCounted(r.step))
     .reduce((sum, r) => sum + r.step.minutes, 0);
-  const progressPct =
-    steps.length === 0 ? 0 : Math.round((doneCount / steps.length) * 100);
   const railFillPct =
     steps.length <= 1
-      ? doneCount > 0
+      ? countedDone > 0
         ? 100
         : 0
       : Math.round(
-          ((Math.max(doneCount, currentIndex >= 0 ? currentIndex : 0) /
+          ((Math.max(countedDone, currentIndex >= 0 ? currentIndex : 0) /
             (steps.length - 1)) *
             100),
         );
@@ -184,18 +212,23 @@ export function DayMap({
               ) : null}
             </div>
             <p className="font-[family-name:var(--font-v2-arabic)] text-sm leading-relaxed text-v2-ink-muted">
-              {steps.length} محطات متسلسلة بتنقلك من القصة والتفصيل لحد أسئلة
+              {countedTotal} محطات متسلسلة بتنقلك من القصة والتفصيل لحد أسئلة
               اليوم والتدريب.
             </p>
             <div className="mt-1 flex items-center gap-3 pt-1">
-              <div className="h-2 flex-1 overflow-hidden rounded-full bg-v2-line">
-                <div
-                  className="h-full rounded-full bg-v2-action transition-all duration-500"
-                  style={{ width: `${progressPct}%` }}
-                />
+              <div className="flex h-2 flex-1 gap-0.5 overflow-hidden rounded-full">
+                {countedSteps.map((s) => (
+                  <div
+                    key={s.id}
+                    className={[
+                      'h-full flex-1 first:rounded-s-full last:rounded-e-full',
+                      doneSet.has(s.id) ? 'bg-v2-action' : 'bg-v2-line',
+                    ].join(' ')}
+                  />
+                ))}
               </div>
               <span className="shrink-0 font-[family-name:var(--font-v2-arabic)] text-xs font-semibold text-v2-ink">
-                محطات مكتملة ({doneCount}/{steps.length})
+                محطات مكتملة ({countedDone}/{countedTotal})
               </span>
             </div>
           </div>

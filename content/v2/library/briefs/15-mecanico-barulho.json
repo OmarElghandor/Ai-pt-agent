@@ -1,0 +1,58 @@
+{
+  "target_lang": "pt-PT",
+  "number": 15,
+  "slug": "mecanico-barulho",
+  "type": "story",
+  "target_level": 4,
+  "intro_eg": "العربية بتطلّع صوت غريب، وإنت عند الميكانيكي.",
+  "cast": [
+    {
+      "voice_key": "yassin",
+      "role_eg": "المتعلم",
+      "learner": true
+    },
+    {
+      "voice_key": "pool_m_3",
+      "role_eg": "الميكانيكي",
+      "learner": false
+    }
+  ],
+  "places": [
+    "mechanic"
+  ],
+  "beats": [
+    "يوصف الصوت (إمتى، لما يفرمل ولا لما يلف).",
+    "الميكانيكي يجرّب.",
+    "التشخيص.",
+    "التكلفة والمدة.",
+    "يسيب العربية.",
+    "يتفقوا يتصل بيه."
+  ],
+  "must_have_phrases": [],
+  "moments": [
+    {
+      "id": "mecanico-barulho_m1",
+      "eg": "هيكلف كام تقريباً قبل ما تبدأ؟",
+      "direction": "يسأل",
+      "must_say": "",
+      "bank_id": null
+    },
+    {
+      "id": "mecanico-barulho_m2",
+      "eg": "آخر صيانة إمتى؟",
+      "direction": "يتسأل",
+      "must_say": "",
+      "bank_id": null
+    },
+    {
+      "id": "mecanico-barulho_m3",
+      "eg": "أقدر أسوقها كده لحد ما تتصلح؟",
+      "direction": "يسأل",
+      "must_say": "",
+      "bank_id": null
+    }
+  ],
+  "linked_episode": null,
+  "notes_admin": "",
+  "sort_order": 15
+}

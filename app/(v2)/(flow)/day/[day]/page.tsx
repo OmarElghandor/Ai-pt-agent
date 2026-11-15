@@ -1,20 +1,12 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { DayMap, type DayMapStep } from '@/components/v2/player/DayMap';
+import { DayMap } from '@/components/v2/player/DayMap';
 import { LessonProgressBootstrap } from '@/components/v2/player/LessonProgressBootstrap';
-import {
-  getLatestLessonPack,
-  getPublishedLesson,
-} from '@/lib/v2/content/getPublishedLesson';
-import { findImageStepVisible } from '@/lib/v2/findImage/buildRounds';
-import { getPublishedPack } from '@/lib/v2/generation/pack/save';
-import { rehydrateLessonImages } from '@/lib/v2/images/rehydrate';
-import {
-  FIND_IMAGE_MINUTES,
-  minutesForMode,
-  PRACTICE_MINUTES,
-} from '@/lib/v2/render/dayMinutes';
-import { plainRt } from '@/lib/v2/render/speechTarget';
+import { getCurrentV2UserId } from '@/lib/v2/auth/session';
+import { connectMongo, mongoConfigured } from '@/lib/mongo';
+import { buildDaySteps } from '@/lib/v2/progress/daySteps';
+import { createMongoProgressStore } from '@/lib/v2/progress/events';
+import { buildStepView } from '@/lib/v2/progress/stepView';
 
 export default async function DayMapPage({
   params,
@@ -29,9 +21,8 @@ export default async function DayMapPage({
   if (!Number.isInteger(day) || day < 1) notFound();
 
   const dev = sp.dev === '1';
-  const published =
-    (await getPublishedLesson(day)) ?? (await getLatestLessonPack(day));
-  if (!published) {
+  const built = await buildDaySteps({ day, dev });
+  if (!built) {
     return (
       <main className="px-4 py-8">
         <Link href="/path" className="text-sm">
@@ -44,118 +35,50 @@ export default async function DayMapPage({
     );
   }
 
-  const pack = await getPublishedPack(day);
-  const lessonPack = await rehydrateLessonImages({
-    day: published.day,
-    targetLang: published.target_lang,
-    version: published.version,
-    pack: published.pack,
-  });
-  const pages = lessonPack.pages.filter((p) => p.role !== 'test');
-  const storyIntro =
-    pages.find((p) => p.preset === 'story' && p.role !== 'test') ??
-    pages.find((p) => p.preset === 'story') ??
-    pages[0];
-  // Legacy packs may still carry a scene page — skip it at render time (00 2026-11-13).
-  const detailPages = pages.filter(
-    (p) => p.id !== storyIntro?.id && p.preset !== 'scene',
-  );
-  const lastDetailId = detailPages[detailPages.length - 1]?.id ?? null;
-  const questionsId = 'day_questions';
-  const findImageId = 'find_image';
-  const showFindImage = findImageStepVisible(lessonPack.items ?? []);
-  const unlockAfter = questionsId;
-  const questionsAfterId = showFindImage
-    ? findImageId
-    : (lastDetailId ?? storyIntro?.id ?? null);
-  const devUnlock = dev;
-  const withDev = (href: string) => {
-    if (!dev) return href;
-    return href.includes('?') ? `${href}&dev=1` : `${href}?dev=1`;
-  };
+  let serverDoneIds: string[] = [];
+  let nextStepId: string | null = null;
 
-  const steps: DayMapStep[] = [];
-
-  if (storyIntro) {
-    steps.push({
-      id: storyIntro.id,
-      kind: 'page',
-      title: 'القصة',
-      subtitle: plainRt(storyIntro.title),
-      minutes: minutesForMode(storyIntro.mode),
-      href: withDev(`/day/${day}/page/${storyIntro.id}`),
-    });
+  const userId = await getCurrentV2UserId();
+  if (userId && mongoConfigured()) {
+    await connectMongo();
+    const store = createMongoProgressStore();
+    const progress = await store.getLesson(userId, 'pt-PT', day);
+    const view = buildStepView(progress, built.steps);
+    serverDoneIds = (progress?.steps ?? [])
+      .filter((s) => s.status === 'done')
+      .map((s) => s.id);
+    nextStepId = view.nextStep?.id ?? null;
+  } else {
+    const view = buildStepView(null, built.steps);
+    nextStepId = view.nextStep?.id ?? null;
   }
-
-  for (const page of detailPages) {
-    steps.push({
-      id: page.id,
-      kind: 'page',
-      title: plainRt(page.title),
-      subtitle: page.pill,
-      minutes: minutesForMode(page.mode),
-      href: withDev(`/day/${day}/page/${page.id}`),
-    });
-  }
-
-  if (showFindImage) {
-    steps.push({
-      id: findImageId,
-      kind: 'find_image',
-      title: 'لاقي الصورة',
-      subtitle: 'اسمع واختار',
-      minutes: FIND_IMAGE_MINUTES,
-      href: withDev(`/day/${day}/find-image`),
-    });
-  }
-
-  steps.push({
-    id: questionsId,
-    kind: 'questions',
-    title: 'أسئلة اليوم',
-    subtitle: 'اختبرني',
-    minutes: 3,
-    href: withDev(`/day/${day}/questions`),
-  });
-
-  steps.push({
-    id: 'practice',
-    kind: 'practice',
-    title: 'تدريب',
-    subtitle: 'محادثة',
-    minutes: PRACTICE_MINUTES,
-    href: pack ? `/practice/${day}${devUnlock ? '?dev=1' : ''}` : null,
-  });
-
-  const openSteps = steps.map((s) => ({
-    id: s.id,
-    present: s.id !== 'real_world' || Boolean(s.href),
-  }));
-  // Mark find_image absent when hidden; real_world pages already filtered by content.
-  if (!showFindImage) {
-    openSteps.push({ id: 'find_image', present: false });
-  }
-
-  const dayQuestionsTotal = Array.isArray(lessonPack.questions)
-    ? lessonPack.questions.length
-    : 0;
 
   return (
     <>
       <LessonProgressBootstrap
-        day={published.day}
-        steps={openSteps}
-        dayQuestionsTotal={dayQuestionsTotal}
-        lessonVersion={published.version}
+        day={built.day}
+        steps={built.openSteps}
+        dayQuestionsTotal={built.dayQuestionsTotal}
+        lessonVersion={built.lessonVersion ?? undefined}
       />
       <DayMap
-        day={published.day}
-        situation={lessonPack.lesson.situation}
-        steps={steps}
-        lastPageId={unlockAfter}
-        practiceDevUnlock={devUnlock}
-        hasPublishedPack={Boolean(pack)}
-        questionsAfterId={questionsAfterId}
+        day={built.day}
+        situation={built.situation}
+        steps={built.displaySteps.map((s) => ({
+          id: s.id,
+          kind: s.kind,
+          title: s.title,
+          subtitle: s.subtitle,
+          minutes: s.minutes,
+          href: s.href,
+          counted: s.counted,
+        }))}
+        lastPageId={built.unlockAfter}
+        practiceDevUnlock={dev}
+        hasPublishedPack={built.hasPublishedPack}
+        questionsAfterId={built.questionsAfterId}
+        serverDoneIds={serverDoneIds}
+        nextStepId={nextStepId}
       />
     </>
   );

@@ -1,16 +1,38 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Icon } from '@/components/v2/Icon';
-import { readDonePages } from '@/components/v2/player/session';
 import type { PathDayRow } from '@/lib/v2/path';
 import type { LearnerPathDay } from '@/lib/v2/progress/learnerPath';
 
 type NodeStatus = 'done' | 'current' | 'available' | 'locked' | 'bakra';
 
 type PathRoadDay = PathDayRow &
-  Partial<Pick<LearnerPathDay, 'learner_status' | 'bakra' | 'practised'>>;
+  Partial<
+    Pick<
+      LearnerPathDay,
+      | 'learner_status'
+      | 'bakra'
+      | 'practised'
+      | 'steps_done'
+      | 'steps_total'
+    >
+  >;
+
+export type CurrentDayStepsProp = {
+  done: number;
+  total: number;
+  next_step: { id: string; title: string; href: string | null } | null;
+  last_done_step: { id: string; title: string; href: string | null } | null;
+  started: boolean;
+  practised: boolean;
+  total_minutes: number;
+  first_step_href: string | null;
+  practice_href: string | null;
+  day_map_href: string;
+  completed: boolean;
+};
 
 const DAY_ICONS = [
   'waving_hand',
@@ -23,9 +45,59 @@ const DAY_ICONS = [
   'trophy',
 ] as const;
 
-function dayLooksDone(day: number): boolean {
-  const done = readDonePages(day);
-  return done.includes('day_questions') || done.includes('practice');
+const EASTERN = '٠١٢٣٤٥٦٧٨٩';
+
+function toEastern(n: number): string {
+  return String(n)
+    .split('')
+    .map((c) => EASTERN[Number(c)] ?? c)
+    .join('');
+}
+
+function heroCta(steps: CurrentDayStepsProp | null, bakra: boolean): {
+  label: string;
+  href: string | null;
+  disabled: boolean;
+} {
+  if (bakra) {
+    return { label: 'بيفتح بكرة', href: null, disabled: true };
+  }
+  if (!steps) {
+    return { label: 'يلا نبدأ', href: null, disabled: true };
+  }
+  if (steps.completed && steps.practised) {
+    return {
+      label: 'راجع الدرس',
+      href: steps.day_map_href,
+      disabled: false,
+    };
+  }
+  if (steps.completed && !steps.practised) {
+    return {
+      label: 'اتمرّن على الدرس',
+      href: steps.practice_href ?? steps.day_map_href,
+      disabled: !steps.practice_href,
+    };
+  }
+  if (!steps.started) {
+    return {
+      label: 'يلا نبدأ',
+      href: steps.first_step_href ?? steps.day_map_href,
+      disabled: false,
+    };
+  }
+  if (steps.next_step) {
+    return {
+      label: `كمّل: ${steps.next_step.title}`,
+      href: steps.next_step.href ?? steps.day_map_href,
+      disabled: false,
+    };
+  }
+  return {
+    label: 'راجع الدرس',
+    href: steps.day_map_href,
+    disabled: false,
+  };
 }
 
 export function PathRoadmap({
@@ -35,6 +107,8 @@ export function PathRoadmap({
   coverUrl = null,
   deckLeft = null,
   deckTotal = null,
+  currentDaySteps = null,
+  suggestion = null,
 }: {
   week: number;
   days: PathRoadDay[];
@@ -42,25 +116,14 @@ export function PathRoadmap({
   coverUrl?: string | null;
   deckLeft?: number | null;
   deckTotal?: number | null;
+  currentDaySteps?: CurrentDayStepsProp | null;
+  suggestion?: { kind: string; text: string } | null;
 }) {
-  const [doneDays, setDoneDays] = useState<Set<number>>(() => new Set());
-
-  useEffect(() => {
-    const next = new Set<number>();
-    for (const row of days) {
-      if (row.learner_status === 'completed') {
-        next.add(row.day);
-        continue;
-      }
-      if (row.status !== 'locked' && dayLooksDone(row.day)) next.add(row.day);
-    }
-    setDoneDays(next);
-  }, [days]);
-
   const nodes = useMemo(() => {
     let markedCurrent = false;
     return days.map((row) => {
-      if (row.learner_status === 'completed' || doneDays.has(row.day)) {
+      // Server status only — sessionStorage must never mark a day done (13 §5).
+      if (row.learner_status === 'completed') {
         return { row, status: 'done' as NodeStatus };
       }
       if (row.bakra || row.learner_status === 'scheduled') {
@@ -88,27 +151,24 @@ export function PathRoadmap({
       }
       return { row, status: 'available' as NodeStatus };
     });
-  }, [days, doneDays, ssrCurrentDay]);
+  }, [days, ssrCurrentDay]);
 
   const current =
     nodes.find((n) => n.status === 'current')?.row ??
+    nodes.find((n) => n.status === 'bakra')?.row ??
     days.find((d) => d.day === ssrCurrentDay) ??
     days.find((d) => d.status !== 'locked') ??
     null;
 
-  const unlocked = days.filter((d) => d.status !== 'locked');
   const doneCount = nodes.filter((n) => n.status === 'done').length;
   const currentIndex = current
     ? days.findIndex((d) => d.day === current.day) + 1
     : doneCount;
-  const weekProgress =
-    unlocked.length === 0
-      ? 0
-      : Math.round(
-          ((doneCount + (current && !doneDays.has(current.day) ? 0.4 : 0)) /
-            unlocked.length) *
-            100,
-        );
+
+  const bakra = Boolean(current?.bakra || current?.learner_status === 'scheduled');
+  const cta = heroCta(currentDaySteps, bakra);
+  const stationsDone = currentDaySteps?.done ?? 0;
+  const stationsTotal = currentDaySteps?.total ?? 0;
 
   const cardsLabel =
     deckTotal != null && deckTotal > 0
@@ -121,7 +181,6 @@ export function PathRoadmap({
 
   return (
     <div className="relative flex flex-col">
-      {/* Atmospheric mint glows */}
       <div
         aria-hidden
         className="pointer-events-none absolute -start-1/4 top-0 size-80 rounded-full bg-v2-primary-fixed/30 blur-3xl"
@@ -139,7 +198,6 @@ export function PathRoadmap({
       />
 
       <div className="relative z-10 flex flex-col gap-2">
-        {/* Hero: continue current learning */}
         {current ? (
           <section className="-mx-4 px-4 pt-4">
             <div className="overflow-hidden rounded-2xl border border-v2-line/50 bg-v2-card shadow-sm transition-shadow hover:shadow-md">
@@ -155,14 +213,9 @@ export function PathRoadmap({
                   <div className="absolute inset-0 bg-gradient-to-br from-v2-primary-fixed via-v2-primary-tint to-v2-action-tint" />
                 )}
                 <div className="absolute inset-0 flex items-end bg-gradient-to-t from-v2-hero-scrim/80 via-transparent to-transparent p-4">
-                  <div className="flex items-center gap-2">
-                    <span className="rounded-full bg-v2-primary px-2.5 py-0.5 font-[family-name:var(--font-v2-arabic)] text-[11px] font-bold text-white shadow-sm">
-                      مستوى A1
-                    </span>
-                    <span className="rounded-full bg-v2-card/90 px-2.5 py-0.5 font-[family-name:var(--font-v2-arabic)] text-[11px] font-medium text-v2-ink backdrop-blur-sm">
-                      {weekProgress}٪ مكتمل
-                    </span>
-                  </div>
+                  <span className="rounded-full bg-v2-primary px-2.5 py-0.5 font-[family-name:var(--font-v2-arabic)] text-[11px] font-bold text-white shadow-sm">
+                    مستوى A1
+                  </span>
                 </div>
               </div>
               <div className="flex flex-col gap-3 p-4">
@@ -183,35 +236,81 @@ export function PathRoadmap({
                     {current.situation_eg || current.title_ar}
                   </p>
                 </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-v2-primary-tint">
-                  <div
-                    className="h-full rounded-full bg-v2-primary transition-all duration-700"
-                    style={{ width: `${Math.min(100, weekProgress)}%` }}
-                  />
-                </div>
-                <div className="flex items-center justify-between gap-3 pt-1">
-                  <span className="flex items-center gap-1 font-[family-name:var(--font-v2-arabic)] text-xs font-medium text-v2-sand">
-                    <Icon name="schedule" size={20} variant="outlined" />
-                    محطة اليوم
-                  </span>
-                  {current.href ? (
-                    <Link
-                      href={current.href}
-                      className="flex h-9 items-center gap-2 rounded-xl bg-v2-primary px-5 text-sm font-semibold text-white shadow-sm transition-colors active:scale-95 hover:bg-v2-primary-strong"
+
+                {stationsTotal > 0 ? (
+                  <div className="flex flex-col gap-2">
+                    <p className="font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-v2-ink">
+                      {stationsDone === 0
+                        ? `${toEastern(stationsTotal)} محطات · حوالي ${toEastern(currentDaySteps?.total_minutes ?? 0)} دقيقة`
+                        : `${toEastern(stationsDone)} من ${toEastern(stationsTotal)} محطات`}
+                    </p>
+                    <div className="flex h-2 w-full gap-0.5 overflow-hidden rounded-full">
+                      {Array.from({ length: stationsTotal }, (_, i) => (
+                        <div
+                          key={i}
+                          className={[
+                            'h-full flex-1 first:rounded-s-full last:rounded-e-full',
+                            i < stationsDone
+                              ? 'bg-v2-primary'
+                              : 'bg-v2-primary-tint',
+                          ].join(' ')}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
+                {currentDaySteps?.started &&
+                !currentDaySteps.completed &&
+                currentDaySteps.last_done_step ? (
+                  <p className="font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
+                    وقفت عند: {currentDaySteps.last_done_step.title}
+                  </p>
+                ) : null}
+
+                <div className="flex flex-col gap-2 pt-1">
+                  {cta.disabled || !cta.href ? (
+                    <button
+                      type="button"
+                      disabled
+                      className="flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-v2-paper-deep px-5 text-sm font-semibold text-v2-sand"
                     >
                       <span className="font-[family-name:var(--font-v2-arabic)]">
-                        ابدأ التمرين الآن
+                        {cta.label}
+                      </span>
+                    </button>
+                  ) : (
+                    <Link
+                      href={cta.href}
+                      className="flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-v2-primary px-5 text-sm font-semibold text-white shadow-sm transition-colors active:scale-95 hover:bg-v2-primary-strong"
+                    >
+                      <span className="font-[family-name:var(--font-v2-arabic)]">
+                        {cta.label}
                       </span>
                       <Icon name="play_arrow" size={20} variant="outlined" fill />
                     </Link>
+                  )}
+                  {bakra && suggestion?.text ? (
+                    <p className="font-[family-name:var(--font-v2-arabic)] text-xs leading-relaxed text-v2-ink-muted">
+                      {suggestion.text}
+                    </p>
                   ) : null}
+                  <Link
+                    href={
+                      currentDaySteps?.day_map_href ??
+                      current.href ??
+                      `/day/${current.day}`
+                    }
+                    className="text-center font-[family-name:var(--font-v2-arabic)] text-xs font-semibold text-v2-primary hover:underline"
+                  >
+                    شوف كل المحطات
+                  </Link>
                 </div>
               </div>
             </div>
           </section>
         ) : null}
 
-        {/* Quick practice shortcuts */}
         <section className="-mx-4 px-4 py-2">
           <div className="mb-2 flex items-center justify-between">
             <h3 className="font-[family-name:var(--font-v2-arabic)] text-sm font-bold text-v2-ink">
@@ -276,7 +375,6 @@ export function PathRoadmap({
           </div>
         </section>
 
-        {/* Lisbon cultural tip */}
         <section className="-mx-4 px-4 py-2">
           <div className="relative flex items-start gap-3 overflow-hidden rounded-2xl border border-v2-line bg-v2-card p-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
             <div className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-xl bg-v2-primary/10 text-v2-primary">
@@ -313,7 +411,6 @@ export function PathRoadmap({
           </div>
         </section>
 
-        {/* Serpentine roadmap */}
         <section className="-mx-4 px-4 pt-4 pb-2">
           <div className="mb-4 flex items-center justify-between gap-3">
             <div>
@@ -365,6 +462,11 @@ export function PathRoadmap({
                   row.is_test ||
                   (row.is_story && index === days.length - 1) ||
                   index === days.length - 1;
+                const showStepsFrac =
+                  row.learner_status === 'in_progress' &&
+                  typeof row.steps_done === 'number' &&
+                  typeof row.steps_total === 'number' &&
+                  row.steps_total > 0;
 
                 if (isCheckpoint && isLocked && index === days.length - 1) {
                   return (
@@ -411,15 +513,7 @@ export function PathRoadmap({
                         ].join(' ')}
                       >
                         <Icon
-                          name={
-                            isDone
-                              ? 'check'
-                              : isLocked
-                                ? 'lock'
-                                : isCurrent
-                                  ? icon
-                                  : icon
-                          }
+                          name={isDone ? 'check' : isLocked ? 'lock' : icon}
                           size={isCurrent ? 24 : 20}
                           variant="outlined"
                           fill={isDone || isCurrent}
@@ -478,6 +572,11 @@ export function PathRoadmap({
                       >
                         {row.title_ar}
                       </p>
+                      {showStepsFrac ? (
+                        <p className="mt-0.5 font-[family-name:var(--font-v2-arabic)] text-[10px] font-semibold text-v2-primary">
+                          {toEastern(row.steps_done!)}/{toEastern(row.steps_total!)}
+                        </p>
+                      ) : null}
                     </div>
                   </div>
                 );
@@ -511,7 +610,6 @@ export function PathRoadmap({
 }
 
 function serpentinePath(height: number): string {
-  // Stitch-like S-curve for a ~340-wide viewBox; scales with node count.
   const midY = Math.max(540, height - 40);
   return `M 90 40
     C 220 70, 260 130, 245 160

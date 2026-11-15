@@ -1499,6 +1499,30 @@ export function V2OfficialDeckModel(): Model<V2OfficialDeckDoc> {
   );
 }
 
+/* Library models live in ./libraryModels (Turbopack HMR-safe split). */
+export type {
+  V2LibraryBriefDoc,
+  V2LibraryEpisodeDoc,
+  V2LibraryJobDoc,
+  V2LibraryVoiceDoc,
+  V2LibrarySettingsDoc,
+  V2LibraryVoiceTestDoc,
+  V2LibraryMomentDoc,
+  V2LibraryTtsUsageDoc,
+  V2LibraryProgressDoc,
+} from './libraryModels';
+export {
+  V2LibraryBriefModel,
+  V2LibraryEpisodeModel,
+  V2LibraryJobModel,
+  V2LibraryVoiceModel,
+  V2LibrarySettingsModel,
+  V2LibraryVoiceTestModel,
+  V2LibraryMomentModel,
+  V2LibraryTtsUsageModel,
+  V2LibraryProgressModel,
+} from './libraryModels';
+
 void overrideFormSchema;
 void skillSrsSchema;
 void errorProblemLabelSchema;

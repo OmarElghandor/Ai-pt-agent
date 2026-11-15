@@ -32,6 +32,12 @@ This pack holds everything decided in design sessions for **A-Z Talkie** (produc
 | `docs/langify-v2/10-auth-tasks.md` | One-session task breakdown for auth (A0–A7) | English |
 | `docs/langify-v2/11-profile-progress.md` | Lesson progress, problems/weak spots, daily deck, streak, profile summary (P0–P12) | English |
 | `docs/langify-v2/12-custom-decks.md` | Learner-generated flashcard decks, shared item pool, images (§2.10), public list, admin promotion (C0–C9) | English |
+| `docs/langify-v2/13-step-progress.md` | Server-owned day-step ticks, next-step resume, shared step list, home stations hero (S0–S5) | English |
+| `docs/langify-v2/14-library.md` | Library: stories and podcasts from real life (levels, moments, ElevenLabs, player, saved words) | English |
+| `docs/langify-v2/14b-library-content.md` | Voices registry, moment bank, 20 episode briefs | English / Egyptian |
+| `docs/langify-v2/14c-library-design.md` | Stitch refs, language notes decision, player UI fixes | English |
+| `docs/langify-v2/14d-library-admin.md` | Admin tool to build episodes (LA0–LA9); replaces 14 tasks L1–L4b and L8 | English |
+| `design/reference/library/` | Stitch screens for library home, story/podcast players, word sheet, end (see 14c) | HTML / PNG |
 | `examples/day06-example.json` | Gold ESTAR lesson (filename kept; `lesson.day` is **11** in the grammar-first order) | JSON |
 | `prototypes/ser-estar.html` | Working prototype of a guided (autoplay) page | HTML |
 | `prototypes/verb-endings.html` | Working prototype of an explore page (person dial, swap, build questions) | HTML |

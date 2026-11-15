@@ -19,6 +19,11 @@ export type HandleProgressEventOpts = {
   timezone?: string | null;
   now?: Date;
   store: ProgressStore;
+  /**
+   * Admin session + client `?dev=1` (via body `dev: true`).
+   * Allows writing progress on locked/scheduled days outside day 1.
+   */
+  allowDevUnlock?: boolean;
   /** Optional hook when streak-eligible activity first lands (P11). */
   onStreakActivity?: (args: {
     userId: string;
@@ -26,6 +31,34 @@ export type HandleProgressEventOpts = {
     timezone: string;
   }) => Promise<void>;
 };
+
+/**
+ * Lock guard (13 §3): step_done / lesson_opened must not mutate locked or
+ * future-scheduled days except day 1 and admin+dev. Due scheduled days
+ * (opens_on <= today) may promote to available.
+ */
+export function lessonProgressWritable(
+  lesson: Pick<LessonProgressRecord, 'day' | 'status' | 'opens_on'>,
+  opts: { localDate: string; allowDevUnlock?: boolean },
+): boolean {
+  if (
+    lesson.status === 'available' ||
+    lesson.status === 'in_progress' ||
+    lesson.status === 'completed'
+  ) {
+    return true;
+  }
+  if (lesson.day === 1) return true;
+  if (opts.allowDevUnlock) return true;
+  if (
+    lesson.status === 'scheduled' &&
+    lesson.opens_on &&
+    lesson.opens_on <= opts.localDate
+  ) {
+    return true;
+  }
+  return false;
+}
 
 export type HandleProgressEventResult = {
   duplicate: boolean;
@@ -175,13 +208,28 @@ export async function handleProgressEvent(
         event.target_lang,
         event.day,
       );
+      if (
+        !lessonProgressWritable(lesson, {
+          localDate,
+          allowDevUnlock: opts.allowDevUnlock,
+        })
+      ) {
+        console.info('[progress] lesson_opened blocked (locked/scheduled)', {
+          userId,
+          day: event.day,
+          status: lesson.status,
+        });
+        break;
+      }
       if (lesson.status === 'scheduled' && lesson.opens_on && lesson.opens_on <= localDate) {
         lesson.status = 'available';
         lesson.opens_on = null;
       }
       if (lesson.status === 'locked') {
-        // Day 1 safety; otherwise leave locked.
-        if (event.day === 1) lesson.status = 'available';
+        // Day 1 safety, or admin+dev unlock.
+        if (event.day === 1 || opts.allowDevUnlock) {
+          lesson.status = 'available';
+        }
       }
       if (
         lesson.status === 'available' ||
@@ -220,11 +268,40 @@ export async function handleProgressEvent(
         event.target_lang,
         event.day,
       );
+      if (
+        !lessonProgressWritable(lesson, {
+          localDate,
+          allowDevUnlock: opts.allowDevUnlock,
+        })
+      ) {
+        console.info('[progress] step_done blocked (locked/scheduled)', {
+          userId,
+          day: event.day,
+          step_id: event.step_id,
+          status: lesson.status,
+        });
+        break;
+      }
+      if (lesson.status === 'scheduled' && lesson.opens_on && lesson.opens_on <= localDate) {
+        lesson.status = 'available';
+        lesson.opens_on = null;
+      }
+      if (lesson.status === 'locked' && (event.day === 1 || opts.allowDevUnlock)) {
+        lesson.status = 'available';
+      }
       if (lesson.status === 'completed') {
         // Replay: update resume/steps without touching completed_at.
-      } else if (lesson.status === 'available' || lesson.status === 'locked') {
+      } else if (lesson.status === 'available') {
         lesson.status = 'in_progress';
         if (!lesson.started_at) lesson.started_at = now;
+      } else if (lesson.status === 'locked') {
+        // Still locked after guard — should not happen; refuse write.
+        console.info('[progress] step_done blocked (still locked)', {
+          userId,
+          day: event.day,
+          step_id: event.step_id,
+        });
+        break;
       }
       const idx = lesson.steps.findIndex((s) => s.id === event.step_id);
       if (idx >= 0) {

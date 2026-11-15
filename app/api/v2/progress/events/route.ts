@@ -33,10 +33,17 @@ export async function POST(req: Request) {
     );
   }
 
+  const wantsDev =
+    typeof body === 'object' &&
+    body !== null &&
+    (body as { dev?: unknown }).dev === true;
+  const allowDevUnlock = auth.user.role === 'admin' && wantsDev;
+
   const result = await handleProgressEvent(parsed.data, {
     userId: auth.user.id,
     timezone: auth.user.timezone,
     store: createMongoProgressStore(),
+    allowDevUnlock,
     onStreakActivity: async (args) => {
       const { onStreakActivity } = await import('@/lib/v2/progress/streak');
       await onStreakActivity(args);

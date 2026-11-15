@@ -1,0 +1,62 @@
+{
+  "target_lang": "pt-PT",
+  "number": 19,
+  "slug": "fim-de-semana",
+  "type": "podcast",
+  "target_level": 5,
+  "intro_eg": "يوم الاتنين الصبح في الشغل، وزميلتك بتسألك عملت إيه في الويك إند.",
+  "cast": [
+    {
+      "voice_key": "yassin",
+      "role_eg": "المتعلم",
+      "learner": true
+    },
+    {
+      "voice_key": "ines",
+      "role_eg": "زميلة",
+      "learner": false
+    },
+    {
+      "voice_key": "carlos",
+      "role_eg": "زميل بيدخل في الكلام",
+      "learner": false
+    }
+  ],
+  "places": [
+    "work"
+  ],
+  "beats": [
+    "ines تسأل.",
+    "يحكي عمل إيه (ماضي كتير).",
+    "هي تحكي يومها.",
+    "carlos يدخل ويحكي حاجة حصلتله.",
+    "يتكلموا عن الويك إند الجاي."
+  ],
+  "must_have_phrases": [],
+  "moments": [
+    {
+      "id": "fim-de-semana_m1",
+      "eg": "لسه ما جربتش … (أكلة أو مكان عام)؟",
+      "direction": "يتسأل",
+      "must_say": "",
+      "bank_id": null
+    },
+    {
+      "id": "fim-de-semana_m2",
+      "eg": "ينفع أنضم معاكم المرة الجاية؟",
+      "direction": "يسأل",
+      "must_say": "",
+      "bank_id": null
+    },
+    {
+      "id": "fim-de-semana_m3",
+      "eg": "carlos بيدخل في الكلام فجأة.",
+      "direction": "يسمع",
+      "must_say": "",
+      "bank_id": null
+    }
+  ],
+  "linked_episode": null,
+  "notes_admin": "the main grammar load here is past tenses (pretérito and imperfeito together).",
+  "sort_order": 19
+}

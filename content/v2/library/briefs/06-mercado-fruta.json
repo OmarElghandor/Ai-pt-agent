@@ -1,0 +1,63 @@
+{
+  "target_lang": "pt-PT",
+  "number": 6,
+  "slug": "mercado-fruta",
+  "type": "story",
+  "target_level": 2,
+  "intro_eg": "السبت الصبح في السوق، عايز خضار وفاكهة.",
+  "cast": [
+    {
+      "voice_key": "yassin",
+      "role_eg": "المتعلم",
+      "learner": true
+    },
+    {
+      "voice_key": "pool_m_4",
+      "role_eg": "البياع",
+      "learner": false
+    },
+    {
+      "voice_key": "graca",
+      "role_eg": "جارة كبيرة بتشتري جنبه",
+      "learner": false
+    }
+  ],
+  "places": [
+    "market"
+  ],
+  "beats": [
+    "graca تسلّم عليه.",
+    "يسأل سعر الكيلو.",
+    "يختار ويطلب نص كيلو وكيلو.",
+    "البياع يوزن ويقول الوزن.",
+    "الحساب كاش والباقي.",
+    "سلام لـgraca."
+  ],
+  "must_have_phrases": [],
+  "moments": [
+    {
+      "id": "mercado-fruta_m1",
+      "eg": "ممكن أدوق؟",
+      "direction": "يسأل",
+      "must_say": "",
+      "bank_id": null
+    },
+    {
+      "id": "mercado-fruta_m2",
+      "eg": "عايزهم للأكل النهارده ولا بعد كام يوم؟",
+      "direction": "يتسأل",
+      "must_say": "",
+      "bank_id": null
+    },
+    {
+      "id": "mercado-fruta_m3",
+      "eg": "graca بتفاصل مع البياع.",
+      "direction": "يسمع",
+      "must_say": "",
+      "bank_id": null
+    }
+  ],
+  "linked_episode": null,
+  "notes_admin": "",
+  "sort_order": 6
+}

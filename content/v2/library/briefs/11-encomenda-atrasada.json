@@ -1,0 +1,64 @@
+{
+  "target_lang": "pt-PT",
+  "number": 11,
+  "slug": "encomenda-atrasada",
+  "type": "podcast",
+  "target_level": 3,
+  "intro_eg": "طلبت حاجة أونلاين من أسبوع ولسه ما وصلتش، وبتكلم خدمة العملاء.",
+  "cast": [
+    {
+      "voice_key": "yassin",
+      "role_eg": "المتعلم",
+      "learner": true
+    },
+    {
+      "voice_key": "pool_m_2",
+      "role_eg": "موظف خدمة العملاء",
+      "learner": false
+    },
+    {
+      "voice_key": "narrator",
+      "role_eg": "رسالة الانتظار",
+      "learner": false
+    }
+  ],
+  "places": [
+    "phone_call"
+  ],
+  "beats": [
+    "رسالة انتظار.",
+    "الموظف يرد ويطلب رقم الطلب.",
+    "يشرح المشكلة.",
+    "الموظف يدوّر.",
+    "سبب التأخير.",
+    "الحلول: ميعاد جديد أو فلوسه ترجع.",
+    "يختار، وتأكيد بالإيميل."
+  ],
+  "must_have_phrases": [],
+  "moments": [
+    {
+      "id": "encomenda-atrasada_m1",
+      "eg": "ممكن تأكد الإيميل؟",
+      "direction": "يتسأل",
+      "must_say": "",
+      "bank_id": null
+    },
+    {
+      "id": "encomenda-atrasada_m2",
+      "eg": "ينفع يسيبوه عند الجيران لو مش موجود؟",
+      "direction": "يسأل",
+      "must_say": "",
+      "bank_id": null
+    },
+    {
+      "id": "encomenda-atrasada_m3",
+      "eg": "ممكن تكرر رقم الطلب؟",
+      "direction": "يتسأل",
+      "must_say": "",
+      "bank_id": null
+    }
+  ],
+  "linked_episode": null,
+  "notes_admin": "",
+  "sort_order": 11
+}

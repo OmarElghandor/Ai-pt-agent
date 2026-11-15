@@ -1,0 +1,539 @@
+{
+  "target_lang": "pt-PT",
+  "places": {
+    "cafe": [
+      {
+        "id": "cafe_1",
+        "place": "cafe",
+        "eg": "الكرسي ده فاضي؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "cafe_2",
+        "place": "cafe",
+        "eg": "فيه واي فاي؟ الباسورد إيه؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "cafe_3",
+        "place": "cafe",
+        "eg": "ينفع أشحن الموبايل هنا؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "cafe_4",
+        "place": "cafe",
+        "eg": "القهوة سادة ولا بلبن؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "cafe_5",
+        "place": "cafe",
+        "eg": "زبون بيطلب \"زي كل يوم\".",
+        "must_say": "",
+        "archived": false
+      }
+    ],
+    "padaria": [
+      {
+        "id": "padaria_1",
+        "place": "padaria",
+        "eg": "العيش ده طازة النهارده؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "padaria_2",
+        "place": "padaria",
+        "eg": "عايز كيس؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "padaria_3",
+        "place": "padaria",
+        "eg": "ممكن تقطّعه؟",
+        "must_say": "",
+        "archived": false
+      }
+    ],
+    "street_transport": [
+      {
+        "id": "street_transport_1",
+        "place": "street_transport",
+        "eg": "ده الخط الصح لـ…؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "street_transport_2",
+        "place": "street_transport",
+        "eg": "الكرسي ده فاضي؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "street_transport_3",
+        "place": "street_transport",
+        "eg": "لو سمحت هنزل (عشان يعدّي)",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "street_transport_4",
+        "place": "street_transport",
+        "eg": "المحطة الجاية إيه؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "street_transport_5",
+        "place": "street_transport",
+        "eg": "إنت مش من هنا؟",
+        "must_say": "",
+        "archived": false
+      }
+    ],
+    "ticket_office": [
+      {
+        "id": "ticket_office_1",
+        "place": "ticket_office",
+        "eg": "ينفع أشحنه من المكنة؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "ticket_office_2",
+        "place": "ticket_office",
+        "eg": "معاك الكارت؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "ticket_office_3",
+        "place": "ticket_office",
+        "eg": "عايز وصل؟",
+        "must_say": "",
+        "archived": false
+      }
+    ],
+    "supermarket": [
+      {
+        "id": "supermarket_1",
+        "place": "supermarket",
+        "eg": "حد معاه حاجة واحدة وإنت بتعدّيه قدامك",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "supermarket_2",
+        "place": "supermarket",
+        "eg": "الكاشير ده فاتح؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "supermarket_3",
+        "place": "supermarket",
+        "eg": "الحاجة دي خلصت؟ هتيجي إمتى؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "supermarket_4",
+        "place": "supermarket",
+        "eg": "مكنة الدفع الذاتي علقت",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "supermarket_5",
+        "place": "supermarket",
+        "eg": "العرض ده شغال على النوع ده؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "supermarket_6",
+        "place": "supermarket",
+        "eg": "إنت آخر واحد في الطابور؟",
+        "must_say": "",
+        "archived": false
+      }
+    ],
+    "market": [
+      {
+        "id": "market_1",
+        "place": "market",
+        "eg": "ممكن أدوق؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "market_2",
+        "place": "market",
+        "eg": "عايزهم للأكل النهارده ولا بعد كام يوم؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "market_3",
+        "place": "market",
+        "eg": "واحدة كبيرة بتفاصل مع البياع.",
+        "must_say": "",
+        "archived": false
+      }
+    ],
+    "pharmacy": [
+      {
+        "id": "pharmacy_1",
+        "place": "pharmacy",
+        "eg": "محتاج روشتة؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "pharmacy_2",
+        "place": "pharmacy",
+        "eg": "فيه بديل أرخص؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "pharmacy_3",
+        "place": "pharmacy",
+        "eg": "بتاخد أي دوا تاني؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "pharmacy_4",
+        "place": "pharmacy",
+        "eg": "ينفع آخده مع دوا تاني؟",
+        "must_say": "",
+        "archived": false
+      }
+    ],
+    "restaurant": [
+      {
+        "id": "restaurant_1",
+        "place": "restaurant",
+        "eg": "الأكل ده حار؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "restaurant_2",
+        "place": "restaurant",
+        "eg": "فيه أوبشن نباتي؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "restaurant_3",
+        "place": "restaurant",
+        "eg": "ده فيه لحم خنزير؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "restaurant_4",
+        "place": "restaurant",
+        "eg": "ممكن من غير بصل؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "restaurant_5",
+        "place": "restaurant",
+        "eg": "الطبق كبير؟ ينفع نص طبق؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "restaurant_6",
+        "place": "restaurant",
+        "eg": "العيش والزيتون اللي على الترابيزة بفلوس؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "restaurant_7",
+        "place": "restaurant",
+        "eg": "تنصحني بإيه؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "restaurant_8",
+        "place": "restaurant",
+        "eg": "الجرسون يسأل \"كله تمام؟\"",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "restaurant_9",
+        "place": "restaurant",
+        "eg": "كل واحد يدفع لوحده؟",
+        "must_say": "",
+        "archived": false
+      }
+    ],
+    "gym": [
+      {
+        "id": "gym_1",
+        "place": "gym",
+        "eg": "محتاج الوزن ده؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "gym_2",
+        "place": "gym",
+        "eg": "لسه شغال على الجهاز ده؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "gym_3",
+        "place": "gym",
+        "eg": "ينفع أشاركك على الجهاز؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "gym_4",
+        "place": "gym",
+        "eg": "باقيلك كام جولة؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "gym_5",
+        "place": "gym",
+        "eg": "ممكن تساعدني في الرفعة دي؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "gym_6",
+        "place": "gym",
+        "eg": "الفوطة دي بتاعتك؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "gym_7",
+        "place": "gym",
+        "eg": "فين اللوكرز، ومحتاج قفل؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "gym_8",
+        "place": "gym",
+        "eg": "الجهاز ده عطلان؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "gym_9",
+        "place": "gym",
+        "eg": "حد بيقول \"رجّع الأوزان مكانها\".",
+        "must_say": "",
+        "archived": false
+      }
+    ],
+    "phone_call": [
+      {
+        "id": "phone_call_1",
+        "place": "phone_call",
+        "eg": "ممكن تتهجى اسمك؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "phone_call_2",
+        "place": "phone_call",
+        "eg": "ممكن تكرر الرقم؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "phone_call_3",
+        "place": "phone_call",
+        "eg": "رسالة مسجلة \"دوس ١…\"",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "phone_call_4",
+        "place": "phone_call",
+        "eg": "المكالمة بتتحول لقسم تاني",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "phone_call_5",
+        "place": "phone_call",
+        "eg": "ممكن تأكد الإيميل؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "phone_call_6",
+        "place": "phone_call",
+        "eg": "سامعني؟ الصوت بيقطع.",
+        "must_say": "",
+        "archived": false
+      }
+    ],
+    "landlord": [
+      {
+        "id": "landlord_1",
+        "place": "landlord",
+        "eg": "مسموح بحيوانات أليفة؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "landlord_2",
+        "place": "landlord",
+        "eg": "فيه عقد وإيصالات؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "landlord_3",
+        "place": "landlord",
+        "eg": "الجيران هاديين؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "landlord_4",
+        "place": "landlord",
+        "eg": "الشقة باردة في الشتا؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "landlord_5",
+        "place": "landlord",
+        "eg": "ينفع أدهن الحيطة؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "landlord_6",
+        "place": "landlord",
+        "eg": "إنت شغال فين؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "landlord_7",
+        "place": "landlord",
+        "eg": "فيه حد تاني هيسكن معاك؟",
+        "must_say": "",
+        "archived": false
+      }
+    ],
+    "bank": [
+      {
+        "id": "bank_1",
+        "place": "bank",
+        "eg": "فيه حساب من غير مصاريف؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "bank_2",
+        "place": "bank",
+        "eg": "الكارت يوصل إمتى؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "bank_3",
+        "place": "bank",
+        "eg": "إنت ساكن هنا من إمتى؟",
+        "must_say": "",
+        "archived": false
+      }
+    ],
+    "mechanic": [
+      {
+        "id": "mechanic_1",
+        "place": "mechanic",
+        "eg": "هيكلف كام تقريباً قبل ما تبدأ؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "mechanic_2",
+        "place": "mechanic",
+        "eg": "آخر صيانة إمتى؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "mechanic_3",
+        "place": "mechanic",
+        "eg": "أقدر أسوقها كده لحد ما تتصلح؟",
+        "must_say": "",
+        "archived": false
+      }
+    ],
+    "neighbours": [
+      {
+        "id": "neighbours_1",
+        "place": "neighbours",
+        "eg": "الغسالة بالليل",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "neighbours_2",
+        "place": "neighbours",
+        "eg": "لو فيه حاجة قوليلي على طول",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "neighbours_3",
+        "place": "neighbours",
+        "eg": "جار تاني اشتكى كمان.",
+        "must_say": "",
+        "archived": false
+      }
+    ],
+    "work": [
+      {
+        "id": "work_1",
+        "place": "work",
+        "eg": "تقدر تبدأ إمتى؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "work_2",
+        "place": "work",
+        "eg": "ينفع جزء من الشغل من البيت؟",
+        "must_say": "",
+        "archived": false
+      },
+      {
+        "id": "work_3",
+        "place": "work",
+        "eg": "ينفع أنضم المرة الجاية؟",
+        "must_say": "",
+        "archived": false
+      }
+    ]
+  }
+}

@@ -79,7 +79,8 @@ After the checks:
 
 ### 2.7 The public list ("من المتعلمين")
 
-- Every saved deck is public. There is no private switch in v1.
+- Topic-generated and learner-shared decks are public. There is no private switch in v1 for those decks.
+- **(changed 2026-11-14) Exception — private `saved` deck from the library (`14` §2.10):** each learner gets one automatic private deck **"من المكتبة"** with `kind: saved` and `visibility: private`. It is never listed in "من المتعلمين", has no report button, and cannot be promoted. Words, chunks and moment lines saved from a library episode resolve to official items when present, otherwise to `v2_custom_items`; the card example is the episode sentence with its line audio. Removing a word from this deck removes the link only. Review follows §2.6 (own session, not in the daily 15). The deck is user-keyed and deleted with the account (A5).
 - Deck listing tabs become: **المواقف** (situation decks from lessons) · **الأفعال** · **مواضيع** (official themed decks, §6) · **من المتعلمين**.
 - "من المتعلمين" sorts by popularity (how many learners added it), with a "الجديد" filter and a search box over titles and tags.
 - A deck tile shows `title_ar`, `title_tl`, the word count and "ضافوه N". **The creator's name is not shown** (privacy, and it avoids one more thing to moderate).

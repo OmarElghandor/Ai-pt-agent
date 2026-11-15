@@ -48,7 +48,20 @@ Full detail: `10-auth.md`. Tasks: `10-auth-tasks.md`.
 - **(new)** Days 1–54 are labeled **A1**, and phase 2 (from day 55) starts **A2**. This is aligned with the CIPLE A2 exam that residents need.
 - SER vs ESTAR is now days 19–23. `examples/day06-example.json` is the ESTAR day, which is **day 22** in the new order. The file keeps its name, but its `day` is 22.
 - A normal day has these steps, about 10 minutes in all: see the place (words) → situation phrases → one small rule → self-test → conversation with a character → review. Each step is one or more **pages**.
-- The "Library" (المكتبة) is the book in its original order: rules, tenses, verb cards, picture dictionary, stories. A page unlocks there when the learner reaches it on the path.
+- **(changed 2026-11-14)** The "Library" (المكتبة) is the **stories and podcasts** module (`14-library.md`): real-life episodes anyone can open, not locked to the learner's day. The older book-order idea (rules, tenses, verb cards, picture dictionary) becomes a later tab **"المراجع"** inside المكتبة if still wanted; until then that tab does not exist. Detail: §1c.
+
+## 1c. Library (stories and podcasts) (new, 2026-11-14)
+
+Full detail: `14-library.md`, content `14b-library-content.md`, design `14c-library-design.md`, admin `14d-library-admin.md`. Where those docs and this section disagree with older §1 about المكتبة, with §10 about TTS (for the library only), or with §5b / `12` about every deck being public, **14 and this section win**.
+
+- **Episodes:** 3–5 minute **stories** (illustrated scene, text-first) and **podcasts** (audio-first: calls, friends talking). One ordered list by level (1–5: سهل جداً · سهل · متوسط · أصعب شوية · صعب), then Omar's sort. No unlocks, no CEFR labels, no day gate. The curriculum never reads episodes.
+- **Real, not drills:** each episode is a full situation from start to end (generic places, no brands). **Real moments** (side exchanges textbooks skip) are required in the brief: learner asks / is asked / hears; minimum 2 on level 1, 3 on levels 2–5. Moment bank is Egyptian descriptions only (`14b`); Portuguese comes from the model unless Omar adds `must_say`.
+- **Language notes** (`14c` §2): 0–3 short Egyptian notes between lines (`notes` with `after_line`, `eg` as `rt`, optional `focus`). Extra words and facts outside the curriculum and the 1000-word list are welcome. Notes never pause audio. Note surface uses the mint note tokens, not attention gold.
+- **Script → tokens → audio → images → publish** are admin-built (`14d`). Learners never trigger paid generation.
+- **Audio (library only):** **ElevenLabs** with character timings, pre-generated per line, stitched for the player. Lessons, cards, in-lesson stories and talk keep Azure TTS (§10). Env: `ELEVENLABS_API_KEY`, `LIBRARY_TTS_MODEL`, monthly char cap.
+- **Player:** transcript follows audio (sentence + word highlight); tap a word → meaning sheet + **"ضيفها لكروتي"** into the private **"من المكتبة"** deck (`12` private `saved` kind). Resume from last line; end screen with moment lines worth saving.
+- **Images:** existing lesson image pipeline; keys `library.pt-PT.<slug>.scene-N` / `.cover`; no place badges. Publish does not require images.
+- **Admin:** `/v2-admin/library` (`14d`), `role: admin` only.
 
 ## 2. Language and text
 
@@ -327,7 +340,8 @@ Full detail: `12-custom-decks.md`. Where that doc and this section disagree with
 - **Shared items, not copies.** Generated words live in `v2_custom_items` (one doc per language × normalised lemma × POS, id like `ugc.pt-PT.chuva.noun`). The same word in two decks is one item. Before creating a custom item, code checks official lesson banks; if the word already exists (`food.cheese`, `weather.rain`), the deck references that id. Card SRS stays in `v2_item_state` (`source: custom` for UGC). Promotion never migrates progress — official decks keep the same item ids.
 - **Item shape:** `tl` (nouns with article), optional `tl_f`, `pos`, `gender`, `ar` (simple MSA), optional `eg_note` (Egyptian), short `example_tl` / `example_ar`, `concept_en` (English slug for the image key only, never shown), and `image = { key, url }` when ready. Code adds `say` (`00` §2). Verbs show the infinitive only; conjugation poster only if the lemma is in the verified table.
 - **Generation:** Haiku via env (`CUSTOM_DECK_MODEL`), one non-streamed JSON call, 20 s timeout, one parse retry. Topic blocklist in code first; model may set `topic_ok: false` (sexual, insults, hate, violence, drugs, politics, real person). Checks drop bad words (Brazilian forms, `/` in `tl`, noun article/gender, Arabic `ar`, example rules, `concept_en` slug, duplicates); top-up once if under 15; fail under 15 after top-up without counting quota. Quotas via `customDeckQuota(user)` (env caps now; plans later). Failed / rejected / "ضيفه" don't count.
-- **Learner flow:** find existing public deck by title/tags first (no model) → generate → preview (remove only, ≥15 to save) → save to "ديكاتي" and publish to "من المتعلمين". Public by default; **no private switch in v1**.
+- **Learner flow:** find existing public deck by title/tags first (no model) → generate → preview (remove only, ≥15 to save) → save to "ديكاتي" and publish to "من المتعلمين". Public by default; **no private switch in v1** for topic-generated decks.
+- **(new 2026-11-14) Private library deck:** each learner gets one automatic private deck **"من المكتبة"** (`kind: saved`, `visibility: private`) for words saved from library episodes (`14` §2.10). It never appears in "من المتعلمين", has no report button, and can't be promoted. Detail in `12`.
 - **Review:** not mixed into the daily 15. Per-deck session: due first, then ≤10 new/day. Same card UI (picture or placeholder); ratings through `POST /api/v2/answers`. Custom items never feed weak spots by problem; curriculum / planner / distractors / known-items ignore them. A finished custom / official themed session with ≥10 cards rated counts for the streak (`11` §7.2).
 - **Public list:** sort by `added_count`, "الجديد", search titles/tags; tiles show titles, word count, "ضافوه N" (no creator name). Add/remove from "ديكاتي"; report (deck or wrong picture, optional item id) → auto-hide at 3 reports from different learners (adders keep it). Admin hide/delete/remove word.
 - **Images (`12` §2.10):** cheap model from env (`CUSTOM_DECK_IMAGE_MODEL`, start GPT Image 2) at **low** quality, 1:1, edits endpoint + style-anchor only — **no cast, no character sheets**. Nouns, verbs and adjectives only (phrases none). Specs from code templates using `concept_en`. Keys `word.<concept_en>` reused when ready. Auto-queue when `added_count` ≥ `CUSTOM_DECK_IMAGE_THRESHOLD` (start 5); **admin may generate for any deck at any time** after seeing missing count and estimated cost. Same Haiku QA + meaning check; Cloudinary; `v2_images.used_by` includes deck ids; deck `images_status` (none | queued | partial | ready); global daily image cap (`CUSTOM_DECK_IMAGE_DAILY_LIMIT`). Wrong-picture reports flag/hide the key. Learners never trigger images; image cost is separate from the deck quota.
@@ -420,6 +434,7 @@ Full detail: `11-profile-progress.md`. Where that doc and this section disagree 
   - **Completed** = every day question answered once (right or wrong). Earlier steps do not block. No minimum score. Weekly story days: completed when the reading's questions are answered.
   - **One new day per local day:** completing day N makes N+1 `scheduled` with `opens_on` = the next local date ("بكرة"); it never opens the same day. Day 1 is available after onboarding. Replays, cards, نواقصك, conversations on completed lessons and free chat are never limited.
   - Content regeneration never breaks progress: completed stays completed; new items appear as new.
+  - **Step ticks, next-step resume, and the home stations hero:** `13-step-progress.md` (where it disagrees with `11` on those points, **13 wins**).
 - **Problems and weak spots.** Words are reviewed on cards (item SRS). Problems (rules/patterns) are reviewed in "نواقصك". One mistake can feed both. Weak slots in the daily card deck come from item misses, not problems.
 - **Daily deck** (`v2_card_decks`, one per user × local date): built once (9 recent / 4 weak items / 2 older); ratings go to answers (SRS) and to progress events (deck). No backlog.
 - **Activity** (`v2_activity_days`) and **streak** on `v2_users`: a day counts for the streak after a real learning action (lesson step, finished daily deck, نواقصك session, conversation with ≥5 learner turns, **or** a finished custom / official themed deck session with ≥10 cards rated — `12` / `11` §7.2). **Two grace days** in any rolling 7-day window; the shown count is active days only. Calm Kit, no flame. No Langify progress import — every learner starts at day 1.
@@ -562,6 +577,7 @@ Full detail: `11-profile-progress.md`. Where that doc and this section disagree 
   - There is no text in the image.
   - Weekly story days get one image like this per scene.
 - Audio: Azure TTS pt-PT, cached. Whether Azure pronunciation assessment supports pt-PT is still unknown; check before building scoring on it.
+- **(new 2026-11-14) Library audio exception:** the library module (`14` §2.7, §1c) uses **ElevenLabs** for pre-generated episode audio only. Everything else (lessons, cards, in-lesson stories, talk) keeps Azure TTS above.
 
 ## 11. Open items
 

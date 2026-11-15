@@ -14,12 +14,30 @@ import {
   resolveLearnerCurrentDay,
 } from '@/lib/v2/progress/learnerPath';
 import { buildPathPayload } from '@/lib/v2/path';
+import { buildDaySteps } from '@/lib/v2/progress/daySteps';
+import type { LessonProgressRecord } from '@/lib/v2/progress/events/store';
+import { buildStepView } from '@/lib/v2/progress/stepView';
 import { userLocalDate } from '@/lib/v2/progress/userLocalDate';
 import {
   graceDaysLeft,
   streakGraceLine,
 } from '@/lib/v2/progress/streak/compute';
 import type { ItemState } from '@/lib/v2/progress/types';
+
+export type CurrentDayStepsSummary = {
+  done: number;
+  total: number;
+  next_step: { id: string; title: string; href: string | null } | null;
+  last_done_step: { id: string; title: string; href: string | null } | null;
+  started: boolean;
+  last_step_done_at: string | null;
+  practised: boolean;
+  total_minutes: number;
+  first_step_href: string | null;
+  practice_href: string | null;
+  day_map_href: string;
+  completed: boolean;
+};
 
 export type MeSummary = {
   name: string;
@@ -31,6 +49,7 @@ export type MeSummary = {
   current_day_title_tl: string | null;
   bakra: boolean;
   completed_days: number;
+  current_day_steps: CurrentDayStepsSummary | null;
   streak: {
     current: number;
     best: number;
@@ -130,6 +149,66 @@ export async function buildMeSummary(user: V2User): Promise<MeSummary> {
   const currentRow = learnerDays.find((d) => d.day === currentDay) ?? null;
   const bakra = Boolean(currentRow?.bakra);
 
+  let current_day_steps: CurrentDayStepsSummary | null = null;
+  if (currentDay != null) {
+    const [lessonDoc, shared] = await Promise.all([
+      V2LessonProgressModel()
+        .findOne({
+          user_id: user.id,
+          target_lang: user.target_lang || 'pt-PT',
+          day: currentDay,
+        })
+        .lean(),
+      buildDaySteps({ day: currentDay }),
+    ]);
+    const progress = lessonDoc
+      ? ({
+          status: lessonDoc.status as LessonProgressRecord['status'],
+          steps: (lessonDoc.steps ?? []).map((s) => ({
+            id: s.id,
+            status: s.status as LessonProgressRecord['steps'][number]['status'],
+            done_at: s.done_at ? new Date(s.done_at as Date) : null,
+          })),
+        } satisfies Pick<LessonProgressRecord, 'status' | 'steps'>)
+      : null;
+    const view = buildStepView(progress, shared?.steps ?? []);
+    const practised = Boolean(
+      lessonDoc?.practice &&
+        typeof (lessonDoc.practice as { times?: number }).times === 'number' &&
+        (lessonDoc.practice as { times: number }).times > 0,
+    );
+    const firstCounted = (shared?.steps ?? []).find((s) => s.counted);
+    const practice = (shared?.steps ?? []).find((s) => s.kind === 'practice');
+    current_day_steps = {
+      done: view.done,
+      total: view.total,
+      next_step: view.nextStep
+        ? {
+            id: view.nextStep.id,
+            title: view.nextStep.title,
+            href: view.nextStep.href,
+          }
+        : null,
+      last_done_step: view.lastDoneStep
+        ? {
+            id: view.lastDoneStep.id,
+            title: view.lastDoneStep.title,
+            href: view.lastDoneStep.href,
+          }
+        : null,
+      started: view.started,
+      last_step_done_at: view.lastStepDoneAt
+        ? view.lastStepDoneAt.toISOString()
+        : null,
+      practised,
+      total_minutes: shared?.totalCountedMinutes ?? 0,
+      first_step_href: firstCounted?.href ?? null,
+      practice_href: practice?.href ?? null,
+      day_map_href: `/day/${currentDay}`,
+      completed: progress?.status === 'completed',
+    };
+  }
+
   const levels = countHomeNumbers(itemDocs.map((d) => docToState(d as unknown as Record<string, unknown>)));
 
   const deckCards = deck?.cards ?? [];
@@ -164,6 +243,7 @@ export async function buildMeSummary(user: V2User): Promise<MeSummary> {
     current_day_title_tl: currentRow?.title_tl ?? null,
     bakra,
     completed_days: completedCount,
+    current_day_steps,
     streak: {
       current: streak.current,
       best: streak.best,

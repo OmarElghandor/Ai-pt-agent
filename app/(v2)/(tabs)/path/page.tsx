@@ -26,10 +26,18 @@ export default async function PathPage() {
     opens_on: null as string | null,
     practised: false,
     bakra: false,
+    steps_done: null as number | null,
+    steps_total: null as number | null,
   }));
 
   let deckLeft: number | null = null;
   let deckTotal: number | null = null;
+  let currentDaySteps = null as Awaited<
+    ReturnType<typeof buildMeSummary>
+  >['current_day_steps'];
+  let suggestion = null as Awaited<
+    ReturnType<typeof buildMeSummary>
+  >['suggestion'];
 
   if (user && mongoConfigured()) {
     await connectMongo();
@@ -42,6 +50,8 @@ export default async function PathPage() {
       const summary = await buildMeSummary(user);
       deckLeft = summary.deck.left;
       deckTotal = summary.deck.total;
+      currentDaySteps = summary.current_day_steps;
+      suggestion = summary.suggestion;
     } catch {
       /* path stays usable without deck counts */
     }
@@ -97,6 +107,8 @@ export default async function PathPage() {
         coverUrl={coverUrl}
         deckLeft={deckLeft}
         deckTotal={deckTotal}
+        currentDaySteps={currentDaySteps}
+        suggestion={suggestion}
       />
     </main>
   );

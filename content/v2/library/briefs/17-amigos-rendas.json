@@ -1,0 +1,58 @@
+{
+  "target_lang": "pt-PT",
+  "number": 17,
+  "slug": "amigos-rendas",
+  "type": "podcast",
+  "target_level": 5,
+  "intro_eg": "إنت سامع اتنين صحاب بيتكلموا عن الإيجارات في المدينة.",
+  "cast": [
+    {
+      "voice_key": "ines",
+      "role_eg": "ines",
+      "learner": false
+    },
+    {
+      "voice_key": "tiago",
+      "role_eg": "tiago",
+      "learner": false
+    }
+  ],
+  "places": [
+    "landlord"
+  ],
+  "beats": [
+    "tiago بيدوّر على شقة ومتضايق.",
+    "الأسعار في الأحياء المختلفة.",
+    "أوضة في شقة مشتركة ولا شقة لوحده.",
+    "المسافة للشغل والمواصلات.",
+    "ines تحكي إزاي لقت شقتها.",
+    "يتفقوا على خطة."
+  ],
+  "must_have_phrases": [],
+  "moments": [
+    {
+      "id": "amigos-rendas_m1",
+      "eg": "صاحب بيت عايز كاش من غير عقد",
+      "direction": "none",
+      "must_say": "",
+      "bank_id": null
+    },
+    {
+      "id": "amigos-rendas_m2",
+      "eg": "فواتير الكهربا في الشتا",
+      "direction": "none",
+      "must_say": "",
+      "bank_id": null
+    },
+    {
+      "id": "amigos-rendas_m3",
+      "eg": "tiago يسأل لو ينفع يقعد عند ines كام يوم.",
+      "direction": "none",
+      "must_say": "",
+      "bank_id": null
+    }
+  ],
+  "linked_episode": null,
+  "notes_admin": "no learner",
+  "sort_order": 17
+}
