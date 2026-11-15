@@ -1,16 +1,12 @@
 import type { TalkBubble } from '@/components/v2/convo/types';
 import type { RoleplayTurnEvent } from '@/lib/v2/roleplay/events';
-import type { RoleplayTier } from '@/lib/v2/roleplay/types';
 
 export type RoleplayResultState = {
-  tier: RoleplayTier;
-  star: number;
   alone: number;
   assisted: number;
   key_phrases: string[];
   corrections: Array<{ tl: string; ar?: string }>;
   summary_eg: string;
-  next_tier: RoleplayTier | null;
 };
 
 export type RoleplayUiState = {
@@ -39,9 +35,7 @@ export function emptyRoleplayUiState(): RoleplayUiState {
 export function reduceRoleplayEvent(
   state: RoleplayUiState,
   event: RoleplayTurnEvent,
-  opts?: { tier?: RoleplayTier },
 ): RoleplayUiState {
-  const tier = opts?.tier ?? 1;
   switch (event.type) {
     case 'character': {
       const bubble: TalkBubble = {
@@ -50,8 +44,7 @@ export function reduceRoleplayEvent(
         tl: event.tl,
         say: event.tl,
         ar: event.ar,
-        meaningHidden: Boolean(event.ar_hidden),
-        ...(event.coach_eg ? { coachEg: event.coach_eg, coachRevealed: tier === 1 } : {}),
+        meaningHidden: event.ar_hidden !== false,
         final: true,
       };
       return { ...state, bubbles: [...state.bubbles, bubble], help: null };
@@ -71,7 +64,7 @@ export function reduceRoleplayEvent(
         help:
           event.chips && event.chips.length
             ? {
-                frame_tl: event.frame_tl ?? event.chips[0],
+                frame_tl: event.frame_tl ?? event.chips[0]!,
                 eg: event.eg,
                 chips: event.chips,
               }
@@ -99,7 +92,6 @@ export function reduceRoleplayEvent(
       };
     }
     case 'correction': {
-      // Attach to last learner bubble when present.
       const bubbles = [...state.bubbles];
       for (let i = bubbles.length - 1; i >= 0; i--) {
         const b = bubbles[i];
@@ -125,14 +117,11 @@ export function reduceRoleplayEvent(
       return {
         ...state,
         result: {
-          tier: event.tier,
-          star: event.star,
           alone: event.alone,
           assisted: event.assisted,
           key_phrases: event.key_phrases,
           corrections: event.corrections,
           summary_eg: event.summary_eg,
-          next_tier: event.next_tier,
         },
       };
     }
@@ -148,9 +137,8 @@ export function reduceRoleplayEvent(
 export function applyRoleplayEvents(
   state: RoleplayUiState,
   events: RoleplayTurnEvent[],
-  opts?: { tier?: RoleplayTier },
 ): RoleplayUiState {
   let next = state;
-  for (const e of events) next = reduceRoleplayEvent(next, e, opts);
+  for (const e of events) next = reduceRoleplayEvent(next, e);
   return next;
 }

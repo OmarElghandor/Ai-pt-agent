@@ -10,7 +10,6 @@ import { LearnerBubble } from '@/components/v2/convo/LearnerBubble';
 import { usePacedBubbles } from '@/components/v2/convo/usePacedBubbles';
 import type { TalkBubble } from '@/components/v2/convo/types';
 import type { RoleplayTurnEvent } from '@/lib/v2/roleplay/events';
-import type { RoleplayTier } from '@/lib/v2/roleplay/types';
 import { RoleplayResultCard } from './RoleplayResultCard';
 import {
   applyRoleplayEvents,
@@ -50,9 +49,12 @@ type Props = {
   titleTl: string;
   titleAr: string;
   sessionId: string;
-  tier: RoleplayTier;
   startEvents: RoleplayTurnEvent[];
-  onPlayNextTier?: (tier: RoleplayTier) => void;
+  nextSituationId?: string | null;
+  /** Unused placeholder kept for callers that still pass summary. */
+  summaryEg?: string;
+  /** First character TTS already played inside the start click handler. */
+  firstLineAlreadyPlayed?: boolean;
 };
 
 export function RoleplaySession({
@@ -60,12 +62,12 @@ export function RoleplaySession({
   titleTl,
   titleAr,
   sessionId,
-  tier,
   startEvents,
-  onPlayNextTier,
+  nextSituationId = null,
+  firstLineAlreadyPlayed = false,
 }: Props) {
   const [ui, setUi] = useState<RoleplayUiState>(() =>
-    applyRoleplayEvents(emptyRoleplayUiState(), startEvents, { tier }),
+    applyRoleplayEvents(emptyRoleplayUiState(), startEvents),
   );
   const [busy, setBusy] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
@@ -126,7 +128,7 @@ export function RoleplaySession({
           help: null,
         };
         for await (const event of readRoleplayNdjson(res.body)) {
-          next = reduceRoleplayEvent(next, event, { tier });
+          next = reduceRoleplayEvent(next, event);
           bubblesRef.current = next.bubbles;
           setUi({ ...next });
           syncAuthoritative(next.bubbles);
@@ -137,7 +139,7 @@ export function RoleplaySession({
         setBusy(false);
       }
     },
-    [busy, ui, sessionId, tier, commitImmediate, syncAuthoritative],
+    [busy, ui, sessionId, commitImmediate, syncAuthoritative],
   );
 
   const progressPct =
@@ -161,6 +163,13 @@ export function RoleplaySession({
           href="/roleplay"
           className="flex h-9 w-9 items-center justify-center rounded-full text-v2-primary"
           aria-label="رجوع"
+          onClick={() => {
+            void fetch('/api/v2/roleplay/end', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ session_id: sessionId }),
+            });
+          }}
         >
           <Icon name="arrow_forward" size={22} />
         </Link>
@@ -172,7 +181,7 @@ export function RoleplaySession({
             {titleTl}
           </p>
           <p className="truncate font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
-            {titleAr} · درجة {tier}
+            {titleAr}
           </p>
           <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-v2-paper-deep">
             <div
@@ -191,25 +200,20 @@ export function RoleplaySession({
       </header>
 
       <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-3 py-3">
-        {pacedVisible.map((b) => {
+        {pacedVisible.map((b, i) => {
           if (b.role === 'character') {
+            const skipAuto =
+              firstLineAlreadyPlayed &&
+              i === 0 &&
+              pacedVisible.findIndex((x) => x.role === 'character') === i;
             return (
-              <div key={b.id} className="flex flex-col gap-1">
-                <CharacterBubble
-                  tl={b.tl}
-                  meaningEg={tier === 1 || !b.meaningHidden ? b.ar : b.ar}
-                  coachEg={b.coachEg}
-                  coachRevealed={b.coachRevealed !== false}
-                  typing={b.typing}
-                  autoPlay={!b.typing}
-                  playbackRate={tier === 1 ? 0.85 : 1}
-                />
-                {tier === 1 && b.ar ? (
-                  <p className="px-12 text-end font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
-                    {b.ar}
-                  </p>
-                ) : null}
-              </div>
+              <CharacterBubble
+                key={b.id}
+                tl={b.tl}
+                meaningEg={b.ar}
+                typing={b.typing}
+                autoPlay={!b.typing && !skipAuto}
+              />
             );
           }
           if (b.role === 'learner') {
@@ -231,7 +235,7 @@ export function RoleplaySession({
           return null;
         })}
 
-        {ui.help && tier === 1 ? (
+        {ui.help ? (
           <div className="rounded-v2-card bg-v2-note px-3 py-3 ring-1 ring-v2-note-border/50">
             <p
               className="font-[family-name:var(--font-v2-target)] text-sm text-v2-primary"
@@ -263,7 +267,7 @@ export function RoleplaySession({
           <RoleplayResultCard
             result={ui.result}
             situationId={situationId}
-            onRetryTier={onPlayNextTier}
+            nextSituationId={nextSituationId}
           />
         ) : null}
       </div>

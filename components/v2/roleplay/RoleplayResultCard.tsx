@@ -2,23 +2,22 @@
 
 import Link from 'next/link';
 import type { RoleplayResultState } from './roleplayStreamReduce';
-import type { RoleplayTier } from '@/lib/v2/roleplay/types';
 
 type Props = {
   result: RoleplayResultState;
   situationId: string;
-  onRetryTier?: (tier: RoleplayTier) => void;
+  nextSituationId?: string | null;
 };
 
 export function RoleplayResultCard({
   result,
   situationId,
-  onRetryTier,
+  nextSituationId = null,
 }: Props) {
   return (
     <div className="mx-4 mb-4 flex flex-col gap-3 rounded-v2-card bg-v2-card px-4 py-5 shadow-[var(--shadow-v2-soft)]">
       <p className="font-[family-name:var(--font-v2-display-ar)] text-xl font-bold text-v2-primary">
-        نجمة الدرجة {result.star} ★
+        خلصت ✓
       </p>
       <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink">
         لوحدك: {result.alone} · بمساعدة: {result.assisted}
@@ -62,14 +61,13 @@ export function RoleplayResultCard({
         {result.summary_eg}
       </p>
       <div className="mt-2 flex flex-col gap-2">
-        {result.next_tier ? (
-          <button
-            type="button"
-            onClick={() => onRetryTier?.(result.next_tier!)}
-            className="min-h-11 rounded-v2-row bg-v2-primary font-[family-name:var(--font-v2-arabic)] font-semibold text-white"
+        {nextSituationId ? (
+          <Link
+            href={`/roleplay/${encodeURIComponent(nextSituationId)}`}
+            className="flex min-h-11 items-center justify-center rounded-v2-row bg-v2-primary font-[family-name:var(--font-v2-arabic)] font-semibold text-white"
           >
-            جرّب الدرجة الجاية
-          </button>
+            المكالمة الجاية
+          </Link>
         ) : null}
         <Link
           href="/roleplay"
@@ -81,7 +79,7 @@ export function RoleplayResultCard({
           href={`/roleplay/${encodeURIComponent(situationId)}`}
           className="text-center font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted"
         >
-          إعادة المشهد
+          إعادة المكالمة
         </Link>
       </div>
     </div>

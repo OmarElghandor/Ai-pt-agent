@@ -4,60 +4,65 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Icon } from '@/components/v2/Icon';
 import { ScreenLoading } from '@/components/v2/ScreenLoading';
-import type { RoleplayCatalog, RoleplayCatalogSituation } from '@/lib/v2/roleplay/catalog';
-import type { RoleplayTier } from '@/lib/v2/roleplay/types';
+import type {
+  RoleplayCatalog,
+  RoleplayCatalogScene,
+} from '@/lib/v2/roleplay/catalog';
 
-function StarSlots({ stars }: { stars: RoleplayTier[] }) {
-  const set = new Set(stars);
+function NextCard({ s }: { s: RoleplayCatalogScene }) {
   return (
-    <span className="flex gap-0.5" aria-label={`${stars.length} من 3 نجوم`}>
-      {([1, 2, 3] as const).map((t) => (
-        <span
-          key={t}
-          className={
-            set.has(t) ? 'text-v2-attention' : 'text-v2-sand'
-          }
-          aria-hidden
+    <Link
+      href={`/roleplay/${encodeURIComponent(s.id)}`}
+      className="flex flex-col gap-4 rounded-v2-card bg-v2-card px-5 py-6 shadow-[var(--shadow-v2-soft)]"
+    >
+      <span className="text-4xl" aria-hidden>
+        {s.emoji}
+      </span>
+      <div>
+        <p
+          className="font-[family-name:var(--font-v2-target)] text-xl font-semibold text-v2-primary"
+          dir="ltr"
         >
-          ★
-        </span>
-      ))}
-    </span>
+          {s.title_tl}
+        </p>
+        <p className="mt-1 font-[family-name:var(--font-v2-arabic)] text-base text-v2-ink">
+          {s.title_ar}
+        </p>
+        {s.place_eg ? (
+          <p className="mt-2 font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
+            {s.place_eg}
+          </p>
+        ) : null}
+      </div>
+      <span className="flex min-h-12 items-center justify-center rounded-v2-row bg-v2-primary font-[family-name:var(--font-v2-arabic)] text-base font-semibold text-white">
+        {s.resume ? 'كمّل المكالمة' : 'ابدأ المكالمة'}
+      </span>
+    </Link>
   );
 }
 
-function SituationCard({ s }: { s: RoleplayCatalogSituation }) {
+function PastRow({ s }: { s: RoleplayCatalogScene }) {
   return (
     <li>
       <Link
         href={`/roleplay/${encodeURIComponent(s.id)}`}
-        className="flex min-h-14 items-center gap-3 rounded-v2-row bg-v2-card px-4 py-3 shadow-[var(--shadow-v2-soft)]"
+        className="flex min-h-12 items-center gap-3 rounded-v2-row bg-v2-paper px-3 py-2 ring-1 ring-v2-line/40"
       >
-        <span className="text-2xl" aria-hidden>
+        <span className="text-xl" aria-hidden>
           {s.emoji}
         </span>
         <span className="min-w-0 flex-1">
-          <span className="flex flex-wrap items-center gap-2">
-            <span
-              className="font-[family-name:var(--font-v2-target)] text-base font-semibold text-v2-primary"
-              dir="ltr"
-            >
-              {s.title_tl}
-            </span>
-            {s.hard_for_you ? (
-              <span className="shrink-0 rounded-full bg-v2-paper px-2 py-0.5 font-[family-name:var(--font-v2-arabic)] text-[10px] font-semibold text-v2-ink-muted ring-1 ring-v2-line/40">
-                صعب عليك دلوقتي
-              </span>
-            ) : null}
+          <span
+            className="block truncate font-[family-name:var(--font-v2-target)] text-sm font-semibold text-v2-primary"
+            dir="ltr"
+          >
+            {s.title_tl}
           </span>
-          <span className="mt-0.5 flex items-center justify-between gap-2">
-            <span className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-              {s.title_ar}
-            </span>
-            <StarSlots stars={s.stars} />
+          <span className="block truncate font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
+            {s.title_ar}
           </span>
         </span>
-        <Icon name="arrow_back" size={20} className="text-v2-action" />
+        <Icon name="arrow_back" size={18} className="text-v2-action" />
       </Link>
     </li>
   );
@@ -66,6 +71,7 @@ function SituationCard({ s }: { s: RoleplayCatalogSituation }) {
 export function RoleplayListScreen() {
   const [catalog, setCatalog] = useState<RoleplayCatalog | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [pastOpen, setPastOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -111,23 +117,44 @@ export function RoleplayListScreen() {
             رول بلاي
           </h1>
           <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-            مواقف حقيقية — رتّبها على ٥ مستويات
+            مكالمة واحدة بعد التانية
           </p>
         </div>
       </header>
 
-      {catalog.levels.map((lvl) => (
-        <section key={lvl.level} className="flex flex-col gap-3">
-          <h2 className="font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-v2-ink-muted">
-            المستوى {lvl.level} · {lvl.name_eg}
-          </h2>
-          <ul className="flex flex-col gap-2">
-            {lvl.situations.map((s) => (
-              <SituationCard key={s.id} s={s} />
-            ))}
-          </ul>
+      {catalog.next ? (
+        <NextCard s={catalog.next} />
+      ) : (
+        <div className="rounded-v2-card bg-v2-card px-5 py-6 text-center shadow-[var(--shadow-v2-soft)]">
+          <p className="font-[family-name:var(--font-v2-arabic)] text-base text-v2-ink">
+            خلّصت كل المكالمات ✓
+          </p>
+        </div>
+      )}
+
+      {catalog.past.length > 0 ? (
+        <section className="flex flex-col gap-3">
+          <button
+            type="button"
+            onClick={() => setPastOpen((v) => !v)}
+            className="flex items-center justify-between font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-v2-ink-muted"
+          >
+            <span>المكالمات اللي فاتت</span>
+            <Icon
+              name={pastOpen ? 'expand_less' : 'expand_more'}
+              size={20}
+              className="text-v2-ink-muted"
+            />
+          </button>
+          {pastOpen ? (
+            <ul className="flex flex-col gap-2">
+              {catalog.past.map((s) => (
+                <PastRow key={s.id} s={s} />
+              ))}
+            </ul>
+          ) : null}
         </section>
-      ))}
+      ) : null}
     </div>
   );
 }

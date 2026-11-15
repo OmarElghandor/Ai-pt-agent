@@ -1,5 +1,9 @@
 import { RoleplaySituationClient } from '@/components/v2/roleplay/RoleplaySituationClient';
-import { loadRoleplayIndex, loadRoleplaySituation } from '@/lib/v2/roleplay/load';
+import {
+  loadRoleplayIndex,
+  loadRoleplaySituation,
+} from '@/lib/v2/roleplay/load';
+import { nextSituationIdOnPath } from '@/lib/v2/roleplay/catalog';
 import { notFound } from 'next/navigation';
 
 type Props = {
@@ -16,6 +20,7 @@ export default async function RoleplaySituationPage({ params }: Props) {
     notFound();
   }
   const index = loadRoleplayIndex();
+  const nextId = nextSituationIdOnPath(id, index);
 
   return (
     <main className="mx-auto flex w-full max-w-[390px] flex-1 flex-col">
@@ -27,11 +32,9 @@ export default async function RoleplaySituationPage({ params }: Props) {
           title_ar: situation.title_ar,
           place_eg: situation.place_eg,
           task_eg: situation.task_eg,
-          learner_role_eg: situation.learner_role_eg,
-          key_phrases: situation.key_phrases,
-          recommended_tier: 1,
+          learner_role_eg: situation.summary_eg,
         }}
-        tiers={index.tiers}
+        nextSituationId={nextId}
       />
     </main>
   );

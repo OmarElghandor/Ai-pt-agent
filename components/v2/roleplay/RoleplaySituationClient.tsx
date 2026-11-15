@@ -3,27 +3,59 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { Icon } from '@/components/v2/Icon';
-import {
-  RoleplayIntroSheet,
-  type RoleplayIntroSituation,
-} from '@/components/v2/roleplay/RoleplayIntroSheet';
+import { RoleplayIntroSheet } from '@/components/v2/roleplay/RoleplayIntroSheet';
 import { RoleplaySession } from '@/components/v2/roleplay/RoleplaySession';
 import type { RoleplayTurnEvent } from '@/lib/v2/roleplay/events';
-import type { RoleplayIndexTier, RoleplayTier } from '@/lib/v2/roleplay/types';
+
+export type RoleplayIntroSituation = {
+  id: string;
+  emoji: string;
+  title_tl: string;
+  title_ar: string;
+  place_eg: string;
+  task_eg: string;
+  learner_role_eg: string;
+};
 
 type Props = {
   situation: RoleplayIntroSituation;
-  tiers: RoleplayIndexTier[];
+  nextSituationId?: string | null;
+  /** When true, the CTA says كمّل المكالمة. */
+  resume?: boolean;
 };
 
-export function RoleplaySituationClient({ situation, tiers }: Props) {
+async function playFirstCharacterLine(events: RoleplayTurnEvent[]): Promise<void> {
+  const first = events.find((e) => e.type === 'character');
+  if (!first || first.type !== 'character' || !first.tl.trim()) return;
+  try {
+    const res = await fetch('/api/tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: first.tl, lang: 'pt' }),
+    });
+    if (!res.ok) return;
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    audio.onended = () => URL.revokeObjectURL(url);
+    await audio.play();
+  } catch {
+    /* ignore */
+  }
+}
+
+export function RoleplaySituationClient({
+  situation,
+  nextSituationId = null,
+  resume = false,
+}: Props) {
   const [phase, setPhase] = useState<'intro' | 'play'>('intro');
   const [starting, setStarting] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [tier, setTier] = useState<RoleplayTier>(situation.recommended_tier);
   const [startEvents, setStartEvents] = useState<RoleplayTurnEvent[]>([]);
+  const [firstLineAlreadyPlayed, setFirstLineAlreadyPlayed] = useState(false);
 
-  const startTier = async (chosen: RoleplayTier) => {
+  const start = async () => {
     if (starting) return;
     setStarting(true);
     try {
@@ -32,16 +64,17 @@ export function RoleplaySituationClient({ situation, tiers }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           situation_id: situation.id,
-          tier: chosen,
         }),
       });
       if (!res.ok) throw new Error(`start ${res.status}`);
       const data = (await res.json()) as {
         session_id: string;
         events: RoleplayTurnEvent[];
+        resumed?: boolean;
       };
+      await playFirstCharacterLine(data.events ?? []);
+      setFirstLineAlreadyPlayed(true);
       setSessionId(data.session_id);
-      setTier(chosen);
       setStartEvents(data.events ?? []);
       setPhase('play');
     } catch {
@@ -58,13 +91,10 @@ export function RoleplaySituationClient({ situation, tiers }: Props) {
         titleTl={situation.title_tl}
         titleAr={situation.title_ar}
         sessionId={sessionId}
-        tier={tier}
         startEvents={startEvents}
-        onPlayNextTier={(next) => {
-          setPhase('intro');
-          setSessionId(null);
-          void startTier(next);
-        }}
+        nextSituationId={nextSituationId}
+        summaryEg={situation.learner_role_eg}
+        firstLineAlreadyPlayed={firstLineAlreadyPlayed}
       />
     );
   }
@@ -81,10 +111,14 @@ export function RoleplaySituationClient({ situation, tiers }: Props) {
         </Link>
       </div>
       <RoleplayIntroSheet
-        situation={situation}
-        tiers={tiers}
-        onStart={startTier}
+        emoji={situation.emoji}
+        titleTl={situation.title_tl}
+        titleAr={situation.title_ar}
+        placeEg={situation.place_eg}
+        taskEg={situation.task_eg}
+        onStart={() => void start()}
         starting={starting}
+        resume={resume}
       />
     </div>
   );
