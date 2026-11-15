@@ -20,18 +20,24 @@ export type RoleplayIntroSituation = {
 type Props = {
   situation: RoleplayIntroSituation;
   nextSituationId?: string | null;
-  /** When true, the CTA says كمّل المكالمة. */
+  /** When true, the CTA says كمّل المكالمة and start resumes. */
   resume?: boolean;
 };
 
-async function playFirstCharacterLine(events: RoleplayTurnEvent[]): Promise<void> {
+async function playFirstCharacterLine(
+  events: RoleplayTurnEvent[],
+): Promise<void> {
   const first = events.find((e) => e.type === 'character');
   if (!first || first.type !== 'character' || !first.tl.trim()) return;
   try {
     const res = await fetch('/api/tts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: first.tl, lang: 'pt' }),
+      body: JSON.stringify({
+        text: first.tl,
+        lang: 'pt',
+        ...(first.voice ? { voice: first.voice } : {}),
+      }),
     });
     if (!res.ok) return;
     const blob = await res.blob();
@@ -64,6 +70,7 @@ export function RoleplaySituationClient({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           situation_id: situation.id,
+          resume,
         }),
       });
       if (!res.ok) throw new Error(`start ${res.status}`);

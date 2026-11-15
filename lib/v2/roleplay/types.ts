@@ -58,7 +58,9 @@ export type RoleplayStep = {
   if_slot?: Record<string, string>;
   says: RoleplayLine | null;
   speaker?: string;
-  /** Shown only when the learner is stuck (help). */
+  /** What the learner must do now (EG); always shown under the character bubble. */
+  do_eg: string;
+  /** Shown only when the learner is stuck (help) or taps the دورك strip. */
   hint_eg?: string;
   expects: RoleplayExpects;
   help: RoleplayHelp;

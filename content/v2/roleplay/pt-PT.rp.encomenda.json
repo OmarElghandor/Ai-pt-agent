@@ -51,6 +51,7 @@
         "tl": "Boa tarde! Encomenda para {name}?",
         "ar": "مساء الخير! طرد باسم {name}؟"
       },
+      "do_eg": "عامل التوصيل بيسأل الطرد ده بتاعك؟ قول أيوه أنا 📦",
       "expects": {
         "intent_eg": "يقول ده هو",
         "examples_tl": [
@@ -79,6 +80,7 @@
         "tl": "Preciso que assine aqui no ecrã, se faz favor.",
         "ar": "أحتاج أن توقّع هنا على الشاشة من فضلك."
       },
+      "do_eg": "قال جملة طويلة بسرعة. لو ما فهمتش، اطلب منه يعيد أو يبطّأ.",
       "expects": {
         "intent_eg": "يطلب يعيد أو يوافق",
         "examples_tl": [
@@ -143,6 +145,7 @@
         "tl_f": "A senhora fala português?",
         "ar_f": "هل تتكلمين البرتغالية؟"
       },
+      "do_eg": "بيسألك بتتكلم برتغالي؟ رد.",
       "expects": {
         "intent_eg": "يقول بيتكلم شوية",
         "examples_tl": [
@@ -179,6 +182,7 @@
         "tl": "Olhe, tenho outra para o vizinho do segundo esquerdo. Pode ficar com ela?",
         "ar": "انظر، معي طرد آخر لجار الطابق الثاني يسار. هل يمكنك الاحتفاظ به؟"
       },
+      "do_eg": "عايزك تستلم طرد لجارك. وافق أو اعتذر.",
       "expects": {
         "intent_eg": "يوافق يستلم طرد جاره أو يعتذر",
         "examples_tl": [
@@ -247,6 +251,7 @@
         "tl": "Obrigado e boa tarde!",
         "ar": "شكرًا ومساءً سعيدًا!"
       },
+      "do_eg": "ودّعه.",
       "expects": {
         "intent_eg": "يودّعه",
         "examples_tl": [

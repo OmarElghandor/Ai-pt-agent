@@ -49,6 +49,7 @@
         "tl": "Bom dia. Tem senha?",
         "ar": "صباح الخير. هل لديك رقم انتظار؟"
       },
+      "do_eg": "إنت على شباك Finanças. الموظفة بتسألك معاك ورقة الدور؟ رد 🏛️",
       "expects": {
         "intent_eg": "يرد معاه دور ولا لأ",
         "examples_tl": [
@@ -105,6 +106,7 @@
     {
       "id": "ask_nif",
       "says": null,
+      "do_eg": "بتقولك «اتفضل». اطلب رقم ضريبي (NIF).",
       "expects": {
         "intent_eg": "يطلب NIF",
         "examples_tl": [
@@ -135,6 +137,7 @@
     {
       "id": "passport",
       "says": null,
+      "do_eg": "بتسألك معاك الباسبور؟ ادّيهولها.",
       "expects": {
         "intent_eg": "يدّيها الباسبور",
         "examples_tl": [
@@ -165,6 +168,7 @@
     {
       "id": "address",
       "says": null,
+      "do_eg": "بتسألك على عنوانك. قوله.",
       "expects": {
         "intent_eg": "يقول عنوانه",
         "examples_tl": [
@@ -204,6 +208,7 @@
         "ar": "منذ متى تسكن في البرتغال؟",
         "ar_f": "منذ متى تسكنين في البرتغال؟"
       },
+      "do_eg": "بتسألك بقالك قد إيه في البرتغال؟ رد.",
       "expects": {
         "intent_eg": "يقول بقاله قد إيه",
         "examples_tl": [
@@ -241,6 +246,7 @@
         "tl": "Pronto, aqui tem o seu NIF. 📄",
         "ar": "تفضّل، هذا رقمك الضريبي."
       },
+      "do_eg": "خلصت! اشكرها.",
       "expects": {
         "intent_eg": "يشكرها",
         "examples_tl": [

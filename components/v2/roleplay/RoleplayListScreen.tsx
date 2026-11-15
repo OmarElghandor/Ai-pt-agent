@@ -9,10 +9,15 @@ import type {
   RoleplayCatalogScene,
 } from '@/lib/v2/roleplay/catalog';
 
+function situationHref(s: RoleplayCatalogScene): string {
+  const base = `/roleplay/${encodeURIComponent(s.id)}`;
+  return s.resume ? `${base}?resume=1` : base;
+}
+
 function NextCard({ s }: { s: RoleplayCatalogScene }) {
   return (
     <Link
-      href={`/roleplay/${encodeURIComponent(s.id)}`}
+      href={situationHref(s)}
       className="flex flex-col gap-4 rounded-v2-card bg-v2-card px-5 py-6 shadow-[var(--shadow-v2-soft)]"
     >
       <span className="text-4xl" aria-hidden>
@@ -41,19 +46,28 @@ function NextCard({ s }: { s: RoleplayCatalogScene }) {
   );
 }
 
-function PastRow({ s }: { s: RoleplayCatalogScene }) {
+function PathRow({ s }: { s: RoleplayCatalogScene }) {
+  const finished = s.finished;
   return (
     <li>
       <Link
-        href={`/roleplay/${encodeURIComponent(s.id)}`}
-        className="flex min-h-12 items-center gap-3 rounded-v2-row bg-v2-paper px-3 py-2 ring-1 ring-v2-line/40"
+        href={situationHref(s)}
+        className={[
+          'flex min-h-12 items-center gap-3 rounded-v2-row px-3 py-2 ring-1',
+          finished
+            ? 'bg-v2-paper/70 text-v2-ink-muted ring-v2-line/30'
+            : 'bg-v2-paper ring-v2-line/40',
+        ].join(' ')}
       >
-        <span className="text-xl" aria-hidden>
+        <span className={['text-xl', finished ? 'opacity-60' : ''].join(' ')} aria-hidden>
           {s.emoji}
         </span>
         <span className="min-w-0 flex-1">
           <span
-            className="block truncate font-[family-name:var(--font-v2-target)] text-sm font-semibold text-v2-primary"
+            className={[
+              'block truncate font-[family-name:var(--font-v2-target)] text-sm font-semibold',
+              finished ? 'text-v2-ink-muted' : 'text-v2-primary',
+            ].join(' ')}
             dir="ltr"
           >
             {s.title_tl}
@@ -62,7 +76,16 @@ function PastRow({ s }: { s: RoleplayCatalogScene }) {
             {s.title_ar}
           </span>
         </span>
-        <Icon name="arrow_back" size={18} className="text-v2-action" />
+        {finished ? (
+          <span
+            className="shrink-0 font-[family-name:var(--font-v2-arabic)] text-xs font-semibold text-v2-action"
+            aria-label="خلصت"
+          >
+            ✓
+          </span>
+        ) : (
+          <Icon name="arrow_back" size={18} className="text-v2-action" />
+        )}
       </Link>
     </li>
   );
@@ -71,7 +94,6 @@ function PastRow({ s }: { s: RoleplayCatalogScene }) {
 export function RoleplayListScreen() {
   const [catalog, setCatalog] = useState<RoleplayCatalog | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [pastOpen, setPastOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -101,6 +123,8 @@ export function RoleplayListScreen() {
   if (!catalog) {
     return <ScreenLoading label="بنجهّز الرول بلاي…" />;
   }
+
+  const rest = catalog.path.filter((s) => s.id !== catalog.next?.id);
 
   return (
     <div className="flex flex-col gap-6 px-4 pb-10 pt-4">
@@ -132,27 +156,16 @@ export function RoleplayListScreen() {
         </div>
       )}
 
-      {catalog.past.length > 0 ? (
+      {rest.length > 0 ? (
         <section className="flex flex-col gap-3">
-          <button
-            type="button"
-            onClick={() => setPastOpen((v) => !v)}
-            className="flex items-center justify-between font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-v2-ink-muted"
-          >
-            <span>المكالمات اللي فاتت</span>
-            <Icon
-              name={pastOpen ? 'expand_less' : 'expand_more'}
-              size={20}
-              className="text-v2-ink-muted"
-            />
-          </button>
-          {pastOpen ? (
-            <ul className="flex flex-col gap-2">
-              {catalog.past.map((s) => (
-                <PastRow key={s.id} s={s} />
-              ))}
-            </ul>
-          ) : null}
+          <h2 className="font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-v2-ink-muted">
+            كل المكالمات
+          </h2>
+          <ul className="flex flex-col gap-2">
+            {rest.map((s) => (
+              <PathRow key={s.id} s={s} />
+            ))}
+          </ul>
         </section>
       ) : null}
     </div>

@@ -29,6 +29,7 @@ export async function POST(req: Request) {
   const body = (await req.json().catch(() => null)) as {
     situation_id?: string;
     session_id?: string;
+    resume?: boolean;
   } | null;
 
   const situationId = body?.situation_id?.trim();
@@ -52,6 +53,7 @@ export async function POST(req: Request) {
     gender,
     learnerName,
     sessionId: body?.session_id?.trim(),
+    resume: typeof body?.resume === 'boolean' ? body.resume : undefined,
     store,
   });
 

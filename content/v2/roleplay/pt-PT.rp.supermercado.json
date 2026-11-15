@@ -153,6 +153,7 @@
         ]
       },
       "speaker": "pedro",
+      "do_eg": "Pedro بيسألك محتاج مساعدة؟ اسأله حاجة مكانها فين 🛒",
       "hint_eg": "Precisa de ajuda? = محتاج مساعدة؟ اسأله: Onde fica + الحاجة?"
     },
     {
@@ -185,7 +186,8 @@
         "tl": "De nada!",
         "ar": "عفوًا!"
       },
-      "speaker": "pedro"
+      "speaker": "pedro",
+      "do_eg": "وراك المكان. اشكره."
     },
     {
       "id": "bag",
@@ -246,6 +248,7 @@
         ]
       },
       "speaker": "carla",
+      "do_eg": "إنت دلوقتي على الكاشير مع Carla. بتسألك محتاج كيس؟ رد.",
       "hint_eg": "إنت دلوقتي على الكاشير مع Carla. o saco = الكيس (بفلوس هنا)."
     },
     {
@@ -280,7 +283,8 @@
         "tl": "Muito bem.",
         "ar": "حسنًا."
       },
-      "speaker": "carla"
+      "speaker": "carla",
+      "do_eg": "بتسألك معاك كارت العميل؟ رد."
     },
     {
       "id": "contribuinte",
@@ -340,6 +344,7 @@
         ]
       },
       "speaker": "carla",
+      "do_eg": "بتسألك عايز رقمك الضريبي على الفاتورة؟ رد.",
       "hint_eg": "Contribuinte؟ = عايز رقمك الضريبي على الفاتورة؟ هتسمعها في كل محل."
     },
     {
@@ -397,7 +402,8 @@
           "Em dinheiro."
         ]
       },
-      "speaker": "carla"
+      "speaker": "carla",
+      "do_eg": "قالتلك الحساب. ادفع."
     },
     {
       "id": "bye",
@@ -435,7 +441,8 @@
           "Boa tarde!"
         ]
       },
-      "speaker": "carla"
+      "speaker": "carla",
+      "do_eg": "خلصت! ودّعها."
     }
   ],
   "closing": {

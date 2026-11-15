@@ -30,6 +30,8 @@ type Props = {
   tone?: BubbleTone;
   /** Partner display name for calm header. */
   partnerName?: string;
+  /** Azure pt-PT voice; when set, passed to /api/tts. */
+  voice?: string;
   /** Increment to abort in-flight TTS (G2 reaction_reset). */
   ttsEpoch?: number;
 };
@@ -90,6 +92,7 @@ export function CharacterBubble({
   onPlayStart,
   onPlayEnd,
   partnerName = 'Inês',
+  voice,
   ttsEpoch = 0,
 }: Props) {
   const [showMeaning, setShowMeaning] = useState(false);
@@ -117,7 +120,11 @@ export function CharacterBubble({
         const res = await fetch('/api/tts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: tl, lang: 'pt' }),
+          body: JSON.stringify({
+            text: tl,
+            lang: 'pt',
+            ...(voice ? { voice } : {}),
+          }),
         });
         if (!res.ok || cancelled) {
           setPlaying(false);
@@ -143,7 +150,7 @@ export function CharacterBubble({
       cancelled = true;
       audioRef.current?.pause();
     };
-  }, [autoPlay, streaming, tl, playbackRate, onPlayStart, onPlayEnd, typing]);
+  }, [autoPlay, streaming, tl, playbackRate, onPlayStart, onPlayEnd, typing, voice]);
 
   // v4 V1: never render a character bubble with empty PT (unless still streaming/typing).
   if (!tl.trim() && !streaming && !typing) {

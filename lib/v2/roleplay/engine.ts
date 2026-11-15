@@ -4,6 +4,10 @@ import {
 } from '@/lib/v2/convo/correction';
 import type { ConvoProgressWriter } from '@/lib/v2/convo/progress/mirror';
 import type { FreeTextCorrection } from '@/lib/v2/grader';
+import {
+  resolveRoleplaySpeaker,
+  roleplayCharacterDisplayName,
+} from './character';
 import type { RoleplayTurnEvent } from './events';
 import {
   fuzzyMatchRoleplayExample,
@@ -94,23 +98,54 @@ function sessionEvent(state: RoleplaySessionState): RoleplayTurnEvent {
   };
 }
 
+function emitDo(
+  events: RoleplayTurnEvent[],
+  situation: RoleplaySituation,
+  state: RoleplaySessionState,
+): void {
+  if (state.status === 'done' || !state.current_step_id) return;
+  const step = situation.steps.find((s) => s.id === state.current_step_id);
+  if (!step?.do_eg?.trim()) return;
+  events.push({
+    type: 'do',
+    eg: step.do_eg,
+    ...(step.hint_eg?.trim() ? { hint_eg: step.hint_eg } : {}),
+    step_id: step.id,
+  });
+}
+
 function finishTurn(
   events: RoleplayTurnEvent[],
   situation: RoleplaySituation,
   state: RoleplaySessionState,
   correctionPromise?: Promise<FreeTextCorrection | null>,
 ): RoleplayTurnResult {
+  emitDo(events, situation, state);
   events.push(progressEvent(situation, state));
   events.push(sessionEvent(state));
   events.push({ type: 'done', finished: state.status === 'done' });
   return { state, events, correctionPromise };
 }
 
-function characterName(situation: RoleplaySituation): string | null {
-  const c = situation.character;
-  if (c && 'name' in c && typeof c.name === 'string') return c.name;
-  if (c && 'id' in c && typeof c.id === 'string') return c.id;
-  return null;
+function characterIdentity(
+  situation: RoleplaySituation,
+  speaker?: string | null,
+): { name: string; character_id?: string | null; voice?: string; speaker?: string } {
+  const resolved = resolveRoleplaySpeaker(situation, speaker);
+  return {
+    name: resolved.name,
+    character_id: resolved.character_id,
+    voice: resolved.voice,
+    ...(speaker ? { speaker } : {}),
+  };
+}
+
+function sceneIntroEg(situation: RoleplaySituation): string {
+  return [
+    `📍 ${situation.place_eg}`,
+    `👤 دورك: ${situation.learner_role_eg}`,
+    `🎯 المهمة: ${situation.task_eg}`,
+  ].join('\n');
 }
 
 function noteKeyPhrases(
@@ -151,6 +186,7 @@ function replayEvent(
   fallbackStepId: string,
 ): RoleplayTurnEvent {
   const stepId = ex.step_id ?? fallbackStepId;
+  const identity = characterIdentity(situation, ex.speaker);
   return {
     type: 'character',
     tl: ex.tl ?? '',
@@ -161,7 +197,7 @@ function replayEvent(
       ex.audio_key ??
       `roleplay:${situation.id}:${stepId}:${ex.kind === 'reply' ? 'reply' : 'says'}`,
     playback: 'normal',
-    ...(ex.speaker ? { speaker: ex.speaker } : {}),
+    ...identity,
   };
 }
 
@@ -175,6 +211,7 @@ function emitSays(
   const says = characterSays(step, state.gender, state.learner_name);
   if (!says) return false;
   const audio_key = `roleplay:${situation.id}:${step.id}:says`;
+  const identity = characterIdentity(situation, step.speaker);
   events.push({
     type: 'character',
     tl: says.tl,
@@ -183,7 +220,7 @@ function emitSays(
     ar_hidden: true,
     audio_key,
     playback: 'normal',
-    ...(step.speaker ? { speaker: step.speaker } : {}),
+    ...identity,
   });
   if (opts?.record !== false) {
     state.exchanges.push({
@@ -206,10 +243,12 @@ function emitReply(
   situation: RoleplaySituation,
   stepId: string,
   kind: 'reply' | 'closing' = 'reply',
+  speaker?: string,
 ): void {
   const tl = applyLearnerName(reply.tl, state.learner_name);
   const ar = applyLearnerName(reply.ar, state.learner_name);
   const audio_key = `roleplay:${situation.id}:${stepId}:${kind}`;
+  const identity = characterIdentity(situation, speaker);
   events.push({
     type: 'character',
     tl,
@@ -218,6 +257,7 @@ function emitReply(
     ar_hidden: true,
     audio_key,
     playback: 'normal',
+    ...identity,
   });
   state.exchanges.push({
     role: 'character',
@@ -226,6 +266,7 @@ function emitReply(
     step_id: stepId,
     kind,
     audio_key,
+    ...(speaker ? { speaker } : {}),
   });
 }
 
@@ -302,6 +343,7 @@ function applyHelpLadder(
   }
 
   // Miss 1.
+  const identity = characterIdentity(situation, step.speaker);
   events.push({
     type: 'character',
     tl: CONFUSION_LINE.tl,
@@ -310,6 +352,7 @@ function applyHelpLadder(
     ar_hidden: true,
     audio_key: `roleplay:${situation.id}:${step.id}:confusion`,
     playback: 'normal',
+    ...identity,
   });
   state.exchanges.push({
     role: 'character',
@@ -317,6 +360,7 @@ function applyHelpLadder(
     ar: CONFUSION_LINE.ar,
     step_id: step.id,
     kind: 'confusion',
+    ...(step.speaker ? { speaker: step.speaker } : {}),
   });
 
   repeatPrompt(events, state, situation, step);
@@ -465,9 +509,9 @@ async function advanceAfterStep(opts: {
 // ---------------------------------------------------------------------------
 
 /**
- * Open / resume. On resume: «كنا فين», replay the last character line the
- * learner heard (even when the current step has no `says`), and re-show a
- * pending full-sentence assist.
+ * Open / resume. Fresh start: scene intro coach, then the first says, then do.
+ * Resume only: «كنا فين», replay the last character line, re-show pending
+ * assist, then do. Never emit the resume note on a fresh start.
  */
 export function startRoleplayScene(opts: {
   situation: RoleplaySituation;
@@ -494,6 +538,11 @@ export function startRoleplayScene(opts: {
       events.push(assistCoachEvent(state.pending_assist));
     }
   } else if (step) {
+    events.push({
+      type: 'coach',
+      eg: sceneIntroEg(situation),
+      moment: 'intro',
+    });
     emitSays(events, step, state, situation);
   }
 
@@ -548,7 +597,7 @@ export async function runRoleplayTurn(
     situation,
     step: current,
     gender: state.gender,
-    characterName: characterName(situation),
+    characterName: roleplayCharacterDisplayName(situation),
   });
 
   if (side.kind === 'language' || side.kind === 'arabic_other') {
@@ -641,6 +690,7 @@ export async function runRoleplayTurn(
           ar: '',
           step_id: current.id,
           ar_hidden: true,
+          ...characterIdentity(situation, current.speaker),
         });
       }
     }

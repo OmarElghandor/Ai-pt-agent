@@ -72,6 +72,10 @@ export function validateRoleplaySituation(
     const step = situation.steps[i];
     const base = `steps[${i}](${step.id})`;
 
+    if (!step.do_eg?.trim()) {
+      issues.push(issue(id, `${base}.do_eg`, 'do_eg required'));
+    }
+
     if (step.if_slot) {
       for (const [slot, value] of Object.entries(step.if_slot)) {
         const values = declaredSlots.get(slot);

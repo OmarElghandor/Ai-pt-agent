@@ -10,6 +10,7 @@ import { LearnerBubble } from '@/components/v2/convo/LearnerBubble';
 import { usePacedBubbles } from '@/components/v2/convo/usePacedBubbles';
 import type { TalkBubble } from '@/components/v2/convo/types';
 import type { RoleplayTurnEvent } from '@/lib/v2/roleplay/events';
+import { RoleplayDoStrip } from './RoleplayDoStrip';
 import { RoleplayResultCard } from './RoleplayResultCard';
 import {
   applyRoleplayEvents,
@@ -87,7 +88,7 @@ export function RoleplaySession({
   useEffect(() => {
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
-  }, [pacedVisible, ui.help, ui.result]);
+  }, [pacedVisible, ui.help, ui.result, ui.do_eg]);
 
   const send = useCallback(
     async (text: string, opts?: { help?: boolean; assisted?: boolean }) => {
@@ -156,6 +157,16 @@ export function RoleplaySession({
         }
       : null;
 
+  const lastCharacterIndex = (() => {
+    for (let i = pacedVisible.length - 1; i >= 0; i--) {
+      if (pacedVisible[i]?.role === 'character') return i;
+    }
+    return -1;
+  })();
+
+  const partnerName = ui.partnerName;
+  const headerTitle = partnerName || titleTl;
+
   return (
     <div className="flex h-[100dvh] max-h-[100dvh] flex-col bg-v2-paper">
       <header className="flex items-center gap-3 border-b border-v2-line/60 bg-v2-card px-3 py-2">
@@ -173,21 +184,31 @@ export function RoleplaySession({
         >
           <Icon name="arrow_forward" size={22} />
         </Link>
-        <div className="min-w-0 flex-1">
-          <p
-            className="truncate font-[family-name:var(--font-v2-target)] text-sm font-semibold text-v2-primary"
-            dir="ltr"
-          >
-            {titleTl}
-          </p>
-          <p className="truncate font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
-            {titleAr}
-          </p>
-          <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-v2-paper-deep">
-            <div
-              className="h-full rounded-full bg-v2-primary transition-[width]"
-              style={{ width: `${progressPct}%` }}
-            />
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          {partnerName ? (
+            <span
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-v2-primary-tint font-[family-name:var(--font-v2-target)] text-sm font-semibold text-v2-primary"
+              aria-hidden
+            >
+              {partnerName.slice(0, 1).toUpperCase()}
+            </span>
+          ) : null}
+          <div className="min-w-0 flex-1">
+            <p
+              className="truncate font-[family-name:var(--font-v2-target)] text-sm font-semibold text-v2-primary"
+              dir="ltr"
+            >
+              {headerTitle}
+            </p>
+            <p className="truncate font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
+              {partnerName ? titleTl : titleAr}
+            </p>
+            <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-v2-paper-deep">
+              <div
+                className="h-full rounded-full bg-v2-primary transition-[width]"
+                style={{ width: `${progressPct}%` }}
+              />
+            </div>
           </div>
         </div>
         <button
@@ -199,21 +220,31 @@ export function RoleplaySession({
         </button>
       </header>
 
-      <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-3 py-3">
+      <div ref={scrollRef} className="flex flex-1 flex-col space-y-3 overflow-y-auto px-3 py-3">
         {pacedVisible.map((b, i) => {
           if (b.role === 'character') {
             const skipAuto =
               firstLineAlreadyPlayed &&
               i === 0 &&
               pacedVisible.findIndex((x) => x.role === 'character') === i;
+            const isLatest = i === lastCharacterIndex;
             return (
-              <CharacterBubble
-                key={b.id}
-                tl={b.tl}
-                meaningEg={b.ar}
-                typing={b.typing}
-                autoPlay={!b.typing && !skipAuto}
-              />
+              <div key={b.id} className="flex flex-col items-start">
+                <CharacterBubble
+                  tl={b.tl}
+                  meaningEg={b.ar}
+                  typing={b.typing}
+                  autoPlay={!b.typing && !skipAuto}
+                  partnerName={b.partnerName || partnerName || undefined}
+                  voice={b.voice || ui.partnerVoice || undefined}
+                />
+                {isLatest && ui.do_eg && !ui.result ? (
+                  <RoleplayDoStrip
+                    eg={ui.do_eg.eg}
+                    hintEg={ui.do_eg.hint_eg}
+                  />
+                ) : null}
+              </div>
             );
           }
           if (b.role === 'learner') {
@@ -227,8 +258,11 @@ export function RoleplaySession({
           }
           if (b.role === 'coach') {
             return (
-              <CoachCard key={b.id} label="المساعد">
-                {b.eg}
+              <CoachCard
+                key={b.id}
+                label={b.moment === 'intro' ? 'المشهد' : 'المساعد'}
+              >
+                <span className="whitespace-pre-line">{b.eg}</span>
               </CoachCard>
             );
           }

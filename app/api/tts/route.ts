@@ -9,9 +9,10 @@ export const maxDuration = 60;
 
 export async function POST(req: Request) {
   try {
-    const { lang, text } = (await req.json()) as {
+    const { lang, text, voice } = (await req.json()) as {
       lang?: 'pt' | 'ar';
       text?: string;
+      voice?: string;
     };
 
     if (!lang || !text?.trim()) {
@@ -26,29 +27,34 @@ export async function POST(req: Request) {
     }
 
     const trimmed = text.trim();
+    const voiceOpt = typeof voice === 'string' && voice.trim() ? voice.trim() : undefined;
     await refreshMongoCatalogue().catch(() => 0);
-    const remoteUrl = findRemoteAudioUrl(lang, trimmed);
-    if (remoteUrl) {
-      const remote = await fetch(remoteUrl);
-      if (remote.ok) {
-        const buffer = Buffer.from(await remote.arrayBuffer());
-        const contentType = remote.headers.get('content-type') || 'audio/mpeg';
-        return new Response(new Uint8Array(buffer), {
-          status: 200,
-          headers: {
-            'Content-Type': contentType,
-            'Cache-Control': 'no-store',
-          },
-        });
+    // Character-specific voices skip the shared remote/cache catalogue.
+    if (!voiceOpt) {
+      const remoteUrl = findRemoteAudioUrl(lang, trimmed);
+      if (remoteUrl) {
+        const remote = await fetch(remoteUrl);
+        if (remote.ok) {
+          const buffer = Buffer.from(await remote.arrayBuffer());
+          const contentType = remote.headers.get('content-type') || 'audio/mpeg';
+          return new Response(new Uint8Array(buffer), {
+            status: 200,
+            headers: {
+              'Content-Type': contentType,
+              'Cache-Control': 'no-store',
+            },
+          });
+        }
       }
     }
 
-    const cached = readCachedAudio(lang, trimmed);
+    const cached = voiceOpt ? null : readCachedAudio(lang, trimmed);
     const { buffer, contentType } = cached
       ? cached
       : await speakSegment({
           lang,
           text: trimmed,
+          ...(voiceOpt ? { voice: voiceOpt } : {}),
         });
 
     return new Response(new Uint8Array(buffer), {

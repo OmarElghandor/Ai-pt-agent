@@ -5,6 +5,7 @@ export * from './validate';
 export * from './match';
 export * from './playable';
 export * from './text';
+export * from './character';
 export * from './sideChannel';
 export * from './session';
 export * from './events';

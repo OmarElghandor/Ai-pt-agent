@@ -49,6 +49,7 @@
         "tl": "Boa tarde! Quantas pessoas?",
         "ar": "مساء الخير! كم شخصًا؟"
       },
+      "do_eg": "Manuel بيسألك كام فرد؟ اطلب ترابيزة 🍽️",
       "expects": {
         "intent_eg": "يطلب ترابيزة",
         "examples_tl": [
@@ -111,6 +112,7 @@
         "tl": "Aqui está a ementa. O prato do dia é carne de porco à alentejana.",
         "ar": "هذه قائمة الطعام. طبق اليوم لحم خنزير على طريقة ألينتيجو."
       },
+      "do_eg": "طبق اليوم فيه لحم خنزير. قوله إنك مش بتاكله، أو اطلب حاجة تانية.",
       "expects": {
         "intent_eg": "يقول مش بياكل خنزير أو يطلب حاجة تانية",
         "examples_tl": [
@@ -187,6 +189,7 @@
         "food": "no_pork"
       },
       "says": null,
+      "do_eg": "قالك فيه فراخ أو سمك. اختار.",
       "expects": {
         "intent_eg": "يختار فراخ أو سمك",
         "examples_tl": [
@@ -237,6 +240,7 @@
         "tl": "Para começar, a sopa do dia é caldo verde.",
         "ar": "للبداية، حساء اليوم هو كالدو فيردي."
       },
+      "do_eg": "قالك شوربة اليوم. اسأل فيها خنزير ولا لأ.",
       "expects": {
         "intent_eg": "يسأل الشوربة فيها خنزير ولا لأ",
         "examples_tl": [
@@ -298,6 +302,7 @@
         "tl": "E para beber?",
         "ar": "وماذا تشرب؟"
       },
+      "do_eg": "بيسألك تشرب إيه؟ اطلب مشروب.",
       "expects": {
         "intent_eg": "يطلب مشروب",
         "examples_tl": [
@@ -365,6 +370,7 @@
         "tl": "Então, estava tudo bem?",
         "ar": "إذن، هل كان كل شيء جيدًا؟"
       },
+      "do_eg": "خلصت أكل. بيسألك كله كان تمام؟ رد.",
       "expects": {
         "intent_eg": "يقول الأكل كان حلو",
         "examples_tl": [
@@ -401,6 +407,7 @@
     {
       "id": "bill",
       "says": null,
+      "do_eg": "بيعرض حلو أو قهوة. اطلب الحساب.",
       "expects": {
         "intent_eg": "يطلب الحساب",
         "examples_tl": [
@@ -432,6 +439,7 @@
     {
       "id": "pay",
       "says": null,
+      "do_eg": "قالك الحساب. ادفع.",
       "expects": {
         "intent_eg": "يدفع",
         "examples_tl": [
@@ -462,6 +470,7 @@
     {
       "id": "bye",
       "says": null,
+      "do_eg": "ودّعه.",
       "expects": {
         "intent_eg": "يودّعه",
         "examples_tl": [

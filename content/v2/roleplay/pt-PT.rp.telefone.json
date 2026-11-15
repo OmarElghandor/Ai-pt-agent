@@ -50,6 +50,7 @@
         "tl": "Estou? 📞",
         "ar": "ألو؟"
       },
+      "do_eg": "Tiago رد على التليفون. سلّم عليه وقوله إنت مين 📞",
       "expects": {
         "intent_eg": "يسلّم ويقول هو مين",
         "examples_tl": [
@@ -86,6 +87,7 @@
     {
       "id": "how_are_you",
       "says": null,
+      "do_eg": "بيسألك عامل إيه؟ رد واسأله.",
       "expects": {
         "intent_eg": "يرد إنه كويس ويسأله",
         "examples_tl": [
@@ -114,6 +116,7 @@
     {
       "id": "doing",
       "says": null,
+      "do_eg": "بيقولك «قول». اسأله بيعمل إيه.",
       "expects": {
         "intent_eg": "يسأله بيعمل إيه",
         "examples_tl": [
@@ -145,6 +148,7 @@
     {
       "id": "invite",
       "says": null,
+      "do_eg": "اعزمه على السينما.",
       "expects": {
         "intent_eg": "يعزمه على السينما",
         "examples_tl": [
@@ -175,6 +179,7 @@
     {
       "id": "when",
       "says": null,
+      "do_eg": "بيسألك إمتى؟ قوله.",
       "expects": {
         "intent_eg": "يقول إمتى",
         "examples_tl": [
@@ -211,6 +216,7 @@
         "tl": "Ah, hoje não dá, desculpa. Pode ser amanhã?",
         "ar": "آه، اليوم لا يناسبني، آسف. هل يمكن غدًا؟"
       },
+      "do_eg": "النهارده مش هينفع معاه. وافق على بكره.",
       "expects": {
         "intent_eg": "يوافق على بكره",
         "examples_tl": [
@@ -248,6 +254,7 @@
         "tl": "Fixe! Então combinado. Xau!",
         "ar": "رائع! اتفقنا إذن. إلى اللقاء!"
       },
+      "do_eg": "اتفقتوا. اقفل المكالمة.",
       "expects": {
         "intent_eg": "يقفل المكالمة",
         "examples_tl": [

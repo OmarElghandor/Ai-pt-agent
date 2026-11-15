@@ -67,6 +67,7 @@
         "tl": "Bom dia! Diga.",
         "ar": "صباح الخير! تفضّل."
       },
+      "do_eg": "Manuel بيقولك «اؤمر». اطلب مشروب ☕",
       "expects": {
         "intent_eg": "يطلب مشروب",
         "examples_tl": [
@@ -152,6 +153,7 @@
         "tl": "Mais alguma coisa?",
         "ar": "هل تريد شيئًا آخر؟"
       },
+      "do_eg": "بيسألك عايز حاجة تانية؟ اطلب حاجة تاكلها، أو قول بس كده.",
       "expects": {
         "intent_eg": "يطلب أكل أو يقول بس كده",
         "examples_tl": [
@@ -241,6 +243,7 @@
         "tl": "É para comer aqui ou para levar?",
         "ar": "هل هو للأكل هنا أم للأخذ؟"
       },
+      "do_eg": "بيسألك هتاكل هنا ولا تاخده معاك؟ رد.",
       "expects": {
         "intent_eg": "يقول هياكل هنا ولا تيك أواي",
         "examples_tl": [
@@ -292,6 +295,7 @@
         "tl": "Aqui está! 😊",
         "ar": "تفضّل!"
       },
+      "do_eg": "الطلب جه. اسأله الحساب كام.",
       "expects": {
         "intent_eg": "يسأل الحساب كام",
         "examples_tl": [
@@ -323,6 +327,7 @@
     {
       "id": "pay",
       "says": null,
+      "do_eg": "قالك الحساب. ادفع بالكارت أو كاش.",
       "expects": {
         "intent_eg": "يدفع بالكارت أو كاش",
         "examples_tl": [
@@ -380,6 +385,7 @@
         "tl": "Quer fatura com contribuinte?",
         "ar": "هل تريد فاتورة برقمك الضريبي؟"
       },
+      "do_eg": "بيسألك عايز رقمك الضريبي على الفاتورة؟ رد.",
       "expects": {
         "intent_eg": "يرد على سؤال رقم الضرايب",
         "examples_tl": [
@@ -417,6 +423,7 @@
         "tl": "Obrigado! Bom dia!",
         "ar": "شكرًا! يومًا سعيدًا!"
       },
+      "do_eg": "خلصت! ودّعه.",
       "expects": {
         "intent_eg": "يودّعه",
         "examples_tl": [

@@ -19,6 +19,12 @@ export type StartRoleplayInput = {
   learnerName?: string | null;
   /** Resume an existing session id when provided. */
   sessionId?: string;
+  /**
+   * When false, always open a fresh session (abandon any active for this
+   * situation). When true, resume an active session. When omitted, resume if
+   * an active session exists (legacy).
+   */
+  resume?: boolean;
   store: RoleplaySessionStore;
 };
 
@@ -28,34 +34,58 @@ export type StartRoleplayResult = {
   resumed: boolean;
 };
 
+async function abandonActive(
+  store: RoleplaySessionStore,
+  userId: string,
+  situationId: string,
+): Promise<void> {
+  const active = await store.findActive(userId, situationId);
+  if (!active) return;
+  active.status = 'done';
+  active.updated_at = new Date().toISOString();
+  await store.save(active);
+}
+
 export async function startRoleplaySession(
   input: StartRoleplayInput,
 ): Promise<StartRoleplayResult> {
   const situation = loadRoleplaySituation(input.situationId);
   const gender = input.gender ?? 'm';
 
-  if (input.sessionId) {
-    const existing = await input.store.get(input.sessionId, input.userId);
-    if (existing && existing.status === 'active') {
-      const { state, events } = startRoleplayScene({
-        situation,
-        state: existing,
-        resume: true,
-      });
-      await input.store.save(state);
-      return { state, events, resumed: true };
-    }
-  }
+  const wantResume = input.resume === true;
+  const wantFresh = input.resume === false;
 
-  const active = await input.store.findActive(input.userId, input.situationId);
-  if (active) {
-    const { state, events } = startRoleplayScene({
-      situation,
-      state: active,
-      resume: true,
-    });
-    await input.store.save(state);
-    return { state, events, resumed: true };
+  if (!wantFresh) {
+    if (input.sessionId) {
+      const existing = await input.store.get(input.sessionId, input.userId);
+      if (existing && existing.status === 'active') {
+        const { state, events } = startRoleplayScene({
+          situation,
+          state: existing,
+          resume: true,
+        });
+        await input.store.save(state);
+        return { state, events, resumed: true };
+      }
+    }
+
+    if (wantResume || input.resume === undefined) {
+      const active = await input.store.findActive(
+        input.userId,
+        input.situationId,
+      );
+      if (active) {
+        const { state, events } = startRoleplayScene({
+          situation,
+          state: active,
+          resume: true,
+        });
+        await input.store.save(state);
+        return { state, events, resumed: true };
+      }
+    }
+  } else {
+    await abandonActive(input.store, input.userId, input.situationId);
   }
 
   const playable = playableSteps(situation, {});

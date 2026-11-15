@@ -54,6 +54,7 @@
         "tl_f": "Boa tarde! A senhora é a vizinha nova?",
         "ar_f": "مساء الخير! هل أنتِ الجارة الجديدة؟"
       },
+      "do_eg": "جارتك بتسألك إنت الساكن الجديد؟ سلّم عليها وقول أيوه 🏢",
       "expects": {
         "intent_eg": "يسلّم ويقول أيوه",
         "examples_tl": [
@@ -88,6 +89,7 @@
     {
       "id": "name",
       "says": null,
+      "do_eg": "قالتلك اسمها. قول تشرفنا واسمك.",
       "expects": {
         "intent_eg": "يقول اسمه وتشرفنا",
         "examples_tl": [
@@ -122,6 +124,7 @@
         "tl": "E de onde é?",
         "ar": "ومن أين أنت؟"
       },
+      "do_eg": "بتسألك إنت منين؟ رد.",
       "expects": {
         "intent_eg": "يقول هو منين",
         "examples_tl": [
@@ -165,6 +168,7 @@
         "tl": "E o que faz?",
         "ar": "وماذا تعمل؟"
       },
+      "do_eg": "بتسألك بتشتغل إيه؟ رد.",
       "expects": {
         "intent_eg": "يقول شغلته",
         "examples_tl": [
@@ -208,6 +212,7 @@
         "tl": "E mora no segundo esquerdo, não é?",
         "ar": "وتسكن في الطابق الثاني يسار، أليس كذلك؟"
       },
+      "do_eg": "بتسألك ساكن في أنهي دور وأنهي شقة؟ رد.",
       "expects": {
         "intent_eg": "يقول ساكن فين في العمارة",
         "examples_tl": [
@@ -247,6 +252,7 @@
         "tl": "Bem, vou às compras. Até logo!",
         "ar": "حسنًا، سأذهب للتسوق. إلى اللقاء!"
       },
+      "do_eg": "هي ماشية. ودّعها.",
       "expects": {
         "intent_eg": "يودّعها",
         "examples_tl": [

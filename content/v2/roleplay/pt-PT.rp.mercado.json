@@ -63,6 +63,7 @@
         "tl": "Bom dia! O que vai ser?",
         "ar": "صباح الخير! ماذا تريد؟"
       },
+      "do_eg": "Manuel بيسألك «تحب إيه؟». اطلب كيلو فاكهة أو خضار 🍊",
       "expects": {
         "intent_eg": "يطلب كيلو فاكهة أو خضار",
         "examples_tl": [
@@ -152,6 +153,7 @@
         "tl": "Olhe, é tudo fresquinho! 😊",
         "ar": "انظر، كل شيء طازج!"
       },
+      "do_eg": "اسأله بكام.",
       "expects": {
         "intent_eg": "يسأل بكام",
         "examples_tl": [
@@ -182,6 +184,7 @@
         "tl": "Mais alguma coisa?",
         "ar": "هل تريد شيئًا آخر؟"
       },
+      "do_eg": "بيسألك عايز حاجة تانية؟ اطلب، أو قول بس كده.",
       "expects": {
         "intent_eg": "يطلب حاجة تانية أو يقول بس كده",
         "examples_tl": [
@@ -229,6 +232,7 @@
         "tl": "Precisa de saco?",
         "ar": "هل تحتاج كيسًا؟"
       },
+      "do_eg": "بيسألك محتاج كيس؟ رد.",
       "expects": {
         "intent_eg": "يرد محتاج كيس ولا لأ",
         "examples_tl": [
@@ -288,6 +292,7 @@
         "tl": "São três euros e vinte.",
         "ar": "المجموع ثلاثة يوروهات وعشرون سنتًا."
       },
+      "do_eg": "قالك الحساب. ادفع.",
       "expects": {
         "intent_eg": "يدفع",
         "examples_tl": [
@@ -345,6 +350,7 @@
         "tl": "Desculpe, aqui só aceito dinheiro. 😕",
         "ar": "عذرًا، أقبل النقود فقط هنا."
       },
+      "do_eg": "بيقولك كاش بس. وافق وادفع كاش.",
       "expects": {
         "intent_eg": "يقبل يدفع كاش",
         "examples_tl": [
@@ -378,6 +384,7 @@
         "tl": "Obrigado! Bom fim de semana!",
         "ar": "شكرًا! عطلة سعيدة!"
       },
+      "do_eg": "بيتمنالك ويك إند حلو. رد عليه وودّعه.",
       "expects": {
         "intent_eg": "يودّعه",
         "examples_tl": [

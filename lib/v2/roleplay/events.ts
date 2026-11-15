@@ -21,6 +21,17 @@ export type RoleplayTurnEvent =
       audio_key?: string;
       playback?: 'normal' | 'slow';
       speaker?: string;
+      /** Display name — from scene character / speaker, never a UI default. */
+      name: string;
+      character_id?: string | null;
+      voice?: string;
+    }
+  | {
+      /** Current step instruction for the «دورك» strip. */
+      type: 'do';
+      eg: string;
+      hint_eg?: string;
+      step_id?: string;
     }
   | {
       type: 'help';

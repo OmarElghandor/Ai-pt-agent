@@ -52,6 +52,7 @@
         "tl": "Bom dia. Diga.",
         "ar": "صباح الخير. تفضّل."
       },
+      "do_eg": "الموظفة بتقولك «اؤمر». اطلب تذكرة لسينترا 🚆",
       "expects": {
         "intent_eg": "يطلب تذكرة لسينترا",
         "examples_tl": [
@@ -80,6 +81,7 @@
     {
       "id": "return",
       "says": null,
+      "do_eg": "بتسألك رايح بس ولا رايح جاي؟ اختار.",
       "expects": {
         "intent_eg": "يختار رايح بس أو رايح جاي",
         "examples_tl": [
@@ -132,6 +134,7 @@
     {
       "id": "pay",
       "says": null,
+      "do_eg": "قالتلك السعر. ادفع.",
       "expects": {
         "intent_eg": "يدفع",
         "examples_tl": [
@@ -162,6 +165,7 @@
     {
       "id": "next_train",
       "says": null,
+      "do_eg": "معاك التذكرة. اسأل القطر الجاي إمتى.",
       "expects": {
         "intent_eg": "يسأل القطر الجاي إمتى",
         "examples_tl": [
@@ -197,6 +201,7 @@
         "tl": "Boa viagem!",
         "ar": "رحلة سعيدة!"
       },
+      "do_eg": "ودّعها.",
       "expects": {
         "intent_eg": "يشكرها ويمشي",
         "examples_tl": [

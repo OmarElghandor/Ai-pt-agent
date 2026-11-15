@@ -55,6 +55,7 @@ The path goes in order, scene after scene. A scene is never locked.
 - optional `if_slot` {slot: value}: the step plays only when an earlier answer set that slot;
 - `says` {tl, ar, tl_f?, ar_f?}: the character's line. When it's **null**, the previous reply is the prompt;
 - optional `speaker`;
+- `do_eg`: **what the learner must do now**, in Egyptian, 2nd person («Manuel بيقولك «اؤمر». اطلب مشروب ☕»). It's **always shown** (see «Always show what to do» below);
 - optional `hint_eg`: a one-line meaning or culture note, shown only when the learner is stuck;
 - `expects`:
   - `intent_eg`, `examples_tl[]` (+ `_f`), `keywords[]`;
@@ -66,6 +67,18 @@ The path goes in order, scene after scene. A scene is never locked.
 **Text rules:**
 - `{name}` is the learner's name; drop it with its comma when the name is unknown.
 - When the learner is female, use the `_f` fields.
+
+## Always show what to do (fix 2026-11-15: the conversation was unclear)
+
+The learner must never wonder what to do.
+
+1. **Scene intro.** Before the character's first line, show one coach card, built from the file:
+   - 📍 `place_eg`;
+   - 👤 دورك: `learner_role_eg`;
+   - 🎯 المهمة: `task_eg`.
+   It is shown on a fresh start only. The «كنا فين — نكمّل من هنا» note is for resume only, never on a fresh start.
+2. **«دورك» strip.** Under the latest character bubble, a small strip shows the current step's `do_eg`. It updates on every step, stays visible until the learner answers, and is never hidden. Tapping it shows `hint_eg` (if any).
+3. **Character identity.** The bubble name, avatar and voice come from `character` / `speaker`: `manuel` → Manuel, an inline person → their `name`. **Never a default character** (the café showed «Inês»: that's a bug).
 
 ## The engine (per learner message)
 
