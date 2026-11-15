@@ -5,12 +5,16 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Icon } from '@/components/v2/Icon';
 import { CharacterBubble } from '@/components/v2/convo/CharacterBubble';
 import { CoachCard } from '@/components/v2/convo/CoachCard';
+import {
+  ConvoDevMenu,
+  readConvoModelChoice,
+  type ConvoModelChoice,
+} from '@/components/v2/convo/ConvoDevMenu';
 import { ConvoVoiceBar } from '@/components/v2/convo/ConvoVoiceBar';
 import { LearnerBubble } from '@/components/v2/convo/LearnerBubble';
 import { usePacedBubbles } from '@/components/v2/convo/usePacedBubbles';
 import type { TalkBubble } from '@/components/v2/convo/types';
 import type { RoleplayTurnEvent } from '@/lib/v2/roleplay/events';
-import { RoleplayDoStrip } from './RoleplayDoStrip';
 import { RoleplayResultCard } from './RoleplayResultCard';
 import {
   applyRoleplayEvents,
@@ -72,6 +76,7 @@ export function RoleplaySession({
   );
   const [busy, setBusy] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [convoModel, setConvoModel] = useState<ConvoModelChoice>('qwen');
   const scrollRef = useRef<HTMLDivElement>(null);
   const bubblesRef = useRef<TalkBubble[]>(ui.bubbles);
   const {
@@ -81,6 +86,10 @@ export function RoleplaySession({
   } = usePacedBubbles();
 
   useEffect(() => {
+    setConvoModel(readConvoModelChoice());
+  }, []);
+
+  useEffect(() => {
     bubblesRef.current = ui.bubbles;
     syncAuthoritative(ui.bubbles);
   }, [ui.bubbles, syncAuthoritative]);
@@ -88,7 +97,7 @@ export function RoleplaySession({
   useEffect(() => {
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
-  }, [pacedVisible, ui.help, ui.result, ui.do_eg]);
+  }, [pacedVisible, ui.help, ui.result, busy]);
 
   const send = useCallback(
     async (text: string, opts?: { help?: boolean; assisted?: boolean }) => {
@@ -99,12 +108,30 @@ export function RoleplaySession({
       const learnerId = newId('learner');
       if (trimmed) {
         const withLearner: TalkBubble[] = [
-          ...bubblesRef.current,
+          ...bubblesRef.current.filter((b) => !b.typing),
           { id: learnerId, role: 'learner', tl: trimmed },
         ];
         bubblesRef.current = withLearner;
         commitImmediate(withLearner);
         setUi((s) => ({ ...s, bubbles: withLearner, help: null }));
+      }
+
+      // Typing indicator while the server buffers the actor (no token stream).
+      if (!opts?.help) {
+        const typingId = newId('typing');
+        const withTyping: TalkBubble[] = [
+          ...bubblesRef.current.filter((b) => !b.typing),
+          {
+            id: typingId,
+            role: 'character',
+            tl: '',
+            typing: true,
+            partnerName: ui.partnerName ?? undefined,
+          },
+        ];
+        bubblesRef.current = withTyping;
+        commitImmediate(withTyping);
+        setUi((s) => ({ ...s, bubbles: withTyping }));
       }
 
       setBusy(true);
@@ -119,15 +146,17 @@ export function RoleplaySession({
             help: Boolean(opts?.help),
             assisted: Boolean(opts?.assisted),
             learner_turn_id: learnerId,
+            convo_model: convoModel,
           }),
         });
         if (!res.ok || !res.body) throw new Error(`turn ${res.status}`);
 
         let next: RoleplayUiState = {
           ...ui,
-          bubbles: bubblesRef.current,
+          bubbles: bubblesRef.current.filter((b) => !b.typing),
           help: null,
         };
+        bubblesRef.current = next.bubbles;
         for await (const event of readRoleplayNdjson(res.body)) {
           next = reduceRoleplayEvent(next, event);
           bubblesRef.current = next.bubbles;
@@ -135,12 +164,22 @@ export function RoleplaySession({
           syncAuthoritative(next.bubbles);
         }
       } catch {
-        /* keep learner bubble */
+        const cleared = bubblesRef.current.filter((b) => !b.typing);
+        bubblesRef.current = cleared;
+        setUi((s) => ({ ...s, bubbles: cleared }));
+        syncAuthoritative(cleared);
       } finally {
         setBusy(false);
       }
     },
-    [busy, ui, sessionId, commitImmediate, syncAuthoritative],
+    [
+      busy,
+      ui,
+      sessionId,
+      convoModel,
+      commitImmediate,
+      syncAuthoritative,
+    ],
   );
 
   const progressPct =
@@ -157,18 +196,8 @@ export function RoleplaySession({
         }
       : null;
 
-  const lastCharacterIndex = (() => {
-    for (let i = pacedVisible.length - 1; i >= 0; i--) {
-      if (pacedVisible[i]?.role === 'character' && !pacedVisible[i]?.typing) {
-        return i;
-      }
-    }
-    return -1;
-  })();
-
   const partnerName = ui.partnerName;
   const headerTitle = partnerName || titleTl;
-  const showDoStrip = Boolean(ui.do_eg && !ui.result && !busy);
 
   return (
     <div className="flex h-[100dvh] max-h-[100dvh] flex-col bg-v2-paper">
@@ -214,6 +243,9 @@ export function RoleplaySession({
             </div>
           </div>
         </div>
+        <ConvoDevMenu
+          onConvoModelChange={(choice) => setConvoModel(choice)}
+        />
         <button
           type="button"
           onClick={() => void send('', { help: true })}
@@ -231,24 +263,16 @@ export function RoleplaySession({
               pacedVisible.findIndex(
                 (x) => x.role === 'character' && !x.typing,
               ) === i;
-            const isLatest = i === lastCharacterIndex;
             return (
-              <div key={b.id} className="flex flex-col items-start">
-                <CharacterBubble
-                  tl={b.tl}
-                  meaningEg={b.ar}
-                  typing={b.typing}
-                  autoPlay={!b.typing && !skipAuto}
-                  partnerName={b.partnerName || partnerName || undefined}
-                  voice={b.voice || ui.partnerVoice || undefined}
-                />
-                {isLatest && showDoStrip && ui.do_eg ? (
-                  <RoleplayDoStrip
-                    eg={ui.do_eg.eg}
-                    hintEg={ui.do_eg.hint_eg}
-                  />
-                ) : null}
-              </div>
+              <CharacterBubble
+                key={b.id}
+                tl={b.tl}
+                meaningEg={b.ar}
+                typing={b.typing}
+                autoPlay={!b.typing && !skipAuto}
+                partnerName={b.partnerName || partnerName || undefined}
+                voice={b.voice || ui.partnerVoice || undefined}
+              />
             );
           }
           if (b.role === 'learner') {
@@ -262,21 +286,13 @@ export function RoleplaySession({
           }
           if (b.role === 'coach') {
             return (
-              <CoachCard
-                key={b.id}
-                label={b.moment === 'intro' ? 'المشهد' : 'المساعد'}
-              >
+              <CoachCard key={b.id} label="المساعد">
                 <span className="whitespace-pre-line">{b.eg}</span>
               </CoachCard>
             );
           }
           return null;
         })}
-
-        {/* Fallback: strip after the thread when no character bubble is visible yet. */}
-        {showDoStrip && ui.do_eg && lastCharacterIndex < 0 ? (
-          <RoleplayDoStrip eg={ui.do_eg.eg} hintEg={ui.do_eg.hint_eg} />
-        ) : null}
 
         {ui.help ? (
           <div className="rounded-v2-card bg-v2-note px-3 py-3 ring-1 ring-v2-note-border/50">

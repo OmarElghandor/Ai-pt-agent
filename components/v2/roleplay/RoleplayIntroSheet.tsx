@@ -5,19 +5,19 @@ type Props = {
   titleTl: string;
   titleAr: string;
   placeEg: string;
-  taskEg: string;
+  /** Kept for callers; not shown (hints-only — no task card). */
+  taskEg?: string;
   onStart: () => void;
   starting?: boolean;
   resume?: boolean;
 };
 
-/** One-button entry — no tier picker, no key phrases before the call. */
+/** One-button entry — title + place + CTA; no task / دورك instructions. */
 export function RoleplayIntroSheet({
   emoji,
   titleTl,
   titleAr,
   placeEg,
-  taskEg,
   onStart,
   starting,
   resume,
@@ -37,12 +37,11 @@ export function RoleplayIntroSheet({
         <p className="mt-1 font-[family-name:var(--font-v2-arabic)] text-base text-v2-ink">
           {titleAr}
         </p>
-        <p className="mt-3 font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-          {placeEg}
-        </p>
-        <p className="mt-1 font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink">
-          {taskEg}
-        </p>
+        {placeEg ? (
+          <p className="mt-3 font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
+            {placeEg}
+          </p>
+        ) : null}
       </div>
       <button
         type="button"

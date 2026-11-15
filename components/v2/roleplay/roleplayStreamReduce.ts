@@ -9,19 +9,12 @@ export type RoleplayResultState = {
   summary_eg: string;
 };
 
-export type RoleplayDoState = {
-  eg: string;
-  hint_eg?: string;
-  step_id?: string;
-};
-
 export type RoleplayUiState = {
   bubbles: TalkBubble[];
   progress: { current: number; total: number; step_id: string | null };
   help: { frame_tl: string; eg: string; chips: string[] } | null;
   result: RoleplayResultState | null;
   finished: boolean;
-  do_eg: RoleplayDoState | null;
   partnerName: string | null;
   partnerVoice: string | null;
 };
@@ -37,7 +30,6 @@ export function emptyRoleplayUiState(): RoleplayUiState {
     help: null,
     result: null,
     finished: false,
-    do_eg: null,
     partnerName: null,
     partnerVoice: null,
   };
@@ -61,29 +53,25 @@ export function reduceRoleplayEvent(
         partnerName: event.name,
         ...(event.voice ? { voice: event.voice } : {}),
       };
+      // Drop any temporary typing placeholder.
+      const bubbles = state.bubbles.filter((b) => !b.typing);
       return {
         ...state,
-        bubbles: [...state.bubbles, bubble],
+        bubbles: [...bubbles, bubble],
         help: null,
         partnerName: event.name || state.partnerName,
         partnerVoice: event.voice ?? state.partnerVoice,
       };
     }
-    case 'do': {
-      return {
-        ...state,
-        do_eg: {
-          eg: event.eg,
-          ...(event.hint_eg ? { hint_eg: event.hint_eg } : {}),
-          ...(event.step_id ? { step_id: event.step_id } : {}),
-        },
-      };
-    }
+    case 'do':
+      // Hints-only: ignore always-on do strip events if any arrive.
+      return state;
     case 'coach': {
+      if (!event.eg?.trim()) return state;
       return {
         ...state,
         bubbles: [
-          ...state.bubbles,
+          ...state.bubbles.filter((b) => !b.typing),
           {
             id: newId('coach'),
             role: 'coach',
@@ -153,7 +141,6 @@ export function reduceRoleplayEvent(
           corrections: event.corrections,
           summary_eg: event.summary_eg,
         },
-        do_eg: null,
       };
     }
     case 'done': {
