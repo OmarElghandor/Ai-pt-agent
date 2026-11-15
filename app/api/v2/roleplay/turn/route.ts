@@ -39,6 +39,8 @@ export async function POST(req: Request) {
     text?: string;
     help?: boolean;
     assisted?: boolean;
+    /** Explicit «خلّص» after task_done. */
+    finish?: boolean;
     learner_turn_id?: string;
     /** Dev A/B: `qwen` | `haiku` | `anthropic:…` | `deepinfra:…`. */
     convo_model?: string;
@@ -83,6 +85,7 @@ export async function POST(req: Request) {
             learnerText: body?.text ?? '',
             help: Boolean(body?.help),
             assisted: Boolean(body?.assisted),
+            finish: Boolean(body?.finish),
             learner_turn_id: body?.learner_turn_id,
           },
           {

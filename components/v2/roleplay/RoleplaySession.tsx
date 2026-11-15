@@ -97,13 +97,16 @@ export function RoleplaySession({
   useEffect(() => {
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
-  }, [pacedVisible, ui.help, ui.result, busy]);
+  }, [pacedVisible, ui.help, ui.result, ui.cue, busy]);
 
   const send = useCallback(
-    async (text: string, opts?: { help?: boolean; assisted?: boolean }) => {
+    async (
+      text: string,
+      opts?: { help?: boolean; assisted?: boolean; finish?: boolean },
+    ) => {
       if (busy || ui.result) return;
       const trimmed = text.trim();
-      if (!trimmed && !opts?.help) return;
+      if (!trimmed && !opts?.help && !opts?.finish) return;
 
       const learnerId = newId('learner');
       if (trimmed) {
@@ -113,7 +116,7 @@ export function RoleplaySession({
         ];
         bubblesRef.current = withLearner;
         commitImmediate(withLearner);
-        setUi((s) => ({ ...s, bubbles: withLearner, help: null }));
+        setUi((s) => ({ ...s, bubbles: withLearner, help: null, cue: null }));
       }
 
       // Typing indicator while the server buffers the actor (no token stream).
@@ -131,7 +134,7 @@ export function RoleplaySession({
         ];
         bubblesRef.current = withTyping;
         commitImmediate(withTyping);
-        setUi((s) => ({ ...s, bubbles: withTyping }));
+        setUi((s) => ({ ...s, bubbles: withTyping, cue: null }));
       }
 
       setBusy(true);
@@ -145,6 +148,7 @@ export function RoleplaySession({
             text: trimmed,
             help: Boolean(opts?.help),
             assisted: Boolean(opts?.assisted),
+            finish: Boolean(opts?.finish),
             learner_turn_id: learnerId,
             convo_model: convoModel,
           }),
@@ -246,6 +250,16 @@ export function RoleplaySession({
         <ConvoDevMenu
           onConvoModelChange={(choice) => setConvoModel(choice)}
         />
+        {ui.taskDone && !ui.result ? (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => void send('', { finish: true })}
+            className="shrink-0 rounded-full bg-v2-primary px-3 py-1.5 font-[family-name:var(--font-v2-arabic)] text-xs font-semibold text-white disabled:opacity-60"
+          >
+            خلّص
+          </button>
+        ) : null}
         <button
           type="button"
           onClick={() => void send('', { help: true })}
@@ -263,16 +277,30 @@ export function RoleplaySession({
               pacedVisible.findIndex(
                 (x) => x.role === 'character' && !x.typing,
               ) === i;
+            const isLatest =
+              i ===
+              [...pacedVisible]
+                .map((x, idx) =>
+                  x.role === 'character' && !x.typing ? idx : -1,
+                )
+                .filter((idx) => idx >= 0)
+                .pop();
             return (
-              <CharacterBubble
-                key={b.id}
-                tl={b.tl}
-                meaningEg={b.ar}
-                typing={b.typing}
-                autoPlay={!b.typing && !skipAuto}
-                partnerName={b.partnerName || partnerName || undefined}
-                voice={b.voice || ui.partnerVoice || undefined}
-              />
+              <div key={b.id} className="flex flex-col items-start gap-1">
+                <CharacterBubble
+                  tl={b.tl}
+                  meaningEg={b.ar}
+                  typing={b.typing}
+                  autoPlay={!b.typing && !skipAuto}
+                  partnerName={b.partnerName || partnerName || undefined}
+                  voice={b.voice || ui.partnerVoice || undefined}
+                />
+                {isLatest && ui.cue && !ui.result && !busy ? (
+                  <p className="ms-2 max-w-[90%] font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
+                    {ui.cue}
+                  </p>
+                ) : null}
+              </div>
             );
           }
           if (b.role === 'learner') {
@@ -286,7 +314,10 @@ export function RoleplaySession({
           }
           if (b.role === 'coach') {
             return (
-              <CoachCard key={b.id} label="المساعد">
+              <CoachCard
+                key={b.id}
+                label={b.moment === 'task_done' ? 'تمام' : 'المساعد'}
+              >
                 <span className="whitespace-pre-line">{b.eg}</span>
               </CoachCard>
             );
@@ -297,12 +328,12 @@ export function RoleplaySession({
         {ui.help ? (
           <div className="rounded-v2-card bg-v2-note px-3 py-3 ring-1 ring-v2-note-border/50">
             <p
-              className="font-[family-name:var(--font-v2-target)] text-sm text-v2-primary"
+              className="break-words font-[family-name:var(--font-v2-target)] text-sm text-v2-primary"
               dir="ltr"
             >
               {ui.help.frame_tl}
             </p>
-            <p className="mt-1 font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
+            <p className="mt-1 break-words font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
               {ui.help.eg}
             </p>
             <div className="mt-2 flex flex-wrap gap-2">

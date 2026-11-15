@@ -240,6 +240,7 @@
       "id": "prescription",
       "says": null,
       "do_eg": "اديتك دوا. اسأل محتاج روشتة ولا بكام.",
+      "learner_leads": true,
       "expects": {
         "intent_eg": "يسأل عن الروشتة أو السعر",
         "examples_tl": [
@@ -288,6 +289,7 @@
       "id": "dosage",
       "says": null,
       "do_eg": "اسألها تاخده كام مرة في اليوم.",
+      "learner_leads": true,
       "expects": {
         "intent_eg": "يسأل ياخده كام مرة",
         "examples_tl": [

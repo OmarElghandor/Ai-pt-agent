@@ -87,6 +87,7 @@
       "id": "confirm",
       "says": null,
       "do_eg": "وصفلك الطريق. أكّده علشان تتأكد إنك فاهم، أو اطلب يعيد.",
+      "learner_leads": true,
       "expects": {
         "intent_eg": "يأكّد الطريق أو يطلب يعيد",
         "examples_tl": [
@@ -141,6 +142,7 @@
       "id": "far",
       "says": null,
       "do_eg": "اسأله المكان بعيد ولا قريب.",
+      "learner_leads": true,
       "expects": {
         "intent_eg": "يسأل بعيد ولا لأ",
         "examples_tl": [
@@ -174,6 +176,7 @@
         "ar": "المحطة بجانب البنك، في الساحة."
       },
       "do_eg": "قالك المحطة جنب إيه. كرر علشان تتأكد واشكره.",
+      "learner_leads": true,
       "expects": {
         "intent_eg": "يكرر العلامة ويشكره",
         "examples_tl": [

@@ -227,6 +227,7 @@
       "id": "price",
       "says": null,
       "do_eg": "اسأل بكام.",
+      "learner_leads": true,
       "expects": {
         "intent_eg": "يسأل السعر",
         "examples_tl": [

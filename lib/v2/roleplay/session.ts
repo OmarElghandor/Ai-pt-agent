@@ -38,10 +38,14 @@ export type RoleplaySessionState = {
   gender: RoleplayGender;
   learner_name: string | null;
   status: RoleplaySessionStatus;
+  /** All beats done; conversation stays open until goodbye / خلّص. */
+  task_done: boolean;
+  /** Consecutive in-scene side-talk turns (max 2 without counting as misses). */
+  side_talk_streak: number;
   exchanges: RoleplayExchange[];
   /** Corrections collected this session (tl → ar). */
   corrections: Array<{ tl: string; ar?: string }>;
-  /** Incremented only when optional model reaction runs. */
+  /** Incremented when the character actor runs. */
   model_calls: number;
   created_at: string;
   updated_at: string;
@@ -71,6 +75,8 @@ export function createRoleplaySessionState(opts: {
     gender: opts.gender ?? 'm',
     learner_name: opts.learner_name ?? null,
     status: 'active',
+    task_done: false,
+    side_talk_streak: 0,
     exchanges: [],
     corrections: [],
     model_calls: 0,

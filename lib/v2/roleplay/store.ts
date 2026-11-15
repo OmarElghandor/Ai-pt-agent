@@ -39,6 +39,8 @@ function docToState(doc: {
   gender?: 'm' | 'f';
   learner_name?: string | null;
   status: 'active' | 'done';
+  task_done?: boolean;
+  side_talk_streak?: number;
   exchanges?: RoleplaySessionState['exchanges'];
   corrections?: RoleplaySessionState['corrections'];
   model_calls?: number;
@@ -59,6 +61,8 @@ function docToState(doc: {
     gender: doc.gender === 'f' ? 'f' : 'm',
     learner_name: doc.learner_name ?? null,
     status: doc.status,
+    task_done: Boolean(doc.task_done),
+    side_talk_streak: doc.side_talk_streak ?? 0,
     exchanges: [...(doc.exchanges ?? [])],
     corrections: [...(doc.corrections ?? [])],
     model_calls: doc.model_calls ?? 0,
@@ -155,6 +159,8 @@ export class MongoRoleplaySessionStore implements RoleplaySessionStore {
           gender: state.gender,
           learner_name: state.learner_name,
           status: state.status,
+          task_done: state.task_done,
+          side_talk_streak: state.side_talk_streak,
           exchanges: state.exchanges,
           corrections: state.corrections,
           model_calls: state.model_calls,

@@ -81,6 +81,7 @@
       "id": "rent",
       "says": null,
       "do_eg": "إنت في الأوضة. اسأل الإيجار كام.",
+      "learner_leads": true,
       "expects": {
         "intent_eg": "يسأل الإيجار كام",
         "examples_tl": [
@@ -112,6 +113,7 @@
       "id": "bills",
       "says": null,
       "do_eg": "اسأل المية والكهربا والنت داخلين في الإيجار ولا لأ.",
+      "learner_leads": true,
       "expects": {
         "intent_eg": "يسأل المصاريف داخلة ولا لأ",
         "examples_tl": [

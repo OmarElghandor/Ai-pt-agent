@@ -4,6 +4,7 @@ import {
   tokenizeContentWords,
 } from '@/lib/v2/convo/guard/levelGuard';
 import { checkPtScript } from '@/lib/v2/convo/output/scriptGuard';
+import { normalizeRoleplayText } from './normalize';
 import { countSentences } from './parse';
 import type { RoleplaySituation, RoleplayStep } from './types';
 
@@ -11,7 +12,8 @@ export type RoleplayActorGuardReason =
   | 'empty'
   | 'script'
   | 'sentences'
-  | 'oov';
+  | 'oov'
+  | 'closed';
 
 export type RoleplayActorGuardResult = {
   ok: boolean;
@@ -83,10 +85,54 @@ export function checkRoleplayReplyVocab(opts: {
   return { ok: off.length <= 2, offScene: off };
 }
 
-/** Reject empty / wrong script / >2 sentences / OOV (off-scene). */
+/**
+ * Every character turn must open the talk: question or answerable invitation.
+ * (Except the answer to the learner's goodbye.)
+ */
+export function endsWithOpenTalk(text: string): boolean {
+  const t = text.trim();
+  if (!t) return false;
+  if (/\?\s*$/u.test(t) || /\?\s*[😊🙂😉]?\s*$/u.test(t)) return true;
+  // Answerable invitations without a final ?
+  return /\b(mais alguma coisa|cart[aã]o ou dinheiro|o que (quer|deseja|vai ser)|e agora|precisa de|diga(-me)?|conta(-me)?|e tu)\b/iu.test(
+    t,
+  );
+}
+
+/** Short open question from beat options, or «E agora?». */
+export function openQuestionFromBeat(step: RoleplayStep | null): string {
+  const opts =
+    step?.expects.options?.map((o) => o.value.trim()).filter(Boolean) ?? [];
+  if (opts.length >= 2) {
+    const shown = opts.slice(0, 4);
+    if (shown.length === 2) return `${shown[0]} ou ${shown[1]}?`;
+    const last = shown[shown.length - 1]!;
+    return `${shown.slice(0, -1).join(', ')} ou ${last}?`;
+  }
+  if (opts.length === 1) return `${opts[0]}?`;
+  return 'E agora?';
+}
+
+/** Ensure PT ends with a question/invitation (replace trailing close if needed). */
+export function ensureOpensTalk(
+  tl: string,
+  step: RoleplayStep | null,
+): string {
+  const base = tl.trim();
+  if (!base) return openQuestionFromBeat(step);
+  if (endsWithOpenTalk(base)) return base;
+  const q = openQuestionFromBeat(step);
+  return `${base.replace(/[.!…😊🙂]+\s*$/u, '').trim()} ${q}`.trim();
+}
+
+/**
+ * Reject empty / wrong script / too many sentences / OOV / closed statement.
+ * Pass `allowClosed` for the goodbye reply only.
+ */
 export function guardRoleplayActorTurn(opts: {
   tl: string;
   situation: RoleplaySituation;
+  allowClosed?: boolean;
 }): RoleplayActorGuardResult {
   const tl = opts.tl.trim();
   if (!tl) return { ok: false, reason: 'empty' };
@@ -95,7 +141,7 @@ export function guardRoleplayActorTurn(opts: {
   if (script) return { ok: false, reason: 'script' };
 
   // Prompt asks for ≤2 sentences; allow 3 short clauses so goldens like
-  // «Um café? Claro! Mais alguma coisa?» pass (question + beat + follow-up).
+  // «Um café? Claro! Mais alguma coisa?» pass.
   if (countSentences(tl) > 3) return { ok: false, reason: 'sentences' };
 
   const vocab = checkRoleplayReplyVocab({
@@ -104,6 +150,10 @@ export function guardRoleplayActorTurn(opts: {
   });
   if (!vocab.ok) {
     return { ok: false, reason: 'oov', offScene: vocab.offScene };
+  }
+
+  if (!opts.allowClosed && !endsWithOpenTalk(tl)) {
+    return { ok: false, reason: 'closed' };
   }
   return { ok: true };
 }
@@ -156,4 +206,31 @@ export function matchRoleplayOptionValue(
     if (opt.keywords.some((k) => norm(k) === want)) return opt.value;
   }
   return null;
+}
+
+/** Learner is saying goodbye (triggers closing + end card after task_done). */
+export function isLearnerGoodbye(text: string): boolean {
+  const t = normalizeRoleplayText(text);
+  if (!t) return false;
+  // Clear farewells — not «Obrigado! Até amanhã!» which is often the last beat line.
+  if (/\b(adeus|tchau|xau)\b/.test(t)) return true;
+  if (
+    /^(ate logo|ate amanha|ate ja|bom fim de semana|boa tarde|boa noite)[.!]*$/.test(
+      t,
+    )
+  ) {
+    return true;
+  }
+  return /^(muito )?obrigad[oa][.!]*$/.test(t);
+}
+
+/** In-scene side question / small talk (not a beat attempt). */
+export function looksLikeSideTalk(text: string): boolean {
+  const raw = text.trim();
+  if (!raw) return false;
+  if (/\?/.test(raw)) return true;
+  const t = normalizeRoleplayText(raw);
+  return /\b(bonito|fixe|interessante|por acaso|e ai|desculpe|com licenca|gostei|que calor|que frio)\b/.test(
+    t,
+  );
 }

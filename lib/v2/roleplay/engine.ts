@@ -11,8 +11,12 @@ import {
 } from './character';
 import type { RoleplayTurnEvent } from './events';
 import {
+  endsWithOpenTalk,
+  ensureOpensTalk,
   guardRoleplayActorTurn,
+  isLearnerGoodbye,
   isRealRoleplayAttempt,
+  looksLikeSideTalk,
   matchRoleplayOptionValue,
 } from './guard';
 import {
@@ -26,6 +30,7 @@ import { playableSteps, remainingPlayableSteps } from './playable';
 import {
   buildFileFallbackLines,
   buildRoleplayActorPrompt,
+  replaceEndingWithCue,
 } from './prompt';
 import { creditRoleplayItems } from './progress';
 import type { RoleplayExchange, RoleplaySessionState } from './session';
@@ -39,12 +44,7 @@ import {
 import type { RoleplaySituation, RoleplayStep } from './types';
 
 export type RoleplayEngineDeps = {
-  /** Optional progress writer — never required for pure turns. */
   progressWriter?: ConvoProgressWriter;
-  /**
-   * Character actor (buffered V2_CONVO_MODEL). When omitted, the engine uses
-   * file lines (tests / chips finish). Live API always injects an actor.
-   */
   actor?: RoleplayActor;
   now?: () => Date;
 };
@@ -53,23 +53,18 @@ export type RoleplayTurnInput = {
   situation: RoleplaySituation;
   state: RoleplaySessionState;
   learnerText: string;
-  /** Explicit help button (ساعدني). */
   help?: boolean;
   learner_turn_id?: string;
-  /** Chip tap — skip the free-text correction. Does not mark the step assisted. */
   assisted?: boolean;
+  /** Explicit «خلّص» — finish after task_done. */
+  finish?: boolean;
 };
 
 export type RoleplayTurnResult = {
   state: RoleplaySessionState;
   events: RoleplayTurnEvent[];
-  /** Pending correction promise (flush before done in API layer). */
   correctionPromise?: Promise<FreeTextCorrection | null>;
 };
-
-// ---------------------------------------------------------------------------
-// Event helpers
-// ---------------------------------------------------------------------------
 
 function progressEvent(
   situation: RoleplaySituation,
@@ -94,6 +89,7 @@ function sessionEvent(state: RoleplaySessionState): RoleplayTurnEvent {
       current_step_id: state.current_step_id,
       slots: { ...state.slots },
       status: state.status,
+      task_done: state.task_done,
       alone_steps: [...state.alone_steps],
       assisted_steps: [...state.assisted_steps],
       pending_assist: state.pending_assist,
@@ -103,13 +99,28 @@ function sessionEvent(state: RoleplaySessionState): RoleplayTurnEvent {
   };
 }
 
+function emitLearnerLeadsCue(
+  events: RoleplayTurnEvent[],
+  step: RoleplayStep | null | undefined,
+): void {
+  if (!step?.learner_leads) return;
+  const eg = step.do_eg?.trim();
+  if (!eg) return;
+  events.push({ type: 'cue', eg: `💡 ${eg}`, step_id: step.id });
+}
+
 function finishTurn(
   events: RoleplayTurnEvent[],
   situation: RoleplaySituation,
   state: RoleplaySessionState,
   correctionPromise?: Promise<FreeTextCorrection | null>,
+  cueStep?: RoleplayStep | null,
 ): RoleplayTurnResult {
-  // Hints-only: no always-on do strip.
+  if (cueStep) emitLearnerLeadsCue(events, cueStep);
+  else if (state.current_step_id && state.status === 'active') {
+    const step = situation.steps.find((s) => s.id === state.current_step_id);
+    emitLearnerLeadsCue(events, step);
+  }
   events.push(progressEvent(situation, state));
   events.push(sessionEvent(state));
   events.push({ type: 'done', finished: state.status === 'done' });
@@ -150,7 +161,6 @@ function noteKeyPhrases(
   }
 }
 
-/** Last character line the learner heard. */
 function lastCharacterExchange(
   state: RoleplaySessionState,
 ): RoleplayExchange | null {
@@ -182,7 +192,6 @@ function replayEvent(
   };
 }
 
-/** One character bubble (PT for TTS; AR stored for tap — never raw AR:/BEAT:). */
 function emitCharacterBubble(
   events: RoleplayTurnEvent[],
   state: RoleplaySessionState,
@@ -226,21 +235,18 @@ function emitSays(
 ): boolean {
   const says = characterSays(step, state.gender, state.learner_name);
   if (!says) return false;
+  const tl = ensureOpensTalk(says.tl, step);
   emitCharacterBubble(
     events,
     state,
     situation,
-    says,
+    { tl, ar: says.ar },
     step.id,
     'says',
     step.speaker,
   );
   return true;
 }
-
-// ---------------------------------------------------------------------------
-// Help ladder (hints only — no Desculpe? / always-on strip)
-// ---------------------------------------------------------------------------
 
 function assistSentence(
   step: RoleplayStep,
@@ -271,10 +277,6 @@ function stuckHintEg(step: RoleplayStep): string {
   return step.hint_eg?.trim() || step.do_eg?.trim() || step.help.eg;
 }
 
-/**
- * Miss 1: 💡 hint (`hint_eg` else `do_eg`) + 2 chips.
- * Miss 2+: full sentence chip; beat marked assisted when learner sends it.
- */
 function applyHelpLadder(
   events: RoleplayTurnEvent[],
   state: RoleplaySessionState,
@@ -321,10 +323,6 @@ function matchesPendingAssist(text: string, pending: string): boolean {
   return a === b || fuzzyMatchRoleplayExample(text, pending);
 }
 
-// ---------------------------------------------------------------------------
-// Advance + end
-// ---------------------------------------------------------------------------
-
 async function markStepComplete(
   state: RoleplaySessionState,
   stepId: string,
@@ -340,14 +338,44 @@ async function markStepComplete(
   }
 }
 
-async function finishScene(
+/** Mark task done but keep conversation open. */
+async function markTaskDone(
   events: RoleplayTurnEvent[],
   state: RoleplaySessionState,
   situation: RoleplaySituation,
   deps: RoleplayEngineDeps,
 ): Promise<void> {
+  if (state.task_done) return;
+  state.task_done = true;
   state.current_step_id = null;
+  events.push({
+    type: 'coach',
+    eg: 'المهمة خلصت ✓',
+    moment: 'task_done',
+  });
+  state.exchanges.push({ role: 'coach', eg: 'المهمة خلصت ✓' });
+  if (deps.progressWriter) {
+    const alone = state.alone_steps.length;
+    const assistedCount = state.assisted_steps.length;
+    await creditRoleplayItems({
+      situation,
+      sessionId: state.id,
+      day: situation.recommended_day,
+      assisted: assistedCount > alone,
+      write: deps.progressWriter,
+    });
+  }
+}
+
+/** End card — only after goodbye / خلّص. */
+async function emitEndCard(
+  events: RoleplayTurnEvent[],
+  state: RoleplaySessionState,
+  situation: RoleplaySituation,
+): Promise<void> {
   state.status = 'done';
+  state.current_step_id = null;
+  state.task_done = true;
   const alone = state.alone_steps.length;
   const assistedCount = state.assisted_steps.length;
   events.push({
@@ -358,15 +386,6 @@ async function finishScene(
     corrections: [...state.corrections],
     summary_eg: situation.summary_eg,
   });
-  if (deps.progressWriter) {
-    await creditRoleplayItems({
-      situation,
-      sessionId: state.id,
-      day: situation.recommended_day,
-      assisted: assistedCount > alone,
-      write: deps.progressWriter,
-    });
-  }
 }
 
 function nextPlayableAfter(
@@ -387,15 +406,11 @@ function nextPlayableAfter(
   return remaining.find((s) => !completed.has(s.id)) ?? null;
 }
 
-// ---------------------------------------------------------------------------
-// Actor call (buffer → guard → bubble)
-// ---------------------------------------------------------------------------
-
 async function resolveCharacterLine(opts: {
   deps: RoleplayEngineDeps;
   situation: RoleplaySituation;
   state: RoleplaySessionState;
-  current: RoleplayStep;
+  current: RoleplayStep | null;
   next: RoleplayStep | null;
   codeDone: boolean;
   codeSlot: string | null;
@@ -403,70 +418,58 @@ async function resolveCharacterLine(opts: {
   optionReply: { tl: string; ar: string } | null;
   stepReply: { tl: string; ar: string } | null;
   hitStay: boolean;
+  openChat?: boolean;
+  goodbye?: boolean;
+  sideTalk?: boolean;
 }): Promise<{
   line: { tl: string; ar: string };
   modelBeatDone: boolean;
   modelSlot: string | null;
-  usedModel: boolean;
-  usedFallback: boolean;
 }> {
   const fallback = buildFileFallbackLines({
     situation: opts.situation,
     state: opts.state,
     current: opts.current,
-    next: opts.next,
+    next: opts.codeDone ? opts.next : null, // never next line on open beat
     optionReply: opts.optionReply,
     stepReply: opts.stepReply,
     beatDone: opts.codeDone,
     hitStay: opts.hitStay,
-    closing: opts.codeDone && !opts.next && !opts.hitStay,
+    goodbye: opts.goodbye,
+    openChat: opts.openChat,
   });
 
   if (!opts.deps.actor) {
-    return {
-      line: fallback,
-      modelBeatDone: false,
-      modelSlot: null,
-      usedModel: false,
-      usedFallback: true,
-    };
+    return { line: fallback, modelBeatDone: false, modelSlot: null };
   }
 
   const prompt = buildRoleplayActorPrompt({
     situation: opts.situation,
     state: opts.state,
     current: opts.current,
-    next: opts.next,
+    next: opts.codeDone ? opts.next : null,
     codeDone: opts.codeDone,
     codeSlot: opts.codeSlot,
     learnerText: opts.learnerText,
+    openChat: opts.openChat,
+    goodbye: opts.goodbye,
+    sideTalk: opts.sideTalk,
   });
 
   opts.state.model_calls += 1;
   const generated = await opts.deps.actor.generate(prompt);
   if (generated.timedOut || !generated.text.trim()) {
-    return {
-      line: fallback,
-      modelBeatDone: false,
-      modelSlot: null,
-      usedModel: true,
-      usedFallback: true,
-    };
+    return { line: fallback, modelBeatDone: false, modelSlot: null };
   }
 
   const parsed = parseRoleplayActorOutput(generated.text);
   const guard = guardRoleplayActorTurn({
     tl: parsed.tl,
     situation: opts.situation,
+    allowClosed: Boolean(opts.goodbye),
   });
   if (!guard.ok) {
-    return {
-      line: fallback,
-      modelBeatDone: false,
-      modelSlot: null,
-      usedModel: true,
-      usedFallback: true,
-    };
+    return { line: fallback, modelBeatDone: false, modelSlot: null };
   }
 
   let tl = parsed.tl.trim();
@@ -475,6 +478,7 @@ async function resolveCharacterLine(opts: {
   let modelSlot: string | null = null;
 
   if (
+    opts.current &&
     parsed.beat.kind === 'done' &&
     isRealRoleplayAttempt(opts.learnerText, opts.current)
   ) {
@@ -487,57 +491,50 @@ async function resolveCharacterLine(opts: {
         modelBeatDone = true;
         modelSlot = matched;
       }
-      // Invalid slot → reject BEAT: done (treat as open).
     } else {
       modelBeatDone = true;
     }
   }
 
   const beatDone = opts.codeDone || modelBeatDone;
-  if (beatDone && !opts.hitStay) {
-    // If the model didn't move on, append next says / closing.
-    const nextSays = opts.next
-      ? characterSays(opts.next, opts.state.gender, opts.state.learner_name)
-      : pickLine(opts.situation.closing, opts.state.gender);
-    if (nextSays) {
-      const already =
-        normalizeRoleplayText(tl).includes(
-          normalizeRoleplayText(nextSays.tl).slice(0, 12),
-        ) || tl.includes(nextSays.tl.slice(0, 8));
-      if (!already) {
-        tl = `${tl} ${nextSays.tl}`.trim();
-        if (nextSays.ar) ar = `${ar} ${nextSays.ar}`.trim();
+
+  // No glue: only replace ending when beat done and turn has no open question.
+  if (beatDone && !opts.hitStay && !opts.goodbye && !opts.openChat) {
+    if (!endsWithOpenTalk(tl)) {
+      const nextSays = opts.next
+        ? characterSays(opts.next, opts.state.gender, opts.state.learner_name)
+        : null;
+      if (nextSays) {
+        tl = ensureOpensTalk(
+          replaceEndingWithCue(tl, nextSays.tl),
+          opts.next,
+        );
+        if (nextSays.ar) ar = ar ? `${ar} ${nextSays.ar}` : nextSays.ar;
+      } else {
+        tl = ensureOpensTalk(tl, opts.next ?? opts.current);
       }
     }
+  } else if (!opts.goodbye && !endsWithOpenTalk(tl)) {
+    tl = ensureOpensTalk(tl, opts.current);
   }
 
-  return {
-    line: { tl, ar },
-    modelBeatDone,
-    modelSlot,
-    usedModel: true,
-    usedFallback: false,
-  };
+  return { line: { tl, ar }, modelBeatDone, modelSlot };
 }
 
-// ---------------------------------------------------------------------------
-// Public API
-// ---------------------------------------------------------------------------
-
-/**
- * Open / resume. Fresh start: first says only (no intro card).
- * Resume: «كنا فين», replay last character bubble.
- */
 export function startRoleplayScene(opts: {
   situation: RoleplaySituation;
   state: RoleplaySessionState;
   resume?: boolean;
 }): RoleplayTurnResult {
   const { situation, state } = opts;
+  // Back-compat for sessions saved before task_done existed.
+  if (typeof state.task_done !== 'boolean') state.task_done = false;
+  if (typeof state.side_talk_streak !== 'number') state.side_talk_streak = 0;
+
   const events: RoleplayTurnEvent[] = [];
   const step = situation.steps.find((s) => s.id === state.current_step_id);
 
-  if (opts.resume && step) {
+  if (opts.resume) {
     events.push({
       type: 'coach',
       eg: 'كنا فين — نكمّل من هنا.',
@@ -545,24 +542,29 @@ export function startRoleplayScene(opts: {
     });
     const last = lastCharacterExchange(state);
     if (last) {
-      events.push(replayEvent(situation, last, step.id));
-    } else {
+      events.push(
+        replayEvent(situation, last, step?.id ?? last.step_id ?? 'resume'),
+      );
+    } else if (step) {
       emitSays(events, step, state, situation);
     }
     if (state.pending_assist) {
       events.push(assistCoachEvent(state.pending_assist));
     }
+    if (state.task_done) {
+      events.push({
+        type: 'coach',
+        eg: 'المهمة خلصت ✓',
+        moment: 'task_done',
+      });
+    }
   } else if (step) {
     emitSays(events, step, state, situation);
   }
 
-  return finishTurn(events, situation, state);
+  return finishTurn(events, situation, state, undefined, step);
 }
 
-/**
- * Process one learner turn: matcher (code) → buffered actor → guards →
- * one character bubble. Correction + progress credit on every path.
- */
 export async function runRoleplayTurn(
   input: RoleplayTurnInput,
   deps: RoleplayEngineDeps = {},
@@ -578,6 +580,8 @@ export async function runRoleplayTurn(
     key_phrases_said: [...input.state.key_phrases_said],
     exchanges: [...input.state.exchanges],
     corrections: [...input.state.corrections],
+    task_done: Boolean(input.state.task_done),
+    side_talk_streak: input.state.side_talk_streak ?? 0,
   };
   const now = deps.now?.() ?? new Date();
   state.updated_at = now.toISOString();
@@ -585,10 +589,67 @@ export async function runRoleplayTurn(
   const events: RoleplayTurnEvent[] = [];
   const text = input.learnerText.trim();
 
-  if (state.status === 'done' || !state.current_step_id) {
+  if (state.status === 'done') {
     events.push(sessionEvent(state));
     events.push({ type: 'done', finished: true });
     return { state, events };
+  }
+
+  // Explicit خلّص after task done.
+  if (input.finish && state.task_done) {
+    const closing = pickLine(situation.closing, state.gender) ?? {
+      tl: 'Adeus!',
+      ar: 'مع السلامة!',
+    };
+    emitCharacterBubble(
+      events,
+      state,
+      situation,
+      closing,
+      'closing',
+      'closing',
+    );
+    await emitEndCard(events, state, situation);
+    return finishTurn(events, situation, state);
+  }
+
+  // Open-chat phase (task done, waiting for goodbye).
+  if (state.task_done || !state.current_step_id) {
+    if (!text && !input.finish) {
+      return finishTurn(events, situation, state);
+    }
+    const goodbye = isLearnerGoodbye(text) || Boolean(input.finish);
+    if (text) {
+      state.exchanges.push({ role: 'learner', tl: text });
+      noteKeyPhrases(state, situation, text);
+    }
+    const resolved = await resolveCharacterLine({
+      deps,
+      situation,
+      state,
+      current: null,
+      next: null,
+      codeDone: false,
+      codeSlot: null,
+      learnerText: text || 'Adeus!',
+      optionReply: null,
+      stepReply: null,
+      hitStay: false,
+      openChat: !goodbye,
+      goodbye,
+    });
+    emitCharacterBubble(
+      events,
+      state,
+      situation,
+      resolved.line,
+      goodbye ? 'closing' : 'open',
+      goodbye ? 'closing' : 'actor',
+    );
+    if (goodbye) {
+      await emitEndCard(events, state, situation);
+    }
+    return finishTurn(events, situation, state);
   }
 
   const current = situation.steps.find((s) => s.id === state.current_step_id);
@@ -602,7 +663,6 @@ export async function runRoleplayTurn(
     return { state, events };
   }
 
-  // 1. Side channel first.
   const side = handleRoleplaySideChannel({
     learnerText: text,
     situation,
@@ -614,19 +674,18 @@ export async function runRoleplayTurn(
   if (side.kind === 'language' || side.kind === 'arabic_other') {
     events.push({ type: 'coach', eg: side.eg, moment: side.kind });
     state.exchanges.push({ role: 'coach', eg: side.eg });
-    return finishTurn(events, situation, state);
+    return finishTurn(events, situation, state, undefined, current);
   }
 
   if (input.help || side.kind === 'help') {
     applyHelpLadder(events, state, current);
-    return finishTurn(events, situation, state);
+    return finishTurn(events, situation, state, undefined, current);
   }
 
   if (!text) {
-    return finishTurn(events, situation, state);
+    return finishTurn(events, situation, state, undefined, current);
   }
 
-  // Learner Portuguese turn.
   state.exchanges.push({ role: 'learner', tl: text, step_id: current.id });
   noteKeyPhrases(state, situation, text);
 
@@ -658,7 +717,6 @@ export async function runRoleplayTurn(
     ];
   }
 
-  // Correction on every learner turn (model + fallback).
   let correctionPromise: Promise<FreeTextCorrection | null> | undefined;
   if (
     shouldFireFreeTextCorrection({
@@ -685,15 +743,18 @@ export async function runRoleplayTurn(
   const first = hits[0] ?? null;
   const codeDone = Boolean(first && !first.stay);
   const hitStay = Boolean(first?.stay);
+  const sideTalk =
+    !first &&
+    looksLikeSideTalk(text) &&
+    state.side_talk_streak < 2;
 
-  // Apply code slots first (matcher wins when sure).
   if (first) {
     for (const h of hits) {
       if (h.slot && h.slot_value) state.slots[h.slot] = h.slot_value;
     }
+    state.side_talk_streak = 0;
   }
 
-  // Look-ahead completions for state (code-owned).
   const lookaheadHits = first ? hits.slice(1) : [];
   for (const h of lookaheadHits) {
     if (h.slot && h.slot_value) state.slots[h.slot] = h.slot_value;
@@ -707,43 +768,23 @@ export async function runRoleplayTurn(
     : null;
   const stepReply = pickLine(firstStep.reply, state.gender);
 
-  // After look-ahead, find next beat for the prompt / append.
   let lastCompletedId = firstStep.id;
   for (const h of lookaheadHits) {
     if (!h.stay) lastCompletedId = h.step_id;
   }
-  const provisionalSlots = { ...state.slots };
+
   let nextForPrompt: RoleplayStep | null = null;
-  if (codeDone || hitStay) {
-    if (hitStay) {
-      nextForPrompt = firstStep;
-    } else {
-      // Simulate completing first (+ look-ahead) for next-beat prompt.
-      const pretend = {
-        ...state,
-        alone_steps: [...state.alone_steps, firstStep.id],
-        slots: provisionalSlots,
-      };
-      for (const h of lookaheadHits) {
-        if (!h.stay && !pretend.alone_steps.includes(h.step_id)) {
-          pretend.alone_steps.push(h.step_id);
-        }
+  if (codeDone && !hitStay) {
+    const pretend: RoleplaySessionState = {
+      ...state,
+      alone_steps: [...state.alone_steps, firstStep.id],
+    };
+    for (const h of lookaheadHits) {
+      if (!h.stay && !pretend.alone_steps.includes(h.step_id)) {
+        pretend.alone_steps.push(h.step_id);
       }
-      nextForPrompt = nextPlayableAfter(
-        situation,
-        pretend,
-        lastCompletedId,
-      );
     }
-  } else {
-    nextForPrompt = nextPlayableAfter(situation, state, current.id);
-    // Still on current — next is the following beat after current if we finish.
-    const afterCurrent = remainingPlayableSteps(
-      situation,
-      state.slots,
-      current.id,
-    ).filter((s) => s.id !== current.id);
-    nextForPrompt = afterCurrent[0] ?? null;
+    nextForPrompt = nextPlayableAfter(situation, pretend, lastCompletedId);
   }
 
   const codeSlot =
@@ -756,54 +797,95 @@ export async function runRoleplayTurn(
     situation,
     state,
     current: firstStep,
-    next: hitStay ? null : nextForPrompt,
+    next: hitStay || !codeDone ? null : nextForPrompt,
     codeDone,
     codeSlot,
     learnerText: text,
     optionReply,
     stepReply,
     hitStay,
+    sideTalk,
   });
 
-  // Model BEAT: can complete when code didn't (real attempt + valid slot).
   let beatDone = codeDone;
-  if (!beatDone && resolved.modelBeatDone) {
+  if (!beatDone && resolved.modelBeatDone && !sideTalk) {
     beatDone = true;
     if (resolved.modelSlot && firstStep.expects.slot) {
       state.slots[firstStep.expects.slot] = resolved.modelSlot;
     }
   }
+  // Open beat: model cannot skip via BEAT if we're treating as side talk.
+  if (sideTalk) beatDone = false;
 
-  // Emit one character bubble.
+  let bubbleLine = resolved.line;
+  // If the model completed an open beat, attach/replace with next cue (no glue).
+  if (beatDone && !codeDone && !hitStay) {
+    const nextAfterModel = nextPlayableAfter(situation, {
+      ...state,
+      alone_steps: state.alone_steps.includes(firstStep.id)
+        ? state.alone_steps
+        : [...state.alone_steps, firstStep.id],
+    }, firstStep.id);
+    if (!endsWithOpenTalk(bubbleLine.tl)) {
+      const nextSays = nextAfterModel
+        ? characterSays(nextAfterModel, state.gender, state.learner_name)
+        : null;
+      if (nextSays) {
+        bubbleLine = {
+          tl: ensureOpensTalk(
+            replaceEndingWithCue(bubbleLine.tl, nextSays.tl),
+            nextAfterModel,
+          ),
+          ar: [bubbleLine.ar, nextSays.ar].filter(Boolean).join(' '),
+        };
+      } else {
+        bubbleLine = {
+          ...bubbleLine,
+          tl: ensureOpensTalk(bubbleLine.tl, nextAfterModel),
+        };
+      }
+    }
+  }
+
   emitCharacterBubble(
     events,
     state,
     situation,
-    resolved.line,
+    bubbleLine,
     firstStep.id,
     beatDone ? 'reply' : 'says',
     firstStep.speaker,
   );
 
   if (hitStay) {
-    // Reply but keep step open — not a miss.
-    return finishTurn(events, situation, state, correctionPromise);
+    return finishTurn(events, situation, state, correctionPromise, current);
   }
 
   if (!beatDone) {
-    // No progress — hints when stuck (2 turns / this miss ladder).
+    if (sideTalk) {
+      state.side_talk_streak += 1;
+      return finishTurn(events, situation, state, correctionPromise, current);
+    }
+    state.side_talk_streak = 0;
     applyHelpLadder(events, state, current);
-    return finishTurn(events, situation, state, correctionPromise);
+    return finishTurn(events, situation, state, correctionPromise, current);
   }
 
-  // Complete first step (+ look-ahead).
   state.misses[firstStep.id] = 0;
+  state.side_talk_streak = 0;
   await markStepComplete(state, firstStep.id, assistActive);
 
   for (const h of lookaheadHits) {
     if (h.stay) {
       state.current_step_id = h.step_id;
-      return finishTurn(events, situation, state, correctionPromise);
+      const stayStep = situation.steps.find((s) => s.id === h.step_id);
+      return finishTurn(
+        events,
+        situation,
+        state,
+        correctionPromise,
+        stayStep ?? null,
+      );
     }
     await markStepComplete(state, h.step_id, false);
     lastCompletedId = h.step_id;
@@ -811,11 +893,10 @@ export async function runRoleplayTurn(
 
   const next = nextPlayableAfter(situation, state, lastCompletedId);
   if (!next) {
-    // Closing already in the bubble when fallback/model appended it.
-    await finishScene(events, state, situation, deps);
+    await markTaskDone(events, state, situation, deps);
     return finishTurn(events, situation, state, correctionPromise);
   }
 
   state.current_step_id = next.id;
-  return finishTurn(events, situation, state, correctionPromise);
+  return finishTurn(events, situation, state, correctionPromise, next);
 }

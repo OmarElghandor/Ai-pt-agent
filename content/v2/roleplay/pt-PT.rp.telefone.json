@@ -117,6 +117,7 @@
       "id": "doing",
       "says": null,
       "do_eg": "بيقولك «قول». اسأله بيعمل إيه.",
+      "learner_leads": true,
       "expects": {
         "intent_eg": "يسأله بيعمل إيه",
         "examples_tl": [
@@ -149,6 +150,7 @@
       "id": "invite",
       "says": null,
       "do_eg": "اعزمه على السينما.",
+      "learner_leads": true,
       "expects": {
         "intent_eg": "يعزمه على السينما",
         "examples_tl": [

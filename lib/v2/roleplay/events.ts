@@ -27,10 +27,16 @@ export type RoleplayTurnEvent =
       voice?: string;
     }
   | {
-      /** Current step instruction for the «دورك» strip. */
+      /** Legacy / unused always-on strip (ignored by UI). */
       type: 'do';
       eg: string;
       hint_eg?: string;
+      step_id?: string;
+    }
+  | {
+      /** One-line 💡 cue under the character bubble (`learner_leads` beats). */
+      type: 'cue';
+      eg: string;
       step_id?: string;
     }
   | {
@@ -62,6 +68,7 @@ export type RoleplayTurnEvent =
         | 'current_step_id'
         | 'slots'
         | 'status'
+        | 'task_done'
         | 'alone_steps'
         | 'assisted_steps'
         | 'pending_assist'

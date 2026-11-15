@@ -150,10 +150,11 @@
     {
       "id": "ask_price",
       "says": {
-        "tl": "Olhe, é tudo fresquinho! 😊",
-        "ar": "انظر، كل شيء طازج!"
+        "tl": "Aqui está! 😊",
+        "ar": "تفضّل!"
       },
       "do_eg": "اسأله بكام.",
+      "learner_leads": true,
       "expects": {
         "intent_eg": "يسأل بكام",
         "examples_tl": [

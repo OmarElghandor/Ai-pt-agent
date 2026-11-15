@@ -296,6 +296,7 @@
         "ar": "تفضّل!"
       },
       "do_eg": "الطلب جه. اسأله الحساب كام.",
+      "learner_leads": true,
       "expects": {
         "intent_eg": "يسأل الحساب كام",
         "examples_tl": [

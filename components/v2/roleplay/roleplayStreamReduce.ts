@@ -13,8 +13,11 @@ export type RoleplayUiState = {
   bubbles: TalkBubble[];
   progress: { current: number; total: number; step_id: string | null };
   help: { frame_tl: string; eg: string; chips: string[] } | null;
+  /** One-line 💡 cue under the latest character bubble (`learner_leads`). */
+  cue: string | null;
   result: RoleplayResultState | null;
   finished: boolean;
+  taskDone: boolean;
   partnerName: string | null;
   partnerVoice: string | null;
 };
@@ -28,8 +31,10 @@ export function emptyRoleplayUiState(): RoleplayUiState {
     bubbles: [],
     progress: { current: 0, total: 0, step_id: null },
     help: null,
+    cue: null,
     result: null,
     finished: false,
+    taskDone: false,
     partnerName: null,
     partnerVoice: null,
   };
@@ -53,23 +58,31 @@ export function reduceRoleplayEvent(
         partnerName: event.name,
         ...(event.voice ? { voice: event.voice } : {}),
       };
-      // Drop any temporary typing placeholder.
       const bubbles = state.bubbles.filter((b) => !b.typing);
       return {
         ...state,
         bubbles: [...bubbles, bubble],
         help: null,
+        cue: null,
         partnerName: event.name || state.partnerName,
         partnerVoice: event.voice ?? state.partnerVoice,
       };
     }
     case 'do':
-      // Hints-only: ignore always-on do strip events if any arrive.
       return state;
-    case 'coach': {
-      if (!event.eg?.trim()) return state;
+    case 'cue': {
       return {
         ...state,
+        cue: event.eg.trim() || null,
+      };
+    }
+    case 'coach': {
+      if (!event.eg?.trim()) return state;
+      const taskDone =
+        event.moment === 'task_done' ? true : state.taskDone;
+      return {
+        ...state,
+        taskDone,
         bubbles: [
           ...state.bubbles.filter((b) => !b.typing),
           {
@@ -131,9 +144,17 @@ export function reduceRoleplayEvent(
       }
       return { ...state, bubbles };
     }
+    case 'session': {
+      return {
+        ...state,
+        taskDone: Boolean(event.session.task_done) || state.taskDone,
+      };
+    }
     case 'result': {
       return {
         ...state,
+        cue: null,
+        taskDone: true,
         result: {
           alone: event.alone,
           assisted: event.assisted,
@@ -146,7 +167,6 @@ export function reduceRoleplayEvent(
     case 'done': {
       return { ...state, finished: event.finished };
     }
-    case 'session':
     default:
       return state;
   }

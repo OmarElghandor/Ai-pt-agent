@@ -166,6 +166,7 @@
       "id": "next_train",
       "says": null,
       "do_eg": "معاك التذكرة. اسأل القطر الجاي إمتى.",
+      "learner_leads": true,
       "expects": {
         "intent_eg": "يسأل القطر الجاي إمتى",
         "examples_tl": [

@@ -21,6 +21,8 @@ const v2RoleplaySessionSchema = new Schema(
       default: 'active',
       index: true,
     },
+    task_done: { type: Boolean, required: true, default: false },
+    side_talk_streak: { type: Number, required: true, default: 0 },
     exchanges: { type: Schema.Types.Mixed, required: true, default: [] },
     corrections: { type: Schema.Types.Mixed, required: true, default: [] },
     model_calls: { type: Number, required: true, default: 0 },

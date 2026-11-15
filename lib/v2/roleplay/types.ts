@@ -58,9 +58,14 @@ export type RoleplayStep = {
   if_slot?: Record<string, string>;
   says: RoleplayLine | null;
   speaker?: string;
-  /** What the learner must do now (EG); always shown under the character bubble. */
+  /**
+   * Learner must start this beat (ask the price, invite…). Show a one-line
+   * 💡 cue (`do_eg`) under the character bubble automatically.
+   */
+  learner_leads?: boolean;
+  /** What the learner must do now (EG); cue when learner_leads or stuck. */
   do_eg: string;
-  /** Shown only when the learner is stuck (help) or taps the دورك strip. */
+  /** Shown only when the learner is stuck (help). */
   hint_eg?: string;
   expects: RoleplayExpects;
   help: RoleplayHelp;

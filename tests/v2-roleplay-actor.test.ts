@@ -56,6 +56,13 @@ describe('roleplay actor parse + guards', () => {
     );
     assert.equal(
       guardRoleplayActorTurn({
+        tl: 'Olhe, é tudo fresquinho!',
+        situation: cafe,
+      }).reason,
+      'closed',
+    );
+    assert.equal(
+      guardRoleplayActorTurn({
         tl: '你好世界朋友',
         situation: cafe,
       }).reason,
