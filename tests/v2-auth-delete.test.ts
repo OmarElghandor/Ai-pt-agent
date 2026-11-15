@@ -30,7 +30,6 @@ describe('account deletion collection list', () => {
       'v2_custom_deck_jobs',
       'v2_library_progress',
       'v2_roleplay_sessions',
-      'v2_roleplay_stars',
       'v2_users',
       'v2_auth_sessions',
       'v2_auth_accounts',

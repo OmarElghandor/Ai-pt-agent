@@ -1,10 +1,6 @@
 import { randomUUID } from 'node:crypto';
-import {
-  V2RoleplaySessionModel,
-  V2RoleplayStarsModel,
-} from '@/lib/v2/mongo/roleplayModels';
+import { V2RoleplaySessionModel } from '@/lib/v2/mongo/roleplayModels';
 import type { RoleplaySessionState } from './session';
-import type { RoleplayTier } from './types';
 
 export type RoleplaySessionStore = {
   get(sessionId: string, userId: string): Promise<RoleplaySessionState | null>;
@@ -12,35 +8,25 @@ export type RoleplaySessionStore = {
   findActive(
     userId: string,
     situationId: string,
-    tier: RoleplayTier,
   ): Promise<RoleplaySessionState | null>;
-};
-
-export type RoleplayStarsStore = {
-  getStars(
+  /** Situation ids with at least one done session. */
+  listFinishedSituationIds(userId: string): Promise<string[]>;
+  /** Active sessions keyed by situation id. */
+  listActiveBySituation(
     userId: string,
-    situationId: string,
-  ): Promise<RoleplayTier[]>;
-  getAllStars(
-    userId: string,
-  ): Promise<Record<string, RoleplayTier[]>>;
-  awardStar(
-    userId: string,
-    situationId: string,
-    tier: RoleplayTier,
-  ): Promise<RoleplayTier[]>;
+  ): Promise<Record<string, RoleplaySessionState>>;
 };
 
 function docToState(doc: {
   _id: string;
   user_id: string;
   situation_id: string;
-  tier: number;
   current_step_id?: string | null;
   slots?: Record<string, string>;
   misses?: Record<string, number>;
   alone_steps?: string[];
   assisted_steps?: string[];
+  pending_assist?: string | null;
   key_phrases_said?: string[];
   gender?: 'm' | 'f';
   learner_name?: string | null;
@@ -55,12 +41,12 @@ function docToState(doc: {
     id: doc._id,
     user_id: doc.user_id,
     situation_id: doc.situation_id,
-    tier: doc.tier as RoleplayTier,
     current_step_id: doc.current_step_id ?? null,
     slots: { ...(doc.slots ?? {}) },
     misses: { ...(doc.misses ?? {}) },
     alone_steps: [...(doc.alone_steps ?? [])],
     assisted_steps: [...(doc.assisted_steps ?? [])],
+    pending_assist: doc.pending_assist ?? null,
     key_phrases_said: [...(doc.key_phrases_said ?? [])],
     gender: doc.gender === 'f' ? 'f' : 'm',
     learner_name: doc.learner_name ?? null,
@@ -92,13 +78,11 @@ export class MemoryRoleplaySessionStore implements RoleplaySessionStore {
   async findActive(
     userId: string,
     situationId: string,
-    tier: RoleplayTier,
   ): Promise<RoleplaySessionState | null> {
     for (const s of this.byId.values()) {
       if (
         s.user_id === userId &&
         s.situation_id === situationId &&
-        s.tier === tier &&
         s.status === 'active'
       ) {
         return structuredClone(s);
@@ -106,45 +90,27 @@ export class MemoryRoleplaySessionStore implements RoleplaySessionStore {
     }
     return null;
   }
-}
 
-export class MemoryRoleplayStarsStore implements RoleplayStarsStore {
-  private map = new Map<string, RoleplayTier[]>();
-
-  private key(userId: string, situationId: string): string {
-    return `${userId}::${situationId}`;
+  async listFinishedSituationIds(userId: string): Promise<string[]> {
+    const ids = new Set<string>();
+    for (const s of this.byId.values()) {
+      if (s.user_id === userId && s.status === 'done') {
+        ids.add(s.situation_id);
+      }
+    }
+    return [...ids];
   }
 
-  async getStars(
+  async listActiveBySituation(
     userId: string,
-    situationId: string,
-  ): Promise<RoleplayTier[]> {
-    return [...(this.map.get(this.key(userId, situationId)) ?? [])];
-  }
-
-  async getAllStars(
-    userId: string,
-  ): Promise<Record<string, RoleplayTier[]>> {
-    const out: Record<string, RoleplayTier[]> = {};
-    for (const [k, v] of this.map) {
-      if (k.startsWith(`${userId}::`)) {
-        out[k.slice(userId.length + 2)] = [...v];
+  ): Promise<Record<string, RoleplaySessionState>> {
+    const out: Record<string, RoleplaySessionState> = {};
+    for (const s of this.byId.values()) {
+      if (s.user_id === userId && s.status === 'active') {
+        out[s.situation_id] = structuredClone(s);
       }
     }
     return out;
-  }
-
-  async awardStar(
-    userId: string,
-    situationId: string,
-    tier: RoleplayTier,
-  ): Promise<RoleplayTier[]> {
-    const k = this.key(userId, situationId);
-    const cur = new Set(this.map.get(k) ?? []);
-    cur.add(tier);
-    const next = [...cur].sort() as RoleplayTier[];
-    this.map.set(k, next);
-    return next;
   }
 }
 
@@ -153,10 +119,12 @@ export class MongoRoleplaySessionStore implements RoleplaySessionStore {
     sessionId: string,
     userId: string,
   ): Promise<RoleplaySessionState | null> {
-    const doc = await V2RoleplaySessionModel().findOne({
-      _id: sessionId,
-      user_id: userId,
-    }).lean();
+    const doc = await V2RoleplaySessionModel()
+      .findOne({
+        _id: sessionId,
+        user_id: userId,
+      })
+      .lean();
     if (!doc) return null;
     return docToState(doc as never);
   }
@@ -167,12 +135,12 @@ export class MongoRoleplaySessionStore implements RoleplaySessionStore {
       {
         $set: {
           situation_id: state.situation_id,
-          tier: state.tier,
           current_step_id: state.current_step_id,
           slots: state.slots,
           misses: state.misses,
           alone_steps: state.alone_steps,
           assisted_steps: state.assisted_steps,
+          pending_assist: state.pending_assist,
           key_phrases_said: state.key_phrases_said,
           gender: state.gender,
           learner_name: state.learner_name,
@@ -182,6 +150,7 @@ export class MongoRoleplaySessionStore implements RoleplaySessionStore {
           model_calls: state.model_calls,
         },
         $setOnInsert: { _id: state.id, user_id: state.user_id },
+        $unset: { tier: 1 },
       },
       { upsert: true },
     );
@@ -190,58 +159,38 @@ export class MongoRoleplaySessionStore implements RoleplaySessionStore {
   async findActive(
     userId: string,
     situationId: string,
-    tier: RoleplayTier,
   ): Promise<RoleplaySessionState | null> {
-    const doc = await V2RoleplaySessionModel().findOne({
-      user_id: userId,
-      situation_id: situationId,
-      tier,
-      status: 'active',
-    }).lean();
+    const doc = await V2RoleplaySessionModel()
+      .findOne({
+        user_id: userId,
+        situation_id: situationId,
+        status: 'active',
+      })
+      .lean();
     if (!doc) return null;
     return docToState(doc as never);
   }
-}
 
-export class MongoRoleplayStarsStore implements RoleplayStarsStore {
-  async getStars(
-    userId: string,
-    situationId: string,
-  ): Promise<RoleplayTier[]> {
-    const doc = await V2RoleplayStarsModel()
-      .findOne({ user_id: userId, situation_id: situationId })
+  async listFinishedSituationIds(userId: string): Promise<string[]> {
+    const docs = await V2RoleplaySessionModel()
+      .find({ user_id: userId, status: 'done' })
+      .select({ situation_id: 1 })
       .lean();
-    return ((doc?.stars ?? []) as number[]).filter(
-      (n): n is RoleplayTier => n === 1 || n === 2 || n === 3,
-    );
+    return [...new Set(docs.map((d) => d.situation_id as string))];
   }
 
-  async getAllStars(
+  async listActiveBySituation(
     userId: string,
-  ): Promise<Record<string, RoleplayTier[]>> {
-    const docs = await V2RoleplayStarsModel().find({ user_id: userId }).lean();
-    const out: Record<string, RoleplayTier[]> = {};
-    for (const d of docs) {
-      out[d.situation_id] = ((d.stars ?? []) as number[]).filter(
-        (n): n is RoleplayTier => n === 1 || n === 2 || n === 3,
-      );
+  ): Promise<Record<string, RoleplaySessionState>> {
+    const docs = await V2RoleplaySessionModel()
+      .find({ user_id: userId, status: 'active' })
+      .lean();
+    const out: Record<string, RoleplaySessionState> = {};
+    for (const doc of docs) {
+      const state = docToState(doc as never);
+      out[state.situation_id] = state;
     }
     return out;
-  }
-
-  async awardStar(
-    userId: string,
-    situationId: string,
-    tier: RoleplayTier,
-  ): Promise<RoleplayTier[]> {
-    const doc = await V2RoleplayStarsModel().findOneAndUpdate(
-      { user_id: userId, situation_id: situationId },
-      { $addToSet: { stars: tier } },
-      { upsert: true, new: true },
-    ).lean();
-    return ((doc?.stars ?? [tier]) as number[]).filter(
-      (n): n is RoleplayTier => n === 1 || n === 2 || n === 3,
-    );
   }
 }
 

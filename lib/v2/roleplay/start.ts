@@ -10,13 +10,11 @@ import {
   newRoleplaySessionId,
   type RoleplaySessionStore,
 } from './store';
-import type { RoleplayTier } from './types';
 import type { RoleplayGender } from './text';
 
 export type StartRoleplayInput = {
   userId: string;
   situationId: string;
-  tier: RoleplayTier;
   gender?: RoleplayGender;
   learnerName?: string | null;
   /** Resume an existing session id when provided. */
@@ -34,7 +32,6 @@ export async function startRoleplaySession(
   input: StartRoleplayInput,
 ): Promise<StartRoleplayResult> {
   const situation = loadRoleplaySituation(input.situationId);
-  const tier = input.tier;
   const gender = input.gender ?? 'm';
 
   if (input.sessionId) {
@@ -45,34 +42,31 @@ export async function startRoleplaySession(
         state: existing,
         resume: true,
       });
+      await input.store.save(state);
       return { state, events, resumed: true };
     }
   }
 
-  const active = await input.store.findActive(
-    input.userId,
-    input.situationId,
-    tier,
-  );
+  const active = await input.store.findActive(input.userId, input.situationId);
   if (active) {
     const { state, events } = startRoleplayScene({
       situation,
       state: active,
       resume: true,
     });
+    await input.store.save(state);
     return { state, events, resumed: true };
   }
 
-  const playable = playableSteps(situation, tier, {});
+  const playable = playableSteps(situation, {});
   if (!playable.length) {
-    throw new Error(`no playable steps for ${input.situationId} tier ${tier}`);
+    throw new Error(`no playable steps for ${input.situationId}`);
   }
 
   const state = createRoleplaySessionState({
     id: newRoleplaySessionId(),
     user_id: input.userId,
     situation_id: situation.id,
-    tier,
     first_step_id: playable[0].id,
     gender,
     learner_name: input.learnerName ?? null,

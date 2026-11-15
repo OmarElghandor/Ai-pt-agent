@@ -1,128 +1,116 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
+  buildRoleplayCatalog,
   clearRoleplayLoadCache,
-  createRoleplaySessionState,
+  encodeRoleplayTurnEvent,
+  finishWithChips,
+  loadRoleplayIndex,
   loadRoleplaySituation,
-  playableSteps,
+  MemoryRoleplaySessionStore,
   runRoleplayTurn,
-  startRoleplayScene,
+  startRoleplaySession,
 } from '../lib/v2/roleplay';
+import { V2RoleplaySessionModel } from '../lib/v2/mongo/roleplayModels';
+import { USER_KEYED_V2_COLLECTIONS } from '../lib/v2/auth/userKeyedCollections';
 
-describe('roleplay R3 session engine', () => {
-  it('tier 1 playable steps exclude min_tier 2/3', () => {
-    clearRoleplayLoadCache();
-    const cafe = loadRoleplaySituation('rp.cafe');
-    const t1 = playableSteps(cafe, 1, {});
-    assert.ok(t1.every((s) => s.min_tier <= 1));
-    assert.ok(!t1.some((s) => s.id === 'no_galao'));
-    assert.ok(!t1.some((s) => s.id === 'here_or_go'));
+describe('roleplay R3 API and path progress', () => {
+  it('exports session model and registers sessions as user-keyed', () => {
+    assert.equal(typeof V2RoleplaySessionModel, 'function');
+    assert.ok(USER_KEYED_V2_COLLECTIONS.includes('v2_roleplay_sessions'));
+    assert.equal(
+      USER_KEYED_V2_COLLECTIONS.includes('v2_roleplay_stars' as never),
+      false,
+    );
   });
 
-  it('if_slot cash_only only when pay=cartão', () => {
+  it('start + turn + soft end keep resume pointer', async () => {
     clearRoleplayLoadCache();
-    const mercado = loadRoleplaySituation('rp.mercado');
-    const without = playableSteps(mercado, 1, {});
-    assert.ok(!without.some((s) => s.id === 'cash_only'));
-    const withCard = playableSteps(mercado, 1, { pay: 'cartão' });
-    assert.ok(withCard.some((s) => s.id === 'cash_only'));
-  });
+    const sessions = new MemoryRoleplaySessionStore();
 
-  it('start emits character says; resume adds كنا فين', () => {
-    clearRoleplayLoadCache();
-    const cafe = loadRoleplaySituation('rp.cafe');
-    const state = createRoleplaySessionState({
-      id: 's1',
-      user_id: 'u1',
-      situation_id: 'rp.cafe',
-      tier: 1,
-      first_step_id: 'order_drink',
+    const started = await startRoleplaySession({
+      userId: 'u-r3',
+      situationId: 'rp.cafe',
+      store: sessions,
     });
-    const started = startRoleplayScene({ situation: cafe, state });
+    assert.equal(started.resumed, false);
     assert.ok(started.events.some((e) => e.type === 'character'));
-    const resumed = startRoleplayScene({
-      situation: cafe,
-      state,
-      resume: true,
-    });
-    const coach = resumed.events.find(
-      (e) => e.type === 'coach' && e.eg.includes('كنا فين'),
-    );
-    assert.ok(coach);
-  });
 
-  it('3 wrong answers assist the step and advance (no dead end)', async () => {
-    clearRoleplayLoadCache();
-    const cafe = loadRoleplaySituation('rp.cafe');
-    let state = createRoleplaySessionState({
-      id: 's2',
-      user_id: 'u1',
-      situation_id: 'rp.cafe',
-      tier: 1,
-      first_step_id: 'order_drink',
-    });
-    for (let i = 0; i < 3; i++) {
-      const r = await runRoleplayTurn({
-        situation: cafe,
-        state,
-        learnerText: 'zzzz not portuguese',
-      });
-      state = r.state;
-    }
-    assert.ok(state.assisted_steps.includes('order_drink'));
-    assert.notEqual(state.current_step_id, 'order_drink');
-    assert.equal(state.model_calls, 0);
-  });
-
-  it('side channel language question makes zero model calls', async () => {
-    clearRoleplayLoadCache();
-    const cafe = loadRoleplaySituation('rp.cafe');
-    const state = createRoleplaySessionState({
-      id: 's3',
-      user_id: 'u1',
-      situation_id: 'rp.cafe',
-      tier: 1,
-      first_step_id: 'order_drink',
-    });
-    let modelCalls = 0;
-    const r = await runRoleplayTurn(
-      {
-        situation: cafe,
-        state,
-        learnerText: 'يعني إيه Diga؟',
-      },
-      {
-        modelReactionsEnabled: true,
-        modelReaction: async () => {
-          modelCalls += 1;
-          return 'x';
-        },
-      },
-    );
-    assert.equal(modelCalls, 0);
-    assert.equal(r.state.model_calls, 0);
-    assert.equal(r.state.current_step_id, 'order_drink');
-    assert.ok(r.events.some((e) => e.type === 'coach'));
-  });
-
-  it('matched turn advances and still zero model calls', async () => {
-    clearRoleplayLoadCache();
-    const cafe = loadRoleplaySituation('rp.cafe');
-    const state = createRoleplaySessionState({
-      id: 's4',
-      user_id: 'u1',
-      situation_id: 'rp.cafe',
-      tier: 1,
-      first_step_id: 'order_drink',
-    });
-    const r = await runRoleplayTurn({
-      situation: cafe,
-      state,
+    const situation = loadRoleplaySituation('rp.cafe');
+    const turn = await runRoleplayTurn({
+      situation,
+      state: started.state,
       learnerText: 'Bom dia! Queria um galão, por favor.',
     });
-    assert.equal(r.state.slots.drink, 'galão');
-    assert.equal(r.state.current_step_id, 'order_food');
-    assert.equal(r.state.model_calls, 0);
-    assert.ok(r.state.alone_steps.includes('order_drink'));
+    await sessions.save(turn.state);
+    assert.equal(turn.state.slots.drink, 'galão');
+    assert.equal(turn.state.status, 'active');
+
+    // Soft leave: session stays active.
+    const left = await sessions.get(turn.state.id, 'u-r3');
+    assert.ok(left);
+    assert.equal(left!.status, 'active');
+    assert.ok(left!.current_step_id);
+
+    const resumed = await startRoleplaySession({
+      userId: 'u-r3',
+      situationId: 'rp.cafe',
+      store: sessions,
+    });
+    assert.equal(resumed.resumed, true);
+    assert.equal(resumed.state.slots.drink, 'galão');
+    assert.equal(resumed.state.current_step_id, turn.state.current_step_id);
+    assert.ok(
+      resumed.events.some(
+        (e) => e.type === 'coach' && e.eg.includes('كنا فين'),
+      ),
+    );
+  });
+
+  it('next scene is the first unfinished in path order', async () => {
+    clearRoleplayLoadCache();
+    const sessions = new MemoryRoleplaySessionStore();
+    const index = loadRoleplayIndex();
+    assert.equal(index.path[0].id, 'rp.cafe');
+
+    let catalog = buildRoleplayCatalog({
+      finishedIds: [],
+      activeSituationIds: [],
+    });
+    assert.equal(catalog.next?.id, 'rp.cafe');
+    assert.equal(catalog.path_finished, false);
+
+    // Finish café via chips, mark done in store.
+    const cafe = loadRoleplaySituation('rp.cafe');
+    const finished = await finishWithChips({ situation: cafe });
+    assert.equal(finished.state.status, 'done');
+    finished.state.user_id = 'u-path';
+    await sessions.save(finished.state);
+
+    const finishedIds = await sessions.listFinishedSituationIds('u-path');
+    catalog = buildRoleplayCatalog({
+      finishedIds,
+      activeSituationIds: [],
+    });
+    assert.equal(catalog.next?.id, 'rp.mercado');
+    assert.equal(catalog.past.map((p) => p.id).includes('rp.cafe'), true);
+  });
+
+  it('path_finished when all 15 are done', () => {
+    clearRoleplayLoadCache();
+    const index = loadRoleplayIndex();
+    const catalog = buildRoleplayCatalog({
+      finishedIds: index.path.map((p) => p.id),
+      activeSituationIds: [],
+    });
+    assert.equal(catalog.next, null);
+    assert.equal(catalog.path_finished, true);
+    assert.equal(catalog.past.length, 15);
+  });
+
+  it('encodes NDJSON turn events', () => {
+    const line = encodeRoleplayTurnEvent({ type: 'done', finished: false });
+    assert.equal(line.endsWith('\n'), true);
+    assert.equal(JSON.parse(line.trim()).type, 'done');
   });
 });

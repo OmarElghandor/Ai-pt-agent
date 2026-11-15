@@ -9,7 +9,8 @@ import { MongoRoleplaySessionStore } from '@/lib/v2/roleplay/store';
 export const runtime = 'nodejs';
 
 /**
- * End a role-play session early (marks done without awarding a star).
+ * Soft-leave a role-play call. Keeps the session active so «كمّل المكالمة»
+ * can resume at the same step.
  * Body: { session_id }
  */
 export async function POST(req: Request) {
@@ -37,13 +38,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'session not found' }, { status: 404 });
   }
 
-  state.status = 'done';
-  state.current_step_id = null;
+  // Keep active + step pointer for resume.
   state.updated_at = new Date().toISOString();
   await store.save(state);
 
   return NextResponse.json({
     session_id: state.id,
     status: state.status,
+    current_step_id: state.current_step_id,
   });
 }

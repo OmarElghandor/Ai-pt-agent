@@ -8,13 +8,12 @@ import { isV2Enabled } from '@/lib/v2/flags';
 import { loadRoleplaySituation } from '@/lib/v2/roleplay/load';
 import { startRoleplaySession } from '@/lib/v2/roleplay/start';
 import { MongoRoleplaySessionStore } from '@/lib/v2/roleplay/store';
-import type { RoleplayTier } from '@/lib/v2/roleplay/types';
 
 export const runtime = 'nodejs';
 
 /**
  * Start or resume a role-play session.
- * Body: { situation_id, tier, session_id? }
+ * Body: { situation_id, session_id? }
  */
 export async function POST(req: Request) {
   if (!isV2Enabled()) {
@@ -29,17 +28,12 @@ export async function POST(req: Request) {
 
   const body = (await req.json().catch(() => null)) as {
     situation_id?: string;
-    tier?: number;
     session_id?: string;
   } | null;
 
   const situationId = body?.situation_id?.trim();
-  const tier = body?.tier;
   if (!situationId) {
     return NextResponse.json({ error: 'situation_id required' }, { status: 400 });
-  }
-  if (tier !== 1 && tier !== 2 && tier !== 3) {
-    return NextResponse.json({ error: 'tier must be 1|2|3' }, { status: 400 });
   }
 
   try {
@@ -55,7 +49,6 @@ export async function POST(req: Request) {
   const result = await startRoleplaySession({
     userId,
     situationId,
-    tier: tier as RoleplayTier,
     gender,
     learnerName,
     sessionId: body?.session_id?.trim(),
@@ -65,7 +58,6 @@ export async function POST(req: Request) {
   return NextResponse.json({
     session_id: result.state.id,
     situation_id: result.state.situation_id,
-    tier: result.state.tier,
     resumed: result.resumed,
     events: result.events,
     session: {

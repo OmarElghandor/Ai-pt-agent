@@ -12,7 +12,6 @@ import { createLiveRoleplayModelReaction } from '@/lib/v2/roleplay/modelReaction
 import {
   encodeRoleplayTurnEvent,
   MongoRoleplaySessionStore,
-  MongoRoleplayStarsStore,
 } from '@/lib/v2/roleplay/store';
 import type { RoleplayTurnEvent } from '@/lib/v2/roleplay/events';
 
@@ -54,7 +53,6 @@ export async function POST(req: Request) {
   }
 
   const situation = loadRoleplaySituation(state.situation_id);
-  const starsStore = new MongoRoleplayStarsStore();
   const progressWriter = createAnswersConvoProgressWriter();
 
   const encoder = new TextEncoder();
@@ -106,14 +104,6 @@ export async function POST(req: Request) {
               });
             },
           });
-        }
-
-        if (result.state.status === 'done') {
-          await starsStore.awardStar(
-            userId,
-            result.state.situation_id,
-            result.state.tier,
-          );
         }
 
         await store.save(result.state);
