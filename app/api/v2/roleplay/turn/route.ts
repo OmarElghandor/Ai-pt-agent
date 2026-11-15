@@ -2,12 +2,13 @@ import {
   getCurrentV2User,
   getCurrentV2UserId,
 } from '@/lib/v2/auth/session';
-import { isV2Enabled } from '@/lib/v2/flags';
+import { isRoleplayModelReactionsEnabled, isV2Enabled } from '@/lib/v2/flags';
 import { createAnswersConvoProgressWriter } from '@/lib/v2/convo/progress';
 import { awaitAndEmitCorrection } from '@/lib/v2/convo/correction';
 import { noFreeTextCorrection } from '@/lib/v2/grader';
 import { loadRoleplaySituation } from '@/lib/v2/roleplay/load';
 import { runRoleplayTurn } from '@/lib/v2/roleplay/engine';
+import { createLiveRoleplayModelReaction } from '@/lib/v2/roleplay/modelReaction';
 import {
   encodeRoleplayTurnEvent,
   MongoRoleplaySessionStore,
@@ -63,6 +64,7 @@ export async function POST(req: Request) {
         controller.enqueue(encoder.encode(encodeRoleplayTurnEvent(event)));
       };
       try {
+        const modelOn = isRoleplayModelReactionsEnabled();
         const result = await runRoleplayTurn(
           {
             situation,
@@ -72,7 +74,13 @@ export async function POST(req: Request) {
             assisted: Boolean(body?.assisted),
             learner_turn_id: body?.learner_turn_id,
           },
-          { progressWriter },
+          {
+            progressWriter,
+            modelReactionsEnabled: modelOn,
+            ...(modelOn
+              ? { modelReaction: createLiveRoleplayModelReaction() }
+              : {}),
+          },
         );
 
         for (const event of result.events) {

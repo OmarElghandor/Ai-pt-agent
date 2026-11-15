@@ -13,3 +13,4 @@ export * from './engine';
 export * from './start';
 export * from './store';
 export * from './catalog';
+export * from './modelReaction';
