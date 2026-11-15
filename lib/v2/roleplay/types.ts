@@ -1,6 +1,4 @@
-/** Role-play v1 content + session types. */
-
-export type RoleplayTier = 1 | 2 | 3;
+/** Role-play v1 content types (one-button path; no tiers). */
 
 export type RoleplayLine = {
   tl: string;
@@ -57,12 +55,11 @@ export type RoleplayHelp = {
 
 export type RoleplayStep = {
   id: string;
-  min_tier: RoleplayTier;
   if_slot?: Record<string, string>;
   says: RoleplayLine | null;
-  says_alt?: RoleplayLine[];
   speaker?: string;
-  coach_eg?: string;
+  /** Shown only when the learner is stuck (help). */
+  hint_eg?: string;
   expects: RoleplayExpects;
   help: RoleplayHelp;
   reply?: RoleplayLine;
@@ -71,8 +68,7 @@ export type RoleplayStep = {
 export type RoleplaySituation = {
   id: string;
   target_lang: string;
-  level: number;
-  order: number;
+  round: number;
   recommended_day: number;
   emoji: string;
   title_tl: string;
@@ -92,35 +88,21 @@ export type RoleplaySituation = {
   authored?: boolean;
 };
 
-export type RoleplayIndexScenario = {
+/** One entry in the authored path order. */
+export type RoleplayPathEntry = {
+  n: number;
   id: string;
-  level: number;
-  order: number;
-  recommended_day: number;
+  round: number;
   emoji: string;
   title_tl: string;
   title_ar: string;
+  recommended_day: number;
   steps: number;
-  steps_by_tier: [number, number, number];
-};
-
-export type RoleplayIndexLevel = {
-  level: number;
-  name_eg: string;
-  name_en: string;
-  scenarios: RoleplayIndexScenario[];
-};
-
-export type RoleplayIndexTier = {
-  tier: RoleplayTier;
-  name_eg: string;
-  desc_eg: string;
 };
 
 export type RoleplayIndex = {
   target_lang: string;
-  tiers: RoleplayIndexTier[];
-  levels: RoleplayIndexLevel[];
+  path: RoleplayPathEntry[];
 };
 
 export type RoleplayValidationIssue = {

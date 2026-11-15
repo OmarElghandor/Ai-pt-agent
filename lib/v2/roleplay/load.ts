@@ -2,22 +2,15 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import type {
   RoleplayIndex,
-  RoleplayIndexLevel,
-  RoleplayIndexScenario,
-  RoleplayIndexTier,
+  RoleplayPathEntry,
   RoleplaySituation,
   RoleplayStep,
-  RoleplayTier,
 } from './types';
 
 const DEFAULT_DIR = path.join(process.cwd(), 'content/v2/roleplay');
 
 let indexCache: RoleplayIndex | null = null;
 const situationCache = new Map<string, RoleplaySituation>();
-
-function isTier(n: unknown): n is RoleplayTier {
-  return n === 1 || n === 2 || n === 3;
-}
 
 function isLine(v: unknown): boolean {
   if (v === null) return true;
@@ -34,72 +27,51 @@ function parseIndex(raw: unknown): RoleplayIndex {
   if (typeof o.target_lang !== 'string') {
     throw new Error('roleplay index: target_lang required');
   }
-  if (!Array.isArray(o.tiers) || o.tiers.length !== 3) {
-    throw new Error('roleplay index: tiers must have 3 entries');
+  if (!Array.isArray(o.path) || o.path.length === 0) {
+    throw new Error('roleplay index: path must be a non-empty array');
   }
-  const tiers: RoleplayIndexTier[] = o.tiers.map((t, i) => {
-    if (!t || typeof t !== 'object') throw new Error(`roleplay index: tier ${i}`);
-    const r = t as Record<string, unknown>;
-    if (!isTier(r.tier) || typeof r.name_eg !== 'string' || typeof r.desc_eg !== 'string') {
-      throw new Error(`roleplay index: tier ${i} invalid`);
+  const pathEntries: RoleplayPathEntry[] = o.path.map((entry, i) => {
+    if (!entry || typeof entry !== 'object') {
+      throw new Error(`roleplay index: path[${i}] invalid`);
     }
-    return { tier: r.tier, name_eg: r.name_eg, desc_eg: r.desc_eg };
-  });
-
-  if (!Array.isArray(o.levels) || o.levels.length !== 5) {
-    throw new Error('roleplay index: levels must have 5 entries');
-  }
-  const levels: RoleplayIndexLevel[] = o.levels.map((lvl, i) => {
-    if (!lvl || typeof lvl !== 'object') throw new Error(`roleplay index: level ${i}`);
-    const r = lvl as Record<string, unknown>;
+    const sc = entry as Record<string, unknown>;
     if (
-      typeof r.level !== 'number' ||
-      typeof r.name_eg !== 'string' ||
-      typeof r.name_en !== 'string' ||
-      !Array.isArray(r.scenarios)
+      typeof sc.n !== 'number' ||
+      typeof sc.id !== 'string' ||
+      typeof sc.round !== 'number' ||
+      typeof sc.emoji !== 'string' ||
+      typeof sc.title_tl !== 'string' ||
+      typeof sc.title_ar !== 'string' ||
+      typeof sc.recommended_day !== 'number' ||
+      typeof sc.steps !== 'number'
     ) {
-      throw new Error(`roleplay index: level ${i} invalid`);
+      throw new Error(`roleplay index: path[${i}] invalid`);
     }
-    const scenarios: RoleplayIndexScenario[] = r.scenarios.map((s, j) => {
-      if (!s || typeof s !== 'object') {
-        throw new Error(`roleplay index: level ${i} scenario ${j}`);
-      }
-      const sc = s as Record<string, unknown>;
-      if (
-        typeof sc.id !== 'string' ||
-        typeof sc.level !== 'number' ||
-        typeof sc.order !== 'number' ||
-        typeof sc.recommended_day !== 'number' ||
-        typeof sc.emoji !== 'string' ||
-        typeof sc.title_tl !== 'string' ||
-        typeof sc.title_ar !== 'string' ||
-        typeof sc.steps !== 'number' ||
-        !Array.isArray(sc.steps_by_tier) ||
-        sc.steps_by_tier.length !== 3
-      ) {
-        throw new Error(`roleplay index: level ${i} scenario ${j} invalid`);
-      }
-      return {
-        id: sc.id,
-        level: sc.level,
-        order: sc.order,
-        recommended_day: sc.recommended_day,
-        emoji: sc.emoji,
-        title_tl: sc.title_tl,
-        title_ar: sc.title_ar,
-        steps: sc.steps,
-        steps_by_tier: sc.steps_by_tier as [number, number, number],
-      };
-    });
     return {
-      level: r.level,
-      name_eg: r.name_eg,
-      name_en: r.name_en,
-      scenarios,
+      n: sc.n,
+      id: sc.id,
+      round: sc.round,
+      emoji: sc.emoji,
+      title_tl: sc.title_tl,
+      title_ar: sc.title_ar,
+      recommended_day: sc.recommended_day,
+      steps: sc.steps,
     };
   });
 
-  return { target_lang: o.target_lang, tiers, levels };
+  for (let i = 0; i < pathEntries.length; i++) {
+    if (pathEntries[i].n !== i + 1) {
+      throw new Error(
+        `roleplay index: path[${i}].n expected ${i + 1}, got ${pathEntries[i].n}`,
+      );
+    }
+  }
+  const ids = pathEntries.map((p) => p.id);
+  if (new Set(ids).size !== ids.length) {
+    throw new Error('roleplay index: path ids must be unique');
+  }
+
+  return { target_lang: o.target_lang, path: pathEntries };
 }
 
 function parseSituation(raw: unknown, fileHint: string): RoleplaySituation {
@@ -132,8 +104,7 @@ function parseSituation(raw: unknown, fileHint: string): RoleplaySituation {
   return {
     id: reqStr('id'),
     target_lang: reqStr('target_lang'),
-    level: reqNum('level'),
-    order: reqNum('order'),
+    round: reqNum('round'),
     recommended_day: reqNum('recommended_day'),
     emoji: reqStr('emoji'),
     title_tl: reqStr('title_tl'),
@@ -164,7 +135,6 @@ export function situationFilePath(
   id: string,
   dir: string = DEFAULT_DIR,
 ): string {
-  // id is "rp.cafe" → file "pt-PT.rp.cafe.json"
   const short = id.startsWith('rp.') ? id.slice(3) : id;
   return path.join(dir, `pt-PT.rp.${short}.json`);
 }
@@ -204,13 +174,12 @@ export function loadRoleplaySituation(
   return situation;
 }
 
-/** Load every situation listed in the index (15). */
+/** Load every situation listed in the path. */
 export function loadAllRoleplaySituations(
   dir: string = DEFAULT_DIR,
 ): RoleplaySituation[] {
   const index = loadRoleplayIndex(dir);
-  const ids = index.levels.flatMap((l) => l.scenarios.map((s) => s.id));
-  return ids.map((id) => loadRoleplaySituation(id, dir));
+  return index.path.map((entry) => loadRoleplaySituation(entry.id, dir));
 }
 
 /** List situation files on disk (for tests / tooling). */

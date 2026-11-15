@@ -1,8 +1,6 @@
 {
   "id": "rp.consulta",
   "target_lang": "pt-PT",
-  "level": 4,
-  "order": 1,
   "recommended_day": 38,
   "emoji": "🩺",
   "title_tl": "Marcar uma consulta",
@@ -50,7 +48,6 @@
   "steps": [
     {
       "id": "book",
-      "min_tier": 1,
       "says": {
         "tl": "Centro de Saúde, bom dia.",
         "ar": "المركز الصحي، صباح الخير."
@@ -82,9 +79,7 @@
     },
     {
       "id": "utente",
-      "min_tier": 1,
       "says": null,
-      "coach_eg": "número de utente = رقم المريض في المنظومة الصحية. لو لسه بتعمله: Ainda não tenho.",
       "expects": {
         "intent_eg": "يقول رقمه أو إنه لسه ما عندوش",
         "examples_tl": [
@@ -146,11 +141,11 @@
           "Ainda não tenho.",
           "É o 123 456 789."
         ]
-      }
+      },
+      "hint_eg": "número de utente = رقم المريض في المنظومة الصحية. لو لسه بتعمله: Ainda não tenho."
     },
     {
       "id": "reason",
-      "min_tier": 1,
       "says": {
         "tl": "É para quê?",
         "ar": "لأي سبب؟"
@@ -189,7 +184,6 @@
     },
     {
       "id": "when",
-      "min_tier": 1,
       "says": {
         "tl": "Pode ser na terça-feira, às nove e meia?",
         "ar": "هل يناسبك يوم الثلاثاء، في التاسعة والنصف؟"
@@ -246,7 +240,6 @@
     },
     {
       "id": "thursday",
-      "min_tier": 1,
       "if_slot": {
         "slot": "no"
       },
@@ -280,7 +273,6 @@
     },
     {
       "id": "early",
-      "min_tier": 2,
       "says": {
         "tl": "Chegue dez minutos antes, está bem?",
         "ar": "تعالَ قبل الموعد بعشر دقائق، حسنًا؟",
@@ -314,38 +306,7 @@
       }
     },
     {
-      "id": "spell",
-      "min_tier": 3,
-      "says": {
-        "tl": "Ah, e como se escreve o seu apelido?",
-        "ar": "آه، وكيف يُكتب اسم عائلتك؟"
-      },
-      "coach_eg": "o apelido = اسم العيلة. الحروف بالبرتغالي في «رف النطق».",
-      "expects": {
-        "intent_eg": "يتهجّى اسم العيلة",
-        "examples_tl": [
-          "E-L-G-H-A-N-D-O-U-R.",
-          "É E, L, G, H…",
-          "Escreve-se E-L-G-H-A-N-D-O-U-R."
-        ],
-        "keywords": [],
-        "free_answer": true
-      },
-      "help": {
-        "frame_tl": "___ (حرف حرف)",
-        "eg": "o apelido = اسم العيلة. اتهجّاه حرف حرف بالبرتغالي.",
-        "chips": [
-          "Pode repetir, por favor?"
-        ]
-      },
-      "reply": {
-        "tl": "Perfeito, obrigada.",
-        "ar": "ممتاز، شكرًا."
-      }
-    },
-    {
       "id": "bye",
-      "min_tier": 1,
       "says": {
         "tl": "Obrigada, até lá!",
         "ar": "شكرًا، أراك حينها!"
@@ -405,5 +366,6 @@
     "phrase.can_it_be_tuesday",
     "phrase.not_yet",
     "phrase.at_nine"
-  ]
+  ],
+  "round": 1
 }

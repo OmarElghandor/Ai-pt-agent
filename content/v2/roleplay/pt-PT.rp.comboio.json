@@ -1,8 +1,6 @@
 {
   "id": "rp.comboio",
   "target_lang": "pt-PT",
-  "level": 3,
-  "order": 2,
   "recommended_day": 32,
   "emoji": "🚆",
   "title_tl": "Um bilhete para Sintra",
@@ -50,7 +48,6 @@
   "steps": [
     {
       "id": "ticket",
-      "min_tier": 1,
       "says": {
         "tl": "Bom dia. Diga.",
         "ar": "صباح الخير. تفضّل."
@@ -82,9 +79,7 @@
     },
     {
       "id": "return",
-      "min_tier": 1,
       "says": null,
-      "coach_eg": "só ida = رايح بس · ida e volta = رايح وراجع",
       "expects": {
         "intent_eg": "يختار رايح بس أو رايح جاي",
         "examples_tl": [
@@ -131,11 +126,11 @@
           "Ida e volta, por favor.",
           "Só ida, por favor."
         ]
-      }
+      },
+      "hint_eg": "só ida = رايح بس · ida e volta = رايح وراجع"
     },
     {
       "id": "pay",
-      "min_tier": 1,
       "says": null,
       "expects": {
         "intent_eg": "يدفع",
@@ -166,9 +161,7 @@
     },
     {
       "id": "next_train",
-      "min_tier": 2,
       "says": null,
-      "coach_eg": "o próximo comboio = القطر الجاي · a linha = الرصيف",
       "expects": {
         "intent_eg": "يسأل القطر الجاي إمتى",
         "examples_tl": [
@@ -195,51 +188,11 @@
       "reply": {
         "tl": "Às dez e vinte, na linha dois.",
         "ar": "في العاشرة وعشرين دقيقة، على الرصيف الثاني."
-      }
-    },
-    {
-      "id": "strike",
-      "min_tier": 3,
-      "says": {
-        "tl": "Ah, atenção: hoje há greve. Há poucos comboios.",
-        "ar": "آه، انتبه: اليوم هناك إضراب. القطارات قليلة."
       },
-      "coach_eg": "greve = إضراب. بيحصل في المواصلات هنا، فاسأل دايمًا.",
-      "expects": {
-        "intent_eg": "يرد على خبر الإضراب",
-        "examples_tl": [
-          "A sério? Obrigado pela informação.",
-          "Ai, que chatice! Obrigado.",
-          "Está bem, obrigado."
-        ],
-        "keywords": [
-          "sério",
-          "serio",
-          "obrigad",
-          "está bem",
-          "chatice"
-        ]
-      },
-      "help": {
-        "frame_tl": "A sério? Obrigado!",
-        "eg": "a greve = إضراب (بيحصل كتير!). قول: A sério? Obrigado!",
-        "chips": [
-          "A sério? Obrigado!",
-          "Que chatice! Obrigado."
-        ],
-        "chips_f": [
-          "A sério? Obrigada!",
-          "Que chatice! Obrigada."
-        ]
-      },
-      "reply": {
-        "tl": "De nada.",
-        "ar": "عفوًا."
-      }
+      "hint_eg": "o próximo comboio = القطر الجاي · a linha = الرصيف"
     },
     {
       "id": "bye",
-      "min_tier": 1,
       "says": {
         "tl": "Boa viagem!",
         "ar": "رحلة سعيدة!"
@@ -293,5 +246,6 @@
     "word.ticket",
     "phrase.ticket_to",
     "phrase.really"
-  ]
+  ],
+  "round": 1
 }

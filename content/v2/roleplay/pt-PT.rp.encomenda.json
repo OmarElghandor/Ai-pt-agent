@@ -1,8 +1,6 @@
 {
   "id": "rp.encomenda",
   "target_lang": "pt-PT",
-  "level": 2,
-  "order": 1,
   "recommended_day": 11,
   "emoji": "📦",
   "title_tl": "A encomenda",
@@ -49,18 +47,10 @@
   "steps": [
     {
       "id": "its_me",
-      "min_tier": 1,
       "says": {
         "tl": "Boa tarde! Encomenda para {name}?",
         "ar": "مساء الخير! طرد باسم {name}؟"
       },
-      "says_alt": [
-        {
-          "tl": "Boa tarde, tenho aqui uma encomenda para {name}, é aqui?",
-          "ar": "مساء الخير، معي طرد باسم {name}، هل هو هنا؟"
-        }
-      ],
-      "coach_eg": "a encomenda = الطرد. Sou eu = أنا (هو ده أنا).",
       "expects": {
         "intent_eg": "يقول ده هو",
         "examples_tl": [
@@ -80,16 +70,15 @@
           "Sim, sou eu.",
           "Boa tarde! Sou eu."
         ]
-      }
+      },
+      "hint_eg": "a encomenda = الطرد. Sou eu = أنا (هو ده أنا)."
     },
     {
       "id": "sign",
-      "min_tier": 1,
       "says": {
         "tl": "Preciso que assine aqui no ecrã, se faz favor.",
         "ar": "أحتاج أن توقّع هنا على الشاشة من فضلك."
       },
-      "coach_eg": "ما فهمتش؟ ده أهم موقف: اطلب يعيد. البرتغاليين بيتكلموا بسرعة ومش هيزعلوا.",
       "expects": {
         "intent_eg": "يطلب يعيد أو يوافق",
         "examples_tl": [
@@ -143,11 +132,11 @@
           "Desculpe, pode repetir?",
           "Mais devagar, por favor."
         ]
-      }
+      },
+      "hint_eg": "ما فهمتش؟ ده أهم موقف: اطلب يعيد. البرتغاليين بيتكلموا بسرعة ومش هيزعلوا."
     },
     {
       "id": "speak_pt",
-      "min_tier": 1,
       "says": {
         "tl": "O senhor fala português?",
         "ar": "هل تتكلم البرتغالية؟",
@@ -186,12 +175,10 @@
     },
     {
       "id": "neighbour_parcel",
-      "min_tier": 2,
       "says": {
         "tl": "Olhe, tenho outra para o vizinho do segundo esquerdo. Pode ficar com ela?",
         "ar": "انظر، معي طرد آخر لجار الطابق الثاني يسار. هل يمكنك الاحتفاظ به؟"
       },
-      "coach_eg": "ده بيحصل كتير هنا: الجيران بيستلموا لبعض. segundo esquerdo = الدور التاني، الشقة الشمال.",
       "expects": {
         "intent_eg": "يوافق يستلم طرد جاره أو يعتذر",
         "examples_tl": [
@@ -251,11 +238,11 @@
           "Sim, pode ser.",
           "Não, desculpe."
         ]
-      }
+      },
+      "hint_eg": "ده بيحصل كتير هنا: الجيران بيستلموا لبعض. segundo esquerdo = الدور التاني، الشقة الشمال."
     },
     {
       "id": "bye",
-      "min_tier": 1,
       "says": {
         "tl": "Obrigado e boa tarde!",
         "ar": "شكرًا ومساءً سعيدًا!"
@@ -310,5 +297,6 @@
     "phrase.no_problem",
     "word.neighbour_m",
     "phrase.are_you_ok"
-  ]
+  ],
+  "round": 1
 }

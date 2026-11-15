@@ -1,8 +1,6 @@
 {
   "id": "rp.direcoes",
   "target_lang": "pt-PT",
-  "level": 3,
-  "order": 3,
   "recommended_day": 34,
   "emoji": "🧭",
   "title_tl": "Onde fica o metro?",
@@ -51,12 +49,10 @@
   "steps": [
     {
       "id": "ask",
-      "min_tier": 1,
       "says": {
         "tl": "Sim? 🙂",
         "ar": "نعم؟"
       },
-      "coach_eg": "Desculpe = لو سمحت (علشان توقف حد). Sabe onde fica…? = تعرف … فين؟",
       "expects": {
         "intent_eg": "يسأل المترو فين",
         "examples_tl": [
@@ -83,11 +79,11 @@
       "reply": {
         "tl": "O metro? Siga em frente e depois vire à esquerda. ⬆️⬅️",
         "ar": "المترو؟ امشِ إلى الأمام ثم انعطف يسارًا."
-      }
+      },
+      "hint_eg": "Desculpe = لو سمحت (علشان توقف حد). Sabe onde fica…? = تعرف … فين؟"
     },
     {
       "id": "confirm",
-      "min_tier": 1,
       "says": null,
       "expects": {
         "intent_eg": "يأكّد الطريق أو يطلب يعيد",
@@ -141,7 +137,6 @@
     },
     {
       "id": "far",
-      "min_tier": 1,
       "says": null,
       "expects": {
         "intent_eg": "يسأل بعيد ولا لأ",
@@ -171,7 +166,6 @@
     },
     {
       "id": "landmark",
-      "min_tier": 2,
       "says": {
         "tl": "A estação fica ao lado do banco, na praça.",
         "ar": "المحطة بجانب البنك، في الساحة."
@@ -209,47 +203,7 @@
       }
     },
     {
-      "id": "closed",
-      "min_tier": 3,
-      "says": {
-        "tl": "Ah, não… espere! Essa entrada está fechada. É melhor a outra, à direita.",
-        "ar": "آه، لا… انتظر! ذلك المدخل مغلق. الأفضل الآخر، على اليمين."
-      },
-      "coach_eg": "está fechada = مقفولة · a entrada = المدخل · à direita = يمين",
-      "expects": {
-        "intent_eg": "يفهم التغيير ويأكّد",
-        "examples_tl": [
-          "À direita? Está bem, obrigado!",
-          "A outra, à direita?",
-          "Está fechada? Obrigado!"
-        ],
-        "keywords": [
-          "direita",
-          "está bem",
-          "obrigad",
-          "fechada"
-        ]
-      },
-      "help": {
-        "frame_tl": "À direita? Está bem, obrigado!",
-        "eg": "المدخل ده مقفول، روح التاني يمين. أكّد: À direita?",
-        "chips": [
-          "À direita? Está bem, obrigado!",
-          "Desculpe, pode repetir?"
-        ],
-        "chips_f": [
-          "À direita? Está bem, obrigada!",
-          "Desculpe, pode repetir?"
-        ]
-      },
-      "reply": {
-        "tl": "Isso, à direita.",
-        "ar": "صحيح، على اليمين."
-      }
-    },
-    {
       "id": "bye",
-      "min_tier": 1,
       "says": {
         "tl": "De nada! Bom dia!",
         "ar": "عفوًا! يومًا سعيدًا!"
@@ -311,5 +265,6 @@
     "phrase.next_to",
     "phrase.right_there",
     "phrase.turn_left"
-  ]
+  ],
+  "round": 1
 }

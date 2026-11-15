@@ -1,8 +1,6 @@
 {
   "id": "rp.roupa",
   "target_lang": "pt-PT",
-  "level": 4,
-  "order": 3,
   "recommended_day": 46,
   "emoji": "👕",
   "title_tl": "Na loja de roupa",
@@ -51,13 +49,11 @@
   "steps": [
     {
       "id": "browse",
-      "min_tier": 1,
       "says": {
         "tl": "Olá, boa tarde! Está à procura de alguma coisa?",
         "ar": "مرحبًا، مساء الخير! هل تبحث عن شيء ما؟",
         "ar_f": "مرحبًا، مساء الخير! هل تبحثين عن شيء ما؟"
       },
-      "coach_eg": "Estou só a ver = «بتفرّج بس». أشهر جملة في المحلات هنا.",
       "expects": {
         "intent_eg": "يقول بيتفرج أو عايز حاجة",
         "examples_tl": [
@@ -118,11 +114,11 @@
           "Estou só a ver, obrigada.",
           "Sim, queria uma camisola."
         ]
-      }
+      },
+      "hint_eg": "Estou só a ver = «بتفرّج بس». أشهر جملة في المحلات هنا."
     },
     {
       "id": "try",
-      "min_tier": 1,
       "says": {
         "tl": "Então? Gosta desta camisola azul? É nova.",
         "ar": "إذن؟ هل تعجبك هذه الكنزة الزرقاء؟ إنها جديدة."
@@ -156,12 +152,10 @@
     },
     {
       "id": "size",
-      "min_tier": 1,
       "says": {
         "tl": "Então, que tal?",
         "ar": "إذن، كيف هي؟"
       },
-      "coach_eg": "Que tal? = «إيه رأيك / عاملة إزاي؟»",
       "expects": {
         "intent_eg": "يقول المقاس مش مظبوط ويطلب غيره",
         "examples_tl": [
@@ -187,11 +181,11 @@
       "reply": {
         "tl": "Tenho o L. Aqui está.",
         "ar": "لدي مقاس L. تفضّل."
-      }
+      },
+      "hint_eg": "Que tal? = «إيه رأيك / عاملة إزاي؟»"
     },
     {
       "id": "colour",
-      "min_tier": 2,
       "says": {
         "tl": "E a cor? Também temos em verde e em preto.",
         "ar": "وماذا عن اللون؟ لدينا أيضًا الأخضر والأسود."
@@ -227,7 +221,6 @@
     },
     {
       "id": "price",
-      "min_tier": 1,
       "says": null,
       "expects": {
         "intent_eg": "يسأل السعر",
@@ -255,9 +248,7 @@
     },
     {
       "id": "decide",
-      "min_tier": 1,
       "says": null,
-      "coach_eg": "em saldo = في الأوكازيون",
       "expects": {
         "intent_eg": "يشتري أو يقول غالية",
         "examples_tl": [
@@ -304,11 +295,11 @@
           "Levo esta.",
           "É um bocado cara…"
         ]
-      }
+      },
+      "hint_eg": "em saldo = في الأوكازيون"
     },
     {
       "id": "cheaper",
-      "min_tier": 1,
       "if_slot": {
         "decide": "caro"
       },
@@ -339,45 +330,7 @@
       }
     },
     {
-      "id": "gift",
-      "min_tier": 3,
-      "says": {
-        "tl": "Quer talão de oferta?",
-        "ar": "هل تريد إيصال هدية؟",
-        "ar_f": "هل تريدين إيصال هدية؟"
-      },
-      "coach_eg": "talão de oferta = وصل هدية من غير سعر، علشان اللي هياخدها يقدر يبدّل.",
-      "expects": {
-        "intent_eg": "يرد على إيصال الهدية",
-        "examples_tl": [
-          "Não, é para mim.",
-          "Sim, é uma prenda.",
-          "Não, obrigado."
-        ],
-        "keywords": [
-          "não",
-          "nao",
-          "sim",
-          "para mim",
-          "prenda"
-        ]
-      },
-      "help": {
-        "frame_tl": "Não, é para mim.",
-        "eg": "talão de oferta = إيصال هدية (علشان يبدّلوها). Não, é para mim.",
-        "chips": [
-          "Não, é para mim.",
-          "Sim, é uma prenda."
-        ]
-      },
-      "reply": {
-        "tl": "Muito bem.",
-        "ar": "حسنًا."
-      }
-    },
-    {
       "id": "bye",
-      "min_tier": 1,
       "says": {
         "tl": "Obrigada! Boa tarde!",
         "ar": "شكرًا! مساءً سعيدًا!"
@@ -432,5 +385,6 @@
     "phrase.smaller",
     "phrase.how_much_this_one",
     "word.fitting_room"
-  ]
+  ],
+  "round": 1
 }

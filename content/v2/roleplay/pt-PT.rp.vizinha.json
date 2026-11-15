@@ -1,8 +1,6 @@
 {
   "id": "rp.vizinha",
   "target_lang": "pt-PT",
-  "level": 2,
-  "order": 3,
   "recommended_day": 20,
   "emoji": "🏢",
   "title_tl": "A vizinha do primeiro andar",
@@ -50,14 +48,12 @@
   "steps": [
     {
       "id": "new_neighbour",
-      "min_tier": 1,
       "says": {
         "tl": "Boa tarde! O senhor é o vizinho novo?",
         "ar": "مساء الخير! هل أنت الجار الجديد؟",
         "tl_f": "Boa tarde! A senhora é a vizinha nova?",
         "ar_f": "مساء الخير! هل أنتِ الجارة الجديدة؟"
       },
-      "coach_eg": "o vizinho novo = الجار الجديد. الستات الكبار بيقولوا o senhor / a senhora.",
       "expects": {
         "intent_eg": "يسلّم ويقول أيوه",
         "examples_tl": [
@@ -86,11 +82,11 @@
         "ar": "أهلًا بك! أنا غراسا. أسكن في الطابق الأول.",
         "tl_f": "Bem-vinda! Eu sou a Graça. Moro no primeiro andar.",
         "ar_f": "أهلًا بكِ! أنا غراسا. أسكن في الطابق الأول."
-      }
+      },
+      "hint_eg": "o vizinho novo = الجار الجديد. الستات الكبار بيقولوا o senhor / a senhora."
     },
     {
       "id": "name",
-      "min_tier": 1,
       "says": null,
       "expects": {
         "intent_eg": "يقول اسمه وتشرفنا",
@@ -122,7 +118,6 @@
     },
     {
       "id": "from",
-      "min_tier": 1,
       "says": {
         "tl": "E de onde é?",
         "ar": "ومن أين أنت؟"
@@ -166,7 +161,6 @@
     },
     {
       "id": "job",
-      "min_tier": 1,
       "says": {
         "tl": "E o que faz?",
         "ar": "وماذا تعمل؟"
@@ -210,12 +204,10 @@
     },
     {
       "id": "flat",
-      "min_tier": 2,
       "says": {
         "tl": "E mora no segundo esquerdo, não é?",
         "ar": "وتسكن في الطابق الثاني يسار، أليس كذلك؟"
       },
-      "coach_eg": "العنوان في البرتغال: الدور + الشقة. segundo esquerdo = الدور التاني، الشمال · direito = اليمين.",
       "expects": {
         "intent_eg": "يقول ساكن فين في العمارة",
         "examples_tl": [
@@ -246,53 +238,11 @@
       "reply": {
         "tl": "Ah, muito bem! Então somos vizinhos. 😄",
         "ar": "آه، رائع! إذن نحن جيران."
-      }
-    },
-    {
-      "id": "offer_help",
-      "min_tier": 3,
-      "says": {
-        "tl": "Olhe, se precisar de alguma coisa, é só bater à porta, está bem?",
-        "ar": "اسمع، إذا احتجت أي شيء، اطرق الباب فقط، حسنًا؟"
       },
-      "expects": {
-        "intent_eg": "يشكرها بأدب",
-        "examples_tl": [
-          "Muito obrigado! A senhora é muito simpática.",
-          "Obrigado, Dona Graça!",
-          "Muito obrigado!"
-        ],
-        "keywords": [
-          "obrigad",
-          "simpátic",
-          "simpatic"
-        ],
-        "examples_tl_f": [
-          "Muito obrigada! A senhora é muito simpática."
-        ]
-      },
-      "help": {
-        "frame_tl": "Muito obrigado! A senhora é muito simpática.",
-        "eg": "بتقولك لو احتجت حاجة خبّط عليها. اشكرها: Muito obrigado!",
-        "chips": [
-          "Muito obrigado! A senhora é muito simpática.",
-          "Obrigado, Dona Graça!"
-        ],
-        "chips_f": [
-          "Muito obrigada! A senhora é muito simpática.",
-          "Obrigada, Dona Graça!"
-        ]
-      },
-      "reply": {
-        "tl": "De nada, filho! 😊",
-        "ar": "عفوًا يا بنيّ!",
-        "tl_f": "De nada, filha! 😊",
-        "ar_f": "عفوًا يا بنتي!"
-      }
+      "hint_eg": "العنوان في البرتغال: الدور + الشقة. segundo esquerdo = الدور التاني، الشمال · direito = اليمين."
     },
     {
       "id": "bye",
-      "min_tier": 1,
       "says": {
         "tl": "Bem, vou às compras. Até logo!",
         "ar": "حسنًا، سأذهب للتسوق. إلى اللقاء!"
@@ -348,5 +298,6 @@
     "phrase.what_do_you_do",
     "word.student",
     "phrase.are_you_ok"
-  ]
+  ],
+  "round": 1
 }

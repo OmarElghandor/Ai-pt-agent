@@ -1,8 +1,6 @@
 {
   "id": "rp.financas",
   "target_lang": "pt-PT",
-  "level": 5,
-  "order": 3,
   "recommended_day": 54,
   "emoji": "🏛️",
   "title_tl": "Pedir o NIF nas Finanças",
@@ -47,12 +45,10 @@
   "steps": [
     {
       "id": "ticket",
-      "min_tier": 1,
       "says": {
         "tl": "Bom dia. Tem senha?",
         "ar": "صباح الخير. هل لديك رقم انتظار؟"
       },
-      "coach_eg": "a senha = ورقة الدور اللي بتسحبها من الماكينة. أي مصلحة حكومية بتبدأ بيها.",
       "expects": {
         "intent_eg": "يرد معاه دور ولا لأ",
         "examples_tl": [
@@ -103,13 +99,12 @@
           "Sim, aqui está.",
           "Não. Onde tiro a senha?"
         ]
-      }
+      },
+      "hint_eg": "a senha = ورقة الدور اللي بتسحبها من الماكينة. أي مصلحة حكومية بتبدأ بيها."
     },
     {
       "id": "ask_nif",
-      "min_tier": 1,
       "says": null,
-      "coach_eg": "NIF = número de contribuinte = رقمك الضريبي. محتاجه في كل حاجة هنا.",
       "expects": {
         "intent_eg": "يطلب NIF",
         "examples_tl": [
@@ -134,11 +129,11 @@
       "reply": {
         "tl": "Muito bem. Tem o passaporte?",
         "ar": "حسنًا. هل معك جواز السفر؟"
-      }
+      },
+      "hint_eg": "NIF = número de contribuinte = رقمك الضريبي. محتاجه في كل حاجة هنا."
     },
     {
       "id": "passport",
-      "min_tier": 1,
       "says": null,
       "expects": {
         "intent_eg": "يدّيها الباسبور",
@@ -169,9 +164,7 @@
     },
     {
       "id": "address",
-      "min_tier": 1,
       "says": null,
-      "coach_eg": "a morada = العنوان. الشكل: Rua + الاسم, número + رقم, الدور + الشقة.",
       "expects": {
         "intent_eg": "يقول عنوانه",
         "examples_tl": [
@@ -201,11 +194,11 @@
       "reply": {
         "tl": "Muito bem.",
         "ar": "حسنًا."
-      }
+      },
+      "hint_eg": "a morada = العنوان. الشكل: Rua + الاسم, número + رقم, الدور + الشقة."
     },
     {
       "id": "how_long",
-      "min_tier": 2,
       "says": {
         "tl": "Mora em Portugal há quanto tempo?",
         "ar": "منذ متى تسكن في البرتغال؟",
@@ -243,46 +236,7 @@
       }
     },
     {
-      "id": "system_down",
-      "min_tier": 3,
-      "says": {
-        "tl": "Ai… o sistema está em baixo. Pode voltar daqui a uma hora?",
-        "ar": "آه… النظام متوقف. هل يمكنك العودة بعد ساعة؟",
-        "ar_f": "آه… النظام متوقف. هل يمكنكِ العودة بعد ساعة؟"
-      },
-      "coach_eg": "o sistema está em baixo = السيستم واقع. بيحصل، فخلّيك هادي.",
-      "expects": {
-        "intent_eg": "يرد على وقوع السيستم",
-        "examples_tl": [
-          "Está bem, volto daqui a uma hora.",
-          "Posso esperar aqui?",
-          "A sério? Está bem."
-        ],
-        "keywords": [
-          "volto",
-          "está bem",
-          "esperar",
-          "posso",
-          "sério",
-          "serio"
-        ]
-      },
-      "help": {
-        "frame_tl": "Posso esperar aqui?",
-        "eg": "السيستم واقع! تستنى؟ Posso esperar aqui? · ترجع؟ Volto daqui a uma hora.",
-        "chips": [
-          "Posso esperar aqui?",
-          "Está bem, volto daqui a uma hora."
-        ]
-      },
-      "reply": {
-        "tl": "Ah, espere… já voltou! Que sorte. 😅",
-        "ar": "آه، انتظر… لقد عاد! يا للحظ."
-      }
-    },
-    {
       "id": "done",
-      "min_tier": 1,
       "says": {
         "tl": "Pronto, aqui tem o seu NIF. 📄",
         "ar": "تفضّل، هذا رقمك الضريبي."
@@ -330,5 +284,6 @@
     "phrase.receipt_nif",
     "phrase.are_you_ok",
     "phrase.really"
-  ]
+  ],
+  "round": 1
 }

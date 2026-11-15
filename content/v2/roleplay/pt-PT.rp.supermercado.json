@@ -1,8 +1,6 @@
 {
   "id": "rp.supermercado",
   "target_lang": "pt-PT",
-  "level": 1,
-  "order": 3,
   "recommended_day": 9,
   "emoji": "🛒",
   "title_tl": "No supermercado",
@@ -70,12 +68,10 @@
   "steps": [
     {
       "id": "ask_where",
-      "min_tier": 1,
       "says": {
         "tl": "Bom dia! Precisa de ajuda?",
         "ar": "صباح الخير! هل تحتاج مساعدة؟"
       },
-      "coach_eg": "Precisa de ajuda? = محتاج مساعدة؟ اسأله: Onde fica + الحاجة?",
       "expects": {
         "intent_eg": "يسأل حاجة مكانها فين",
         "examples_tl": [
@@ -156,11 +152,11 @@
           "Desculpe, onde fica o arroz?"
         ]
       },
-      "speaker": "pedro"
+      "speaker": "pedro",
+      "hint_eg": "Precisa de ajuda? = محتاج مساعدة؟ اسأله: Onde fica + الحاجة?"
     },
     {
       "id": "thanks",
-      "min_tier": 1,
       "says": null,
       "expects": {
         "intent_eg": "يشكره",
@@ -193,12 +189,10 @@
     },
     {
       "id": "bag",
-      "min_tier": 1,
       "says": {
         "tl": "Boa tarde! Precisa de saco?",
         "ar": "مساء الخير! هل تحتاج كيسًا؟"
       },
-      "coach_eg": "إنت دلوقتي على الكاشير مع Carla. o saco = الكيس (بفلوس هنا).",
       "expects": {
         "intent_eg": "يرد على الكيس",
         "examples_tl": [
@@ -251,11 +245,11 @@
           "Não, obrigada."
         ]
       },
-      "speaker": "carla"
+      "speaker": "carla",
+      "hint_eg": "إنت دلوقتي على الكاشير مع Carla. o saco = الكيس (بفلوس هنا)."
     },
     {
       "id": "loyalty",
-      "min_tier": 2,
       "says": {
         "tl": "Tem cartão de cliente?",
         "ar": "هل لديك بطاقة عميل؟"
@@ -290,12 +284,10 @@
     },
     {
       "id": "contribuinte",
-      "min_tier": 1,
       "says": {
         "tl": "Contribuinte?",
         "ar": "رقمك الضريبي؟"
       },
-      "coach_eg": "Contribuinte؟ = عايز رقمك الضريبي على الفاتورة؟ هتسمعها في كل محل.",
       "expects": {
         "intent_eg": "يرد على رقم الضرايب",
         "examples_tl": [
@@ -347,11 +339,11 @@
           "Sim, por favor."
         ]
       },
-      "speaker": "carla"
+      "speaker": "carla",
+      "hint_eg": "Contribuinte؟ = عايز رقمك الضريبي على الفاتورة؟ هتسمعها في كل محل."
     },
     {
       "id": "pay",
-      "min_tier": 1,
       "says": {
         "tl": "São doze euros e cinquenta.",
         "ar": "المجموع اثنا عشر يورو وخمسون سنتًا."
@@ -408,69 +400,7 @@
       "speaker": "carla"
     },
     {
-      "id": "terminal_down",
-      "min_tier": 3,
-      "if_slot": {
-        "pay": "cartão"
-      },
-      "says": {
-        "tl": "Ai… o terminal não está a funcionar. Tem dinheiro?",
-        "ar": "آه… الجهاز لا يعمل. هل معك نقود؟"
-      },
-      "expects": {
-        "intent_eg": "يرد معاه كاش ولا لأ",
-        "examples_tl": [
-          "Sim, tenho. Aqui tem.",
-          "Não, não tenho dinheiro.",
-          "Não tenho, desculpe."
-        ],
-        "keywords": [
-          "sim",
-          "tenho",
-          "aqui tem",
-          "não",
-          "nao"
-        ],
-        "slot": "cash",
-        "options": [
-          {
-            "value": "sim",
-            "keywords": [
-              "sim",
-              "aqui tem"
-            ],
-            "reply": {
-              "tl": "Obrigada! Aqui tem o troco.",
-              "ar": "شكرًا! تفضّل الباقي."
-            }
-          },
-          {
-            "value": "não",
-            "keywords": [
-              "não",
-              "nao",
-              "desculpe"
-            ],
-            "reply": {
-              "tl": "Ah, espere… já funciona! Pode passar. 😅",
-              "ar": "آه، انتظر… لقد عمل! يمكنك تمرير البطاقة."
-            }
-          }
-        ]
-      },
-      "help": {
-        "frame_tl": "Sim, tenho. Aqui tem.",
-        "eg": "الجهاز واقف. معاك كاش؟ Sim, tenho. · مفيش؟ Não tenho, desculpe.",
-        "chips": [
-          "Sim, tenho. Aqui tem.",
-          "Não tenho, desculpe."
-        ]
-      },
-      "speaker": "carla"
-    },
-    {
       "id": "bye",
-      "min_tier": 1,
       "says": {
         "tl": "Obrigada! Boa tarde!",
         "ar": "شكرًا! مساءً سعيدًا!"
@@ -527,5 +457,6 @@
       "gender": "f",
       "role_eg": "الكاشير"
     }
-  ]
+  ],
+  "round": 1
 }

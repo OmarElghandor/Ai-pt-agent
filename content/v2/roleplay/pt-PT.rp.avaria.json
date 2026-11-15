@@ -1,8 +1,6 @@
 {
   "id": "rp.avaria",
   "target_lang": "pt-PT",
-  "level": 5,
-  "order": 2,
   "recommended_day": 52,
   "emoji": "🔧",
   "title_tl": "A máquina de lavar avariou",
@@ -47,7 +45,6 @@
   "steps": [
     {
       "id": "hello",
-      "min_tier": 1,
       "says": {
         "tl": "Estou? Sim?",
         "ar": "ألو؟ نعم؟"
@@ -85,9 +82,7 @@
     },
     {
       "id": "problem",
-      "min_tier": 1,
       "says": null,
-      "coach_eg": "avariou = باظت · não funciona = مش شغالة",
       "expects": {
         "intent_eg": "يقول المشكلة",
         "examples_tl": [
@@ -116,11 +111,11 @@
       "reply": {
         "tl": "Ai… outra vez? O que aconteceu?",
         "ar": "آه… مرة أخرى؟ ماذا حدث؟"
-      }
+      },
+      "hint_eg": "avariou = باظت · não funciona = مش شغالة"
     },
     {
       "id": "details",
-      "min_tier": 1,
       "says": null,
       "expects": {
         "intent_eg": "يوصف اللي حصل",
@@ -156,7 +151,6 @@
     },
     {
       "id": "visit",
-      "min_tier": 1,
       "says": {
         "tl": "Posso mandar o técnico amanhã de manhã. Está em casa?",
         "ar": "يمكنني إرسال الفني غدًا صباحًا. هل ستكون في البيت؟",
@@ -216,7 +210,6 @@
     },
     {
       "id": "evening",
-      "min_tier": 1,
       "if_slot": {
         "visit": "no"
       },
@@ -251,7 +244,6 @@
     },
     {
       "id": "meanwhile",
-      "min_tier": 2,
       "says": {
         "tl": "Entretanto, não use a máquina, está bem?",
         "ar": "في الأثناء، لا تستعمل الغسالة، حسنًا؟",
@@ -286,45 +278,7 @@
       }
     },
     {
-      "id": "who_pays",
-      "min_tier": 3,
-      "says": {
-        "tl": "Ah, e se foi mau uso, quem paga é o inquilino…",
-        "ar": "آه، وإذا كان سوء استعمال، فالمستأجر هو من يدفع…"
-      },
-      "coach_eg": "o inquilino = الساكن (المستأجر). Já estava assim = كانت كده من الأول.",
-      "expects": {
-        "intent_eg": "يعترض بأدب",
-        "examples_tl": [
-          "Eu não fiz nada. Já estava assim.",
-          "Não é culpa minha. A máquina é muito velha.",
-          "Desculpe, mas eu não fiz nada."
-        ],
-        "keywords": [
-          "não fiz",
-          "nao fiz",
-          "já estava",
-          "ja estava",
-          "velha",
-          "culpa"
-        ]
-      },
-      "help": {
-        "frame_tl": "Eu não fiz nada. Já estava assim.",
-        "eg": "بيلمّح إنك تدفع. اعترض بأدب: Eu não fiz nada. Já estava assim.",
-        "chips": [
-          "Eu não fiz nada. Já estava assim.",
-          "A máquina é muito velha."
-        ]
-      },
-      "reply": {
-        "tl": "Pronto, pronto. O técnico vê isso. 😊",
-        "ar": "حسنًا، حسنًا. الفني سيرى ذلك."
-      }
-    },
-    {
       "id": "bye",
-      "min_tier": 1,
       "says": {
         "tl": "Pronto, então até amanhã.",
         "ar": "حسنًا، إلى الغد إذن."
@@ -374,5 +328,6 @@
     "phrase.are_you_ok",
     "phrase.phone_hello",
     "phrase.i_did_nothing"
-  ]
+  ],
+  "round": 1
 }

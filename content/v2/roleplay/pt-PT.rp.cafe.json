@@ -1,8 +1,6 @@
 {
   "id": "rp.cafe",
   "target_lang": "pt-PT",
-  "level": 1,
-  "order": 1,
   "recommended_day": 9,
   "emoji": "☕",
   "title_tl": "Um café, por favor",
@@ -65,12 +63,10 @@
   "steps": [
     {
       "id": "order_drink",
-      "min_tier": 1,
       "says": {
         "tl": "Bom dia! Diga.",
         "ar": "صباح الخير! تفضّل."
       },
-      "coach_eg": "Diga = «اؤمر / تفضّل». ده اللي بيقولوه ورا الكاونتر في البرتغال.",
       "expects": {
         "intent_eg": "يطلب مشروب",
         "examples_tl": [
@@ -147,79 +143,11 @@
           "Queria um galão, por favor.",
           "Queria um café, por favor."
         ]
-      }
-    },
-    {
-      "id": "no_galao",
-      "min_tier": 3,
-      "if_slot": {
-        "drink": "galão"
       },
-      "says": {
-        "tl": "Ai, desculpe… a máquina do leite está avariada. Pode ser um café?",
-        "ar": "آه، عذرًا… آلة الحليب معطّلة. هل يناسبك قهوة؟"
-      },
-      "expects": {
-        "intent_eg": "يقبل القهوة أو يطلب حاجة تانية",
-        "examples_tl": [
-          "Sim, pode ser.",
-          "Pode ser.",
-          "Não, obrigado. Um chá, por favor."
-        ],
-        "keywords": [
-          "sim",
-          "pode",
-          "não",
-          "nao",
-          "chá",
-          "cha",
-          "está bem"
-        ],
-        "slot": "drink",
-        "options": [
-          {
-            "value": "chá",
-            "keywords": [
-              "chá",
-              "cha"
-            ],
-            "reply": {
-              "tl": "Muito bem, um chá.",
-              "ar": "حسنًا، شاي."
-            }
-          },
-          {
-            "value": "café",
-            "keywords": [
-              "sim",
-              "pode",
-              "café",
-              "cafe",
-              "está bem"
-            ],
-            "reply": {
-              "tl": "Muito bem, um café.",
-              "ar": "حسنًا، قهوة."
-            }
-          }
-        ]
-      },
-      "help": {
-        "frame_tl": "Sim, pode ser.",
-        "eg": "ماكينة اللبن بايظة. موافق؟ Sim, pode ser. عايز حاجة تانية؟ Não, obrigado. Um chá.",
-        "chips": [
-          "Sim, pode ser.",
-          "Não, obrigado. Um chá, por favor."
-        ],
-        "chips_f": [
-          "Sim, pode ser.",
-          "Não, obrigada. Um chá, por favor."
-        ]
-      }
+      "hint_eg": "Diga = «اؤمر / تفضّل». ده اللي بيقولوه ورا الكاونتر في البرتغال."
     },
     {
       "id": "order_food",
-      "min_tier": 1,
       "says": {
         "tl": "Mais alguma coisa?",
         "ar": "هل تريد شيئًا آخر؟"
@@ -309,12 +237,10 @@
     },
     {
       "id": "here_or_go",
-      "min_tier": 2,
       "says": {
         "tl": "É para comer aqui ou para levar?",
         "ar": "هل هو للأكل هنا أم للأخذ؟"
       },
-      "coach_eg": "aqui = هنا · para levar = تاخده معاك",
       "expects": {
         "intent_eg": "يقول هياكل هنا ولا تيك أواي",
         "examples_tl": [
@@ -357,11 +283,11 @@
           "Para comer aqui.",
           "Para levar, por favor."
         ]
-      }
+      },
+      "hint_eg": "aqui = هنا · para levar = تاخده معاك"
     },
     {
       "id": "ask_price",
-      "min_tier": 1,
       "says": {
         "tl": "Aqui está! 😊",
         "ar": "تفضّل!"
@@ -396,7 +322,6 @@
     },
     {
       "id": "pay",
-      "min_tier": 1,
       "says": null,
       "expects": {
         "intent_eg": "يدفع بالكارت أو كاش",
@@ -451,12 +376,10 @@
     },
     {
       "id": "contribuinte",
-      "min_tier": 2,
       "says": {
         "tl": "Quer fatura com contribuinte?",
         "ar": "هل تريد فاتورة برقمك الضريبي؟"
       },
-      "coach_eg": "contribuinte = رقمك الضريبي (NIF). معظم الناس بيقولوا Não, obrigado في القهوة.",
       "expects": {
         "intent_eg": "يرد على سؤال رقم الضرايب",
         "examples_tl": [
@@ -485,11 +408,11 @@
       "reply": {
         "tl": "Muito bem.",
         "ar": "حسنًا."
-      }
+      },
+      "hint_eg": "contribuinte = رقمك الضريبي (NIF). معظم الناس بيقولوا Não, obrigado في القهوة."
     },
     {
       "id": "bye",
-      "min_tier": 1,
       "says": {
         "tl": "Obrigado! Bom dia!",
         "ar": "شكرًا! يومًا سعيدًا!"
@@ -530,5 +453,6 @@
     "ar": "إلى الغد!"
   },
   "summary_eg": "طلبت وسألت الحساب ودفعت لوحدك في كافيه برتغالي ☕",
-  "authored": true
+  "authored": true,
+  "round": 1
 }

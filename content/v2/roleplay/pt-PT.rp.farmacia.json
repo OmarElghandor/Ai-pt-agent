@@ -1,8 +1,6 @@
 {
   "id": "rp.farmacia",
   "target_lang": "pt-PT",
-  "level": 4,
-  "order": 2,
   "recommended_day": 40,
   "emoji": "💊",
   "title_tl": "Na farmácia",
@@ -51,12 +49,10 @@
   "steps": [
     {
       "id": "problem",
-      "min_tier": 1,
       "says": {
         "tl": "Boa tarde! Em que posso ajudar?",
         "ar": "مساء الخير! كيف أستطيع المساعدة؟"
       },
-      "coach_eg": "Em que posso ajudar? = أقدر أساعدك في إيه؟",
       "expects": {
         "intent_eg": "يقول عنده إيه",
         "examples_tl": [
@@ -128,11 +124,11 @@
           "Queria algo para a tosse.",
           "Dói-me a cabeça."
         ]
-      }
+      },
+      "hint_eg": "Em que posso ajudar? = أقدر أساعدك في إيه؟"
     },
     {
       "id": "fever",
-      "min_tier": 1,
       "says": {
         "tl": "Tem febre?",
         "ar": "هل لديك حرارة؟"
@@ -167,12 +163,10 @@
     },
     {
       "id": "since",
-      "min_tier": 2,
       "says": {
         "tl": "Desde quando?",
         "ar": "منذ متى؟"
       },
-      "coach_eg": "desde ontem = من امبارح · há dois dias = بقالي يومين",
       "expects": {
         "intent_eg": "يقول من إمتى",
         "examples_tl": [
@@ -200,16 +194,15 @@
       "reply": {
         "tl": "Muito bem.",
         "ar": "حسنًا."
-      }
+      },
+      "hint_eg": "desde ontem = من امبارح · há dois dias = بقالي يومين"
     },
     {
       "id": "allergy",
-      "min_tier": 1,
       "says": {
         "tl": "Tem alguma alergia a medicamentos?",
         "ar": "هل لديك أي حساسية من الأدوية؟"
       },
-      "coach_eg": "سؤال مهم: عندك حساسية من أدوية؟ لو أيوه قول الاسم.",
       "expects": {
         "intent_eg": "يرد على سؤال الحساسية",
         "examples_tl": [
@@ -236,11 +229,11 @@
       "reply": {
         "tl": "Então leve este. É muito bom. 💊",
         "ar": "إذن خذ هذا. إنه جيد جدًا."
-      }
+      },
+      "hint_eg": "سؤال مهم: عندك حساسية من أدوية؟ لو أيوه قول الاسم."
     },
     {
       "id": "prescription",
-      "min_tier": 1,
       "says": null,
       "expects": {
         "intent_eg": "يسأل عن الروشتة أو السعر",
@@ -288,7 +281,6 @@
     },
     {
       "id": "dosage",
-      "min_tier": 1,
       "says": null,
       "expects": {
         "intent_eg": "يسأل ياخده كام مرة",
@@ -318,47 +310,11 @@
       }
     },
     {
-      "id": "doctor",
-      "min_tier": 3,
-      "says": {
-        "tl": "Se não melhorar em três dias, vá ao médico, está bem?",
-        "ar": "إذا لم تتحسن خلال ثلاثة أيام، اذهب إلى الطبيب، حسنًا؟",
-        "ar_f": "إذا لم تتحسني خلال ثلاثة أيام، اذهبي إلى الطبيب، حسنًا؟"
-      },
-      "expects": {
-        "intent_eg": "يقول حاضر",
-        "examples_tl": [
-          "Está bem, obrigado.",
-          "Está bem. Obrigado pela ajuda!",
-          "Claro."
-        ],
-        "keywords": [
-          "está bem",
-          "obrigad",
-          "claro"
-        ]
-      },
-      "help": {
-        "frame_tl": "Está bem, obrigado.",
-        "eg": "لو ما اتحسنتش في 3 أيام روح للدكتور. قول: Está bem, obrigado.",
-        "chips": [
-          "Está bem, obrigado.",
-          "Obrigado pela ajuda!"
-        ],
-        "chips_f": [
-          "Está bem, obrigada.",
-          "Obrigada pela ajuda!"
-        ]
-      }
-    },
-    {
       "id": "bye",
-      "min_tier": 1,
       "says": {
         "tl": "As melhoras!",
         "ar": "أتمنى لك الشفاء!"
       },
-      "coach_eg": "As melhoras! = «ألف سلامة». هتسمعها في أي صيدلية.",
       "expects": {
         "intent_eg": "يشكرها",
         "examples_tl": [
@@ -388,7 +344,8 @@
           "Obrigada! Boa tarde!",
           "Muito obrigada!"
         ]
-      }
+      },
+      "hint_eg": "As melhoras! = «ألف سلامة». هتسمعها في أي صيدلية."
     }
   ],
   "closing": {
@@ -406,5 +363,6 @@
     "phrase.something_for_cough",
     "phrase.three_times_a_day",
     "word.cough"
-  ]
+  ],
+  "round": 1
 }
