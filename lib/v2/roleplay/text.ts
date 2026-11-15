@@ -40,21 +40,13 @@ export function pickChips(
   return [...chips];
 }
 
-/** Character line for the tier: says_alt[0] at tier ≥2 when present. */
-export function characterSaysForTier(
-  step: {
-    says: RoleplayLine | null;
-    says_alt?: RoleplayLine[];
-  },
-  tier: number,
+/** Character line for a step: always `step.says` (null when the step has none). */
+export function characterSays(
+  step: { says: RoleplayLine | null },
   gender: RoleplayGender,
   name?: string | null,
 ): { tl: string; ar: string } | null {
-  let line: RoleplayLine | null = step.says;
-  if (tier >= 2 && step.says_alt && step.says_alt.length > 0) {
-    line = step.says_alt[0];
-  }
-  const picked = pickLine(line, gender);
+  const picked = pickLine(step.says, gender);
   if (!picked) return null;
   return {
     tl: applyLearnerName(picked.tl, name),

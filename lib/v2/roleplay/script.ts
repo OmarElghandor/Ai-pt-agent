@@ -5,12 +5,13 @@ import {
   type RoleplaySessionState,
 } from './session';
 import { pickChips } from './text';
-import type { RoleplaySituation, RoleplayTier } from './types';
+import type { RoleplaySituation } from './types';
 import type { RoleplayTurnEvent } from './events';
 
 export type ScriptTurn = {
   text: string;
   help?: boolean;
+  /** Chip tap — skips the free-text correction. */
   assisted?: boolean;
 };
 
@@ -26,18 +27,16 @@ export type ScriptResult = {
  */
 export async function runRoleplayScript(opts: {
   situation: RoleplaySituation;
-  tier: RoleplayTier;
   turns: ScriptTurn[];
   gender?: 'm' | 'f';
   modelReaction?: (input: unknown) => Promise<string | null>;
   modelReactionsEnabled?: boolean;
 }): Promise<ScriptResult> {
-  const playable = playableSteps(opts.situation, opts.tier, {});
+  const playable = playableSteps(opts.situation, {});
   let state = createRoleplaySessionState({
-    id: `script-${opts.situation.id}-t${opts.tier}`,
+    id: `script-${opts.situation.id}`,
     user_id: 'script',
     situation_id: opts.situation.id,
-    tier: opts.tier,
     first_step_id: playable[0].id,
     gender: opts.gender ?? 'm',
   });
@@ -75,19 +74,17 @@ export async function runRoleplayScript(opts: {
   };
 }
 
-/** Finish a situation at a tier using only the first help chip each step. */
+/** Finish a situation using only the first help chip each step. */
 export async function finishWithChips(opts: {
   situation: RoleplaySituation;
-  tier: RoleplayTier;
   maxTurns?: number;
 }): Promise<ScriptResult> {
   const maxTurns = opts.maxTurns ?? 40;
-  const playable = playableSteps(opts.situation, opts.tier, {});
+  const playable = playableSteps(opts.situation, {});
   let state = createRoleplaySessionState({
-    id: `chips-${opts.situation.id}-t${opts.tier}`,
+    id: `chips-${opts.situation.id}`,
     user_id: 'chips',
     situation_id: opts.situation.id,
-    tier: opts.tier,
     first_step_id: playable[0].id,
   });
   state = startRoleplayScene({ situation: opts.situation, state }).state;

@@ -6,7 +6,7 @@ import {
 } from '@/lib/v2/convo/sideChannel/matchContext';
 import { normalizeAr } from '@/lib/v2/convo/sideChannel/normalizeAr';
 import type { RoleplaySituation, RoleplayStep } from './types';
-import { characterSaysForTier, pickLine, type RoleplayGender } from './text';
+import { characterSays, pickLine, type RoleplayGender } from './text';
 
 const HELP_RE =
   /(ساعدني|ساعدنى|مش\s*عارف|مش\s*عارفه|مش\s*فاهم|مش\s*فاهمه|محتاج\s*مساعده|محتاجة\s*مساعدة)/;
@@ -21,7 +21,6 @@ export function isRoleplayHelpRequest(text: string): boolean {
 export function collectRoleplayContextCandidates(
   situation: RoleplaySituation,
   step: RoleplayStep | null,
-  tier: number,
   gender: RoleplayGender,
 ): ContextLine[] {
   const out: ContextLine[] = [];
@@ -37,7 +36,7 @@ export function collectRoleplayContextCandidates(
   }
 
   if (step) {
-    const says = characterSaysForTier(step, tier, gender);
+    const says = characterSays(step, gender);
     if (says) push(says.tl, says.ar, 3);
     if (step.reply) {
       const r = pickLine(step.reply, gender);
@@ -70,7 +69,6 @@ export function handleRoleplaySideChannel(opts: {
   learnerText: string;
   situation: RoleplaySituation;
   step: RoleplayStep | null;
-  tier: number;
   gender: RoleplayGender;
   characterName?: string | null;
 }): RoleplaySideChannelResult {
@@ -88,7 +86,6 @@ export function handleRoleplaySideChannel(opts: {
     const candidates = collectRoleplayContextCandidates(
       opts.situation,
       opts.step,
-      opts.tier,
       opts.gender,
     );
     const match = matchContextLine(text, candidates);

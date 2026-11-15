@@ -1,5 +1,4 @@
 import type { RoleplaySessionState } from './session';
-import type { RoleplayTier } from './types';
 
 /** NDJSON events for a role-play turn. */
 export type RoleplayTurnEvent =
@@ -15,9 +14,10 @@ export type RoleplayTurnEvent =
       tl: string;
       ar: string;
       step_id?: string;
-      /** When true, Arabic is behind a tap (tier 2+) or costs the star (tier 3). */
+      /** Always true: Arabic is behind a tap. */
       ar_hidden?: boolean;
-      coach_eg?: string;
+      /** Optional step hint (EG); normally sent as a `coach` event instead. */
+      hint_eg?: string;
       audio_key?: string;
       playback?: 'normal' | 'slow';
       speaker?: string;
@@ -48,26 +48,23 @@ export type RoleplayTurnEvent =
         RoleplaySessionState,
         | 'id'
         | 'situation_id'
-        | 'tier'
         | 'current_step_id'
         | 'slots'
         | 'status'
         | 'alone_steps'
         | 'assisted_steps'
+        | 'pending_assist'
         | 'key_phrases_said'
         | 'model_calls'
       >;
     }
   | {
       type: 'result';
-      tier: RoleplayTier;
-      star: number;
       alone: number;
       assisted: number;
       key_phrases: string[];
       corrections: Array<{ tl: string; ar?: string }>;
       summary_eg: string;
-      next_tier: RoleplayTier | null;
     }
   | {
       type: 'done';

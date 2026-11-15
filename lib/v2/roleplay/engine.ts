@@ -5,38 +5,38 @@ import {
 import type { ConvoProgressWriter } from '@/lib/v2/convo/progress/mirror';
 import type { FreeTextCorrection } from '@/lib/v2/grader';
 import type { RoleplayTurnEvent } from './events';
-import { matchRoleplayWithLookahead } from './match';
-import { fuzzyMatchRoleplayExample } from './match';
+import {
+  fuzzyMatchRoleplayExample,
+  matchRoleplayWithLookahead,
+  type RoleplayMatchHit,
+} from './match';
+import { normalizeRoleplayText } from './normalize';
 import { playableSteps, remainingPlayableSteps } from './playable';
 import { creditRoleplayItems } from './progress';
-import type { RoleplaySessionState } from './session';
+import type { RoleplayExchange, RoleplaySessionState } from './session';
 import { handleRoleplaySideChannel } from './sideChannel';
 import {
   applyLearnerName,
-  characterSaysForTier,
+  characterSays,
   pickChips,
   pickLine,
 } from './text';
-import type { RoleplaySituation, RoleplayStep, RoleplayTier } from './types';
+import type { RoleplaySituation, RoleplayStep } from './types';
 
-const CONFUSION_LINES = [
-  { tl: 'Desculpe?', ar: 'عذرًا؟' },
-  { tl: 'Como?', ar: 'كيف؟' },
-] as const;
+const CONFUSION_LINE = { tl: 'Desculpe?', ar: 'عذرًا؟' } as const;
 
 export type RoleplayEngineDeps = {
   /** Optional progress writer — never required for pure turns. */
   progressWriter?: ConvoProgressWriter;
-  /** Optional model reaction (R7). Default: never called. */
+  /** Optional model reaction. Dormant: default is never called. */
   modelReaction?: (input: {
     situation: RoleplaySituation;
     step: RoleplayStep;
     learnerText: string;
     lastExchanges: RoleplaySessionState['exchanges'];
   }) => Promise<string | null>;
-  /** When true, allow modelReaction at tier 3. */
+  /** When true (and modelReaction is given), allow it on off-script turns. */
   modelReactionsEnabled?: boolean;
-  /** Pace delays are 0 in tests (UI concern); engine is sync aside from hooks. */
   now?: () => Date;
 };
 
@@ -44,10 +44,10 @@ export type RoleplayTurnInput = {
   situation: RoleplaySituation;
   state: RoleplaySessionState;
   learnerText: string;
-  /** Explicit help button. */
+  /** Explicit help button (ساعدني). */
   help?: boolean;
   learner_turn_id?: string;
-  /** Chip / assist path — skip correction. */
+  /** Chip tap — skip the free-text correction. Does not mark the step assisted. */
   assisted?: boolean;
 };
 
@@ -58,17 +58,16 @@ export type RoleplayTurnResult = {
   correctionPromise?: Promise<FreeTextCorrection | null>;
 };
 
-function arHiddenForTier(tier: RoleplayTier): boolean {
-  return tier >= 2;
-}
+// ---------------------------------------------------------------------------
+// Event helpers
+// ---------------------------------------------------------------------------
 
 function progressEvent(
   situation: RoleplaySituation,
   state: RoleplaySessionState,
 ): RoleplayTurnEvent {
-  const playable = playableSteps(situation, state.tier, state.slots);
-  const done =
-    state.alone_steps.length + state.assisted_steps.length;
+  const playable = playableSteps(situation, state.slots);
+  const done = state.alone_steps.length + state.assisted_steps.length;
   return {
     type: 'progress',
     current: Math.min(done, playable.length),
@@ -83,16 +82,28 @@ function sessionEvent(state: RoleplaySessionState): RoleplayTurnEvent {
     session: {
       id: state.id,
       situation_id: state.situation_id,
-      tier: state.tier,
       current_step_id: state.current_step_id,
       slots: { ...state.slots },
       status: state.status,
       alone_steps: [...state.alone_steps],
       assisted_steps: [...state.assisted_steps],
+      pending_assist: state.pending_assist,
       key_phrases_said: [...state.key_phrases_said],
       model_calls: state.model_calls,
     },
   };
+}
+
+function finishTurn(
+  events: RoleplayTurnEvent[],
+  situation: RoleplaySituation,
+  state: RoleplaySessionState,
+  correctionPromise?: Promise<FreeTextCorrection | null>,
+): RoleplayTurnResult {
+  events.push(progressEvent(situation, state));
+  events.push(sessionEvent(state));
+  events.push({ type: 'done', finished: state.status === 'done' });
+  return { state, events, correctionPromise };
 }
 
 function characterName(situation: RoleplaySituation): string | null {
@@ -123,44 +134,69 @@ function noteKeyPhrases(
   }
 }
 
+/** Last character line the learner heard (not the «Desculpe?» confusion line). */
+function lastCharacterExchange(
+  state: RoleplaySessionState,
+): RoleplayExchange | null {
+  for (let i = state.exchanges.length - 1; i >= 0; i--) {
+    const e = state.exchanges[i];
+    if (e.role === 'character' && e.kind !== 'confusion' && e.tl) return e;
+  }
+  return null;
+}
+
+function replayEvent(
+  situation: RoleplaySituation,
+  ex: RoleplayExchange,
+  fallbackStepId: string,
+): RoleplayTurnEvent {
+  const stepId = ex.step_id ?? fallbackStepId;
+  return {
+    type: 'character',
+    tl: ex.tl ?? '',
+    ar: ex.ar ?? '',
+    step_id: stepId,
+    ar_hidden: true,
+    audio_key:
+      ex.audio_key ??
+      `roleplay:${situation.id}:${stepId}:${ex.kind === 'reply' ? 'reply' : 'says'}`,
+    playback: 'normal',
+    ...(ex.speaker ? { speaker: ex.speaker } : {}),
+  };
+}
+
 function emitSays(
   events: RoleplayTurnEvent[],
   step: RoleplayStep,
   state: RoleplaySessionState,
   situation: RoleplaySituation,
-  opts?: { slow?: boolean; forceCoach?: boolean },
-): void {
-  const says = characterSaysForTier(
-    step,
-    state.tier,
-    state.gender,
-    state.learner_name,
-  );
-  if (!says) return;
-  const showCoach =
-    Boolean(step.coach_eg) &&
-    (state.tier === 1 || opts?.forceCoach);
+  opts?: { record?: boolean },
+): boolean {
+  const says = characterSays(step, state.gender, state.learner_name);
+  if (!says) return false;
+  const audio_key = `roleplay:${situation.id}:${step.id}:says`;
   events.push({
     type: 'character',
     tl: says.tl,
     ar: says.ar,
     step_id: step.id,
-    ar_hidden: arHiddenForTier(state.tier),
-    ...(showCoach && step.coach_eg ? { coach_eg: step.coach_eg } : {}),
-    audio_key: `roleplay:${situation.id}:${step.id}:says`,
-    playback: opts?.slow
-      ? 'slow'
-      : state.tier === 1
-        ? 'slow'
-        : 'normal',
+    ar_hidden: true,
+    audio_key,
+    playback: 'normal',
     ...(step.speaker ? { speaker: step.speaker } : {}),
   });
-  state.exchanges.push({
-    role: 'character',
-    tl: says.tl,
-    ar: says.ar,
-    step_id: step.id,
-  });
+  if (opts?.record !== false) {
+    state.exchanges.push({
+      role: 'character',
+      tl: says.tl,
+      ar: says.ar,
+      step_id: step.id,
+      kind: 'says',
+      audio_key,
+      ...(step.speaker ? { speaker: step.speaker } : {}),
+    });
+  }
+  return true;
 }
 
 function emitReply(
@@ -169,143 +205,152 @@ function emitReply(
   state: RoleplaySessionState,
   situation: RoleplaySituation,
   stepId: string,
+  kind: 'reply' | 'closing' = 'reply',
 ): void {
   const tl = applyLearnerName(reply.tl, state.learner_name);
   const ar = applyLearnerName(reply.ar, state.learner_name);
+  const audio_key = `roleplay:${situation.id}:${stepId}:${kind}`;
   events.push({
     type: 'character',
     tl,
     ar,
     step_id: stepId,
-    ar_hidden: arHiddenForTier(state.tier),
-    audio_key: `roleplay:${situation.id}:${stepId}:reply`,
-    playback: state.tier === 1 ? 'slow' : 'normal',
+    ar_hidden: true,
+    audio_key,
+    playback: 'normal',
   });
-  state.exchanges.push({ role: 'character', tl, ar, step_id: stepId });
+  state.exchanges.push({
+    role: 'character',
+    tl,
+    ar,
+    step_id: stepId,
+    kind,
+    audio_key,
+  });
 }
 
-function helpPayload(
+/**
+ * Repeat what the learner must answer. Uses the step's own `says`; when the
+ * step has none, repeats the last character line (a previous reply/prompt).
+ * Repeats are not recorded again in the exchange log.
+ */
+function repeatPrompt(
+  events: RoleplayTurnEvent[],
+  state: RoleplaySessionState,
+  situation: RoleplaySituation,
+  step: RoleplayStep,
+): void {
+  if (emitSays(events, step, state, situation, { record: false })) return;
+  const last = lastCharacterExchange(state);
+  if (last) events.push(replayEvent(situation, last, step.id));
+}
+
+// ---------------------------------------------------------------------------
+// Help ladder (one button: ساعدني / off-script)
+// ---------------------------------------------------------------------------
+
+/** Full sentence offered at miss 2. */
+function assistSentence(
   step: RoleplayStep,
   state: RoleplaySessionState,
-  miss: number,
-): RoleplayTurnEvent {
+): string {
+  const chips = pickChips(step.help.chips ?? [], step.help.chips_f, state.gender);
+  // frame_tl may hold a blank («Queria um ___»), so prefer a complete chip.
+  const frame = step.help.frame_tl?.trim() ?? '';
+  const frameComplete = frame && !/[…_]|\.\.\./.test(frame);
+  return (
+    chips[0] ||
+    (frameComplete ? frame : '') ||
+    step.expects.examples_tl[0] ||
+    frame
+  );
+}
+
+function assistCoachEvent(full: string): RoleplayTurnEvent {
+  return {
+    type: 'coach',
+    eg: `قول كده: ${full}`,
+    moment: 'assist',
+    chips: [full],
+    frame_tl: full,
+  };
+}
+
+/**
+ * Miss 1 (or first ساعدني): «Desculpe?», repeat the prompt, hint_eg coach,
+ * help.eg + 2 chips. Miss 2+: show the full sentence as a chip and wait; the
+ * step completes (as assisted) only when the learner sends it.
+ */
+function applyHelpLadder(
+  events: RoleplayTurnEvent[],
+  state: RoleplaySessionState,
+  situation: RoleplaySituation,
+  step: RoleplayStep,
+): void {
+  const miss = (state.misses[step.id] ?? 0) + 1;
+  state.misses[step.id] = miss;
+
+  if (miss >= 2) {
+    const full = state.pending_assist ?? assistSentence(step, state);
+    state.pending_assist = full;
+    const coach = assistCoachEvent(full);
+    events.push(coach);
+    if (coach.type === 'coach') {
+      state.exchanges.push({ role: 'coach', eg: coach.eg, step_id: step.id });
+    }
+    return;
+  }
+
+  // Miss 1.
+  events.push({
+    type: 'character',
+    tl: CONFUSION_LINE.tl,
+    ar: CONFUSION_LINE.ar,
+    step_id: step.id,
+    ar_hidden: true,
+    audio_key: `roleplay:${situation.id}:${step.id}:confusion`,
+    playback: 'normal',
+  });
+  state.exchanges.push({
+    role: 'character',
+    tl: CONFUSION_LINE.tl,
+    ar: CONFUSION_LINE.ar,
+    step_id: step.id,
+    kind: 'confusion',
+  });
+
+  repeatPrompt(events, state, situation, step);
+
+  if (step.hint_eg?.trim()) {
+    events.push({ type: 'coach', eg: step.hint_eg, moment: 'hint' });
+    state.exchanges.push({ role: 'coach', eg: step.hint_eg, step_id: step.id });
+  }
+
   const chips = pickChips(
     step.help.chips ?? [],
     step.help.chips_f,
     state.gender,
-  );
-  return {
+  ).slice(0, 2);
+  events.push({
     type: 'help',
     frame_tl: step.help.frame_tl,
     eg: step.help.eg,
     chips,
     miss,
-  };
+  });
 }
 
-function chipsVisible(
-  tier: RoleplayTier,
-  miss: number,
-  helpRequested: boolean,
-): boolean {
-  if (tier === 1) return true;
-  if (tier === 2) return miss >= 1 || helpRequested;
-  // tier 3: only via ساعدني
-  return helpRequested || miss >= 2;
+/** Does the learner's text amount to the offered full sentence? */
+function matchesPendingAssist(text: string, pending: string): boolean {
+  const a = normalizeRoleplayText(text);
+  const b = normalizeRoleplayText(pending);
+  if (!a || !b) return false;
+  return a === b || fuzzyMatchRoleplayExample(text, pending);
 }
 
-async function applyHelpLadder(
-  events: RoleplayTurnEvent[],
-  state: RoleplaySessionState,
-  situation: RoleplaySituation,
-  step: RoleplayStep,
-  helpRequested: boolean,
-  deps: RoleplayEngineDeps,
-): Promise<'stayed' | 'assisted'> {
-  const miss = (state.misses[step.id] ?? 0) + 1;
-  state.misses[step.id] = miss;
-
-  if (miss >= 3) {
-    const chips = pickChips(
-      step.help.chips ?? [],
-      step.help.chips_f,
-      state.gender,
-    );
-    const full =
-      chips[0] ||
-      step.expects.examples_tl[0] ||
-      step.help.frame_tl;
-    events.push({
-      type: 'coach',
-      eg: `قول كده: ${full}`,
-      moment: 'assist',
-      chips: [full],
-      frame_tl: full,
-    });
-    state.exchanges.push({ role: 'coach', eg: `قول كده: ${full}`, step_id: step.id });
-    // Mark assisted and advance as if they said it.
-    if (!state.assisted_steps.includes(step.id)) {
-      state.assisted_steps.push(step.id);
-    }
-    await advanceAfterStep({
-      events,
-      state,
-      situation,
-      step,
-      hitStay: false,
-      optionReply: null,
-      stepReply: pickLine(step.reply, state.gender),
-      assisted: true,
-      deps,
-      lookaheadHits: [],
-    });
-    return 'assisted';
-  }
-
-  if (miss === 1 && state.tier >= 2 && !helpRequested) {
-    const line = CONFUSION_LINES[0];
-    events.push({
-      type: 'character',
-      tl: line.tl,
-      ar: line.ar,
-      step_id: step.id,
-      ar_hidden: arHiddenForTier(state.tier),
-      audio_key: `roleplay:${situation.id}:${step.id}:confusion`,
-    });
-    state.exchanges.push({
-      role: 'character',
-      tl: line.tl,
-      ar: line.ar,
-      step_id: step.id,
-    });
-    emitSays(events, step, state, situation, { forceCoach: true });
-    return 'stayed';
-  }
-
-  // Miss 1 at tier 1, or miss 2, or help button: frame + chips when allowed.
-  if (chipsVisible(state.tier, miss, helpRequested) || state.tier === 1) {
-    events.push(helpPayload(step, state, miss));
-    if (step.coach_eg && state.tier >= 2) {
-      events.push({
-        type: 'coach',
-        eg: step.coach_eg,
-        moment: 'coach_after_miss',
-      });
-    }
-  } else if (state.tier === 3 && miss === 1) {
-    const line = CONFUSION_LINES[0];
-    events.push({
-      type: 'character',
-      tl: line.tl,
-      ar: line.ar,
-      step_id: step.id,
-      ar_hidden: true,
-    });
-    emitSays(events, step, state, situation, { forceCoach: true });
-  }
-
-  return 'stayed';
-}
+// ---------------------------------------------------------------------------
+// Advance
+// ---------------------------------------------------------------------------
 
 async function advanceAfterStep(opts: {
   events: RoleplayTurnEvent[];
@@ -315,6 +360,7 @@ async function advanceAfterStep(opts: {
   hitStay: boolean;
   optionReply: { tl: string; ar: string } | null;
   stepReply: { tl: string; ar: string } | null;
+  /** First step completed via the miss-2 full sentence. */
   assisted: boolean;
   deps: RoleplayEngineDeps;
   lookaheadHits: Array<{
@@ -324,27 +370,18 @@ async function advanceAfterStep(opts: {
     stay: boolean;
   }>;
 }): Promise<void> {
-  const {
-    events,
-    state,
-    situation,
-    step,
-    hitStay,
-    optionReply,
-    stepReply,
-    assisted,
-    deps,
-  } = opts;
+  const { events, state, situation, step, hitStay, optionReply, stepReply } =
+    opts;
+
+  state.pending_assist = null;
 
   if (hitStay) {
-    if (optionReply) {
-      emitReply(events, optionReply, state, situation, step.id);
-    }
+    if (optionReply) emitReply(events, optionReply, state, situation, step.id);
     // Stay: keep current_step_id.
     return;
   }
 
-  if (assisted) {
+  if (opts.assisted) {
     if (!state.assisted_steps.includes(step.id)) {
       state.assisted_steps.push(step.id);
     }
@@ -354,25 +391,9 @@ async function advanceAfterStep(opts: {
 
   // Option reply wins over step reply.
   const reply = optionReply ?? stepReply;
-  if (reply) {
-    emitReply(events, reply, state, situation, step.id);
-  }
+  if (reply) emitReply(events, reply, state, situation, step.id);
 
-  if (deps.progressWriter) {
-    await creditRoleplayItems({
-      situation,
-      sessionId: state.id,
-      day: situation.recommended_day,
-      assisted,
-      write: deps.progressWriter,
-      // Credit whole situation items once at end would over-count; credit none
-      // per step unless we track — for now credit nothing mid-turn; end session
-      // credits. Kept hook for future per-item mapping.
-      itemIds: [],
-    });
-  }
-
-  // Process look-ahead completions (reply only, no says).
+  // Look-ahead completions (reply only, no says).
   let lastStep = step;
   for (const la of opts.lookaheadHits) {
     if (la.stay) {
@@ -382,7 +403,10 @@ async function advanceAfterStep(opts: {
       state.current_step_id = la.step.id;
       return;
     }
-    if (!state.alone_steps.includes(la.step.id)) {
+    if (
+      !state.alone_steps.includes(la.step.id) &&
+      !state.assisted_steps.includes(la.step.id)
+    ) {
       state.alone_steps.push(la.step.id);
     }
     const r = la.optionReply ?? la.stepReply;
@@ -390,15 +414,12 @@ async function advanceAfterStep(opts: {
     lastStep = la.step;
   }
 
-  // Next playable step after last completed.
-  const slots = state.slots;
+  // Next playable step after the last completed one.
   const remaining = remainingPlayableSteps(
     situation,
-    state.tier,
-    slots,
+    state.slots,
     lastStep.id,
   );
-  // remaining starts at lastStep — always skip it and any already completed.
   const completed = new Set([
     ...state.alone_steps,
     ...state.assisted_steps,
@@ -407,44 +428,29 @@ async function advanceAfterStep(opts: {
   const next = remaining.find((s) => !completed.has(s.id));
 
   if (!next) {
-    // Closing + done.
     const closing = pickLine(situation.closing, state.gender);
     if (closing) {
-      emitReply(
-        events,
-        {
-          tl: applyLearnerName(closing.tl, state.learner_name),
-          ar: applyLearnerName(closing.ar, state.learner_name),
-        },
-        state,
-        situation,
-        'closing',
-      );
+      emitReply(events, closing, state, situation, 'closing', 'closing');
     }
     state.current_step_id = null;
     state.status = 'done';
     const alone = state.alone_steps.length;
     const assistedCount = state.assisted_steps.length;
-    const nextTier =
-      state.tier < 3 ? ((state.tier + 1) as RoleplayTier) : null;
     events.push({
       type: 'result',
-      tier: state.tier,
-      star: state.tier,
       alone,
       assisted: assistedCount,
       key_phrases: [...state.key_phrases_said],
       corrections: [...state.corrections],
       summary_eg: situation.summary_eg,
-      next_tier: nextTier,
     });
-    if (deps.progressWriter) {
+    if (opts.deps.progressWriter) {
       await creditRoleplayItems({
         situation,
         sessionId: state.id,
         day: situation.recommended_day,
         assisted: assistedCount > alone,
-        write: deps.progressWriter,
+        write: opts.deps.progressWriter,
       });
     }
     return;
@@ -454,8 +460,14 @@ async function advanceAfterStep(opts: {
   emitSays(events, next, state, situation);
 }
 
+// ---------------------------------------------------------------------------
+// Public API
+// ---------------------------------------------------------------------------
+
 /**
- * Open / resume: emit current says + optional «كنا فين» on resume.
+ * Open / resume. On resume: «كنا فين», replay the last character line the
+ * learner heard (even when the current step has no `says`), and re-show a
+ * pending full-sentence assist.
  */
 export function startRoleplayScene(opts: {
   situation: RoleplaySituation;
@@ -464,21 +476,28 @@ export function startRoleplayScene(opts: {
 }): RoleplayTurnResult {
   const { situation, state } = opts;
   const events: RoleplayTurnEvent[] = [];
-  if (opts.resume && state.current_step_id) {
+  const step = situation.steps.find((s) => s.id === state.current_step_id);
+
+  if (opts.resume && step) {
     events.push({
       type: 'coach',
       eg: 'كنا فين — نكمّل من هنا.',
       moment: 'resume',
     });
-  }
-  const step = situation.steps.find((s) => s.id === state.current_step_id);
-  if (step) {
+    const last = lastCharacterExchange(state);
+    if (last) {
+      events.push(replayEvent(situation, last, step.id));
+    } else {
+      emitSays(events, step, state, situation);
+    }
+    if (state.pending_assist) {
+      events.push(assistCoachEvent(state.pending_assist));
+    }
+  } else if (step) {
     emitSays(events, step, state, situation);
   }
-  events.push(progressEvent(situation, state));
-  events.push(sessionEvent(state));
-  events.push({ type: 'done', finished: state.status === 'done' });
-  return { state, events };
+
+  return finishTurn(events, situation, state);
 }
 
 /**
@@ -495,6 +514,7 @@ export async function runRoleplayTurn(
     misses: { ...input.state.misses },
     alone_steps: [...input.state.alone_steps],
     assisted_steps: [...input.state.assisted_steps],
+    pending_assist: input.state.pending_assist ?? null,
     key_phrases_said: [...input.state.key_phrases_said],
     exchanges: [...input.state.exchanges],
     corrections: [...input.state.corrections],
@@ -527,86 +547,74 @@ export async function runRoleplayTurn(
     learnerText: text,
     situation,
     step: current,
-    tier: state.tier,
     gender: state.gender,
     characterName: characterName(situation),
   });
 
-  const helpRequested = Boolean(input.help) || side.kind === 'help';
-
   if (side.kind === 'language' || side.kind === 'arabic_other') {
-    events.push({
-      type: 'coach',
-      eg: side.eg,
-      moment: side.kind,
-    });
+    events.push({ type: 'coach', eg: side.eg, moment: side.kind });
     state.exchanges.push({ role: 'coach', eg: side.eg });
     // Character waits.
-    events.push(progressEvent(situation, state));
-    events.push(sessionEvent(state));
-    events.push({ type: 'done', finished: false });
-    return { state, events };
+    return finishTurn(events, situation, state);
   }
 
-  if (helpRequested && !text) {
-    await applyHelpLadder(events, state, situation, current, true, deps);
-    events.push(progressEvent(situation, state));
-    events.push(sessionEvent(state));
-    events.push({ type: 'done', finished: false });
-    return { state, events };
+  if (input.help || side.kind === 'help') {
+    applyHelpLadder(events, state, situation, current);
+    return finishTurn(events, situation, state);
   }
 
-  if (helpRequested && (side.kind === 'help' || input.help)) {
-    // If they also typed Portuguese, still run help ladder when it's a help phrase.
-    if (side.kind === 'help' || (input.help && !text)) {
-      await applyHelpLadder(events, state, situation, current, true, deps);
-      events.push(progressEvent(situation, state));
-      events.push(sessionEvent(state));
-      events.push({ type: 'done', finished: false });
-      return { state, events };
-    }
-  }
-
-  if (side.kind === 'help') {
-    await applyHelpLadder(events, state, situation, current, true, deps);
-    events.push(progressEvent(situation, state));
-    events.push(sessionEvent(state));
-    events.push({ type: 'done', finished: false });
-    return { state, events };
+  if (!text) {
+    return finishTurn(events, situation, state);
   }
 
   // Learner Portuguese turn.
-  state.exchanges.push({
-    role: 'learner',
-    tl: text,
-    step_id: current.id,
-  });
+  state.exchanges.push({ role: 'learner', tl: text, step_id: current.id });
   noteKeyPhrases(state, situation, text);
+
+  const pendingBefore = state.pending_assist;
+  const assistActive =
+    pendingBefore != null || (state.misses[current.id] ?? 0) >= 2;
 
   const remaining = remainingPlayableSteps(
     situation,
-    state.tier,
     state.slots,
     state.current_step_id,
   );
-  const hits = matchRoleplayWithLookahead(text, remaining);
+  let hits: RoleplayMatchHit[] = matchRoleplayWithLookahead(text, remaining);
+
+  // The offered full sentence always completes the step, even if the matcher
+  // would not recognise it on its own.
+  if (
+    hits.length === 0 &&
+    pendingBefore &&
+    matchesPendingAssist(text, pendingBefore)
+  ) {
+    hits = [
+      {
+        step_id: current.id,
+        option: null,
+        stay: false,
+        slot: null,
+        slot_value: null,
+        via: 'example',
+      },
+    ];
+  }
 
   let correctionPromise: Promise<FreeTextCorrection | null> | undefined;
   if (
     shouldFireFreeTextCorrection({
       learnerText: text,
-      assisted: Boolean(input.assisted),
+      assisted: Boolean(input.assisted) || assistActive,
       sideChannel: false,
     })
   ) {
+    const prompt =
+      characterSays(current, state.gender, state.learner_name)?.tl ??
+      lastCharacterExchange(state)?.tl;
     correctionPromise = startFreeTextCorrection({
       answer: text,
-      character_tl: characterSaysForTier(
-        current,
-        state.tier,
-        state.gender,
-        state.learner_name,
-      )?.tl,
+      character_tl: prompt,
       frame_tl: current.help.frame_tl,
       frame_chips: pickChips(
         current.help.chips ?? [],
@@ -617,12 +625,8 @@ export async function runRoleplayTurn(
   }
 
   if (hits.length === 0) {
-    // Off-script: help ladder; optional model reaction at tier 3.
-    if (
-      deps.modelReactionsEnabled &&
-      state.tier === 3 &&
-      deps.modelReaction
-    ) {
+    // Off-script. Optional (dormant) model reaction, then the help ladder.
+    if (deps.modelReactionsEnabled && deps.modelReaction) {
       const reaction = await deps.modelReaction({
         situation,
         step: current,
@@ -640,26 +644,13 @@ export async function runRoleplayTurn(
         });
       }
     }
-    await applyHelpLadder(
-      events,
-      state,
-      situation,
-      current,
-      Boolean(input.help),
-      deps,
-    );
-    events.push(progressEvent(situation, state));
-    events.push(sessionEvent(state));
-    events.push({ type: 'done', finished: state.status === 'done' });
-    return { state, events, correctionPromise };
+    applyHelpLadder(events, state, situation, current);
+    return finishTurn(events, situation, state, correctionPromise);
   }
 
   const first = hits[0];
-  // Apply slot from first (+ look-ahead) hits.
   for (const h of hits) {
-    if (h.slot && h.slot_value) {
-      state.slots[h.slot] = h.slot_value;
-    }
+    if (h.slot && h.slot_value) state.slots[h.slot] = h.slot_value;
   }
 
   const firstStep = remaining.find((s) => s.id === first.step_id)!;
@@ -680,7 +671,6 @@ export async function runRoleplayTurn(
     };
   });
 
-  // Reset misses on success.
   state.misses[firstStep.id] = 0;
 
   await advanceAfterStep({
@@ -691,13 +681,10 @@ export async function runRoleplayTurn(
     hitStay: first.stay,
     optionReply,
     stepReply,
-    assisted: Boolean(input.assisted),
+    assisted: assistActive,
     deps,
     lookaheadHits,
   });
 
-  events.push(progressEvent(situation, state));
-  events.push(sessionEvent(state));
-  events.push({ type: 'done', finished: state.status === 'done' });
-  return { state, events, correctionPromise };
+  return finishTurn(events, situation, state, correctionPromise);
 }
