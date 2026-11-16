@@ -126,7 +126,8 @@ export function listTopicCatalog(opts?: {
     const bank = loadAuthoredTopicBank(topicId, {
       targetLang: opts?.targetLang,
     });
-    if (!bank) continue;
+    // Scenes never appear in the free-talk catalog (batch-rp-2).
+    if (!bank || bank.kind === 'scene') continue;
     push(bankToEntry(bank, topicId));
   }
 

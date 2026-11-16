@@ -1,0 +1,225 @@
+{
+  "source": "topic",
+  "kind": "scene",
+  "authored": true,
+  "target_lang": "pt-PT",
+  "topic_id": "cena-financas",
+  "title_tl": "Pedir o NIF nas Finanças",
+  "title_ar": "طلب الـ NIF في Finanças",
+  "emoji": "🏛️",
+  "scene_eg": "مكتب Finanças (مصلحة الضرايب). Rita على الشباك.",
+  "intro_eg": "اطلب رقم ضريبي (NIF): سحب الدور، الورق، العنوان، ومدة إقامتك.",
+  "scene": {
+    "character_id": "rita",
+    "place": "Rita works at the Finanças (tax office) counter",
+    "time_of_day": "morning",
+    "address": "formal"
+  },
+  "opening": {
+    "tl": "Bom dia. Tem senha?",
+    "ar": "صباح الخير. هل لديك رقم انتظار؟"
+  },
+  "closing": {
+    "tl": "Bom dia! 👋",
+    "ar": "يومًا سعيدًا!"
+  },
+  "goals": [
+    {
+      "id": "financas.ticket",
+      "tier": "core",
+      "intent_eg": "يرد معاه دور ولا لأ",
+      "intent_en": "say whether they have a queue ticket",
+      "ask_tl": "Bom dia. Tem senha?",
+      "ask_ar": "صباح الخير. هل لديك رقم انتظار؟",
+      "examples_tl": [
+        "Sim, aqui está.",
+        "Não. Onde tiro a senha?",
+        "Sim, tenho."
+      ],
+      "keywords": [
+        "sim",
+        "aqui",
+        "tenho",
+        "não",
+        "nao",
+        "onde"
+      ],
+      "help": {
+        "frame_tl": "Não. Onde tiro a senha?",
+        "eg": "a senha = ورقة الدور اللي بتسحبها من الماكينة. أي مصلحة حكومية بتبدأ بيها.",
+        "chips": [
+          "Sim, aqui está.",
+          "Não. Onde tiro a senha?"
+        ]
+      }
+    },
+    {
+      "id": "financas.ask_nif",
+      "tier": "core",
+      "intent_eg": "يطلب NIF",
+      "intent_en": "ask for a NIF (tax number)",
+      "ask_tl": "Muito bem. Diga.",
+      "ask_ar": "حسنًا. تفضّل.",
+      "examples_tl": [
+        "Queria pedir o NIF, por favor.",
+        "Preciso de um NIF.",
+        "Queria um número de contribuinte."
+      ],
+      "keywords": [
+        "nif",
+        "contribuinte",
+        "pedir"
+      ],
+      "help": {
+        "frame_tl": "Queria pedir o NIF, por favor.",
+        "eg": "NIF = número de contribuinte = رقمك الضريبي. محتاجه في كل حاجة هنا.",
+        "chips": [
+          "Queria pedir o NIF, por favor.",
+          "Preciso de um NIF."
+        ]
+      }
+    },
+    {
+      "id": "financas.passport",
+      "tier": "core",
+      "intent_eg": "يدّيها الباسبور",
+      "intent_en": "hand over the passport",
+      "ask_tl": "Muito bem. Tem o passaporte?",
+      "ask_ar": "حسنًا. هل معك جواز السفر؟",
+      "examples_tl": [
+        "Sim, aqui está.",
+        "Aqui está o passaporte.",
+        "Sim, tenho."
+      ],
+      "keywords": [
+        "sim",
+        "aqui",
+        "passaporte",
+        "tenho"
+      ],
+      "help": {
+        "frame_tl": "Sim, aqui está.",
+        "eg": "o passaporte = الباسبور. Sim, aqui está.",
+        "chips": [
+          "Sim, aqui está.",
+          "Aqui está o passaporte."
+        ]
+      }
+    },
+    {
+      "id": "financas.address",
+      "tier": "core",
+      "intent_eg": "يقول عنوانه",
+      "intent_en": "give their address",
+      "ask_tl": "Obrigada. E qual é a sua morada?",
+      "ask_ar": "شكرًا. وما هو عنوانك؟",
+      "examples_tl": [
+        "Moro na Rua dos Anjos, número doze.",
+        "Rua dos Anjos, doze, segundo esquerdo.",
+        "Moro na Avenida Almirante Reis."
+      ],
+      "keywords": [
+        "rua",
+        "avenida",
+        "número",
+        "numero",
+        "moro",
+        "travessa",
+        "largo"
+      ],
+      "help": {
+        "frame_tl": "Moro na Rua ___, número ___.",
+        "eg": "a morada = العنوان. الشكل: Rua + الاسم, número + رقم, الدور + الشقة.",
+        "chips": [
+          "Moro na Rua dos Anjos, número doze.",
+          "Rua dos Anjos, doze, segundo esquerdo."
+        ]
+      }
+    },
+    {
+      "id": "financas.how_long",
+      "tier": "core",
+      "intent_eg": "يقول بقاله قد إيه",
+      "intent_en": "say how long they have lived in Portugal",
+      "ask_tl": "Mora em Portugal há quanto tempo?",
+      "ask_ar": "منذ متى تسكن في البرتغال؟",
+      "ask_ar_f": "منذ متى تسكنين في البرتغال؟",
+      "examples_tl": [
+        "Há seis meses.",
+        "Há um ano.",
+        "Há duas semanas."
+      ],
+      "keywords": [
+        "há",
+        "ha",
+        "meses",
+        "mês",
+        "ano",
+        "anos",
+        "semanas",
+        "dias"
+      ],
+      "help": {
+        "frame_tl": "Há seis meses.",
+        "eg": "há quanto tempo = بقالك قد إيه. Há seis meses. = بقالي 6 شهور",
+        "chips": [
+          "Há seis meses.",
+          "Há um ano."
+        ]
+      }
+    },
+    {
+      "id": "financas.done",
+      "tier": "core",
+      "intent_eg": "يشكرها",
+      "intent_en": "thank her and say goodbye",
+      "ask_tl": "Pronto, aqui tem o seu NIF. 📄 Mais alguma coisa?",
+      "ask_ar": "تفضّل، هذا رقمك الضريبي. هل تريد شيئًا آخر؟",
+      "examples_tl": [
+        "Não, muito obrigado! Bom dia!",
+        "Não, obrigado pela ajuda!",
+        "É tudo, obrigado!",
+        "Não, muito obrigada! Bom dia!"
+      ],
+      "keywords": [
+        "obrigad",
+        "adeus",
+        "até",
+        "ate",
+        "boa tarde",
+        "bom dia",
+        "xau",
+        "igualmente"
+      ],
+      "help": {
+        "frame_tl": "Muito obrigado! Bom dia!",
+        "eg": "خلصت! اشكرها: Muito obrigado! Bom dia!",
+        "chips": [
+          "Não, muito obrigado! Bom dia!",
+          "É tudo, obrigado!"
+        ],
+        "chips_f": [
+          "Não, muito obrigada! Bom dia!",
+          "É tudo, obrigada!"
+        ]
+      },
+      "farewell": true
+    }
+  ],
+  "suggested_words": [],
+  "required_items": [
+    "phrase.good_morning",
+    "phrase.receipt_nif",
+    "phrase.are_you_ok",
+    "phrase.really"
+  ],
+  "new_items_tl": [
+    "a senha",
+    "pedir o NIF",
+    "o passaporte",
+    "a morada",
+    "o sistema está em baixo",
+    "daqui a uma hora"
+  ],
+  "recommended_day": 54
+}

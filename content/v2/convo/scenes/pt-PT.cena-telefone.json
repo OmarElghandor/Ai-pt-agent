@@ -1,0 +1,254 @@
+{
+  "source": "topic",
+  "kind": "scene",
+  "authored": true,
+  "target_lang": "pt-PT",
+  "topic_id": "cena-telefone",
+  "title_tl": "Vamos ao cinema?",
+  "title_ar": "مكالمة لصاحبك",
+  "emoji": "📞",
+  "scene_eg": "إنت بتتصل بـ Tiago صاحبك علشان تعزمه على السينما.",
+  "intro_eg": "سلّم وعرّف نفسك في التليفون، اسأله بيعمل إيه، واعزمه واتفقوا على ميعاد.",
+  "scene": {
+    "character_id": "tiago",
+    "place": "Tiago is the learner's friend, answering a phone call",
+    "time_of_day": "evening",
+    "address": "tu"
+  },
+  "opening": {
+    "tl": "Estou? 📞",
+    "ar": "ألو؟"
+  },
+  "closing": {
+    "tl": "Xau! 👋",
+    "ar": "إلى اللقاء!"
+  },
+  "goals": [
+    {
+      "id": "telefone.hello",
+      "tier": "core",
+      "intent_eg": "يسلّم ويقول هو مين",
+      "intent_en": "say hello and who is calling",
+      "ask_tl": "Estou? 📞",
+      "ask_ar": "ألو؟",
+      "examples_tl": [
+        "Olá, Tiago! É o Omar.",
+        "Olá! Sou eu, o Omar.",
+        "Olá Tiago, é o Omar!"
+      ],
+      "keywords": [
+        "olá",
+        "ola",
+        "tiago",
+        "é o",
+        "e o",
+        "sou eu",
+        "sou o",
+        "é a",
+        "sou a"
+      ],
+      "help": {
+        "frame_tl": "Olá, Tiago! É o ___.",
+        "eg": "في التليفون البرتغاليين بيردّوا بـ Estou? أو Sim?. قول: É o + اسمك = أنا فلان.",
+        "chips": [
+          "Olá, Tiago! É o Omar.",
+          "Olá! Sou eu, o Omar."
+        ]
+      }
+    },
+    {
+      "id": "telefone.how_are_you",
+      "tier": "core",
+      "intent_eg": "يرد إنه كويس ويسأله",
+      "intent_en": "say they're fine and ask back",
+      "ask_tl": "Olá, {name}! Tudo bem?",
+      "ask_ar": "مرحبًا يا {name}! كل شيء بخير؟",
+      "examples_tl": [
+        "Tudo bem, e tu?",
+        "Tudo, e contigo?",
+        "Estou bem, obrigado. E tu?"
+      ],
+      "keywords": [
+        "tudo",
+        "bem"
+      ],
+      "help": {
+        "frame_tl": "Tudo bem, e tu?",
+        "eg": "رد واسأله: Tudo bem, e tu?",
+        "chips": [
+          "Tudo bem, e tu?",
+          "Estou bem! E tu?"
+        ]
+      }
+    },
+    {
+      "id": "telefone.doing",
+      "tier": "core",
+      "intent_eg": "يسأله بيعمل إيه",
+      "intent_en": "ask what he is doing",
+      "ask_tl": "Tudo! Diz. 😊",
+      "ask_ar": "بخير! قل.",
+      "examples_tl": [
+        "O que estás a fazer?",
+        "Estás ocupado?",
+        "O que estás a fazer agora?"
+      ],
+      "keywords": [
+        "o que estás",
+        "o que estas",
+        "fazer",
+        "ocupado"
+      ],
+      "help": {
+        "frame_tl": "O que estás a fazer?",
+        "eg": "Diz = «قول / اتفضّل». ده بيقولها لما مستنيك تقول عايز إيه.",
+        "chips": [
+          "O que estás a fazer?",
+          "Estás ocupado?"
+        ]
+      },
+      "cue_eg": "بيقولك «قول». اسأله بيعمل إيه."
+    },
+    {
+      "id": "telefone.invite",
+      "tier": "core",
+      "intent_eg": "يعزمه على السينما",
+      "intent_en": "invite him to the cinema",
+      "ask_tl": "Nada de especial. Estou a ver televisão. 📺 E tu?",
+      "ask_ar": "لا شيء مميز. أشاهد التلفاز. وأنت؟",
+      "examples_tl": [
+        "Queres vir ao cinema?",
+        "Vamos ao cinema?",
+        "Queres ir ao cinema hoje?"
+      ],
+      "keywords": [
+        "cinema",
+        "vamos",
+        "queres",
+        "vir"
+      ],
+      "help": {
+        "frame_tl": "Queres vir ao cinema?",
+        "eg": "اعزمه: Queres vir ao cinema? أو Vamos ao cinema?",
+        "chips": [
+          "Queres vir ao cinema?",
+          "Vamos ao cinema?"
+        ]
+      },
+      "cue_eg": "اعزمه على السينما."
+    },
+    {
+      "id": "telefone.when",
+      "tier": "core",
+      "intent_eg": "يقول إمتى",
+      "intent_en": "say when",
+      "ask_tl": "Ao cinema? Fixe! Quando?",
+      "ask_ar": "إلى السينما؟ رائع! متى؟",
+      "examples_tl": [
+        "Hoje à noite.",
+        "Hoje à noite, às nove.",
+        "Amanhã à tarde."
+      ],
+      "keywords": [
+        "hoje",
+        "amanhã",
+        "amanha",
+        "noite",
+        "tarde",
+        "às",
+        "as"
+      ],
+      "help": {
+        "frame_tl": "Hoje à noite.",
+        "eg": "قول إمتى: Hoje à noite = النهارده بالليل",
+        "chips": [
+          "Hoje à noite.",
+          "Amanhã à tarde."
+        ]
+      }
+    },
+    {
+      "id": "telefone.cant_today",
+      "tier": "core",
+      "intent_eg": "يوافق على بكره",
+      "intent_en": "agree to tomorrow",
+      "ask_tl": "Ah, hoje não dá, desculpa. Pode ser amanhã?",
+      "ask_ar": "آه، اليوم لا يناسبني، آسف. هل يمكن غدًا؟",
+      "examples_tl": [
+        "Sim, pode ser amanhã!",
+        "Está bem, amanhã.",
+        "Claro! Amanhã à noite?"
+      ],
+      "keywords": [
+        "sim",
+        "pode",
+        "amanhã",
+        "amanha",
+        "está bem",
+        "claro",
+        "talvez"
+      ],
+      "help": {
+        "frame_tl": "Sim, pode ser amanhã!",
+        "eg": "Hoje não dá = «النهارده مش هينفع». هتسمعها كتير.",
+        "chips": [
+          "Sim, pode ser amanhã!",
+          "Está bem, amanhã."
+        ]
+      }
+    },
+    {
+      "id": "telefone.bye",
+      "tier": "core",
+      "intent_eg": "يقفل المكالمة",
+      "intent_en": "end the call",
+      "ask_tl": "Fixe! Então combinado. Xau!",
+      "ask_ar": "رائع! اتفقنا إذن. إلى اللقاء!",
+      "examples_tl": [
+        "Combinado! Xau!",
+        "Xau, até amanhã!",
+        "Até logo!"
+      ],
+      "keywords": [
+        "obrigad",
+        "adeus",
+        "até",
+        "ate",
+        "boa tarde",
+        "bom dia",
+        "xau",
+        "igualmente",
+        "combinado",
+        "logo"
+      ],
+      "help": {
+        "frame_tl": "Combinado! Xau!",
+        "eg": "اقفل: Combinado! Xau! (Xau = باي بين الصحاب)",
+        "chips": [
+          "Combinado! Xau!",
+          "Até amanhã!"
+        ]
+      },
+      "farewell": true
+    }
+  ],
+  "suggested_words": [],
+  "required_items": [
+    "phrase.how_are_you",
+    "phrase.im_fine",
+    "phrase.see_you_tomorrow",
+    "phrase.see_you_later",
+    "phrase.are_you_ok",
+    "phrase.what_are_you_doing",
+    "phrase.shall_we_go",
+    "phrase.do_you_want_to_come",
+    "word.q_when",
+    "phrase.at_nine"
+  ],
+  "new_items_tl": [
+    "Diz!",
+    "Nada de especial.",
+    "Hoje não dá."
+  ],
+  "recommended_day": 30
+}

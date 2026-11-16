@@ -1,0 +1,240 @@
+{
+  "source": "topic",
+  "kind": "scene",
+  "authored": true,
+  "target_lang": "pt-PT",
+  "topic_id": "cena-consulta",
+  "title_tl": "Marcar uma consulta",
+  "title_ar": "حجز ميعاد دكتور",
+  "emoji": "🩺",
+  "scene_eg": "مكالمة للمركز الصحي (Centro de Saúde). Rita على الاستقبال.",
+  "intro_eg": "احجز ميعاد: قول عايز إيه، رقمك، بتشتكي من إيه، واتفقوا على يوم وساعة.",
+  "scene": {
+    "character_id": "rita",
+    "place": "Rita answers the phone at the health centre reception",
+    "time_of_day": "morning",
+    "address": "formal"
+  },
+  "opening": {
+    "tl": "Centro de Saúde, bom dia. Em que posso ajudar?",
+    "ar": "المركز الصحي، صباح الخير. كيف أستطيع المساعدة؟"
+  },
+  "closing": {
+    "tl": "Bom dia! 👋",
+    "ar": "يومًا سعيدًا!"
+  },
+  "goals": [
+    {
+      "id": "consulta.book",
+      "tier": "core",
+      "intent_eg": "يطلب يحجز ميعاد",
+      "intent_en": "ask to book an appointment",
+      "ask_tl": "Centro de Saúde, bom dia. Em que posso ajudar?",
+      "ask_ar": "المركز الصحي، صباح الخير. كيف أستطيع المساعدة؟",
+      "examples_tl": [
+        "Bom dia. Queria marcar uma consulta, por favor.",
+        "Queria marcar uma consulta.",
+        "Bom dia! Uma consulta, por favor."
+      ],
+      "keywords": [
+        "marcar",
+        "consulta"
+      ],
+      "help": {
+        "frame_tl": "Queria marcar uma consulta, por favor.",
+        "eg": "قول عايز تحجز: Queria marcar uma consulta.",
+        "chips": [
+          "Bom dia. Queria marcar uma consulta, por favor.",
+          "Queria marcar uma consulta."
+        ]
+      }
+    },
+    {
+      "id": "consulta.utente",
+      "tier": "core",
+      "intent_eg": "يقول رقمه أو إنه لسه ما عندوش",
+      "intent_en": "give their health user number, or say they don't have one yet",
+      "ask_tl": "Com certeza. Qual é o seu número de utente?",
+      "ask_ar": "بالتأكيد. ما هو رقمك في النظام الصحي؟",
+      "examples_tl": [
+        "É o 123 456 789.",
+        "Ainda não tenho.",
+        "Não tenho, desculpe."
+      ],
+      "keywords": [
+        "é o",
+        "número",
+        "numero",
+        "ainda não",
+        "não tenho",
+        "nao tenho"
+      ],
+      "help": {
+        "frame_tl": "Ainda não tenho.",
+        "eg": "número de utente = رقم المريض في المنظومة الصحية. لو لسه بتعمله: Ainda não tenho.",
+        "chips": [
+          "Ainda não tenho.",
+          "É o 123 456 789."
+        ]
+      }
+    },
+    {
+      "id": "consulta.reason",
+      "tier": "core",
+      "intent_eg": "يقول بيشتكي من إيه",
+      "intent_en": "say what is wrong (the symptom)",
+      "ask_tl": "É para quê?",
+      "ask_ar": "لأي سبب؟",
+      "examples_tl": [
+        "Tenho febre.",
+        "Dói-me a cabeça.",
+        "Tenho tosse e febre."
+      ],
+      "keywords": [
+        "febre",
+        "tosse",
+        "dói",
+        "doi",
+        "cabeça",
+        "cabeca",
+        "garganta",
+        "doente",
+        "gripe"
+      ],
+      "help": {
+        "frame_tl": "Tenho febre.",
+        "eg": "É para quê? = علشان إيه؟ قول: Tenho febre. أو Dói-me a cabeça.",
+        "chips": [
+          "Tenho febre.",
+          "Dói-me a cabeça."
+        ]
+      }
+    },
+    {
+      "id": "consulta.when",
+      "tier": "core",
+      "intent_eg": "يوافق على الميعاد أو يرفض",
+      "intent_en": "accept or refuse the proposed day and time",
+      "ask_tl": "Pode ser na terça-feira, às nove e meia?",
+      "ask_ar": "هل يناسبك يوم الثلاثاء، في التاسعة والنصف؟",
+      "examples_tl": [
+        "Sim, pode ser.",
+        "Não posso na terça, desculpe.",
+        "Sim, às nove e meia está bem."
+      ],
+      "keywords": [
+        "sim",
+        "pode",
+        "está bem",
+        "não",
+        "nao"
+      ],
+      "help": {
+        "frame_tl": "Sim, pode ser.",
+        "eg": "terça = التلات · às nove e meia = 9 ونص. مناسب؟ Sim, pode ser.",
+        "chips": [
+          "Sim, pode ser.",
+          "Não posso na terça, desculpe."
+        ]
+      },
+      "facts_tl": [
+        "Se não puder na terça: quinta, às duas da tarde."
+      ]
+    },
+    {
+      "id": "consulta.early",
+      "tier": "core",
+      "intent_eg": "يقول حاضر",
+      "intent_en": "agree politely",
+      "ask_tl": "Chegue dez minutos antes, está bem?",
+      "ask_ar": "تعالَ قبل الموعد بعشر دقائق، حسنًا؟",
+      "ask_ar_f": "تعالي قبل الموعد بعشر دقائق، حسنًا؟",
+      "examples_tl": [
+        "Está bem, obrigado.",
+        "Claro, dez minutos antes.",
+        "Está bem."
+      ],
+      "keywords": [
+        "está bem",
+        "claro",
+        "obrigad",
+        "antes"
+      ],
+      "help": {
+        "frame_tl": "Está bem, obrigado.",
+        "eg": "تعالى قبلها بعشر دقايق. قول: Está bem, obrigado.",
+        "chips": [
+          "Está bem, obrigado.",
+          "Claro!"
+        ],
+        "chips_f": [
+          "Está bem, obrigada.",
+          "Claro!"
+        ]
+      }
+    },
+    {
+      "id": "consulta.bye",
+      "tier": "core",
+      "intent_eg": "يودّعها",
+      "intent_en": "say goodbye",
+      "ask_tl": "Obrigada, até lá!",
+      "ask_ar": "شكرًا، أراك حينها!",
+      "examples_tl": [
+        "Obrigado! Bom dia!",
+        "Obrigada, até terça!",
+        "Muito obrigado!"
+      ],
+      "keywords": [
+        "obrigad",
+        "adeus",
+        "até",
+        "ate",
+        "boa tarde",
+        "bom dia",
+        "xau",
+        "igualmente",
+        "terça",
+        "quinta"
+      ],
+      "help": {
+        "frame_tl": "Obrigado! Bom dia!",
+        "eg": "ودّعها: Obrigado! Bom dia!",
+        "chips": [
+          "Obrigado! Bom dia!",
+          "Muito obrigado!"
+        ],
+        "chips_f": [
+          "Obrigada! Bom dia!",
+          "Muito obrigada!"
+        ]
+      },
+      "farewell": true
+    }
+  ],
+  "suggested_words": [],
+  "required_items": [
+    "phrase.good_morning",
+    "phrase.can_you_repeat",
+    "phrase.excuse_me",
+    "phrase.no_problem",
+    "phrase.are_you_ok",
+    "phrase.my_head_hurts",
+    "phrase.how_is_it_written",
+    "word.number",
+    "phrase.whats_your_number",
+    "word.tuesday",
+    "phrase.appointment",
+    "phrase.can_it_be_tuesday",
+    "phrase.not_yet",
+    "phrase.at_nine"
+  ],
+  "new_items_tl": [
+    "o centro de saúde",
+    "o número de utente",
+    "Ainda não tenho.",
+    "Fica marcado.",
+    "Como se escreve o seu apelido?"
+  ],
+  "recommended_day": 38
+}

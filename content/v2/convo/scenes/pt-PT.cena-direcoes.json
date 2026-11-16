@@ -1,0 +1,213 @@
+{
+  "source": "topic",
+  "kind": "scene",
+  "authored": true,
+  "target_lang": "pt-PT",
+  "topic_id": "cena-direcoes",
+  "title_tl": "Onde fica o metro?",
+  "title_ar": "تايه في وسط البلد",
+  "emoji": "🧭",
+  "scene_eg": "شارع في الـ Baixa. إنت تايه ووقفت راجل ماشي.",
+  "intro_eg": "اسأل عن محطة المترو، افهم الطريق، وأكّده.",
+  "scene": {
+    "character_id": "carlos",
+    "place": "Carlos is a passer-by in the Baixa whom the learner stops to ask the way",
+    "time_of_day": "morning",
+    "address": "formal"
+  },
+  "opening": {
+    "tl": "Sim? 🙂",
+    "ar": "نعم؟"
+  },
+  "closing": {
+    "tl": "Bom dia! 👋",
+    "ar": "يومًا سعيدًا!"
+  },
+  "goals": [
+    {
+      "id": "direcoes.ask",
+      "tier": "core",
+      "intent_eg": "يسأل المترو فين",
+      "intent_en": "ask where the metro is",
+      "ask_tl": "Sim? 🙂",
+      "ask_ar": "نعم؟",
+      "examples_tl": [
+        "Desculpe, sabe onde fica o metro?",
+        "Desculpe, onde fica a estação de metro?",
+        "Onde fica o metro, por favor?"
+      ],
+      "keywords": [
+        "onde",
+        "metro",
+        "estação",
+        "estacao",
+        "sabe"
+      ],
+      "help": {
+        "frame_tl": "Desculpe, sabe onde fica o metro?",
+        "eg": "Desculpe = لو سمحت (علشان توقف حد). Sabe onde fica…? = تعرف … فين؟",
+        "chips": [
+          "Desculpe, sabe onde fica o metro?",
+          "Onde fica a estação de metro?"
+        ]
+      }
+    },
+    {
+      "id": "direcoes.confirm",
+      "tier": "core",
+      "intent_eg": "يأكّد الطريق أو يطلب يعيد",
+      "intent_en": "confirm the directions back, or ask to repeat",
+      "ask_tl": "O metro? Siga em frente e depois vire à esquerda. ⬆️⬅️ Percebeu?",
+      "ask_ar": "المترو؟ امشِ إلى الأمام ثم انعطف يسارًا. هل فهمت؟",
+      "ask_ar_f": "المترو؟ امشِ إلى الأمام ثم انعطف يسارًا. هل فهمتِ؟",
+      "examples_tl": [
+        "Em frente e depois à esquerda?",
+        "Desculpe, pode repetir?",
+        "À esquerda?",
+        "Sim, percebi. Em frente e depois à esquerda."
+      ],
+      "keywords": [
+        "frente",
+        "esquerda",
+        "repetir",
+        "devagar",
+        "sim",
+        "percebi"
+      ],
+      "help": {
+        "frame_tl": "Em frente e depois à esquerda?",
+        "eg": "أكّد: Em frente e depois à esquerda? · مش فاهم؟ Pode repetir?",
+        "chips": [
+          "Em frente e depois à esquerda?",
+          "Desculpe, pode repetir?"
+        ]
+      },
+      "cue_eg": "وصفلك الطريق. أكّده علشان تتأكد إنك فاهم، أو اطلب يعيد."
+    },
+    {
+      "id": "direcoes.far",
+      "tier": "core",
+      "intent_eg": "يسأل بعيد ولا لأ",
+      "intent_en": "ask if it is far",
+      "ask_tl": "Precisa de mais alguma coisa?",
+      "ask_ar": "هل تحتاج شيئًا آخر؟",
+      "examples_tl": [
+        "É longe?",
+        "É perto?",
+        "É longe daqui?"
+      ],
+      "keywords": [
+        "longe",
+        "perto",
+        "minutos"
+      ],
+      "help": {
+        "frame_tl": "É longe?",
+        "eg": "اسأل: É longe? = بعيد؟",
+        "chips": [
+          "É longe?",
+          "É perto?"
+        ]
+      },
+      "cue_eg": "اسأله المكان بعيد ولا قريب."
+    },
+    {
+      "id": "direcoes.landmark",
+      "tier": "core",
+      "intent_eg": "يكرر العلامة ويشكره",
+      "intent_en": "repeat the landmark and thank him",
+      "ask_tl": "Não, é logo ali, cinco minutos a pé. Fica ao lado do banco, na praça. Está a ver?",
+      "ask_ar": "لا، إنه هناك تمامًا، خمس دقائق مشيًا. إنه بجانب البنك، في الساحة. هل تراه؟",
+      "examples_tl": [
+        "Ao lado do banco. Obrigado!",
+        "Na praça, ao lado do banco?",
+        "Está bem, obrigado!"
+      ],
+      "keywords": [
+        "banco",
+        "lado",
+        "praça",
+        "praca",
+        "obrigad",
+        "sim",
+        "estou a ver"
+      ],
+      "help": {
+        "frame_tl": "Ao lado do banco. Obrigado!",
+        "eg": "ao lado do banco = جنب البنك. كرر علشان تتأكد.",
+        "chips": [
+          "Ao lado do banco. Obrigado!",
+          "Na praça?"
+        ],
+        "chips_f": [
+          "Ao lado do banco. Obrigada!",
+          "Na praça?"
+        ]
+      },
+      "cue_eg": "قالك المحطة جنب إيه. كرر علشان تتأكد واشكره."
+    },
+    {
+      "id": "direcoes.bye",
+      "tier": "core",
+      "intent_eg": "يشكره",
+      "intent_en": "thank him and say goodbye",
+      "ask_tl": "Exatamente. De nada! Bom dia!",
+      "ask_ar": "تمامًا. عفوًا! يومًا سعيدًا!",
+      "examples_tl": [
+        "Muito obrigado! Bom dia!",
+        "Obrigado!",
+        "Obrigada! Bom dia!"
+      ],
+      "keywords": [
+        "obrigad",
+        "adeus",
+        "até",
+        "ate",
+        "boa tarde",
+        "bom dia",
+        "xau",
+        "igualmente",
+        "combinado"
+      ],
+      "help": {
+        "frame_tl": "Muito obrigado! Bom dia!",
+        "eg": "اشكره: Muito obrigado!",
+        "chips": [
+          "Muito obrigado! Bom dia!",
+          "Obrigado!"
+        ],
+        "chips_f": [
+          "Muito obrigada! Bom dia!",
+          "Obrigada!"
+        ]
+      },
+      "farewell": true
+    }
+  ],
+  "suggested_words": [],
+  "required_items": [
+    "phrase.good_morning",
+    "phrase.youre_welcome",
+    "phrase.can_you_repeat",
+    "phrase.excuse_me",
+    "phrase.are_you_ok",
+    "word.metro",
+    "phrase.is_it_near",
+    "phrase.its_far",
+    "phrase.where_is_station",
+    "word.left",
+    "word.right",
+    "word.station",
+    "phrase.far_from_here",
+    "phrase.go_straight",
+    "phrase.next_to",
+    "phrase.right_there",
+    "phrase.turn_left"
+  ],
+  "new_items_tl": [
+    "a entrada",
+    "está fechada",
+    "a pé"
+  ],
+  "recommended_day": 34
+}

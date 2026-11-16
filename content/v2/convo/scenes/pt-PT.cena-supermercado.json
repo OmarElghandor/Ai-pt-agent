@@ -1,0 +1,278 @@
+{
+  "source": "topic",
+  "kind": "scene",
+  "authored": true,
+  "target_lang": "pt-PT",
+  "topic_id": "cena-supermercado",
+  "title_tl": "No supermercado",
+  "title_ar": "في السوبر ماركت",
+  "emoji": "🛒",
+  "scene_eg": "سوبر ماركت جنب البيت. Rita بتساعدك تلاقي حاجة، وبعدين بتحاسبك على الكاشير.",
+  "intro_eg": "اسأل حاجة مكانها فين، وبعدين ادفع على الكاشير ورد على أسئلتها.",
+  "scene": {
+    "character_id": "rita",
+    "place": "Rita works at the supermarket: first she helps find a product, then she is at the till",
+    "time_of_day": "afternoon",
+    "address": "formal"
+  },
+  "opening": {
+    "tl": "Bom dia! Precisa de ajuda?",
+    "ar": "صباح الخير! هل تحتاج مساعدة؟"
+  },
+  "closing": {
+    "tl": "Boa tarde! 👋",
+    "ar": "مساءً سعيدًا!"
+  },
+  "goals": [
+    {
+      "id": "supermercado.ask_where",
+      "tier": "core",
+      "intent_eg": "يسأل حاجة مكانها فين",
+      "intent_en": "ask where a product is",
+      "ask_tl": "Boa tarde! Precisa de ajuda?",
+      "ask_ar": "مساء الخير! هل تحتاج مساعدة؟",
+      "examples_tl": [
+        "Sim! Onde fica o leite?",
+        "Desculpe, onde fica o arroz?",
+        "Onde estão os ovos?"
+      ],
+      "keywords": [
+        "onde",
+        "leite",
+        "pão",
+        "pao",
+        "ovo",
+        "arroz",
+        "queijo"
+      ],
+      "help": {
+        "frame_tl": "Desculpe, onde fica o ___?",
+        "eg": "Precisa de ajuda? = محتاج مساعدة؟ اسأله: Onde fica + الحاجة?",
+        "chips": [
+          "Sim! Onde fica o leite?",
+          "Desculpe, onde fica o arroz?"
+        ]
+      }
+    },
+    {
+      "id": "supermercado.thanks",
+      "tier": "core",
+      "intent_eg": "يشكره",
+      "intent_en": "thank him and say goodbye",
+      "ask_tl": "Precisa de mais alguma coisa?",
+      "ask_ar": "هل تحتاج شيئًا آخر؟",
+      "examples_tl": [
+        "Obrigado!",
+        "Muito obrigado!",
+        "Obrigada!",
+        "Não, obrigado!",
+        "Não, obrigada!"
+      ],
+      "keywords": [
+        "obrigad",
+        "não",
+        "nao"
+      ],
+      "help": {
+        "frame_tl": "Obrigado!",
+        "eg": "اشكره: Obrigado! (ولو إنتي: Obrigada!)",
+        "chips": [
+          "Obrigado!",
+          "Muito obrigado!"
+        ],
+        "chips_f": [
+          "Obrigada!",
+          "Muito obrigada!"
+        ]
+      },
+      "facts_tl": [
+        "O leite e o queijo estão lá atrás.",
+        "O pão está ali, à entrada.",
+        "Os ovos e o arroz estão ali."
+      ]
+    },
+    {
+      "id": "supermercado.bag",
+      "tier": "core",
+      "intent_eg": "يرد على الكيس",
+      "intent_en": "answer about the bag",
+      "ask_tl": "Precisa de saco?",
+      "ask_ar": "هل تحتاج كيسًا؟",
+      "examples_tl": [
+        "Sim, por favor.",
+        "Não, obrigado.",
+        "Sim, um saco, por favor."
+      ],
+      "keywords": [
+        "sim",
+        "não",
+        "nao",
+        "saco"
+      ],
+      "help": {
+        "frame_tl": "Sim, por favor.",
+        "eg": "إنت دلوقتي على الكاشير مع Rita. o saco = الكيس (بفلوس هنا).",
+        "chips": [
+          "Sim, por favor.",
+          "Não, obrigado."
+        ],
+        "chips_f": [
+          "Sim, por favor.",
+          "Não, obrigada."
+        ]
+      }
+    },
+    {
+      "id": "supermercado.loyalty",
+      "tier": "core",
+      "intent_eg": "يرد على كارت العميل",
+      "intent_en": "answer about the loyalty card",
+      "ask_tl": "Tem cartão de cliente?",
+      "ask_ar": "هل لديك بطاقة عميل؟",
+      "examples_tl": [
+        "Não, não tenho.",
+        "Não, obrigado.",
+        "Sim, aqui está."
+      ],
+      "keywords": [
+        "não",
+        "nao",
+        "sim",
+        "tenho"
+      ],
+      "help": {
+        "frame_tl": "Não, não tenho.",
+        "eg": "cartão de cliente = كارت النقط بتاع السوبر ماركت. معندكش؟ Não, não tenho.",
+        "chips": [
+          "Não, não tenho.",
+          "Sim, aqui está."
+        ]
+      }
+    },
+    {
+      "id": "supermercado.contribuinte",
+      "tier": "core",
+      "intent_eg": "يرد على رقم الضرايب",
+      "intent_en": "answer about the tax number on the receipt",
+      "ask_tl": "Contribuinte?",
+      "ask_ar": "رقمك الضريبي؟",
+      "examples_tl": [
+        "Não, obrigado.",
+        "Sim, por favor.",
+        "Não é preciso."
+      ],
+      "keywords": [
+        "não",
+        "nao",
+        "sim",
+        "preciso"
+      ],
+      "help": {
+        "frame_tl": "Não, obrigado.",
+        "eg": "Contribuinte؟ = عايز رقمك الضريبي على الفاتورة؟ هتسمعها في كل محل.",
+        "chips": [
+          "Não, obrigado.",
+          "Sim, por favor."
+        ],
+        "chips_f": [
+          "Não, obrigada.",
+          "Sim, por favor."
+        ]
+      }
+    },
+    {
+      "id": "supermercado.pay",
+      "tier": "core",
+      "intent_eg": "يدفع",
+      "intent_en": "pay (card or cash)",
+      "ask_tl": "São doze euros e cinquenta. Cartão ou dinheiro?",
+      "ask_ar": "المجموع اثنا عشر يورو وخمسون سنتًا. بطاقة أم نقدًا؟",
+      "examples_tl": [
+        "Aceita cartão?",
+        "Com cartão, por favor.",
+        "Em dinheiro."
+      ],
+      "keywords": [
+        "cartão",
+        "cartao",
+        "dinheiro",
+        "aqui tem",
+        "multibanco"
+      ],
+      "help": {
+        "frame_tl": "Aceita cartão?",
+        "eg": "بالكارت؟ Aceita cartão? · كاش؟ Em dinheiro.",
+        "chips": [
+          "Aceita cartão?",
+          "Em dinheiro."
+        ]
+      }
+    },
+    {
+      "id": "supermercado.bye",
+      "tier": "core",
+      "intent_eg": "يودّعها",
+      "intent_en": "say goodbye",
+      "ask_tl": "Obrigada! Boa tarde!",
+      "ask_ar": "شكرًا! مساءً سعيدًا!",
+      "examples_tl": [
+        "Obrigado! Boa tarde!",
+        "Boa tarde! Adeus!",
+        "Obrigada, igualmente!"
+      ],
+      "keywords": [
+        "obrigad",
+        "adeus",
+        "até",
+        "ate",
+        "bom dia",
+        "boa tarde",
+        "xau",
+        "igualmente"
+      ],
+      "help": {
+        "frame_tl": "Obrigado! Boa tarde!",
+        "eg": "ودّعها: Obrigado! Boa tarde!",
+        "chips": [
+          "Obrigado! Boa tarde!",
+          "Boa tarde!"
+        ],
+        "chips_f": [
+          "Obrigada! Boa tarde!",
+          "Boa tarde!"
+        ]
+      },
+      "farewell": true
+    }
+  ],
+  "suggested_words": [],
+  "required_items": [
+    "phrase.good_afternoon",
+    "phrase.good_morning",
+    "phrase.likewise",
+    "word.milk",
+    "phrase.youre_welcome",
+    "phrase.at_the_back",
+    "phrase.its_over_there",
+    "phrase.where_is_x",
+    "word.bread",
+    "word.cheese",
+    "word.rice",
+    "phrase.need_a_bag",
+    "phrase.its_x_euros",
+    "phrase.no_thanks",
+    "phrase.card_ok",
+    "phrase.cash",
+    "phrase.receipt_nif",
+    "word.change",
+    "phrase.excuse_me",
+    "word.number"
+  ],
+  "new_items_tl": [
+    "Precisa de ajuda?",
+    "cartão de cliente",
+    "Pode passar.",
+    "O terminal não está a funcionar."
+  ],
+  "recommended_day": 9
+}

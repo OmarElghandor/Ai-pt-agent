@@ -1,0 +1,250 @@
+{
+  "source": "topic",
+  "kind": "scene",
+  "authored": true,
+  "target_lang": "pt-PT",
+  "topic_id": "cena-vizinha",
+  "title_tl": "A vizinha do primeiro andar",
+  "title_ar": "الجارة على السلم",
+  "emoji": "🏢",
+  "scene_eg": "سلم العمارة. Dona Graça، جارتك الكبيرة، بتقابلك لأول مرة.",
+  "intro_eg": "عرّفها بنفسك: اسمك، إنت منين، بتشتغل إيه، وساكن في أنهي دور.",
+  "scene": {
+    "character_id": "graca",
+    "place": "Dona Graça is the older neighbour from the first floor, meeting the learner on the stairs",
+    "time_of_day": "afternoon",
+    "address": "formal"
+  },
+  "opening": {
+    "tl": "Boa tarde! O senhor é o vizinho novo?",
+    "ar": "مساء الخير! هل أنت الجار الجديد؟",
+    "tl_f": "Boa tarde! A senhora é a vizinha nova?",
+    "ar_f": "مساء الخير! هل أنتِ الجارة الجديدة؟"
+  },
+  "closing": {
+    "tl": "Até logo! 👋",
+    "ar": "إلى اللقاء!"
+  },
+  "goals": [
+    {
+      "id": "vizinha.new_neighbour",
+      "tier": "core",
+      "intent_eg": "يسلّم ويقول أيوه",
+      "intent_en": "greet her and say yes",
+      "ask_tl": "Boa tarde! O senhor é o vizinho novo?",
+      "ask_ar": "مساء الخير! هل أنت الجار الجديد؟",
+      "ask_tl_f": "Boa tarde! A senhora é a vizinha nova?",
+      "ask_ar_f": "مساء الخير! هل أنتِ الجارة الجديدة؟",
+      "examples_tl": [
+        "Boa tarde! Sim, sou eu.",
+        "Sim, sou eu!",
+        "Boa tarde! Sim."
+      ],
+      "keywords": [
+        "sim",
+        "sou",
+        "boa tarde",
+        "olá",
+        "ola"
+      ],
+      "help": {
+        "frame_tl": "Boa tarde! Sim, sou eu.",
+        "eg": "o vizinho novo = الجار الجديد. الستات الكبار بيقولوا o senhor / a senhora.",
+        "chips": [
+          "Boa tarde! Sim, sou eu.",
+          "Sim, sou eu!"
+        ]
+      }
+    },
+    {
+      "id": "vizinha.name",
+      "tier": "core",
+      "intent_eg": "يقول اسمه وتشرفنا",
+      "intent_en": "say their name and nice to meet you",
+      "ask_tl": "Bem-vindo! Eu sou a Graça, moro no primeiro andar. E o senhor, como se chama?",
+      "ask_ar": "أهلًا بك! أنا غراسا، أسكن في الطابق الأول. وأنت، ما اسمك؟",
+      "ask_tl_f": "Bem-vinda! Eu sou a Graça, moro no primeiro andar. E a senhora, como se chama?",
+      "ask_ar_f": "أهلًا بكِ! أنا غراسا، أسكن في الطابق الأول. وأنتِ، ما اسمكِ؟",
+      "examples_tl": [
+        "Muito prazer! Chamo-me Omar.",
+        "Muito prazer, Dona Graça. Sou o Omar.",
+        "Chamo-me Omar. Muito prazer!"
+      ],
+      "keywords": [
+        "chamo",
+        "prazer",
+        "sou o",
+        "sou a",
+        "nome"
+      ],
+      "help": {
+        "frame_tl": "Muito prazer! Chamo-me ___.",
+        "eg": "قول تشرفنا واسمك: Muito prazer! Chamo-me + اسمك",
+        "chips": [
+          "Muito prazer! Chamo-me Omar.",
+          "Muito prazer! Sou o Omar."
+        ]
+      }
+    },
+    {
+      "id": "vizinha.from",
+      "tier": "core",
+      "intent_eg": "يقول هو منين",
+      "intent_en": "say where they are from",
+      "ask_tl": "E de onde é?",
+      "ask_ar": "ومن أين أنت؟",
+      "examples_tl": [
+        "Sou do Egito.",
+        "Sou egípcio. Sou do Cairo.",
+        "Do Egito.",
+        "Sou egípcia. Sou do Cairo."
+      ],
+      "keywords": [
+        "egito",
+        "egípci",
+        "egipci",
+        "cairo",
+        "alexandria",
+        "sou de",
+        "sou do"
+      ],
+      "help": {
+        "frame_tl": "Sou do Egito.",
+        "eg": "de onde é = إنت منين. Sou do Egito.",
+        "chips": [
+          "Sou do Egito.",
+          "Sou egípcio, do Cairo."
+        ],
+        "chips_f": [
+          "Sou do Egito.",
+          "Sou egípcia, do Cairo."
+        ]
+      }
+    },
+    {
+      "id": "vizinha.job",
+      "tier": "core",
+      "intent_eg": "يقول شغلته",
+      "intent_en": "say what their job is",
+      "ask_tl": "E o que faz?",
+      "ask_ar": "وماذا تعمل؟",
+      "examples_tl": [
+        "Sou engenheiro.",
+        "Sou estudante.",
+        "Trabalho num escritório.",
+        "Sou engenheira."
+      ],
+      "keywords": [
+        "sou",
+        "trabalho",
+        "engenheir",
+        "estudante",
+        "professor",
+        "médic",
+        "medic"
+      ],
+      "help": {
+        "frame_tl": "Sou ___.",
+        "eg": "O que faz? = بتشتغل إيه؟ Sou engenheiro. / Sou estudante.",
+        "chips": [
+          "Sou engenheiro.",
+          "Sou estudante."
+        ],
+        "chips_f": [
+          "Sou engenheira.",
+          "Sou estudante."
+        ]
+      }
+    },
+    {
+      "id": "vizinha.flat",
+      "tier": "core",
+      "intent_eg": "يقول ساكن فين في العمارة",
+      "intent_en": "say which floor and flat they live in",
+      "ask_tl": "E mora no segundo esquerdo, não é?",
+      "ask_ar": "وتسكن في الطابق الثاني يسار، أليس كذلك؟",
+      "examples_tl": [
+        "Sim, moro no segundo esquerdo.",
+        "Não, moro no terceiro direito.",
+        "Sim, no segundo esquerdo."
+      ],
+      "keywords": [
+        "moro",
+        "segundo",
+        "terceiro",
+        "primeiro",
+        "quarto",
+        "esquerdo",
+        "direito",
+        "sim",
+        "não"
+      ],
+      "help": {
+        "frame_tl": "Sim, moro no segundo esquerdo.",
+        "eg": "العنوان في البرتغال: الدور + الشقة. segundo esquerdo = الدور التاني، الشمال · direito = اليمين.",
+        "chips": [
+          "Sim, moro no segundo esquerdo.",
+          "Não, moro no terceiro direito."
+        ]
+      }
+    },
+    {
+      "id": "vizinha.bye",
+      "tier": "core",
+      "intent_eg": "يودّعها",
+      "intent_en": "say goodbye",
+      "ask_tl": "Bem, vou às compras. Até logo!",
+      "ask_ar": "حسنًا، سأذهب للتسوق. إلى اللقاء!",
+      "examples_tl": [
+        "Até logo!",
+        "Até logo, Dona Graça!",
+        "Boa tarde! Até logo!"
+      ],
+      "keywords": [
+        "obrigad",
+        "adeus",
+        "até",
+        "ate",
+        "boa tarde",
+        "bom dia",
+        "xau",
+        "igualmente",
+        "logo"
+      ],
+      "help": {
+        "frame_tl": "Até logo!",
+        "eg": "Até logo = أشوفك بعدين",
+        "chips": [
+          "Até logo!",
+          "Até logo, Dona Graça!"
+        ]
+      },
+      "farewell": true
+    }
+  ],
+  "suggested_words": [],
+  "required_items": [
+    "phrase.good_afternoon",
+    "phrase.my_name_is",
+    "phrase.nice_to_meet",
+    "phrase.youre_welcome",
+    "phrase.see_you_later",
+    "phrase.welcome",
+    "word.neighbour_m",
+    "word.door",
+    "phrase.im_egyptian",
+    "phrase.im_from_cairo",
+    "phrase.where_are_you_from",
+    "phrase.im_engineer",
+    "phrase.what_do_you_do",
+    "word.student",
+    "phrase.are_you_ok"
+  ],
+  "new_items_tl": [
+    "o vizinho novo",
+    "o primeiro andar",
+    "o segundo esquerdo",
+    "é só bater à porta"
+  ],
+  "recommended_day": 20
+}

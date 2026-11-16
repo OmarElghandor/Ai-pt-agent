@@ -40,8 +40,12 @@ function isAddress(v: unknown): v is ConvoSceneAddress {
   return v === 'formal' || v === 'tu';
 }
 
-function parseGoal(raw: Record<string, unknown>): ConvoGoal {
+/** Parse one goal object (shared by lesson/topic banks and scene banks). */
+export function parseGoalFromRaw(raw: Record<string, unknown>): ConvoGoal {
   const helpRaw = (raw.help ?? {}) as Record<string, unknown>;
+  const chips_f = Array.isArray(helpRaw.chips_f)
+    ? helpRaw.chips_f.map((c) => String(c)).filter((c) => c.trim())
+    : undefined;
   const goal: ConvoGoal = {
     id: String(raw.id ?? ''),
     intent_eg: String(raw.intent_eg ?? ''),
@@ -57,6 +61,7 @@ function parseGoal(raw: Record<string, unknown>): ConvoGoal {
       chips: Array.isArray(helpRaw.chips)
         ? helpRaw.chips.map((c) => String(c))
         : [],
+      ...(chips_f && chips_f.length > 0 ? { chips_f } : {}),
     },
   };
   if (typeof raw.intent_en === 'string') goal.intent_en = raw.intent_en;
@@ -71,6 +76,14 @@ function parseGoal(raw: Record<string, unknown>): ConvoGoal {
   if (Array.isArray(raw.item_ids)) {
     goal.item_ids = raw.item_ids.map((id) => String(id)).filter(Boolean);
   }
+  if (Array.isArray(raw.facts_tl)) {
+    const facts = raw.facts_tl.map((s) => String(s).trim()).filter(Boolean);
+    if (facts.length) goal.facts_tl = facts;
+  }
+  if (typeof raw.cue_eg === 'string' && raw.cue_eg.trim()) {
+    goal.cue_eg = raw.cue_eg.trim();
+  }
+  if (raw.farewell === true) goal.farewell = true;
   const teachRaw = raw.teach;
   if (teachRaw && typeof teachRaw === 'object') {
     const t = teachRaw as Record<string, unknown>;
@@ -94,7 +107,12 @@ function parseGoal(raw: Record<string, unknown>): ConvoGoal {
   return goal;
 }
 
-function parseScene(raw: unknown): ConvoScene | undefined {
+/** @deprecated Prefer parseGoalFromRaw — kept for call-site clarity. */
+function parseGoal(raw: Record<string, unknown>): ConvoGoal {
+  return parseGoalFromRaw(raw);
+}
+
+export function parseSceneFromRaw(raw: unknown): ConvoScene | undefined {
   if (!raw || typeof raw !== 'object') return undefined;
   const s = raw as Record<string, unknown>;
   const character_id = String(s.character_id ?? 'ines');
@@ -105,6 +123,10 @@ function parseScene(raw: unknown): ConvoScene | undefined {
   if (typeof s.place === 'string' && s.place.trim()) scene.place = s.place;
   if (isAddress(s.address)) scene.address = s.address;
   return scene;
+}
+
+function parseScene(raw: unknown): ConvoScene | undefined {
+  return parseSceneFromRaw(raw);
 }
 
 /** Parse + validate a lesson-day bank JSON object. */
@@ -187,6 +209,13 @@ export function parseLessonDayBankJson(
         ? { ar_f: closingRaw.ar_f }
         : {}),
     };
+  }
+
+  // Scene banks live under content/v2/convo/scenes/ — use the scene loader.
+  if (doc.kind === 'scene') {
+    throw new Error(
+      `Scene bank${bank.topic_id ? ` ${bank.topic_id}` : ''}: use loadSceneBank / parseSceneBankJson, not parseLessonDayBankJson`,
+    );
   }
 
   // Topic banks (v4) need goals + ask_tl; core goals need teach.

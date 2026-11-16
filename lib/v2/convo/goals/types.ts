@@ -4,6 +4,8 @@ export type ConvoGoalHelp = {
   frame_tl: string;
   eg: string;
   chips: string[];
+  /** Female learner chip variants (scenes / role-play). */
+  chips_f?: string[];
 };
 
 export type ConvoSceneTimeOfDay = 'morning' | 'afternoon' | 'evening' | 'night';
@@ -51,6 +53,15 @@ export type ConvoGoal = {
   item_ids?: string[];
   /** v4 teaching beat — model never invents this. */
   teach?: ConvoGoalTeach;
+  /**
+   * Scene banks: facts the character must use and must not invent
+   * (prices, times, places, what's included).
+   */
+  facts_tl?: string[];
+  /** Scene banks: one short Egyptian cue under the character bubble. */
+  cue_eg?: string;
+  /** Scene banks: last goal — the goodbye. */
+  farewell?: boolean;
   help: ConvoGoalHelp;
 };
 
@@ -85,6 +96,11 @@ export type ConvoBankClosing = {
 
 export type ConvoGoalBank = {
   source: 'thread' | 'lesson' | 'generated' | 'topic';
+  /**
+   * Role-play scene bank (batch-rp-2). Loaded from content/v2/convo/scenes/,
+   * never from the free-talk topic catalog.
+   */
+  kind?: 'scene';
   topic_id?: string;
   day?: number;
   goals: ConvoGoal[];
@@ -100,6 +116,10 @@ export type ConvoGoalBank = {
   scene_eg?: string;
   opening?: ConvoBankOpening;
   closing?: ConvoBankClosing;
+  /** Scene entry card emoji. */
+  emoji?: string;
+  /** Scene path metadata: suggested curriculum day. */
+  recommended_day?: number;
   /**
    * Core curriculum items the topic needs (v4). Computed once and stored.
    * A topic is allowed at level N when every id is introduced by day ≤ N.
@@ -113,6 +133,16 @@ export type ConvoGoalBank = {
 
 export type ConvoGoalIssue = {
   path: string;
-  rule: 'shape' | 'examples' | 'keywords' | 'help' | 'intent' | 'ask' | 'opening';
+  rule:
+    | 'shape'
+    | 'examples'
+    | 'keywords'
+    | 'help'
+    | 'intent'
+    | 'ask'
+    | 'opening'
+    | 'closing'
+    | 'farewell'
+    | 'kind';
   message: string;
 };
