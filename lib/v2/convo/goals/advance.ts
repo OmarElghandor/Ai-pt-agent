@@ -18,7 +18,7 @@ export function applyCompletedGoals(
   session: ConvoSession,
   bank: ConvoGoalBank,
   completedIds: string[],
-  opts?: { assisted?: boolean },
+  opts?: { assisted?: boolean; learnerGender?: 'm' | 'f' },
 ): ConvoGoal[] {
   const as = opts?.assisted ? 'assisted' : 'done';
   const beforeCurrent = session.current_goal;
@@ -45,7 +45,10 @@ export function applyCompletedGoals(
       time_of_day: current.time_of_day,
     };
   }
-  session.pending_frame = pendingFrameFromGoal(current);
+  session.pending_frame = pendingFrameFromGoal(
+    current,
+    opts?.learnerGender ?? 'm',
+  );
   if (session.current_goal) {
     session.pending_question = {
       id: session.current_goal,

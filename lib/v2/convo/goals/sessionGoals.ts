@@ -10,12 +10,17 @@ export function firstOpenGoalId(states: ConvoGoalState[]): string | null {
 
 export function pendingFrameFromGoal(
   goal: ConvoGoal | undefined,
+  gender: 'm' | 'f' = 'm',
 ): { tl: string; eg: string; chips: string[] } | null {
   if (!goal) return null;
+  const chips =
+    gender === 'f' && goal.help.chips_f?.length
+      ? [...goal.help.chips_f]
+      : [...goal.help.chips];
   return {
     tl: goal.help.frame_tl,
     eg: goal.help.eg,
-    chips: [...goal.help.chips],
+    chips,
   };
 }
 

@@ -33,11 +33,16 @@ export type SteerAction =
 export function steerActionForTurns(
   turnsOnGoal: number,
   goal: ConvoGoal | undefined,
+  gender: 'm' | 'f' = 'm',
 ): SteerAction {
   if (!goal) return { kind: 'none' };
+  const chips =
+    gender === 'f' && goal.help.chips_f?.length
+      ? [...goal.help.chips_f]
+      : [...goal.help.chips];
   if (turnsOnGoal >= 4) {
     const sentence =
-      goal.help.chips[0] ?? goal.examples_tl[0] ?? goal.help.frame_tl;
+      chips[0] ?? goal.examples_tl[0] ?? goal.help.frame_tl;
     return {
       kind: 'coach_give_answer',
       eg: `قولها كده: ${sentence}`,
@@ -50,7 +55,7 @@ export function steerActionForTurns(
       kind: 'coach_frame',
       eg: goal.help.eg,
       frame_tl: goal.help.frame_tl,
-      chips: [...goal.help.chips],
+      chips,
     };
   }
   if (turnsOnGoal >= 2) {
@@ -60,14 +65,21 @@ export function steerActionForTurns(
 }
 
 /** Help ladder step 2 for مش عارف — frame + chips, never the bare answer alone. */
-export function stuckHelpForGoal(goal: ConvoGoal): {
+export function stuckHelpForGoal(
+  goal: ConvoGoal,
+  gender: 'm' | 'f' = 'm',
+): {
   eg: string;
   frame_tl: string;
   chips: string[];
 } {
+  const chips =
+    gender === 'f' && goal.help.chips_f?.length
+      ? [...goal.help.chips_f]
+      : [...goal.help.chips];
   return {
     eg: goal.help.eg,
     frame_tl: goal.help.frame_tl,
-    chips: [...goal.help.chips],
+    chips,
   };
 }

@@ -54,6 +54,13 @@ import {
   type ConvoGoalBank,
 } from '@/lib/v2/convo/goals';
 import {
+  askTlEndsOpen,
+  checkSceneGoals,
+  isSceneBank,
+  replyKeepsAskNumbers,
+  sceneCharacterPersonaJson,
+} from '@/lib/v2/convo/scenes';
+import {
   CORE_DONE_COACH_EG,
   allTierDone,
 } from '@/lib/v2/convo/goals/tiers';
@@ -146,6 +153,8 @@ async function callGoalModel(opts: {
   allowFormal?: boolean;
   /** Verbatim ask line after two failed model checks (F4). */
   fallbackAsk?: { tl: string; ar: string } | null;
+  /** Scenes: closed turns + plain ask_tl fallback (no «Hmm…»). */
+  sceneMode?: boolean;
 }): Promise<{
   pt: string;
   ar: string;
@@ -162,6 +171,21 @@ async function callGoalModel(opts: {
     knownWords: opts.knownWords,
     allowFormal: opts.allowFormal,
   };
+
+  const forceSceneOpen = <T extends { pt: string; decision: string; regenerateReason?: string }>(
+    parsed: T,
+  ): T => {
+    if (!opts.sceneMode) return parsed;
+    if (parsed.decision !== 'ok') return parsed;
+    if (askTlEndsOpen(parsed.pt)) return parsed;
+    return {
+      ...parsed,
+      decision: 'regenerate',
+      regenerateReason:
+        'end with a question or an answerable invitation (never a bare statement)',
+    };
+  };
+
   let rawAcc = '';
   let visibleAcc = '';
   const onChunk = (chunk: string) => {
@@ -182,7 +206,7 @@ async function callGoalModel(opts: {
     onChunk,
   });
 
-  let parsed = parseGoalConvoTurn(result.text, parseOpts);
+  let parsed = forceSceneOpen(parseGoalConvoTurn(result.text, parseOpts));
   if (parsed.decision === 'regenerate' && parsed.regenerateReason) {
     emit({ type: 'reaction_reset', text: '' });
     rawAcc = '';
@@ -194,12 +218,14 @@ async function callGoalModel(opts: {
       regenerateReason: parsed.regenerateReason,
       onChunk,
     });
-    parsed = parseGoalConvoTurn(result.text, parseOpts);
+    parsed = forceSceneOpen(parseGoalConvoTurn(result.text, parseOpts));
     if (parsed.decision === 'regenerate') {
       emit({ type: 'reaction_reset', text: '' });
       const ask = opts.fallbackAsk;
       if (ask?.tl) {
-        const pt = `Hmm… ${ask.tl}`.trim();
+        const pt = opts.sceneMode
+          ? ask.tl.trim()
+          : `Hmm… ${ask.tl}`.trim();
         emit({ type: 'reaction_reset', text: pt });
         const inputTokens =
           result.usage?.inputTokens ??
@@ -396,9 +422,13 @@ export async function runFreeConvoTurn(
     }
 
     // All authored goals done → free flow (weak items); no closing.
+    // Scenes never refill / free-flow.
     await flushCorrectionAuthored();
     if (recastTl) {
       emit({ type: 'bubble_ar', ar: '', pt: recastTl });
+    }
+    if (isSceneBank(bank)) {
+      return true;
     }
     session.goal_tier = 'free';
     const weak =
@@ -520,7 +550,10 @@ export async function runFreeConvoTurn(
       (g) => g.id === session.current_goal,
     );
     if (currentDefEarly) {
-      const help = stuckHelpForGoal(currentDefEarly);
+      const help = stuckHelpForGoal(
+        currentDefEarly,
+        input.learnerGender ?? 'm',
+      );
       session.pending_frame = {
         tl: help.frame_tl,
         eg: help.eg,
@@ -724,9 +757,13 @@ export async function runFreeConvoTurn(
   };
 
   // Topic requests go to the v4 router before the Arabic side channel
-  // (and re-run when already locked = switch topic).
+  // (and re-run when already locked = switch topic). Scenes never re-route.
+  const isSceneTopic =
+    topic.id.startsWith('cena-') ||
+    (session.topic_id?.startsWith('cena-') ?? false);
   if (
     learnerText &&
+    !isSceneTopic &&
     (isExplicitTopicRequest(learnerText) || isTopicRequestText(learnerText))
   ) {
     const level = session.learner_level ?? 1;
@@ -894,15 +931,66 @@ export async function runFreeConvoTurn(
     }
 
     const openDefs = openGoalsFromSession(session, bank);
+    const sceneMode = isSceneBank(bank);
+    const gender = input.learnerGender ?? 'm';
     // Teaching mode: only the current goal may complete (bank order, no skips).
+    // Scenes: ordered matching (current full; look-ahead only fuzzy≥2 / GOALS).
     const codeCompleted = learnerText
-      ? session.teaching_mode && currentDefEarly
-        ? messageCompletesGoal(learnerText, currentDefEarly)
-          ? [currentDefEarly.id]
-          : []
-        : checkGoals(learnerText, openDefs).completedIds
+      ? sceneMode
+        ? checkSceneGoals(learnerText, bank.goals, session.goals)
+            .completedIds
+        : session.teaching_mode && currentDefEarly
+          ? messageCompletesGoal(learnerText, currentDefEarly)
+            ? [currentDefEarly.id]
+            : []
+          : checkGoals(learnerText, openDefs).completedIds
       : [];
     const acceptedFromModel: string[] = [];
+
+    // Scene farewell: learner goodbye → closing + end card; no model turn.
+    if (
+      sceneMode &&
+      learnerText &&
+      currentDefEarly?.farewell &&
+      codeCompleted.includes(currentDefEarly.id)
+    ) {
+      pushExchange(session, 'learner', learnerText);
+      session.learner_lines = pushLearnerLine(
+        session.learner_lines ?? [],
+        learnerText,
+      );
+      applyCompletedGoals(session, bank, codeCompleted, {
+        learnerGender: gender,
+      });
+      const closingTl =
+        bank.closing?.tl?.trim() || 'Até logo!';
+      const closingAr = bank.closing?.ar?.trim() || 'إلى اللقاء!';
+      pushExchange(session, 'character', closingTl);
+      emit({ type: 'bubble_ar', ar: closingAr, pt: closingTl });
+      emit({
+        type: 'question',
+        id: 'scene.closing',
+        tl: closingTl,
+        kind: 'open',
+        item_id: 'closing',
+        audio_key: `free:${topic.id}:closing`,
+      });
+      const summary = buildExitSummary({
+        goals: session.goals,
+        defs: bank.goals,
+        suggestedWords: session.suggested_words,
+      });
+      emit({
+        type: 'coach',
+        id: 'scene_done',
+        eg: `خلصت ✓. ${summary.said.length ? `قلت: ${summary.said.slice(0, 8).join(' · ')}` : 'خلصت المكالمة.'}`,
+        moment: 'summary',
+      });
+      session.status = 'done';
+      session.phase = 'closing';
+      session.pending_frame = null;
+      return finish(true);
+    }
 
     // v4 teaching mode: authored teach → coach → ask (once per goal via teach_shown_for).
     if (shouldShowTeachForGoal(session, currentDefEarly)) {
@@ -938,7 +1026,7 @@ export async function runFreeConvoTurn(
           session.learner_lines ?? [],
           learnerText,
         );
-        const help = stuckHelpForGoal(currentDefEarly);
+        const help = stuckHelpForGoal(currentDefEarly, gender);
         emit({
           type: 'coach',
           id: `goal_steer_give:${currentDefEarly.id}`,
@@ -947,6 +1035,7 @@ export async function runFreeConvoTurn(
         });
         applyCompletedGoals(session, bank, [currentDefEarly.id], {
           assisted: true,
+          learnerGender: gender,
         });
         await advanceTeachingAfterGoal(bank, currentDefEarly);
         return finish(true);
@@ -954,7 +1043,7 @@ export async function runFreeConvoTurn(
 
       // 1st miss → frame chip, then fall through for one model reply.
       // turns_on_goal bumps later via applyCompletedGoals (empty completedIds).
-      const help = stuckHelpForGoal(currentDefEarly);
+      const help = stuckHelpForGoal(currentDefEarly, gender);
       emit({
         type: 'coach',
         id: `goal_steer_frame:${currentDefEarly.id}`,
@@ -981,14 +1070,16 @@ export async function runFreeConvoTurn(
         session.learner_lines ?? [],
         learnerText,
       );
-      applyCompletedGoals(session, bank, codeCompleted);
+      applyCompletedGoals(session, bank, codeCompleted, {
+        learnerGender: gender,
+      });
       await advanceTeachingAfterGoal(bank, currentDefEarly);
       return finish(true);
     }
 
     // V5 escalation before the model call (based on prior stuck turns).
     const turnsBefore = session.turns_on_goal ?? 0;
-    const steer = steerActionForTurns(turnsBefore, currentDefEarly);
+    const steer = steerActionForTurns(turnsBefore, currentDefEarly, gender);
     if (steer.kind === 'coach_frame') {
       const coachId = `goal_steer_frame:${currentDefEarly?.id ?? ''}`;
       if (session.coach_recent_ids.at(-1) !== coachId) {
@@ -1024,6 +1115,7 @@ export async function runFreeConvoTurn(
       }
       applyCompletedGoals(session, bank, [currentDefEarly.id], {
         assisted: true,
+        learnerGender: gender,
       });
       session.coach_phrase = setCoachPhrase(steer.sentence_tl);
       emit({
@@ -1060,7 +1152,7 @@ export async function runFreeConvoTurn(
 
     const currentDef = bank.goals.find((g) => g.id === session.current_goal);
     const askLines = currentDef
-      ? pickGoalAskLines(currentDef, input.learnerGender ?? 'm')
+      ? pickGoalAskLines(currentDef, gender)
       : null;
     const currentGoalLine = currentDef
       ? formatCurrentGoalLine({
@@ -1072,11 +1164,12 @@ export async function runFreeConvoTurn(
           goalId: currentDef.id,
           turnsOnGoal: session.turns_on_goal ?? 0,
           openGoalIds: openGoalsFromSession(session, bank).map((g) => g.id),
+          sceneMode,
+          factsTl: currentDef.facts_tl,
         })
       : '(no open goal — keep chatting naturally)';
 
     const characterId = session.character_id ?? topic.character_id;
-    const persona = requirePersona(characterId);
     const topicTitle =
       bank.title_tl?.trim() || topic.title_tl;
     const promptBuilt = buildGoalFreePrompt({
@@ -1086,7 +1179,7 @@ export async function runFreeConvoTurn(
       freeTopicPlace: session.scene?.place,
       sceneTimeOfDay: session.scene?.time_of_day,
       sceneAddress: session.scene?.address ?? bank.scene?.address,
-      facts: session.facts,
+      facts: sceneMode ? [] : session.facts,
       event: {
         verdict: 'correct',
         item_id: '',
@@ -1098,8 +1191,11 @@ export async function runFreeConvoTurn(
       candidates: [],
       lastExchanges: session.last_exchanges,
       learnerAnswer: learnerText || '(ready)',
-      personaJson: JSON.stringify(persona),
+      personaJson: sceneMode
+        ? sceneCharacterPersonaJson(characterId)
+        : JSON.stringify(requirePersona(characterId)),
       currentGoalLine,
+      sceneMode,
     });
     const { system, prompt } = freePromptPartsToMessages(promptBuilt);
     const allowFormal =
@@ -1112,10 +1208,24 @@ export async function runFreeConvoTurn(
       knownWords: session.suggested_words,
       allowFormal,
       fallbackAsk: askLines,
+      sceneMode,
     });
     metrics = { ...metrics, ...modelOut.metricsPartial };
     let replyPt = modelOut.pt;
     let replyAr = modelOut.ar;
+
+    // Scenes: closed statement or missing price/time numbers → plain ask_tl.
+    if (sceneMode && askLines?.tl?.trim()) {
+      const askTl = askLines.tl.trim();
+      if (
+        !askTlEndsOpen(replyPt) ||
+        !replyKeepsAskNumbers(replyPt, askTl)
+      ) {
+        replyPt = askTl;
+        replyAr = askLines.ar || replyAr;
+        emit({ type: 'reaction_reset', text: replyPt });
+      }
+    }
 
     // v4 V6 level guard on model replies only — authored ask/teach/closing skip it.
     {
@@ -1134,6 +1244,7 @@ export async function runFreeConvoTurn(
           ...bank.goals.flatMap((g) => [
             ...(g.examples_tl ?? []),
             ...(g.keywords ?? []),
+            ...(g.facts_tl ?? []),
             g.ask_tl ?? '',
             g.ask_tl_f ?? '',
             g.teach?.tl ?? '',
@@ -1156,10 +1267,22 @@ export async function runFreeConvoTurn(
             knownWords: session.suggested_words,
             allowFormal,
             fallbackAsk: askLines,
+            sceneMode,
           });
           metrics = { ...metrics, ...regen.metricsPartial };
           replyPt = regen.pt;
           replyAr = regen.ar;
+          if (sceneMode && askLines?.tl?.trim()) {
+            const askTl = askLines.tl.trim();
+            if (
+              !askTlEndsOpen(replyPt) ||
+              !replyKeepsAskNumbers(replyPt, askTl)
+            ) {
+              replyPt = askTl;
+              replyAr = askLines.ar || replyAr;
+              emit({ type: 'reaction_reset', text: replyPt });
+            }
+          }
           guard = checkReplyLevel({
             text: replyPt,
             level,
@@ -1169,7 +1292,7 @@ export async function runFreeConvoTurn(
             // Authored ask fallback — skip further level-guard checks.
             const fb = askLines?.tl?.trim() || currentDefEarly?.ask_tl || '';
             if (fb) {
-              replyPt = `Ah, ok! ${fb}`;
+              replyPt = sceneMode ? fb : `Ah, ok! ${fb}`;
               replyAr = askLines?.ar || currentDefEarly?.ask_ar || replyAr;
               emit({ type: 'reaction_reset', text: replyPt });
             }
@@ -1179,25 +1302,82 @@ export async function runFreeConvoTurn(
     }
 
     if (learnerText) {
-      acceptedFromModel.push(
-        ...acceptModelReportedGoals(
+      if (sceneMode) {
+        // Re-check with model GOALS for ordered look-ahead.
+        const sceneDone = checkSceneGoals(
           learnerText,
-          modelOut.reported_goal_ids,
-          openDefs,
-        ),
-      );
+          bank.goals,
+          session.goals,
+          { modelReportedIds: modelOut.reported_goal_ids },
+        ).completedIds;
+        acceptedFromModel.push(
+          ...sceneDone.filter((id) => !codeCompleted.includes(id)),
+        );
+      } else {
+        acceptedFromModel.push(
+          ...acceptModelReportedGoals(
+            learnerText,
+            modelOut.reported_goal_ids,
+            openDefs,
+          ),
+        );
+      }
     }
-    let completedIds = [
-      ...new Set([...codeCompleted, ...acceptedFromModel]),
-    ];
+    let completedIds = sceneMode
+      ? checkSceneGoals(learnerText, bank.goals, session.goals, {
+          modelReportedIds: modelOut.reported_goal_ids,
+        }).completedIds
+      : [...new Set([...codeCompleted, ...acceptedFromModel])];
     // Teaching: never complete a non-current goal out of bank order.
     if (session.teaching_mode && session.current_goal) {
       completedIds = completedIds.filter((id) => id === session.current_goal);
     }
-    applyCompletedGoals(session, bank, completedIds);
+    applyCompletedGoals(session, bank, completedIds, {
+      learnerGender: gender,
+    });
+
+    // Scene: farewell / all goals done → closing + end; no refill / free flow.
+    if (sceneMode) {
+      const farewellCompleted = completedIds.some(
+        (id) => bank.goals.find((g) => g.id === id)?.farewell,
+      );
+      const allDone =
+        session.goals.length > 0 &&
+        session.goals.every((g) => g.status !== 'open');
+      if (farewellCompleted || allDone) {
+        const closingTl = bank.closing?.tl?.trim() || 'Até logo!';
+        const closingAr = bank.closing?.ar?.trim() || 'إلى اللقاء!';
+        pushExchange(session, 'character', closingTl);
+        emit({ type: 'bubble_ar', ar: closingAr, pt: closingTl });
+        emit({
+          type: 'question',
+          id: 'scene.closing',
+          tl: closingTl,
+          kind: 'open',
+          item_id: 'closing',
+          audio_key: `free:${topic.id}:closing`,
+        });
+        const summary = buildExitSummary({
+          goals: session.goals,
+          defs: bank.goals,
+          suggestedWords: session.suggested_words,
+        });
+        emit({
+          type: 'coach',
+          id: 'scene_done',
+          eg: `خلصت ✓. ${summary.said.length ? `قلت: ${summary.said.slice(0, 8).join(' · ')}` : 'خلصت المكالمة.'}`,
+          moment: 'summary',
+        });
+        session.status = 'done';
+        session.phase = 'closing';
+        session.pending_frame = null;
+        return finish(true);
+      }
+    }
 
     // v4: core goals done → note + move to extended (no auto next-topic).
     if (
+      !sceneMode &&
       session.goal_tier === 'core' &&
       allTierDone(session.goals, bank.goals, 'core')
     ) {
@@ -1230,6 +1410,7 @@ export async function runFreeConvoTurn(
 
     // All goals done → coach note + weak refill; no authored closing (only on خلّص/كفاية).
     if (
+      !sceneMode &&
       session.goals.length > 0 &&
       session.goals.every((g) => g.status !== 'open')
     ) {
@@ -1291,10 +1472,14 @@ export async function runFreeConvoTurn(
     }
 
     const lineId = session.current_goal ?? `${topic.id}.goal`;
+    const cueGoal = bank.goals.find((g) => g.id === session.current_goal);
     emit({
       type: 'bubble_ar',
       ar: replyAr || '',
       pt: replyPt,
+      ...(cueGoal?.cue_eg?.trim()
+        ? { coach_eg: cueGoal.cue_eg.trim() }
+        : {}),
     });
     emit({
       type: 'question',

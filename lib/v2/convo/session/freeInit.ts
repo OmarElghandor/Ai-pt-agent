@@ -20,6 +20,7 @@ import {
   type ConvoSceneTimeOfDay,
 } from '@/lib/v2/convo/goals';
 import { loadAuthoredTopicBank } from '@/lib/v2/convo/goals/loadTopicBank';
+import { isSceneBank, loadSceneBank } from '@/lib/v2/convo/scenes';
 import { oneChatOpeningFrame } from '@/lib/v2/convo/topics/openingChips';
 import type { ConvoOpeningBubbles, ConvoSession } from './types';
 
@@ -131,14 +132,17 @@ export function buildFreeOpeningBubbles(
   if (bank?.opening) {
     const lines = pickBankOpeningLines(bank, opts?.learnerGender ?? 'm')!;
     const introEg = bank.intro_eg?.trim() || topic.intro_eg;
+    // Scenes: no intro card — character speaks first only.
+    const coach_intros =
+      isSceneBank(bank) || !introEg
+        ? []
+        : [{ item_id: topic.id, coach_intro_eg: introEg }];
     return {
       character: {
         tl: fillNameSlot(lines.tl, opts?.learnerName),
         ar: fillNameSlot(lines.ar, opts?.learnerName),
       },
-      coach_intros: introEg
-        ? [{ item_id: topic.id, coach_intro_eg: introEg }]
-        : [],
+      coach_intros,
       card_ids: [],
     };
   }
@@ -201,8 +205,15 @@ export function resolveFreeGoalBank(opts: {
   if (isOpenTopicId(opts.topic.id)) {
     return null;
   }
+  if (opts.topic.id.startsWith('cena-')) {
+    try {
+      return loadSceneBank(opts.topic.id);
+    } catch {
+      return null;
+    }
+  }
   const authored = loadAuthoredTopicBank(opts.topic.id);
-  if (authored) return authored;
+  if (authored && !isSceneBank(authored)) return authored;
   try {
     return loadGoalsForTopic(opts.topic.id);
   } catch {

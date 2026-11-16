@@ -75,8 +75,15 @@ export async function POST(req: Request) {
         controller.enqueue(encoder.encode(encodeConvoTurnEvent(event)));
       };
       try {
+        const sceneDefault =
+          session.module === 'free' &&
+          typeof session.topic_id === 'string' &&
+          session.topic_id.startsWith('cena-')
+            ? 'haiku'
+            : null;
         const liveModel = createLiveConvoStreamModel({
-          modelOverride: body?.convo_model ?? null,
+          // Scenes default to Haiku; body/dev-menu A/B still wins when set.
+          modelOverride: body?.convo_model ?? sceneDefault,
         });
         if (session.module === 'free') {
           const { metrics } = await runFreeConvoTurn({

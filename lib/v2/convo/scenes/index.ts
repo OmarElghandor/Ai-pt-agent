@@ -17,3 +17,17 @@ export {
   sceneBankPath,
   scenesDir,
 } from './load';
+export {
+  checkSceneGoals,
+  fuzzyMatchesExampleAtLeastTwoWords,
+} from './check';
+export {
+  askTlHasPriceOrTime,
+  numberWordsInAsk,
+  replyKeepsAskNumbers,
+} from './numbers';
+export { personaJsonForScene, sceneCharacterPersonaJson } from './persona';
+
+export function isSceneBank(bank: { kind?: string } | null | undefined): boolean {
+  return bank?.kind === 'scene';
+}

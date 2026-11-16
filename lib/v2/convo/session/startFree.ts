@@ -8,10 +8,13 @@ import {
 } from '@/lib/v2/convo/topics';
 import { currentNextLine } from '@/lib/v2/convo/free/nextLine';
 import { ensureLessonDayGoalBank } from '@/lib/v2/convo/goals';
+import { pickGoalAskLines } from '@/lib/v2/convo/prompt';
+import { isSceneBank } from '@/lib/v2/convo/scenes';
 import {
   buildFreeOpeningBubbles,
   createFreeConvoSessionDoc,
   freePackId,
+  resolveFreeGoalBank,
   type LearnerGender,
 } from './freeInit';
 import { buildFreeReopening } from './reopenFree';
@@ -53,6 +56,36 @@ async function resumeFree(
     typeof cleared.lesson_day === 'number' && cleared.lesson_day > 0
       ? cleared.lesson_day
       : null;
+  const sceneBank = resolveFreeGoalBank({ topic, lessonDay });
+  if (isSceneBank(sceneBank)) {
+    const session =
+      cleared !== existing ? await store.save(cleared) : cleared;
+    const opening = buildFreeOpeningBubbles(topic, {
+      learnerName,
+      lessonDay,
+      learnerGender,
+      bank: sceneBank,
+    });
+    // «كمّل المكالمة» replays the last character bubble.
+    const lastCharTl = [...session.last_exchanges]
+      .reverse()
+      .find((e) => e.role === 'character')
+      ?.tl?.trim();
+    if (lastCharTl) {
+      const current = sceneBank.goals.find(
+        (g) => g.id === session.current_goal,
+      );
+      const ask = current
+        ? pickGoalAskLines(current, learnerGender)
+        : null;
+      opening.character = {
+        tl: lastCharTl,
+        ar: ask?.ar?.trim() || opening.character.ar,
+      };
+    }
+    return { session, opening, resumed: true };
+  }
+
   if (
     cleared.pending_question &&
     !isOpenTopicId(topic.id) &&
