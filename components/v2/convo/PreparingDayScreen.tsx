@@ -81,7 +81,7 @@ export function PreparingDayScreen({
   onOpen,
   onRetry,
   onPracticeNow,
-  backHref = '/talk/learn',
+  backHref = '/roleplay',
 }: Props) {
   const lesson = stepState(readiness, 'lesson');
   const pack = stepState(readiness, 'pack');

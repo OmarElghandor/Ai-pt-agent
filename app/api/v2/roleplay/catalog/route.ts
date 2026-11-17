@@ -4,12 +4,19 @@ import {
   getCurrentV2UserId,
 } from '@/lib/v2/auth/session';
 import { isV2Enabled } from '@/lib/v2/flags';
-import { buildRoleplayCatalog } from '@/lib/v2/roleplay/catalog';
-import { MongoRoleplaySessionStore } from '@/lib/v2/roleplay/store';
+import {
+  buildSceneCatalog,
+  listActiveScenesByTopic,
+  listFinishedSceneIds,
+} from '@/lib/v2/convo/scenes';
+import { MongoConvoSessionStore } from '@/lib/v2/convo/session';
 
 export const runtime = 'nodejs';
 
-/** Role-play path: next scene + past finished calls. */
+/**
+ * Role-play path catalog (scenes on free-talk).
+ * Same shape as batch-rp-1 so RoleplayListScreen keeps working.
+ */
 export async function GET() {
   if (!isV2Enabled()) {
     return NextResponse.json({ error: 'v2 disabled' }, { status: 403 });
@@ -21,16 +28,15 @@ export async function GET() {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
 
-  const store = new MongoRoleplaySessionStore();
+  const store = new MongoConvoSessionStore();
   try {
-    const [finishedIds, activeBySituation] = await Promise.all([
-      store.listFinishedSituationIds(userId),
-      store.listActiveBySituation(userId),
+    const [finishedIds, activeByScene] = await Promise.all([
+      listFinishedSceneIds(store, userId),
+      listActiveScenesByTopic(store, userId),
     ]);
-    const catalog = buildRoleplayCatalog({
+    const catalog = buildSceneCatalog({
       finishedIds,
-      activeBySituation,
-      activeSituationIds: Object.keys(activeBySituation),
+      activeByScene,
     });
     return NextResponse.json(catalog);
   } catch (err) {

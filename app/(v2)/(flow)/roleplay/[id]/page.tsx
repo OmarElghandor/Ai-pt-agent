@@ -1,9 +1,10 @@
 import { RoleplaySituationClient } from '@/components/v2/roleplay/RoleplaySituationClient';
 import {
-  loadRoleplayIndex,
-  loadRoleplaySituation,
-} from '@/lib/v2/roleplay/load';
-import { nextSituationIdOnPath } from '@/lib/v2/roleplay/catalog';
+  loadSceneBank,
+  loadSceneIndex,
+  nextSceneIdOnPath,
+  nextUnfinishedSceneIdOnPath,
+} from '@/lib/v2/convo/scenes';
 import { notFound } from 'next/navigation';
 
 type Props = {
@@ -18,27 +19,29 @@ export default async function RoleplaySituationPage({
   const { id: raw } = await params;
   const sp = await searchParams;
   const id = decodeURIComponent(raw);
-  let situation;
+  let bank;
   try {
-    situation = loadRoleplaySituation(id);
+    bank = loadSceneBank(id);
   } catch {
     notFound();
   }
-  const index = loadRoleplayIndex();
-  const nextId = nextSituationIdOnPath(id, index);
+  const index = loadSceneIndex();
+  // Prefer next in path; client end card can still open the next unfinished.
+  const nextId =
+    nextUnfinishedSceneIdOnPath(id, [id], index) ??
+    nextSceneIdOnPath(id, index);
   const resume = sp.resume === '1' || sp.resume === 'true';
 
   return (
     <main className="mx-auto flex w-full max-w-[390px] flex-1 flex-col">
       <RoleplaySituationClient
         situation={{
-          id: situation.id,
-          emoji: situation.emoji,
-          title_tl: situation.title_tl,
-          title_ar: situation.title_ar,
-          place_eg: situation.place_eg,
-          task_eg: situation.task_eg,
-          learner_role_eg: situation.learner_role_eg,
+          id: bank.topic_id ?? id,
+          emoji: bank.emoji ?? '📞',
+          title_tl: bank.title_tl ?? id,
+          title_ar: bank.title_ar ?? id,
+          place_eg: bank.scene_eg ?? '',
+          task_eg: bank.intro_eg ?? '',
         }}
         nextSituationId={nextId}
         resume={resume}

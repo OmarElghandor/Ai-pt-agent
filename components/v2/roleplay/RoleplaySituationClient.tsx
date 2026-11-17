@@ -3,9 +3,8 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { Icon } from '@/components/v2/Icon';
+import { FreeTalkSession } from '@/components/v2/convo/FreeTalkSession';
 import { RoleplayIntroSheet } from '@/components/v2/roleplay/RoleplayIntroSheet';
-import { RoleplaySession } from '@/components/v2/roleplay/RoleplaySession';
-import type { RoleplayTurnEvent } from '@/lib/v2/roleplay/events';
 
 export type RoleplayIntroSituation = {
   id: string;
@@ -14,94 +13,33 @@ export type RoleplayIntroSituation = {
   title_ar: string;
   place_eg: string;
   task_eg: string;
-  learner_role_eg: string;
+  learner_role_eg?: string;
 };
 
 type Props = {
   situation: RoleplayIntroSituation;
   nextSituationId?: string | null;
-  /** When true, the CTA says كمّل المكالمة and start resumes. */
+  /** When true, the CTA says كمّل المكالمة. */
   resume?: boolean;
 };
 
-async function playFirstCharacterLine(
-  events: RoleplayTurnEvent[],
-): Promise<void> {
-  const first = events.find((e) => e.type === 'character');
-  if (!first || first.type !== 'character' || !first.tl.trim()) return;
-  try {
-    const res = await fetch('/api/tts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        text: first.tl,
-        lang: 'pt',
-        ...(first.voice ? { voice: first.voice } : {}),
-      }),
-    });
-    if (!res.ok) return;
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const audio = new Audio(url);
-    audio.onended = () => URL.revokeObjectURL(url);
-    await audio.play();
-  } catch {
-    /* ignore */
-  }
-}
-
+/**
+ * One-button intro → free-talk session on the scene bank (batch-rp-2).
+ */
 export function RoleplaySituationClient({
   situation,
   nextSituationId = null,
   resume = false,
 }: Props) {
   const [phase, setPhase] = useState<'intro' | 'play'>('intro');
-  const [starting, setStarting] = useState(false);
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const [startEvents, setStartEvents] = useState<RoleplayTurnEvent[]>([]);
-  const [firstLineAlreadyPlayed, setFirstLineAlreadyPlayed] = useState(false);
 
-  const start = async () => {
-    if (starting) return;
-    setStarting(true);
-    try {
-      const res = await fetch('/api/v2/roleplay/start', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          situation_id: situation.id,
-          resume,
-        }),
-      });
-      if (!res.ok) throw new Error(`start ${res.status}`);
-      const data = (await res.json()) as {
-        session_id: string;
-        events: RoleplayTurnEvent[];
-        resumed?: boolean;
-      };
-      await playFirstCharacterLine(data.events ?? []);
-      setFirstLineAlreadyPlayed(true);
-      setSessionId(data.session_id);
-      setStartEvents(data.events ?? []);
-      setPhase('play');
-    } catch {
-      /* keep intro */
-    } finally {
-      setStarting(false);
-    }
-  };
-
-  if (phase === 'play' && sessionId) {
+  if (phase === 'play') {
     return (
-      <RoleplaySession
-        situationId={situation.id}
-        titleTl={situation.title_tl}
-        titleAr={situation.title_ar}
-        sessionId={sessionId}
-        startEvents={startEvents}
-        nextSituationId={nextSituationId}
-        summaryEg={situation.learner_role_eg}
-        firstLineAlreadyPlayed={firstLineAlreadyPlayed}
+      <FreeTalkSession
+        topicId={situation.id}
+        sceneMode
+        nextSceneId={nextSituationId}
+        backHref="/roleplay"
       />
     );
   }
@@ -123,8 +61,7 @@ export function RoleplaySituationClient({
         titleAr={situation.title_ar}
         placeEg={situation.place_eg}
         taskEg={situation.task_eg}
-        onStart={() => void start()}
-        starting={starting}
+        onStart={() => setPhase('play')}
         resume={resume}
       />
     </div>

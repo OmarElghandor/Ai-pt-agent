@@ -1,3 +1,7 @@
+import {
+  activeScenesFromSessions,
+  finishedSceneIdsFromSessions,
+} from '@/lib/v2/convo/scenes/progress';
 import type { ConvoSession } from './types';
 
 export type ConvoSessionStore = {
@@ -5,6 +9,11 @@ export type ConvoSessionStore = {
   findOpen(userId: string, packId: string): Promise<ConvoSession | null>;
   /** Open free-chat topic ids for a user (practice picker «كمّل»). */
   findOpenFreeTopicIds?(userId: string): Promise<string[]>;
+  /** Scene path progress (batch-rp-2). */
+  listFinishedSceneIds?(userId: string): Promise<string[]>;
+  listActiveScenesByTopic?(
+    userId: string,
+  ): Promise<Record<string, { id: string }>>;
   create(session: ConvoSession): Promise<ConvoSession>;
   save(session: ConvoSession): Promise<ConvoSession>;
   /** Delete open session(s) for user+pack so start can reopen fresh. */
@@ -51,6 +60,16 @@ export class MemoryConvoSessionStore implements ConvoSessionStore {
       }
     }
     return ids;
+  }
+
+  async listFinishedSceneIds(userId: string): Promise<string[]> {
+    return finishedSceneIdsFromSessions(this.byId.values(), userId);
+  }
+
+  async listActiveScenesByTopic(
+    userId: string,
+  ): Promise<Record<string, { id: string }>> {
+    return activeScenesFromSessions(this.byId.values(), userId);
   }
 
   async create(session: ConvoSession): Promise<ConvoSession> {

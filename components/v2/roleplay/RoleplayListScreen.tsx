@@ -5,16 +5,16 @@ import { useEffect, useState } from 'react';
 import { Icon } from '@/components/v2/Icon';
 import { ScreenLoading } from '@/components/v2/ScreenLoading';
 import type {
-  RoleplayCatalog,
-  RoleplayCatalogScene,
-} from '@/lib/v2/roleplay/catalog';
+  SceneCatalog,
+  SceneCatalogEntry,
+} from '@/lib/v2/convo/scenes';
 
-function situationHref(s: RoleplayCatalogScene): string {
+function situationHref(s: SceneCatalogEntry): string {
   const base = `/roleplay/${encodeURIComponent(s.id)}`;
   return s.resume ? `${base}?resume=1` : base;
 }
 
-function NextCard({ s }: { s: RoleplayCatalogScene }) {
+function NextCard({ s }: { s: SceneCatalogEntry }) {
   return (
     <Link
       href={situationHref(s)}
@@ -46,7 +46,7 @@ function NextCard({ s }: { s: RoleplayCatalogScene }) {
   );
 }
 
-function PathRow({ s }: { s: RoleplayCatalogScene }) {
+function PathRow({ s }: { s: SceneCatalogEntry }) {
   const finished = s.finished;
   return (
     <li>
@@ -92,7 +92,7 @@ function PathRow({ s }: { s: RoleplayCatalogScene }) {
 }
 
 export function RoleplayListScreen() {
-  const [catalog, setCatalog] = useState<RoleplayCatalog | null>(null);
+  const [catalog, setCatalog] = useState<SceneCatalog | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -101,7 +101,7 @@ export function RoleplayListScreen() {
       try {
         const res = await fetch('/api/v2/roleplay/catalog');
         if (!res.ok) throw new Error(`catalog ${res.status}`);
-        const data = (await res.json()) as RoleplayCatalog;
+        const data = (await res.json()) as SceneCatalog;
         if (!cancelled) setCatalog(data);
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : 'failed');

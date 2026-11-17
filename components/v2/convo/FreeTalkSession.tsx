@@ -12,6 +12,8 @@ import {
   readConvoModelChoice,
   type ConvoModelChoice,
 } from './ConvoDevMenu';
+import { RoleplayResultCard } from '@/components/v2/roleplay/RoleplayResultCard';
+import type { RoleplayResultState } from '@/components/v2/roleplay/roleplayStreamReduce';
 import { ConvoSummaryCard } from './ConvoSummaryCard';
 import { ConvoVoiceBar } from './ConvoVoiceBar';
 import { LearnerBubble } from './LearnerBubble';
@@ -42,12 +44,21 @@ type Props = {
   day?: number | null;
   /** Dev-only curriculum level override (`?level=N`). */
   level?: number | null;
+  /** Role-play scene on free-talk (batch-rp-2). */
+  sceneMode?: boolean;
+  /** «المكالمة الجاية» target after scene end. */
+  nextSceneId?: string | null;
+  /** Back link (default /talk; scenes use /roleplay). */
+  backHref?: string;
 };
 
 export function FreeTalkSession({
   topicId,
   day = null,
   level = null,
+  sceneMode = false,
+  nextSceneId = null,
+  backHref = '/talk',
 }: Props) {
   const [loading, setLoading] = useState(true);
   const [errorEg, setErrorEg] = useState<string | null>(null);
@@ -70,13 +81,24 @@ export function FreeTalkSession({
   const [assisted, setAssisted] = useState(false);
   const [openMode, setOpenMode] = useState(topicId === 'open');
   const [characterId, setCharacterId] = useState('ines');
-  const [convoModel, setConvoModel] = useState<ConvoModelChoice>('qwen');
+  const [convoModel, setConvoModel] = useState<ConvoModelChoice>(
+    sceneMode ? 'haiku' : 'qwen',
+  );
   const [summary, setSummary] = useState<ConvoSessionSummary | null>(null);
+  const [sceneResult, setSceneResult] = useState<RoleplayResultState | null>(
+    null,
+  );
   const [ending, setEnding] = useState(false);
 
   useEffect(() => {
-    setConvoModel(readConvoModelChoice());
-  }, []);
+    const saved = readConvoModelChoice();
+    // Scenes default Haiku; respect an explicit A/B cookie when set.
+    if (sceneMode && (!saved || saved === 'qwen')) {
+      setConvoModel('haiku');
+    } else {
+      setConvoModel(saved);
+    }
+  }, [sceneMode]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const bubblesRef = useRef<TalkBubble[]>([]);
   const streamBubbleId = useRef<string | null>(null);
@@ -106,6 +128,26 @@ export function FreeTalkSession({
         }
         // Teach meanings ride on bubble_ar.coach_eg — skip legacy teach: coaches.
         if (event.id.startsWith('teach:')) {
+          return;
+        }
+        if (sceneMode && event.id === 'scene_done') {
+          const corrections = bubblesRef.current
+            .filter((b) => b.role === 'learner' && b.correction?.tl)
+            .map((b) => ({
+              tl: b.correction!.tl,
+              ...(b.correction!.ar ? { ar: b.correction!.ar } : {}),
+            }));
+          const said = bubblesRef.current
+            .filter((b) => b.role === 'learner' && b.tl.trim())
+            .map((b) => b.tl.trim())
+            .slice(-8);
+          setSceneResult({
+            alone: said.length,
+            assisted: 0,
+            key_phrases: said,
+            corrections,
+            summary_eg: event.eg,
+          });
           return;
         }
         const next = [
@@ -176,7 +218,7 @@ export function FreeTalkSession({
         setErrorEg('حاول تاني');
       }
     },
-    [syncAuthoritative],
+    [syncAuthoritative, sceneMode],
   );
 
   const markLearnerFailed = useCallback(
@@ -426,17 +468,37 @@ export function FreeTalkSession({
     titleTl,
     titleAr,
   });
-  const headerTitle = isLessonDay
-    ? [partnerLabel(characterId), titlesLine].filter(Boolean).join(' · ')
-    : partnerLabel(characterId);
-  const headerSub = isLessonDay
-    ? `يوم ${lessonDay}${titleAr ? ` · ${titleAr}` : ''}`
-    : topicLine;
+  const scenePartner =
+    characterId && characterId !== 'ines'
+      ? characterId.charAt(0).toUpperCase() + characterId.slice(1)
+      : partnerLabel(characterId);
+  const headerTitle = sceneMode
+    ? titleTl || scenePartner
+    : isLessonDay
+      ? [partnerLabel(characterId), titlesLine].filter(Boolean).join(' · ')
+      : partnerLabel(characterId);
+  const headerSub = sceneMode
+    ? titleAr || topicLine
+    : isLessonDay
+      ? `يوم ${lessonDay}${titleAr ? ` · ${titleAr}` : ''}`
+      : topicLine;
   const chipLabel = isLessonDay
     ? `يوم ${lessonDay}${titleAr ? ` · ${titleAr}` : ''}`
     : topicLine;
-  const partner = partnerLabel(characterId);
+  const partner = sceneMode ? scenePartner : partnerLabel(characterId);
   const partnerInitial = partner.slice(0, 1).toUpperCase();
+
+  if (sceneResult) {
+    return (
+      <div className="v2-free-talk mx-auto flex h-[100dvh] w-full max-w-[390px] flex-col overflow-y-auto">
+        <RoleplayResultCard
+          result={sceneResult}
+          situationId={topicId}
+          nextSituationId={nextSceneId}
+        />
+      </div>
+    );
+  }
 
   if (summary) {
     return (
@@ -444,7 +506,7 @@ export function FreeTalkSession({
         <ConvoSummaryCard
           summary={summary}
           practiceHref="/talk/free/open"
-          backHref="/talk"
+          backHref={backHref}
           showPracticeCta={false}
         />
       </div>
@@ -466,7 +528,7 @@ export function FreeTalkSession({
     <div className="v2-free-talk mx-auto flex h-[100dvh] w-full max-w-[390px] flex-col">
       <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-2 border-b border-[var(--ft-border)]/60 bg-[color-mix(in_srgb,var(--ft-ivory)_80%,transparent)] px-3 shadow-[0_1px_8px_rgba(0,0,0,0.03)] backdrop-blur-xl">
         <Link
-          href="/talk"
+          href={backHref}
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[var(--ft-ink)]"
           aria-label="رجوع"
         >
@@ -539,14 +601,16 @@ export function FreeTalkSession({
             window.location.reload();
           }}
         />
-        <button
-          type="button"
-          onClick={() => void endSession()}
-          disabled={!sessionId || ending || loading}
-          className="shrink-0 rounded-[var(--ft-radius-control)] bg-[var(--ft-sage)] px-3.5 py-1.5 font-[family-name:var(--font-ft-ar)] text-[13px] font-semibold text-[var(--ft-on-sage)] disabled:opacity-40"
-        >
-          خلّص
-        </button>
+        {sceneMode ? null : (
+          <button
+            type="button"
+            onClick={() => void endSession()}
+            disabled={!sessionId || ending || loading}
+            className="shrink-0 rounded-[var(--ft-radius-control)] bg-[var(--ft-sage)] px-3.5 py-1.5 font-[family-name:var(--font-ft-ar)] text-[13px] font-semibold text-[var(--ft-on-sage)] disabled:opacity-40"
+          >
+            خلّص
+          </button>
+        )}
       </header>
 
       <div

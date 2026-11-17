@@ -220,6 +220,53 @@ export class MongoConvoSessionStore implements ConvoSessionStore {
     return ids;
   }
 
+  async listFinishedSceneIds(userId: string): Promise<string[]> {
+    await connectMongo();
+    const docs = await V2ConvoSessionModel()
+      .find({
+        user_id: userId,
+        module: 'free',
+        status: 'done',
+        topic_id: { $regex: /^cena-/ },
+      })
+      .select({ topic_id: 1 })
+      .lean();
+    const ids = new Set<string>();
+    for (const d of docs) {
+      const tid = (d as { topic_id?: string | null }).topic_id;
+      if (tid?.startsWith('cena-')) ids.add(tid);
+    }
+    return [...ids];
+  }
+
+  async listActiveScenesByTopic(
+    userId: string,
+  ): Promise<Record<string, { id: string }>> {
+    await connectMongo();
+    const docs = await V2ConvoSessionModel()
+      .find({
+        user_id: userId,
+        module: 'free',
+        status: 'open',
+        topic_id: { $regex: /^cena-/ },
+      })
+      .select({ _id: 1, topic_id: 1, pack_id: 1 })
+      .lean();
+    const out: Record<string, { id: string }> = {};
+    for (const d of docs) {
+      const row = d as {
+        _id: string;
+        topic_id?: string | null;
+        pack_id?: string;
+      };
+      const tid = row.topic_id;
+      if (!tid?.startsWith('cena-')) continue;
+      if (row.pack_id && row.pack_id !== `free.${tid}`) continue;
+      out[tid] = { id: String(row._id) };
+    }
+    return out;
+  }
+
   async create(session: ConvoSession): Promise<ConvoSession> {
     await connectMongo();
     const created = await V2ConvoSessionModel().create({

@@ -27,6 +27,17 @@ export {
   replyKeepsAskNumbers,
 } from './numbers';
 export { personaJsonForScene, sceneCharacterPersonaJson } from './persona';
+export {
+  buildSceneCatalog,
+  nextSceneIdOnPath,
+  nextUnfinishedSceneIdOnPath,
+  type SceneCatalog,
+  type SceneCatalogEntry,
+} from './catalog';
+export {
+  listActiveScenesByTopic,
+  listFinishedSceneIds,
+} from './progress';
 
 export function isSceneBank(bank: { kind?: string } | null | undefined): boolean {
   return bank?.kind === 'scene';
