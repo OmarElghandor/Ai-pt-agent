@@ -12,8 +12,10 @@ import {
   readConvoModelChoice,
   type ConvoModelChoice,
 } from './ConvoDevMenu';
-import { RoleplayResultCard } from '@/components/v2/roleplay/RoleplayResultCard';
-import type { RoleplayResultState } from '@/components/v2/roleplay/roleplayStreamReduce';
+import {
+  RoleplayResultCard,
+  type RoleplayResultState,
+} from '@/components/v2/roleplay/RoleplayResultCard';
 import { ConvoSummaryCard } from './ConvoSummaryCard';
 import { ConvoVoiceBar } from './ConvoVoiceBar';
 import { LearnerBubble } from './LearnerBubble';

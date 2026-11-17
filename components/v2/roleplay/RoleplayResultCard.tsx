@@ -1,7 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import type { RoleplayResultState } from './roleplayStreamReduce';
+
+export type RoleplayResultState = {
+  alone: number;
+  assisted: number;
+  key_phrases: string[];
+  corrections: Array<{ tl: string; ar?: string }>;
+  summary_eg: string;
+};
 
 type Props = {
   result: RoleplayResultState;
