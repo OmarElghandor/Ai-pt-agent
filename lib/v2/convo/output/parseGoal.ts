@@ -1,3 +1,4 @@
+import { askTlEndsOpen } from '@/lib/v2/convo/scenes/validate';
 import {
   findBrazilianLeak,
   findEnglishLeak,
@@ -127,7 +128,12 @@ export function collapseRepeatedPt(text: string): string {
 
 export function parseGoalConvoTurn(
   text: string,
-  opts?: { knownWords?: string[]; allowFormal?: boolean },
+  opts?: {
+    knownWords?: string[];
+    allowFormal?: boolean;
+    /** Scenes: invitations (Diga) count as open, not only `?`. */
+    sceneMode?: boolean;
+  },
 ): ParseGoalConvoResult {
   const { pt: rawPt, ar, goalsRaw } = splitGoalMarkers(text);
   const { ids, missing } = parseReportedGoalIds(goalsRaw);
@@ -147,7 +153,8 @@ export function parseGoalConvoTurn(
   const ptIssue = checkPtScript(pt);
   if (ptIssue) extraIssues.push(ptIssue);
 
-  if (!/\?/.test(pt)) {
+  const endsOpen = opts?.sceneMode ? askTlEndsOpen(pt) : /\?/.test(pt);
+  if (!endsOpen) {
     extraIssues.push('missing_question');
   }
   if (!opts?.allowFormal && FORMAL_RE.test(pt)) {
@@ -171,7 +178,11 @@ export function parseGoalConvoTurn(
     reasons.push('add AR: with the Arabic translation');
   }
   if (extraIssues.includes('missing_question')) {
-    reasons.push('end with exactly one question');
+    reasons.push(
+      opts?.sceneMode
+        ? 'end with a question or an answerable invitation'
+        : 'end with exactly one question',
+    );
   }
   if (extraIssues.includes('formal')) {
     reasons.push('use tu forms only');

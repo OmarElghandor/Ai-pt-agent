@@ -22,6 +22,7 @@ A scene is a normal goal bank (`ConvoGoalBank`) with a few extra fields. The 15 
 | `facts_tl[]` | goal | Facts the character must use and must not invent (prices, times, places, what's included) |
 | `cue_eg` | goal | One short Egyptian line shown under the character bubble, only on goals where the learner must start («اسأله بكام.») |
 | `farewell: true` | goal | The last goal: the goodbye |
+| `label_eg` | goal | 2–4 Egyptian words for the mission checklist («اطلب مشروب») |
 | `help.chips_f[]` | goal | Chips for a female learner |
 
 Every goal has `ask_tl` / `ask_ar`: the character's line that opens the goal. **Every `ask_tl` already ends with a question or an invitation**, and facts like prices are inside it («São dois euros e sessenta. Cartão ou dinheiro?»).
@@ -51,6 +52,21 @@ Every goal has `ask_tl` / `ask_ar`: the character's line that opens the goal. **
 8. **Scenes stay out of free talk:** they never appear in the router catalog, the opening chips, or the allowed-topics list.
 9. **The level guard** treats the scene's `ask_tl`, `examples_tl`, `facts_tl` and `new_items_tl` words as allowed.
 10. **Path progress:** the next scene is the first one in `path` without a finished session.
+
+## The mission strip (Omar, 2026-11-17: «مفيش أي guide بيقول لليوزر محتاج يتكلم عن إيه»)
+
+The learner must always know what this scene is about, without long instructions.
+
+- **Under the header, pinned, one line:** 🎯 + the bank's `intro_eg` («اطلب مشروب وحاجة تاكلها، اسأل الحساب كام، وادفع.»). It never scrolls away.
+- **Tap it** → it expands into the goal checklist: one row per goal with its new `label_eg` («اطلب مشروب», «اطلب حاجة تاكلها», «اسأل الحساب كام», «ادفع»…). Done goals get ✓, the current goal is bold. Tap again to collapse.
+- When a goal completes, its row ticks with a small animation, and the strip shows «2 من 7» next to the mission.
+- **No other guidance by default.** `cue_eg` (under the bubble) and the help ladder stay as they are.
+- **Remove the free-talk topic chip** («الموضوع: …») in scenes; the strip replaces it.
+
+## Bugs seen in the 2026-11-17 café run
+
+1. **The character is Inês in the café; the bank says `manuel`.** In a scene, the name, avatar and voice come from `scene.character_id`. Add a test for every scene.
+2. **The first answer was ignored.** «quria um cafe por favor» → the character repeated «Bom dia! Diga.»; the same message the second time completed the goal. The first learner message must go straight to the scene's goal check: no greeting pre-filter, no router, no topic logic in scenes. Test: the first message «quria um cafe por favor» completes `cafe.order_drink`.
 
 ## Prompt to paste into Cursor
 

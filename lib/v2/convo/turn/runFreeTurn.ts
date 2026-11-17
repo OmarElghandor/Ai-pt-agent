@@ -144,6 +144,22 @@ function pushExchange(
   ].slice(-3);
 }
 
+export type SceneTurnGuard =
+  | 'accepted'
+  | 'parse_regen'
+  | 'force_closed'
+  | 'numbers'
+  | 'level'
+  | 'ask_fallback';
+
+export type SceneTurnModelLog = {
+  model_called: boolean;
+  raw: string[];
+  guard: SceneTurnGuard;
+  final_pt: string;
+  current_goal: string | null;
+};
+
 async function callGoalModel(opts: {
   model: ConvoStreamModel;
   system: string;
@@ -165,12 +181,18 @@ async function callGoalModel(opts: {
     'ttft_ms' | 'input_tokens' | 'cached_input_tokens' | 'output_tokens'
   >;
   usedAskFallback?: boolean;
+  /** Scene diagnostics: raw model outputs + why we fell back. */
+  sceneLog?: Pick<SceneTurnModelLog, 'model_called' | 'raw' | 'guard'>;
 }> {
   const { model, system, prompt, emit } = opts;
   const parseOpts = {
     knownWords: opts.knownWords,
     allowFormal: opts.allowFormal,
+    sceneMode: opts.sceneMode,
   };
+  const maxTokens = opts.sceneMode ? 320 : 180;
+  const raws: string[] = [];
+  let guard: SceneTurnGuard = 'accepted';
 
   const forceSceneOpen = <T extends { pt: string; decision: string; regenerateReason?: string }>(
     parsed: T,
@@ -178,6 +200,7 @@ async function callGoalModel(opts: {
     if (!opts.sceneMode) return parsed;
     if (parsed.decision !== 'ok') return parsed;
     if (askTlEndsOpen(parsed.pt)) return parsed;
+    guard = 'force_closed';
     return {
       ...parsed,
       decision: 'regenerate',
@@ -202,23 +225,50 @@ async function callGoalModel(opts: {
   let result = await streamFn({
     system,
     prompt,
-    maxTokens: 180,
+    maxTokens,
     onChunk,
   });
+  raws.push(result.text);
 
-  let parsed = forceSceneOpen(parseGoalConvoTurn(result.text, parseOpts));
+  const softenSceneParse = (
+    parsed: ReturnType<typeof parseGoalConvoTurn>,
+  ): ReturnType<typeof parseGoalConvoTurn> => {
+    // Scenes: keep a good open PT even if AR/GOALS were truncated (Haiku).
+    if (!opts.sceneMode || parsed.decision === 'ok') return parsed;
+    const pt = parsed.pt.trim();
+    if (!pt || !askTlEndsOpen(pt)) return parsed;
+    const onlyMissingAr =
+      parsed.extraIssues.includes('missing_ar') &&
+      !parsed.extraIssues.some((e) => e !== 'missing_ar') &&
+      parsed.issues.length === 0;
+    if (!onlyMissingAr && parsed.extraIssues.length > 0) return parsed;
+    return {
+      ...parsed,
+      ar: parsed.ar || opts.fallbackAsk?.ar || '',
+      decision: 'ok',
+      regenerateReason: undefined,
+    };
+  };
+
+  let parsed = forceSceneOpen(
+    softenSceneParse(parseGoalConvoTurn(result.text, parseOpts)),
+  );
   if (parsed.decision === 'regenerate' && parsed.regenerateReason) {
+    if (guard === 'accepted') guard = 'parse_regen';
     emit({ type: 'reaction_reset', text: '' });
     rawAcc = '';
     visibleAcc = '';
     result = await streamFn({
       system,
       prompt,
-      maxTokens: 180,
+      maxTokens,
       regenerateReason: parsed.regenerateReason,
       onChunk,
     });
-    parsed = forceSceneOpen(parseGoalConvoTurn(result.text, parseOpts));
+    raws.push(result.text);
+    parsed = forceSceneOpen(
+      softenSceneParse(parseGoalConvoTurn(result.text, parseOpts)),
+    );
     if (parsed.decision === 'regenerate') {
       emit({ type: 'reaction_reset', text: '' });
       const ask = opts.fallbackAsk;
@@ -242,6 +292,11 @@ async function callGoalModel(opts: {
           reported_goal_ids: [],
           unknownWords: [],
           usedAskFallback: true,
+          sceneLog: {
+            model_called: true,
+            raw: raws,
+            guard: 'ask_fallback',
+          },
           metricsPartial: {
             ttft_ms: result.ttftMs,
             input_tokens: inputTokens,
@@ -267,6 +322,11 @@ async function callGoalModel(opts: {
   const dropped = parsed.decision === 'drop';
   return {
     pt: dropped ? '' : parsed.pt,
+    sceneLog: {
+      model_called: true,
+      raw: raws,
+      guard,
+    },
     ar: dropped ? '' : parsed.ar,
     reported_goal_ids: dropped ? [] : parsed.reported_goal_ids,
     unknownWords: parsed.unknownWords,
@@ -476,6 +536,9 @@ export async function runFreeConvoTurn(
         struggled: session.struggled,
         said_once: session.said_once,
         survival_used: session.survival_used,
+        goals: session.goals,
+        current_goal: session.current_goal,
+        character_id: session.character_id,
       },
     });
     emit({ type: 'metrics', ...metrics });
@@ -873,7 +936,9 @@ export async function runFreeConvoTurn(
   }
 
   // —— v4 router: unlocked greeting / small talk → reask ——
+  // Scenes never use the greeting pre-filter (batch-rp-2).
   if (
+    !isSceneTopic &&
     !session.topic_locked &&
     !hasGoals &&
     learnerText &&
@@ -1150,6 +1215,23 @@ export async function runFreeConvoTurn(
       session.facts = pushFreeFact(session.facts, fact);
     }
 
+    // Scenes: advance completed goals BEFORE prompt/model so ask_tl / fallback
+    // target the next open goal (fixes off-by-one). Snapshot pre-advance
+    // states so post-model look-ahead still uses ordered rules (not a weak
+    // re-match of the same text against the new current goal).
+    const sceneGoalsBeforeEarly = sceneMode
+      ? session.goals.map((g) => ({ ...g }))
+      : null;
+    const sceneAppliedEarly =
+      sceneMode && codeCompleted.length > 0
+        ? [...codeCompleted]
+        : ([] as string[]);
+    if (sceneAppliedEarly.length) {
+      applyCompletedGoals(session, bank, sceneAppliedEarly, {
+        learnerGender: gender,
+      });
+    }
+
     const currentDef = bank.goals.find((g) => g.id === session.current_goal);
     const askLines = currentDef
       ? pickGoalAskLines(currentDef, gender)
@@ -1213,17 +1295,23 @@ export async function runFreeConvoTurn(
     metrics = { ...metrics, ...modelOut.metricsPartial };
     let replyPt = modelOut.pt;
     let replyAr = modelOut.ar;
+    let sceneGuard: SceneTurnGuard = modelOut.sceneLog?.guard ?? 'accepted';
+    const sceneRaws = [...(modelOut.sceneLog?.raw ?? [])];
 
-    // Scenes: closed statement or missing price/time numbers → plain ask_tl.
+    // Scenes: closed statement or missing price/time numbers → plain ask_tl
+    // of the *next* open goal (already advanced above when completing).
     if (sceneMode && askLines?.tl?.trim()) {
       const askTl = askLines.tl.trim();
-      if (
-        !askTlEndsOpen(replyPt) ||
-        !replyKeepsAskNumbers(replyPt, askTl)
-      ) {
+      if (!askTlEndsOpen(replyPt)) {
         replyPt = askTl;
         replyAr = askLines.ar || replyAr;
         emit({ type: 'reaction_reset', text: replyPt });
+        sceneGuard = 'force_closed';
+      } else if (!replyKeepsAskNumbers(replyPt, askTl)) {
+        replyPt = askTl;
+        replyAr = askLines.ar || replyAr;
+        emit({ type: 'reaction_reset', text: replyPt });
+        sceneGuard = 'numbers';
       }
     }
 
@@ -1252,13 +1340,13 @@ export async function runFreeConvoTurn(
           ]),
           ...session.suggested_words,
         ];
-        let guard = checkReplyLevel({
+        let levelGuard = checkReplyLevel({
           text: replyPt,
           level,
           extraAllowed,
         });
-        if (!guard.ok && replyPt.trim()) {
-          const regenSystem = `${system}\n\nLEVEL GUARD: do not use these words: ${guard.offLevel.join(', ')}. Stay within the learner's level.`;
+        if (!levelGuard.ok && replyPt.trim()) {
+          const regenSystem = `${system}\n\nLEVEL GUARD: do not use these words: ${levelGuard.offLevel.join(', ')}. Stay within the learner's level.`;
           const regen = await callGoalModel({
             model: input.model,
             system: regenSystem,
@@ -1272,46 +1360,68 @@ export async function runFreeConvoTurn(
           metrics = { ...metrics, ...regen.metricsPartial };
           replyPt = regen.pt;
           replyAr = regen.ar;
+          if (regen.sceneLog?.raw?.length) {
+            sceneRaws.push(...regen.sceneLog.raw);
+          }
           if (sceneMode && askLines?.tl?.trim()) {
             const askTl = askLines.tl.trim();
-            if (
-              !askTlEndsOpen(replyPt) ||
-              !replyKeepsAskNumbers(replyPt, askTl)
-            ) {
+            if (!askTlEndsOpen(replyPt)) {
               replyPt = askTl;
               replyAr = askLines.ar || replyAr;
               emit({ type: 'reaction_reset', text: replyPt });
+              sceneGuard = 'force_closed';
+            } else if (!replyKeepsAskNumbers(replyPt, askTl)) {
+              replyPt = askTl;
+              replyAr = askLines.ar || replyAr;
+              emit({ type: 'reaction_reset', text: replyPt });
+              sceneGuard = 'numbers';
             }
           }
-          guard = checkReplyLevel({
+          levelGuard = checkReplyLevel({
             text: replyPt,
             level,
             extraAllowed,
           });
-          if (!guard.ok) {
+          if (!levelGuard.ok) {
             // Authored ask fallback — skip further level-guard checks.
             const fb = askLines?.tl?.trim() || currentDefEarly?.ask_tl || '';
             if (fb) {
               replyPt = sceneMode ? fb : `Ah, ok! ${fb}`;
               replyAr = askLines?.ar || currentDefEarly?.ask_ar || replyAr;
               emit({ type: 'reaction_reset', text: replyPt });
+              if (sceneMode) sceneGuard = 'level';
             }
           }
         }
       }
     }
 
+    if (sceneMode) {
+      const log: SceneTurnModelLog = {
+        model_called: modelOut.sceneLog?.model_called ?? true,
+        raw: sceneRaws,
+        guard: sceneGuard,
+        final_pt: replyPt,
+        current_goal: session.current_goal,
+      };
+      console.info(JSON.stringify({ tag: 'v2_scene_turn', ...log }));
+      if (sceneGuard !== 'accepted') {
+        metrics.regenerate_reason = sceneGuard;
+      }
+    }
+
     if (learnerText) {
       if (sceneMode) {
-        // Re-check with model GOALS for ordered look-ahead.
+        // Re-check against *pre-advance* states + model GOALS so look-ahead
+        // stays ordered (never treat the next goal as current for this text).
         const sceneDone = checkSceneGoals(
           learnerText,
           bank.goals,
-          session.goals,
+          sceneGoalsBeforeEarly ?? session.goals,
           { modelReportedIds: modelOut.reported_goal_ids },
         ).completedIds;
         acceptedFromModel.push(
-          ...sceneDone.filter((id) => !codeCompleted.includes(id)),
+          ...sceneDone.filter((id) => !sceneAppliedEarly.includes(id)),
         );
       } else {
         acceptedFromModel.push(
@@ -1324,9 +1434,7 @@ export async function runFreeConvoTurn(
       }
     }
     let completedIds = sceneMode
-      ? checkSceneGoals(learnerText, bank.goals, session.goals, {
-          modelReportedIds: modelOut.reported_goal_ids,
-        }).completedIds
+      ? [...acceptedFromModel]
       : [...new Set([...codeCompleted, ...acceptedFromModel])];
     // Teaching: never complete a non-current goal out of bank order.
     if (session.teaching_mode && session.current_goal) {
@@ -1338,7 +1446,7 @@ export async function runFreeConvoTurn(
 
     // Scene: farewell / all goals done → closing + end; no refill / free flow.
     if (sceneMode) {
-      const farewellCompleted = completedIds.some(
+      const farewellCompleted = [...sceneAppliedEarly, ...completedIds].some(
         (id) => bank.goals.find((g) => g.id === id)?.farewell,
       );
       const allDone =

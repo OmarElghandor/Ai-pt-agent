@@ -14,6 +14,8 @@ export {
 export {
   runFreeConvoTurn,
   type RunFreeConvoTurnInput,
+  type SceneTurnGuard,
+  type SceneTurnModelLog,
 } from './runFreeTurn';
 export {
   sessionHasGoals,

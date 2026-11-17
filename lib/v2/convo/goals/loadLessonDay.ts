@@ -83,6 +83,9 @@ export function parseGoalFromRaw(raw: Record<string, unknown>): ConvoGoal {
   if (typeof raw.cue_eg === 'string' && raw.cue_eg.trim()) {
     goal.cue_eg = raw.cue_eg.trim();
   }
+  if (typeof raw.label_eg === 'string' && raw.label_eg.trim()) {
+    goal.label_eg = raw.label_eg.trim();
+  }
   if (raw.farewell === true) goal.farewell = true;
   const teachRaw = raw.teach;
   if (teachRaw && typeof teachRaw === 'object') {

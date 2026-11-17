@@ -119,6 +119,9 @@ export type ConvoTurnStreamEvent =
         | 'struggled'
         | 'said_once'
         | 'survival_used'
+        | 'goals'
+        | 'current_goal'
+        | 'character_id'
       >;
     }
   | {

@@ -30,11 +30,14 @@ export function createLiveConvoStreamModel(opts?: {
       const started = Date.now();
       let ttftMs = -1;
       let text = '';
+      // Haiku/Anthropic rejects temperature on some models; passing it can
+      // yield empty streams. Only set temperature for non-Anthropic.
+      const useTemperature = spec.provider !== 'anthropic';
       const result = streamText({
         model: getConvoModel(opts?.modelOverride),
         system: input.system,
         prompt: withRegen(input.prompt, input.regenerateReason),
-        temperature: 0.4,
+        ...(useTemperature ? { temperature: 0.4 } : {}),
         maxOutputTokens: input.maxTokens ?? 48,
       });
 
@@ -42,6 +45,15 @@ export function createLiveConvoStreamModel(opts?: {
         if (ttftMs < 0) ttftMs = Date.now() - started;
         text += chunk;
         input.onChunk?.(chunk);
+      }
+      // Some Anthropic streams yield no deltas but still fill `text`.
+      if (!text.trim()) {
+        const full = await result.text;
+        if (full?.trim()) {
+          text = full;
+          if (ttftMs < 0) ttftMs = Date.now() - started;
+          input.onChunk?.(full);
+        }
       }
       if (ttftMs < 0) ttftMs = Date.now() - started;
 

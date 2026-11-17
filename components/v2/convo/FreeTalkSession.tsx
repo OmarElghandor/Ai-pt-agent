@@ -24,6 +24,10 @@ import { TalkDevPanel, type TalkTurnMetrics } from './TalkDevPanel';
 import { reduceFreeTalkStream } from './freeTalkStreamReduce';
 import { usePacedBubbles } from './usePacedBubbles';
 import { freeTalkTopicHeaderLine } from '@/lib/v2/convo/ui/topicHeader';
+import {
+  SceneMissionStrip,
+  type SceneMissionGoal,
+} from './SceneMissionStrip';
 import type { TalkBubble } from './types';
 
 const PARTNERS = [
@@ -32,12 +36,34 @@ const PARTNERS = [
   { id: 'nour', label: 'Nour' },
 ] as const;
 
+/** Known cast display names (never default scene cast to Inês). */
+const CAST_LABELS: Record<string, string> = {
+  ines: 'Inês',
+  tiago: 'Tiago',
+  nour: 'Nour',
+  rita: 'Rita',
+  carlos: 'Carlos',
+  manuel: 'Manuel',
+  sofia: 'Sofia',
+  graca: 'Graça',
+  yassin: 'Yassin',
+};
+
 function newId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
 function partnerLabel(id: string): string {
   return PARTNERS.find((p) => p.id === id)?.label ?? 'Inês';
+}
+
+function castLabel(id: string): string {
+  const key = id.trim().toLowerCase();
+  if (!key) return '';
+  if (CAST_LABELS[key]) return CAST_LABELS[key]!;
+  const fromPartners = PARTNERS.find((p) => p.id === key)?.label;
+  if (fromPartners) return fromPartners;
+  return key.charAt(0).toUpperCase() + key.slice(1);
 }
 
 type Props = {
@@ -91,6 +117,12 @@ export function FreeTalkSession({
     null,
   );
   const [ending, setEnding] = useState(false);
+  const [missionIntroEg, setMissionIntroEg] = useState('');
+  const [missionGoals, setMissionGoals] = useState<SceneMissionGoal[]>([]);
+  const [missionCurrentGoal, setMissionCurrentGoal] = useState<string | null>(
+    null,
+  );
+  const [missionDoneIds, setMissionDoneIds] = useState<string[]>([]);
 
   useEffect(() => {
     const saved = readConvoModelChoice();
@@ -203,6 +235,24 @@ export function FreeTalkSession({
         setTitleTl(event.title_tl);
         setTitleAr(event.title_ar);
         setOpenMode(false);
+        return;
+      }
+      if (event.type === 'session') {
+        if (event.session.character_id) {
+          setCharacterId(event.session.character_id);
+        }
+        if (sceneMode) {
+          if (event.session.current_goal !== undefined) {
+            setMissionCurrentGoal(event.session.current_goal);
+          }
+          if (event.session.goals) {
+            setMissionDoneIds(
+              event.session.goals
+                .filter((g) => g.status !== 'open')
+                .map((g) => g.id),
+            );
+          }
+        }
         return;
       }
       if (event.type === 'metrics') {
@@ -356,6 +406,12 @@ export function FreeTalkSession({
           warm_lines?: string[];
           open_mode?: boolean;
           character_id?: string;
+          scene_mission?: {
+            intro_eg: string;
+            goals: SceneMissionGoal[];
+            current_goal: string | null;
+            done_ids: string[];
+          };
         };
         if (cancelled) return;
         setSessionId(data.session_id);
@@ -372,6 +428,12 @@ export function FreeTalkSession({
         // open just because topicId === 'open' — that hid locked topic titles.
         setOpenMode(resolvedDay ? false : Boolean(data.open_mode));
         if (data.character_id) setCharacterId(data.character_id);
+        if (data.scene_mission) {
+          setMissionIntroEg(data.scene_mission.intro_eg);
+          setMissionGoals(data.scene_mission.goals);
+          setMissionCurrentGoal(data.scene_mission.current_goal);
+          setMissionDoneIds(data.scene_mission.done_ids);
+        }
         if (data.current_frame) setFrame(data.current_frame);
         const warm = (data.warm_lines ?? []).slice(0, 3);
         for (const line of warm) {
@@ -470,10 +532,7 @@ export function FreeTalkSession({
     titleTl,
     titleAr,
   });
-  const scenePartner =
-    characterId && characterId !== 'ines'
-      ? characterId.charAt(0).toUpperCase() + characterId.slice(1)
-      : partnerLabel(characterId);
+  const scenePartner = castLabel(characterId);
   const headerTitle = sceneMode
     ? titleTl || scenePartner
     : isLessonDay
@@ -488,7 +547,7 @@ export function FreeTalkSession({
     ? `يوم ${lessonDay}${titleAr ? ` · ${titleAr}` : ''}`
     : topicLine;
   const partner = sceneMode ? scenePartner : partnerLabel(characterId);
-  const partnerInitial = partner.slice(0, 1).toUpperCase();
+  const partnerInitial = (partner || '?').slice(0, 1).toUpperCase();
 
   if (sceneResult) {
     return (
@@ -615,6 +674,15 @@ export function FreeTalkSession({
         )}
       </header>
 
+      {sceneMode ? (
+        <SceneMissionStrip
+          introEg={missionIntroEg}
+          goals={missionGoals}
+          currentGoalId={missionCurrentGoal}
+          doneIds={missionDoneIds}
+        />
+      ) : null}
+
       <div
         ref={scrollRef}
         className="flex-1 overflow-y-auto px-4 py-4"
@@ -625,7 +693,7 @@ export function FreeTalkSession({
         role="presentation"
       >
         <div className="flex flex-col gap-3.5">
-          {isLessonDay || titleTl || titleAr ? (
+          {sceneMode ? null : isLessonDay || titleTl || titleAr ? (
             <div className="flex justify-center">
               <span className="rounded-[var(--ft-radius-control)] bg-[var(--ft-mist)]/50 px-3 py-1 font-[family-name:var(--font-ft-ar)] text-[11px] text-[var(--ft-text-secondary)]">
                 {isLessonDay ? chipLabel : `الموضوع: ${topicLine}`}
@@ -640,7 +708,7 @@ export function FreeTalkSession({
                 <CharacterBubble
                   key={b.id}
                   tone="calm"
-                  partnerName={partnerLabel(characterId)}
+                  partnerName={partner}
                   tl={b.tl}
                   streaming={b.streaming}
                   meaningEg={b.ar}

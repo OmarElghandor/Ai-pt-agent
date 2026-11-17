@@ -93,6 +93,13 @@ export function validateSceneBank(bank: ConvoGoalBank): {
   }
 
   goals.forEach((g, i) => {
+    if (!g.label_eg?.trim()) {
+      issues.push({
+        path: `goals[${i}].label_eg`,
+        rule: 'shape',
+        message: 'scene goal needs label_eg (mission checklist)',
+      });
+    }
     if (g.farewell) return;
     const ask = g.ask_tl?.trim() ?? '';
     if (ask && !askTlEndsOpen(ask)) {

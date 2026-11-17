@@ -60,6 +60,8 @@ export type ConvoGoal = {
   facts_tl?: string[];
   /** Scene banks: one short Egyptian cue under the character bubble. */
   cue_eg?: string;
+  /** Scene banks: 2–4 Egyptian words for the mission checklist. */
+  label_eg?: string;
   /** Scene banks: last goal — the goodbye. */
   farewell?: boolean;
   help: ConvoGoalHelp;
