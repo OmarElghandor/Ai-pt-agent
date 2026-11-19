@@ -2,6 +2,10 @@ import { loadGoalsForDay } from '@/lib/v2/convo/goals/fromLesson';
 import { getCachedLessonDayBankSync } from '@/lib/v2/convo/goals/loadLessonDay';
 import { loadAuthoredTopicBank } from '@/lib/v2/convo/goals/loadTopicBank';
 import type { ConvoGoalBank } from '@/lib/v2/convo/goals/types';
+import {
+  loadSceneBank,
+  normalizeSceneId,
+} from '@/lib/v2/convo/scenes';
 import { isOpenTopicId, OPEN_TOPIC } from './openTopic';
 import {
   loadFreeTopicsFile,
@@ -92,7 +96,7 @@ function freeTopicFromThreadSafe(topicId: string): FreeTopic | null {
 
 /**
  * Resolve any free-talk topic id to a FreeTopic row.
- * Order: open → thread → authored topic bank → lesson-day bank → generated cache.
+ * Order: open → scene bank → thread → authored topic bank → lesson-day → cache.
  */
 export function resolveFreeTopic(
   topicId: string,
@@ -102,11 +106,24 @@ export function resolveFreeTopic(
   if (!id) return null;
   if (isOpenTopicId(id)) return OPEN_TOPIC;
 
+  // Role-play scenes (batch-rp-2) — not in the free-talk catalog.
+  if (id.startsWith('cena-')) {
+    try {
+      const sceneId = normalizeSceneId(id);
+      const bank = loadSceneBank(sceneId);
+      return freeTopicFromGoalBank(sceneId, bank);
+    } catch {
+      // fall through
+    }
+  }
+
   const thread = threadTopicById(id, file);
   if (thread && !isOpenTopicId(thread.id)) return thread;
 
   const authored = loadAuthoredTopicBank(id);
-  if (authored) return freeTopicFromGoalBank(id, authored);
+  if (authored && authored.kind !== 'scene') {
+    return freeTopicFromGoalBank(id, authored);
+  }
 
   const day = parseLessonDayTopicId(id);
   if (day != null) {

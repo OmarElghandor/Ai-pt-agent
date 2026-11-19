@@ -61,6 +61,9 @@ type Props = {
   onSttMs?: (ms: number) => void;
   /** Unclear STT coach message. */
   onUnclearStt?: () => void;
+  /** External fill (e.g. scene suggest chip) — puts text in the input. */
+  fillText?: string | null;
+  onFillConsumed?: () => void;
 };
 
 function formatRec(seconds: number): string {
@@ -78,6 +81,8 @@ export function ConvoVoiceBar({
   onBargeIn,
   frame,
   helpOpen,
+  fillText,
+  onFillConsumed,
   onToggleHelp,
   onSttMs,
   onUnclearStt,
@@ -102,6 +107,14 @@ export function ConvoVoiceBar({
   useEffect(() => {
     setMode(readInputMode());
   }, []);
+
+  useEffect(() => {
+    if (!fillText?.trim()) return;
+    setText(fillText);
+    setMode('text');
+    writeInputMode('text');
+    onFillConsumed?.();
+  }, [fillText, onFillConsumed]);
 
   useEffect(() => {
     if (ptMic.recording || arMic.recording) {

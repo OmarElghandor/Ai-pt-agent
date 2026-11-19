@@ -4,6 +4,15 @@ import { loadPlan } from './plan';
 
 export type CoreItemKind = 'word' | 'phrase' | 'pattern' | 'verb';
 
+/** Frequency / reuse tier (00 §4, 2026-11-19). */
+export type CoreItemPriority = 'essential' | 'useful' | 'situational';
+
+const CORE_ITEM_PRIORITIES = new Set<CoreItemPriority>([
+  'essential',
+  'useful',
+  'situational',
+]);
+
 /** Hard cap per day (00 §1 — split lessons larger than this). */
 export const MAX_CORE_ITEMS_PER_DAY = 14;
 
@@ -22,6 +31,8 @@ export type CoreItem = {
   kind: CoreItemKind;
   tl: string;
   eg: string;
+  /** High-frequency / reuse tier — required on every core item. */
+  priority: CoreItemPriority;
   /** Phrase: learner says vs hears. Copied onto phrase items. */
   role?: 'said' | 'heard';
   /** Said phrase that answers this heard line (id). */
@@ -77,7 +88,7 @@ export type CoreItemsDay = {
   day: number;
   title_tl?: string;
   is_story: boolean;
-  /** Phase test day (A1 on day 54) — no new items. */
+  /** Phase test day (A1 on day 56) — no new items. */
   is_test?: boolean;
   core_items: CoreItem[];
   recycle_ids: string[];
@@ -152,6 +163,16 @@ export function validateCoreItemsFile(
       if (!item?.id) {
         issues.push({ path, rule: 'missing_id', message: 'item missing id' });
         continue;
+      }
+      if (
+        !item.priority ||
+        !CORE_ITEM_PRIORITIES.has(item.priority as CoreItemPriority)
+      ) {
+        issues.push({
+          path: `${path}.priority`,
+          rule: 'priority_required',
+          message: `${item.id} needs priority essential|useful|situational`,
+        });
       }
       const prev = idOwner.get(item.id);
       if (prev != null) {
@@ -296,7 +317,12 @@ export function loadCoreItemsFile(
   }
   const issues = validateCoreItemsFile(raw);
   const fatals = issues.filter((i) =>
-    ['empty_file', 'core_items_cap', 'duplicate_id'].includes(i.rule),
+    [
+      'empty_file',
+      'core_items_cap',
+      'duplicate_id',
+      'priority_required',
+    ].includes(i.rule),
   );
   if (fatals.length) {
     throw new Error(

@@ -181,6 +181,27 @@ export async function POST(req: Request) {
         });
         const title_tl = bank?.title_tl?.trim() || topic.title_tl;
         const title_ar = bank?.title_ar?.trim() || topic.title_ar;
+        const sceneMission =
+          bank?.kind === 'scene'
+            ? {
+                intro_eg: bank.intro_eg?.trim() || '',
+                goals: bank.goals
+                  .filter((g) => !g.farewell)
+                  .map((g) => ({
+                    id: g.id,
+                    label_eg: g.label_eg?.trim() || g.intent_eg || g.id,
+                  })),
+                current_goal: result.session.current_goal,
+                done_ids: result.session.goals
+                  .filter(
+                    (g) => g.status === 'done' || g.status === 'assisted',
+                  )
+                  .map((g) => g.id),
+                skipped_ids: result.session.goals
+                  .filter((g) => g.status === 'skipped')
+                  .map((g) => g.id),
+              }
+            : null;
         return NextResponse.json({
           session_id: result.session.id,
           module: 'free',
@@ -205,6 +226,7 @@ export async function POST(req: Request) {
           lesson_day: result.session.lesson_day ?? null,
           session: sessionPayload,
           character_id: result.session.character_id ?? topic.character_id,
+          ...(sceneMission ? { scene_mission: sceneMission } : {}),
         });
       }
 

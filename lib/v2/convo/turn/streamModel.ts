@@ -1,5 +1,6 @@
 import { streamText } from 'ai';
 import {
+  getChatModel,
   getConvoModel,
   parseConvoModelSpec,
 } from '@/lib/model';
@@ -15,11 +16,16 @@ function withRegen(prompt: string, reason?: string): string {
 /**
  * Live model streamer (AI SDK + `V2_CONVO_MODEL` / override).
  * Prefer `stream` for tag-early handling; `complete` buffers.
+ * Scenes (FINAL SPEC §3): always `getChatModel()`, no Haiku A/B.
  */
 export function createLiveConvoStreamModel(opts?: {
   modelOverride?: string | null;
+  /** Scenes: force getChatModel() (ignore override / Haiku). */
+  sceneMode?: boolean;
 }): ConvoStreamModel {
-  const spec = parseConvoModelSpec(opts?.modelOverride);
+  const spec = opts?.sceneMode
+    ? parseConvoModelSpec('qwen')
+    : parseConvoModelSpec(opts?.modelOverride);
   return {
     async complete(input) {
       return this.stream!({
@@ -30,18 +36,32 @@ export function createLiveConvoStreamModel(opts?: {
       const started = Date.now();
       let ttftMs = -1;
       let text = '';
+      // Haiku/Anthropic rejects temperature on some models; passing it can
+      // yield empty streams. Only set temperature for non-Anthropic.
+      const useTemperature = spec.provider !== 'anthropic';
       const result = streamText({
-        model: getConvoModel(opts?.modelOverride),
+        model: opts?.sceneMode
+          ? getChatModel()
+          : getConvoModel(opts?.modelOverride),
         system: input.system,
         prompt: withRegen(input.prompt, input.regenerateReason),
-        temperature: 0.4,
-        maxOutputTokens: input.maxTokens ?? 48,
+        ...(useTemperature ? { temperature: 0.4 } : {}),
+        maxOutputTokens: input.maxTokens ?? (opts?.sceneMode ? 80 : 48),
       });
 
       for await (const chunk of result.textStream) {
         if (ttftMs < 0) ttftMs = Date.now() - started;
         text += chunk;
         input.onChunk?.(chunk);
+      }
+      // Some Anthropic streams yield no deltas but still fill `text`.
+      if (!text.trim()) {
+        const full = await result.text;
+        if (full?.trim()) {
+          text = full;
+          if (ttftMs < 0) ttftMs = Date.now() - started;
+          input.onChunk?.(full);
+        }
       }
       if (ttftMs < 0) ttftMs = Date.now() - started;
 

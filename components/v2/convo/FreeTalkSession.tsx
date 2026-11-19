@@ -12,6 +12,10 @@ import {
   readConvoModelChoice,
   type ConvoModelChoice,
 } from './ConvoDevMenu';
+import {
+  RoleplayResultCard,
+  type RoleplayResultState,
+} from '@/components/v2/roleplay/RoleplayResultCard';
 import { ConvoSummaryCard } from './ConvoSummaryCard';
 import { ConvoVoiceBar } from './ConvoVoiceBar';
 import { LearnerBubble } from './LearnerBubble';
@@ -20,6 +24,10 @@ import { TalkDevPanel, type TalkTurnMetrics } from './TalkDevPanel';
 import { reduceFreeTalkStream } from './freeTalkStreamReduce';
 import { usePacedBubbles } from './usePacedBubbles';
 import { freeTalkTopicHeaderLine } from '@/lib/v2/convo/ui/topicHeader';
+import {
+  SceneMissionStrip,
+  type SceneMissionGoal,
+} from './SceneMissionStrip';
 import type { TalkBubble } from './types';
 
 const PARTNERS = [
@@ -27,6 +35,19 @@ const PARTNERS = [
   { id: 'tiago', label: 'Tiago' },
   { id: 'nour', label: 'Nour' },
 ] as const;
+
+/** Known cast display names (never default scene cast to Inês). */
+const CAST_LABELS: Record<string, string> = {
+  ines: 'Inês',
+  tiago: 'Tiago',
+  nour: 'Nour',
+  rita: 'Rita',
+  carlos: 'Carlos',
+  manuel: 'Manuel',
+  sofia: 'Sofia',
+  graca: 'Graça',
+  yassin: 'Yassin',
+};
 
 function newId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
@@ -36,18 +57,39 @@ function partnerLabel(id: string): string {
   return PARTNERS.find((p) => p.id === id)?.label ?? 'Inês';
 }
 
+function castLabel(id: string): string {
+  const key = id.trim().toLowerCase();
+  if (!key) return '';
+  if (CAST_LABELS[key]) return CAST_LABELS[key]!;
+  const fromPartners = PARTNERS.find((p) => p.id === key)?.label;
+  if (fromPartners) return fromPartners;
+  return key.charAt(0).toUpperCase() + key.slice(1);
+}
+
 type Props = {
   topicId: string;
   /** Seed open-mode suggested words from this day's core items (P4). */
   day?: number | null;
   /** Dev-only curriculum level override (`?level=N`). */
   level?: number | null;
+  /** Role-play scene on free-talk (batch-rp-2). */
+  sceneMode?: boolean;
+  /** Seed cast from scene bank (avoid Inês flash before start). */
+  initialCharacterId?: string | null;
+  /** «المكالمة الجاية» target after scene end. */
+  nextSceneId?: string | null;
+  /** Back link (default /talk; scenes use /roleplay). */
+  backHref?: string;
 };
 
 export function FreeTalkSession({
   topicId,
   day = null,
   level = null,
+  sceneMode = false,
+  initialCharacterId = null,
+  nextSceneId = null,
+  backHref = '/talk',
 }: Props) {
   const [loading, setLoading] = useState(true);
   const [errorEg, setErrorEg] = useState<string | null>(null);
@@ -69,14 +111,32 @@ export function FreeTalkSession({
   const [helpOpen, setHelpOpen] = useState(false);
   const [assisted, setAssisted] = useState(false);
   const [openMode, setOpenMode] = useState(topicId === 'open');
-  const [characterId, setCharacterId] = useState('ines');
+  const [characterId, setCharacterId] = useState(
+    initialCharacterId?.trim() || 'ines',
+  );
   const [convoModel, setConvoModel] = useState<ConvoModelChoice>('qwen');
   const [summary, setSummary] = useState<ConvoSessionSummary | null>(null);
+  const [sceneResult, setSceneResult] = useState<RoleplayResultState | null>(
+    null,
+  );
   const [ending, setEnding] = useState(false);
+  const [missionIntroEg, setMissionIntroEg] = useState('');
+  const [missionGoals, setMissionGoals] = useState<SceneMissionGoal[]>([]);
+  const [missionCurrentGoal, setMissionCurrentGoal] = useState<string | null>(
+    null,
+  );
+  const [missionDoneIds, setMissionDoneIds] = useState<string[]>([]);
+  const [missionSkippedIds, setMissionSkippedIds] = useState<string[]>([]);
+  const [composeFill, setComposeFill] = useState<string | null>(null);
 
   useEffect(() => {
+    // Scenes are Qwen-only; free talk keeps the A/B localStorage choice.
+    if (sceneMode) {
+      setConvoModel('qwen');
+      return;
+    }
     setConvoModel(readConvoModelChoice());
-  }, []);
+  }, [sceneMode]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const bubblesRef = useRef<TalkBubble[]>([]);
   const streamBubbleId = useRef<string | null>(null);
@@ -106,6 +166,26 @@ export function FreeTalkSession({
         }
         // Teach meanings ride on bubble_ar.coach_eg — skip legacy teach: coaches.
         if (event.id.startsWith('teach:')) {
+          return;
+        }
+        if (sceneMode && event.id === 'scene_done') {
+          const corrections = bubblesRef.current
+            .filter((b) => b.role === 'learner' && b.correction?.tl)
+            .map((b) => ({
+              tl: b.correction!.tl,
+              ...(b.correction!.ar ? { ar: b.correction!.ar } : {}),
+            }));
+          const said = bubblesRef.current
+            .filter((b) => b.role === 'learner' && b.tl.trim())
+            .map((b) => b.tl.trim())
+            .slice(-8);
+          setSceneResult({
+            alone: said.length,
+            assisted: 0,
+            key_phrases: said,
+            corrections,
+            summary_eg: event.eg,
+          });
           return;
         }
         const next = [
@@ -153,12 +233,62 @@ export function FreeTalkSession({
           eg: event.eg,
           chips: event.chips,
         });
+        // Scene ladder L4: put suggest chips on the latest character bubble.
+        if (sceneMode) {
+          const chips = event.chips ?? [];
+          let lastChar = -1;
+          for (let i = bubblesRef.current.length - 1; i >= 0; i--) {
+            if (bubblesRef.current[i]?.role === 'character') {
+              lastChar = i;
+              break;
+            }
+          }
+          if (lastChar >= 0) {
+            const next = bubblesRef.current.map((b, i) => {
+              if (b.role !== 'character') return b;
+              if (i === lastChar) {
+                return chips.length
+                  ? { ...b, suggest: [...chips] }
+                  : { ...b, suggest: undefined };
+              }
+              if (b.suggest) return { ...b, suggest: undefined };
+              return b;
+            });
+            bubblesRef.current = next;
+            syncAuthoritative(next);
+          }
+        }
         return;
       }
       if (event.type === 'topic_lock') {
         setTitleTl(event.title_tl);
         setTitleAr(event.title_ar);
         setOpenMode(false);
+        return;
+      }
+      if (event.type === 'session') {
+        if (event.session.character_id) {
+          setCharacterId(event.session.character_id);
+        }
+        if (sceneMode) {
+          if (event.session.current_goal !== undefined) {
+            setMissionCurrentGoal(event.session.current_goal);
+          }
+          if (event.session.goals) {
+            setMissionDoneIds(
+              event.session.goals
+                .filter(
+                  (g) => g.status === 'done' || g.status === 'assisted',
+                )
+                .map((g) => g.id),
+            );
+            setMissionSkippedIds(
+              event.session.goals
+                .filter((g) => g.status === 'skipped')
+                .map((g) => g.id),
+            );
+          }
+        }
         return;
       }
       if (event.type === 'metrics') {
@@ -176,7 +306,7 @@ export function FreeTalkSession({
         setErrorEg('حاول تاني');
       }
     },
-    [syncAuthoritative],
+    [syncAuthoritative, sceneMode],
   );
 
   const markLearnerFailed = useCallback(
@@ -235,7 +365,8 @@ export function FreeTalkSession({
           body: JSON.stringify({
             session_id: sessionId,
             text: learnerText,
-            convo_model: convoModel,
+            // Scenes: never send A/B override (server forces Qwen).
+            ...(sceneMode ? {} : { convo_model: convoModel }),
             ...(useAssisted ? { assisted: true } : {}),
             ...(openMode ? { character_id: characterId } : {}),
             ...(opts?.learnerTurnId
@@ -272,6 +403,7 @@ export function FreeTalkSession({
       openMode,
       characterId,
       convoModel,
+      sceneMode,
       markLearnerFailed,
     ],
   );
@@ -312,6 +444,13 @@ export function FreeTalkSession({
           warm_lines?: string[];
           open_mode?: boolean;
           character_id?: string;
+          scene_mission?: {
+            intro_eg: string;
+            goals: SceneMissionGoal[];
+            current_goal: string | null;
+            done_ids: string[];
+            skipped_ids?: string[];
+          };
         };
         if (cancelled) return;
         setSessionId(data.session_id);
@@ -328,6 +467,13 @@ export function FreeTalkSession({
         // open just because topicId === 'open' — that hid locked topic titles.
         setOpenMode(resolvedDay ? false : Boolean(data.open_mode));
         if (data.character_id) setCharacterId(data.character_id);
+        if (data.scene_mission) {
+          setMissionIntroEg(data.scene_mission.intro_eg);
+          setMissionGoals(data.scene_mission.goals);
+          setMissionCurrentGoal(data.scene_mission.current_goal);
+          setMissionDoneIds(data.scene_mission.done_ids);
+          setMissionSkippedIds(data.scene_mission.skipped_ids ?? []);
+        }
         if (data.current_frame) setFrame(data.current_frame);
         const warm = (data.warm_lines ?? []).slice(0, 3);
         for (const line of warm) {
@@ -360,6 +506,7 @@ export function FreeTalkSession({
               role: 'character',
               tl: openTl,
               ar: data.opening.character.ar,
+              // Scene suggest chips only after hint ladder level 4 — never on open.
             });
           }
         }
@@ -426,17 +573,34 @@ export function FreeTalkSession({
     titleTl,
     titleAr,
   });
-  const headerTitle = isLessonDay
-    ? [partnerLabel(characterId), titlesLine].filter(Boolean).join(' · ')
-    : partnerLabel(characterId);
-  const headerSub = isLessonDay
-    ? `يوم ${lessonDay}${titleAr ? ` · ${titleAr}` : ''}`
-    : topicLine;
+  const scenePartner = castLabel(characterId);
+  const headerTitle = sceneMode
+    ? titleTl || scenePartner
+    : isLessonDay
+      ? [partnerLabel(characterId), titlesLine].filter(Boolean).join(' · ')
+      : partnerLabel(characterId);
+  const headerSub = sceneMode
+    ? titleAr || topicLine
+    : isLessonDay
+      ? `يوم ${lessonDay}${titleAr ? ` · ${titleAr}` : ''}`
+      : topicLine;
   const chipLabel = isLessonDay
     ? `يوم ${lessonDay}${titleAr ? ` · ${titleAr}` : ''}`
     : topicLine;
-  const partner = partnerLabel(characterId);
-  const partnerInitial = partner.slice(0, 1).toUpperCase();
+  const partner = sceneMode ? scenePartner : partnerLabel(characterId);
+  const partnerInitial = (partner || '?').slice(0, 1).toUpperCase();
+
+  if (sceneResult) {
+    return (
+      <div className="v2-free-talk mx-auto flex h-[100dvh] w-full max-w-[390px] flex-col overflow-y-auto">
+        <RoleplayResultCard
+          result={sceneResult}
+          situationId={topicId}
+          nextSituationId={nextSceneId}
+        />
+      </div>
+    );
+  }
 
   if (summary) {
     return (
@@ -444,7 +608,7 @@ export function FreeTalkSession({
         <ConvoSummaryCard
           summary={summary}
           practiceHref="/talk/free/open"
-          backHref="/talk"
+          backHref={backHref}
           showPracticeCta={false}
         />
       </div>
@@ -466,7 +630,7 @@ export function FreeTalkSession({
     <div className="v2-free-talk mx-auto flex h-[100dvh] w-full max-w-[390px] flex-col">
       <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-2 border-b border-[var(--ft-border)]/60 bg-[color-mix(in_srgb,var(--ft-ivory)_80%,transparent)] px-3 shadow-[0_1px_8px_rgba(0,0,0,0.03)] backdrop-blur-xl">
         <Link
-          href="/talk"
+          href={backHref}
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[var(--ft-ink)]"
           aria-label="رجوع"
         >
@@ -527,6 +691,7 @@ export function FreeTalkSession({
         <ConvoDevMenu
           topicId={topicId}
           day={day}
+          hideModelSwitch={sceneMode}
           onConvoModelChange={setConvoModel}
           onReloadStart={() => {
             bubblesRef.current = [];
@@ -539,15 +704,27 @@ export function FreeTalkSession({
             window.location.reload();
           }}
         />
-        <button
-          type="button"
-          onClick={() => void endSession()}
-          disabled={!sessionId || ending || loading}
-          className="shrink-0 rounded-[var(--ft-radius-control)] bg-[var(--ft-sage)] px-3.5 py-1.5 font-[family-name:var(--font-ft-ar)] text-[13px] font-semibold text-[var(--ft-on-sage)] disabled:opacity-40"
-        >
-          خلّص
-        </button>
+        {sceneMode ? null : (
+          <button
+            type="button"
+            onClick={() => void endSession()}
+            disabled={!sessionId || ending || loading}
+            className="shrink-0 rounded-[var(--ft-radius-control)] bg-[var(--ft-sage)] px-3.5 py-1.5 font-[family-name:var(--font-ft-ar)] text-[13px] font-semibold text-[var(--ft-on-sage)] disabled:opacity-40"
+          >
+            خلّص
+          </button>
+        )}
       </header>
+
+      {sceneMode ? (
+        <SceneMissionStrip
+          introEg={missionIntroEg}
+          goals={missionGoals}
+          currentGoalId={missionCurrentGoal}
+          doneIds={missionDoneIds}
+          skippedIds={missionSkippedIds}
+        />
+      ) : null}
 
       <div
         ref={scrollRef}
@@ -559,7 +736,7 @@ export function FreeTalkSession({
         role="presentation"
       >
         <div className="flex flex-col gap-3.5">
-          {isLessonDay || titleTl || titleAr ? (
+          {sceneMode ? null : isLessonDay || titleTl || titleAr ? (
             <div className="flex justify-center">
               <span className="rounded-[var(--ft-radius-control)] bg-[var(--ft-mist)]/50 px-3 py-1 font-[family-name:var(--font-ft-ar)] text-[11px] text-[var(--ft-text-secondary)]">
                 {isLessonDay ? chipLabel : `الموضوع: ${topicLine}`}
@@ -567,14 +744,26 @@ export function FreeTalkSession({
             </div>
           ) : null}
 
-          {pacedVisible.map((b) => {
+          {pacedVisible.map((b, i) => {
             if (b.role === 'character') {
               if (!b.tl.trim() && !b.streaming && !b.typing) return null;
+              let latestCharacterIdx = -1;
+              for (let j = pacedVisible.length - 1; j >= 0; j--) {
+                const row = pacedVisible[j];
+                if (
+                  row?.role === 'character' &&
+                  (row.tl.trim() || row.streaming || row.typing)
+                ) {
+                  latestCharacterIdx = j;
+                  break;
+                }
+              }
+              const isLatestCharacter = sceneMode && i === latestCharacterIdx;
               return (
                 <CharacterBubble
                   key={b.id}
                   tone="calm"
-                  partnerName={partnerLabel(characterId)}
+                  partnerName={partner}
                   tl={b.tl}
                   streaming={b.streaming}
                   meaningEg={b.ar}
@@ -582,6 +771,24 @@ export function FreeTalkSession({
                   coachRevealed={b.coachRevealed !== false}
                   typing={b.typing}
                   ttsEpoch={b.ttsEpoch}
+                  playbackRate={b.playbackRate ?? 1}
+                  alwaysShowMeaning={sceneMode}
+                  suggest={sceneMode ? b.suggest : undefined}
+                  onSuggestChip={
+                    sceneMode
+                      ? (chip) => {
+                          setComposeFill(chip);
+                        }
+                      : undefined
+                  }
+                  onHintPress={
+                    isLatestCharacter && !b.suggest?.length
+                      ? () => {
+                          void runTurn('تلميح');
+                        }
+                      : undefined
+                  }
+                  hintDisabled={busy}
                   autoPlay={
                     !b.typing &&
                     !b.streaming &&
@@ -686,6 +893,8 @@ export function FreeTalkSession({
           disabled={loading}
           frame={frame}
           helpOpen={helpOpen}
+          fillText={composeFill}
+          onFillConsumed={() => setComposeFill(null)}
           onToggleHelp={() => setHelpOpen((v) => !v)}
           onSend={(t, opts) => sendPt(t, { assisted: opts?.assisted })}
           onArabicSend={(t) => {

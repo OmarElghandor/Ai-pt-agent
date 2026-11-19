@@ -24,13 +24,13 @@ import { runGenerationChecks } from '../lib/v2/generation/lesson/generationCheck
 import { MicroSchema, SpeakPromptSchema } from '../lib/v2/content/lesson';
 
 describe('v2 generation · plan', () => {
-  it('loads days 1–54 from pt-PT.days.json', () => {
+  it('loads days 1–56 from pt-PT.days.json', () => {
     const plan = loadPlan();
     assert.equal(plan.target_lang, 'pt-PT');
-    assert.equal(plan.days.length, 54);
+    assert.equal(plan.days.length, 56);
     assert.equal(plan.days[0]!.day, 1);
-    assert.equal(plan.days[53]!.day, 54);
-    assert.equal(plan.days[53]!.is_test, true);
+    assert.equal(plan.days[55]!.day, 56);
+    assert.equal(plan.days[55]!.is_test, true);
   });
 
   it('day 1 has grammar-first title fields', () => {
@@ -129,7 +129,7 @@ describe('v2 generation · buildRequest', () => {
     const req = buildDayRequest({ dayPlan, knownItems: [], existingImageKeys: [] });
     assert.ok(req.includes('VERB_TABLE'));
     assert.ok(req.includes('PAGE_PLAN'));
-    assert.ok(req.includes('Write day 5 of 114'));
+    assert.ok(req.includes('Write day 5 of 116'));
     assert.ok(req.includes('title: Gramática Básica'));
     assert.ok(req.includes('early_chunks_tl:'));
     assert.ok(req.includes('O que é isto?'));

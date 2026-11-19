@@ -1,6 +1,6 @@
 {
   "target_lang": "pt-PT",
-  "verified_note": "verified:true for the reviewed core set (ser, estar, ir, ter, dormir, falar, querer, poder, fazer, dizer, ver, sair, ficar, chegar, saber, conhecer). Others remain false until checked.",
+  "verified_note": "verified:true for the reviewed core set (achar, chegar, conhecer, dar, dizer, dormir, encontrar, esperar, estar, falar, fazer, ficar, ir, levar, pedir, poder, querer, saber, sair, ser, ter, trazer, ver, voltar). Others remain false until checked.",
   "verbs": [
     {
       "lemma": "ser",
@@ -878,6 +878,131 @@
           }
         }
       }
+    },
+    {
+      "lemma": "dar",
+      "class": "irregular",
+      "meaning_ar": "يدي / يعطي",
+      "verified": true,
+      "overrides": {
+        "pres": {
+          "eu": {
+            "tl": "dou",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "dás",
+            "irregular": true
+          },
+          "ele": {
+            "tl": "dá",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "damos",
+            "irregular": true
+          },
+          "eles": {
+            "tl": "dão",
+            "irregular": true
+          }
+        }
+      }
+    },
+    {
+      "lemma": "pedir",
+      "class": "irregular",
+      "meaning_ar": "يطلب",
+      "verified": true,
+      "overrides": {
+        "pres": {
+          "eu": {
+            "tl": "peço",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "pedes",
+            "irregular": true
+          },
+          "ele": {
+            "tl": "pede",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "pedimos",
+            "irregular": true
+          },
+          "eles": {
+            "tl": "pedem",
+            "irregular": true
+          }
+        }
+      }
+    },
+    {
+      "lemma": "trazer",
+      "class": "irregular",
+      "meaning_ar": "يجيب / يحضر",
+      "verified": true,
+      "overrides": {
+        "pres": {
+          "eu": {
+            "tl": "trago",
+            "irregular": true
+          },
+          "tu": {
+            "tl": "trazes",
+            "irregular": true
+          },
+          "ele": {
+            "tl": "traz",
+            "irregular": true
+          },
+          "nos": {
+            "tl": "trazemos",
+            "irregular": true
+          },
+          "eles": {
+            "tl": "trazem",
+            "irregular": true
+          }
+        }
+      }
+    },
+    {
+      "lemma": "voltar",
+      "class": "ar",
+      "meaning_ar": "يرجع",
+      "verified": true,
+      "overrides": {}
+    },
+    {
+      "lemma": "achar",
+      "class": "ar",
+      "meaning_ar": "يظن / يشوف إن",
+      "verified": true,
+      "overrides": {}
+    },
+    {
+      "lemma": "esperar",
+      "class": "ar",
+      "meaning_ar": "يستنى",
+      "verified": true,
+      "overrides": {}
+    },
+    {
+      "lemma": "levar",
+      "class": "ar",
+      "meaning_ar": "ياخد معاه",
+      "verified": true,
+      "overrides": {}
+    },
+    {
+      "lemma": "encontrar",
+      "class": "ar",
+      "meaning_ar": "يلاقي",
+      "verified": true,
+      "overrides": {}
     }
   ]
 }

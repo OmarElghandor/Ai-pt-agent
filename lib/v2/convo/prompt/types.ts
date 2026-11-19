@@ -41,6 +41,8 @@ export type BuildConvoPromptInput = {
   sceneTimeOfDay?: string;
   /** v3: scene address register (formal | tu). */
   sceneAddress?: 'formal' | 'tu';
+  /** Role-play scene bank — uses SCENE_CONVO_CHARACTER_RULES. */
+  sceneMode?: boolean;
 };
 
 export type BuildConvoPromptResult = {

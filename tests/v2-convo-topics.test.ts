@@ -117,26 +117,19 @@ describe('v2 convo topics · list for a test user', () => {
       packAvailable: (id) => id === 'pt-PT.day-33',
     });
 
+    // Role-play v1 moved to /roleplay — day 33 is no longer on the learn list.
     const d33 = listing.themes
       .flatMap((t) => t.topics)
       .find((t) => t.id === 'directions.day-33');
-    assert.ok(d33);
-    assert.equal(d33!.unlocked, true);
-    assert.equal(d33!.pack_available, true);
-    assert.equal(d33!.status, 'not_tried');
-    assert.equal(d33!.status_glyph, '⚪');
+    assert.equal(d33, undefined);
 
-    // v3: role-play list is task days only (day 33 for now).
     const cafe = listing.themes
       .flatMap((t) => t.topics)
       .find((t) => t.id === 'cafe.day-3');
     assert.equal(cafe, undefined);
-    assert.ok(
-      listing.themes.flatMap((t) => t.topics).every((t) => t.day === 33),
-    );
   });
 
-  it('returns needs_review statuses and a 🟡 suggestion for a test user', () => {
+  it('learn list is empty after role-play v1 (no day-33 suggestion)', () => {
     const map = new Map<string, ItemState>();
     for (const id of DAY33_ITEMS) map.set(id, solidState(id, now));
     map.set('word.right', dueState('word.right', now));
@@ -150,17 +143,16 @@ describe('v2 convo topics · list for a test user', () => {
       packAvailable: (id) => id === 'pt-PT.day-33',
     });
 
-    const d33 = listing.themes
-      .flatMap((t) => t.topics)
-      .find((t) => t.id === 'directions.day-33');
-    assert.equal(d33!.status, 'needs_review');
-    assert.equal(d33!.status_glyph, '🟡');
-    assert.ok(listing.suggestion);
-    assert.equal(listing.suggestion!.id, 'directions.day-33');
-    assert.equal(listing.suggestion!.pack_id, 'pt-PT.day-33');
+    assert.equal(listing.themes.flatMap((t) => t.topics).length, 0);
+    assert.equal(listing.suggestion, null);
+    // Status helpers still work for the pack itself (admin / direct routes).
+    assert.equal(
+      topicStatus(DAY33_ITEMS, map, new Set(), now),
+      'needs_review',
+    );
   });
 
-  it('returns solid with no suggestion when progress is healthy', () => {
+  it('returns solid status for day-33 items when progress is healthy', () => {
     const map = new Map<string, ItemState>();
     for (const id of DAY33_ITEMS) map.set(id, solidState(id, now));
 
@@ -173,11 +165,9 @@ describe('v2 convo topics · list for a test user', () => {
       packAvailable: (id) => id === 'pt-PT.day-33',
     });
 
-    const d33 = listing.themes
-      .flatMap((t) => t.topics)
-      .find((t) => t.id === 'directions.day-33');
-    assert.equal(d33!.status, 'solid');
+    assert.equal(listing.themes.flatMap((t) => t.topics).length, 0);
     assert.equal(listing.suggestion, null);
+    assert.equal(topicStatus(DAY33_ITEMS, map, new Set(), now), 'solid');
   });
 
   it('builds home suggestion copy and talk href', () => {

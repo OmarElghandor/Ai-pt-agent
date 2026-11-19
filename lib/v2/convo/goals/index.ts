@@ -7,6 +7,10 @@ export type {
   ConvoGoalStatus,
   ConvoScene,
   ConvoSceneTimeOfDay,
+  SceneGlobalBlock,
+  SceneLine,
+  SceneHints,
+  SceneOption,
 } from './types';
 export { GOAL_KEYWORD_STOP, keywordsFromExamples } from './keywords';
 export {
@@ -25,7 +29,9 @@ export {
   getCachedLessonDayBankSync,
   lessonDayCacheSlug,
   loadAuthoredLessonDayBank,
+  parseGoalFromRaw,
   parseLessonDayBankJson,
+  parseSceneFromRaw,
   resetMemoryLessonDayBanks,
   resolveLessonDayBank,
   setCachedLessonDayBankMemory,
@@ -63,7 +69,10 @@ export {
   findGoal,
   firstOpenGoalId,
   goalStatesFromBank,
+  healSceneSessionAgainstBank,
   pendingFrameFromGoal,
+  remapSceneGoalStatesToBank,
+  sceneSessionGoalsMatchBank,
 } from './sessionGoals';
 export {
   acceptModelReportedGoals,
@@ -75,12 +84,16 @@ export {
 } from './check';
 export {
   applyCompletedGoals,
+  applySceneDoneGoals,
   markGoalsDone,
+  markGoalsSkipped,
   openGoalsFromSession,
 } from './advance';
 export {
   isStuckHelpRequest,
   steerActionForTurns,
+  sceneHintLevel1,
+  sceneHintLevel2,
   stuckHelpForGoal,
   type SteerAction,
 } from './steer';

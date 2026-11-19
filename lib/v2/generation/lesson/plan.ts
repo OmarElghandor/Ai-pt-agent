@@ -45,7 +45,7 @@ export type DayPlan = {
   early_chunks_tl: string[];
   book_pages: string[];
   is_story: boolean;
-  /** Phase test day (A1 on day 54). */
+  /** Phase test day (A1 on day 56). */
   is_test?: boolean;
   generation?: DayGeneration;
 };

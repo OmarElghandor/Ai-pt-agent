@@ -25,14 +25,14 @@ import {
 } from '@/lib/v2/convo/turn';
 
 describe('conversations v3 V8 modes + regressions', () => {
-  it('role-play allowlist is day 33 only', () => {
-    assert.deepEqual([...ROLE_PLAY_DAYS], [33]);
-    assert.ok(isRolePlayDay(33));
+  it('legacy role-play allowlist is empty (v1 list is /roleplay)', () => {
+    assert.deepEqual([...ROLE_PLAY_DAYS], []);
+    assert.ok(!isRolePlayDay(33));
     assert.ok(!isRolePlayDay(1));
     assert.ok(isGreetingStyleDay(1));
   });
 
-  it('topics list only includes day 33', () => {
+  it('learn topics list no longer includes day 33 role-play packs', () => {
     const file = loadTopicsFile();
     const list = buildTopicsList({
       file,
@@ -41,8 +41,7 @@ describe('conversations v3 V8 modes + regressions', () => {
       weakIds: new Set(),
     });
     const days = list.themes.flatMap((th) => th.topics.map((t) => t.day));
-    assert.ok(days.length >= 1);
-    assert.ok(days.every((d) => d === 33));
+    assert.ok(!days.includes(33));
   });
 
   it('regression: collapse repeated reaction text', () => {

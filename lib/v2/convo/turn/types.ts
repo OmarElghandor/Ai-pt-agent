@@ -69,6 +69,10 @@ export type ConvoTurnStreamEvent =
       coach_eg?: string;
       /** Goal id when this bubble is a v4 teach+ask beat. */
       teach_goal_id?: string;
+      /** Scene repeat / Mais devagar — client TTS slower (0.85). */
+      playback?: 'normal' | 'slow';
+      /** Format 3 scene: suggestion chips under this bubble. */
+      suggest?: string[];
     }
   | {
       type: 'visual';
@@ -119,6 +123,9 @@ export type ConvoTurnStreamEvent =
         | 'struggled'
         | 'said_once'
         | 'survival_used'
+        | 'goals'
+        | 'current_goal'
+        | 'character_id'
       >;
     }
   | {

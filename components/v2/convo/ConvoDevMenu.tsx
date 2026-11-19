@@ -35,6 +35,8 @@ type Props = {
   onReloadStart?: () => void;
   /** Fired when the character model A/B switch changes. */
   onConvoModelChange?: (choice: ConvoModelChoice) => void;
+  /** Hide Qwen/Haiku A/B (scenes are Qwen-only). */
+  hideModelSwitch?: boolean;
 };
 
 /**
@@ -48,6 +50,7 @@ export function ConvoDevMenu({
   onPreparing,
   onReloadStart,
   onConvoModelChange,
+  hideModelSwitch = false,
 }: Props) {
   const [allowed, setAllowed] = useState(false);
   const [open, setOpen] = useState(false);
@@ -149,40 +152,42 @@ export function ConvoDevMenu({
           role="menu"
           className="absolute end-0 top-full z-50 mt-1 min-w-[220px] overflow-hidden rounded-2xl border border-[color:var(--ft-border,#E5DED5)] bg-white py-1 shadow-lg"
         >
-          <div className="border-b border-[color:var(--ft-border,#E5DED5)] px-4 py-2">
-            <p className="mb-1.5 font-[family-name:var(--font-ft-ar,var(--font-v2-arabic))] text-[11px] text-[color:var(--ft-text-secondary,#666963)]">
-              نموذج الشخصية (A/B)
-            </p>
-            <div className="flex gap-1">
-              {(
-                [
-                  ['qwen', 'Qwen'],
-                  ['haiku', 'Haiku'],
-                ] as const
-              ).map(([id, label]) => (
-                <button
-                  key={id}
-                  type="button"
-                  role="menuitemradio"
-                  aria-checked={convoModel === id}
-                  disabled={busy}
-                  onClick={() => {
-                    setConvoModel(id);
-                    writeConvoModelChoice(id);
-                    onConvoModelChange?.(id);
-                    setMsg(`نموذج: ${label}`);
-                  }}
-                  className={`flex-1 rounded-lg px-2 py-1.5 font-[family-name:var(--font-ft-ui,var(--font-v2-ui))] text-[12px] ${
-                    convoModel === id
-                      ? 'bg-[color:var(--ft-moss,#5C6B5E)] text-white'
-                      : 'bg-[color:var(--ft-mist,#D9E1D9)]/50 text-[color:var(--ft-ink,#202A25)]'
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
+          {hideModelSwitch ? null : (
+            <div className="border-b border-[color:var(--ft-border,#E5DED5)] px-4 py-2">
+              <p className="mb-1.5 font-[family-name:var(--font-ft-ar,var(--font-v2-arabic))] text-[11px] text-[color:var(--ft-text-secondary,#666963)]">
+                نموذج الشخصية (A/B)
+              </p>
+              <div className="flex gap-1">
+                {(
+                  [
+                    ['qwen', 'Qwen'],
+                    ['haiku', 'Haiku'],
+                  ] as const
+                ).map(([id, label]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    role="menuitemradio"
+                    aria-checked={convoModel === id}
+                    disabled={busy}
+                    onClick={() => {
+                      setConvoModel(id);
+                      writeConvoModelChoice(id);
+                      onConvoModelChange?.(id);
+                      setMsg(`نموذج: ${label}`);
+                    }}
+                    className={`flex-1 rounded-lg px-2 py-1.5 font-[family-name:var(--font-ft-ui,var(--font-v2-ui))] text-[12px] ${
+                      convoModel === id
+                        ? 'bg-[color:var(--ft-moss,#5C6B5E)] text-white'
+                        : 'bg-[color:var(--ft-mist,#D9E1D9)]/50 text-[color:var(--ft-ink,#202A25)]'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
           {(
             [
               ['reset', 'ابدأ من الأول'],

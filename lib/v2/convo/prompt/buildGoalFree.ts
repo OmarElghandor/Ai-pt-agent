@@ -1,4 +1,7 @@
-import { GOAL_CONVO_CHARACTER_RULES } from './characterRules';
+import {
+  GOAL_CONVO_CHARACTER_RULES,
+  SCENE_CONVO_CHARACTER_RULES,
+} from './characterRules';
 import type {
   BuildConvoPromptInput,
   BuildConvoPromptResult,
@@ -47,7 +50,10 @@ export function buildGoalFreePrompt(
   const persona =
     input.personaJson?.trim() ||
     '{"note":"persona missing"}';
-  const characterText = `${persona}\n\n${GOAL_CONVO_CHARACTER_RULES}${convoPromptBudgetTestExtraText()}`;
+  const rules = input.sceneMode
+    ? SCENE_CONVO_CHARACTER_RULES
+    : GOAL_CONVO_CHARACTER_RULES;
+  const characterText = `${persona}\n\n${rules}${convoPromptBudgetTestExtraText()}`;
   const eventLine = input.eventLine?.trim() || 'learner replied';
   const currentGoal =
     input.currentGoalLine?.trim() ||
@@ -104,7 +110,24 @@ export function formatCurrentGoalLine(opts: {
   goalId: string;
   turnsOnGoal: number;
   openGoalIds: string[];
+  /** Role-play scene banks (batch-rp-2). */
+  sceneMode?: boolean;
+  factsTl?: string[];
 }): string {
+  if (opts.sceneMode) {
+    // Reaction-only: code appends ask_tl; never ask the model to say it.
+    let steer = `react to the learner for this goal intent: ${opts.intentEn}`;
+    const facts = (opts.factsTl ?? []).map((f) => f.trim()).filter(Boolean);
+    if (facts.length) {
+      steer += ` · use these facts exactly; never invent a price, a time or a place: ${facts.join('; ')}`;
+    }
+    steer += ` · goal id: ${opts.goalId}`;
+    if (opts.openGoalIds.length) {
+      steer += ` · open ids: ${opts.openGoalIds.join(',')}`;
+    }
+    return steer;
+  }
+
   const share = opts.seedTl?.trim()
     ? ` · you may share: ${opts.seedTl.trim()}`
     : '';

@@ -57,6 +57,7 @@ export {
   visibleGoalStreamText,
   collapseRepeatedPt,
   GOAL_CONVO_MAX_WORDS,
+  SCENE_REACTION_MAX_WORDS,
   type ParseGoalConvoResult,
   type GoalParseExtraIssue,
 } from './parseGoal';

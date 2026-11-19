@@ -148,7 +148,8 @@ export function usePacedBubbles(opts?: { scale?: PaceScale }) {
         });
         await sleep(delay, signal);
         if (signal.cancelled) {
-          queueRef.current.unshift(item);
+          // Reveal immediately — don't park in the queue (flush race).
+          revealCoachStrip(item.bubbleId);
           break;
         }
         revealCoachStrip(item.bubbleId);
@@ -181,7 +182,8 @@ export function usePacedBubbles(opts?: { scale?: PaceScale }) {
         });
         await sleep(delay, signal);
         if (signal.cancelled) {
-          queueRef.current.unshift(item);
+          // Reveal immediately — don't park in the queue (flush race).
+          revealBubble(bubble);
           break;
         }
       } else if (bubble.role === 'character' && isStreaming) {
@@ -210,7 +212,7 @@ export function usePacedBubbles(opts?: { scale?: PaceScale }) {
             signal,
           );
           if (signal.cancelled) {
-            queueRef.current.unshift(item);
+            revealBubble(bubble);
             break;
           }
         }
@@ -222,7 +224,7 @@ export function usePacedBubbles(opts?: { scale?: PaceScale }) {
         });
         await sleep(delay, signal);
         if (signal.cancelled) {
-          queueRef.current.unshift(item);
+          revealBubble(bubble);
           break;
         }
       }

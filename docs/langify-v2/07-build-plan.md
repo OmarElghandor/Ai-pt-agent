@@ -355,6 +355,19 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
 - Use the generated question types as-is (read_meaning, recall_tl, listen, writing). Mechanical questions made by code follow the same direction rules: show the stimulus, and never show the answer in the prompt.
 - Store reports from the "report error" button in `v2_reports` ({item_id | question_id, day, note, user}). An item with 2+ reports gets hidden from new card mixes until it is reviewed in admin.
 
+### Phase 4 add-on · Essential items engine (2026-11-19) — deferred
+
+Content and `00` decisions landed with curriculum P0 1119 (`priority` on core items). **Do not start until a dedicated chat owns this add-on.** Spec: `00` §4 (lesson), §5 (cards), §9 (practice).
+
+**Done when**
+- Daily card queue (`GET /api/v2/cards/today`): inside the existing 9/4/2 / cap-15 mix, due **essential** items are picked first in each bucket.
+- Essential SRS ladder is **1 → 2 → 4 → 7 → 14 → 21**; graduation for essentials needs **3** situations in `usedCorrectlyIn` (others stay at 2); a wrong answer on an essential puts it in "اللي بتغلط فيه" immediately (others still need 2 misses).
+- Lesson generation / vocab flow: every essential gets its own item card and ≥1 micro check; code adds essentials to `recycle_ids` of the next 3 fitting lessons; story MUST_COVER includes 1–2 due essentials when the situation allows.
+- Practice / free talk: packs get `ESSENTIAL_TARGETS` (≤6 unmet/weak/due essentials); ≥40% of speaking and writing beats require one; the reactor nudges when a fitting essential was skipped; the end screen lists essentials used correctly.
+
+**Prompt**
+> Read docs/langify-v2/00-decisions.md §4 Essential items, §5 Essential items come first in review, and §9 Practice leans on essential items. Implement the Phase 4 add-on · Essential items engine in 07-build-plan.md. Reuse existing cards/SRS/answers/vocab-flow/MUST_COVER/pack/reactor paths — do not invent parallel progress stores. Ship unit tests for queue order, ladder, 3-situation graduation, first-miss weak spot, and the 40% speaking/writing beat quota.
+
 ---
 
 ## Phase 5 · Cards UI
@@ -416,6 +429,8 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
 
 **Prompt**
 > Read docs/langify-v2/00-decisions.md §9, 01-architecture.md ("Flow of one practice beat"), the agent section of 03, 06-screens.md S8, and docs/app-core-prompts-and-conversation-flow.md for the old flow you can reuse. Build v2 packs with skills, lib/v2/grader and lib/v2/reactor as pure modules (no DB writes), beat handling in /api/v2/answers, and the /practice/[day] screen with the 9 states and the end screen, as specified in Phase 6.
+
+**Pointer (2026-11-19):** practice `ESSENTIAL_TARGETS`, the 40% speaking/writing quota, reactor nudges, and the essentials-used end screen are part of **Phase 4 add-on · Essential items engine** — implement there, not as a second pack pipeline.
 
 **Add-on (2026-10-28, after Phases 3–5)**
 

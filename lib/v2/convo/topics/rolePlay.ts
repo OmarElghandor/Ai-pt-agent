@@ -1,8 +1,9 @@
 /**
- * Role-play (Module A) days with a real task. Conversations v3:
- * start with day 33 only; later café/pharmacy/shop/appointment/tickets.
+ * Legacy Module A role-play days on the learn topics list.
+ * Role-play v1 situations live at `/roleplay` — day 33 stays reachable
+ * from admin / pack routes only.
  */
-export const ROLE_PLAY_DAYS: readonly number[] = [33];
+export const ROLE_PLAY_DAYS: readonly number[] = [];
 
 export function isRolePlayDay(day: number): boolean {
   return ROLE_PLAY_DAYS.includes(day);

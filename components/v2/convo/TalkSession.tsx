@@ -838,7 +838,7 @@ export function TalkSession({ packId }: Props) {
           const q = day != null ? `?day=${day}` : '';
           router.push(`/talk/free/open${q}`);
         }}
-        backHref="/talk/learn"
+        backHref="/roleplay"
       />
     );
   }
@@ -851,7 +851,7 @@ export function TalkSession({ packId }: Props) {
           lessonStats={resultStats}
           lessonDay={day}
           practiceHref={practiceHref}
-          backHref="/talk/learn"
+          backHref="/roleplay"
           showPracticeCta
         />
       </main>
@@ -933,7 +933,7 @@ export function TalkSession({ packId }: Props) {
           }}
         />
         <Link
-          href={day ? `/day/${day}` : '/talk/learn'}
+          href={day ? `/day/${day}` : '/roleplay'}
           className="flex h-10 w-10 items-center justify-center rounded-full text-[color:var(--ft-sage,#6B7F6E)] hover:bg-[color:var(--ft-mist,#D9E1D9)]/50"
           aria-label="رجوع"
         >

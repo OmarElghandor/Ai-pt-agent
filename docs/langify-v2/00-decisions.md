@@ -31,21 +31,20 @@ Full detail: `10-auth.md`. Tasks: `10-auth-tasks.md`.
 ## 1. Product shape
 
 - Audience: Egyptian Arabic speakers living in Portugal, A0–A1. Target language: European Portuguese (pt-PT). Later: English and German on the same engine.
-- **(changed 2026-11-01) Lesson size: at most 14 core items.** Bigger lessons are split into two lessons, one after the other. **(changed 2026-11-11)** The plan is now **114 days**: phase 1 is days 1–54 (46 lessons, 7 stories, and the A1 test on day 54), and phases 2–3 are days 55–114. The old → new day mapping is in `04` ("تقسيم الدروس الكبيرة"). Day numbers elsewhere in the docs that were written before this date use the old numbering unless they've been updated; `04` and this file are current.
+- **(changed 2026-11-01) Lesson size: at most 14 core items.** Bigger lessons are split into two lessons, one after the other. **(changed 2026-11-11)** The plan was **114 days** with phase 1 = days 1–54. **(changed 2026-11-19)** Phase 1 is now **days 1–56** (48 lessons, 7 stories, and the A1 test on day 56): new day 37 Documentos e Marcações and day 50 Problemas em Casa; old 37–54 → 38–56 (49→51 skips new 50). Total course **116** days; phases 2–3 are days 57–116. Earlier mappings stay in `04`; this file and `04` are current.
 - **(new 2026-11-11) Everyday words.** Phase 1 must teach the words people use in every conversation, not only the words of each situation: where (aqui · aí · ali · lá · em cima de…), describing (bom · caro · assim · como · igual), comparing (mais … do que · melhor), quantity (todos · ninguém · nada · cada), not knowing (Não sei · Acho que…) and conversation fillers (Então · Pois · Olha · Pronto).
-  - They're added to existing days as items or ready-made chunks only where the day stays at 14 items or fewer. Otherwise they get their own day: 44 Adjetivos 2, 47 Aqui e Ali, 48 Comparativos, 49 Saber e Conhecer, 51 Todos e Ninguém.
-  - Old → new: 44→45, 45→46, 46→50, 47→52, 48→53, 49→54, and every day from 50 to 109 moves up by 5. Days 1–43 keep their numbers.
+  - They're added to existing days as items or ready-made chunks only where the day stays at 14 items or fewer. Otherwise they get their own day: **45** Adjetivos 2, **48** Aqui e Ali, **49** Comparativos, **51** Saber e Conhecer, **53** Todos e Ninguém (numbers after the 2026-11-19 insert).
   - Fillers, occasions and polite requests are micro chains, not lesson items. Full list: `04` ("كلام كل يوم").
   - These words are taught as items. They are **not** added to `function-words.json`, so the generator won't use them before they're taught.
 - **(changed 2026-10-25)** 90 days, ordered **grammar-first**. Each day is one grammar unit, following the unit order of Practice Portuguese A1: regular present -ar → -er → -ir, then ser/estar, then the irregulars, then the past. The unit is taught **inside a street situation** that needs it, and the situation supplies the phrases, the words and the character conversation.
   - Anything urgent for a resident (Queria…, O que é isto?, Fui ao…, Dói-me…) comes early as a **ready-made chunk**, and its rule comes later in its place in the order. Numbers are the one exception, with their own day (day 8).
-  - Each week ends with a story day (days 7, 14, 21, 29, 37, 45, 53 in phase 1). Full plan: `04-curriculum.md`.
+  - Each week ends with a story day (days **7, 14, 21, 29, 38, 46, 55** in phase 1). Full plan: `04-curriculum.md`.
 - **(new)** Lesson titles are the Portuguese unit titles (e.g. "Verbos -AR 1", "Possessivos"), shown with an Arabic translation and the situation under them.
   - When a day covers more than one of their units, the extra unit titles are listed on it.
-  - Story days, the second parts of split lessons, and days 44, 47, 48, 49, 51 and 52 have our own titles.
+  - Story days, the second parts of split lessons, and days **45, 48, 49, 51, 53 and 54** have our own titles.
   - We reuse only the topic order and names, never their content.
   - Plan fields: `title_tl`, `title_ar`, `situation_eg`, `example_tl`, `rule_eg`, `extra_units_tl`, `early_chunks_tl`.
-- **(new)** Days 1–54 are labeled **A1**, and phase 2 (from day 55) starts **A2**. This is aligned with the CIPLE A2 exam that residents need.
+- **(new)** Days 1–56 are labeled **A1**, and phase 2 (from day 57) starts **A2**. This is aligned with the CIPLE A2 exam that residents need.
 - SER vs ESTAR is now days 19–23. `examples/day06-example.json` is the ESTAR day, which is **day 22** in the new order. The file keeps its name, but its `day` is 22.
 - A normal day has these steps, about 10 minutes in all: see the place (words) → situation phrases → one small rule → self-test → conversation with a character → review. Each step is one or more **pages**.
 - **(changed 2026-11-14)** The "Library" (المكتبة) is the **stories and podcasts** module (`14-library.md`): real-life episodes anyone can open, not locked to the learner's day. The older book-order idea (rules, tenses, verb cards, picture dictionary) becomes a later tab **"المراجع"** inside المكتبة if still wanted; until then that tab does not exist. Detail: §1c.
@@ -313,6 +312,11 @@ Full detail: `14-library.md`, content `14b-library-content.md`, design `14c-libr
     - "سؤال معجمي".
     The transliteration comes from code `say` (queijo is كَيجو, not كايچو).
 
+- **(new 2026-11-19) Essential items: high-frequency words get their own place everywhere.** Every core item has `priority`: `essential` (high-frequency verbs, function words with meaning, and conversation chunks used in almost every conversation: precisar, ficar, esperar, dizer, chegar, sair, voltar, pedir, então, pronto, claro, não me lembro…), `useful`, or `situational` (tied to one place: o galão, a avaria).
+  - **In the lesson:** an essential item is never only part of a sentence. It always gets **its own item card** in the vocab flow (a verb card shows the infinitive plus the 1–2 forms the day needs, for example precisar → preciso de / precisa de), then appears in the sentence that uses it. It is always the target of at least one micro check.
+  - **Spread:** essential items are introduced across many days (1–2 per lesson), each in a situation where it's natural, and then they're **recycled on purpose**: they're added to `recycle_ids` of the next 3 lessons where they fit, and the story MUST_COVER takes 1–2 due essential items when the situation allows.
+  - Essential items count toward the 14-item limit like any other item.
+
 ## 5. Flashcards
 
 - Cards exist for words, phrases and verbs. Function words get no cards.
@@ -320,6 +324,10 @@ Full detail: `14-library.md`, content `14b-library-content.md`, design `14c-libr
 - **Daily cap: 15 cards**, about 3 minutes, made of 9 from the last 7 days, 4 from weak items and 2 older ones. If a slot can't be filled, it goes to recent items. Missed days never pile up into a backlog, and backlog counts are never shown.
 - A correct use of the item inside a lesson or practice counts as an implicit review.
 - **(changed 2026-10-28)** Buttons: **صعب** (= again: the card comes back later in this session and its interval resets) / **متوسط** (= hard) / **سهل** (= easy). The API values stay again | hard | easy | know; only the labels change. There is also a "عارفها" option that skips an item the learner already knows. After a hint, only صعب and متوسط are enabled.
+- **(new 2026-11-19) Essential items come first in review.**
+  - The daily queue fills its slots with due essential items first, then the rest (the 9 / 4 / 2 split stays, and inside each part essential items are picked first).
+  - Essential items get one extra early step on the ladder (1 → 2 → 4 → 7 → 14 → 21) and need correct use in **3** different situations to graduate (others need 2).
+  - A wrong answer on an essential item puts it in "اللي بتغلط فيه" right away (others need 2 misses).
 - Graduation: for lesson / official items, interval ≥ 21 days **and** correct use in 2 different situations (`usedCorrectlyIn`). **(changed 2026-11-12)** Custom-only items (`source: custom`) graduate on interval ≥ 21 alone; the situations condition is dropped because lessons never use them. Official items keep the full rule even when reviewed from a custom deck. Graduation maps to `masteryLevel: mastered`, and graduated cards leave review.
 - **(new) Retrieval first.** The front shows only the target word plus audio: a speaker button and a slow (turtle) button. Audio does not autoplay on the front. "محتاج تلميح" shows the word inside a sentence with no Arabic, and using it forces the rating to صعبة. Flipping plays the word once. The back shows the answer first (meaning, pronunciation, picture), then details.
 - **(new) Verb card back** is a conjugation poster, 5 rows. Endings are colored by class: -ar orange, -er blue, -ir green. Irregular forms are purple with ⚡ (in pt-PT usually just `eu`, like DURMO). Regular forms are marked "عادي". Then examples and one tip.
@@ -471,6 +479,12 @@ Full detail: `11-profile-progress.md`. Where that doc and this section disagree 
   | writing | A friend's message, a note, a form | Types the answer (accent key row) | بتقول |
 
 - **(new)** "مش قادر أتكلم دلوقتي" switches a speaking beat to writing, and it counts for writing only.
+- **(new 2026-11-19) Practice leans on essential items.**
+  - Every practice pack and free conversation gets `ESSENTIAL_TARGETS`: up to 6 essential items the learner has met but not graduated, weak ones and due ones first.
+  - The pack generator must build at least 40% of the speaking and writing beats so that answering naturally needs one of them. The character also uses them in its own lines.
+  - The reactor nudges the learner toward an essential item when it would fit and they didn't use it ("ممكن تقولها بـ precisar").
+  - Correct use of an essential item in practice counts as a situation for graduation.
+  - The end screen lists the essential items used correctly.
 - **(new)** Packs have 8–14 beats, so the mix is a proportion: by default 30% speaking, 30% listening, 20% reading, 20% writing, rounded, with at least one beat of each skill. The mix is passed into generation (`skill_mix`), which shifts weight toward the learner's weak skill.
 - **(new)** Two visible voices:
   - The character speaks in white bubbles, target language only. The meaning is behind "معناها؟"; the pronunciation in Arabic letters is shown.

@@ -1,0 +1,269 @@
+{
+  "source": "topic",
+  "kind": "scene",
+  "authored": true,
+  "target_lang": "pt-PT",
+  "topic_id": "cena-quarto",
+  "title_tl": "Ver um quarto para alugar",
+  "title_ar": "معاينة أوضة للإيجار",
+  "emoji": "🏠",
+  "scene_eg": "شقة في Arroios. Carlos صاحب الشقة بيفرّجك على الأوضة.",
+  "intro_eg": "اسأل عن الإيجار والمصاريف، قارن، واتفاوض على التأمين.",
+  "scene": {
+    "character_id": "carlos",
+    "place": "Carlos is the landlord showing a room to rent",
+    "time_of_day": "afternoon",
+    "address": "formal"
+  },
+  "opening": {
+    "tl": "Boa tarde! Veio ver o quarto, não é?",
+    "ar": "مساء الخير! جئت لرؤية الغرفة، أليس كذلك؟",
+    "ar_f": "مساء الخير! جئتِ لرؤية الغرفة، أليس كذلك؟"
+  },
+  "closing": {
+    "tl": "Até amanhã! 👋",
+    "ar": "إلى الغد!"
+  },
+  "goals": [
+    {
+      "id": "quarto.arrive",
+      "tier": "core",
+      "intent_eg": "يسلّم ويعرّف نفسه",
+      "label_eg": "عرّفه بنفسك",
+      "intent_en": "greet and say who they are",
+      "ask_tl": "Boa tarde! Veio ver o quarto, não é?",
+      "ask_ar": "مساء الخير! جئت لرؤية الغرفة، أليس كذلك؟",
+      "ask_ar_f": "مساء الخير! جئتِ لرؤية الغرفة، أليس كذلك؟",
+      "examples_tl": [
+        "Sim, boa tarde! Sou o Omar.",
+        "Boa tarde! Sim, sou o Omar.",
+        "Sim, sou eu."
+      ],
+      "keywords": [
+        "sim",
+        "boa tarde",
+        "sou"
+      ],
+      "help": {
+        "frame_tl": "Boa tarde! Sim, sou o ___.",
+        "eg": "سلّم وعرّف نفسك: Boa tarde! Sim, sou o + اسمك",
+        "chips": [
+          "Sim, boa tarde! Sou o Omar.",
+          "Sim, sou eu."
+        ]
+      }
+    },
+    {
+      "id": "quarto.rent",
+      "tier": "core",
+      "intent_eg": "يسأل الإيجار كام",
+      "label_eg": "اسأل الإيجار كام",
+      "intent_en": "ask how much the rent is",
+      "ask_tl": "Entre, entre. Este é o quarto. O que acha?",
+      "ask_ar": "ادخل، ادخل. هذه هي الغرفة. ما رأيك؟",
+      "ask_ar_f": "ادخلي، ادخلي. هذه هي الغرفة. ما رأيكِ؟",
+      "examples_tl": [
+        "Quanto é a renda?",
+        "Quanto custa por mês?",
+        "Qual é a renda?"
+      ],
+      "keywords": [
+        "renda",
+        "quanto",
+        "mês",
+        "mes"
+      ],
+      "help": {
+        "frame_tl": "Quanto é a renda?",
+        "eg": "a renda = الإيجار. اسأل: Quanto é a renda?",
+        "chips": [
+          "Quanto é a renda?",
+          "Quanto custa por mês?"
+        ]
+      },
+      "cue_eg": "إنت في الأوضة. اسأل الإيجار كام."
+    },
+    {
+      "id": "quarto.bills",
+      "tier": "core",
+      "intent_eg": "يسأل المصاريف داخلة ولا لأ",
+      "label_eg": "اسأل عن المصاريف",
+      "intent_en": "ask whether bills are included",
+      "ask_tl": "São quatrocentos e cinquenta euros por mês. Tem alguma pergunta?",
+      "ask_ar": "أربعمائة وخمسون يورو في الشهر. هل لديك أي سؤال؟",
+      "examples_tl": [
+        "As despesas estão incluídas?",
+        "A água e a luz estão incluídas?",
+        "E a internet?"
+      ],
+      "keywords": [
+        "despesas",
+        "incluíd",
+        "incluid",
+        "água",
+        "agua",
+        "luz",
+        "internet"
+      ],
+      "help": {
+        "frame_tl": "As despesas estão incluídas?",
+        "eg": "as despesas = فواتير المية والكهربا والنت. لازم تسأل دايمًا.",
+        "chips": [
+          "As despesas estão incluídas?",
+          "A água e a luz estão incluídas?"
+        ]
+      },
+      "cue_eg": "اسأل المية والكهربا والنت داخلين في الإيجار ولا لأ."
+    },
+    {
+      "id": "quarto.noisy",
+      "tier": "core",
+      "intent_eg": "يرد أو يطلب يشوف التانية",
+      "label_eg": "رد على الدوشة",
+      "intent_en": "react to the noise, or ask to see the other room",
+      "ask_tl": "A água e a internet sim, a luz é à parte. Este quarto é um bocado barulhento. Faz-lhe diferença?",
+      "ask_ar": "الماء والإنترنت نعم، والكهرباء منفصلة. هذه الغرفة صاخبة قليلًا. هل يهمك ذلك؟",
+      "examples_tl": [
+        "Não faz mal.",
+        "Posso ver o outro?",
+        "Prefiro um quarto calmo."
+      ],
+      "keywords": [
+        "faz mal",
+        "ver",
+        "outro",
+        "prefiro",
+        "calmo"
+      ],
+      "help": {
+        "frame_tl": "Posso ver o outro?",
+        "eg": "barulhento = دوشة. عايز تشوف التانية؟ Posso ver o outro? · مش فارق؟ Não faz mal.",
+        "chips": [
+          "Posso ver o outro?",
+          "Não faz mal."
+        ]
+      }
+    },
+    {
+      "id": "quarto.questions",
+      "tier": "core",
+      "intent_eg": "يسأل سؤال عن البيت",
+      "label_eg": "اسأل سؤال عن البيت",
+      "intent_en": "ask a question about the flat (who lives here, contract, when)",
+      "ask_tl": "Tem mais alguma pergunta?",
+      "ask_ar": "هل لديك سؤال آخر؟",
+      "examples_tl": [
+        "Quem mora aqui?",
+        "Quando posso entrar?",
+        "Tem contrato?"
+      ],
+      "keywords": [
+        "quem",
+        "quando",
+        "contrato",
+        "recibo",
+        "entrar"
+      ],
+      "help": {
+        "frame_tl": "Quem mora aqui?",
+        "eg": "o contrato = العقد. مهم يكون فيه عقد وإيصالات (recibos).",
+        "chips": [
+          "Quem mora aqui?",
+          "Tem contrato?"
+        ]
+      },
+      "facts_tl": [
+        "Moram cá dois estudantes, muito calmos.",
+        "Há contrato e recibos.",
+        "Pode entrar no dia um."
+      ]
+    },
+    {
+      "id": "quarto.decide",
+      "tier": "core",
+      "intent_eg": "يقرر أو يطلب يفكر",
+      "label_eg": "قرر أو قول هتفكر",
+      "intent_en": "decide, or ask to think until tomorrow",
+      "ask_tl": "Então, gosta do quarto?",
+      "ask_ar": "إذن، هل تعجبك الغرفة؟",
+      "examples_tl": [
+        "Gosto muito. Posso pensar até amanhã?",
+        "Sim, fico com ele!",
+        "Posso pensar?"
+      ],
+      "keywords": [
+        "gosto",
+        "pensar",
+        "fico",
+        "sim",
+        "amanhã",
+        "amanha"
+      ],
+      "help": {
+        "frame_tl": "Posso pensar até amanhã?",
+        "eg": "عايز تفكر؟ Posso pensar até amanhã? · موافق؟ Sim, fico com ele!",
+        "chips": [
+          "Posso pensar até amanhã?",
+          "Sim, fico com ele!"
+        ]
+      }
+    },
+    {
+      "id": "quarto.bye",
+      "tier": "core",
+      "intent_eg": "يودّعه",
+      "label_eg": "ودّعه",
+      "intent_en": "say goodbye",
+      "ask_tl": "Até amanhã, então.",
+      "ask_ar": "إلى الغد إذن.",
+      "examples_tl": [
+        "Obrigado! Até amanhã!",
+        "Muito obrigado, boa tarde!",
+        "Até amanhã!"
+      ],
+      "keywords": [
+        "obrigad",
+        "adeus",
+        "até",
+        "ate",
+        "boa tarde",
+        "bom dia",
+        "xau",
+        "igualmente"
+      ],
+      "help": {
+        "frame_tl": "Obrigado! Até amanhã!",
+        "eg": "ودّعه: Obrigado! Até amanhã!",
+        "chips": [
+          "Obrigado! Até amanhã!",
+          "Boa tarde!"
+        ],
+        "chips_f": [
+          "Obrigada! Até amanhã!",
+          "Boa tarde!"
+        ]
+      },
+      "farewell": true
+    }
+  ],
+  "suggested_words": [],
+  "required_items": [
+    "phrase.good_afternoon",
+    "phrase.see_you_tomorrow",
+    "word.water",
+    "phrase.how_much_is_it",
+    "phrase.no_problem",
+    "word.bedroom",
+    "phrase.are_you_ok",
+    "word.q_when",
+    "word.rent"
+  ],
+  "new_items_tl": [
+    "as despesas",
+    "estão incluídas",
+    "à parte",
+    "a caução",
+    "Posso pensar?"
+  ],
+  "recommended_day": 49
+}

@@ -75,8 +75,14 @@ export async function POST(req: Request) {
         controller.enqueue(encoder.encode(encodeConvoTurnEvent(event)));
       };
       try {
+        const isScene =
+          session.module === 'free' &&
+          typeof session.topic_id === 'string' &&
+          session.topic_id.startsWith('cena-');
         const liveModel = createLiveConvoStreamModel({
-          modelOverride: body?.convo_model ?? null,
+          // Scenes: getChatModel() only (no Haiku / A/B). Free talk accepts override.
+          modelOverride: isScene ? null : (body?.convo_model ?? null),
+          sceneMode: isScene,
         });
         if (session.module === 'free') {
           const { metrics } = await runFreeConvoTurn({

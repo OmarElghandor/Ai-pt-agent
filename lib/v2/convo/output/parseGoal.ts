@@ -14,10 +14,14 @@ import {
 import { visibleFreeStreamText } from './parseFree';
 
 export const GOAL_CONVO_MAX_WORDS = 24;
+/** Scene reactions: short phrase; code appends ask_tl. */
+export const SCENE_REACTION_MAX_WORDS = 12;
 
 export type GoalParseExtraIssue =
   | 'missing_ar'
   | 'missing_question'
+  /** Scene reaction must not ask / invite — code appends ask_tl. */
+  | 'has_question'
   | 'formal'
   | 'not_arabic'
   | ScriptIssue;
@@ -127,11 +131,21 @@ export function collapseRepeatedPt(text: string): string {
 
 export function parseGoalConvoTurn(
   text: string,
-  opts?: { knownWords?: string[]; allowFormal?: boolean },
+  opts?: {
+    knownWords?: string[];
+    allowFormal?: boolean;
+    /**
+     * Scenes: reaction only (no question); code appends ask_tl.
+     * Failures use decision `drop` (no regen).
+     */
+    sceneMode?: boolean;
+  },
 ): ParseGoalConvoResult {
   const { pt: rawPt, ar, goalsRaw } = splitGoalMarkers(text);
   const { ids, missing } = parseReportedGoalIds(goalsRaw);
   const pt = collapseRepeatedPt(rawPt.trim());
+  const sceneMode = Boolean(opts?.sceneMode);
+  const maxWords = sceneMode ? SCENE_REACTION_MAX_WORDS : GOAL_CONVO_MAX_WORDS;
 
   const issues: ConvoOutputIssue[] = [];
   const extraIssues: GoalParseExtraIssue[] = [];
@@ -147,7 +161,20 @@ export function parseGoalConvoTurn(
   const ptIssue = checkPtScript(pt);
   if (ptIssue) extraIssues.push(ptIssue);
 
-  if (!/\?/.test(pt)) {
+  if (sceneMode) {
+    // Reaction must not open the next turn — code appends ask_tl.
+    // Embedded ? in a recast («Um café? Claro!») is fine; ending open is not.
+    // Do not use askTlEndsOpen (that treats any ? as open).
+    const core = pt
+      .trim()
+      .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\s]+$/u, '')
+      .trim();
+    const endsOpen =
+      !core || /\?\s*$/.test(core) || /\b(diga|diz)\.?$/i.test(core);
+    if (endsOpen) {
+      extraIssues.push('has_question');
+    }
+  } else if (!/\?/.test(pt)) {
     extraIssues.push('missing_question');
   }
   if (!opts?.allowFormal && FORMAL_RE.test(pt)) {
@@ -155,7 +182,7 @@ export function parseGoalConvoTurn(
   }
   if (findBrazilianLeak(pt)) issues.push('brazilian');
   if (findEnglishLeak(pt)) issues.push('english');
-  if (wordCount(pt) > GOAL_CONVO_MAX_WORDS) issues.push('length');
+  if (wordCount(pt) > maxWords) issues.push('length');
 
   const reasons: string[] = [];
   if (issues.includes('brazilian')) {
@@ -165,13 +192,16 @@ export function parseGoalConvoTurn(
     reasons.push('no English in the PT line');
   }
   if (issues.includes('length')) {
-    reasons.push(`keep the PT line under ${GOAL_CONVO_MAX_WORDS} words`);
+    reasons.push(`keep the PT line under ${maxWords} words`);
   }
   if (extraIssues.includes('missing_ar')) {
     reasons.push('add AR: with the Arabic translation');
   }
   if (extraIssues.includes('missing_question')) {
     reasons.push('end with exactly one question');
+  }
+  if (extraIssues.includes('has_question')) {
+    reasons.push('do not ask a question; the app adds the next line');
   }
   if (extraIssues.includes('formal')) {
     reasons.push('use tu forms only');
@@ -189,21 +219,25 @@ export function parseGoalConvoTurn(
     }
   }
 
-  const decision =
-    issues.length === 0 &&
-    !extraIssues.some(
-      (e) =>
-        e === 'missing_ar' ||
-        e === 'missing_question' ||
-        e === 'formal' ||
-        e === 'not_arabic' ||
-        e === 'ar_not_arabic' ||
-        e === 'cjk' ||
-        e === 'cyrillic' ||
-        e === 'forbidden_script' ||
-        e === 'pt_not_latin',
-    )
-      ? 'ok'
+  const hardFail = extraIssues.some(
+    (e) =>
+      e === 'missing_ar' ||
+      e === 'missing_question' ||
+      e === 'has_question' ||
+      e === 'formal' ||
+      e === 'not_arabic' ||
+      e === 'ar_not_arabic' ||
+      e === 'cjk' ||
+      e === 'cyrillic' ||
+      e === 'forbidden_script' ||
+      e === 'pt_not_latin',
+  );
+  const ok = issues.length === 0 && !hardFail;
+  // Scenes: never regen — drop the reaction; code shows ask_tl alone.
+  const decision: ParseGoalConvoResult['decision'] = ok
+    ? 'ok'
+    : sceneMode
+      ? 'drop'
       : 'regenerate';
 
   return {
@@ -214,7 +248,9 @@ export function parseGoalConvoTurn(
     issues,
     extraIssues,
     decision,
-    ...(reasons.length ? { regenerateReason: reasons.join('; ') } : {}),
+    ...(reasons.length && decision === 'regenerate'
+      ? { regenerateReason: reasons.join('; ') }
+      : {}),
     unknownWords: findUnknownWords(pt, opts?.knownWords),
   };
 }

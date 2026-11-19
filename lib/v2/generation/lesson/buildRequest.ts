@@ -14,16 +14,16 @@ export type BuildRequestOptions = {
   targetLang?: string;
 };
 
-/** Total days on the path after the 2026-11-11 everyday-words days (phase 1 = 1–54). */
-export const COURSE_DAYS = 114;
+/** Total days on the path after the 2026-11-19 curriculum insert (phase 1 = 1–56). */
+export const COURSE_DAYS = 116;
 
 /** Numbers are introduced on this day; blocked in TL before it. */
 export const NUMBERS_INTRO_DAY = 8;
 
-/** Phase 1 ends at the A1 test (day 54); phase 2 runs 55–84; phase 3 from 85. */
+/** Phase 1 ends at the A1 test (day 56); phase 2 runs 57–86; phase 3 from 87. */
 export function phaseForDay(day: number): number {
-  if (day <= 54) return 1;
-  if (day <= 84) return 2;
+  if (day <= 56) return 1;
+  if (day <= 86) return 2;
   return 3;
 }
 

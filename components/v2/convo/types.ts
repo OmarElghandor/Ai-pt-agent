@@ -25,6 +25,14 @@ export type TalkBubble =
       coachRevealed?: boolean;
       /** Pacing: bubble is a typing placeholder. */
       typing?: boolean;
+      /** Scene character display name (role-play). */
+      partnerName?: string;
+      /** Azure pt-PT voice for TTS (role-play). */
+      voice?: string;
+      /** Scene repeat / Mais devagar — TTS slower (0.85). */
+      playbackRate?: number;
+      /** Format 3 scene: suggestion chips under the latest character bubble. */
+      suggest?: string[];
     }
   | {
       id: string;

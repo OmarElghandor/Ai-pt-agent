@@ -1,0 +1,255 @@
+{
+  "source": "topic",
+  "kind": "scene",
+  "authored": true,
+  "target_lang": "pt-PT",
+  "topic_id": "cena-mercado",
+  "title_tl": "Na banca do mercado",
+  "title_ar": "في فرشة السوق",
+  "emoji": "🍊",
+  "scene_eg": "سوق الحي يوم سبت. Manuel عنده فرشة فاكهة وخضار.",
+  "intro_eg": "اشتري كيلو فاكهة، اسأل بكام، وادفع.",
+  "scene": {
+    "character_id": "manuel",
+    "place": "Manuel sells fruit and vegetables at a market stall",
+    "time_of_day": "morning",
+    "address": "formal"
+  },
+  "opening": {
+    "tl": "Bom dia! O que vai ser?",
+    "ar": "صباح الخير! ماذا تريد؟"
+  },
+  "closing": {
+    "tl": "Até sábado! 👋",
+    "ar": "إلى السبت!"
+  },
+  "goals": [
+    {
+      "id": "mercado.order",
+      "tier": "core",
+      "intent_eg": "يطلب كيلو فاكهة أو خضار",
+      "label_eg": "اطلب كيلو فاكهة",
+      "intent_en": "order a kilo of a fruit or vegetable",
+      "ask_tl": "Bom dia! O que vai ser?",
+      "ask_ar": "صباح الخير! ماذا تريد؟",
+      "examples_tl": [
+        "Queria um quilo de laranjas, por favor.",
+        "Queria laranjas, por favor.",
+        "Um quilo de maçãs."
+      ],
+      "keywords": [
+        "laranja",
+        "maçã",
+        "maca",
+        "banana",
+        "batata",
+        "tomate",
+        "quilo"
+      ],
+      "help": {
+        "frame_tl": "Queria um quilo de ___, por favor.",
+        "eg": "O que vai ser? = «تحب إيه؟». الكمية: um quilo de = كيلو.",
+        "chips": [
+          "Queria um quilo de laranjas, por favor.",
+          "Queria um quilo de batatas, por favor."
+        ]
+      }
+    },
+    {
+      "id": "mercado.ask_price",
+      "tier": "core",
+      "intent_eg": "يسأل بكام",
+      "label_eg": "اسأل بكام",
+      "intent_en": "ask the price",
+      "ask_tl": "Olhe, é tudo fresquinho! 😊 Quer saber o preço?",
+      "ask_ar": "انظر، كل شيء طازج! هل تريد معرفة السعر؟",
+      "examples_tl": [
+        "Quanto custa?",
+        "Quanto custa o quilo?",
+        "Quanto é?",
+        "Sim, quanto custa?"
+      ],
+      "keywords": [
+        "quanto",
+        "sim",
+        "preço",
+        "preco",
+        "conta"
+      ],
+      "help": {
+        "frame_tl": "Quanto custa?",
+        "eg": "اسأل بكام: Quanto custa?",
+        "chips": [
+          "Quanto custa?",
+          "Quanto custa o quilo?"
+        ]
+      },
+      "cue_eg": "اسأله بكام."
+    },
+    {
+      "id": "mercado.anything_else",
+      "tier": "core",
+      "intent_eg": "يطلب حاجة تانية أو يقول بس كده",
+      "label_eg": "عايز حاجة تانية؟",
+      "intent_en": "order something else, or say that is all",
+      "ask_tl": "É um euro e oitenta o quilo. Mais alguma coisa?",
+      "ask_ar": "الكيلو بيورو وثمانين سنتًا. هل تريد شيئًا آخر؟",
+      "examples_tl": [
+        "Só isto, obrigado.",
+        "Sim, um quilo de batatas.",
+        "Não, é tudo.",
+        "Só isto, obrigada."
+      ],
+      "keywords": [
+        "só",
+        "isto",
+        "nada",
+        "não",
+        "nao",
+        "tudo",
+        "laranja",
+        "maçã",
+        "banana",
+        "batata",
+        "tomate"
+      ],
+      "help": {
+        "frame_tl": "Só isto, obrigado.",
+        "eg": "مش عايز حاجة تانية؟ Só isto, obrigado.",
+        "chips": [
+          "Só isto, obrigado.",
+          "Sim, um quilo de batatas."
+        ],
+        "chips_f": [
+          "Só isto, obrigada.",
+          "Sim, um quilo de batatas."
+        ]
+      }
+    },
+    {
+      "id": "mercado.bag",
+      "tier": "core",
+      "intent_eg": "يرد محتاج كيس ولا لأ",
+      "label_eg": "رد على الكيس",
+      "intent_en": "say whether they need a bag",
+      "ask_tl": "Precisa de saco?",
+      "ask_ar": "هل تحتاج كيسًا؟",
+      "examples_tl": [
+        "Sim, por favor.",
+        "Não, obrigado. Tenho saco.",
+        "Não, obrigado."
+      ],
+      "keywords": [
+        "sim",
+        "não",
+        "nao",
+        "tenho"
+      ],
+      "help": {
+        "frame_tl": "Não, obrigado. Tenho saco.",
+        "eg": "o saco = الكيس. معاك كيس؟ Não, obrigado. Tenho saco.",
+        "chips": [
+          "Sim, por favor.",
+          "Não, obrigado. Tenho saco."
+        ],
+        "chips_f": [
+          "Sim, por favor.",
+          "Não, obrigada. Tenho saco."
+        ]
+      }
+    },
+    {
+      "id": "mercado.pay",
+      "tier": "core",
+      "intent_eg": "يدفع",
+      "label_eg": "ادفع",
+      "intent_en": "pay (card or cash)",
+      "ask_tl": "São três euros e vinte. Como quer pagar?",
+      "ask_ar": "المجموع ثلاثة يوروهات وعشرون سنتًا. كيف تريد أن تدفع؟",
+      "examples_tl": [
+        "Aqui tem.",
+        "Aceita cartão?",
+        "Em dinheiro. Aqui tem."
+      ],
+      "keywords": [
+        "aqui tem",
+        "dinheiro",
+        "cartão",
+        "cartao",
+        "tome"
+      ],
+      "help": {
+        "frame_tl": "Aqui tem.",
+        "eg": "Aqui tem = «اتفضل» وإنت بتدّي الفلوس",
+        "chips": [
+          "Aqui tem.",
+          "Aceita cartão?"
+        ]
+      },
+      "facts_tl": [
+        "Na banca só aceita dinheiro."
+      ]
+    },
+    {
+      "id": "mercado.bye",
+      "tier": "core",
+      "intent_eg": "يودّعه",
+      "label_eg": "ودّعه",
+      "intent_en": "say goodbye",
+      "ask_tl": "Obrigado! Bom fim de semana!",
+      "ask_ar": "شكرًا! عطلة سعيدة!",
+      "examples_tl": [
+        "Obrigado! Igualmente!",
+        "Igualmente! Adeus!",
+        "Obrigada, até sábado!"
+      ],
+      "keywords": [
+        "obrigad",
+        "adeus",
+        "até",
+        "ate",
+        "bom dia",
+        "boa tarde",
+        "xau",
+        "igualmente"
+      ],
+      "help": {
+        "frame_tl": "Obrigado! Igualmente!",
+        "eg": "بيتمنالك ويك إند حلو. رد: Igualmente! = وإنت كمان",
+        "chips": [
+          "Obrigado! Igualmente!",
+          "Igualmente! Adeus!"
+        ],
+        "chips_f": [
+          "Obrigada! Igualmente!",
+          "Igualmente! Adeus!"
+        ]
+      },
+      "farewell": true
+    }
+  ],
+  "suggested_words": [],
+  "required_items": [
+    "phrase.good_morning",
+    "phrase.likewise",
+    "phrase.anything_else",
+    "phrase.thats_all",
+    "phrase.how_much_is_it",
+    "phrase.need_a_bag",
+    "phrase.no_thanks",
+    "phrase.card_ok",
+    "phrase.cash",
+    "word.change",
+    "phrase.excuse_me",
+    "phrase.no_problem",
+    "phrase.are_you_ok",
+    "word.saturday"
+  ],
+  "new_items_tl": [
+    "O que vai ser?",
+    "um quilo de",
+    "Aqui tem.",
+    "Só aceito dinheiro."
+  ],
+  "recommended_day": 9
+}

@@ -12,7 +12,7 @@ type Props = {
   /** @deprecated Unused in talk UI — pronunciation-in-Arabic is no longer shown. */
   say?: string;
   streaming?: boolean;
-  /** Egyptian / MSA meaning — revealed via translate icon. */
+  /** Egyptian / MSA meaning — revealed via translate icon (or always in sceneMode). */
   meaningEg?: string;
   /** Teach coach strip inside the bubble. */
   coachEg?: string;
@@ -30,8 +30,20 @@ type Props = {
   tone?: BubbleTone;
   /** Partner display name for calm header. */
   partnerName?: string;
+  /** Azure pt-PT voice; when set, passed to /api/tts. */
+  voice?: string;
   /** Increment to abort in-flight TTS (G2 reaction_reset). */
   ttsEpoch?: number;
+  /** Format 3 scene: always show Arabic under the PT. */
+  alwaysShowMeaning?: boolean;
+  /** Format 3 scene: suggestion chips under the latest bubble (ladder level 4). */
+  suggest?: string[];
+  /** Called when the learner taps a suggest chip (fills input). */
+  onSuggestChip?: (text: string) => void;
+  /** Format 3 scene: progressive hint button (before level 4). */
+  onHintPress?: () => void;
+  /** Disable the hint button while a turn is in flight. */
+  hintDisabled?: boolean;
 };
 
 function MeaningToggle({
@@ -90,9 +102,15 @@ export function CharacterBubble({
   onPlayStart,
   onPlayEnd,
   partnerName = 'Inês',
+  voice,
   ttsEpoch = 0,
+  alwaysShowMeaning = false,
+  suggest,
+  onSuggestChip,
+  onHintPress,
+  hintDisabled = false,
 }: Props) {
-  const [showMeaning, setShowMeaning] = useState(false);
+  const [showMeaning, setShowMeaning] = useState(alwaysShowMeaning);
   const [playing, setPlaying] = useState(false);
   const playedRef = useRef<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -117,7 +135,11 @@ export function CharacterBubble({
         const res = await fetch('/api/tts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: tl, lang: 'pt' }),
+          body: JSON.stringify({
+            text: tl,
+            lang: 'pt',
+            ...(voice ? { voice } : {}),
+          }),
         });
         if (!res.ok || cancelled) {
           setPlaying(false);
@@ -143,7 +165,7 @@ export function CharacterBubble({
       cancelled = true;
       audioRef.current?.pause();
     };
-  }, [autoPlay, streaming, tl, playbackRate, onPlayStart, onPlayEnd, typing]);
+  }, [autoPlay, streaming, tl, playbackRate, onPlayStart, onPlayEnd, typing, voice]);
 
   // v4 V1: never render a character bubble with empty PT (unless still streaming/typing).
   if (!tl.trim() && !streaming && !typing) {
@@ -213,7 +235,14 @@ export function CharacterBubble({
               ) : null}
             </p>
 
-            {showMeaning && meaningEg ? (
+            {alwaysShowMeaning && meaningEg ? (
+              <p
+                dir="rtl"
+                className="mt-1.5 text-end font-[family-name:var(--font-ft-ar)] text-[12px] leading-snug text-[var(--ft-text-secondary)]"
+              >
+                {meaningEg}
+              </p>
+            ) : showMeaning && meaningEg ? (
               <p
                 dir="rtl"
                 className="mt-2 border-t border-[var(--ft-border)] pt-2 text-end font-[family-name:var(--font-ft-ar)] text-[13px] text-[var(--ft-ink)]"
@@ -230,15 +259,51 @@ export function CharacterBubble({
               ) : (
                 <span />
               )}
-              <MeaningToggle
-                meaningEg={meaningEg}
-                showMeaning={showMeaning}
-                onToggle={() => setShowMeaning((v) => !v)}
-              />
+              {alwaysShowMeaning ? (
+                <span />
+              ) : (
+                <MeaningToggle
+                  meaningEg={meaningEg}
+                  showMeaning={showMeaning}
+                  onToggle={() => setShowMeaning((v) => !v)}
+                />
+              )}
             </div>
           </>
         )}
       </div>
+
+      {suggest?.length && onSuggestChip ? (
+        <div
+          dir="rtl"
+          className="flex w-full flex-wrap items-center gap-1.5 px-1"
+        >
+          <span className="font-[family-name:var(--font-ft-ar)] text-[11px] text-[var(--ft-text-secondary)]">
+            ممكن تقول:
+          </span>
+          {suggest.map((chip) => (
+            <button
+              key={chip}
+              type="button"
+              onClick={() => onSuggestChip(chip)}
+              className="rounded-lg bg-[color-mix(in_srgb,var(--ft-mist)_55%,transparent)] px-2.5 py-1 font-[family-name:var(--font-ft-pt)] text-[12px] text-[var(--ft-ink)] ring-1 ring-[var(--ft-border)]"
+            >
+              {chip}
+            </button>
+          ))}
+        </div>
+      ) : onHintPress ? (
+        <div dir="rtl" className="flex w-full items-center px-1">
+          <button
+            type="button"
+            onClick={onHintPress}
+            disabled={hintDisabled}
+            className="rounded-lg px-2.5 py-1 font-[family-name:var(--font-ft-ar)] text-[12px] text-[var(--ft-sage)] ring-1 ring-[var(--ft-border)] hover:bg-[color-mix(in_srgb,var(--ft-mist)_40%,transparent)] disabled:opacity-50"
+          >
+            💡 تلميح
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }

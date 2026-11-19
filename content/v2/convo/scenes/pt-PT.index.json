@@ -1,0 +1,14 @@
+{
+  "target_lang": "pt-PT",
+  "path": [
+    {
+      "n": 1,
+      "id": "cena-cafe",
+      "round": 1,
+      "emoji": "☕",
+      "title_tl": "Um café, por favor",
+      "title_ar": "في الكافيه",
+      "recommended_day": 9
+    }
+  ]
+}

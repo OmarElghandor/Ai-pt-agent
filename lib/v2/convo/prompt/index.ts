@@ -3,6 +3,7 @@ export {
   FREE_CONVO_CHARACTER_RULES,
   GOAL_CONVO_CHARACTER_RULES,
   OPEN_CONVO_CHARACTER_RULES,
+  SCENE_CONVO_CHARACTER_RULES,
 } from './characterRules';
 export {
   buildConvoPrompt,
