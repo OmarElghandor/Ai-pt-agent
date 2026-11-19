@@ -329,6 +329,9 @@ export async function runConvoTurn(
         struggled: session.struggled,
         said_once: session.said_once,
         survival_used: session.survival_used ?? 0,
+        goals: session.goals,
+        current_goal: session.current_goal,
+        character_id: session.character_id,
       },
     });
     await store.save(session);

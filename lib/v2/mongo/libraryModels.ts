@@ -1,4 +1,5 @@
 import mongoose, { Schema, type InferSchemaType, type Model } from 'mongoose';
+import type { EpisodeStages } from '@/lib/v2/library/types';
 
 /* Library (14 §3, 14d §3): briefs, episodes, jobs, voices, settings. */
 /* Split from models.ts so Next/Turbopack loads a fresh module (HMR-safe). */
@@ -132,10 +133,12 @@ v2LibraryEpisodeSchema.index(
 );
 v2LibraryEpisodeSchema.index({ target_lang: 1, target_level: 1, sort_order: 1 });
 
-export type V2LibraryEpisodeDoc = InferSchemaType<
-  typeof v2LibraryEpisodeSchema
-> & {
+type V2LibraryEpisodeDocBase = InferSchemaType<typeof v2LibraryEpisodeSchema>;
+
+export type V2LibraryEpisodeDoc = Omit<V2LibraryEpisodeDocBase, 'stages'> & {
   _id: mongoose.Types.ObjectId;
+  /** Narrow stage statuses; assignable to the Mongo subdocs. */
+  stages: EpisodeStages;
 };
 
 export function V2LibraryEpisodeModel(): Model<V2LibraryEpisodeDoc> {

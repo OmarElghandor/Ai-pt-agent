@@ -169,14 +169,18 @@ export function FreeTalkSession({
           return;
         }
         if (sceneMode && event.id === 'scene_done') {
-          const corrections = bubblesRef.current
-            .filter((b) => b.role === 'learner' && b.correction?.tl)
+          const learnerBubbles = bubblesRef.current.filter(
+            (b): b is Extract<TalkBubble, { role: 'learner' }> =>
+              b.role === 'learner',
+          );
+          const corrections = learnerBubbles
+            .filter((b) => b.correction?.corrected_tl.trim())
             .map((b) => ({
-              tl: b.correction!.tl,
+              tl: b.correction!.corrected_tl,
               ...(b.correction!.ar ? { ar: b.correction!.ar } : {}),
             }));
-          const said = bubblesRef.current
-            .filter((b) => b.role === 'learner' && b.tl.trim())
+          const said = learnerBubbles
+            .filter((b) => b.tl.trim())
             .map((b) => b.tl.trim())
             .slice(-8);
           setSceneResult({

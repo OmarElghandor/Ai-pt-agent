@@ -266,7 +266,6 @@ export async function runAudioBuild(
       Buffer.from(lines.map((l) => String((l as { audio_key?: string }).audio_key ?? '')).join('\n')),
       `${slug}/stitch`,
     );
-    (episode as { audio_stitch_url?: string }).set?.('audio_stitch_url', stitchUrl);
     episode.set('images', {
       ...((episode.images as object) ?? {}),
       stitch_url: stitchUrl,

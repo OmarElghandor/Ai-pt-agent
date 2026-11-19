@@ -95,7 +95,9 @@ export function usageCost(t: UsageTotals, fallbackModel: string): JobCost {
   };
 }
 
-export type ParseOutcome<T> = { value?: T; fatal: FatalProblem[] };
+export type ParseOutcome<T> =
+  | { value: T; fatal?: undefined }
+  | { value?: undefined; fatal: FatalProblem[] };
 
 export type CallWithRetryResult<T> =
   | { ok: true; value: T; attempts: AttemptLog[]; usage: UsageTotals }
@@ -163,10 +165,10 @@ export async function callWithRetry<T>(opts: {
 
     if (errors.length === 0) {
       const outcome = opts.parse(data);
-      if (outcome.fatal.length === 0 && outcome.value !== undefined) {
+      if (outcome.value !== undefined) {
         return { ok: true, value: outcome.value, attempts, usage };
       }
-      errors = outcome.fatal.length
+      errors = outcome.fatal?.length
         ? outcome.fatal
         : [{ code: 'no_parse', message: 'Output could not be used' }];
     }

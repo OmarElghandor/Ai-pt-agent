@@ -34,6 +34,14 @@ export async function GET(
     .lean();
 
   const shared = await buildDaySteps({ day });
+  const rawDayQuestions = doc?.day_questions as
+    | LessonProgressRecord['day_questions']
+    | null
+    | undefined;
+  const rawPractice = doc?.practice as
+    | LessonProgressRecord['practice']
+    | null
+    | undefined;
   const progress = doc
     ? ({
         user_id: String(doc.user_id),
@@ -54,8 +62,21 @@ export async function GET(
               item_index: doc.resume.item_index ?? undefined,
             }
           : null,
-        day_questions: doc.day_questions,
-        practice: doc.practice,
+        day_questions: {
+          total: Number(rawDayQuestions?.total ?? 0),
+          answered: Number(rawDayQuestions?.answered ?? 0),
+          first_try_correct: Number(rawDayQuestions?.first_try_correct ?? 0),
+          per_skill: { ...(rawDayQuestions?.per_skill ?? {}) },
+        },
+        practice: {
+          times: Number(rawPractice?.times ?? 0),
+          last_at: rawPractice?.last_at
+            ? new Date(rawPractice.last_at as Date)
+            : null,
+          said: Number(rawPractice?.said ?? 0),
+          understood: Number(rawPractice?.understood ?? 0),
+          best_said: Number(rawPractice?.best_said ?? 0),
+        },
         started_at: doc.started_at ? new Date(doc.started_at as Date) : null,
         completed_at: doc.completed_at
           ? new Date(doc.completed_at as Date)

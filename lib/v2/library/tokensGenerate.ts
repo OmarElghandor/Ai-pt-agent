@@ -26,6 +26,7 @@ import {
   mergeTokensIntoChunk,
   splitChunk,
   type LibraryToken,
+  type LineTokens,
 } from './tokens';
 import { clearStale } from './stages';
 import { LIBRARY_LANG, type EpisodeStages } from './types';
@@ -153,7 +154,7 @@ export async function runTokensJob(
         tl: lines[i].tl,
         ar: lines[i].ar ?? '',
       }));
-      const result = await callWithRetry({
+      const result = await callWithRetry<LineTokens[]>({
         callModel,
         system: buildTokensSystem(),
         user: buildTokensUser(payload),

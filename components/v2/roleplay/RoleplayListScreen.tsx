@@ -83,7 +83,7 @@ function PathRow({ s }: { s: SceneCatalogEntry }) {
             ✓
           </span>
         ) : (
-          <Icon name="arrow_back" size={18} className="text-v2-action" />
+          <Icon name="arrow_back" size={20} className="text-v2-action" />
         )}
       </Link>
     </li>

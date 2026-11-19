@@ -32,9 +32,10 @@ export type StageStatus<S extends LibraryStage = LibraryStage> =
 
 export type StageState<S extends LibraryStage = LibraryStage> = {
   status: StageStatus<S>;
-  updated_at?: Date | string | null;
+  /** Matches v2 library episode stage subdoc (`Date` in Mongo). */
+  updated_at?: Date | null;
   stale: boolean;
-  stale_reason?: string;
+  stale_reason?: string | null;
 };
 
 export type EpisodeStages = { [S in LibraryStage]: StageState<S> };

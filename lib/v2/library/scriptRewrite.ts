@@ -344,7 +344,7 @@ export async function runScriptRewriteJob(
     instruction: params.instruction,
   });
 
-  const result = await callWithRetry({
+  const result = await callWithRetry<ScriptLine[]>({
     callModel,
     system,
     user,

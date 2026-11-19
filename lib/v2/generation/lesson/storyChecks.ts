@@ -285,6 +285,7 @@ export function autoFixStoryLines(
           kind: 'pattern',
           tl: itemTl(item),
           eg: '',
+          priority: 'essential',
           pattern_kind:
             'kind' in item
               ? (item as { kind?: CoreItem['pattern_kind'] }).kind
@@ -384,6 +385,7 @@ export function autoFixStoryLines(
           kind: 'pattern' as const,
           tl: itemTl(item),
           eg: '',
+          priority: 'essential' as const,
         };
         const draft: StoryLine = { ...line, tl: sent, ids: sentIds };
         if (lineCoversItem(draft, core, itemsById, coreItems)) {
@@ -903,6 +905,7 @@ export function checkStory(ctx: StoryCheckContext): TierIssue[] {
           kind: 'pattern' as const,
           tl: '',
           eg: '',
+          priority: 'essential' as const,
         };
         return lineCoversItem(line, core, itemsById, coreItems);
       });

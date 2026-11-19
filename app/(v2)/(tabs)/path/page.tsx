@@ -6,6 +6,7 @@ import { buildPathPayload, buildWeekPathPayload, weekDays } from '@/lib/v2/path'
 import {
   mergeLearnerPath,
   resolveLearnerCurrentDay,
+  type LearnerPathDay,
 } from '@/lib/v2/progress/learnerPath';
 import { getImageByKey } from '@/lib/v2/images';
 import { storySceneKey } from '@/lib/v2/images/keys';
@@ -15,7 +16,7 @@ export default async function PathPage() {
   const { days } = await buildPathPayload();
   const user = await getCurrentV2User();
 
-  let learnerDays = days.map((d) => ({
+  let learnerDays: LearnerPathDay[] = days.map((d) => ({
     ...d,
     learner_status: (d.day === 1 && d.href ? 'available' : 'locked') as
       | 'locked'

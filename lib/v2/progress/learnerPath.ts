@@ -18,9 +18,9 @@ export type LearnerPathDay = PathDayRow & {
   practised: boolean;
   /** Content may exist but learner hasn't unlocked yet. */
   bakra: boolean;
-  /** Counted stations done/total — only set for in_progress days. */
-  steps_done?: number | null;
-  steps_total?: number | null;
+  /** Counted stations done/total — null unless in_progress (or unreadable). */
+  steps_done: number | null;
+  steps_total: number | null;
 };
 
 function toProgressRecord(

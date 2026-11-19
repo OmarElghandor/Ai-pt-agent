@@ -1,3 +1,5 @@
+import type { ConvoGoalBank } from '@/lib/v2/convo/goals/types';
+
 export type { SceneIndex, ScenePathEntry } from './types';
 export {
   askTlEndsOpen,
@@ -76,6 +78,11 @@ export {
 export { reactionHasNewContentWords } from './reaction';
 export { isAtLeast80Similar, sceneExampleSimilarity } from './similarity';
 
-export function isSceneBank(bank: { kind?: string } | null | undefined): boolean {
-  return bank?.kind === 'scene';
+/** Scene banks are goal banks with `kind: 'scene'` (role-play packs). */
+export type ConvoSceneBank = ConvoGoalBank & { kind: 'scene' };
+
+export function isSceneBank(
+  bank: ConvoGoalBank | null | undefined,
+): bank is ConvoSceneBank {
+  return bank != null && bank.kind === 'scene';
 }

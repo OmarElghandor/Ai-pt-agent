@@ -634,7 +634,6 @@ export async function runFreeConvoTurn(
         learnerName,
         assisted: input.assisted,
         learnerTurnId: input.learnerTurnId,
-        freeTextGrader: input.freeTextGrader,
         coachCaller: input.coachCaller,
         stubReaction: input.stubSceneReaction,
         stubQwen: input.stubSceneQwen,
