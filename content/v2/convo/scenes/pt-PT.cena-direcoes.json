@@ -64,24 +64,25 @@
       "ask_ar_f": "المترو؟ امشِ إلى الأمام ثم انعطف يسارًا. هل فهمتِ؟",
       "examples_tl": [
         "Em frente e depois à esquerda?",
-        "Desculpe, pode repetir?",
         "À esquerda?",
         "Sim, percebi. Em frente e depois à esquerda."
       ],
       "keywords": [
         "frente",
         "esquerda",
-        "repetir",
-        "devagar",
         "sim",
         "percebi"
       ],
       "help": {
         "frame_tl": "Em frente e depois à esquerda?",
-        "eg": "أكّد: Em frente e depois à esquerda? · مش فاهم؟ Pode repetir?",
+        "eg": "أكّد الطريق: Em frente e depois à esquerda? · مش فاهم؟ Pode repetir?",
         "chips": [
           "Em frente e depois à esquerda?",
-          "Desculpe, pode repetir?"
+          "Sim, percebi. Obrigado!"
+        ],
+        "chips_f": [
+          "Em frente e depois à esquerda?",
+          "Sim, percebi. Obrigada!"
         ]
       },
       "cue_eg": "وصفلك الطريق. أكّده علشان تتأكد إنك فاهم، أو اطلب يعيد."
@@ -156,8 +157,8 @@
       "intent_eg": "يشكره",
       "label_eg": "اشكره",
       "intent_en": "thank him and say goodbye",
-      "ask_tl": "Exatamente. De nada! Bom dia!",
-      "ask_ar": "تمامًا. عفوًا! يومًا سعيدًا!",
+      "ask_tl": "De nada! Bom dia!",
+      "ask_ar": "عفوًا! يومًا سعيدًا!",
       "examples_tl": [
         "Muito obrigado! Bom dia!",
         "Obrigado!",

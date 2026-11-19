@@ -1,6 +1,13 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
-import type { ConvoGoalBank } from '@/lib/v2/convo/goals/types';
+import type {
+  ConvoGoal,
+  ConvoGoalBank,
+  ConvoGoalHelp,
+  SceneGlobalBlock,
+  SceneLine,
+  SceneOption,
+} from '@/lib/v2/convo/goals/types';
 import {
   parseGoalFromRaw,
   parseSceneFromRaw,
@@ -117,16 +124,206 @@ export function loadSceneIndex(opts?: {
   return index;
 }
 
-/** Parse + validate a scene bank JSON object. */
-export function parseSceneBankJson(raw: unknown): ConvoGoalBank {
-  if (!raw || typeof raw !== 'object') {
-    throw new Error('scene bank: expected object');
-  }
-  const doc = raw as Record<string, unknown>;
-  if (doc.kind !== 'scene') {
-    throw new Error('scene bank: kind must be "scene"');
+function parseSceneLine(raw: unknown): SceneLine | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const o = raw as Record<string, unknown>;
+  const tl = typeof o.tl === 'string' ? o.tl : '';
+  const ar = typeof o.ar === 'string' ? o.ar : '';
+  if (!tl.trim()) return null;
+  const tl_f = typeof o.tl_f === 'string' ? o.tl_f : undefined;
+  const ar_f = typeof o.ar_f === 'string' ? o.ar_f : undefined;
+  return {
+    tl,
+    ar,
+    ...(tl_f?.trim() ? { tl_f } : {}),
+    ...(ar_f?.trim() ? { ar_f } : {}),
+  };
+}
+
+function parseSceneLines(raw: unknown): SceneLine[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.map(parseSceneLine).filter((l): l is SceneLine => Boolean(l));
+}
+
+function parseSceneOption(raw: unknown): SceneOption | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const o = raw as Record<string, unknown>;
+  const value = typeof o.value === 'string' ? o.value.trim() : '';
+  if (!value) return null;
+  const keywords = Array.isArray(o.keywords)
+    ? o.keywords.map((k) => String(k)).filter(Boolean)
+    : [];
+  const examples = Array.isArray(o.examples)
+    ? o.examples.map((e) => String(e)).filter(Boolean)
+    : [];
+  const react = parseSceneLines(o.react);
+  return { value, keywords, examples, react };
+}
+
+function parseHints(raw: unknown): ConvoGoal['hints'] | undefined {
+  if (!raw || typeof raw !== 'object') return undefined;
+  const o = raw as Record<string, unknown>;
+  const what_eg = typeof o.what_eg === 'string' ? o.what_eg.trim() : '';
+  const words_eg = typeof o.words_eg === 'string' ? o.words_eg.trim() : '';
+  const frame_tl = typeof o.frame_tl === 'string' ? o.frame_tl.trim() : '';
+  if (!what_eg && !words_eg && !frame_tl) return undefined;
+  return { what_eg, words_eg, frame_tl };
+}
+
+function synthesizeHelp(goal: {
+  hint_eg?: string;
+  hints?: ConvoGoal['hints'];
+  suggest?: string[];
+  suggest_f?: string[];
+}): ConvoGoalHelp {
+  const chips = goal.suggest?.length ? [...goal.suggest] : ['…'];
+  const eg =
+    goal.hints?.what_eg?.trim() || goal.hint_eg?.trim() || '';
+  return {
+    frame_tl: goal.hints?.frame_tl?.trim() || chips[0] || '…',
+    eg,
+    chips,
+    ...(goal.suggest_f?.length ? { chips_f: [...goal.suggest_f] } : {}),
+  };
+}
+
+function parseFormat3Goal(raw: Record<string, unknown>): ConvoGoal {
+  const id = typeof raw.id === 'string' ? raw.id.trim() : '';
+  const label_eg =
+    typeof raw.label_eg === 'string' ? raw.label_eg.trim() : '';
+  const ask = parseSceneLines(raw.ask);
+  const unclear = parseSceneLines(raw.unclear);
+  const options = Array.isArray(raw.options)
+    ? raw.options
+        .map(parseSceneOption)
+        .filter((o): o is SceneOption => Boolean(o))
+    : [];
+  const suggest = Array.isArray(raw.suggest)
+    ? raw.suggest.map((s) => String(s)).filter(Boolean)
+    : [];
+  const suggest_f = Array.isArray(raw.suggest_f)
+    ? raw.suggest_f.map((s) => String(s)).filter(Boolean)
+    : undefined;
+  const hints = parseHints(raw.hints);
+  const hint_eg =
+    typeof raw.hint_eg === 'string'
+      ? raw.hint_eg.trim()
+      : hints?.what_eg || undefined;
+  const farewell = raw.farewell === true;
+
+  const keywords = options.flatMap((o) => o.keywords);
+  const examples_tl = options.flatMap((o) => o.examples);
+  const firstAsk = ask[0];
+
+  return {
+    id,
+    intent_eg: label_eg || id,
+    label_eg: label_eg || undefined,
+    examples_tl: examples_tl.length ? examples_tl : [''],
+    keywords: keywords.length ? keywords : [id],
+    ask_tl: firstAsk?.tl,
+    ask_ar: firstAsk?.ar,
+    ask,
+    options,
+    unclear,
+    suggest,
+    ...(suggest_f?.length ? { suggest_f } : {}),
+    ...(hints ? { hints } : {}),
+    ...(hint_eg ? { hint_eg } : {}),
+    ...(farewell ? { farewell: true } : {}),
+    help: synthesizeHelp({ hint_eg, hints, suggest, suggest_f }),
+  };
+}
+
+function parseGlobal(raw: unknown): SceneGlobalBlock | undefined {
+  if (!raw || typeof raw !== 'object') return undefined;
+  const g = raw as Record<string, unknown>;
+  const greetingRaw = g.greeting as Record<string, unknown> | undefined;
+  const thanksRaw = g.thanks as Record<string, unknown> | undefined;
+  const sideRaw = g.side_unknown as Record<string, unknown> | undefined;
+  if (!greetingRaw || !thanksRaw || !sideRaw) return undefined;
+  return {
+    greeting: {
+      keywords: Array.isArray(greetingRaw.keywords)
+        ? greetingRaw.keywords.map((k) => String(k)).filter(Boolean)
+        : [],
+      react: parseSceneLines(greetingRaw.react),
+    },
+    thanks: {
+      keywords: Array.isArray(thanksRaw.keywords)
+        ? thanksRaw.keywords.map((k) => String(k)).filter(Boolean)
+        : [],
+      react: parseSceneLines(thanksRaw.react),
+    },
+    side_unknown: {
+      react: parseSceneLines(sideRaw.react),
+    },
+  };
+}
+
+function parseFormat3SceneBank(doc: Record<string, unknown>): ConvoGoalBank {
+  const opening_lines = parseSceneLines(doc.opening);
+  const closing_lines = parseSceneLines(doc.closing);
+  const goalsRaw = Array.isArray(doc.goals) ? doc.goals : [];
+  const characterId =
+    typeof doc.character_id === 'string'
+      ? doc.character_id.trim()
+      : typeof (doc.scene as { character_id?: string } | undefined)
+            ?.character_id === 'string'
+        ? String((doc.scene as { character_id: string }).character_id)
+        : '';
+  const address =
+    doc.address === 'tu' || doc.address === 'formal'
+      ? doc.address
+      : undefined;
+  const mission =
+    typeof doc.mission_eg === 'string'
+      ? doc.mission_eg
+      : typeof doc.intro_eg === 'string'
+        ? doc.intro_eg
+        : undefined;
+
+  const bank: ConvoGoalBank = {
+    source: 'topic',
+    kind: 'scene',
+    format: 3,
+    goals: goalsRaw.map((g) =>
+      parseFormat3Goal((g ?? {}) as Record<string, unknown>),
+    ),
+    suggested_words: Array.isArray(doc.suggested_words)
+      ? doc.suggested_words.map((w) => String(w))
+      : [],
+    scene: {
+      character_id: characterId,
+      time_of_day: 'morning',
+      ...(address ? { address } : {}),
+    },
+    authored: true,
+    opening_lines,
+    closing_lines,
+    opening: opening_lines[0]
+      ? { tl: opening_lines[0].tl, ar: opening_lines[0].ar }
+      : undefined,
+    closing: closing_lines[0]
+      ? { tl: closing_lines[0].tl, ar: closing_lines[0].ar }
+      : undefined,
+    global: parseGlobal(doc.global),
+  };
+
+  if (typeof doc.id === 'string') bank.topic_id = doc.id;
+  if (typeof doc.topic_id === 'string') bank.topic_id = doc.topic_id;
+  if (typeof doc.title_tl === 'string') bank.title_tl = doc.title_tl;
+  if (typeof doc.title_ar === 'string') bank.title_ar = doc.title_ar;
+  if (mission) bank.intro_eg = mission;
+  if (typeof doc.emoji === 'string') bank.emoji = doc.emoji;
+  if (typeof doc.recommended_day === 'number') {
+    bank.recommended_day = doc.recommended_day;
   }
 
+  return bank;
+}
+
+function parseFormat2SceneBank(doc: Record<string, unknown>): ConvoGoalBank {
   const openingRaw = doc.opening as Record<string, unknown> | undefined;
   const closingRaw = doc.closing as Record<string, unknown> | undefined;
   const goalsRaw = Array.isArray(doc.goals) ? doc.goals : [];
@@ -134,6 +331,7 @@ export function parseSceneBankJson(raw: unknown): ConvoGoalBank {
   const bank: ConvoGoalBank = {
     source: 'topic',
     kind: 'scene',
+    format: 2,
     goals: goalsRaw.map((g) =>
       parseGoalFromRaw((g ?? {}) as Record<string, unknown>),
     ),
@@ -188,6 +386,23 @@ export function parseSceneBankJson(raw: unknown): ConvoGoalBank {
         : {}),
     };
   }
+
+  return bank;
+}
+
+/** Parse + validate a scene bank JSON object. */
+export function parseSceneBankJson(raw: unknown): ConvoGoalBank {
+  if (!raw || typeof raw !== 'object') {
+    throw new Error('scene bank: expected object');
+  }
+  const doc = raw as Record<string, unknown>;
+  if (doc.kind !== 'scene') {
+    throw new Error('scene bank: kind must be "scene"');
+  }
+
+  const format = doc.format === 3 ? 3 : 2;
+  const bank =
+    format === 3 ? parseFormat3SceneBank(doc) : parseFormat2SceneBank(doc);
 
   const { ok, issues } = validateSceneBank(bank);
   if (!ok) {

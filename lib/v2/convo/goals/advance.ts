@@ -14,6 +14,32 @@ export function markGoalsDone(
   );
 }
 
+export function markGoalsSkipped(
+  states: ConvoGoalState[],
+  skippedIds: string[],
+): ConvoGoalState[] {
+  if (!skippedIds.length) return states;
+  const set = new Set(skippedIds);
+  return states.map((g) =>
+    set.has(g.id) && g.status === 'open' ? { ...g, status: 'skipped' } : g,
+  );
+}
+
+/** Apply a scene DONE match: done/assisted + skipped gaps; reset miss/hint. */
+export function applySceneDoneGoals(
+  session: ConvoSession,
+  bank: ConvoGoalBank,
+  doneIds: string[],
+  skippedIds: string[],
+  opts?: { assisted?: boolean; learnerGender?: 'm' | 'f' },
+): ConvoGoal[] {
+  session.goals = markGoalsSkipped(session.goals, skippedIds);
+  const completed = applyCompletedGoals(session, bank, doneIds, opts);
+  session.scene_misses = 0;
+  session.scene_hint_level = 0;
+  return completed;
+}
+
 export function applyCompletedGoals(
   session: ConvoSession,
   bank: ConvoGoalBank,

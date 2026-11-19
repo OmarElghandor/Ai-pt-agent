@@ -39,6 +39,10 @@ type ConvoSessionDocLean = {
   recap_done_ids?: string[];
   survival_used?: number;
   learner_lines?: string[];
+  scene_misses?: number;
+  scene_hint_level?: 0 | 1 | 2 | 3 | 4;
+  scene_format?: 2 | 3;
+  scene_variant_counters?: Record<string, number>;
   recasts?: Array<{ original: string; corrected: string }>;
   coach_phrase?: ConvoSession['coach_phrase'];
   open_turns?: number;
@@ -88,6 +92,10 @@ function sessionFields(session: ConvoSession) {
     recap_done_ids: session.recap_done_ids,
     survival_used: session.survival_used,
     learner_lines: session.learner_lines,
+    scene_misses: session.scene_misses ?? 0,
+    scene_hint_level: session.scene_hint_level ?? 0,
+    scene_format: session.scene_format,
+    scene_variant_counters: session.scene_variant_counters ?? {},
     recasts: session.recasts,
     coach_phrase: session.coach_phrase,
     open_turns: session.open_turns,
@@ -153,6 +161,12 @@ function fromDoc(doc: ConvoSessionDocLean): ConvoSession {
     recap_done_ids: doc.recap_done_ids ?? [],
     survival_used: doc.survival_used ?? 0,
     learner_lines: doc.learner_lines ?? [],
+    scene_misses: doc.scene_misses ?? 0,
+    scene_hint_level: (doc.scene_hint_level ?? 0) as 0 | 1 | 2 | 3 | 4,
+    scene_format: doc.scene_format === 2 || doc.scene_format === 3
+      ? doc.scene_format
+      : undefined,
+    scene_variant_counters: doc.scene_variant_counters ?? {},
     recasts: Array.isArray(doc.recasts) ? doc.recasts : [],
     coach_phrase: doc.coach_phrase ?? null,
     open_turns: doc.open_turns ?? 0,

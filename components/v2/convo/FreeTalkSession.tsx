@@ -74,6 +74,8 @@ type Props = {
   level?: number | null;
   /** Role-play scene on free-talk (batch-rp-2). */
   sceneMode?: boolean;
+  /** Seed cast from scene bank (avoid Inês flash before start). */
+  initialCharacterId?: string | null;
   /** «المكالمة الجاية» target after scene end. */
   nextSceneId?: string | null;
   /** Back link (default /talk; scenes use /roleplay). */
@@ -85,6 +87,7 @@ export function FreeTalkSession({
   day = null,
   level = null,
   sceneMode = false,
+  initialCharacterId = null,
   nextSceneId = null,
   backHref = '/talk',
 }: Props) {
@@ -108,10 +111,10 @@ export function FreeTalkSession({
   const [helpOpen, setHelpOpen] = useState(false);
   const [assisted, setAssisted] = useState(false);
   const [openMode, setOpenMode] = useState(topicId === 'open');
-  const [characterId, setCharacterId] = useState('ines');
-  const [convoModel, setConvoModel] = useState<ConvoModelChoice>(
-    sceneMode ? 'haiku' : 'qwen',
+  const [characterId, setCharacterId] = useState(
+    initialCharacterId?.trim() || 'ines',
   );
+  const [convoModel, setConvoModel] = useState<ConvoModelChoice>('qwen');
   const [summary, setSummary] = useState<ConvoSessionSummary | null>(null);
   const [sceneResult, setSceneResult] = useState<RoleplayResultState | null>(
     null,
@@ -123,15 +126,16 @@ export function FreeTalkSession({
     null,
   );
   const [missionDoneIds, setMissionDoneIds] = useState<string[]>([]);
+  const [missionSkippedIds, setMissionSkippedIds] = useState<string[]>([]);
+  const [composeFill, setComposeFill] = useState<string | null>(null);
 
   useEffect(() => {
-    const saved = readConvoModelChoice();
-    // Scenes default Haiku; respect an explicit A/B cookie when set.
-    if (sceneMode && (!saved || saved === 'qwen')) {
-      setConvoModel('haiku');
-    } else {
-      setConvoModel(saved);
+    // Scenes are Qwen-only; free talk keeps the A/B localStorage choice.
+    if (sceneMode) {
+      setConvoModel('qwen');
+      return;
     }
+    setConvoModel(readConvoModelChoice());
   }, [sceneMode]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const bubblesRef = useRef<TalkBubble[]>([]);
@@ -229,6 +233,31 @@ export function FreeTalkSession({
           eg: event.eg,
           chips: event.chips,
         });
+        // Scene ladder L4: put suggest chips on the latest character bubble.
+        if (sceneMode) {
+          const chips = event.chips ?? [];
+          let lastChar = -1;
+          for (let i = bubblesRef.current.length - 1; i >= 0; i--) {
+            if (bubblesRef.current[i]?.role === 'character') {
+              lastChar = i;
+              break;
+            }
+          }
+          if (lastChar >= 0) {
+            const next = bubblesRef.current.map((b, i) => {
+              if (b.role !== 'character') return b;
+              if (i === lastChar) {
+                return chips.length
+                  ? { ...b, suggest: [...chips] }
+                  : { ...b, suggest: undefined };
+              }
+              if (b.suggest) return { ...b, suggest: undefined };
+              return b;
+            });
+            bubblesRef.current = next;
+            syncAuthoritative(next);
+          }
+        }
         return;
       }
       if (event.type === 'topic_lock') {
@@ -248,7 +277,14 @@ export function FreeTalkSession({
           if (event.session.goals) {
             setMissionDoneIds(
               event.session.goals
-                .filter((g) => g.status !== 'open')
+                .filter(
+                  (g) => g.status === 'done' || g.status === 'assisted',
+                )
+                .map((g) => g.id),
+            );
+            setMissionSkippedIds(
+              event.session.goals
+                .filter((g) => g.status === 'skipped')
                 .map((g) => g.id),
             );
           }
@@ -329,7 +365,8 @@ export function FreeTalkSession({
           body: JSON.stringify({
             session_id: sessionId,
             text: learnerText,
-            convo_model: convoModel,
+            // Scenes: never send A/B override (server forces Qwen).
+            ...(sceneMode ? {} : { convo_model: convoModel }),
             ...(useAssisted ? { assisted: true } : {}),
             ...(openMode ? { character_id: characterId } : {}),
             ...(opts?.learnerTurnId
@@ -366,6 +403,7 @@ export function FreeTalkSession({
       openMode,
       characterId,
       convoModel,
+      sceneMode,
       markLearnerFailed,
     ],
   );
@@ -411,6 +449,7 @@ export function FreeTalkSession({
             goals: SceneMissionGoal[];
             current_goal: string | null;
             done_ids: string[];
+            skipped_ids?: string[];
           };
         };
         if (cancelled) return;
@@ -433,6 +472,7 @@ export function FreeTalkSession({
           setMissionGoals(data.scene_mission.goals);
           setMissionCurrentGoal(data.scene_mission.current_goal);
           setMissionDoneIds(data.scene_mission.done_ids);
+          setMissionSkippedIds(data.scene_mission.skipped_ids ?? []);
         }
         if (data.current_frame) setFrame(data.current_frame);
         const warm = (data.warm_lines ?? []).slice(0, 3);
@@ -466,6 +506,7 @@ export function FreeTalkSession({
               role: 'character',
               tl: openTl,
               ar: data.opening.character.ar,
+              // Scene suggest chips only after hint ladder level 4 — never on open.
             });
           }
         }
@@ -650,6 +691,7 @@ export function FreeTalkSession({
         <ConvoDevMenu
           topicId={topicId}
           day={day}
+          hideModelSwitch={sceneMode}
           onConvoModelChange={setConvoModel}
           onReloadStart={() => {
             bubblesRef.current = [];
@@ -680,6 +722,7 @@ export function FreeTalkSession({
           goals={missionGoals}
           currentGoalId={missionCurrentGoal}
           doneIds={missionDoneIds}
+          skippedIds={missionSkippedIds}
         />
       ) : null}
 
@@ -701,9 +744,21 @@ export function FreeTalkSession({
             </div>
           ) : null}
 
-          {pacedVisible.map((b) => {
+          {pacedVisible.map((b, i) => {
             if (b.role === 'character') {
               if (!b.tl.trim() && !b.streaming && !b.typing) return null;
+              let latestCharacterIdx = -1;
+              for (let j = pacedVisible.length - 1; j >= 0; j--) {
+                const row = pacedVisible[j];
+                if (
+                  row?.role === 'character' &&
+                  (row.tl.trim() || row.streaming || row.typing)
+                ) {
+                  latestCharacterIdx = j;
+                  break;
+                }
+              }
+              const isLatestCharacter = sceneMode && i === latestCharacterIdx;
               return (
                 <CharacterBubble
                   key={b.id}
@@ -716,6 +771,24 @@ export function FreeTalkSession({
                   coachRevealed={b.coachRevealed !== false}
                   typing={b.typing}
                   ttsEpoch={b.ttsEpoch}
+                  playbackRate={b.playbackRate ?? 1}
+                  alwaysShowMeaning={sceneMode}
+                  suggest={sceneMode ? b.suggest : undefined}
+                  onSuggestChip={
+                    sceneMode
+                      ? (chip) => {
+                          setComposeFill(chip);
+                        }
+                      : undefined
+                  }
+                  onHintPress={
+                    isLatestCharacter && !b.suggest?.length
+                      ? () => {
+                          void runTurn('تلميح');
+                        }
+                      : undefined
+                  }
+                  hintDisabled={busy}
                   autoPlay={
                     !b.typing &&
                     !b.streaming &&
@@ -820,6 +893,8 @@ export function FreeTalkSession({
           disabled={loading}
           frame={frame}
           helpOpen={helpOpen}
+          fillText={composeFill}
+          onFillConsumed={() => setComposeFill(null)}
           onToggleHelp={() => setHelpOpen((v) => !v)}
           onSend={(t, opts) => sendPt(t, { assisted: opts?.assisted })}
           onArabicSend={(t) => {

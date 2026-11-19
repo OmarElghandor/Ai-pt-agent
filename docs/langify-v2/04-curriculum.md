@@ -80,7 +80,7 @@ Exported 2026-10-25. Language: Egyptian Arabic.
 
 آخر يوم في كل أسبوع مختلف: قصة الأسبوع (جزئين)، وأسئلة الفهم، وتمرين مختلط من الأسبوع كله.
 
-## المرحلة ١: تعيش أول شهرين (يوم 1–54)
+## المرحلة ١: تعيش أول شهرين (يوم 1–56)
 
 في آخر الشهر المتعلم يقدر يعرّف نفسه، يشتري ويدفع، يصرّف أي فعل منتظم في المضارع، يتحرك في البلد، يوصف ويقارن ويقول الحاجة فين، يقول بكرة هيعمل إيه، ويبتدي يحكي امبارح عمل إيه. ده مستوى A1. عمود «العنوان» هو اسم الوحدة بالبرتغالي، والعمود الأخير بيقول اليوم بياخد من أنهي صفحات في الكتاب.
 
@@ -127,28 +127,30 @@ Exported 2026-10-25. Language: Egyptian Arabic.
 | 34 | Vire à Esquerda | يمين وشمال | في الطريق (الجزء ٢) | É longe daqui? É logo ali. | تمرين على Onde fica + الاتجاهات | É logo ali | — |
 | 35 | Que Dia É Hoje? | الأيام وفترات اليوم | حجز ميعاد | Hoje é segunda. De manhã trabalho. | أيام الأسبوع + de manhã / à tarde / à noite (Períodos de Tempo) + الشهور والتاريخ (É dia 5 de março) | — | — |
 | 36 | Datas e Consultas | التاريخ والمواعيد | حجز ميعاد (الجزء ٢) | Pode ser daqui a dois dias? | dia + رقم + de + شهر، وantes · depois · ainda não · já · daqui a | Já está! | — |
-| 37 | قصة ٥ | O Fim de Semana |  |  | مراجعة الأسبوع |  | — |
+| 37 | Documentos e Marcações | الورق والمعاملات | في مكتب خدمة: ميعاد وورق | Que documentos são necessários? | Que + اسم؟ · Preciso de + حاجة | — | — |
+| 38 | قصة ٥ | O Fim de Semana |  |  | مراجعة الأسبوع |  | — |
 | **الأسبوع 6** |  |  |  |  |  |  |  |
-| 38 | Que Horas São? | الساعة | مواعيد الفتح | A que horas abre? Às nove e meia. | الساعة + الأرقام فوق 100 (Números 2) | — | 70 |
-| 39 | Futuro Informal | المستقبل القريب | خطة الويك إند | Amanhã vou trabalhar. | ir + فعل = المستقبل القريب | — | 152، 185 |
-| 40 | Verbos no Infinitivo 1 | فعل + مصدر | في الصيدلية | Queria algo para a tosse. Preciso de descansar. | poder / querer / precisar de + مصدر، وpara (عشان) | — | 2 (نص para) |
-| 41 | Possessivos | الملكية | العيلة | Tenho dois irmãos. A minha mãe mora no Cairo. | الملكية (o meu, a minha) | — | 64، 72 |
-| 42 | Adjetivos 1 | الصفات والألوان | محل الهدوم | A camisola azul é grande. | الصفة بعد الاسم وبتتغير مع المذكر والمؤنث والجمع (+ جمع -ão و-l)، والألوان (Cores · Roupa e Acessórios) | — | 68، 76، 80–82 |
-| 43 | Noutro Tamanho | مقاس ولون تاني | محل الهدوم (الجزء ٢) | Tem noutro tamanho? Tem mais barato? | -ão→-ões · -l→-is | Tem mais pequeno? · Tem maior? · Tem mais barato? | — |
-| 44 | Adjetivos 2 | توصف حاجة | بتوصف شقتك والحي لصاحبك | O quarto é um bocado pequeno. É como no Cairo. | muito / bastante / demasiado / um bocado + صفة، وassim (كده) وcomo (زي) وigual a / diferente de / parecido com | — | — |
-| 45 | قصة ٦ | A Visita da Família |  |  | مراجعة الأسبوع |  | — |
+| 39 | Que Horas São? | الساعة | مواعيد الفتح | A que horas abre? Às nove e meia. | الساعة + الأرقام فوق 100 (Números 2) | — | 70 |
+| 40 | Futuro Informal | المستقبل القريب | خطة الويك إند | Amanhã vou trabalhar. | ir + فعل = المستقبل القريب | — | 152، 185 |
+| 41 | Verbos no Infinitivo 1 | فعل + مصدر | في الصيدلية | Queria algo para a tosse. Preciso de descansar. | poder / querer / precisar de + مصدر، وpara (عشان) | — | 2 (نص para) |
+| 42 | Possessivos | الملكية | العيلة | Tenho dois irmãos. A minha mãe mora no Cairo. | الملكية (o meu, a minha) | — | 64، 72 |
+| 43 | Adjetivos 1 | الصفات والألوان | محل الهدوم | A camisola azul é grande. | الصفة بعد الاسم وبتتغير مع المذكر والمؤنث والجمع (+ جمع -ão و-l)، والألوان (Cores · Roupa e Acessórios) | — | 68، 76، 80–82 |
+| 44 | Noutro Tamanho | مقاس ولون تاني | محل الهدوم (الجزء ٢) | Tem noutro tamanho? Tem mais barato? | -ão→-ões · -l→-is | Tem mais pequeno? · Tem maior? · Tem mais barato? | — |
+| 45 | Adjetivos 2 | توصف حاجة | توصف شقتك والحي | O quarto é um bocado pequeno. É como no Cairo. | muito / bastante / demasiado / um bocado + صفة، وassim (كده) وcomo (زي) وigual a / diferente de / parecido com | — | — |
+| 46 | قصة ٦ | A Visita da Família |  |  | مراجعة الأسبوع |  | — |
 | **الأسبوع 7** |  |  |  |  |  |  |  |
-| 46 | Isto e Aquilo | ده وده | تختار حاجة في المحل | Posso experimentar este? O que é aquilo? | isto / isso / aquilo + este / esse / aquele (Qual?) | — | 23، 33، 92–94 |
-| 47 | Aqui e Ali | هنا وهناك | بتدوّر على حاجاتك في البيت | Onde está o telemóvel? Está em cima da mesa. | aqui · aí · ali · lá بنفس مسافة este · esse · aquele، وحروف المكان + de (em cima da mesa)، وestá للحاجة اللي بتتحرك وfica للمكان الثابت | Anda cá! | — |
-| 48 | Comparativos | المقارنة | بتختار بين شقتين | Este é mais barato do que aquele. Qual é melhor? | mais / menos … do que، tão … como، والشواذ melhor · pior · maior، وo mais … | — | — |
-| 49 | Saber e Conhecer | saber ولا conhecer | بتسأل في الشارع وبتتكلم عن ناس تعرفهم | Não sei onde fica. Conhece Lisboa? | saber (معلومة أو تعرف تعمل حاجة) ولا conhecer (شخص أو مكان)، وsei الشاذة، وse = لو | Claro! · A sério? · Tem a certeza? | — |
-| 50 | Verbo Pôr | فعل pôr | الصبح قبل الشغل | Ponho o casaco. Visto-me às sete. | pôr في المضارع + vestir-se (أول فعل انعكاسي) | — | 4، 5 |
-| 51 | Todos e Ninguém | الكل ومفيش حد | الصبح في المكتب ومفيش حد | Não está ninguém. Estão todos a almoçar. | todos / tudo / cada، alguém / ninguém، alguma coisa / nada، algum / nenhum، والنفي المزدوج (Não está ninguém) | Cada um paga o seu | — |
-| 52 | O Que Fizeste Ontem? | مقدمة الماضي | امبارح عملت إيه | Fui ao supermercado. Comprei pão. | الماضي التام لـ 5 أفعال (fui, fiz, estive, comprei, comi) | — | 130–133 |
-| 53 | قصة ٧ | Um Dia Normal |  |  | مراجعة الأسبوع |  | — |
-| 54 | Teste A1 | اختبار المرحلة ١ | — | — | — | — | 128–129 (تمارين المضارع) |
+| 47 | Isto e Aquilo | ده وده | تختار حاجة في المحل | Posso experimentar este? O que é aquilo? | isto / isso / aquilo + este / esse / aquele (Qual?) | — | 23، 33، 92–94 |
+| 48 | Aqui e Ali | هنا وهناك | بتدوّر على حاجاتك | Onde está o telemóvel? Está em cima da mesa. | aqui · aí · ali · lá بنفس مسافة este · esse · aquele، وحروف المكان + de (em cima da mesa)، وestá للحاجة اللي بتتحرك وfica للمكان الثابت | Anda cá! | — |
+| 49 | Comparativos | المقارنة | بتختار بين شقتين | Este é mais barato do que aquele. Qual é melhor? | mais / menos … do que، tão … como، والشواذ melhor · pior · maior، وo mais … | — | — |
+| 50 | Problemas em Casa | مشاكل في البيت | بتكلم صاحب الشقة على عطل | Não há água quente. | Há / Não há + اسم · … não funciona | — | — |
+| 51 | Saber e Conhecer | saber ولا conhecer | بتسأل وبتتكلم عن ناس تعرفهم | Não sei onde fica. Conhece Lisboa? | saber (معلومة أو تعرف تعمل حاجة) ولا conhecer (شخص أو مكان)، وsei الشاذة، وse = لو | Claro! · A sério? · Tem a certeza? | — |
+| 52 | Verbo Pôr | فعل pôr | الصبح قبل الشغل | Ponho o casaco. Visto-me às sete. | pôr في المضارع + vestir-se (أول فعل انعكاسي) | — | 4، 5 |
+| 53 | Todos e Ninguém | الكل ومفيش حد | المكتب فاضي | Não está ninguém. Estão todos a almoçar. | todos / tudo / cada، alguém / ninguém، alguma coisa / nada، algum / nenhum، والنفي المزدوج (Não está ninguém) | Cada um paga o seu | — |
+| 54 | O Que Fizeste Ontem? | مقدمة الماضي | امبارح عملت إيه | Fui ao supermercado. Comprei pão. | الماضي التام لـ 5 أفعال (fui, fiz, estive, comprei, comi) | — | 130–133 |
+| 55 | قصة ٧ | Um Dia Normal |  |  | مراجعة الأسبوع |  | — |
+| 56 | Teste A1 | اختبار المرحلة ١ | — | — | — | — | 128–129 (تمارين المضارع) |
 
-العنوان بالبرتغالي هو اسم الوحدة في ترتيب Practice Portuguese للمستوى A1، ومترجم للعربي في التطبيق. لما يوم بيضم أكتر من وحدة عندهم، الوحدات التانية مكتوبة بين قوسين في عمود القاعدة. القصص وأيام 44، 47، 48، 49، 51، 52 عناوينهم من عندنا. إحنا بناخد ترتيب المواضيع وأساميها بس، مش أي محتوى منهم. الدكتور والطوارئ والردود السريعة خرجوا من أيام المرحلة ١ وبقوا سلاسل ميكرو، والمقارنة بقت يوم 48 في المرحلة ١. ولو النسخة لحد لسه جاي من مصر، يوم 55 و33 يبدأوا بالمطار (ص 22 و 36) بدل المترو.
+العنوان بالبرتغالي هو اسم الوحدة في ترتيب Practice Portuguese للمستوى A1، ومترجم للعربي في التطبيق. لما يوم بيضم أكتر من وحدة عندهم، الوحدات التانية مكتوبة بين قوسين في عمود القاعدة. القصص وأيام 45، 48، 49، 51، 53، 54 عناوينهم من عندنا. إحنا بناخد ترتيب المواضيع وأساميها بس، مش أي محتوى منهم. الدكتور والطوارئ والردود السريعة خرجوا من أيام المرحلة ١ وبقوا سلاسل ميكرو، والمقارنة بقت يوم 49 في المرحلة ١. يوم 37 (الورق) ويوم 50 (مشاكل البيت) اتضافوا 2026-11-19.
 
 ## الأساسيات اللي كانت ناقصة
 

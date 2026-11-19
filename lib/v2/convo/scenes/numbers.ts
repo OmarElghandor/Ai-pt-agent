@@ -47,3 +47,25 @@ export function replyKeepsAskNumbers(replyPt: string, askTl: string): boolean {
 export function askTlHasPriceOrTime(askTl: string): boolean {
   return numberWordsInAsk(askTl).length > 0;
 }
+
+/**
+ * True when the reaction introduces a price/time number that is not
+ * authorized by the scene file (facts_tl / ask_tl / examples).
+ * Drops invented prices like «Custa 2 euros» when the file says 2,60.
+ */
+export function reactionInventedNumbers(
+  reactionPt: string,
+  allowedTexts: readonly string[],
+): boolean {
+  const used = numberWordsInAsk(reactionPt);
+  if (!used.length) return false;
+  const allowed = new Set<string>();
+  for (const text of allowedTexts) {
+    for (const n of numberWordsInAsk(text)) allowed.add(n);
+  }
+  if (allowed.size === 0) {
+    // Scene has no authored numbers — any number in the reaction is invented.
+    return true;
+  }
+  return used.some((n) => !allowed.has(n));
+}

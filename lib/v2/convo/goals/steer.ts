@@ -1,13 +1,40 @@
 import type { ConvoGoal } from './types';
 
-/** Egyptian / Arabic stuck phrases → start help at step 2. */
+/**
+ * A2 stuck / help (§3 / §4): مش عارف, مش فاهم أعمل إيه, ساعدني.
+ * Bare مش فاهم is A3 (repeat), not stuck.
+ */
 const STUCK_RE =
-  /^(مش\s*عارف|مش\s*عارفة|مش\s*فاهم|مش\s*فاهمة|ما\s*عرفش|ما\s*افهمش|لا\s*أعرف|لا\s*أفهم)/;
+  /^(مش\s*عارف|مش\s*عارفة|مش\s*فاهم\s*أعمل\s*إيه|مش\s*فاهم\s*اعمل\s*ايه|ما\s*عرفش|ما\s*افهمش|لا\s*أعرف|لا\s*أفهم|ساعدني|تلميح|💡\s*تلميح)/;
 
 export function isStuckHelpRequest(text: string): boolean {
   const t = text.trim();
-  if (!t) return true; // silence
+  if (!t) return true; // silence / empty STT
   return STUCK_RE.test(t);
+}
+
+/** Scene hint level 1: help.eg + 2 chips. */
+export function sceneHintLevel1(
+  goal: ConvoGoal,
+  gender: 'm' | 'f' = 'm',
+): { eg: string; frame_tl: string; chips: string[] } {
+  const help = stuckHelpForGoal(goal, gender);
+  return {
+    eg: help.eg,
+    frame_tl: help.frame_tl,
+    chips: help.chips.slice(0, 2),
+  };
+}
+
+/** Scene hint level 2: frame_tl as the single chip. */
+export function sceneHintLevel2(
+  goal: ConvoGoal,
+): { eg: string; frame_tl: string; chips: string[] } {
+  return {
+    eg: goal.help.eg,
+    frame_tl: goal.help.frame_tl,
+    chips: [goal.help.frame_tl],
+  };
 }
 
 export type SteerAction =

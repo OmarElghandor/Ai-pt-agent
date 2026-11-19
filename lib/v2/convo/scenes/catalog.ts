@@ -6,6 +6,7 @@ export type SceneCatalogEntry = ScenePathEntry & {
   place_eg: string;
   /** Optional task line (`intro_eg`) — not shown on the one-button card. */
   task_eg: string;
+  /** Always false — scenes never resume mid-call. */
   resume: boolean;
   finished: boolean;
   active_session_id?: string | null;
@@ -21,16 +22,16 @@ export type SceneCatalog = {
 
 /**
  * Path progress for role-play scenes on free-talk sessions.
- * Next = active resume first, else first unfinished in path order.
+ * Next = first unfinished in path order (no mid-call resume).
  */
 export function buildSceneCatalog(opts: {
   finishedIds: Iterable<string>;
+  /** Ignored — kept for call-site compatibility; scenes never resume. */
   activeByScene?: Record<string, { id: string }>;
   index?: SceneIndex;
 }): SceneCatalog {
   const index = opts.index ?? loadSceneIndex();
   const finished = new Set(opts.finishedIds);
-  const activeBy = opts.activeByScene ?? {};
 
   const path: SceneCatalogEntry[] = index.path.map((entry) => {
     let place_eg = '';
@@ -46,15 +47,14 @@ export function buildSceneCatalog(opts: {
       ...entry,
       place_eg,
       task_eg,
-      resume: Boolean(activeBy[entry.id]),
+      resume: false,
       finished: finished.has(entry.id),
-      active_session_id: activeBy[entry.id]?.id ?? null,
+      active_session_id: null,
     };
   });
 
-  const nextActive = path.find((s) => s.resume);
   const nextFresh = path.find((s) => !s.finished);
-  const next = nextActive ?? nextFresh ?? null;
+  const next = nextFresh ?? null;
   const past = path.filter((s) => s.finished);
 
   return {

@@ -73,7 +73,8 @@
         "quanto",
         "sim",
         "preço",
-        "preco"
+        "preco",
+        "conta"
       ],
       "help": {
         "frame_tl": "Quanto custa?",

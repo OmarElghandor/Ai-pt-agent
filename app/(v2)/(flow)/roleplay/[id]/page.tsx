@@ -9,15 +9,10 @@ import { notFound } from 'next/navigation';
 
 type Props = {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ resume?: string }>;
 };
 
-export default async function RoleplaySituationPage({
-  params,
-  searchParams,
-}: Props) {
+export default async function RoleplaySituationPage({ params }: Props) {
   const { id: raw } = await params;
-  const sp = await searchParams;
   const id = decodeURIComponent(raw);
   let bank;
   try {
@@ -30,7 +25,6 @@ export default async function RoleplaySituationPage({
   const nextId =
     nextUnfinishedSceneIdOnPath(id, [id], index) ??
     nextSceneIdOnPath(id, index);
-  const resume = sp.resume === '1' || sp.resume === 'true';
 
   return (
     <main className="mx-auto flex w-full max-w-[390px] flex-1 flex-col">
@@ -43,8 +37,8 @@ export default async function RoleplaySituationPage({
           place_eg: bank.scene_eg ?? '',
           task_eg: bank.intro_eg ?? '',
         }}
+        characterId={bank.scene?.character_id ?? null}
         nextSituationId={nextId}
-        resume={resume}
       />
     </main>
   );

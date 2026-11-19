@@ -18,11 +18,196 @@ export function askTlEndsOpen(askTl: string): boolean {
   return false;
 }
 
+function validateFormat3SceneBank(bank: ConvoGoalBank): ConvoGoalIssue[] {
+  const issues: ConvoGoalIssue[] = [];
+
+  if (bank.kind !== 'scene') {
+    issues.push({
+      path: 'kind',
+      rule: 'kind',
+      message: 'scene bank needs kind: "scene"',
+    });
+  }
+
+  const opening = bank.opening_lines ?? [];
+  if (!opening.length || !opening[0]?.tl?.trim() || !opening[0]?.ar?.trim()) {
+    issues.push({
+      path: 'opening',
+      rule: 'opening',
+      message: 'opening needs at least one {tl, ar}',
+    });
+  }
+  const closing = bank.closing_lines ?? [];
+  if (!closing.length || !closing[0]?.tl?.trim() || !closing[0]?.ar?.trim()) {
+    issues.push({
+      path: 'closing',
+      rule: 'closing',
+      message: 'closing needs at least one {tl, ar}',
+    });
+  }
+  if (!bank.scene?.character_id?.trim()) {
+    issues.push({
+      path: 'character_id',
+      rule: 'shape',
+      message: 'scene needs character_id',
+    });
+  }
+  if (!bank.global?.greeting?.react?.length) {
+    issues.push({
+      path: 'global.greeting',
+      rule: 'shape',
+      message: 'global.greeting needs react',
+    });
+  }
+  if (!bank.global?.thanks?.react?.length) {
+    issues.push({
+      path: 'global.thanks',
+      rule: 'shape',
+      message: 'global.thanks needs react',
+    });
+  }
+  if (!bank.global?.side_unknown?.react?.length) {
+    issues.push({
+      path: 'global.side_unknown',
+      rule: 'shape',
+      message: 'global.side_unknown needs react',
+    });
+  }
+
+  const goals = bank.goals;
+  if (goals.length < 1) {
+    issues.push({
+      path: 'goals',
+      rule: 'shape',
+      message: 'scene needs at least one goal',
+    });
+  } else {
+    const last = goals[goals.length - 1];
+    if (!last.farewell) {
+      issues.push({
+        path: `goals[${goals.length - 1}].farewell`,
+        rule: 'farewell',
+        message: 'last goal must have farewell: true',
+      });
+    }
+    for (let i = 0; i < goals.length - 1; i++) {
+      if (goals[i].farewell) {
+        issues.push({
+          path: `goals[${i}].farewell`,
+          rule: 'farewell',
+          message: 'only the last goal may be farewell',
+        });
+      }
+    }
+  }
+
+  const seen = new Set<string>();
+  goals.forEach((g, i) => {
+    if (!g.id?.trim()) {
+      issues.push({
+        path: `goals[${i}].id`,
+        rule: 'shape',
+        message: 'missing id',
+      });
+    } else if (seen.has(g.id)) {
+      issues.push({
+        path: `goals[${i}].id`,
+        rule: 'shape',
+        message: `duplicate goal id: ${g.id}`,
+      });
+    } else {
+      seen.add(g.id);
+    }
+    if (!g.label_eg?.trim()) {
+      issues.push({
+        path: `goals[${i}].label_eg`,
+        rule: 'shape',
+        message: 'scene goal needs label_eg',
+      });
+    }
+    if (!g.ask?.length) {
+      issues.push({
+        path: `goals[${i}].ask`,
+        rule: 'ask',
+        message: 'format 3 goal needs ask[]',
+      });
+    } else if (!g.farewell) {
+      for (let a = 0; a < g.ask.length; a++) {
+        const ask = g.ask[a]!.tl;
+        if (ask && !askTlEndsOpen(ask)) {
+          issues.push({
+            path: `goals[${i}].ask[${a}]`,
+            rule: 'ask',
+            message:
+              'ask must end with a question or an invitation (Diga / Diz)',
+          });
+        }
+      }
+    }
+    if (!g.options?.length) {
+      issues.push({
+        path: `goals[${i}].options`,
+        rule: 'shape',
+        message: 'format 3 goal needs options[]',
+      });
+    } else {
+      g.options.forEach((opt, oi) => {
+        if (!opt.value?.trim()) {
+          issues.push({
+            path: `goals[${i}].options[${oi}].value`,
+            rule: 'shape',
+            message: 'option needs value',
+          });
+        }
+        if (!opt.keywords?.length && !opt.examples?.length) {
+          issues.push({
+            path: `goals[${i}].options[${oi}]`,
+            rule: 'keywords',
+            message: 'option needs keywords or examples',
+          });
+        }
+      });
+    }
+    if (!g.unclear?.length) {
+      issues.push({
+        path: `goals[${i}].unclear`,
+        rule: 'shape',
+        message: 'format 3 goal needs unclear[]',
+      });
+    }
+    if (!g.suggest?.length || g.suggest.length < 2) {
+      issues.push({
+        path: `goals[${i}].suggest`,
+        rule: 'shape',
+        message: 'format 3 goal needs 2 suggest chips',
+      });
+    }
+    if (
+      !g.hints?.what_eg?.trim() ||
+      !g.hints?.words_eg?.trim() ||
+      !g.hints?.frame_tl?.trim()
+    ) {
+      issues.push({
+        path: `goals[${i}].hints`,
+        rule: 'help',
+        message: 'format 3 goal needs hints {what_eg, words_eg, frame_tl}',
+      });
+    }
+  });
+
+  return issues;
+}
+
 /** Validate a scene goal bank (kind: "scene"). */
 export function validateSceneBank(bank: ConvoGoalBank): {
   ok: boolean;
   issues: ConvoGoalIssue[];
 } {
+  if (bank.format === 3) {
+    const issues = validateFormat3SceneBank(bank);
+    return { ok: issues.length === 0, issues };
+  }
+
   const issues: ConvoGoalIssue[] = [];
 
   if (bank.kind !== 'scene') {
@@ -120,13 +305,17 @@ export function sceneOpenAskIssues(goals: ConvoGoal[]): ConvoGoalIssue[] {
   const issues: ConvoGoalIssue[] = [];
   goals.forEach((g, i) => {
     if (g.farewell) return;
-    const ask = g.ask_tl?.trim() ?? '';
-    if (ask && !askTlEndsOpen(ask)) {
-      issues.push({
-        path: `goals[${i}].ask_tl`,
-        rule: 'ask',
-        message: `does not end open: ${ask.slice(-40)}`,
-      });
+    const asks = g.ask?.length
+      ? g.ask.map((a) => a.tl)
+      : [g.ask_tl?.trim() ?? ''];
+    for (const ask of asks) {
+      if (ask && !askTlEndsOpen(ask)) {
+        issues.push({
+          path: `goals[${i}].ask_tl`,
+          rule: 'ask',
+          message: `does not end open: ${ask.slice(-40)}`,
+        });
+      }
     }
   });
   return issues;

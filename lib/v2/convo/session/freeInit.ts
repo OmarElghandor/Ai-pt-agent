@@ -376,6 +376,11 @@ export function createFreeConvoSessionDoc(opts: {
     recap_done_ids: [],
     survival_used: 0,
     learner_lines: [],
+    scene_misses: 0,
+    scene_hint_level: 0,
+    ...(bank?.format === 2 || bank?.format === 3
+      ? { scene_format: bank.format }
+      : {}),
     recasts: [],
     coach_phrase: null,
     open_turns: 0,

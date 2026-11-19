@@ -6,7 +6,6 @@ import {
 import { isV2Enabled } from '@/lib/v2/flags';
 import {
   buildSceneCatalog,
-  listActiveScenesByTopic,
   listFinishedSceneIds,
 } from '@/lib/v2/convo/scenes';
 import { MongoConvoSessionStore } from '@/lib/v2/convo/session';
@@ -30,14 +29,8 @@ export async function GET() {
 
   const store = new MongoConvoSessionStore();
   try {
-    const [finishedIds, activeByScene] = await Promise.all([
-      listFinishedSceneIds(store, userId),
-      listActiveScenesByTopic(store, userId),
-    ]);
-    const catalog = buildSceneCatalog({
-      finishedIds,
-      activeByScene,
-    });
+    const finishedIds = await listFinishedSceneIds(store, userId);
+    const catalog = buildSceneCatalog({ finishedIds });
     return NextResponse.json(catalog);
   } catch (err) {
     if (err instanceof Error && err.message === 'mongo_unavailable') {

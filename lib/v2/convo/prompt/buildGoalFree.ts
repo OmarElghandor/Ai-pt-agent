@@ -115,16 +115,11 @@ export function formatCurrentGoalLine(opts: {
   factsTl?: string[];
 }): string {
   if (opts.sceneMode) {
-    let steer = `intent: ${opts.intentEn}`;
-    if (opts.askTl?.trim()) {
-      steer += ` · say this, or something very close: ${opts.askTl.trim()}`;
-    }
+    // Reaction-only: code appends ask_tl; never ask the model to say it.
+    let steer = `react to the learner for this goal intent: ${opts.intentEn}`;
     const facts = (opts.factsTl ?? []).map((f) => f.trim()).filter(Boolean);
     if (facts.length) {
       steer += ` · use these facts exactly; never invent a price, a time or a place: ${facts.join('; ')}`;
-    }
-    if (opts.turnsOnGoal >= 2) {
-      steer += ' · ask about it directly now';
     }
     steer += ` · goal id: ${opts.goalId}`;
     if (opts.openGoalIds.length) {

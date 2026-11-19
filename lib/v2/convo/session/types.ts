@@ -125,6 +125,14 @@ export type ConvoSession = {
   survival_used: number;
   /** Learner Portuguese lines this session (Batch 10 خلاص, max 8). */
   learner_lines: string[];
+  /** Scene: consecutive misses on the current goal (§3 Step D). */
+  scene_misses?: number;
+  /** Scene: hint ladder level on the current goal (0–4). */
+  scene_hint_level?: 0 | 1 | 2 | 3 | 4;
+  /** Scene bank format when the session was created (reject mismatch on open). */
+  scene_format?: 2 | 3;
+  /** Format 3: variant counters for ask/react/global/opening/closing arrays. */
+  scene_variant_counters?: Record<string, number>;
   /** Recast / free-text correction pairs (Batch 10 + K5). */
   recasts: Array<{ original: string; corrected: string; ar?: string }>;
   /**

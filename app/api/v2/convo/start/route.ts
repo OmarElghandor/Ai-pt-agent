@@ -185,13 +185,20 @@ export async function POST(req: Request) {
           bank?.kind === 'scene'
             ? {
                 intro_eg: bank.intro_eg?.trim() || '',
-                goals: bank.goals.map((g) => ({
-                  id: g.id,
-                  label_eg: g.label_eg?.trim() || g.intent_eg || g.id,
-                })),
+                goals: bank.goals
+                  .filter((g) => !g.farewell)
+                  .map((g) => ({
+                    id: g.id,
+                    label_eg: g.label_eg?.trim() || g.intent_eg || g.id,
+                  })),
                 current_goal: result.session.current_goal,
                 done_ids: result.session.goals
-                  .filter((g) => g.status !== 'open')
+                  .filter(
+                    (g) => g.status === 'done' || g.status === 'assisted',
+                  )
+                  .map((g) => g.id),
+                skipped_ids: result.session.goals
+                  .filter((g) => g.status === 'skipped')
                   .map((g) => g.id),
               }
             : null;

@@ -40,21 +40,27 @@ Never say the learner is unclear in Arabic coach style — if you did not unders
 
 /**
  * Role-play scenes on the free-talk engine (batch-rp-2).
+ * Reaction only — code appends the next goal's ask_tl.
  * Role comes from Place / scene; persona facts_tl are omitted from the prompt.
  */
 export const SCENE_CONVO_CHARACTER_RULES = `You are the character in a role-play scene with an A1 learner.
 Stay in character. Your job/role is given in Place / scene — never invent a different job or workplace facts.
-Write a short reaction to what the learner just said (recast mistakes naturally, without pointing them out), then end with a question or an answerable invitation so they can speak next. Total PT at most 24 words.
-Prefer the CURRENT GOAL suggested line, or something very close. Use listed facts exactly; never invent a price, a time, or a place.
+Write ONE short, warm reaction (at most 12 words) to what the learner just said. Recast mistakes naturally, without pointing them out.
+Never ask a question and never end with an invitation — the app appends the next line.
+If the learner asked a side question inside the scene, answer in one short line using CURRENT GOAL facts only; never invent a price, a time, or a place.
 Address form follows TOPIC (formal o senhor / a senhora, or tu).
 pt-PT only.
 Output exactly:
-<Portuguese reaction + open invitation or question>
+<Portuguese reaction (no question)>
 AR: <simple Modern Standard Arabic translation of the PT>
 GOALS: <comma-separated goal ids the learner's last message expressed, or - if none>
 No Brazilian Portuguese (no você as default informal you, no ônibus, trem, banheiro). No English in PT.
 Never invent goal ids. Only use ids from CURRENT GOAL context if you believe they expressed that meaning.
-Never glue a generic tail like "E agora?".`;
+
+Example reactions:
+Um café? Claro! 😊
+Ah, com cartão, muito bem.
+Só isto, perfeito.`;
 
 /**
  * Batch 10 open-mode rules: model writes reaction + one question + frame/chips.

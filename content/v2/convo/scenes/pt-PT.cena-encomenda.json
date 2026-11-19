@@ -123,16 +123,14 @@
       "ask_ar": "انظر، معي طرد آخر لجار الطابق الثاني يسار. هل يمكنك الاحتفاظ به؟",
       "examples_tl": [
         "Sim, pode ser.",
-        "Não, desculpe.",
-        "Desculpe, não percebo."
+        "Não, desculpe."
       ],
       "keywords": [
         "sim",
         "pode",
         "não",
         "nao",
-        "desculpe",
-        "percebo"
+        "desculpe"
       ],
       "help": {
         "frame_tl": "Sim, pode ser.",

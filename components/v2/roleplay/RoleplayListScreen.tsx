@@ -10,8 +10,7 @@ import type {
 } from '@/lib/v2/convo/scenes';
 
 function situationHref(s: SceneCatalogEntry): string {
-  const base = `/roleplay/${encodeURIComponent(s.id)}`;
-  return s.resume ? `${base}?resume=1` : base;
+  return `/roleplay/${encodeURIComponent(s.id)}`;
 }
 
 function NextCard({ s }: { s: SceneCatalogEntry }) {
@@ -40,7 +39,7 @@ function NextCard({ s }: { s: SceneCatalogEntry }) {
         ) : null}
       </div>
       <span className="flex min-h-12 items-center justify-center rounded-v2-row bg-v2-primary font-[family-name:var(--font-v2-arabic)] text-base font-semibold text-white">
-        {s.resume ? 'كمّل المكالمة' : 'ابدأ المكالمة'}
+        ابدأ المكالمة
       </span>
     </Link>
   );

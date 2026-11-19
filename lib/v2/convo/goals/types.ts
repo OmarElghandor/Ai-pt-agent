@@ -65,9 +65,55 @@ export type ConvoGoal = {
   /** Scene banks: last goal — the goodbye. */
   farewell?: boolean;
   help: ConvoGoalHelp;
+  /** Format 3: character ask variants. */
+  ask?: SceneLine[];
+  /** Format 3: matchable options with authored reacts. */
+  options?: SceneOption[];
+  /** Format 3: unclear turn variants. */
+  unclear?: SceneLine[];
+  /** Format 3: suggestion chips. */
+  suggest?: string[];
+  suggest_f?: string[];
+  /**
+   * Format 3: Egyptian hint (legacy). Prefer `hints`.
+   * Kept for soft-compat when loading older banks.
+   */
+  hint_eg?: string;
+  /** Format 3: progressive hint ladder (what → words → frame). */
+  hints?: SceneHints;
 };
 
-export type ConvoGoalStatus = 'open' | 'done' | 'assisted';
+/** Format 3 progressive hints (batch-rp-3 Change 2026-11-19). */
+export type SceneHints = {
+  what_eg: string;
+  words_eg: string;
+  frame_tl: string;
+};
+
+/** One authored PT+AR line (format 3 scenes). */
+export type SceneLine = {
+  tl: string;
+  ar: string;
+  /** Female learner variants (optional). */
+  tl_f?: string;
+  ar_f?: string;
+};
+
+/** One matchable option on a format-3 scene goal. */
+export type SceneOption = {
+  value: string;
+  keywords: string[];
+  examples: string[];
+  react: SceneLine[];
+};
+
+export type SceneGlobalBlock = {
+  greeting: { keywords: string[]; react: SceneLine[] };
+  thanks: { keywords: string[]; react: SceneLine[] };
+  side_unknown: { react: SceneLine[] };
+};
+
+export type ConvoGoalStatus = 'open' | 'done' | 'assisted' | 'skipped';
 
 export type ConvoGoalState = {
   id: string;
@@ -103,6 +149,8 @@ export type ConvoGoalBank = {
    * never from the free-talk topic catalog.
    */
   kind?: 'scene';
+  /** Scene bank schema version. Format 3 = authored bubbles + Qwen JSON only. */
+  format?: 2 | 3;
   topic_id?: string;
   day?: number;
   goals: ConvoGoal[];
@@ -118,6 +166,11 @@ export type ConvoGoalBank = {
   scene_eg?: string;
   opening?: ConvoBankOpening;
   closing?: ConvoBankClosing;
+  /** Format 3: opening / closing variant arrays. */
+  opening_lines?: SceneLine[];
+  closing_lines?: SceneLine[];
+  /** Format 3: greeting / thanks / side_unknown. */
+  global?: SceneGlobalBlock;
   /** Scene entry card emoji. */
   emoji?: string;
   /** Scene path metadata: suggested curriculum day. */

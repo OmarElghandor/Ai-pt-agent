@@ -20,12 +20,19 @@ export {
 export {
   checkSceneGoals,
   fuzzyMatchesExampleAtLeastTwoWords,
+  type SceneMatchResult,
 } from './check';
 export {
   askTlHasPriceOrTime,
   numberWordsInAsk,
+  reactionInventedNumbers,
   replyKeepsAskNumbers,
 } from './numbers';
+export { firstWords, stripRepeatedOpener } from './opener';
+export {
+  goalExamplesIncludeRepeat,
+  isSceneRepeatRequest,
+} from './repeat';
 export { personaJsonForScene, sceneCharacterPersonaJson } from './persona';
 export {
   buildSceneCatalog,
@@ -38,6 +45,36 @@ export {
   listActiveScenesByTopic,
   listFinishedSceneIds,
 } from './progress';
+export {
+  buildSceneReactionPrompt,
+  collectSceneFacts,
+  sceneLevelExtraAllowed,
+} from './prompt';
+export {
+  guardSceneReaction,
+  parseSceneModelOutput,
+  reactionEchoesLearner,
+  type SceneReactionGuard,
+} from './reaction';
+export { runSceneTurn, type RunSceneTurnInput } from './runSceneTurn';
+export {
+  callSceneQwen,
+  parseSceneQwenJson,
+  sceneQwenCandidatesFromOpen,
+  validateSceneQwenResult,
+  type SceneQwenResult,
+} from './qwenScene';
+export {
+  isWeakWordOrPhrase,
+  messageContainsKeyword,
+  messageHasAnyKeyword,
+  messageHasStrongKeyword,
+  normalizeSceneText,
+  sceneKeywordMatchesToken,
+  SCENE_WEAK_WORDS,
+} from './weak';
+export { reactionHasNewContentWords } from './reaction';
+export { isAtLeast80Similar, sceneExampleSimilarity } from './similarity';
 
 export function isSceneBank(bank: { kind?: string } | null | undefined): boolean {
   return bank?.kind === 'scene';

@@ -7,7 +7,10 @@ import {
   type FreeTopic,
 } from '@/lib/v2/convo/topics';
 import { currentNextLine } from '@/lib/v2/convo/free/nextLine';
-import { ensureLessonDayGoalBank } from '@/lib/v2/convo/goals';
+import {
+  ensureLessonDayGoalBank,
+  healSceneSessionAgainstBank,
+} from '@/lib/v2/convo/goals';
 import { pickGoalAskLines } from '@/lib/v2/convo/prompt';
 import { isSceneBank } from '@/lib/v2/convo/scenes';
 import {
@@ -58,8 +61,16 @@ async function resumeFree(
       : null;
   const sceneBank = resolveFreeGoalBank({ topic, lessonDay });
   if (isSceneBank(sceneBank)) {
-    const session =
+    let session =
       cleared !== existing ? await store.save(cleared) : cleared;
+    const healed = healSceneSessionAgainstBank(
+      session,
+      sceneBank,
+      learnerGender,
+    );
+    if (healed) {
+      session = await store.save(session);
+    }
     const opening = buildFreeOpeningBubbles(topic, {
       learnerName,
       lessonDay,
@@ -82,6 +93,12 @@ async function resumeFree(
         tl: lastCharTl,
         ar: ask?.ar?.trim() || opening.character.ar,
       };
+    } else if (opening.character.tl?.trim()) {
+      // Resumed with no history — seed opening so the first turn has context.
+      session.last_exchanges = [
+        { role: 'character', tl: opening.character.tl.trim() },
+      ];
+      session = await store.save(session);
     }
     return { session, opening, resumed: true };
   }
@@ -149,34 +166,67 @@ export async function startFreeConvoSession(
     return stored === requestedDay;
   };
 
-  if (opts.sessionId) {
-    const existing = await opts.store.findById(opts.sessionId);
-    if (
-      existing &&
-      existing.user_id === opts.userId &&
-      existing.module === 'free' &&
-      existing.topic_id === topic.id &&
-      lessonDayMatches(existing)
-    ) {
-      return resumeFree(
-        existing,
-        topic,
-        opts.store,
-        learnerName,
-        opts.learnerGender ?? 'm',
-      );
+  // Roleplay scenes always start fresh — no mid-call resume.
+  // Old-format scene sessions must never resume (batch-rp-3 G11).
+  const isScene = topic.id.startsWith('cena-');
+  if (isScene) {
+    await opts.store.deleteOpen?.(opts.userId, packId);
+  } else {
+    if (opts.sessionId) {
+      const existing = await opts.store.findById(opts.sessionId);
+      if (
+        existing &&
+        existing.user_id === opts.userId &&
+        existing.module === 'free' &&
+        existing.topic_id === topic.id &&
+        lessonDayMatches(existing)
+      ) {
+        const bank = resolveFreeGoalBank({
+          topic,
+          lessonDay: requestedDay,
+        });
+        if (
+          isSceneBank(bank) &&
+          existing.scene_format != null &&
+          bank.format != null &&
+          existing.scene_format !== bank.format
+        ) {
+          await opts.store.deleteOpen?.(opts.userId, packId);
+        } else {
+          return resumeFree(
+            existing,
+            topic,
+            opts.store,
+            learnerName,
+            opts.learnerGender ?? 'm',
+          );
+        }
+      }
     }
-  }
 
-  const open = await opts.store.findOpen(opts.userId, packId);
-  if (open && open.module === 'free' && lessonDayMatches(open)) {
-    return resumeFree(
-      open,
-      topic,
-      opts.store,
-      learnerName,
-      opts.learnerGender ?? 'm',
-    );
+    const open = await opts.store.findOpen(opts.userId, packId);
+    if (open && open.module === 'free' && lessonDayMatches(open)) {
+      const bank = resolveFreeGoalBank({
+        topic,
+        lessonDay: requestedDay,
+      });
+      if (
+        isSceneBank(bank) &&
+        open.scene_format != null &&
+        bank.format != null &&
+        open.scene_format !== bank.format
+      ) {
+        await opts.store.deleteOpen?.(opts.userId, packId);
+      } else {
+        return resumeFree(
+          open,
+          topic,
+          opts.store,
+          learnerName,
+          opts.learnerGender ?? 'm',
+        );
+      }
+    }
   }
 
   // F5: hydrate generated lesson-day bank into memory/Mongo before create.
@@ -202,14 +252,30 @@ export async function startFreeConvoSession(
     learnerLevel: opts.learnerLevel,
     ...(suggestedWords ? { suggestedWords } : {}),
   });
+  const opening = buildFreeOpeningBubbles(topic, {
+    learnerName,
+    lessonDay: opts.lessonDay,
+    learnerGender: opts.learnerGender ?? 'm',
+  });
+  // Scenes: seed last character exchange so the first learner turn has context.
+  if (
+    created.topic_id?.startsWith('cena-') &&
+    opening.character.tl?.trim()
+  ) {
+    created.last_exchanges = [
+      { role: 'character', tl: opening.character.tl.trim() },
+    ];
+    if (opening.character.tl.trim()) {
+      created.scene_variant_counters = {
+        ...(created.scene_variant_counters ?? {}),
+        opening: 1,
+      };
+    }
+  }
   const session = await opts.store.create(created);
   return {
     session,
-    opening: buildFreeOpeningBubbles(topic, {
-      learnerName,
-      lessonDay: opts.lessonDay,
-      learnerGender: opts.learnerGender ?? 'm',
-    }),
+    opening,
     resumed: false,
   };
 }

@@ -6,7 +6,7 @@
       "week": 1,
       "title_tl": "Apresentar-se",
       "title_ar": "تقديم نفسك",
-      "situation_eg": "أول يوم في الشغل",
+      "situation_eg": "أول يوم في الشغل: التعارف",
       "example_tl": "Chamo-me Omar. Muito prazer!",
       "rule_eg": "الضمير بعد الفعل (Chamo-me)",
       "extra_units_tl": [],
@@ -22,9 +22,9 @@
       "generation": {
         "situation_tl": "O primeiro dia no trabalho",
         "can_do": [
-          "تعرّف بنفسك",
-          "تقول اسمك وتقول متشكر",
-          "ترد على التحية"
+          "تسلّم على الناس حسب وقت اليوم",
+          "تقول اسمك وتسأل عن اسم اللي قدامك",
+          "ترد على Muito prazer"
         ],
         "grammar_focus": {
           "id": "pronouns.clitic_after",
@@ -85,7 +85,7 @@
       "week": 1,
       "title_tl": "Tudo Bem?",
       "title_ar": "إزيك؟ والوداع",
-      "situation_eg": "أول يوم في الشغل",
+      "situation_eg": "أول يوم في الشغل: السؤال عن الحال والوداع",
       "example_tl": "Tudo bem?",
       "rule_eg": "إزيك وعامل إيه، وإزاي تودّع",
       "extra_units_tl": [],
@@ -97,11 +97,11 @@
       ],
       "is_story": false,
       "generation": {
-        "situation_tl": "O primeiro dia no trabalho",
+        "situation_tl": "No fim do primeiro dia",
         "can_do": [
-          "تعرّف بنفسك",
-          "تقول اسمك وتقول متشكر",
-          "ترد على التحية"
+          "تسأل حد عامل إيه، بأدب أو كاجوال",
+          "ترد إنك كويس وتشكر (obrigado لو راجل، obrigada لو ست)",
+          "تودّع وتقول أشوفك بكرة"
         ],
         "grammar_focus": {
           "id": "pronouns.clitic_after",
@@ -128,14 +128,17 @@
           "a manhã"
         ],
         "new_items": {
-          "words": [],
+          "words": [
+            "voltar"
+          ],
           "phrases": [
             "Tudo bem?",
             "Tudo bem, obrigado.",
             "Até amanhã!",
             "Adeus!",
             "Como está?",
-            "Estou bem, obrigado."
+            "Estou bem, obrigado.",
+            "Já volto!"
           ]
         },
         "recycle": [],
@@ -160,7 +163,7 @@
       "week": 1,
       "title_tl": "Conversação Básica",
       "title_ar": "كلام أساسي",
-      "situation_eg": "في الكافيه",
+      "situation_eg": "في الكافيه: تطلب",
       "example_tl": "Queria um café, por favor.",
       "rule_eg": "Queria للطلب بأدب + um/uma",
       "extra_units_tl": [],
@@ -174,11 +177,11 @@
       ],
       "is_story": false,
       "generation": {
-        "situation_tl": "No café",
+        "situation_tl": "Pedir no café",
         "can_do": [
-          "تطلب قهوة بأدب",
-          "تقول من فضلك وشكراً",
-          "تطلب حاجة بـ um/uma"
+          "تطلب مشروب أو أكلة بـ Queria + um/uma",
+          "تفهم سؤال الجرسون Com leite? / Mais alguma coisa?",
+          "تقول بس كده"
         ],
         "grammar_focus": {
           "id": "polite.queria",
@@ -247,7 +250,7 @@
       "week": 1,
       "title_tl": "Mais Alguma Coisa?",
       "title_ar": "حاجة تانية في الكافيه",
-      "situation_eg": "في الكافيه",
+      "situation_eg": "في الكافيه: تزوّد على طلبك وتدفع",
       "example_tl": "Quanto é?",
       "rule_eg": "تكمّل طلبك وتدفع",
       "extra_units_tl": [],
@@ -259,11 +262,11 @@
       ],
       "is_story": false,
       "generation": {
-        "situation_tl": "No café",
+        "situation_tl": "Pagar no café",
         "can_do": [
-          "تطلب قهوة بأدب",
-          "تقول من فضلك وشكراً",
-          "تطلب حاجة بـ um/uma"
+          "تزوّد حاجة على طلبك",
+          "تسأل الحساب كام وتفهم الرقم",
+          "ترد على شكراً بـ De nada وتستأذن بـ Com licença"
         ],
         "grammar_focus": {
           "id": "polite.queria",
@@ -297,13 +300,16 @@
             "o açúcar",
             "o sumo",
             "o bolo",
-            "o copo"
+            "o copo",
+            "então"
           ],
           "phrases": [
             "Quanto é?",
             "Gosto de café.",
             "De nada.",
-            "Com licença."
+            "Com licença.",
+            "Então, quanto é?",
+            "Pronto, obrigado."
           ]
         },
         "recycle": [
@@ -331,7 +337,7 @@
       "week": 1,
       "title_tl": "Gramática Básica",
       "title_ar": "قواعد أساسية",
-      "situation_eg": "في السوبر ماركت",
+      "situation_eg": "في السوبر ماركت: تدوّر على الحاجة",
       "example_tl": "Onde fica o leite?",
       "rule_eg": "o / a: مذكر ومؤنث + الجمع (Plurais)",
       "extra_units_tl": [
@@ -350,11 +356,11 @@
       ],
       "is_story": false,
       "generation": {
-        "situation_tl": "No supermercado",
+        "situation_tl": "Procurar no supermercado",
         "can_do": [
-          "تشتري أكل وتسأل على المكان",
-          "تسأل على السعر",
-          "تدفع"
+          "تسأل الحاجة فين وتفهم الرد (ali / lá atrás)",
+          "تسأل ده إيه",
+          "تقول الأداة الصح o / a مع الحاجة"
         ],
         "grammar_focus": {
           "id": "articles.definite",
@@ -417,7 +423,7 @@
       "week": 1,
       "title_tl": "Plurais",
       "title_ar": "الجمع",
-      "situation_eg": "في السوبر ماركت",
+      "situation_eg": "في السوبر ماركت: الكمية والكاشير",
       "example_tl": "Quanto custa isso?",
       "rule_eg": "os / as + اسم + s",
       "extra_units_tl": [],
@@ -430,11 +436,11 @@
       ],
       "is_story": false,
       "generation": {
-        "situation_tl": "No supermercado",
+        "situation_tl": "Na caixa do supermercado",
         "can_do": [
-          "تشتري أكل وتسأل على المكان",
-          "تسأل على السعر",
-          "تدفع"
+          "تطلب حاجة بالجمع (laranjas, tomates)",
+          "تسأل ده بكام",
+          "ترد على Precisa de saco? عند الكاشير"
         ],
         "grammar_focus": {
           "id": "articles.definite.2",
@@ -460,11 +466,13 @@
             "a laranja",
             "o tomate",
             "a batata",
-            "a fruta"
+            "a fruta",
+            "dar"
           ],
           "phrases": [
             "Quanto custa isso?",
-            "Precisa de saco?"
+            "Precisa de saco?",
+            "Pode dar-me um saco?"
           ]
         },
         "recycle": [
@@ -529,7 +537,7 @@
       "week": 2,
       "title_tl": "Números 1",
       "title_ar": "الأرقام 1",
-      "situation_eg": "بكام؟ والدفع",
+      "situation_eg": "بكام؟ تفهم الأسعار",
       "example_tl": "São doze euros.",
       "rule_eg": "الأرقام 0–100 (استثناء مستعجل)",
       "extra_units_tl": [],
@@ -573,7 +581,13 @@
         "tomorrow": {
           "tl": "Pagar e a Idade",
           "eg": "الدفع والسن"
-        }
+        },
+        "situation_tl": "Perguntar o preço",
+        "can_do": [
+          "تفهم السعر لما يتقال بالأرقام",
+          "تقول رقم لحد 100",
+          "ترفض بأدب: Não, obrigado"
+        ]
       }
     },
     {
@@ -581,7 +595,7 @@
       "week": 2,
       "title_tl": "Pagar e a Idade",
       "title_ar": "الدفع والسن",
-      "situation_eg": "بكام؟ والدفع",
+      "situation_eg": "تدفع، والسن",
       "example_tl": "Aceita cartão?",
       "rule_eg": "Tenho + رقم + anos (السن بـ ter)",
       "extra_units_tl": [],
@@ -615,7 +629,7 @@
           "phrases": [
             "Aceita cartão?",
             "Em dinheiro.",
-            "Contribuinte?",
+            "Quer contribuinte?",
             "Quantos anos tem?",
             "Tenho trinta e dois anos.",
             "É muito caro!"
@@ -625,7 +639,13 @@
         "tomorrow": {
           "tl": "Introdução aos Verbos",
           "eg": "مقدمة الأفعال"
-        }
+        },
+        "situation_tl": "Pagar e dizer a idade",
+        "can_do": [
+          "تسأل ينفع كارت ولا كاش",
+          "ترد على سؤال الرقم الضريبي (Quer contribuinte?)",
+          "تقول سنك وتسأل عن السن"
+        ]
       }
     },
     {
@@ -633,7 +653,7 @@
       "week": 2,
       "title_tl": "Introdução aos Verbos",
       "title_ar": "مقدمة الأفعال",
-      "situation_eg": "الجيران والسلام",
+      "situation_eg": "لما مش فاهم: تطلب يعيد أو يبطّأ",
       "example_tl": "Não percebo. Fala português?",
       "rule_eg": "يعني إيه فعل ومصدر، وtu / você / o senhor (Tu e Você)، والنفي não / nunca (Advérbios 1)",
       "extra_units_tl": [
@@ -673,7 +693,8 @@
         ],
         "new_items": {
           "words": [
-            "nunca"
+            "nunca",
+            "dizer"
           ],
           "phrases": [
             "Desculpe.",
@@ -682,14 +703,22 @@
             "Não percebo.",
             "Fala português?",
             "Falo um pouco.",
-            "Não sei."
+            "Não sei.",
+            "Pode dizer outra vez?",
+            "Já percebi."
           ]
         },
         "recycle": [],
         "tomorrow": {
           "tl": "Os Vizinhos",
           "eg": "الجيران وtu وvocê"
-        }
+        },
+        "situation_tl": "Quando não percebo",
+        "can_do": [
+          "تقول إنك مش فاهم",
+          "تطلب يعيد أو يتكلم أبطأ",
+          "تقول إنك بتتكلم برتغالي شوية"
+        ]
       }
     },
     {
@@ -697,7 +726,7 @@
       "week": 2,
       "title_tl": "Os Vizinhos",
       "title_ar": "الجيران وtu وvocê",
-      "situation_eg": "الجيران والسلام",
+      "situation_eg": "الجيران: tu ولا o senhor",
       "example_tl": "Até logo!",
       "rule_eg": "tu / você / o senhor + المصدر",
       "extra_units_tl": [],
@@ -746,7 +775,13 @@
         "tomorrow": {
           "tl": "Verbos -AR 1",
           "eg": "أفعال -AR"
-        }
+        },
+        "situation_tl": "Os vizinhos",
+        "can_do": [
+          "تسلّم على جارك وترحّب بحد جديد",
+          "تختار tu أو o senhor حسب الشخص",
+          "تعتذر وترد على الاعتذار بـ Não faz mal"
+        ]
       }
     },
     {
@@ -754,7 +789,7 @@
       "week": 2,
       "title_tl": "Verbos -AR 1",
       "title_ar": "أفعال -AR",
-      "situation_eg": "بتشتغل فين وساكن فين",
+      "situation_eg": "بتشتغل فين",
       "example_tl": "Trabalho num café. Moro em Lisboa.",
       "rule_eg": "نهايات -ar في المضارع مع الضماير الخمسة (Verbos Comuns 1)",
       "extra_units_tl": [
@@ -788,18 +823,30 @@
             "ele / ela",
             "nós",
             "eles / elas / vocês",
-            "o escritório"
+            "falar",
+            "trabalhar",
+            "o escritório",
+            "o colega · a colega",
+            "o chefe · a chefe",
+            "a reunião"
           ],
           "phrases": [
             "Trabalho num café.",
-            "Onde trabalha?"
+            "Onde trabalha?",
+            "Tenho uma reunião."
           ]
         },
         "recycle": [],
         "tomorrow": {
           "tl": "Onde Mora?",
           "eg": "ساكن فين وبتدرس إيه"
-        }
+        },
+        "situation_tl": "Onde trabalha?",
+        "can_do": [
+          "تقول بتشتغل فين",
+          "تسأل حد بيشتغل فين",
+          "تصرّف فعل -ar مع eu / ele / nós"
+        ]
       }
     },
     {
@@ -807,7 +854,7 @@
       "week": 2,
       "title_tl": "Onde Mora?",
       "title_ar": "ساكن فين وبتدرس إيه",
-      "situation_eg": "بتشتغل فين وساكن فين",
+      "situation_eg": "ساكن فين وبتدرس إيه",
       "example_tl": "Moro em Lisboa.",
       "rule_eg": "تمرين على نهايات -ar",
       "extra_units_tl": [],
@@ -835,6 +882,8 @@
         ],
         "new_items": {
           "words": [
+            "morar",
+            "estudar",
             "o trabalho",
             "a escola",
             "a cidade",
@@ -851,7 +900,13 @@
         "tomorrow": {
           "tl": "Uma Tarde no Mercado",
           "eg": "قصة ٢"
-        }
+        },
+        "situation_tl": "Onde mora?",
+        "can_do": [
+          "تقول ساكن فين وقريب من إيه",
+          "تسأل حد ساكن فين",
+          "تقول بتشتغل في شركة أو بتدرس"
+        ]
       }
     },
     {
@@ -895,7 +950,7 @@
       "week": 3,
       "title_tl": "Verbos -ER",
       "title_ar": "أفعال -ER",
-      "situation_eg": "في المطعم",
+      "situation_eg": "في المطعم: تاخد ترابيزة وتطلب",
       "example_tl": "Como sopa e bebo água.",
       "rule_eg": "نهايات -er في المضارع (Comidas e Bebidas)",
       "extra_units_tl": [
@@ -928,6 +983,8 @@
         ],
         "new_items": {
           "words": [
+            "comer",
+            "beber",
             "o restaurante",
             "a ementa",
             "a sopa",
@@ -944,7 +1001,13 @@
         "tomorrow": {
           "tl": "A Conta, por Favor",
           "eg": "الحلو والحساب"
-        }
+        },
+        "situation_tl": "Pedir no restaurante",
+        "can_do": [
+          "تطلب ترابيزة لعدد الناس",
+          "تطلب طبق اليوم أو حاجة من المنيو",
+          "تقول بتاكل وبتشرب إيه بأفعال -er"
+        ]
       }
     },
     {
@@ -952,7 +1015,7 @@
       "week": 3,
       "title_tl": "A Conta, por Favor",
       "title_ar": "الحلو والحساب",
-      "situation_eg": "في المطعم",
+      "situation_eg": "في المطعم: الحلو والحساب",
       "example_tl": "A conta, por favor.",
       "rule_eg": "تمرين على نهايات -er",
       "extra_units_tl": [],
@@ -981,22 +1044,33 @@
         ],
         "new_items": {
           "words": [
+            "aprender",
             "o frango",
             "a salada",
             "a sobremesa",
             "o vinho",
-            "a mesa"
+            "a mesa",
+            "pedir",
+            "trazer"
           ],
           "phrases": [
             "A conta, por favor.",
-            "Bom apetite!"
+            "Bom apetite!",
+            "Vou pedir a conta.",
+            "Pode trazer a ementa?"
           ]
         },
         "recycle": [],
         "tomorrow": {
           "tl": "Verbos -IR",
           "eg": "أفعال -IR"
-        }
+        },
+        "situation_tl": "A conta no restaurante",
+        "can_do": [
+          "تطلب حلو أو مشروب بعد الأكل",
+          "تطلب الحساب",
+          "تقول Bom apetite! وترد عليها"
+        ]
       }
     },
     {
@@ -1004,7 +1078,7 @@
       "week": 3,
       "title_tl": "Verbos -IR",
       "title_ar": "أفعال -IR",
-      "situation_eg": "البيت والروتين",
+      "situation_eg": "البيت: إنت بتعمل إيه في البيت",
       "example_tl": "Abro a janela. Durmo pouco.",
       "rule_eg": "نهايات -ir في المضارع + durmo",
       "extra_units_tl": [],
@@ -1032,6 +1106,8 @@
         ],
         "new_items": {
           "words": [
+            "abrir",
+            "dormir",
             "a casa",
             "o quarto",
             "a janela",
@@ -1046,7 +1122,13 @@
         "tomorrow": {
           "tl": "A Casa",
           "eg": "أوض البيت"
-        }
+        },
+        "situation_tl": "Em casa",
+        "can_do": [
+          "تقول بتعمل إيه في البيت (تفتح، تنام)",
+          "تقول بتنام قد إيه",
+          "تصرّف فعل -ir"
+        ]
       }
     },
     {
@@ -1054,7 +1136,7 @@
       "week": 3,
       "title_tl": "A Casa",
       "title_ar": "أوض البيت",
-      "situation_eg": "البيت والروتين",
+      "situation_eg": "البيت: أوضه وروتين الصبح",
       "example_tl": "Acordo cedo.",
       "rule_eg": "تمرين على نهايات -ir",
       "extra_units_tl": [],
@@ -1082,21 +1164,32 @@
         ],
         "new_items": {
           "words": [
+            "decidir",
+            "acordar",
             "a cozinha",
             "a casa de banho",
             "a sala",
             "a cama",
-            "o sofá"
+            "o sofá",
+            "a internet"
           ],
           "phrases": [
-            "Acordo cedo."
+            "Acordo cedo.",
+            "Não tenho internet.",
+            "Qual é a palavra-passe do wi-fi?"
           ]
         },
         "recycle": [],
         "tomorrow": {
           "tl": "Verbos Ser e Estar 1",
           "eg": "SER"
-        }
+        },
+        "situation_tl": "A minha casa",
+        "can_do": [
+          "توصف أوض بيتك",
+          "تقول بتصحى بدري ولا متأخر",
+          "تحكي الحاجة اللي بتعملها الصبح"
+        ]
       }
     },
     {
@@ -1104,7 +1197,7 @@
       "week": 3,
       "title_tl": "Verbos Ser e Estar 1",
       "title_ar": "SER",
-      "situation_eg": "إنت منين وبتشتغل إيه",
+      "situation_eg": "إنت منين",
       "example_tl": "Sou egípcio. Sou engenheiro.",
       "rule_eg": "SER كامل مع الضماير الخمسة، وo senhor بفعل «هو»",
       "extra_units_tl": [],
@@ -1133,6 +1226,7 @@
         ],
         "new_items": {
           "words": [
+            "ser",
             "egípcio / egípcia",
             "português / portuguesa",
             "engenheiro / engenheira",
@@ -1148,7 +1242,13 @@
         "tomorrow": {
           "tl": "O Que Faz?",
           "eg": "بتشتغل إيه"
-        }
+        },
+        "situation_tl": "De onde é?",
+        "can_do": [
+          "تقول إنت منين وجنسيتك",
+          "تسأل حد هو منين",
+          "تستخدم ser للهوية والأصل"
+        ]
       }
     },
     {
@@ -1156,7 +1256,7 @@
       "week": 3,
       "title_tl": "O Que Faz?",
       "title_ar": "بتشتغل إيه",
-      "situation_eg": "إنت منين وبتشتغل إيه",
+      "situation_eg": "بتشتغل إيه",
       "example_tl": "O que faz?",
       "rule_eg": "O senhor é… (الفعل بتاع هو)",
       "extra_units_tl": [],
@@ -1198,7 +1298,13 @@
         "tomorrow": {
           "tl": "A Aula de Português",
           "eg": "قصة ٣"
-        }
+        },
+        "situation_tl": "O que faz?",
+        "can_do": [
+          "تقول شغلتك",
+          "تسأل حد بيشتغل إيه بأدب (O senhor é…?)",
+          "تفرّق المذكر والمؤنث في الشغلانة"
+        ]
       }
     },
     {
@@ -1275,6 +1381,7 @@
         ],
         "new_items": {
           "words": [
+            "estar",
             "cansado / cansada",
             "doente",
             "contente",
@@ -1290,7 +1397,13 @@
         "tomorrow": {
           "tl": "Ser ou Estar?",
           "eg": "SER ولا ESTAR"
-        }
+        },
+        "situation_tl": "Como se sente?",
+        "can_do": [
+          "تقول إنك تعبان أو جعان أو عطشان",
+          "تستخدم estar للحالة اللي إنت فيها دلوقتي",
+          "تسأل حد حاسس بإيه"
+        ]
       }
     },
     {
@@ -1298,9 +1411,9 @@
       "week": 4,
       "title_tl": "Ser ou Estar?",
       "title_ar": "SER ولا ESTAR",
-      "situation_eg": "حاسس بإيه",
+      "situation_eg": "ser ولا estar: توصف حاجة ولا حالة",
       "example_tl": "Dói-me a cabeça.",
-      "rule_eg": "ser = ثابت · estar = حالة",
+      "rule_eg": "ser = مين/إيه الحاجة (هوية، أصل، شغلانة، وصف عام) · estar = فين وعامل إزاي دلوقتي (مكان، حالة)",
       "extra_units_tl": [],
       "early_chunks_tl": [],
       "book_pages": [
@@ -1346,7 +1459,13 @@
         "tomorrow": {
           "tl": "Presente Contínuo",
           "eg": "estar a + فعل"
-        }
+        },
+        "situation_tl": "Descrever: ser ou estar?",
+        "can_do": [
+          "توصف حاجة بـ ser (O português é difícil)",
+          "تقول حاجة بتوجعك (Dói-me a cabeça)",
+          "تختار ser أو estar في جمل شائعة"
+        ]
       }
     },
     {
@@ -1396,14 +1515,21 @@
             "Posso ligar depois?",
             "O que estás a fazer?",
             "Pode soletrar, por favor?",
-            "Como se escreve?"
+            "Como se escreve?",
+            "O telemóvel está sem bateria."
           ]
         },
         "recycle": [],
         "tomorrow": {
           "tl": "Gostos e Desgostos",
           "eg": "بحب ومبحبش"
-        }
+        },
+        "situation_tl": "Ao telefone",
+        "can_do": [
+          "ترد على التليفون وتطلب حد",
+          "تقول إنك مشغول دلوقتي بـ estar a",
+          "تطلب يتهجّى اسم أو تقول هتكلمه بعدين"
+        ]
       }
     },
     {
@@ -1411,7 +1537,7 @@
       "week": 4,
       "title_tl": "Gostos e Desgostos",
       "title_ar": "بحب ومبحبش",
-      "situation_eg": "خروجة مع صاحب",
+      "situation_eg": "بتحب إيه",
       "example_tl": "Gosto de café, mas não gosto de chá.",
       "rule_eg": "gostar de",
       "extra_units_tl": [],
@@ -1438,6 +1564,7 @@
         ],
         "new_items": {
           "words": [
+            "gostar de",
             "o cinema",
             "a praia",
             "o futebol",
@@ -1456,7 +1583,13 @@
         "tomorrow": {
           "tl": "Prefiro e o Tempo",
           "eg": "بفضّل والجو"
-        }
+        },
+        "situation_tl": "Gostos",
+        "can_do": [
+          "تقول بتحب وبتكره إيه",
+          "تسأل صاحبك بيحب إيه",
+          "ترد بـ Eu também / Eu também não"
+        ]
       }
     },
     {
@@ -1464,7 +1597,7 @@
       "week": 4,
       "title_tl": "Prefiro e o Tempo",
       "title_ar": "بفضّل والجو",
-      "situation_eg": "خروجة مع صاحب",
+      "situation_eg": "بتفضّل إيه، والجو",
       "example_tl": "Adoro a praia!",
       "rule_eg": "تمرين على gostar de + الطقس كجمل جاهزة",
       "extra_units_tl": [],
@@ -1509,7 +1642,13 @@
         "tomorrow": {
           "tl": "Verbos Comuns e Irregulares",
           "eg": "الأفعال الشاذة الأساسية"
-        }
+        },
+        "situation_tl": "Preferências e o tempo",
+        "can_do": [
+          "تقول بتفضّل إيه",
+          "تتكلم عن الجو بجمل جاهزة",
+          "تقول بتعمل حاجة دايماً أو أحياناً"
+        ]
       }
     },
     {
@@ -1517,7 +1656,7 @@
       "week": 4,
       "title_tl": "Verbos Comuns e Irregulares",
       "title_ar": "الأفعال الشاذة الأساسية",
-      "situation_eg": "ترتيب خروجة",
+      "situation_eg": "ترتيب خروجة: تقترح",
       "example_tl": "Tenho tempo. Vamos ao cinema?",
       "rule_eg": "المضارع لـ ter وir وfazer وquerer وpoder",
       "extra_units_tl": [],
@@ -1545,6 +1684,9 @@
         ],
         "new_items": {
           "words": [
+            "ter",
+            "ir",
+            "fazer",
             "o tempo",
             "o jantar"
           ],
@@ -1558,7 +1700,13 @@
         "tomorrow": {
           "tl": "Queres Vir?",
           "eg": "عايز تيجي؟"
-        }
+        },
+        "situation_tl": "Combinar uma saída",
+        "can_do": [
+          "تقترح خروجة (Vamos ao…?)",
+          "تقول عندك وقت ولا لأ",
+          "توافق بحماس (Fixe!)"
+        ]
       }
     },
     {
@@ -1566,7 +1714,7 @@
       "week": 4,
       "title_tl": "Queres Vir?",
       "title_ar": "عايز تيجي؟",
-      "situation_eg": "ترتيب خروجة",
+      "situation_eg": "ترتيب خروجة: تقبل أو تعتذر",
       "example_tl": "Queres vir?",
       "rule_eg": "querer / poder في المضارع",
       "extra_units_tl": [],
@@ -1597,8 +1745,11 @@
         ],
         "new_items": {
           "words": [
+            "querer",
+            "poder",
             "o museu",
-            "o filme"
+            "o filme",
+            "achar"
           ],
           "phrases": [
             "Queres vir?",
@@ -1607,14 +1758,21 @@
             "Acho que não.",
             "Talvez.",
             "Se calhar.",
-            "Depende."
+            "Depende.",
+            "Está combinado!"
           ]
         },
         "recycle": [],
         "tomorrow": {
           "tl": "Uma Noite de Tempestade",
           "eg": "قصة ٤"
-        }
+        },
+        "situation_tl": "Aceitar ou recusar",
+        "can_do": [
+          "تعزم حد (Queres vir?)",
+          "تعتذر بأدب (Não posso, desculpa)",
+          "ترد من غير ما تكون متأكد (Talvez, Depende)"
+        ]
       }
     },
     {
@@ -1689,7 +1847,7 @@
           "words": [
             "Onde?",
             "Quando?",
-            "Porquê? / porque",
+            "Porquê?",
             "Quem?",
             "Qual?",
             "Como?",
@@ -1706,7 +1864,13 @@
         "tomorrow": {
           "tl": "Preposições 1",
           "eg": "حروف الجر والدمج"
-        }
+        },
+        "situation_tl": "Fazer perguntas",
+        "can_do": [
+          "تكوّن سؤال بـ Onde / Quando / Quem / Qual",
+          "تطلب مساعدة بأدب",
+          "تفرّق Porquê? (ليه؟) عن porque (علشان)"
+        ]
       }
     },
     {
@@ -1714,7 +1878,7 @@
       "week": 5,
       "title_tl": "Preposições 1",
       "title_ar": "حروف الجر والدمج",
-      "situation_eg": "المواصلات",
+      "situation_eg": "المواصلات: رايح فين وبإيه",
       "example_tl": "Vou ao centro de metro.",
       "rule_eg": "دمج حروف الجر كامل: do/da · no/na · ao/à",
       "extra_units_tl": [],
@@ -1756,7 +1920,13 @@
         "tomorrow": {
           "tl": "Bilhetes e Paragens",
           "eg": "التذاكر والمحطات"
-        }
+        },
+        "situation_tl": "Como vou?",
+        "can_do": [
+          "تقول رايح فين (ao centro, à estação)",
+          "تقول هتروح بإيه (de metro, a pé)",
+          "تدمج حرف الجر مع الأداة (do, na, ao)"
+        ]
       }
     },
     {
@@ -1764,7 +1934,7 @@
       "week": 5,
       "title_tl": "Bilhetes e Paragens",
       "title_ar": "التذاكر والمحطات",
-      "situation_eg": "المواصلات",
+      "situation_eg": "المواصلات: التذكرة والمحطة",
       "example_tl": "Estou na paragem.",
       "rule_eg": "de + وسيلة (de metro) · a pé",
       "extra_units_tl": [],
@@ -1794,18 +1964,30 @@
             "a paragem",
             "o táxi",
             "o aeroporto",
-            "a bicicleta"
+            "a bicicleta",
+            "esperar",
+            "a linha"
           ],
           "phrases": [
             "Estou na paragem.",
-            "Um bilhete para Sintra, por favor."
+            "Um bilhete para Sintra, por favor.",
+            "Estou à espera do autocarro.",
+            "O comboio está atrasado.",
+            "Perdi o autocarro.",
+            "Esta linha vai para o centro?"
           ]
         },
         "recycle": [],
         "tomorrow": {
           "tl": "Primeira Viagem a Portugal",
           "eg": "الاتجاهات"
-        }
+        },
+        "situation_tl": "Bilhetes e paragens",
+        "can_do": [
+          "تشتري تذكرة لمكان",
+          "تقول إنت فين (Estou na paragem)",
+          "تسأل على تاكسي أو المطار"
+        ]
       }
     },
     {
@@ -1813,7 +1995,7 @@
       "week": 5,
       "title_tl": "Primeira Viagem a Portugal",
       "title_ar": "الاتجاهات",
-      "situation_eg": "في الطريق",
+      "situation_eg": "تسأل على الطريق",
       "example_tl": "Onde fica a estação? É perto?",
       "rule_eg": "Onde fica? = ficar للأماكن",
       "extra_units_tl": [],
@@ -1860,7 +2042,13 @@
         "tomorrow": {
           "tl": "Vire à Esquerda",
           "eg": "يمين وشمال"
-        }
+        },
+        "situation_tl": "Pedir direções",
+        "can_do": [
+          "تسأل مكان فين",
+          "تفهم قريب ولا بعيد",
+          "تفهم يمين وشمال"
+        ]
       }
     },
     {
@@ -1868,7 +2056,7 @@
       "week": 5,
       "title_tl": "Vire à Esquerda",
       "title_ar": "يمين وشمال",
-      "situation_eg": "في الطريق",
+      "situation_eg": "تفهم الاتجاهات",
       "example_tl": "Vire à esquerda.",
       "rule_eg": "تمرين على Onde fica + الاتجاهات",
       "extra_units_tl": [],
@@ -1913,7 +2101,13 @@
         "tomorrow": {
           "tl": "Que Dia É Hoje?",
           "eg": "الأيام وفترات اليوم"
-        }
+        },
+        "situation_tl": "Seguir direções",
+        "can_do": [
+          "تفهم Vire / Siga em frente",
+          "توصف مكان جنب إيه",
+          "تكرر الاتجاه علشان تتأكد"
+        ]
       }
     },
     {
@@ -1921,7 +2115,7 @@
       "week": 5,
       "title_tl": "Que Dia É Hoje?",
       "title_ar": "الأيام وفترات اليوم",
-      "situation_eg": "حجز ميعاد",
+      "situation_eg": "أيام الأسبوع",
       "example_tl": "Hoje é segunda. De manhã trabalho.",
       "rule_eg": "أيام الأسبوع + de manhã / à tarde / à noite (Períodos de Tempo)",
       "extra_units_tl": [
@@ -1965,7 +2159,13 @@
         "tomorrow": {
           "tl": "Datas e Consultas",
           "eg": "التاريخ والمواعيد"
-        }
+        },
+        "situation_tl": "Os dias da semana",
+        "can_do": [
+          "تقول النهارده إيه",
+          "تقول هتعمل حاجة يوم كذا",
+          "تقول الصبح / بعد الضهر / بالليل"
+        ]
       }
     },
     {
@@ -1999,7 +2199,8 @@
           "words": [
             "hoje · amanhã · ontem",
             "janeiro, fevereiro, março … dezembro",
-            "antes · depois"
+            "antes · depois",
+            "o centro de saúde"
           ],
           "phrases": [
             "Pode ser na terça?",
@@ -2007,18 +2208,89 @@
             "Que dia é hoje? — É dia cinco de março.",
             "Ainda não.",
             "Já está!",
-            "daqui a dois dias"
+            "daqui a dois dias",
+            "Tenho uma marcação.",
+            "Preciso de mudar a consulta."
           ]
         },
         "recycle": [],
         "tomorrow": {
-          "tl": "O Fim de Semana",
-          "eg": "قصة ٥"
-        }
+          "tl": "Documentos e Marcações",
+          "eg": "الورق والمعاملات"
+        },
+        "situation_tl": "Marcar uma consulta",
+        "can_do": [
+          "تطلب تحجز ميعاد",
+          "تقترح يوم (Pode ser na terça?)",
+          "تقول وتفهم التاريخ"
+        ]
       }
     },
     {
       "day": 37,
+      "week": 5,
+      "title_tl": "Documentos e Marcações",
+      "title_ar": "الورق والمعاملات",
+      "situation_eg": "في مكتب خدمة: ميعاد وورق",
+      "example_tl": "Que documentos são necessários?",
+      "rule_eg": "Que + اسم? للسؤال عن أنهي حاجة · Preciso de + حاجة",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [],
+      "is_story": false,
+      "generation": {
+        "situation_tl": "No atendimento",
+        "can_do": [
+          "تقول إن عندك ميعاد وتوري ورقك",
+          "تسأل محتاج أنهي ورق",
+          "تسأل الموضوع هياخد وقت قد إيه"
+        ],
+        "grammar_focus": {
+          "id": "questions.que_noun",
+          "description": "Que + noun? (which …?) and Preciso de + noun",
+          "layout": "formula"
+        },
+        "chat_character": "rita",
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "vocab_flow",
+            "focus": "في مكتب خدمة: ميعاد وورق"
+          },
+          {
+            "preset": "pattern",
+            "focus": "Que + noun? (which …?) and Preciso de + noun"
+          }
+        ],
+        "recycle": [],
+        "new_items": {
+          "words": [
+            "o documento",
+            "o passaporte",
+            "o NIF (número de contribuinte)",
+            "o formulário",
+            "o comprovativo"
+          ],
+          "phrases": [
+            "Que documentos são necessários?",
+            "Pode ajudar-me a preencher o formulário?",
+            "Quanto tempo demora?",
+            "Ainda não recebi resposta.",
+            "Preciso de um comprovativo."
+          ]
+        },
+        "tomorrow": {
+          "tl": "O Fim de Semana",
+          "eg": "قصة ٥"
+        },
+        "micro_step": null
+      }
+    },
+    {
+      "day": 38,
       "week": 5,
       "title_tl": "O Fim de Semana",
       "title_ar": "قصة ٥",
@@ -2054,7 +2326,7 @@
       }
     },
     {
-      "day": 38,
+      "day": 39,
       "week": 6,
       "title_tl": "Que Horas São?",
       "title_ar": "الساعة",
@@ -2088,7 +2360,9 @@
           "words": [
             "cem · cento e … · duzentos · mil",
             "e meia · e um quarto · menos um quarto",
-            "meio-dia · meia-noite"
+            "meio-dia · meia-noite",
+            "chegar",
+            "sair"
           ],
           "phrases": [
             "Que horas são?",
@@ -2096,18 +2370,26 @@
             "São nove e meia.",
             "A que horas abre?",
             "Às nove.",
-            "Está fechado."
+            "Está fechado.",
+            "A que horas chega?",
+            "A que horas sai o comboio?"
           ]
         },
         "recycle": [],
         "tomorrow": {
           "tl": "Futuro Informal",
           "eg": "المستقبل القريب"
-        }
+        },
+        "situation_tl": "Horários",
+        "can_do": [
+          "تسأل الساعة كام وتفهم الرد",
+          "تسأل المحل بيفتح إمتى",
+          "تفهم إن المكان مقفول"
+        ]
       }
     },
     {
-      "day": 39,
+      "day": 40,
       "week": 6,
       "title_tl": "Futuro Informal",
       "title_ar": "المستقبل القريب",
@@ -2138,6 +2420,8 @@
         ],
         "new_items": {
           "words": [
+            "visitar",
+            "ficar",
             "o fim de semana",
             "a próxima semana",
             "os amigos",
@@ -2155,11 +2439,17 @@
         "tomorrow": {
           "tl": "Verbos no Infinitivo 1",
           "eg": "فعل + مصدر"
-        }
+        },
+        "situation_tl": "Planos para o fim de semana",
+        "can_do": [
+          "تقول هتعمل إيه بـ ir + مصدر",
+          "تسأل صاحبك هيعمل إيه",
+          "تقول هتقعد في البيت أو تزور حد"
+        ]
       }
     },
     {
-      "day": 40,
+      "day": 41,
       "week": 6,
       "title_tl": "Verbos no Infinitivo 1",
       "title_ar": "فعل + مصدر",
@@ -2189,6 +2479,7 @@
         ],
         "new_items": {
           "words": [
+            "precisar de",
             "a tosse",
             "a febre",
             "o comprimido",
@@ -2208,11 +2499,17 @@
         "tomorrow": {
           "tl": "Possessivos",
           "eg": "الملكية"
-        }
+        },
+        "situation_tl": "Na farmácia",
+        "can_do": [
+          "تطلب دوا لعرض (para a tosse)",
+          "تفهم محتاج روشتة ولا لأ",
+          "تفهم الجرعة (três vezes por dia)"
+        ]
       }
     },
     {
-      "day": 41,
+      "day": 42,
       "week": 6,
       "title_tl": "Possessivos",
       "title_ar": "الملكية",
@@ -2263,15 +2560,21 @@
         "tomorrow": {
           "tl": "Adjetivos 1",
           "eg": "الصفات والألوان"
-        }
+        },
+        "situation_tl": "A família",
+        "can_do": [
+          "تتكلم عن عيلتك",
+          "تسأل حد عنده ولاد ولا لأ",
+          "تستخدم o meu / a minha"
+        ]
       }
     },
     {
-      "day": 42,
+      "day": 43,
       "week": 6,
       "title_tl": "Adjetivos 1",
       "title_ar": "الصفات والألوان",
-      "situation_eg": "محل الهدوم",
+      "situation_eg": "محل الهدوم: توصف",
       "example_tl": "A camisola azul é grande.",
       "rule_eg": "الصفة بعد الاسم وبتتغير مع المذكر والمؤنث والجمع (+ جمع -ão و-l)، والألوان (Cores · Roupa e Acessórios)",
       "extra_units_tl": [
@@ -2318,15 +2621,21 @@
         "tomorrow": {
           "tl": "Noutro Tamanho",
           "eg": "مقاس ولون تاني"
-        }
+        },
+        "situation_tl": "Na loja de roupa",
+        "can_do": [
+          "توصف هدوم باللون والمقاس",
+          "تحط الصفة بعد الاسم وتطابقها",
+          "تقول الحاجة كبيرة أو صغيرة"
+        ]
       }
     },
     {
-      "day": 43,
+      "day": 44,
       "week": 6,
       "title_tl": "Noutro Tamanho",
       "title_ar": "مقاس ولون تاني",
-      "situation_eg": "محل الهدوم",
+      "situation_eg": "محل الهدوم: تطلب مقاس أو لون تاني",
       "example_tl": "Tem noutro tamanho?",
       "rule_eg": "-ão→-ões · -l→-is",
       "extra_units_tl": [],
@@ -2374,15 +2683,21 @@
         "tomorrow": {
           "tl": "Adjetivos 2",
           "eg": "توصف حاجة"
-        }
+        },
+        "situation_tl": "Trocar tamanho ou cor",
+        "can_do": [
+          "تطلب مقاس أو لون تاني",
+          "تطلب حاجة أرخص أو أكبر",
+          "تفهم الجمع في -ões و-is"
+        ]
       }
     },
     {
-      "day": 44,
+      "day": 45,
       "week": 6,
       "title_tl": "Adjetivos 2",
       "title_ar": "توصف حاجة",
-      "situation_eg": "بتوصف شقتك والحي لصاحبك",
+      "situation_eg": "توصف شقتك والحي",
       "example_tl": "O quarto é um bocado pequeno. É como no Cairo.",
       "rule_eg": "muito / bastante / demasiado / um bocado + صفة، وassim (كده) وcomo (زي) وigual a / diferente de / parecido com",
       "extra_units_tl": [],
@@ -2418,8 +2733,7 @@
             "assim",
             "como",
             "igual a · diferente de",
-            "parecido com",
-            "muito · bastante · demasiado · um bocado + صفة"
+            "parecido com"
           ],
           "phrases": [
             "É assim.",
@@ -2432,11 +2746,17 @@
         "tomorrow": {
           "tl": "A Visita da Família",
           "eg": "قصة ٦"
-        }
+        },
+        "situation_tl": "Descrever a casa e o bairro",
+        "can_do": [
+          "توصف شقتك والحي",
+          "تقول حاجة كتير أو شوية (demasiado, um bocado)",
+          "تقارن بحاجة تعرفها (como no Cairo)"
+        ]
       }
     },
     {
-      "day": 45,
+      "day": 46,
       "week": 6,
       "title_tl": "A Visita da Família",
       "title_ar": "قصة ٦",
@@ -2472,7 +2792,7 @@
       }
     },
     {
-      "day": 46,
+      "day": 47,
       "week": 7,
       "title_tl": "Isto e Aquilo",
       "title_ar": "ده وده",
@@ -2510,28 +2830,37 @@
             "este · esta",
             "esse · essa",
             "aquele · aquela",
-            "o provador"
+            "o provador",
+            "levar",
+            "encontrar"
           ],
           "phrases": [
             "Posso experimentar este?",
             "O que é aquilo?",
             "Quanto custa esta?",
-            "Levo este."
+            "Levo este.",
+            "Não encontro o meu tamanho."
           ]
         },
         "recycle": [],
         "tomorrow": {
           "tl": "Aqui e Ali",
           "eg": "هنا وهناك"
-        }
+        },
+        "situation_tl": "Escolher numa loja",
+        "can_do": [
+          "تشاور على حاجة قريبة أو بعيدة",
+          "تطلب تقيس حاجة",
+          "تقول هاخد دي"
+        ]
       }
     },
     {
-      "day": 47,
+      "day": 48,
       "week": 7,
       "title_tl": "Aqui e Ali",
       "title_ar": "هنا وهناك",
-      "situation_eg": "بتدوّر على حاجاتك في البيت",
+      "situation_eg": "بتدوّر على حاجاتك",
       "example_tl": "Onde está o telemóvel? Está em cima da mesa.",
       "rule_eg": "aqui · aí · ali · lá بنفس مسافة este · esse · aquele، وحروف المكان + de (em cima da mesa)، وestá للحاجة اللي بتتحرك وfica للمكان الثابت",
       "extra_units_tl": [],
@@ -2563,9 +2892,7 @@
             "em cima de · debaixo de",
             "dentro de · fora de",
             "atrás de · à frente de",
-            "entre",
-            "aqui = este · aí = esse · ali / lá = aquele",
-            "em cima / debaixo / dentro / atrás + de + o/a = do/da"
+            "entre"
           ],
           "phrases": [
             "Onde está o telemóvel?",
@@ -2580,11 +2907,17 @@
         "tomorrow": {
           "tl": "Comparativos",
           "eg": "المقارنة"
-        }
+        },
+        "situation_tl": "Onde está?",
+        "can_do": [
+          "تسأل حاجة فين في البيت",
+          "تقول الحاجة فوق / تحت / جوه / ورا حاجة",
+          "تفرّق aqui / aí / ali"
+        ]
       }
     },
     {
-      "day": 48,
+      "day": 49,
       "week": 7,
       "title_tl": "Comparativos",
       "title_ar": "المقارنة",
@@ -2623,8 +2956,7 @@
             "o mais … · a mais …",
             "o outro · a outra",
             "o apartamento",
-            "a renda",
-            "mais / menos + صفة + do que"
+            "a renda"
           ],
           "phrases": [
             "Este é mais barato do que aquele.",
@@ -2635,17 +2967,84 @@
         },
         "recycle": [],
         "tomorrow": {
-          "tl": "Saber e Conhecer",
-          "eg": "saber ولا conhecer"
-        }
+          "tl": "Problemas em Casa",
+          "eg": "مشاكل في البيت"
+        },
+        "situation_tl": "Comparar duas casas",
+        "can_do": [
+          "تقارن حاجتين (mais / menos … do que)",
+          "تسأل أنهي أحسن أو أرخص",
+          "تتكلم عن الإيجار (a renda)"
+        ]
       }
     },
     {
-      "day": 49,
+      "day": 50,
+      "week": 7,
+      "title_tl": "Problemas em Casa",
+      "title_ar": "مشاكل في البيت",
+      "situation_eg": "بتكلم صاحب الشقة على عطل",
+      "example_tl": "Não há água quente.",
+      "rule_eg": "Há / Não há + اسم (فيه / مفيش) · … não funciona",
+      "extra_units_tl": [],
+      "early_chunks_tl": [],
+      "book_pages": [],
+      "is_story": false,
+      "generation": {
+        "situation_tl": "Um problema em casa",
+        "can_do": [
+          "تشرح مشكلة في الشقة",
+          "تقول حاجة مش شغالة أو مفيش حاجة",
+          "تسأل الإيجار شامل إيه"
+        ],
+        "grammar_focus": {
+          "id": "existence.ha",
+          "description": "Há / Não há + noun (there is / there isn't)",
+          "layout": "formula"
+        },
+        "chat_character": "carlos",
+        "page_plan": [
+          {
+            "preset": "story",
+            "focus": "situation dialogue"
+          },
+          {
+            "preset": "vocab_flow",
+            "focus": "بتكلم صاحب الشقة على عطل"
+          },
+          {
+            "preset": "pattern",
+            "focus": "Há / Não há + noun (there is / there isn't)"
+          }
+        ],
+        "recycle": [],
+        "new_items": {
+          "words": [
+            "o senhorio · a senhoria",
+            "a fatura",
+            "a avaria",
+            "a água quente"
+          ],
+          "phrases": [
+            "Não há água quente.",
+            "A máquina não funciona.",
+            "Preciso de falar com o senhorio.",
+            "A renda inclui as despesas?"
+          ]
+        },
+        "tomorrow": {
+          "tl": "Saber e Conhecer",
+          "eg": "saber ولا conhecer"
+        },
+        "micro_step": null
+      }
+    },
+    {
+      "day": 51,
       "week": 7,
       "title_tl": "Saber e Conhecer",
       "title_ar": "saber ولا conhecer",
-      "situation_eg": "بتسأل في الشارع وبتتكلم عن ناس تعرفهم",
+      "situation_eg": "بتسأل وبتتكلم عن ناس تعرفهم",
       "example_tl": "Não sei onde fica. Conhece Lisboa?",
       "rule_eg": "saber (معلومة أو تعرف تعمل حاجة) ولا conhecer (شخص أو مكان)، وsei الشاذة، وse = لو",
       "extra_units_tl": [],
@@ -2675,9 +3074,7 @@
           "words": [
             "saber",
             "conhecer",
-            "se",
-            "saber = معلومة / مهارة · conhecer = شخص / مكان",
-            "sei · sabes · sabe · sabemos · sabem"
+            "se"
           ],
           "phrases": [
             "Não sei onde fica.",
@@ -2687,18 +3084,25 @@
             "Conheço a Rita.",
             "Claro!",
             "A sério?",
-            "Tem a certeza?"
+            "Tem a certeza?",
+            "Não tenho a certeza."
           ]
         },
         "recycle": [],
         "tomorrow": {
           "tl": "Verbo Pôr",
           "eg": "فعل pôr"
-        }
+        },
+        "situation_tl": "Saber e conhecer",
+        "can_do": [
+          "تقول تعرف معلومة ولا لأ (sei / não sei)",
+          "تقول تعرف شخص أو مكان (conheço)",
+          "تسأل لو مكان مفتوح (Sabe se…)"
+        ]
       }
     },
     {
-      "day": 50,
+      "day": 52,
       "week": 7,
       "title_tl": "Verbo Pôr",
       "title_ar": "فعل pôr",
@@ -2733,6 +3137,8 @@
         ],
         "new_items": {
           "words": [
+            "pôr",
+            "vestir-se",
             "o pequeno-almoço",
             "a chave",
             "o duche",
@@ -2743,22 +3149,29 @@
             "Ponho o casaco.",
             "Visto-me às sete.",
             "Tomo o pequeno-almoço.",
-            "Onde pus a chave?"
+            "Onde pus a chave?",
+            "Não me lembro."
           ]
         },
         "recycle": [],
         "tomorrow": {
           "tl": "Todos e Ninguém",
           "eg": "الكل ومفيش حد"
-        }
+        },
+        "situation_tl": "De manhã",
+        "can_do": [
+          "توصف روتين الصبح",
+          "تقول بتلبس إمتى (visto-me)",
+          "تسأل حاجتك راحت فين (Onde pus…?)"
+        ]
       }
     },
     {
-      "day": 51,
+      "day": 53,
       "week": 7,
       "title_tl": "Todos e Ninguém",
       "title_ar": "الكل ومفيش حد",
-      "situation_eg": "الصبح في المكتب ومفيش حد",
+      "situation_eg": "المكتب فاضي",
       "example_tl": "Não está ninguém. Estão todos a almoçar.",
       "rule_eg": "todos / tudo / cada، alguém / ninguém، alguma coisa / nada، algum / nenhum، والنفي المزدوج: Não está ninguém",
       "extra_units_tl": [],
@@ -2791,8 +3204,7 @@
             "alguém · ninguém",
             "alguma coisa · nada",
             "algum / alguma · nenhum / nenhuma",
-            "as pessoas",
-            "Não + فعل + ninguém / nada / nenhum"
+            "as pessoas"
           ],
           "phrases": [
             "Não está ninguém.",
@@ -2807,11 +3219,17 @@
         "tomorrow": {
           "tl": "O Que Fizeste Ontem?",
           "eg": "مقدمة الماضي"
-        }
+        },
+        "situation_tl": "Não está ninguém",
+        "can_do": [
+          "تقول مفيش حد / مفيش حاجة",
+          "تسأل فيه حد؟",
+          "تقول الكل بيعمل حاجة"
+        ]
       }
     },
     {
-      "day": 52,
+      "day": 54,
       "week": 7,
       "title_tl": "O Que Fizeste Ontem?",
       "title_ar": "مقدمة الماضي",
@@ -2841,7 +3259,8 @@
         ],
         "new_items": {
           "words": [
-            "o mercado"
+            "o mercado",
+            "comprar"
           ],
           "phrases": [
             "O que fizeste ontem?",
@@ -2856,11 +3275,17 @@
         "tomorrow": {
           "tl": "Um Dia Normal",
           "eg": "قصة ٧"
-        }
+        },
+        "situation_tl": "O que fizeste ontem?",
+        "can_do": [
+          "تسأل حد عمل إيه امبارح",
+          "تقول ٣–٤ حاجات عملتها امبارح",
+          "تقول معملتش حاجة"
+        ]
       }
     },
     {
-      "day": 53,
+      "day": 55,
       "week": 7,
       "title_tl": "Um Dia Normal",
       "title_ar": "قصة ٧",
@@ -2896,8 +3321,8 @@
       }
     },
     {
-      "day": 54,
-      "week": 7,
+      "day": 56,
+      "week": 8,
       "title_tl": "Teste A1",
       "title_ar": "اختبار المرحلة ١",
       "situation_eg": "",

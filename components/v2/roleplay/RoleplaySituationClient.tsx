@@ -1,10 +1,6 @@
 'use client';
 
-import Link from 'next/link';
-import { useState } from 'react';
-import { Icon } from '@/components/v2/Icon';
 import { FreeTalkSession } from '@/components/v2/convo/FreeTalkSession';
-import { RoleplayIntroSheet } from '@/components/v2/roleplay/RoleplayIntroSheet';
 
 export type RoleplayIntroSituation = {
   id: string;
@@ -19,51 +15,25 @@ export type RoleplayIntroSituation = {
 type Props = {
   situation: RoleplayIntroSituation;
   nextSituationId?: string | null;
-  /** When true, the CTA says كمّل المكالمة. */
-  resume?: boolean;
+  /** Cast from scene.character_id (header). */
+  characterId?: string | null;
 };
 
 /**
- * One-button intro → free-talk session on the scene bank (batch-rp-2).
+ * Opens the scene call directly (FINAL SPEC §2.1 — no intro sheet).
  */
 export function RoleplaySituationClient({
   situation,
   nextSituationId = null,
-  resume = false,
+  characterId = null,
 }: Props) {
-  const [phase, setPhase] = useState<'intro' | 'play'>('intro');
-
-  if (phase === 'play') {
-    return (
-      <FreeTalkSession
-        topicId={situation.id}
-        sceneMode
-        nextSceneId={nextSituationId}
-        backHref="/roleplay"
-      />
-    );
-  }
-
   return (
-    <div className="flex flex-col">
-      <div className="px-4 pt-4">
-        <Link
-          href="/roleplay"
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-v2-card text-v2-primary shadow-[var(--shadow-v2-soft)]"
-          aria-label="رجوع"
-        >
-          <Icon name="arrow_forward" size={24} />
-        </Link>
-      </div>
-      <RoleplayIntroSheet
-        emoji={situation.emoji}
-        titleTl={situation.title_tl}
-        titleAr={situation.title_ar}
-        placeEg={situation.place_eg}
-        taskEg={situation.task_eg}
-        onStart={() => setPhase('play')}
-        resume={resume}
-      />
-    </div>
+    <FreeTalkSession
+      topicId={situation.id}
+      sceneMode
+      initialCharacterId={characterId}
+      nextSceneId={nextSituationId}
+      backHref="/roleplay"
+    />
   );
 }

@@ -133,14 +133,26 @@ export function reduceFreeTalkStream(
       ...(event.teach_goal_id ? { teachGoalId: event.teach_goal_id } : {}),
       // Coach strip starts hidden when paced; FreeTalkSession reveals it.
       ...(event.coach_eg ? { coachRevealed: false } : {}),
+      ...(event.playback === 'slow' ? { playbackRate: 0.85 } : {}),
     };
+    const suggestFields = event.suggest?.length
+      ? { suggest: [...event.suggest] }
+      : {};
+    const clearOldSuggest = (list: TalkBubble[]): TalkBubble[] =>
+      event.suggest?.length
+        ? list.map((b) =>
+            b.role === 'character' && b.suggest
+              ? { ...b, suggest: undefined }
+              : b,
+          )
+        : list;
     const sid = streamBubbleId;
     const pt = event.pt?.trim() ? event.pt : '';
     if (sid) {
       if (!pt) {
         // AR-only with no PT: drop empty shells; keep bubbles that already have text.
         const next: TalkBubble[] = [];
-        for (const b of bubbles) {
+        for (const b of clearOldSuggest(bubbles)) {
           if (b.id !== sid || b.role !== 'character') {
             next.push(b);
             continue;
@@ -152,12 +164,13 @@ export function reduceFreeTalkStream(
             streaming: false,
             final: true,
             ...teachFields,
+            ...suggestFields,
             ...(event.say ? { say: event.say } : {}),
           });
         }
         return { bubbles: next, streamBubbleId: null, correctionIndex };
       }
-      bubbles = bubbles.map((b) =>
+      bubbles = clearOldSuggest(bubbles).map((b) =>
         b.id === sid && b.role === 'character'
           ? {
               ...b,
@@ -166,6 +179,7 @@ export function reduceFreeTalkStream(
               ar: event.ar,
               streaming: false,
               ...teachFields,
+              ...suggestFields,
               ...(event.say ? { say: event.say } : {}),
             }
           : b,
@@ -180,7 +194,7 @@ export function reduceFreeTalkStream(
       const nid = mk('char');
       return {
         bubbles: [
-          ...bubbles,
+          ...clearOldSuggest(bubbles),
           {
             id: nid,
             role: 'character',
@@ -189,6 +203,7 @@ export function reduceFreeTalkStream(
             streaming: false,
             final: true,
             ...teachFields,
+            ...suggestFields,
             ...(event.say ? { say: event.say } : {}),
           },
         ],
