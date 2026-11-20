@@ -24,15 +24,23 @@ function ensureCloudinary(): void {
   cloudinary.config(true);
 }
 
+/** New uploads use az-talkie/v2/…; legacy assets may still live under langify/v2/…. */
 function folderForKey(key: string): string {
   if (key.startsWith('avatar.')) {
-    return 'langify/v2/avatars';
+    return 'az-talkie/v2/avatars';
   }
   if (isCharacterKey(key) || key === STYLE_ANCHOR_KEY) {
-    return 'langify/v2/characters';
+    return 'az-talkie/v2/characters';
   }
-  return 'langify/v2/images';
+  return 'az-talkie/v2/images';
 }
+
+/** Legacy Cloudinary folders (pre-rename). Prefer URLs already stored on docs. */
+export const LEGACY_CLOUDINARY_FOLDERS = [
+  'langify/v2/avatars',
+  'langify/v2/characters',
+  'langify/v2/images',
+] as const;
 
 /** public_id without folder prefix — Cloudinary folder option adds it. */
 function publicIdForKey(key: string): string {

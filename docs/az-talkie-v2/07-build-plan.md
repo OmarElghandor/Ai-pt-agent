@@ -2,7 +2,7 @@
 
 Nine phases, all in the `ai-agent-talk` repo (folder `ai-pt-agent`). Run each phase in its own Cursor Agent chat. Each phase lists the docs to read, the tasks, a "done when" checklist and a prompt to paste. Phases 0 → 1 → 2 come first; they're the backbone. After that, 3, 4 and 6 can run in parallel.
 
-Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md` (the tie-breaker) and `01-architecture.md`. Build v2 under `app/(v2)`, `app/api/v2`, `lib/v2`, `components/v2`. Don't change the old `/lessons` and `/chat` pages unless the task says so."
+Every chat starts with: "Read `AGENTS.md`, then `docs/az-talkie-v2/00-decisions.md` (the tie-breaker) and `01-architecture.md`. Build v2 under `app/(v2)`, `app/api/v2`, `lib/v2`, `components/v2`. Don't change the old `/lessons` and `/chat` pages unless the task says so."
 
 > **Status (2026-10-27):** Phases 0–3 are done and pushed. Phase 3 shipped as a job DAG (brief → items → outline → pages/questions/micro/daily_use → critic → continuity → lang_check → assemble) on Kimi K3, about $0.28 per day. It uses the core items file `content/v2/plan/pt-PT.core-items.json`, pattern examples derived by code (`derived: true`), heard/said roles on phrases, question direction set by code (read_meaning · recall_tl · listen · writing), block-level critic reruns, lang_check patches (never regenerate) and a publish gate. Pipeline changes are frozen: change it only when the same issue shows up in 3+ days. Phase 4 is done (tests green after two stale Phase 3 tests were updated).
 >
@@ -40,7 +40,7 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
 - No horizontal scroll at 360px.
 
 **Prompt**
-> Read AGENTS.md, docs/langify-v2/00-decisions.md (§0), 01-architecture.md and 05-design-system.md. Create the v2 route group app/(v2) with an RTL layout, fonts via next/font, the design tokens as CSS variables exposed through Tailwind 4 @theme, and the tab bar (المسار · الكروت · المكتبة · أنا) with empty pages. Build the core components listed in 05 under components/v2, starting with RichText (array of {text, lang: eg|ar|tl, bold?, group?}, each segment its own span with dir and unicode-bidi isolate). Add a /v2-dev page showing every component and state, and a PWA manifest. Match design/reference/01-grammar-page-guided-SER-ESTAR.png.
+> Read AGENTS.md, docs/az-talkie-v2/00-decisions.md (§0), 01-architecture.md and 05-design-system.md. Create the v2 route group app/(v2) with an RTL layout, fonts via next/font, the design tokens as CSS variables exposed through Tailwind 4 @theme, and the tab bar (المسار · الكروت · المكتبة · أنا) with empty pages. Build the core components listed in 05 under components/v2, starting with RichText (array of {text, lang: eg|ar|tl, bold?, group?}, each segment its own span with dir and unicode-bidi isolate). Add a /v2-dev page showing every component and state, and a PWA manifest. Match design/reference/01-grammar-page-guided-SER-ESTAR.png.
 
 ---
 
@@ -72,7 +72,7 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
 - Tests are in `tests/` and wired into `npm test`.
 
 **Prompt**
-> Read docs/langify-v2/00-decisions.md (§2–3), 02-content-schema.md (Arabic text, English field names) and examples/day06-example.json. In lib/v2/content, write zod schemas and TypeScript types for the content model and a validator implementing every rule in the "التحقق" section. Add Mongoose models v2_conjugations and v2_lessons, a conjugation seed for the verbs listed in 07-build-plan Phase 1, a script to load Day 6, and GET /api/v2/lessons/[day] that resolves form ids. Add tests: Day 6 passes; five broken variants fail with clear messages.
+> Read docs/az-talkie-v2/00-decisions.md (§2–3), 02-content-schema.md (Arabic text, English field names) and examples/day06-example.json. In lib/v2/content, write zod schemas and TypeScript types for the content model and a validator implementing every rule in the "التحقق" section. Add Mongoose models v2_conjugations and v2_lessons, a conjugation seed for the verbs listed in 07-build-plan Phase 1, a script to load Day 6, and GET /api/v2/lessons/[day] that resolves form ids. Add tests: Day 6 passes; five broken variants fail with clear messages.
 
 ---
 
@@ -96,7 +96,7 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
 - Every block type has a fixture on `/v2-dev`.
 
 **Prompt**
-> Read docs/langify-v2/02-content-schema.md, 05-design-system.md, 06-screens.md (S2, S3). Open prototypes/ser-estar.html and prototypes/verb-endings.html: port their behaviour and timing. Build the 14 block components in components/v2/blocks, a Page player with guided, explore and static modes, Cover and Quiz, and the routes /day/[day] and /day/[day]/page/[pageId] rendering Day 6 from /api/v2/lessons/6. Ask answers POST to /api/v2/answers (stub it if Phase 4 isn't done). Also apply the Phase 0 review decisions: compare panels side by side down to 360px, highlight only the active row, headers never dimmed, and the CaptionBar with labeled chapter segments. Resolved forms come with {stem, ending, irregular}: color endings by verb class and mark irregular forms purple with ⚡.
+> Read docs/az-talkie-v2/02-content-schema.md, 05-design-system.md, 06-screens.md (S2, S3). Open prototypes/ser-estar.html and prototypes/verb-endings.html: port their behaviour and timing. Build the 14 block components in components/v2/blocks, a Page player with guided, explore and static modes, Cover and Quiz, and the routes /day/[day] and /day/[day]/page/[pageId] rendering Day 6 from /api/v2/lessons/6. Ask answers POST to /api/v2/answers (stub it if Phase 4 isn't done). Also apply the Phase 0 review decisions: compare panels side by side down to 360px, highlight only the active row, headers never dimmed, and the CaptionBar with labeled chapter segments. Resolved forms come with {stem, ending, irregular}: color endings by verb class and mark irregular forms purple with ⚡.
 
 ---
 
@@ -123,7 +123,7 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
 - Days 1–3 generate, pass validation, have images and audio, render in the player and can be published.
 
 **Prompt**
-> Read the sections of docs/langify-v2/03-generation-and-learning.md named in 07-build-plan Phase 3, the PAGES block at the end of 02-content-schema.md, and 04-curriculum.md. Create content/v2/plan/pt-PT.days.json from the days 1–30 table, and lib/v2/generation/lesson with the pipeline described in Phase 3 (system prompt text verbatim from 03, with PAGE STEPS replaced by PAGES; the model never writes conjugated forms). Add the admin route and a /v2-admin review page. Pilot days 1–3. VERB_TABLE in the request lists only verbs with verified: true. Run the validator in strict mode before saving. Use examples/day06-example.json (and gold days 1–3 when they exist) as the in-prompt examples.
+> Read the sections of docs/az-talkie-v2/03-generation-and-learning.md named in 07-build-plan Phase 3, the PAGES block at the end of 02-content-schema.md, and 04-curriculum.md. Create content/v2/plan/pt-PT.days.json from the days 1–30 table, and lib/v2/generation/lesson with the pipeline described in Phase 3 (system prompt text verbatim from 03, with PAGE STEPS replaced by PAGES; the model never writes conjugated forms). Add the admin route and a /v2-admin review page. Pilot days 1–3. VERB_TABLE in the request lists only verbs with verified: true. Run the validator in strict mode before saving. Use examples/day06-example.json (and gold days 1–3 when they exist) as the in-prompt examples.
 
 ### Phase 3 add-on · Story builder (2026-10-30)
 
@@ -347,7 +347,7 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/langify-v2/00-decisions.md
   - a listening answer never calls a model.
 
 **Prompt**
-> Read docs/langify-v2/00-decisions.md §5–8 and the sections of 03 named in 07-build-plan Phase 4. Build the v2 progress models, lib/v2/answers (layered validation), POST /api/v2/answers as the only writer of progress, the question bank and session builder, and the cards endpoints. Write the unit tests listed under "Done when". Item ids and skills must match lib/v2/content types exactly (skills: listening | reading | speaking | writing). Import the types; don't redefine them.
+> Read docs/az-talkie-v2/00-decisions.md §5–8 and the sections of 03 named in 07-build-plan Phase 4. Build the v2 progress models, lib/v2/answers (layered validation), POST /api/v2/answers as the only writer of progress, the question bank and session builder, and the cards endpoints. Write the unit tests listed under "Done when". Item ids and skills must match lib/v2/content types exactly (skills: listening | reading | speaking | writing). Import the types; don't redefine them.
 
 **Add-on after Phase 3 (2026-10-27)**
 - Items with `derived: true` (pattern examples) and recycle items never get their own card. Derived items still count as correct uses of their pattern and words.
@@ -366,7 +366,7 @@ Content and `00` decisions landed with curriculum P0 1119 (`priority` on core it
 - Practice / free talk: packs get `ESSENTIAL_TARGETS` (≤6 unmet/weak/due essentials); ≥40% of speaking and writing beats require one; the reactor nudges when a fitting essential was skipped; the end screen lists essentials used correctly.
 
 **Prompt**
-> Read docs/langify-v2/00-decisions.md §4 Essential items, §5 Essential items come first in review, and §9 Practice leans on essential items. Implement the Phase 4 add-on · Essential items engine in 07-build-plan.md. Reuse existing cards/SRS/answers/vocab-flow/MUST_COVER/pack/reactor paths — do not invent parallel progress stores. Ship unit tests for queue order, ladder, 3-situation graduation, first-miss weak spot, and the 40% speaking/writing beat quota.
+> Read docs/az-talkie-v2/00-decisions.md §4 Essential items, §5 Essential items come first in review, and §9 Practice leans on essential items. Implement the Phase 4 add-on · Essential items engine in 07-build-plan.md. Reuse existing cards/SRS/answers/vocab-flow/MUST_COVER/pack/reactor paths — do not invent parallel progress stores. Ship unit tests for queue order, ladder, 3-situation graduation, first-miss weak spot, and the 40% speaking/writing beat quota.
 
 ---
 
@@ -386,7 +386,7 @@ Content and `00` decisions landed with curriculum P0 1119 (`priority` on core it
 - An irregular `eu` form shows purple with ⚡.
 
 **Prompt**
-> Read docs/langify-v2/00-decisions.md §5 and 06-screens.md S5–S7. Match design/reference/08-decks-listing.png (Warm Editorial), 09-flashcard-front.png and 10-flashcard-back.png, with the corrections in 05 ("Things the designs got wrong"). Build /cards, /cards/deck/[id] and /cards/review against the Phase 4 endpoints.
+> Read docs/az-talkie-v2/00-decisions.md §5 and 06-screens.md S5–S7. Match design/reference/08-decks-listing.png (Warm Editorial), 09-flashcard-front.png and 10-flashcard-back.png, with the corrections in 05 ("Things the designs got wrong"). Build /cards, /cards/deck/[id] and /cards/review against the Phase 4 endpoints.
 
 **Add-on (2026-10-28, after Phase 4 and the v5 design)**
 - Phase 4 built only GET `/api/v2/cards/today` and POST `/api/v2/cards/[itemId]/review`. Add two read-only routes:
@@ -428,7 +428,7 @@ Content and `00` decisions landed with curriculum P0 1119 (`priority` on core it
 - The focus error appears in the next day's cards.
 
 **Prompt**
-> Read docs/langify-v2/00-decisions.md §9, 01-architecture.md ("Flow of one practice beat"), the agent section of 03, 06-screens.md S8, and docs/app-core-prompts-and-conversation-flow.md for the old flow you can reuse. Build v2 packs with skills, lib/v2/grader and lib/v2/reactor as pure modules (no DB writes), beat handling in /api/v2/answers, and the /practice/[day] screen with the 9 states and the end screen, as specified in Phase 6.
+> Read docs/az-talkie-v2/00-decisions.md §9, 01-architecture.md ("Flow of one practice beat"), the agent section of 03, 06-screens.md S8, and docs/app-core-prompts-and-conversation-flow.md for the old flow you can reuse. Build v2 packs with skills, lib/v2/grader and lib/v2/reactor as pure modules (no DB writes), beat handling in /api/v2/answers, and the /practice/[day] screen with the 9 states and the end screen, as specified in Phase 6.
 
 **Pointer (2026-11-19):** practice `ESSENTIAL_TARGETS`, the 40% speaking/writing quota, reactor nudges, and the essentials-used end screen are part of **Phase 4 add-on · Essential items engine** — implement there, not as a second pack pipeline.
 
@@ -490,7 +490,7 @@ Content and `00` decisions landed with curriculum P0 1119 (`priority` on core it
 - A new user can go Day 1 → Day 3 through the path, gets micro units each day, and sees the "بتفهم · بتقول" numbers and gaps change.
 
 **Prompt**
-> Read docs/langify-v2/00-decisions.md §1 and §6, the micro and daily-use sections of 03, and 06-screens.md S1, S4, S9–S11. Build the micro-unit logic and endpoints, and the /path, day done, /library and /me screens.
+> Read docs/az-talkie-v2/00-decisions.md §1 and §6, the micro and daily-use sections of 03, and 06-screens.md S1, S4, S9–S11. Build the micro-unit logic and endpoints, and the /path, day done, /library and /me screens.
 
 **Add-on (2026-10-29, after Phases 3–6)**
 

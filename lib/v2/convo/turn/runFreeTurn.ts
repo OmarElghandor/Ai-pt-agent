@@ -129,6 +129,10 @@ export type RunFreeConvoTurnInput = {
   characterId?: string;
   /** Client learner bubble id — echoed on correction events (K2). */
   learnerTurnId?: string;
+  /** Role-play mistake writer (batch-rp-5). */
+  writeMistake?: import('@/lib/v2/convo/progress').SceneMistakeWriter;
+  /** Learner curriculum day for scene mistakes. */
+  learnerDay?: number;
   /** Injected free-text grader (tests). */
   freeTextGrader?: FreeTextGrader;
   /** Learner gender for tl / tl_f ask lines; default m. */
@@ -653,6 +657,8 @@ export async function runFreeConvoTurn(
         stubQwen: input.stubSceneQwen,
         stubLangHelp: input.stubSceneLangHelp,
         onSceneQwen: input.onSceneQwen,
+        writeMistake: input.writeMistake,
+        learnerDay: input.learnerDay,
       });
     }
   }

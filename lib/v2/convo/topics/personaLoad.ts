@@ -48,7 +48,7 @@ export function loadPersonasFile(
   filePath: string = PERSONAS_PATH,
 ): PersonasFile {
   if (personasCached && filePath === PERSONAS_PATH) return personasCached;
-  const raw = JSON.parse(readFileSync(filePath, 'utf8')) as unknown;
+  const raw = JSON.parse(readFileSync(/*turbopackIgnore: true*/ filePath, 'utf8')) as unknown;
   const result = validatePersonasFile(raw);
   if (!result.ok || !result.doc) {
     throw new Error(`personas invalid: ${result.issues.join('; ')}`);

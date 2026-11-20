@@ -47,7 +47,7 @@ export function assertAuthEnv(): AuthEnv {
 
   if (missing.length > 0) {
     throw new Error(
-      `Auth env missing: ${missing.join(', ')}. Set them in .env (see docs/langify-v2/10-auth.md).`,
+      `Auth env missing: ${missing.join(', ')}. Set them in .env (see docs/az-talkie-v2/10-auth.md).`,
     );
   }
 

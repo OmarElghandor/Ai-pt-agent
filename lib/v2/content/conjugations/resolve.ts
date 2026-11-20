@@ -44,7 +44,7 @@ export function loadConjugationSeed(
   seedPath = join(process.cwd(), 'content/v2/conjugations/pt-PT.json'),
 ): SeedFile {
   if (cachedSeed) return cachedSeed;
-  cachedSeed = JSON.parse(readFileSync(seedPath, 'utf8')) as SeedFile;
+  cachedSeed = JSON.parse(readFileSync(/*turbopackIgnore: true*/ seedPath, 'utf8')) as SeedFile;
   return cachedSeed;
 }
 

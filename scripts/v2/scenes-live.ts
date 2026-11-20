@@ -56,6 +56,41 @@ const G1_LINES = [
   'até amanhã!',
 ] as const;
 
+/** batch-rp-4 live checks (real Qwen, not CI). */
+const RP4_RESTAURANTE = [
+  'mesa pra dois',
+  'agua',
+  'nao como porco',
+  'frango',
+  'a sopa tem porco?',
+  'ازاي اقول الحساب؟',
+  'sim muito bom',
+  'a conta',
+  'cartao',
+  'obrigado',
+] as const;
+
+const RP4_FARMACIA = [
+  'tenho tose',
+  'desde onten',
+  'nao',
+  'nao tenho alergia',
+  'quantas vez por dia?',
+  'cartão',
+  'obrigado',
+] as const;
+
+const RP4_TELEFONE = [
+  'ola tiago e o omar',
+  'tudo bem e tu',
+  'vamos o cinema?',
+  'hoje',
+  'sim amanha',
+  'as nove',
+  'na porta',
+  'xau',
+] as const;
+
 const SCRIPTS: Record<string, LiveScript> = {
   g1: {
     id: 'g1',
@@ -66,6 +101,21 @@ const SCRIPTS: Record<string, LiveScript> = {
     id: 'cafe',
     topicId: 'cena-cafe',
     lines: G1_LINES,
+  },
+  restaurante: {
+    id: 'restaurante',
+    topicId: 'cena-restaurante',
+    lines: RP4_RESTAURANTE,
+  },
+  farmacia: {
+    id: 'farmacia',
+    topicId: 'cena-farmacia',
+    lines: RP4_FARMACIA,
+  },
+  telefone: {
+    id: 'telefone',
+    topicId: 'cena-telefone',
+    lines: RP4_TELEFONE,
   },
   extras: {
     id: 'extras',
@@ -306,7 +356,7 @@ async function playExtras() {
 
 async function main() {
   const args = process.argv.slice(2).filter((a) => !a.startsWith('-'));
-  const ids = args.length ? args : ['g1', 'extras'];
+  const ids = args.length ? args : ['restaurante', 'farmacia', 'telefone'];
 
   for (const id of ids) {
     if (id === 'extras') {
@@ -319,7 +369,9 @@ async function main() {
         ? SCRIPTS.g1
         : undefined);
     if (!script) {
-      console.error(`Unknown script: ${id}. Use: g1 | cafe | extras`);
+      console.error(
+        `Unknown script: ${id}. Use: g1 | cafe | restaurante | farmacia | telefone | extras`,
+      );
       process.exitCode = 1;
       continue;
     }

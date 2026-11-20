@@ -112,11 +112,11 @@ export function loadSceneIndex(opts?: {
   }
   const lang = opts?.targetLang ?? 'pt-PT';
   const filePath = path.join(scenesDir(opts), `${lang}.index.json`);
-  if (!existsSync(filePath)) {
+  if (!existsSync(/*turbopackIgnore: true*/ filePath)) {
     throw new Error(`scene index missing: ${filePath}`);
   }
   const index = parseSceneIndex(
-    JSON.parse(readFileSync(filePath, 'utf8')) as unknown,
+    JSON.parse(readFileSync(/*turbopackIgnore: true*/ filePath, 'utf8')) as unknown,
   );
   if (!opts?.baseDir && !opts?.targetLang) {
     indexCache = index;
@@ -457,9 +457,12 @@ export function parseSceneBankJson(raw: unknown): ConvoGoalBank {
     throw new Error('scene bank: kind must be "scene"');
   }
 
-  const format = doc.format === 3 ? 3 : 2;
-  const bank =
-    format === 3 ? parseFormat3SceneBank(doc) : parseFormat2SceneBank(doc);
+  if (doc.format !== 3) {
+    throw new Error(
+      `scene bank${typeof doc.id === 'string' ? ` ${doc.id}` : ''}: format must be 3`,
+    );
+  }
+  const bank = parseFormat3SceneBank(doc);
 
   const { ok, issues } = validateSceneBank(bank);
   if (!ok) {
@@ -482,11 +485,11 @@ export function loadSceneBank(
     return bankCache.get(cacheKey)!;
   }
   const filePath = sceneBankPath(id, opts);
-  if (!existsSync(filePath)) {
+  if (!existsSync(/*turbopackIgnore: true*/ filePath)) {
     throw new Error(`scene bank missing: ${filePath}`);
   }
   const bank = parseSceneBankJson(
-    JSON.parse(readFileSync(filePath, 'utf8')) as unknown,
+    JSON.parse(readFileSync(/*turbopackIgnore: true*/ filePath, 'utf8')) as unknown,
   );
   if (!bank.topic_id) bank.topic_id = id;
   if (!opts?.baseDir) {
@@ -502,10 +505,10 @@ export function listSceneBankFiles(opts?: {
 }): string[] {
   const lang = opts?.targetLang ?? 'pt-PT';
   const dir = scenesDir(opts);
-  if (!existsSync(dir)) return [];
+  if (!existsSync(/*turbopackIgnore: true*/ dir)) return [];
   const prefix = `${lang}.cena-`;
   const suffix = '.json';
-  return readdirSync(dir)
+  return readdirSync(/*turbopackIgnore: true*/ dir)
     .filter((f) => f.startsWith(prefix) && f.endsWith(suffix))
     .map((f) => `cena-${f.slice(prefix.length, -suffix.length)}`)
     .filter(Boolean)
@@ -517,7 +520,19 @@ export function loadAllSceneBanks(opts?: {
   baseDir?: string;
 }): ConvoGoalBank[] {
   const index = loadSceneIndex(opts);
-  return index.path.map((entry) => loadSceneBank(entry.id, opts));
+  const out: ConvoGoalBank[] = [];
+  for (const entry of index.path) {
+    try {
+      out.push(loadSceneBank(entry.id, opts));
+    } catch (err) {
+      // batch-rp-4: failing scene is reported and left out of the path.
+      console.warn(
+        `[scenes] leaving ${entry.id} out of path:`,
+        err instanceof Error ? err.message : err,
+      );
+    }
+  }
+  return out;
 }
 
 /** All scene ids from the path index (ordered). */

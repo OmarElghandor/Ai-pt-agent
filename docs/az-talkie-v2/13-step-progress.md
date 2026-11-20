@@ -85,10 +85,10 @@ Same card and colours (mint theme), new content:
 
 Same rules as `11`: one task per session, in order, tests included, stop at "Done when". Prompt:
 
-> Read docs/langify-v2/13-step-progress.md (whole) and 11-profile-progress.md §3 and §7.3, AGENTS.md and 00-decisions.md §8b. Implement task **S-x only**. Do not start the next task. The user id always comes from the session helper. Only `/api/v2/progress/events` writes lesson progress. No screen decides a step is done from sessionStorage alone. No percentages on home or the day map. Write the tests the task asks for. Stop when "Done when" is met and list the files you changed.
+> Read docs/az-talkie-v2/13-step-progress.md (whole) and 11-profile-progress.md §3 and §7.3, AGENTS.md and 00-decisions.md §8b. Implement task **S-x only**. Do not start the next task. The user id always comes from the session helper. Only `/api/v2/progress/events` writes lesson progress. No screen decides a step is done from sessionStorage alone. No percentages on home or the day map. Write the tests the task asks for. Stop when "Done when" is met and list the files you changed.
 
 **S0 · Write the doc in**
-- Do: copy this doc to `docs/langify-v2/13-step-progress.md`, add one line to `00-decisions.md` §8b pointing at it, link it from the README.
+- Do: copy this doc to `docs/az-talkie-v2/13-step-progress.md`, add one line to `00-decisions.md` §8b pointing at it, link it from the README.
 - Done when: docs updated, nothing else changed.
 
 **S1 · Shared day-step list**

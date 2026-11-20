@@ -6,7 +6,7 @@ import {
 } from '../lists';
 
 /**
- * System prompt from docs/langify-v2/03-generation-and-learning.md
+ * System prompt from docs/az-talkie-v2/03-generation-and-learning.md
  * with PAGE STEPS replaced by PAGES from 02-content-schema.md.
  * Field names mapped to schema (tl / say / context_eg / eg) per 00-decisions.
  */

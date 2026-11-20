@@ -1,6 +1,6 @@
 /**
  * Deterministic pt-PT → Arabic-letters pronunciation (`say`).
- * Mapping: docs/langify-v2/00-decisions.md §2 and 03-generation-and-learning.md.
+ * Mapping: docs/az-talkie-v2/00-decisions.md §2 and 03-generation-and-learning.md.
  *
  * g → ج · j / g before e|i → چ · sh-sound → ش · initial r / rr → غ
  * v → ڤ · p → پ · lh → لي · nh → ني · final e dropped · final o → و

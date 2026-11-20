@@ -35,7 +35,7 @@ const DEFAULT_SEED_PATH = path.join(
 
 /** Load curated seed plan, sorted by order. */
 export function loadSeedPlan(seedPath = DEFAULT_SEED_PATH): SeedPlanSlot[] {
-  const raw = JSON.parse(readFileSync(seedPath, 'utf8')) as unknown;
+  const raw = JSON.parse(readFileSync(/*turbopackIgnore: true*/ seedPath, 'utf8')) as unknown;
   if (!Array.isArray(raw)) {
     throw new Error('lesson-plan-seed-v1.json must be a JSON array');
   }
@@ -66,7 +66,7 @@ export function loadSeedPlan(seedPath = DEFAULT_SEED_PATH): SeedPlanSlot[] {
 
 export function seedPlanExists(seedPath = DEFAULT_SEED_PATH): boolean {
   try {
-    readFileSync(seedPath, 'utf8');
+    readFileSync(/*turbopackIgnore: true*/ seedPath, 'utf8');
     return true;
   } catch {
     return false;

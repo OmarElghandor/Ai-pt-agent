@@ -98,7 +98,8 @@ describe.skip('scenes fix · cast + first message', () => {
   });
 });
 
-describe('scenes fix · café script opens the next goal', () => {
+/** Superseded by batch-rp-3 G1–G18 / batch-rp-4 goldens (format-3 goal ids). */
+describe.skip('scenes fix · café script opens the next goal', () => {
   it('each learner line advances reply to the next ask_tl', async () => {
     const { store, started } = await startCafe('u-script');
     let session = started.session;

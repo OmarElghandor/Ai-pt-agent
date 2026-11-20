@@ -1,5 +1,5 @@
 <!--
-Source: Claude Docs "خطة ترتيب محتوى الكتاب · Langify" — https://claude.ai/code/artifact/5c577c05-e81b-4c65-ae59-b2143dd6b2d8
+Source: Claude Docs "خطة ترتيب محتوى الكتاب · A-Z Talkie" — https://claude.ai/code/artifact/5c577c05-e81b-4c65-ae59-b2143dd6b2d8
 Exported 2026-10-25. Language: Egyptian Arabic.
 -->
 # 04 · Curriculum plan (90 days)

@@ -95,7 +95,7 @@ export function loadDayPlan(
   path = join(process.cwd(), 'content/v2/plan/pt-PT.days.json'),
 ): DayPlanFile {
   if (cachedPlan) return cachedPlan;
-  cachedPlan = JSON.parse(readFileSync(path, 'utf8')) as DayPlanFile;
+  cachedPlan = JSON.parse(readFileSync(/*turbopackIgnore: true*/ path, 'utf8')) as DayPlanFile;
   return cachedPlan;
 }
 

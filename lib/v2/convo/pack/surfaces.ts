@@ -17,7 +17,7 @@ export function loadConvoItemSurfaces(
   filePath: string = DEFAULT_SURFACES_PATH,
 ): ConvoItemSurface[] {
   if (filePath === DEFAULT_SURFACES_PATH && cached) return cached;
-  const raw = JSON.parse(readFileSync(filePath, 'utf8')) as ConvoItemSurface[];
+  const raw = JSON.parse(readFileSync(/*turbopackIgnore: true*/ filePath, 'utf8')) as ConvoItemSurface[];
   if (filePath === DEFAULT_SURFACES_PATH) cached = raw;
   return raw;
 }

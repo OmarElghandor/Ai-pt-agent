@@ -197,7 +197,7 @@ export async function testVoice(
     modelId,
     settings,
   });
-  const publicId = `langify/v2/library/voice-tests/${key}-${settingsHash.slice(0, 10)}`;
+  const publicId = `az-talkie/v2/library/voice-tests/${key}-${settingsHash.slice(0, 10)}`;
   const url = opts.upload
     ? await opts.upload(result.audio, publicId)
     : `stub://${publicId}`;

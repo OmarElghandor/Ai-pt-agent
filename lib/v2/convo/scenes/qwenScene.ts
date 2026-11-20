@@ -1,6 +1,8 @@
 import { generateText } from 'ai';
 import { getChatModel } from '@/lib/model';
 import type { ConvoGoal, ConvoGoalBank } from '@/lib/v2/convo/goals/types';
+import { goalOptionAnswerWords, isAnswerWordInGoal } from './closeButWrong';
+import { normalizeSceneText } from './weak';
 
 export const SCENE_QWEN_TIMEOUT_MS = 4_000;
 
@@ -11,6 +13,10 @@ export type SceneQwenResult = {
   corrected: string;
   has_error: boolean;
   note_eg: string;
+  /** Expected answer word from the options (batch-rp-4). */
+  answer_word?: string | null;
+  /** True when the learner misspelled that word (batch-rp-4). */
+  answer_word_misspelled?: boolean;
 };
 
 const SYSTEM =
@@ -19,18 +25,15 @@ const SYSTEM =
 const RULES = [
   'fix every mistake (spelling, accents, missing or wrong words), and keep the learner\'s words where they are correct;',
   'when the learner\'s meaning matches an example, prefer the example\'s wording (quero → queria);',
-  'has_error is false if the only differences are capital letters or final punctuation.',
+  'has_error is false if the only differences are capital letters or final punctuation;',
+  'answer_word is the correctly spelled expected word from the current goal\'s option keywords/examples that the learner was answering;',
+  'answer_word_misspelled is true only when that word itself is misspelled in the learner message (not merely missing accents).',
 ].join(' ');
 
 export function buildSceneQwenCandidates(
   bank: ConvoGoalBank,
   currentGoalId: string | null,
 ): ConvoGoal[] {
-  const openOrdered = bank.goals.filter((g) => {
-    // Caller passes only open goals via filtering outside; here we take bank slice.
-    return true;
-  });
-  void openOrdered;
   const goals = bank.goals;
   const currentIdx = goals.findIndex((g) => g.id === currentGoalId);
   if (currentIdx < 0) return [];
@@ -67,6 +70,16 @@ export function sceneQwenCandidatesFromOpen(
   return out;
 }
 
+function emptyExtras(raw: SceneQwenResult): Pick<
+  SceneQwenResult,
+  'answer_word' | 'answer_word_misspelled'
+> {
+  return {
+    answer_word: raw.answer_word ?? null,
+    answer_word_misspelled: Boolean(raw.answer_word_misspelled),
+  };
+}
+
 export function validateSceneQwenResult(
   raw: SceneQwenResult | null | undefined,
   candidates: ConvoGoal[],
@@ -80,6 +93,7 @@ export function validateSceneQwenResult(
       corrected: raw.corrected ?? '',
       has_error: Boolean(raw.has_error),
       note_eg: raw.note_eg ?? '',
+      ...emptyExtras(raw),
     };
   }
   if (raw.kind !== 'answer') return null;
@@ -87,6 +101,22 @@ export function validateSceneQwenResult(
   if (!goal) return null;
   const opt = goal.options?.find((o) => o.value === raw.option);
   if (!opt) return null;
+
+  let answerWord =
+    typeof raw.answer_word === 'string' && raw.answer_word.trim()
+      ? raw.answer_word.trim()
+      : null;
+  // Ignore answer_word when it is not in this goal's option words (R4-8).
+  if (answerWord && !isAnswerWordInGoal(goal, answerWord)) {
+    answerWord = null;
+  } else if (answerWord) {
+    // Canonicalize to authored spelling when possible.
+    const authored = goalOptionAnswerWords(goal).find(
+      (w) => normalizeSceneText(w) === normalizeSceneText(answerWord!),
+    );
+    if (authored) answerWord = authored;
+  }
+
   return {
     kind: 'answer',
     goal: goal.id,
@@ -94,6 +124,8 @@ export function validateSceneQwenResult(
     corrected: raw.corrected ?? '',
     has_error: Boolean(raw.has_error),
     note_eg: raw.note_eg ?? '',
+    answer_word: answerWord,
+    answer_word_misspelled: Boolean(answerWord && raw.answer_word_misspelled),
   };
 }
 
@@ -119,6 +151,9 @@ export function parseSceneQwenJson(text: string): SceneQwenResult | null {
       corrected: typeof obj.corrected === 'string' ? obj.corrected : '',
       has_error: Boolean(obj.has_error),
       note_eg: typeof obj.note_eg === 'string' ? obj.note_eg : '',
+      answer_word:
+        typeof obj.answer_word === 'string' ? obj.answer_word : null,
+      answer_word_misspelled: Boolean(obj.answer_word_misspelled),
     };
   } catch {
     return null;
@@ -134,6 +169,7 @@ function buildPrompt(opts: {
     id: g.id,
     options: (g.options ?? []).map((o) => ({
       value: o.value,
+      keywords: o.keywords,
       examples: o.examples,
     })),
   }));
@@ -142,7 +178,7 @@ function buildPrompt(opts: {
     `Learner message: ${opts.learnerText}`,
     `Candidate goals: ${JSON.stringify(goals)}`,
     `Rules: ${RULES}`,
-    'Output JSON: {"kind":"answer"|"side_question"|"other","goal":"<id or null>","option":"<value or null>","corrected":"<pt-PT>","has_error":true|false,"note_eg":"<eg or empty>"}',
+    'Output JSON: {"kind":"answer"|"side_question"|"other","goal":"<id or null>","option":"<value or null>","corrected":"<pt-PT>","has_error":true|false,"note_eg":"<eg or empty>","answer_word":"<word or null>","answer_word_misspelled":true|false}',
   ].join('\n');
 }
 

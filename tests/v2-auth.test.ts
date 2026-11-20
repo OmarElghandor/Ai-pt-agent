@@ -237,7 +237,7 @@ describe('v2 user doc id|_id filter', () => {
       {
         id,
         name: 'CI',
-        email: 'ci@langify.local',
+        email: 'ci@az-talkie.local',
         gender: null,
         onboarded_at: null,
       },

@@ -49,7 +49,11 @@ function optionExamplesMatch(
 function firstMatchingOption(
   learnerText: string,
   goal: ConvoGoal,
-  opts: { allowWeakKeywords: boolean },
+  opts: {
+    allowWeakKeywords: boolean;
+    /** Example ≥80% similarity — current goal only (batch-rp-4: no jump via shared examples). */
+    allowExamples: boolean;
+  },
 ): SceneOption | null {
   const options = goal.options;
   if (options?.length) {
@@ -57,20 +61,22 @@ function firstMatchingOption(
       const kwHit = opts.allowWeakKeywords
         ? messageHasAnyKeyword(learnerText, opt.keywords)
         : messageHasStrongKeyword(learnerText, opt.keywords);
-      if (kwHit || optionExamplesMatch(learnerText, opt)) {
+      const exHit =
+        opts.allowExamples && optionExamplesMatch(learnerText, opt);
+      if (kwHit || exHit) {
         return opt;
       }
     }
     return null;
   }
 
-  // Format 2 fallback: flat keywords / examples_tl on the goal.
+  // Legacy flat keywords / examples_tl on the goal (no longer authored).
   const kwHit = opts.allowWeakKeywords
     ? messageHasAnyKeyword(learnerText, goal.keywords)
     : messageHasStrongKeyword(learnerText, goal.keywords);
-  const exHit = goal.examples_tl.some((ex) =>
-    isAtLeast80Similar(learnerText, ex),
-  );
+  const exHit =
+    opts.allowExamples &&
+    goal.examples_tl.some((ex) => isAtLeast80Similar(learnerText, ex));
   if (kwHit || exHit) {
     return {
       value: goal.id,
@@ -159,6 +165,7 @@ export function checkSceneGoals(
 
   const currentOpt = firstMatchingOption(t, current, {
     allowWeakKeywords: true,
+    allowExamples: true,
   });
   const currentByModel =
     !current.options?.length &&
@@ -173,7 +180,11 @@ export function checkSceneGoals(
   for (let i = 1; i < openOrdered.length; i++) {
     const goal = openOrdered[i]!;
     if (goal.farewell) continue;
-    const opt = firstMatchingOption(t, goal, { allowWeakKeywords: false });
+    // Later goals: strong keywords only — never examples (shared «Não, obrigado.»).
+    const opt = firstMatchingOption(t, goal, {
+      allowWeakKeywords: false,
+      allowExamples: false,
+    });
     if (opt) matched.set(goal.id, opt.value);
   }
 

@@ -26,6 +26,7 @@ import {
   parseAnswerPayload,
   type AnswerPayload,
   type BeatAnswerPayload,
+  type SceneMistakePayload,
 } from './payload';
 import {
   bumpBeatAttempt,
@@ -33,12 +34,21 @@ import {
   getOrCreatePracticeSession,
   recordSkillResult,
 } from './practiceSession';
+import { processSceneMistake } from './sceneMistake';
 
 export type { AnswerVerdict };
 
 export type BeatAnswerBody = BeatEvaluateResult & {
   session_id: string;
   skill_counts?: Record<string, { correct: number; total: number }>;
+  duplicate?: boolean;
+};
+
+export type SceneMistakeBody = {
+  ok: true;
+  error_id: string;
+  count: number;
+  classified: number;
   duplicate?: boolean;
 };
 
@@ -142,18 +152,24 @@ async function appendErrors(
     const { enqueueClassifyError } = await import(
       '@/lib/v2/progress/classify/enqueue'
     );
+    const { learnerCurrentDay } = await import(
+      '@/lib/v2/progress/learnerDay'
+    );
     for (let i = 0; i < inserted.length; i++) {
       const doc = inserted[i]!;
       const e = errors[i]!;
+      const learnerDay =
+        opts?.learnerDay ?? (await learnerCurrentDay(e.user_id));
       enqueueClassifyError({
         errorId: String(doc._id),
         userId: e.user_id,
-        learnerDay: opts?.learnerDay ?? 1,
+        learnerDay,
         localDate: opts?.localDate ?? new Date().toISOString().slice(0, 10),
         wrong: e.wrong,
         right: e.right,
-        isBrazilian: e.scope === 'brazilian' || e.category === 'vocabulary',
+        isBrazilian: e.scope === 'brazilian',
         itemIds: e.item_id ? [e.item_id] : [],
+        questionKey: e.tool_id,
       });
     }
   } catch {
@@ -251,7 +267,11 @@ async function buildContext(
       });
     }
     const recent = await V2ErrorModel()
-      .find({ user_id: userId, tool_id: { $exists: true } })
+      .find({
+        user_id: userId,
+        tool_id: { $exists: true },
+        source: { $ne: 'roleplay' },
+      })
       .sort({ at: -1 })
       .limit(10)
       .lean();
@@ -309,7 +329,11 @@ async function handleBeat(
   }
 
   const recent = await V2ErrorModel()
-    .find({ user_id: userId, tool_id: { $exists: true } })
+    .find({
+      user_id: userId,
+      tool_id: { $exists: true },
+      source: { $ne: 'roleplay' },
+    })
     .sort({ at: -1 })
     .limit(10)
     .lean();
@@ -375,26 +399,130 @@ async function handleBeat(
 
 export type HandleAnswerResult =
   | { status: 400 | 401 | 403 | 404 | 503; error: string }
-  | { status: 200; body: AnswerVerdict | BeatAnswerBody };
+  | {
+      status: 200;
+      body: AnswerVerdict | BeatAnswerBody | SceneMistakeBody;
+    };
+
+async function handleSceneMistake(
+  payload: SceneMistakePayload,
+  userId: string,
+  tz: string,
+  opts?: {
+    now?: Date;
+    store?: import('./sceneMistake').SceneErrorStore;
+    enqueue?: import('./sceneMistake').SceneMistakeEnqueue;
+  },
+): Promise<SceneMistakeBody> {
+  const localDate = localDateString(opts?.now ?? new Date(), tz);
+  const result = await processSceneMistake({
+    userId,
+    payload,
+    localDate,
+    now: opts?.now,
+    store: opts?.store,
+    enqueue: opts?.enqueue,
+  });
+  return {
+    ok: true,
+    error_id: result.errorId,
+    count: result.count,
+    classified: result.classifiedIds.length,
+  };
+}
 
 export async function handleAnswerRequest(
   body: unknown,
-  opts?: { timeZone?: string },
+  opts?: {
+    timeZone?: string;
+    /** Test overrides for scene_mistake. */
+    userId?: string;
+    now?: Date;
+    sceneStore?: import('./sceneMistake').SceneErrorStore;
+    sceneEnqueue?: import('./sceneMistake').SceneMistakeEnqueue;
+  },
 ): Promise<HandleAnswerResult> {
   const payload = parseAnswerPayload(body);
   if (!payload) {
     return { status: 400, error: 'invalid' };
   }
-  if (!mongoConfigured()) {
+  if (payload.kind !== 'scene_mistake' && !mongoConfigured()) {
     return { status: 503, error: 'MongoDB not configured' };
   }
-  const userId = await getCurrentV2UserId();
+  if (
+    payload.kind === 'scene_mistake' &&
+    !opts?.sceneStore &&
+    !mongoConfigured()
+  ) {
+    return { status: 503, error: 'MongoDB not configured' };
+  }
+  const userId = opts?.userId ?? (await getCurrentV2UserId());
   if (!userId) {
     return { status: 401, error: 'unauthorized' };
   }
 
-  await connectMongo();
+  if (payload.kind !== 'scene_mistake' || !opts?.sceneStore) {
+    await connectMongo();
+  }
   const tz = opts?.timeZone ?? 'UTC';
+
+  if (payload.kind === 'scene_mistake') {
+    const store = {
+      async get(id: string) {
+        const doc = await V2AnswerIdempotencyModel()
+          .findOne({ answer_id: id, user_id: userId })
+          .lean();
+        if (!doc) return undefined;
+        return doc.verdict as SceneMistakeBody;
+      },
+      async set(id: string, verdict: SceneMistakeBody) {
+        if (opts?.sceneStore) {
+          // In-memory tests: skip idempotency persistence.
+          void id;
+          void verdict;
+          return;
+        }
+        await V2AnswerIdempotencyModel().create({
+          answer_id: id,
+          user_id: userId,
+          verdict,
+        });
+      },
+    };
+    try {
+      if (opts?.sceneStore) {
+        const bodyOut = await handleSceneMistake(payload, userId, tz, {
+          now: opts.now,
+          store: opts.sceneStore,
+          enqueue: opts.sceneEnqueue,
+        });
+        return { status: 200, body: bodyOut };
+      }
+      const verdict = await withIdempotency(
+        payload.answer_id,
+        store,
+        async () =>
+          handleSceneMistake(payload, userId, tz, {
+            now: opts?.now,
+            enqueue: opts?.sceneEnqueue,
+          }),
+      );
+      return { status: 200, body: verdict };
+    } catch (err) {
+      if (
+        err &&
+        typeof err === 'object' &&
+        'code' in err &&
+        (err as { code: number }).code === 11000
+      ) {
+        const existing = await store.get(payload.answer_id);
+        if (existing) {
+          return { status: 200, body: { ...existing, duplicate: true } };
+        }
+      }
+      throw err;
+    }
+  }
 
   if (payload.kind === 'beat') {
     const store = {

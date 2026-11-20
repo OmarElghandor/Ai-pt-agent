@@ -269,7 +269,7 @@ UI (Module A Learn + Module C free: **Calm Kit** — global v2 theme; `.v2-free-
 
 Each step ends in something Omar can play. Do them in order. **For Cursor, use the small tasks in `09a-conversations-tasks.md`**, not these steps directly.
 
-0. **Decisions.** Add a section "§9b Conversations" to `00-decisions.md` summarising sections 2, 3, 5 and 7 of this document, and mark the Phase 6 beat-based practice as superseded for new work (kept until cut-over). Add this doc to `docs/langify-v2/README.md`.
+0. **Decisions.** Add a section "§9b Conversations" to `00-decisions.md` summarising sections 2, 3, 5 and 7 of this document, and mark the Phase 6 beat-based practice as superseded for new work (kept until cut-over). Add this doc to `docs/az-talkie-v2/README.md`.
 1. **Engine skeleton, hand-written pack.** Write the day 18 pack by hand as a JSON content file (no generation yet). Build the session document, code grading, ladder, candidate selection, the streamed turn with the fixed prompt, post-checks, the coach bank, and the conversation screen with the map. Done when the day 18 conversation plays end to end with streaming, the map, the help ladder and the result card.
 2. **Prompt budget guard.** Token/latency logging in the dev panel and the 40-turn CI test. Done when the test passes and fails on purpose if a line is added to the prompt.
 3. **Arabic side channel.** The three classifications, the coach call, and item-card answers. Done when "يعني إيه esquina؟" mid-conversation gets a coach note, the character waits, and its history contains no Arabic.
@@ -280,7 +280,7 @@ Each step ends in something Omar can play. Do them in order. **For Cursor, use t
 8. **Polish.** Survival buttons, encouragement variety, adult tone review, speed pass (target: first audio within ~2.5 s of sending).
 9. **Cut-over.** Remove the legacy `/chat` Friend/Assessment, the friend-bridge, the JSON learner file store, and the beat-based practice route once modules A–C cover them.
 
-Prompt to give Cursor for each step: "Read docs/langify-v2/09-conversations.md (whole), AGENTS.md and 00-decisions.md. Implement step N of section 11 only. Follow section 5 strictly: nothing may be added to the per-turn prompt beyond the six parts in 5.1. Reuse the modules listed in section 10 instead of writing new ones. Stop when the step's 'Done when' is met and list what you changed."
+Prompt to give Cursor for each step: "Read docs/az-talkie-v2/09-conversations.md (whole), AGENTS.md and 00-decisions.md. Implement step N of section 11 only. Follow section 5 strictly: nothing may be added to the per-turn prompt beyond the six parts in 5.1. Reuse the modules listed in section 10 instead of writing new ones. Stop when the step's 'Done when' is met and list what you changed."
 
 ---
 

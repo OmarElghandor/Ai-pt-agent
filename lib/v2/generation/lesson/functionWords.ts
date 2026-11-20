@@ -19,7 +19,7 @@ export function loadFunctionWords(
 ): FunctionWordsFile {
   const cached = cache.get(filePath);
   if (cached) return cached;
-  const raw = JSON.parse(readFileSync(filePath, 'utf8')) as FunctionWordsFile;
+  const raw = JSON.parse(readFileSync(/*turbopackIgnore: true*/ filePath, 'utf8')) as FunctionWordsFile;
   cache.set(filePath, raw);
   return raw;
 }

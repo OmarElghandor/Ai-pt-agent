@@ -21,8 +21,8 @@ export function loadAuthoredTopicBank(
   opts?: { targetLang?: string; baseDir?: string },
 ): ConvoGoalBank | null {
   const filePath = authoredTopicBankPath(topicId, opts);
-  if (!existsSync(filePath)) return null;
-  const raw = JSON.parse(readFileSync(filePath, 'utf8')) as unknown;
+  if (!existsSync(/*turbopackIgnore: true*/ filePath)) return null;
+  const raw = JSON.parse(readFileSync(/*turbopackIgnore: true*/ filePath, 'utf8')) as unknown;
   const bank = parseLessonDayBankJson(raw);
   if (!bank.topic_id) bank.topic_id = topicId;
   return ensureBankRequiredItems(bank);
@@ -35,10 +35,10 @@ export function listAuthoredTopicBankIds(opts?: {
 }): string[] {
   const lang = opts?.targetLang ?? 'pt-PT';
   const dir = opts?.baseDir ?? DEFAULT_GOALS_DIR;
-  if (!existsSync(dir)) return [];
+  if (!existsSync(/*turbopackIgnore: true*/ dir)) return [];
   const prefix = `${lang}.topic-`;
   const suffix = '.json';
-  return readdirSync(dir)
+  return readdirSync(/*turbopackIgnore: true*/ dir)
     .filter((f) => f.startsWith(prefix) && f.endsWith(suffix))
     .map((f) => f.slice(prefix.length, -suffix.length))
     .filter(Boolean)

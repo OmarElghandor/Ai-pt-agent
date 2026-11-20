@@ -8,9 +8,13 @@ export async function loadWeakItemIds(userId: string): Promise<Set<string>> {
   if (!mongoConfigured()) return new Set();
   await connectMongo();
   const rows = await V2ErrorModel()
-    .find({ user_id: userId })
+    .find({
+      user_id: userId,
+      // Role-play errors feed problems only — never word cards (batch-rp-5).
+      source: { $ne: 'roleplay' },
+    })
     .sort({ at: 1 })
-    .select('item_id tool_id skill category scope wrong right at')
+    .select('item_id tool_id skill category scope wrong right at source')
     .lean();
   const errors: ProgressError[] = rows.map((r) => ({
     user_id: userId,

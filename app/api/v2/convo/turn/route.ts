@@ -12,7 +12,11 @@ import {
   MongoConvoSessionStore,
   getConvoSession,
 } from '@/lib/v2/convo/session';
-import { createAnswersConvoProgressWriter } from '@/lib/v2/convo/progress';
+import {
+  createAnswersConvoProgressWriter,
+  createAnswersSceneMistakeWriter,
+} from '@/lib/v2/convo/progress';
+import { learnerCurrentDay } from '@/lib/v2/progress/learnerDay';
 import {
   createLiveConvoStreamModel,
   encodeConvoTurnEvent,
@@ -85,6 +89,10 @@ export async function POST(req: Request) {
           sceneMode: isScene,
         });
         if (session.module === 'free') {
+          const day =
+            session.lesson_day && session.lesson_day >= 1
+              ? session.lesson_day
+              : await learnerCurrentDay(userId);
           const { metrics } = await runFreeConvoTurn({
             session,
             learnerText: body?.text ?? '',
@@ -92,6 +100,8 @@ export async function POST(req: Request) {
             model: liveModel,
             emit,
             learnerGender,
+            writeMistake: createAnswersSceneMistakeWriter(),
+            learnerDay: day,
             ...(body?.assisted ? { assisted: true } : {}),
             ...(body?.character_id
               ? { characterId: body.character_id }

@@ -243,7 +243,7 @@ Old Langify progress is **not imported**. Every learner starts v2 at day 1, incl
 
 Same rules as `09a` and `10`: one task per session, in order, tests included, stop at "Done when". Prompt:
 
-> Read docs/langify-v2/11-profile-progress.md (whole), AGENTS.md, 00-decisions.md and 10-auth.md. Implement task **P-x only**. Do not start the next task. The user id always comes from the session helper. Only `/api/v2/answers` writes item state and errors; only the classifier job adds the problem label and updates weak spots; only `/api/v2/progress/events` writes lesson, deck and activity progress. Write the tests the task asks for. Stop when "Done when" is met and list the files you changed.
+> Read docs/az-talkie-v2/11-profile-progress.md (whole), AGENTS.md, 00-decisions.md and 10-auth.md. Implement task **P-x only**. Do not start the next task. The user id always comes from the session helper. Only `/api/v2/answers` writes item state and errors; only the classifier job adds the problem label and updates weak spots; only `/api/v2/progress/events` writes lesson, deck and activity progress. Write the tests the task asks for. Stop when "Done when" is met and list the files you changed.
 
 **P0 · Write the decisions**
 - Do: add "§8b Learner progress" to `00-decisions.md` summarising §2–§9 (including the five decisions), and update §8's taxonomy line to point at the problem list; link this doc from the README.

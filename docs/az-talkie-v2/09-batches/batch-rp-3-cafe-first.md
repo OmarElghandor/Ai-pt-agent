@@ -129,7 +129,7 @@ A goal completed after any `suggest` was shown is marked `assisted`.
 | (start) | Bom dia! 😊 Então, o que vai ser hoje? | — |
 | Bom dia | Bom dia, bom dia! Está frio hoje, hã? ☕ O que lhe sirvo? | — |
 | quero um galão | Um galão, saindo! Pequeno ou grande? | — |
-| grande | Grande, muito bem. Quente ou frio? Também temos com gelo. 🧊 | — |
+| grande | Grande, muito bem. Também temos com gelo. 🧊 Quente ou frio? | — |
 | quente | Quente, claro. Com açúcar ou sem açúcar? | — |
 | sem açúcar | Sem açúcar, muito bem. Os pastéis de nata acabaram de sair do forno. 😋 Quer um para acompanhar? | — |
 | um pastel de nata | Boa escolha! E para beber, mais alguma coisa? | 💬 جرّب تطلب ماية كمان مع الأوردر. |

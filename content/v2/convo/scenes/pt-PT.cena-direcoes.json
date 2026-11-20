@@ -1,219 +1,389 @@
 {
-  "source": "topic",
+  "id": "cena-direcoes",
   "kind": "scene",
-  "authored": true,
+  "format": 3,
   "target_lang": "pt-PT",
-  "topic_id": "cena-direcoes",
   "title_tl": "Onde fica o metro?",
   "title_ar": "تايه في وسط البلد",
   "emoji": "🧭",
-  "scene_eg": "شارع في الـ Baixa. إنت تايه ووقفت راجل ماشي.",
-  "intro_eg": "اسأل عن محطة المترو، افهم الطريق، وأكّده.",
-  "scene": {
-    "character_id": "carlos",
-    "place": "Carlos is a passer-by in the Baixa whom the learner stops to ask the way",
-    "time_of_day": "morning",
-    "address": "formal"
+  "recommended_day": 34,
+  "mission_eg": "اسأل عن محطة المترو، افهم الطريق وأكّده، واسأل بعيد ولا قريب.",
+  "character_id": "carlos",
+  "address": "formal",
+  "opening_coach_eg": "💬 إنت تايه في وسط البلد ووقفت حد في الشارع. اسأله المترو فين، ولما يوصفلك الطريق كرره علشان تتأكد 🧭",
+  "opening": [
+    {
+      "tl": "Sim? Posso ajudar? 🙂",
+      "ar": "نعم؟ هل أستطيع المساعدة؟"
+    }
+  ],
+  "global": {
+    "greeting": {
+      "keywords": [
+        "bom dia",
+        "boa tarde",
+        "boa noite",
+        "olá",
+        "ola",
+        "tudo bem"
+      ],
+      "react": [
+        {
+          "tl": "Bom dia! 🙂",
+          "ar": "صباح الخير!"
+        }
+      ]
+    },
+    "thanks": {
+      "keywords": [
+        "obrigado",
+        "obrigada"
+      ],
+      "react": [
+        {
+          "tl": "De nada! 😊",
+          "ar": "عفوًا!"
+        }
+      ]
+    },
+    "side_unknown": {
+      "react": [
+        {
+          "tl": "Isso não sei, desculpe.",
+          "ar": "هذا لا أعرفه، عذرًا."
+        }
+      ]
+    }
   },
-  "opening": {
-    "tl": "Sim? 🙂",
-    "ar": "نعم؟"
-  },
-  "closing": {
-    "tl": "Bom dia! 👋",
-    "ar": "يومًا سعيدًا!"
-  },
+  "glossary": [
+    {
+      "ar": [
+        "مترو"
+      ],
+      "tl": "o metro = المترو · a estação = المحطة"
+    },
+    {
+      "ar": [
+        "فين"
+      ],
+      "tl": "Onde fica…? = … فين؟"
+    },
+    {
+      "ar": [
+        "على طول",
+        "قدام"
+      ],
+      "tl": "em frente = على طول"
+    },
+    {
+      "ar": [
+        "شمال",
+        "يسار"
+      ],
+      "tl": "à esquerda = شمال"
+    },
+    {
+      "ar": [
+        "يمين"
+      ],
+      "tl": "à direita = يمين"
+    },
+    {
+      "ar": [
+        "لف",
+        "الف"
+      ],
+      "tl": "vire = لف"
+    },
+    {
+      "ar": [
+        "بعيد"
+      ],
+      "tl": "É longe? = بعيد؟"
+    },
+    {
+      "ar": [
+        "قريب"
+      ],
+      "tl": "É perto? = قريب؟"
+    },
+    {
+      "ar": [
+        "جنب",
+        "بجانب"
+      ],
+      "tl": "ao lado de = جنب"
+    },
+    {
+      "ar": [
+        "بنك"
+      ],
+      "tl": "o banco = البنك"
+    },
+    {
+      "ar": [
+        "ميدان",
+        "ساحة"
+      ],
+      "tl": "a praça = الميدان"
+    },
+    {
+      "ar": [
+        "دقايق",
+        "دقائق"
+      ],
+      "tl": "cinco minutos a pé = خمس دقايق مشي"
+    },
+    {
+      "ar": [
+        "فاهم",
+        "فهمت"
+      ],
+      "tl": "Percebi. = فهمت"
+    }
+  ],
   "goals": [
     {
-      "id": "direcoes.ask",
-      "tier": "core",
-      "intent_eg": "يسأل المترو فين",
+      "id": "ask",
       "label_eg": "اسأل المترو فين",
-      "intent_en": "ask where the metro is",
-      "ask_tl": "Sim? 🙂",
-      "ask_ar": "نعم؟",
-      "examples_tl": [
-        "Desculpe, sabe onde fica o metro?",
-        "Desculpe, onde fica a estação de metro?",
-        "Onde fica o metro, por favor?"
+      "ask": [
+        {
+          "tl": "Procura alguma coisa?",
+          "ar": "هل تبحث عن شيء؟"
+        }
       ],
-      "keywords": [
-        "onde",
-        "metro",
-        "estação",
-        "estacao",
-        "sabe"
+      "options": [
+        {
+          "value": "metro",
+          "keywords": [
+            "metro",
+            "estação",
+            "estacao"
+          ],
+          "examples": [
+            "Desculpe, onde fica o metro?"
+          ],
+          "react": [
+            {
+              "tl": "O metro? É fácil.",
+              "ar": "المترو؟ سهل."
+            }
+          ]
+        }
       ],
-      "help": {
-        "frame_tl": "Desculpe, sabe onde fica o metro?",
-        "eg": "Desculpe = لو سمحت (علشان توقف حد). Sabe onde fica…? = تعرف … فين؟",
-        "chips": [
-          "Desculpe, sabe onde fica o metro?",
-          "Onde fica a estação de metro?"
-        ]
-      }
+      "unclear": [
+        {
+          "tl": "Desculpe? O que procura?",
+          "ar": "عذرًا؟ عمّ تبحث؟"
+        }
+      ],
+      "suggest": [
+        "Desculpe, onde fica o metro?",
+        "Onde fica a estação de metro?"
+      ],
+      "hint_words": "onde fica · o metro"
     },
     {
-      "id": "direcoes.confirm",
-      "tier": "core",
-      "intent_eg": "يأكّد الطريق أو يطلب يعيد",
+      "id": "confirm",
       "label_eg": "أكّد الطريق",
-      "intent_en": "confirm the directions back, or ask to repeat",
-      "ask_tl": "O metro? Siga em frente e depois vire à esquerda. ⬆️⬅️ Percebeu?",
-      "ask_ar": "المترو؟ امشِ إلى الأمام ثم انعطف يسارًا. هل فهمت؟",
-      "ask_ar_f": "المترو؟ امشِ إلى الأمام ثم انعطف يسارًا. هل فهمتِ؟",
-      "examples_tl": [
+      "ask": [
+        {
+          "tl": "Siga em frente e depois vire à esquerda. Percebeu?",
+          "ar": "امشِ إلى الأمام ثم انعطف يسارًا. هل فهمت؟",
+          "ar_f": "امشي إلى الأمام ثم انعطفي يسارًا. هل فهمتِ؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "ok",
+          "keywords": [
+            "percebi",
+            "sim",
+            "em frente",
+            "esquerda"
+          ],
+          "examples": [
+            "Em frente e depois à esquerda?",
+            "Sim, percebi."
+          ],
+          "react": [
+            {
+              "tl": "Isso! 👍",
+              "ar": "صحيح!"
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Em frente… e depois à esquerda. Percebeu?",
+          "ar": "إلى الأمام… ثم يسارًا. هل فهمت؟"
+        }
+      ],
+      "suggest": [
         "Em frente e depois à esquerda?",
-        "À esquerda?",
-        "Sim, percebi. Em frente e depois à esquerda."
+        "Sim, percebi."
       ],
-      "keywords": [
-        "frente",
-        "esquerda",
-        "sim",
-        "percebi"
-      ],
-      "help": {
-        "frame_tl": "Em frente e depois à esquerda?",
-        "eg": "أكّد الطريق: Em frente e depois à esquerda? · مش فاهم؟ Pode repetir?",
-        "chips": [
-          "Em frente e depois à esquerda?",
-          "Sim, percebi. Obrigado!"
-        ],
-        "chips_f": [
-          "Em frente e depois à esquerda?",
-          "Sim, percebi. Obrigada!"
-        ]
-      },
-      "cue_eg": "وصفلك الطريق. أكّده علشان تتأكد إنك فاهم، أو اطلب يعيد."
+      "hint_words": "em frente · à esquerda"
     },
     {
-      "id": "direcoes.far",
-      "tier": "core",
-      "intent_eg": "يسأل بعيد ولا لأ",
+      "id": "far",
       "label_eg": "اسأل بعيد ولا قريب",
-      "intent_en": "ask if it is far",
-      "ask_tl": "Precisa de mais alguma coisa?",
-      "ask_ar": "هل تحتاج شيئًا آخر؟",
-      "examples_tl": [
+      "ask": [
+        {
+          "tl": "Precisa de mais alguma coisa?",
+          "ar": "هل تحتاج شيئًا آخر؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "longe",
+          "keywords": [
+            "longe",
+            "perto",
+            "minutos",
+            "distância"
+          ],
+          "examples": [
+            "É longe?"
+          ],
+          "react": [
+            {
+              "tl": "Não, é perto. Cinco minutos a pé.",
+              "ar": "لا، إنه قريب. خمس دقائق مشيًا."
+            }
+          ]
+        },
+        {
+          "value": "não",
+          "keywords": [
+            "não",
+            "nao"
+          ],
+          "examples": [
+            "Não, obrigado."
+          ],
+          "react": [
+            {
+              "tl": "Muito bem.",
+              "ar": "حسنًا."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Mais alguma pergunta?",
+          "ar": "عذرًا؟ سؤال آخر؟"
+        }
+      ],
+      "suggest": [
         "É longe?",
-        "É perto?",
-        "É longe daqui?"
+        "É perto?"
       ],
-      "keywords": [
-        "longe",
-        "perto",
-        "minutos"
-      ],
-      "help": {
-        "frame_tl": "É longe?",
-        "eg": "اسأل: É longe? = بعيد؟",
-        "chips": [
-          "É longe?",
-          "É perto?"
-        ]
-      },
-      "cue_eg": "اسأله المكان بعيد ولا قريب."
+      "hint_words": "é longe?"
     },
     {
-      "id": "direcoes.landmark",
-      "tier": "core",
-      "intent_eg": "يكرر العلامة ويشكره",
-      "label_eg": "كرر العلامة",
-      "intent_en": "repeat the landmark and thank him",
-      "ask_tl": "Não, é logo ali, cinco minutos a pé. Fica ao lado do banco, na praça. Está a ver?",
-      "ask_ar": "لا، إنه هناك تمامًا، خمس دقائق مشيًا. إنه بجانب البنك، في الساحة. هل تراه؟",
-      "examples_tl": [
-        "Ao lado do banco. Obrigado!",
-        "Na praça, ao lado do banco?",
-        "Está bem, obrigado!"
+      "id": "landmark",
+      "label_eg": "اتأكد من العلامة",
+      "ask": [
+        {
+          "tl": "A estação fica ao lado do banco, na praça. Está a ver?",
+          "ar": "المحطة بجانب البنك، في الساحة. هل تراها؟",
+          "ar_f": "المحطة بجانب البنك، في الساحة. هل ترينها؟"
+        }
       ],
-      "keywords": [
-        "banco",
-        "lado",
-        "praça",
-        "praca",
-        "obrigad",
-        "sim",
-        "estou a ver"
+      "options": [
+        {
+          "value": "ok",
+          "keywords": [
+            "sim",
+            "vejo",
+            "banco",
+            "praça",
+            "praca",
+            "estou a ver"
+          ],
+          "examples": [
+            "Sim, ao lado do banco."
+          ],
+          "react": [
+            {
+              "tl": "Isso, ali mesmo.",
+              "ar": "صحيح، هناك تمامًا."
+            }
+          ]
+        }
       ],
-      "help": {
-        "frame_tl": "Ao lado do banco. Obrigado!",
-        "eg": "ao lado do banco = جنب البنك. كرر علشان تتأكد.",
-        "chips": [
-          "Ao lado do banco. Obrigado!",
-          "Na praça?"
-        ],
-        "chips_f": [
-          "Ao lado do banco. Obrigada!",
-          "Na praça?"
-        ]
-      },
-      "cue_eg": "قالك المحطة جنب إيه. كرر علشان تتأكد واشكره."
+      "unclear": [
+        {
+          "tl": "Ali, ao lado do banco. Está a ver?",
+          "ar": "هناك، بجانب البنك. هل تراها؟"
+        }
+      ],
+      "suggest": [
+        "Sim, ao lado do banco.",
+        "Ah, estou a ver!"
+      ],
+      "hint_words": "ao lado do banco"
     },
     {
-      "id": "direcoes.bye",
-      "tier": "core",
-      "intent_eg": "يشكره",
+      "id": "bye",
       "label_eg": "اشكره",
-      "intent_en": "thank him and say goodbye",
-      "ask_tl": "De nada! Bom dia!",
-      "ask_ar": "عفوًا! يومًا سعيدًا!",
-      "examples_tl": [
+      "ask": [
+        {
+          "tl": "Bom dia e boa sorte! 🙂",
+          "ar": "يومًا سعيدًا وبالتوفيق!"
+        }
+      ],
+      "options": [
+        {
+          "value": "bye",
+          "keywords": [
+            "até",
+            "ate",
+            "adeus",
+            "xau",
+            "tchau",
+            "obrigado",
+            "obrigada",
+            "bom dia",
+            "boa tarde",
+            "boa noite",
+            "igualmente"
+          ],
+          "examples": [
+            "Muito obrigado! Bom dia!"
+          ],
+          "react": []
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Bom dia! 🙂",
+          "ar": "يومًا سعيدًا!"
+        }
+      ],
+      "suggest": [
         "Muito obrigado! Bom dia!",
-        "Obrigado!",
-        "Obrigada! Bom dia!"
+        "Obrigado!"
       ],
-      "keywords": [
-        "obrigad",
-        "adeus",
-        "até",
-        "ate",
-        "boa tarde",
-        "bom dia",
-        "xau",
-        "igualmente",
-        "combinado"
+      "suggest_f": [
+        "Muito obrigada! Bom dia!",
+        "Obrigada!"
       ],
-      "help": {
-        "frame_tl": "Muito obrigado! Bom dia!",
-        "eg": "اشكره: Muito obrigado!",
-        "chips": [
-          "Muito obrigado! Bom dia!",
-          "Obrigado!"
-        ],
-        "chips_f": [
-          "Muito obrigada! Bom dia!",
-          "Obrigada!"
-        ]
-      },
+      "hint_words": "muito obrigado",
       "farewell": true
     }
   ],
-  "suggested_words": [],
-  "required_items": [
-    "phrase.good_morning",
-    "phrase.youre_welcome",
-    "phrase.can_you_repeat",
-    "phrase.excuse_me",
-    "phrase.are_you_ok",
-    "word.metro",
-    "phrase.is_it_near",
-    "phrase.its_far",
-    "phrase.where_is_station",
-    "word.left",
-    "word.right",
-    "word.station",
-    "phrase.far_from_here",
-    "phrase.go_straight",
-    "phrase.next_to",
-    "phrase.right_there",
-    "phrase.turn_left"
+  "end_tips_eg": [
+    "لما حد يوصفلك طريق، كرره بصوت عالي («Em frente e depois à esquerda?»). ده طبيعي جدًا هنا.",
+    "«a pé» = مشي."
   ],
-  "new_items_tl": [
-    "a entrada",
-    "está fechada",
-    "a pé"
-  ],
-  "recommended_day": 34
+  "closing": [
+    {
+      "tl": "De nada! 👋",
+      "ar": "عفوًا!"
+    }
+  ]
 }

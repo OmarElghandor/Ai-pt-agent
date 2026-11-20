@@ -1,10 +1,9 @@
 import { RoleplaySituationClient } from '@/components/v2/roleplay/RoleplaySituationClient';
 import {
-  loadSceneBank,
-  loadSceneIndex,
   nextSceneIdOnPath,
   nextUnfinishedSceneIdOnPath,
-} from '@/lib/v2/convo/scenes';
+} from '@/lib/v2/convo/scenes/catalog';
+import { loadSceneBank, loadSceneIndex } from '@/lib/v2/convo/scenes/load';
 import { notFound } from 'next/navigation';
 
 type Props = {

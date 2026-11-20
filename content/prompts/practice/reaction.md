@@ -6,11 +6,11 @@ The pack now writes the character's reaction itself (`reply` on each beat, taken
 
 Placeholders in {BRACES} are filled by the app. Nothing else is sent: no lesson target, no other modes. R1 receives the next story line only so it does not repeat it; the output check drops any reaction that overlaps it.
 
-## Langify v2 (POST /api/react)
+## A-Z Talkie v2 (POST /api/react)
 
-v2 splits grading from reaction. Langify (or `/api/grade`) decides the verdict first. The reactor always has SOURCE=code: it never emits a hidden `VERDICT:` line and never judges. It receives MAIN_ERROR, CORRECTED_TL, WEAK_SPOT, mode (`practice` | `daily` | `open_question` | `assessment`), and skill. It corrects **one** error only. Implementation: `lib/reactor/buildReactPrompt.ts`.
+v2 splits grading from reaction. The answers path (or `/api/grade`) decides the verdict first. The reactor always has SOURCE=code: it never emits a hidden `VERDICT:` line and never judges. It receives MAIN_ERROR, CORRECTED_TL, WEAK_SPOT, mode (`practice` | `daily` | `open_question` | `assessment`), and skill. It corrects **one** error only. Implementation: `lib/reactor/buildReactPrompt.ts`.
 
-The R2 section below (with `VERDICT:` line 1) remains for the **legacy** `/api/chat` path until mobile switches to Langify.
+The R2 section below (with `VERDICT:` line 1) remains for the **legacy** `/api/chat` path.
 
 ## When the model is called
 

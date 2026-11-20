@@ -64,7 +64,7 @@ export type StoryLine = {
 
 export type BeatDifficulty = 'guided' | 'supported' | 'open';
 
-/** Four skills inside one practice conversation (Langify v2). */
+/** Four skills inside one practice conversation (A-Z Talkie v2). */
 export type BeatSkill = 'listening' | 'reading' | 'speaking' | 'writing';
 
 export type ListeningOption = {

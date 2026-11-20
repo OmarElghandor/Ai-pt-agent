@@ -6,3 +6,5 @@ export * from './toolId';
 export * from './payload';
 export * from './evaluate';
 export * from './idempotency';
+export * from './sceneMistakeHelpers';
+export * from './sceneMistake';

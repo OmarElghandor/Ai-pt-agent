@@ -33,25 +33,31 @@ export function buildSceneCatalog(opts: {
   const index = opts.index ?? loadSceneIndex();
   const finished = new Set(opts.finishedIds);
 
-  const path: SceneCatalogEntry[] = index.path.map((entry) => {
+  const path: SceneCatalogEntry[] = [];
+  for (const entry of index.path) {
     let place_eg = '';
     let task_eg = '';
     try {
       const bank = loadSceneBank(entry.id);
       place_eg = bank.scene_eg?.trim() || '';
       task_eg = bank.intro_eg?.trim() || '';
-    } catch {
-      // keep empty
+    } catch (err) {
+      // batch-rp-4: invalid scene left out of the path (never auto-fixed).
+      console.warn(
+        `[scenes] catalog omitting ${entry.id}:`,
+        err instanceof Error ? err.message : err,
+      );
+      continue;
     }
-    return {
+    path.push({
       ...entry,
       place_eg,
       task_eg,
       resume: false,
       finished: finished.has(entry.id),
       active_session_id: null,
-    };
-  });
+    });
+  }
 
   const nextFresh = path.find((s) => !s.finished);
   const next = nextFresh ?? null;

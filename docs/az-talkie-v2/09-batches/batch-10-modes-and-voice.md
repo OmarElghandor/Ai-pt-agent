@@ -12,7 +12,7 @@ What stays, because it doesn't interrupt the conversation: the Arabic side chann
 
 ## Prompt to paste into Cursor
 
-Read docs/langify-v2/09-conversations.md, batch-9-free-chat-v2.md and this file. Implement D1 to D10 in order, and commit each as "conversations: modes+voice Dn <title>". Write the tests each step asks for. At the end, run the three "Done when" scenarios at 390px on a phone-sized viewport, and report anything you skipped.
+Read docs/az-talkie-v2/09-conversations.md, batch-9-free-chat-v2.md and this file. Implement D1 to D10 in order, and commit each as "conversations: modes+voice Dn <title>". Write the tests each step asks for. At the end, run the three "Done when" scenarios at 390px on a phone-sized viewport, and report anything you skipped.
 
 ---
 

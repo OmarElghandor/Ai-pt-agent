@@ -145,7 +145,7 @@ One long page with a sticky stage bar at the top (the 8 stages as steps, the cur
 
 One task per session, in order, tests included, stop at "Done when". Prompt:
 
-> Read docs/langify-v2/14d-library-admin.md (whole), 14-library.md, 14b-library-content.md, 14c-library-design.md, AGENTS.md and 00-decisions.md §0b and §10. Implement task **LA-x only**. Do not start the next task. Admin pages and APIs live under `/v2-admin` and use the existing v2 admin guard. Never write Portuguese or Arabic content yourself; it comes from the model, from these docs, or from Omar. Write the tests the task asks for. Stop when "Done when" is met and list the files you changed.
+> Read docs/az-talkie-v2/14d-library-admin.md (whole), 14-library.md, 14b-library-content.md, 14c-library-design.md, AGENTS.md and 00-decisions.md §0b and §10. Implement task **LA-x only**. Do not start the next task. Admin pages and APIs live under `/v2-admin` and use the existing v2 admin guard. Never write Portuguese or Arabic content yourself; it comes from the model, from these docs, or from Omar. Write the tests the task asks for. Stop when "Done when" is met and list the files you changed.
 
 **LA0 · Decisions**
 - Do: `14` task L0 (decisions into `00` and `12`, README links).
@@ -182,7 +182,7 @@ One task per session, in order, tests included, stop at "Done when". Prompt:
 - Done when: Omar fills and approves the voices for the pharmacy cast, and its voices check is ok.
 
 **LA7 · Audio stage**
-- Do: §2.2f: estimate, build missing and stale lines only, token timings from character timings, pauses, stitch, Cloudinary (`langify/v2/library`), per-line rebuild, waveform with token boundaries, preview player, monthly cap, stop on failure.
+- Do: §2.2f: estimate, build missing and stale lines only, token timings from character timings, pauses, stitch, Cloudinary (`az-talkie/v2/library`), per-line rebuild, waveform with token boundaries, preview player, monthly cap, stop on failure.
 - Tests (stub ElevenLabs): an unchanged rebuild makes no calls and costs 0; a hand-edited line rebuilds only that line and the stitched file; the cap stops before any call; a failed line stops the build and keeps earlier lines; every token has start and end, including a chunk and a word with an accent.
 - Done when: Omar sees the estimate, builds the pharmacy audio, and the preview highlights words in sync.
 

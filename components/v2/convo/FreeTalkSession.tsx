@@ -414,7 +414,7 @@ export function FreeTalkSession({
           session_id: string;
           resumed: boolean;
           opening: {
-            character: { tl: string; ar?: string };
+            character: { tl: string; ar?: string; coach_eg?: string };
             coach_intros?: Array<{ item_id: string; coach_intro_eg: string }>;
           };
           reopening?: { character_tl: string; pending_tl: string | null };

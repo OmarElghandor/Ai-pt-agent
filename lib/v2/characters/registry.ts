@@ -52,7 +52,7 @@ let cached: CharacterRecord[] | null = null;
 let cachedPath: string | null = null;
 
 function loadFile(filePath = DEFAULT_PATH): CharactersFile {
-  return JSON.parse(readFileSync(filePath, 'utf8')) as CharactersFile;
+  return JSON.parse(readFileSync(/*turbopackIgnore: true*/ filePath, 'utf8')) as CharactersFile;
 }
 
 function buildRecords(file: CharactersFile): CharacterRecord[] {

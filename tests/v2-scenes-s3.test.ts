@@ -14,17 +14,17 @@ import {
 } from '@/lib/v2/convo/session';
 import { freeTopicById } from '@/lib/v2/convo/topics';
 
-describe('scenes S3 · catalog + path progress (café-only path)', () => {
+describe('scenes S3 · catalog + path progress (batch-rp-4 · 15 scenes)', () => {
   it('builds catalog with next = café when unfinished', () => {
     clearSceneLoadCache();
     const catalog = buildSceneCatalog({ finishedIds: [] });
-    assert.equal(catalog.path.length, 1);
+    assert.equal(catalog.path.length, 15);
     assert.equal(catalog.next?.id, 'cena-cafe');
     assert.equal(catalog.past.length, 0);
     assert.equal(catalog.path_finished, false);
   });
 
-  it('path_finished when café is done', () => {
+  it('path_finished when every scene is done', () => {
     clearSceneLoadCache();
     const index = loadSceneIndex();
     const catalog = buildSceneCatalog({
@@ -34,10 +34,21 @@ describe('scenes S3 · catalog + path progress (café-only path)', () => {
     assert.equal(catalog.path_finished, true);
   });
 
-  it('nextUnfinishedSceneIdOnPath with one scene', () => {
+  it('nextUnfinishedSceneIdOnPath walks the 15-scene path', () => {
     clearSceneLoadCache();
-    assert.equal(nextSceneIdOnPath('cena-cafe'), null);
-    assert.equal(nextUnfinishedSceneIdOnPath('cena-cafe', ['cena-cafe']), null);
+    assert.equal(nextSceneIdOnPath('cena-cafe'), 'cena-mercado');
+    assert.equal(nextSceneIdOnPath('cena-financas'), null);
+    assert.equal(
+      nextUnfinishedSceneIdOnPath('cena-cafe', ['cena-cafe']),
+      'cena-mercado',
+    );
+    assert.equal(
+      nextUnfinishedSceneIdOnPath(
+        'cena-financas',
+        loadSceneIndex().path.map((p) => p.id),
+      ),
+      null,
+    );
   });
 
   it('memory store tracks finished and active scene sessions', async () => {

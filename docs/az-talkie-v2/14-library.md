@@ -107,7 +107,7 @@ Levels are targets for generation and are then **measured by code** on the finis
 - **Cost guard:** estimate before every build, characters and cost logged per line, a monthly cap (`LIBRARY_TTS_MONTHLY_CHAR_LIMIT`), and rebuilds only for lines whose `tl`, voice or settings changed (the audio key includes voice id, model and settings).
 - **No mixed voices.** If a line fails after one retry, the build stops at that line. An episode is never published with lines from another provider.
 - Small pauses between turns are added by code. A phone-call podcast may get a light phone filter on the other person's voice (a playback setting) only if it doesn't hurt clarity; decided in L5 by listening.
-- Line audio is stored on Cloudinary (folder `langify/v2/library`), plus one stitched file per episode for the background player.
+- Line audio is stored on Cloudinary (folder `az-talkie/v2/library`), plus one stitched file per episode for the background player.
 - Learner-gender lines that differ (`tl_f`) get both versions, and the player picks by the profile.
 
 ### 2.8 The player
@@ -187,7 +187,7 @@ Learner screens follow the Stitch refs and fixes in `14c`, with the "Stitch mint
 
 Same rules as `10`, `11` and `12`: one task per session, in order, tests included, stop at "Done when". Admin tasks LA0–LA9 in `14d` come first. Prompt:
 
-> Read docs/langify-v2/14-library.md (whole), 14c-library-design.md, AGENTS.md, 00-decisions.md and 12-custom-decks.md §2.1 and §2.6. Implement task **L-x only**. Do not start the next task. The user id always comes from the session helper. Never write Portuguese or Arabic content yourself; it comes from the model or from Omar. Write the tests the task asks for. Stop when "Done when" is met and list the files you changed.
+> Read docs/az-talkie-v2/14-library.md (whole), 14c-library-design.md, AGENTS.md, 00-decisions.md and 12-custom-decks.md §2.1 and §2.6. Implement task **L-x only**. Do not start the next task. The user id always comes from the session helper. Never write Portuguese or Arabic content yourself; it comes from the model or from Omar. Write the tests the task asks for. Stop when "Done when" is met and list the files you changed.
 
 **L0 · Write the decisions**
 - Do: add "§1c Library" to `00` summarising §2 (real moments and the notes decision of `14c` §2 included); change the "المكتبة" line in `00` §1 (§2.1 here); note in `00` §10 that the library uses ElevenLabs and everything else keeps the current TTS; note in `12` the private `saved` deck kind (§2.10); link 14, 14b, 14c and 14d from the README.

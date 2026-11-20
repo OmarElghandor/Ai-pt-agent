@@ -1,6 +1,6 @@
 # Library design references
 
-Source: Stitch export `stitch_bilingual_grammar_notebook_app` (15). Mapped per `docs/langify-v2/14c-library-design.md`.
+Source: Stitch export `stitch_bilingual_grammar_notebook_app` (15). Mapped per `docs/az-talkie-v2/14c-library-design.md`.
 
 | Ref | Folder | Screen |
 |---|---|---|

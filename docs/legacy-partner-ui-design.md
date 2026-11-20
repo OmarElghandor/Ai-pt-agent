@@ -3,7 +3,7 @@
 > Scope: the dark teal shell used by `http://localhost:3000/` and its sub-pages  
 > (`/`, `/chat`, `/lessons`, `/lessons/[lessonKey]`).  
 > Source of truth: `app/globals.css` (legacy tokens + shell classes).  
-> Not the Langify v2 Calm Kit (`docs/langify-v2/05-design-system.md`).
+> Not the Langify v2 Calm Kit (`docs/az-talkie-v2/05-design-system.md`).
 
 ## Pages covered
 
@@ -258,4 +258,4 @@ Same shell + chat/voice patterns as `/chat`, with practice chrome:
 
 ## Note vs v2
 
-v2 screens under `app/(v2)` use the **Calm Kit** (ivory paper, sage primary) documented in `docs/langify-v2/05-design-system.md` and `app/(v2)/v2.css`. Do not mix Calm Kit tokens into this legacy partner shell unless intentionally migrating a screen.
+v2 screens under `app/(v2)` use the **Calm Kit** (ivory paper, sage primary) documented in `docs/az-talkie-v2/05-design-system.md` and `app/(v2)/v2.css`. Do not mix Calm Kit tokens into this legacy partner shell unless intentionally migrating a screen.

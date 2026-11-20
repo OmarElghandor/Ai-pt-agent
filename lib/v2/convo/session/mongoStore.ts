@@ -42,6 +42,7 @@ type ConvoSessionDocLean = {
   scene_misses?: number;
   scene_hint_level?: 0 | 1 | 2 | 3 | 4;
   scene_suggest_shown?: boolean;
+  scene_close_but_wrong_streak?: number;
   scene_coach_before_consumed?: string[];
   scene_char_bubbles_since_coach?: number;
   scene_coach_ever_shown?: boolean;
@@ -99,6 +100,7 @@ function sessionFields(session: ConvoSession) {
     scene_misses: session.scene_misses ?? 0,
     scene_hint_level: session.scene_hint_level ?? 0,
     scene_suggest_shown: session.scene_suggest_shown ?? false,
+    scene_close_but_wrong_streak: session.scene_close_but_wrong_streak ?? 0,
     scene_coach_before_consumed: session.scene_coach_before_consumed ?? [],
     scene_char_bubbles_since_coach:
       session.scene_char_bubbles_since_coach ?? 0,
@@ -173,6 +175,7 @@ function fromDoc(doc: ConvoSessionDocLean): ConvoSession {
     scene_misses: doc.scene_misses ?? 0,
     scene_hint_level: (doc.scene_hint_level ?? 0) as 0 | 1 | 2 | 3 | 4,
     scene_suggest_shown: doc.scene_suggest_shown ?? false,
+    scene_close_but_wrong_streak: doc.scene_close_but_wrong_streak ?? 0,
     scene_coach_before_consumed: doc.scene_coach_before_consumed ?? [],
     scene_char_bubbles_since_coach: doc.scene_char_bubbles_since_coach ?? 0,
     scene_coach_ever_shown: doc.scene_coach_ever_shown ?? false,

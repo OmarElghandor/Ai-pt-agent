@@ -310,7 +310,7 @@ export function loadCoreItemsFile(
 ): CoreItemsFile {
   if (cached && filePath === DEFAULT_CORE_PATH) return cached;
   const raw = normalizeCoreItemsFile(
-    JSON.parse(readFileSync(filePath, 'utf8')) as CoreItemsFile,
+    JSON.parse(readFileSync(/*turbopackIgnore: true*/ filePath, 'utf8')) as CoreItemsFile,
   );
   if (!raw?.days?.length) {
     throw new Error(`Empty core-items at ${filePath}`);

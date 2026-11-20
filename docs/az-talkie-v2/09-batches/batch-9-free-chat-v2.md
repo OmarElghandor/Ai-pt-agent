@@ -30,7 +30,7 @@ If a line is wrong, report it, don't silently change it.
 
 ## Prompt to paste into Cursor
 
-Read docs/langify-v2/09-conversations.md sections 5, 6 and 9, this file, the persona file and two thread files. Implement C1 to C10 below in order, and commit each as "conversations: free-chat v2 Cn <title>". Write the tests each step asks for. Don't change Module A (lesson conversations). At the end, run the "Done when" scenario with the real model, and paste the full prompt and raw model output of turns 1 and 5 from the dev panel.
+Read docs/az-talkie-v2/09-conversations.md sections 5, 6 and 9, this file, the persona file and two thread files. Implement C1 to C10 below in order, and commit each as "conversations: free-chat v2 Cn <title>". Write the tests each step asks for. Don't change Module A (lesson conversations). At the end, run the "Done when" scenario with the real model, and paste the full prompt and raw model output of turns 1 and 5 from the dev panel.
 
 ---
 

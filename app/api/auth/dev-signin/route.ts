@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     role?: 'learner' | 'admin';
   } | null;
 
-  const email = (body?.email ?? 'ci-test@langify.local').toLowerCase();
+  const email = (body?.email ?? 'ci-test@az-talkie.local').toLowerCase();
   const name = body?.name ?? 'CI Test';
   const role = body?.role === 'admin' ? 'admin' : 'learner';
 

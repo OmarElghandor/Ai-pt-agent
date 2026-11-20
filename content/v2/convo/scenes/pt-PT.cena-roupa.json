@@ -1,273 +1,704 @@
 {
-  "source": "topic",
+  "id": "cena-roupa",
   "kind": "scene",
-  "authored": true,
+  "format": 3,
   "target_lang": "pt-PT",
-  "topic_id": "cena-roupa",
   "title_tl": "Na loja de roupa",
   "title_ar": "في محل هدوم",
   "emoji": "👕",
-  "scene_eg": "محل هدوم في وسط البلد، وقت الأوكازيون. Inês البيّاعة.",
-  "intro_eg": "قيس حاجة، اطلب مقاس أو لون تاني، اسأل السعر، واشتري.",
-  "scene": {
-    "character_id": "ines",
-    "place": "Inês is a shop assistant in a clothes shop during the sales",
-    "time_of_day": "afternoon",
-    "address": "formal"
-  },
-  "opening": {
-    "tl": "Olá, boa tarde! Está à procura de alguma coisa?",
-    "ar": "مرحبًا، مساء الخير! هل تبحث عن شيء ما؟",
-    "ar_f": "مرحبًا، مساء الخير! هل تبحثين عن شيء ما؟"
-  },
-  "closing": {
-    "tl": "Boa tarde! 👋",
-    "ar": "مساءً سعيدًا!"
-  },
-  "goals": [
+  "recommended_day": 46,
+  "mission_eg": "قيس بلوفر، اطلب مقاس أو لون تاني، اسأل بكام، واشتري.",
+  "character_id": "ines",
+  "address": "formal",
+  "opening_coach_eg": "💬 إنت في محل هدوم وقت الأوكازيون، والبيّاعة بتسألك محتاج مساعدة 👕",
+  "opening": [
     {
-      "id": "roupa.browse",
-      "tier": "core",
-      "intent_eg": "يقول بيتفرج أو عايز حاجة",
-      "label_eg": "قول بتتفرج أو عايز إيه",
-      "intent_en": "say they are just looking, or what they want",
-      "ask_tl": "Olá, boa tarde! Está à procura de alguma coisa?",
-      "ask_ar": "مرحبًا، مساء الخير! هل تبحث عن شيء ما؟",
-      "ask_ar_f": "مرحبًا، مساء الخير! هل تبحثين عن شيء ما؟",
-      "examples_tl": [
-        "Estou só a ver, obrigado.",
-        "Sim, queria uma camisola.",
-        "Boa tarde! Só a ver.",
-        "Estou só a ver, obrigada."
-      ],
+      "tl": "Olá, boa tarde! Posso ajudar?",
+      "ar": "مرحبًا، مساء الخير! هل أستطيع المساعدة؟"
+    }
+  ],
+  "global": {
+    "greeting": {
       "keywords": [
-        "só a ver",
-        "so a ver",
-        "ver",
-        "camisola",
-        "casaco",
-        "calças",
-        "camisa",
-        "queria"
+        "bom dia",
+        "boa tarde",
+        "boa noite",
+        "olá",
+        "ola",
+        "tudo bem"
       ],
-      "help": {
-        "frame_tl": "Estou só a ver, obrigado.",
-        "eg": "Estou só a ver = «بتفرّج بس». أشهر جملة في المحلات هنا.",
-        "chips": [
-          "Estou só a ver, obrigado.",
-          "Sim, queria uma camisola."
-        ],
-        "chips_f": [
-          "Estou só a ver, obrigada.",
-          "Sim, queria uma camisola."
-        ]
-      }
-    },
-    {
-      "id": "roupa.try",
-      "tier": "core",
-      "intent_eg": "يطلب يقيسها",
-      "label_eg": "اطلب تقيس",
-      "intent_en": "ask to try it on",
-      "ask_tl": "Então? Esta camisola azul é nova. Gosta?",
-      "ask_ar": "إذن؟ هذه الكنزة الزرقاء جديدة. هل تعجبك؟",
-      "examples_tl": [
-        "Sim! Posso experimentar?",
-        "Gosto. Posso experimentar esta?",
-        "Posso experimentar?"
-      ],
-      "keywords": [
-        "experimentar",
-        "provador",
-        "gosto",
-        "sim"
-      ],
-      "help": {
-        "frame_tl": "Posso experimentar?",
-        "eg": "عايز تقيس؟ Posso experimentar?",
-        "chips": [
-          "Posso experimentar?",
-          "Gosto! Posso experimentar?"
-        ]
-      }
-    },
-    {
-      "id": "roupa.size",
-      "tier": "core",
-      "intent_eg": "يقول المقاس مش مظبوط ويطلب غيره",
-      "label_eg": "اطلب مقاس تاني",
-      "intent_en": "say the size is wrong and ask for another",
-      "ask_tl": "Então, que tal?",
-      "ask_ar": "إذن، كيف هي؟",
-      "examples_tl": [
-        "É pequena. Tem noutro tamanho?",
-        "Tem maior?",
-        "É um bocado grande. Tem mais pequeno?"
-      ],
-      "keywords": [
-        "tamanho",
-        "maior",
-        "pequen",
-        "grande"
-      ],
-      "help": {
-        "frame_tl": "Tem noutro tamanho?",
-        "eg": "Que tal? = «إيه رأيك / عاملة إزاي؟»",
-        "chips": [
-          "É pequena. Tem noutro tamanho?",
-          "Tem maior?"
-        ]
-      }
-    },
-    {
-      "id": "roupa.colour",
-      "tier": "core",
-      "intent_eg": "يختار لون",
-      "label_eg": "اختار لون",
-      "intent_en": "choose a colour",
-      "ask_tl": "Tenho o L. Aqui está. Também temos em verde e em preto. Que cor prefere?",
-      "ask_ar": "لدي مقاس L. تفضّل. لدينا أيضًا الأخضر والأسود. أي لون تفضّل؟",
-      "examples_tl": [
-        "Prefiro preto.",
-        "Azul está bem.",
-        "Tem noutra cor? Preto?"
-      ],
-      "keywords": [
-        "prefiro",
-        "preto",
-        "verde",
-        "azul",
-        "cor",
-        "está bem"
-      ],
-      "help": {
-        "frame_tl": "Prefiro preto.",
-        "eg": "Prefiro = بفضّل. Prefiro preto.",
-        "chips": [
-          "Prefiro preto.",
-          "Azul está bem."
-        ]
-      }
-    },
-    {
-      "id": "roupa.price",
-      "tier": "core",
-      "intent_eg": "يسأل السعر",
-      "label_eg": "اسأل بكام",
-      "intent_en": "ask the price",
-      "ask_tl": "Boa escolha! Mais alguma coisa?",
-      "ask_ar": "اختيار جيد! هل تريد شيئًا آخر؟",
-      "examples_tl": [
-        "Quanto custa esta?",
-        "Quanto é?",
-        "Quanto custa?"
-      ],
-      "keywords": [
-        "quanto"
-      ],
-      "help": {
-        "frame_tl": "Quanto custa esta?",
-        "eg": "اسأل: Quanto custa esta?",
-        "chips": [
-          "Quanto custa esta?",
-          "Quanto é?"
-        ]
-      },
-      "cue_eg": "اسأل بكام."
-    },
-    {
-      "id": "roupa.decide",
-      "tier": "core",
-      "intent_eg": "يشتري أو يقول غالية",
-      "label_eg": "اشتري أو قول غالية",
-      "intent_en": "say they'll take it, or that it's a bit expensive",
-      "ask_tl": "Está em saldo: vinte e nove euros. Quer levar?",
-      "ask_ar": "إنها في التخفيضات: تسعة وعشرون يورو. هل تريد أن تأخذها؟",
-      "ask_ar_f": "إنها في التخفيضات: تسعة وعشرون يورو. هل تريدين أن تأخذيها؟",
-      "examples_tl": [
-        "Levo esta.",
-        "É um bocado cara…",
-        "Está bem, levo esta!"
-      ],
-      "keywords": [
-        "levo",
-        "caro",
-        "cara",
-        "barat",
-        "sim",
-        "quero"
-      ],
-      "help": {
-        "frame_tl": "Levo esta.",
-        "eg": "em saldo = في الأوكازيون",
-        "chips": [
-          "Levo esta.",
-          "É um bocado cara…"
-        ]
-      },
-      "facts_tl": [
-        "Há uma mais barata: quinze euros."
+      "react": [
+        {
+          "tl": "Boa tarde! 😊",
+          "ar": "مساء الخير!"
+        }
       ]
     },
-    {
-      "id": "roupa.bye",
-      "tier": "core",
-      "intent_eg": "يودّعها",
-      "label_eg": "ودّعها",
-      "intent_en": "say goodbye",
-      "ask_tl": "Obrigada! Boa tarde!",
-      "ask_ar": "شكرًا! مساءً سعيدًا!",
-      "examples_tl": [
-        "Obrigado! Boa tarde!",
-        "Boa tarde!",
-        "Obrigada, igualmente!"
-      ],
+    "thanks": {
       "keywords": [
-        "obrigad",
-        "adeus",
-        "até",
-        "ate",
-        "boa tarde",
-        "bom dia",
-        "xau",
-        "igualmente"
+        "obrigado",
+        "obrigada"
       ],
-      "help": {
-        "frame_tl": "Obrigado! Boa tarde!",
-        "eg": "ودّعها: Obrigado! Boa tarde!",
-        "chips": [
-          "Obrigado! Boa tarde!",
-          "Igualmente!"
-        ],
-        "chips_f": [
-          "Obrigada! Boa tarde!",
-          "Igualmente!"
+      "react": [
+        {
+          "tl": "De nada! 😊",
+          "ar": "عفوًا!"
+        }
+      ]
+    },
+    "side_unknown": {
+      "react": [
+        {
+          "tl": "Isso não sei, desculpe.",
+          "ar": "هذا لا أعرفه، عذرًا."
+        }
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "ar": [
+        "بتفرج",
+        "باتفرج",
+        "اتفرج"
+      ],
+      "tl": "Estou só a ver. = بتفرج بس"
+    },
+    {
+      "ar": [
+        "بلوفر",
+        "سويتر",
+        "كنزة"
+      ],
+      "tl": "uma camisola = بلوفر"
+    },
+    {
+      "ar": [
+        "جاكيت",
+        "جاكت"
+      ],
+      "tl": "um casaco = جاكيت"
+    },
+    {
+      "ar": [
+        "بنطلون"
+      ],
+      "tl": "umas calças = بنطلون"
+    },
+    {
+      "ar": [
+        "قميص"
+      ],
+      "tl": "uma camisa = قميص"
+    },
+    {
+      "ar": [
+        "أقيس",
+        "اقيس",
+        "اجرب",
+        "أجرب"
+      ],
+      "tl": "experimentar = أقيس · Posso experimentar? = ممكن أقيس؟"
+    },
+    {
+      "ar": [
+        "أوضة القياس",
+        "البروفة",
+        "بروفه"
+      ],
+      "tl": "o provador = أوضة القياس"
+    },
+    {
+      "ar": [
+        "مقاس"
+      ],
+      "tl": "o tamanho = المقاس"
+    },
+    {
+      "ar": [
+        "ضيق",
+        "صغير"
+      ],
+      "tl": "é pequena / apertada = صغيرة / ضيقة"
+    },
+    {
+      "ar": [
+        "واسع",
+        "كبير"
+      ],
+      "tl": "é grande / larga = كبيرة / واسعة"
+    },
+    {
+      "ar": [
+        "أسود",
+        "اسود"
+      ],
+      "tl": "preto = أسود"
+    },
+    {
+      "ar": [
+        "أخضر",
+        "اخضر"
+      ],
+      "tl": "verde = أخضر"
+    },
+    {
+      "ar": [
+        "أزرق",
+        "ازرق"
+      ],
+      "tl": "azul = أزرق"
+    },
+    {
+      "ar": [
+        "غالي",
+        "غالية"
+      ],
+      "tl": "é um bocado cara = غالية شوية"
+    },
+    {
+      "ar": [
+        "أرخص",
+        "ارخص"
+      ],
+      "tl": "mais barata = أرخص"
+    },
+    {
+      "ar": [
+        "هاخد",
+        "هاخدها",
+        "هشتري"
+      ],
+      "tl": "Levo esta. = هاخد دي"
+    },
+    {
+      "ar": [
+        "بكام",
+        "سعر"
+      ],
+      "tl": "Quanto custa? = بكام؟"
+    },
+    {
+      "ar": [
+        "أوكازيون",
+        "خصم",
+        "تخفيض"
+      ],
+      "tl": "em saldo = عليها خصم"
+    }
+  ],
+  "goals": [
+    {
+      "id": "browse",
+      "label_eg": "قول بتتفرج أو عايز إيه",
+      "ask": [
+        {
+          "tl": "Procura alguma coisa?",
+          "ar": "هل تبحث عن شيء؟",
+          "ar_f": "هل تبحثين عن شيء؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "ver",
+          "keywords": [
+            "só a ver",
+            "so a ver",
+            "a ver",
+            "ver"
+          ],
+          "examples": [
+            "Estou só a ver, obrigado."
+          ],
+          "react": [
+            {
+              "tl": "Esteja à vontade! 😊",
+              "ar": "خذ راحتك!",
+              "ar_f": "خذي راحتكِ!"
+            }
+          ]
+        },
+        {
+          "value": "quer",
+          "keywords": [
+            "camisola",
+            "casaco",
+            "calças",
+            "calcas",
+            "camisa",
+            "procuro",
+            "queria"
+          ],
+          "examples": [
+            "Queria uma camisola."
+          ],
+          "react": [
+            {
+              "tl": "Claro! As camisolas estão aqui.",
+              "ar": "بالطبع! الكنزات هنا."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Procura alguma coisa, ou está só a ver?",
+          "ar": "عذرًا؟ هل تبحث عن شيء، أم تتفرج فقط؟"
+        }
+      ],
+      "suggest": [
+        "Estou só a ver, obrigado.",
+        "Queria uma camisola."
+      ],
+      "suggest_f": [
+        "Estou só a ver, obrigada.",
+        "Queria uma camisola."
+      ],
+      "hint_words": "só a ver · uma camisola"
+    },
+    {
+      "id": "try",
+      "label_eg": "اطلب تقيس",
+      "ask": [
+        {
+          "tl": "Esta camisola azul é nova e está em saldo. Quer experimentar?",
+          "ar": "هذه الكنزة الزرقاء جديدة وعليها تخفيض. هل تريد تجربتها؟",
+          "ar_f": "هذه الكنزة الزرقاء جديدة وعليها تخفيض. هل تريدين تجربتها؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "sim",
+          "keywords": [
+            "sim",
+            "quero",
+            "experimentar",
+            "provar",
+            "provador"
+          ],
+          "examples": [
+            "Sim, posso experimentar?"
+          ],
+          "react": [
+            {
+              "tl": "Claro! O provador é ali. 👉",
+              "ar": "بالطبع! غرفة القياس هناك."
+            }
+          ]
+        },
+        {
+          "value": "não",
+          "keywords": [
+            "não",
+            "nao"
+          ],
+          "examples": [
+            "Não, obrigado."
+          ],
+          "react": [
+            {
+              "tl": "Muito bem.",
+              "ar": "حسنًا."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Quer experimentar?",
+          "ar": "عذرًا؟ هل تريد تجربتها؟"
+        }
+      ],
+      "suggest": [
+        "Sim, posso experimentar?",
+        "Onde é o provador?"
+      ],
+      "hint_words": "experimentar · o provador"
+    },
+    {
+      "id": "fit",
+      "label_eg": "قول المقاس مظبوط ولا لأ",
+      "only_if": {
+        "goal": "try",
+        "options": [
+          "sim"
         ]
       },
+      "ask": [
+        {
+          "tl": "Então, que tal? Serve bem?",
+          "ar": "إذن، كيف هي؟ هل المقاس مناسب؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "pequena",
+          "keywords": [
+            "pequena",
+            "apertada",
+            "maior"
+          ],
+          "examples": [
+            "É pequena. Tem maior?"
+          ],
+          "react": [
+            {
+              "tl": "Tenho o L. Aqui está.",
+              "ar": "لدي مقاس L. تفضّل."
+            }
+          ]
+        },
+        {
+          "value": "grande",
+          "keywords": [
+            "grande",
+            "larga",
+            "mais pequena"
+          ],
+          "examples": [
+            "É grande. Tem mais pequena?"
+          ],
+          "react": [
+            {
+              "tl": "Tenho o S. Aqui está.",
+              "ar": "لدي مقاس S. تفضّل."
+            }
+          ]
+        },
+        {
+          "value": "bem",
+          "keywords": [
+            "serve",
+            "bem",
+            "sim"
+          ],
+          "examples": [
+            "Sim, serve bem."
+          ],
+          "react": [
+            {
+              "tl": "Fica-lhe muito bem!",
+              "ar": "تبدو رائعة عليك!",
+              "ar_f": "تبدو رائعة عليكِ!"
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? O tamanho está bem?",
+          "ar": "عذرًا؟ هل المقاس مناسب؟"
+        }
+      ],
+      "suggest": [
+        "É pequena. Tem maior?",
+        "Sim, serve bem."
+      ],
+      "hint_words": "pequena · maior · serve"
+    },
+    {
+      "id": "colour",
+      "label_eg": "اختار لون",
+      "ask": [
+        {
+          "tl": "Também temos em verde e em preto. Que cor prefere?",
+          "ar": "لدينا أيضًا الأخضر والأسود. أي لون تفضّل؟",
+          "ar_f": "لدينا أيضًا الأخضر والأسود. أي لون تفضّلين؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "preto",
+          "keywords": [
+            "preto",
+            "preta"
+          ],
+          "examples": [
+            "Prefiro preto."
+          ],
+          "react": [
+            {
+              "tl": "Preto, boa escolha!",
+              "ar": "أسود، اختيار جيد!"
+            }
+          ]
+        },
+        {
+          "value": "verde",
+          "keywords": [
+            "verde"
+          ],
+          "examples": [
+            "Prefiro verde."
+          ],
+          "react": [
+            {
+              "tl": "Verde, boa escolha!",
+              "ar": "أخضر، اختيار جيد!"
+            }
+          ]
+        },
+        {
+          "value": "azul",
+          "keywords": [
+            "azul",
+            "esta",
+            "este"
+          ],
+          "examples": [
+            "Azul está bem."
+          ],
+          "react": [
+            {
+              "tl": "Azul, boa escolha!",
+              "ar": "أزرق، اختيار جيد!"
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Azul, verde ou preto?",
+          "ar": "عذرًا؟ أزرق، أخضر أم أسود؟"
+        }
+      ],
+      "suggest": [
+        "Prefiro preto.",
+        "Azul está bem."
+      ],
+      "hint_words": "prefiro · preto"
+    },
+    {
+      "id": "price",
+      "label_eg": "اسأل بكام",
+      "coach_before_eg": "💬 جرّب تسأل بكام.",
+      "ask": [
+        {
+          "tl": "Mais alguma coisa?",
+          "ar": "شيء آخر؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "quanto",
+          "keywords": [
+            "quanto",
+            "preço",
+            "preco",
+            "custa"
+          ],
+          "examples": [
+            "Quanto custa?"
+          ],
+          "react": [
+            {
+              "tl": "Está em saldo: vinte e nove euros.",
+              "ar": "عليها تخفيض: تسعة وعشرون يورو."
+            }
+          ]
+        },
+        {
+          "value": "não",
+          "keywords": [
+            "não",
+            "nao"
+          ],
+          "examples": [
+            "Não, obrigado."
+          ],
+          "react": [
+            {
+              "tl": "São vinte e nove euros, em saldo.",
+              "ar": "سعرها تسعة وعشرون يورو، بالتخفيض."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Mais alguma pergunta?",
+          "ar": "عذرًا؟ سؤال آخر؟"
+        }
+      ],
+      "suggest": [
+        "Quanto custa?",
+        "Quanto é esta?"
+      ],
+      "hint_words": "quanto custa?"
+    },
+    {
+      "id": "decide",
+      "label_eg": "اشتري أو قول غالية",
+      "ask": [
+        {
+          "tl": "Então, leva?",
+          "ar": "إذن، هل ستأخذها؟",
+          "ar_f": "إذن، هل ستأخذينها؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "caro",
+          "keywords": [
+            "cara",
+            "caro",
+            "barata",
+            "barato"
+          ],
+          "examples": [
+            "É um bocado cara…"
+          ],
+          "react": [
+            {
+              "tl": "Esta aqui é parecida e mais barata: quinze euros.",
+              "ar": "هذه مشابهة وأرخص: خمسة عشر يورو."
+            }
+          ]
+        },
+        {
+          "value": "levo",
+          "keywords": [
+            "levo",
+            "sim",
+            "quero"
+          ],
+          "examples": [
+            "Sim, levo esta."
+          ],
+          "react": [
+            {
+              "tl": "Muito bem!",
+              "ar": "رائع!"
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Leva, ou não?",
+          "ar": "عذرًا؟ هل ستأخذها، أم لا؟"
+        }
+      ],
+      "suggest": [
+        "Sim, levo esta.",
+        "É um bocado cara…"
+      ],
+      "hint_words": "levo · cara"
+    },
+    {
+      "id": "pay",
+      "label_eg": "ادفع",
+      "ask": [
+        {
+          "tl": "Pode pagar aqui. Cartão ou dinheiro?",
+          "ar": "يمكنك الدفع هنا. بطاقة أم نقدًا؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "cartão",
+          "keywords": [
+            "cartão",
+            "cartao",
+            "multibanco"
+          ],
+          "examples": [
+            "Com cartão, por favor."
+          ],
+          "react": [
+            {
+              "tl": "Pode passar. 💳",
+              "ar": "يمكنك تمريرها."
+            }
+          ]
+        },
+        {
+          "value": "dinheiro",
+          "keywords": [
+            "dinheiro",
+            "aqui tem",
+            "notas"
+          ],
+          "examples": [
+            "Em dinheiro."
+          ],
+          "react": [
+            {
+              "tl": "Obrigada. Aqui tem o troco.",
+              "ar": "شكرًا. تفضّل الباقي."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Cartão ou dinheiro?",
+          "ar": "عذرًا؟ بطاقة أم نقدًا؟"
+        }
+      ],
+      "suggest": [
+        "Com cartão, por favor.",
+        "Em dinheiro."
+      ],
+      "hint_words": "cartão · dinheiro"
+    },
+    {
+      "id": "bye",
+      "label_eg": "ودّعها",
+      "ask": [
+        {
+          "tl": "Obrigada e boa tarde! 😊",
+          "ar": "شكرًا ومساءً سعيدًا!"
+        }
+      ],
+      "options": [
+        {
+          "value": "bye",
+          "keywords": [
+            "até",
+            "ate",
+            "adeus",
+            "xau",
+            "tchau",
+            "obrigado",
+            "obrigada",
+            "bom dia",
+            "boa tarde",
+            "boa noite",
+            "igualmente"
+          ],
+          "examples": [
+            "Obrigado! Boa tarde!"
+          ],
+          "react": []
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Boa tarde! 😊",
+          "ar": "مساءً سعيدًا!"
+        }
+      ],
+      "suggest": [
+        "Obrigado! Boa tarde!",
+        "Igualmente!"
+      ],
+      "suggest_f": [
+        "Obrigada! Boa tarde!",
+        "Igualmente!"
+      ],
+      "hint_words": "boa tarde",
       "farewell": true
     }
   ],
-  "suggested_words": [],
-  "required_items": [
-    "phrase.good_afternoon",
-    "phrase.likewise",
-    "phrase.how_much_is_it",
-    "phrase.no_thanks",
-    "phrase.are_you_ok",
-    "phrase.bigger",
-    "phrase.other_colour",
-    "phrase.other_size",
-    "phrase.smaller",
-    "phrase.how_much_this_one",
-    "word.fitting_room"
+  "end_tips_eg": [
+    "«Estou só a ver» = بتفرج بس. أشهر جملة في المحلات.",
+    "«saldos» = الأوكازيون، في يناير ويوليو."
   ],
-  "new_items_tl": [
-    "Estou só a ver.",
-    "Esteja à vontade!",
-    "o provador",
-    "Que tal?",
-    "em saldo",
-    "o talão de oferta"
-  ],
-  "recommended_day": 46
+  "closing": [
+    {
+      "tl": "Boa tarde! 👋",
+      "ar": "مساءً سعيدًا!"
+    }
+  ]
 }

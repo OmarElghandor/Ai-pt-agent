@@ -92,6 +92,22 @@ export type CardReviewPayload = {
   hint?: boolean;
 };
 
+/** Role-play correction / «قصدك» stop pair (batch-rp-5). */
+export type SceneMistakePayload = {
+  kind: 'scene_mistake';
+  answer_id: string;
+  day: number;
+  session_id: string;
+  scene_id: string;
+  goal_id: string;
+  prompt_tl: string;
+  learner_tl: string;
+  corrected_tl: string;
+  wrong: string;
+  right: string;
+  stopped: boolean;
+};
+
 export type AnswerPayload =
   | PageAskPayload
   | PageQuizPayload
@@ -99,7 +115,8 @@ export type AnswerPayload =
   | ClosedSkillPayload
   | BeatAnswerPayload
   | ConvoAnswerPayload
-  | CardReviewPayload;
+  | CardReviewPayload
+  | SceneMistakePayload;
 
 const CONVO_RUNGS = new Set([
   'heard',
@@ -285,6 +302,47 @@ export function parseAnswerPayload(body: unknown): AnswerPayload | null {
         typeof body.session_id === 'string' ? body.session_id : undefined,
       question_id:
         typeof body.question_id === 'string' ? body.question_id : undefined,
+    };
+  }
+
+  if (body.kind === 'scene_mistake') {
+    const str = (v: unknown) =>
+      typeof v === 'string' && v.trim() ? v : null;
+    const session_id = str(body.session_id);
+    const scene_id = str(body.scene_id);
+    const goal_id = str(body.goal_id);
+    const prompt_tl = typeof body.prompt_tl === 'string' ? body.prompt_tl : null;
+    const learner_tl =
+      typeof body.learner_tl === 'string' ? body.learner_tl : null;
+    const corrected_tl =
+      typeof body.corrected_tl === 'string' ? body.corrected_tl : null;
+    const wrong = str(body.wrong);
+    const right = str(body.right);
+    if (
+      !session_id ||
+      !scene_id ||
+      !goal_id ||
+      prompt_tl === null ||
+      learner_tl === null ||
+      corrected_tl === null ||
+      !wrong ||
+      !right
+    ) {
+      return null;
+    }
+    return {
+      kind: 'scene_mistake',
+      answer_id,
+      day,
+      session_id,
+      scene_id,
+      goal_id,
+      prompt_tl,
+      learner_tl,
+      corrected_tl,
+      wrong,
+      right,
+      stopped: body.stopped === true,
     };
   }
 

@@ -381,6 +381,12 @@ const v2ErrorSchema = new Schema(
     at: { type: Date, required: true, default: () => new Date(), index: true },
     /** Set once by the classifier job (doc 11 §4). */
     problem: { type: errorProblemLabelSchema, required: false },
+    /** Role-play mistakes (batch-rp-5); readers of word cards skip these. */
+    source: { type: String, required: false, index: true },
+    mistake_key: { type: String, required: false, index: true },
+    prompt_tl: { type: String, required: false },
+    learner_tl: { type: String, required: false },
+    corrected_tl: { type: String, required: false },
   },
   { timestamps: true, collection: 'v2_errors' },
 );

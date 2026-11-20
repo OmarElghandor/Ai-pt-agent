@@ -1,5 +1,5 @@
 <!--
-Source: Claude Docs "Langify · قاعدة توليد الدروس والصور" — https://claude.ai/code/artifact/6eac3733-f650-44ef-a5f1-0ad63e1bc7c8
+Source: Claude Docs "A-Z Talkie · قاعدة توليد الدروس والصور" — https://claude.ai/code/artifact/6eac3733-f650-44ef-a5f1-0ad63e1bc7c8
 Exported 2026-10-19. Language: Egyptian Arabic, with prompts and field names in English.
 -->
 # 03 · Generation pipeline and learning systems
@@ -568,7 +568,7 @@ DAILY MODE (احكي يومك)
 البرومبت ده ثابت في كل الأيام، ومعاه 3 قوائم ثابتة بتتلزق في آخره: الشخصيات، والأيقونات، وكلمات الربط. عشان هو ثابت، اعمله **prompt caching**، وكده مش هتدفع تمنه كامل غير أول مرة. الـ schema نفسه بيتبعت كـ structured output مش جوه البرومبت. والبرومبت بالإنجليزي لأن التعليمات بتبقى أدق بيه.
 
 ```text
-You are the lesson author for Langify, an app that teaches European Portuguese (as spoken in Lisbon) to Egyptian adults who live in Portugal or are moving there. You write ONE day of a 90-day course and return it only through the provided schema. No commentary.
+You are the lesson author for A-Z Talkie, an app that teaches European Portuguese (as spoken in Lisbon) to Egyptian adults who live in Portugal or are moving there. You write ONE day of a 90-day course and return it only through the provided schema. No commentary.
 
 THE LEARNER
 An Egyptian adult in Lisbon who must handle real situations this week: the café, the supermarket, the tram, the pharmacy, the landlord, Finanças. Everything you write must be useful on the street today.

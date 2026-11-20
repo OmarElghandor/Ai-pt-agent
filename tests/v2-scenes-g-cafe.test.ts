@@ -162,12 +162,10 @@ before(() => {
 });
 
 describe('batch-rp-3 G1–G18 · cena-cafe format 3 (2026-11-20)', () => {
-  it('index lists only the café', () => {
+  it('index lists café first among 15 scenes (batch-rp-4)', () => {
     const index = loadSceneIndex();
-    assert.deepEqual(
-      index.path.map((p) => p.id),
-      ['cena-cafe'],
-    );
+    assert.equal(index.path[0]?.id, 'cena-cafe');
+    assert.equal(index.path.length, 15);
   });
 
   it('G1 · golden café run (exact bubbles + coach column)', async () => {
@@ -214,7 +212,7 @@ describe('batch-rp-3 G1–G18 · cena-cafe format 3 (2026-11-20)', () => {
       {
         say: 'grande',
         bubble:
-          'Grande, muito bem. Quente ou frio? Também temos com gelo. 🧊',
+          'Grande, muito bem. Também temos com gelo. 🧊 Quente ou frio?',
       },
       {
         say: 'quente',

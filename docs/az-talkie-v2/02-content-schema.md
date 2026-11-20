@@ -1,5 +1,5 @@
 <!--
-Source: Claude Docs "Langify · Schema المحتوى" — https://claude.ai/code/artifact/3bac29ec-3272-45bf-b91a-5eab2938849b
+Source: Claude Docs "A-Z Talkie · Schema المحتوى" — https://claude.ai/code/artifact/3bac29ec-3272-45bf-b91a-5eab2938849b
 Exported 2026-10-19. Language: Egyptian Arabic with English field names.
 -->
 # 02 · Content schema

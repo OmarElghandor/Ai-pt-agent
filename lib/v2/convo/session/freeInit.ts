@@ -387,6 +387,7 @@ export function createFreeConvoSessionDoc(opts: {
     scene_misses: 0,
     scene_hint_level: 0,
     scene_suggest_shown: false,
+    scene_close_but_wrong_streak: 0,
     scene_coach_before_consumed: [],
     scene_char_bubbles_since_coach: 0,
     scene_coach_ever_shown: Boolean(

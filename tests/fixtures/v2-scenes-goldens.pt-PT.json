@@ -1,0 +1,779 @@
+{
+  "note": "Golden runs, generated from the scene files with the code-matching rules (stub Qwen: kind other, has_error false). Run each with learner name 'Omar', male; replace {name} in expected bubbles with 'Omar'. 'coach' = the coach line expected right under that bubble (null = none).",
+  "scenes": {
+    "cena-avaria": [
+      {
+        "learner": null,
+        "bubble": "Estou? Sim?",
+        "end_card": false,
+        "coach": "💬 الغسالة باظت. إنت بتكلم Carlos صاحب الشقة. عرّفه بنفسك واحكيله المشكلة 🔧"
+      },
+      {
+        "learner": "Olá, senhor Carlos. É o Omar, do segundo esquerdo.",
+        "bubble": "Ah, olá, {name}! Diga, o que se passa?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "A máquina de lavar não funciona.",
+        "bubble": "Ai, outra vez… O que aconteceu?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Ontem fez um barulho e parou.",
+        "bubble": "Estou a ver. Posso mandar o técnico amanhã de manhã. Está em casa?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Não, de manhã trabalho.",
+        "bubble": "Não faz mal. Então à tarde, depois das seis. Pode ser?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Sim, depois das seis pode ser.",
+        "bubble": "Combinado. Entretanto, não use a máquina, está bem?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Está bem. E a roupa?",
+        "bubble": "Há uma lavandaria na esquina. 😅 E… se foi mau uso, quem paga é o inquilino, sabe?",
+        "end_card": false,
+        "coach": "💬 بيلمّح إنك إنت اللي تدفع. اعترض بأدب."
+      },
+      {
+        "learner": "Eu não fiz nada. Já estava assim.",
+        "bubble": "Pronto, pronto. O técnico vê isso. Então, até amanhã! 😊",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Obrigado, senhor Carlos. Até amanhã!",
+        "bubble": "Até amanhã! 👋",
+        "end_card": true,
+        "coach": null
+      }
+    ],
+    "cena-cafe": [
+      {
+        "learner": null,
+        "bubble": "Bom dia! 😊 Então, o que vai ser hoje?",
+        "end_card": false,
+        "coach": "💬 إنت في كافيه الحي الصبح، وManuel ورا الكاونتر بيسألك تطلب إيه. اطلب مشروب ☕"
+      },
+      {
+        "learner": "Queria um café, por favor.",
+        "bubble": "Um café, saindo! Pequeno ou grande?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Pequeno, por favor.",
+        "bubble": "Pequeno, muito bem. Também temos com gelo. 🧊 Quente ou frio?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Frio, com gelo, por favor.",
+        "bubble": "Com gelo, então! 🧊 Com açúcar ou sem açúcar?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Sem açúcar, por favor.",
+        "bubble": "Sem açúcar, muito bem. Os pastéis de nata acabaram de sair do forno. 😋 Quer um para acompanhar?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Um pastel de nata, por favor.",
+        "bubble": "Boa escolha! E para beber, mais alguma coisa?",
+        "end_card": false,
+        "coach": "💬 جرّب تطلب ماية كمان مع الأوردر."
+      },
+      {
+        "learner": "E uma água, por favor.",
+        "bubble": "Uma água, claro! Natural ou fresca?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Fresca, por favor.",
+        "bubble": "Fresca, muito bem. É para comer aqui ou para levar?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Para comer aqui.",
+        "bubble": "Então sente-se à vontade. Aqui está! 😊 Bom apetite! Precisa de mais alguma coisa?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "É tudo, obrigado.",
+        "bubble": "É tudo, então! São três euros e dez. Cartão ou dinheiro?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Com cartão, por favor.",
+        "bubble": "Com cartão, sem problema. Pode passar aqui. 💳 Quer fatura com contribuinte?",
+        "end_card": false,
+        "coach": "💬 contribuinte = رقمك الضريبي (NIF). هتسمع السؤال ده في أي محل."
+      },
+      {
+        "learner": "Não, obrigado.",
+        "bubble": "Muito bem. Obrigado e bom dia! Até amanhã? 😊",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Até amanhã!",
+        "bubble": "Até amanhã! 👋",
+        "end_card": true,
+        "coach": null
+      }
+    ],
+    "cena-comboio": [
+      {
+        "learner": null,
+        "bubble": "Bom dia! Para onde vai?",
+        "end_card": false,
+        "coach": "💬 إنت في شباك تذاكر محطة Rossio ورايح سينترا 🚆"
+      },
+      {
+        "learner": "Um bilhete para Sintra, por favor.",
+        "bubble": "Para Sintra, muito bem. Só ida ou ida e volta?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Ida e volta, por favor.",
+        "bubble": "Ida e volta, muito bem. Para quantas pessoas?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Para uma pessoa.",
+        "bubble": "Uma pessoa, muito bem. São quatro euros e oitenta. Cartão ou dinheiro?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Com cartão, por favor.",
+        "bubble": "Pode passar. 💳 Aqui tem o bilhete. 🎫 Mais alguma coisa?",
+        "end_card": false,
+        "coach": "💬 جرّب تسأل القطر الجاي إمتى."
+      },
+      {
+        "learner": "A que horas é o próximo comboio?",
+        "bubble": "O próximo é às dez e vinte, na linha dois. Boa viagem! 😊",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Obrigado! Bom dia!",
+        "bubble": "Boa viagem! 👋",
+        "end_card": true,
+        "coach": null
+      }
+    ],
+    "cena-consulta": [
+      {
+        "learner": null,
+        "bubble": "Centro de Saúde, bom dia. Em que posso ajudar?",
+        "end_card": false,
+        "coach": "💬 إنت بتتصل بالمركز الصحي علشان تحجز ميعاد مع الدكتور. هيسألوك على رقمك في المنظومة الصحية (número de utente) 🩺"
+      },
+      {
+        "learner": "Queria marcar uma consulta, por favor.",
+        "bubble": "Com certeza. Qual é o seu número de utente?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Ainda não tenho.",
+        "bubble": "Não faz mal. Traga o passaporte. É para quê?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Tenho febre.",
+        "bubble": "Muito bem. Pode ser na terça-feira, às nove e meia?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Não posso na terça, desculpe.",
+        "bubble": "Não faz mal. E na quinta, às duas da tarde?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Sim, na quinta pode ser.",
+        "bubble": "Então fica marcado: quinta, às duas. Chegue dez minutos antes, está bem?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Está bem, obrigado.",
+        "bubble": "Obrigada. Até lá! Bom dia! 😊",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Obrigado! Bom dia!",
+        "bubble": "Bom dia! 👋",
+        "end_card": true,
+        "coach": null
+      }
+    ],
+    "cena-direcoes": [
+      {
+        "learner": null,
+        "bubble": "Sim? Posso ajudar? 🙂",
+        "end_card": false,
+        "coach": "💬 إنت تايه في وسط البلد ووقفت حد في الشارع. اسأله المترو فين، ولما يوصفلك الطريق كرره علشان تتأكد 🧭"
+      },
+      {
+        "learner": "Desculpe, onde fica o metro?",
+        "bubble": "O metro? É fácil. Siga em frente e depois vire à esquerda. Percebeu?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Em frente e depois à esquerda?",
+        "bubble": "Isso! 👍 Precisa de mais alguma coisa?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "É longe?",
+        "bubble": "Não, é perto. Cinco minutos a pé. A estação fica ao lado do banco, na praça. Está a ver?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Sim, ao lado do banco.",
+        "bubble": "Isso, ali mesmo. Bom dia e boa sorte! 🙂",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Muito obrigado! Bom dia!",
+        "bubble": "De nada! 👋",
+        "end_card": true,
+        "coach": null
+      }
+    ],
+    "cena-encomenda": [
+      {
+        "learner": null,
+        "bubble": "Boa tarde! Tenho uma encomenda para {name}. É aqui?",
+        "end_card": false,
+        "coach": "💬 جرس الباب! ده عامل التوصيل ومعاه طرد ليك. ولو ما فهمتش كلامه قول: Pode repetir? 📦"
+      },
+      {
+        "learner": "Sim, sou eu.",
+        "bubble": "Ótimo! Preciso que assine aqui no ecrã, se faz favor. Pode ser?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Claro.",
+        "bubble": "Obrigado. ✍️ O senhor fala português?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Falo um pouco.",
+        "bubble": "Fala muito bem! 😄 Tenho outra encomenda para o vizinho do segundo esquerdo. Pode ficar com ela?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Sim, posso ficar com ela.",
+        "bubble": "Muito obrigado! Aqui está. 📦 Boa tarde, então! 😊",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Obrigado! Boa tarde!",
+        "bubble": "Boa tarde! 👋",
+        "end_card": true,
+        "coach": null
+      }
+    ],
+    "cena-farmacia": [
+      {
+        "learner": null,
+        "bubble": "Boa tarde! Em que posso ajudar?",
+        "end_card": false,
+        "coach": "💬 إنت في الصيدلية وتعبان شوية. قول للصيدلانية عندك إيه 💊"
+      },
+      {
+        "learner": "Tenho tosse.",
+        "bubble": "Tosse… muito bem. Desde quando?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Desde ontem.",
+        "bubble": "Muito bem. Tem febre?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Não, não tenho.",
+        "bubble": "Ainda bem. Tem alguma alergia a medicamentos?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Não, não tenho.",
+        "bubble": "Muito bem. Então leve este xarope. É muito bom. 💊 Tem alguma pergunta?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Quantas vezes por dia?",
+        "bubble": "Três vezes por dia, depois das refeições. São seis euros e noventa. Cartão ou dinheiro?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Com cartão, por favor.",
+        "bubble": "Pode passar. 💳 As melhoras! 😊",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Obrigado! Boa tarde!",
+        "bubble": "As melhoras! 👋",
+        "end_card": true,
+        "coach": null
+      }
+    ],
+    "cena-financas": [
+      {
+        "learner": null,
+        "bubble": "Bom dia. Tem senha?",
+        "end_card": false,
+        "coach": "💬 إنت في مكتب Finanças علشان تطلب رقم ضريبي (NIF). أول حاجة: ورقة الدور (a senha) 🏛️"
+      },
+      {
+        "learner": "Não. Onde tiro a senha?",
+        "bubble": "É na máquina, à entrada. 👉 … Pronto. Diga, em que posso ajudar?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Queria pedir o NIF, por favor.",
+        "bubble": "Muito bem. Tem o passaporte?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Sim, aqui está.",
+        "bubble": "Obrigada. Qual é a sua morada?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Moro na Rua dos Anjos, número doze.",
+        "bubble": "Muito bem. Mora em Portugal há quanto tempo?",
+        "end_card": false,
+        "coach": "💬 há quanto tempo = بقالك قد إيه. الرد: Há + المدة."
+      },
+      {
+        "learner": "Há seis meses.",
+        "bubble": "Muito bem. Ai… o sistema está em baixo. Pode esperar um bocadinho?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Sim, posso esperar.",
+        "bubble": "Obrigada… pronto, já voltou! 😅 Aqui tem o seu NIF. 📄 Mais alguma coisa?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Não, muito obrigado! Bom dia!",
+        "bubble": "Bom dia! 👋",
+        "end_card": true,
+        "coach": null
+      }
+    ],
+    "cena-mercado": [
+      {
+        "learner": null,
+        "bubble": "Bom dia! 😊 O que vai levar hoje?",
+        "end_card": false,
+        "coach": "💬 إنت في سوق الحي، وManuel بيبيع فاكهة وخضار. اطلب حاجة 🍊"
+      },
+      {
+        "learner": "Queria laranjas, por favor.",
+        "bubble": "Laranjas! Estão muito doces. Quantos quilos?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Meio quilo, por favor.",
+        "bubble": "Meio quilo, muito bem. Os morangos hoje estão ótimos. 🍓 Mais alguma coisa?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Uma caixa de morangos, por favor.",
+        "bubble": "Uma caixa de morangos, muito bem! Precisa de saco?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Não, obrigado. Tenho saco.",
+        "bubble": "Ótimo, assim poupa! 😊 São quatro euros e vinte. Como quer pagar?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Em dinheiro. Aqui tem.",
+        "bubble": "Obrigado. Aqui tem o troco. Bom fim de semana! 😊",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Obrigado! Igualmente!",
+        "bubble": "Até sábado! 👋",
+        "end_card": true,
+        "coach": null
+      }
+    ],
+    "cena-quarto": [
+      {
+        "learner": null,
+        "bubble": "Boa tarde! Veio ver o quarto, não é?",
+        "end_card": false,
+        "coach": "💬 إنت بتعاين أوضة للإيجار، وCarlos صاحب الشقة بيفرّجك. اسأل عن الإيجار والمصاريف 🏠"
+      },
+      {
+        "learner": "Sim, boa tarde! Sou o Omar.",
+        "bubble": "Entre, entre! Este é o quarto. É grande e tem muita luz. O que acha?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Quanto é a renda?",
+        "bubble": "São quatrocentos e cinquenta euros por mês. Tem mais alguma pergunta?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "As despesas estão incluídas?",
+        "bubble": "A água e a internet estão incluídas. A luz é à parte. Mais alguma dúvida?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Quem mora aqui?",
+        "bubble": "Moram cá dois estudantes, muito calmos. Preciso de dois meses de caução. Pode ser?",
+        "end_card": false,
+        "coach": "💬 caução = التأمين. التفاوض عليه عادي هنا."
+      },
+      {
+        "learner": "É possível só um mês?",
+        "bubble": "Hmm… pronto, pode ser um mês. 🤝 Então, gosta do quarto?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Gosto. Posso pensar até amanhã?",
+        "bubble": "Claro. Ligue-me amanhã. Até breve! 😊",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Obrigado! Até amanhã!",
+        "bubble": "Boa tarde! 👋",
+        "end_card": true,
+        "coach": null
+      }
+    ],
+    "cena-restaurante": [
+      {
+        "learner": null,
+        "bubble": "Boa tarde! 😊 Mesa para quantas pessoas?",
+        "end_card": false,
+        "coach": "💬 إنت داخل مطعم على الغدا، وManuel الجرسون بيسألك كام فرد. خلّي بالك: carne de porco = لحم خنزير 🍽️"
+      },
+      {
+        "learner": "Uma mesa para dois, por favor.",
+        "bubble": "Para dois, esta mesa aqui à janela. E para beber?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Uma água, por favor.",
+        "bubble": "Uma água, claro. Aqui está a ementa. O prato do dia é carne de porco à alentejana. Pode ser?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Não como carne de porco.",
+        "bubble": "Sem problema! Temos frango grelhado ou peixe do dia. O que prefere?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "O frango, por favor.",
+        "bubble": "O frango, ótima escolha. Hoje a sopa é caldo verde. Quer uma para começar?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Isto tem porco?",
+        "bubble": "Tem uma rodela de chouriço, mas posso tirar. 👍 … Então, estava tudo bem?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Sim, muito bom!",
+        "bubble": "Ainda bem! 😊 Uma sobremesa? Um café?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Não, obrigado. A conta, por favor.",
+        "bubble": "Com certeza. São vinte e três euros. Cartão ou dinheiro?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Com cartão, por favor.",
+        "bubble": "Com cartão, aqui está a máquina. 💳 Muito obrigado e volte sempre! 😊",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Obrigado! Boa tarde!",
+        "bubble": "Boa tarde! 👋",
+        "end_card": true,
+        "coach": null
+      }
+    ],
+    "cena-roupa": [
+      {
+        "learner": null,
+        "bubble": "Olá, boa tarde! Posso ajudar?",
+        "end_card": false,
+        "coach": "💬 إنت في محل هدوم وقت الأوكازيون، والبيّاعة بتسألك محتاج مساعدة 👕"
+      },
+      {
+        "learner": "Estou só a ver, obrigado.",
+        "bubble": "Esteja à vontade! 😊 Esta camisola azul é nova e está em saldo. Quer experimentar?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Sim, posso experimentar?",
+        "bubble": "Claro! O provador é ali. 👉 Então, que tal? Serve bem?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "É pequena. Tem maior?",
+        "bubble": "Tenho o L. Aqui está. Também temos em verde e em preto. Que cor prefere?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Prefiro preto.",
+        "bubble": "Preto, boa escolha! Mais alguma coisa?",
+        "end_card": false,
+        "coach": "💬 جرّب تسأل بكام."
+      },
+      {
+        "learner": "Quanto custa?",
+        "bubble": "Está em saldo: vinte e nove euros. Então, leva?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "É um bocado cara…",
+        "bubble": "Esta aqui é parecida e mais barata: quinze euros. Pode pagar aqui. Cartão ou dinheiro?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Com cartão, por favor.",
+        "bubble": "Pode passar. 💳 Obrigada e boa tarde! 😊",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Obrigado! Boa tarde!",
+        "bubble": "Boa tarde! 👋",
+        "end_card": true,
+        "coach": null
+      }
+    ],
+    "cena-supermercado": [
+      {
+        "learner": null,
+        "bubble": "Bom dia! Precisa de ajuda? 😊",
+        "end_card": false,
+        "coach": "💬 إنت في السوبر ماركت ومش لاقي حاجة. Rita بتشتغل هنا. اسألها الحاجة فين 🛒"
+      },
+      {
+        "learner": "Onde está o leite?",
+        "bubble": "O leite está no corredor três, ao fundo. 👉 Precisa de mais alguma coisa?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Não, obrigado!",
+        "bubble": "De nada! Quando quiser, venha à caixa. 😊 Pronto, vamos lá. Precisa de saco?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Não, obrigado. Tenho saco.",
+        "bubble": "Ótimo! Tem cartão de cliente?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Não, não tenho.",
+        "bubble": "Não faz mal. Contribuinte?",
+        "end_card": false,
+        "coach": "💬 contribuinte = رقمك الضريبي (NIF). هتسمعها في كل محل."
+      },
+      {
+        "learner": "Não, obrigado.",
+        "bubble": "Muito bem. São doze euros e cinquenta. Cartão ou dinheiro?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Com cartão, por favor.",
+        "bubble": "Pode passar o cartão. 💳 Obrigada! Bom dia! 😊",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Obrigado! Bom dia!",
+        "bubble": "Bom dia! 👋",
+        "end_card": true,
+        "coach": null
+      }
+    ],
+    "cena-telefone": [
+      {
+        "learner": null,
+        "bubble": "Estou? 📞",
+        "end_card": false,
+        "coach": "💬 إنت بتكلم Tiago صاحبك علشان تعزمه على السينما. سلّم وقول إنت مين 📞"
+      },
+      {
+        "learner": "Olá, Tiago! É o Omar.",
+        "bubble": "Ah, olá, {name}! Tudo bem contigo?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Tudo bem, e tu?",
+        "bubble": "Também, obrigado! 😊 Diz, diz! O que se passa?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Queres vir ao cinema?",
+        "bubble": "Ao cinema? Fixe! 🎬 Quando? Hoje ou amanhã?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Hoje à noite.",
+        "bubble": "Hoje… deixa ver. Ah, hoje não dá, desculpa. Pode ser amanhã?",
+        "end_card": false,
+        "coach": "💬 «hoje não dá» = النهارده مش هينفع. هتسمعها كتير."
+      },
+      {
+        "learner": "Sim, pode ser amanhã.",
+        "bubble": "Combinado! A que horas?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Às nove.",
+        "bubble": "Perfeito! 👍 Encontramo-nos onde? À porta do cinema?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Sim, à porta do cinema.",
+        "bubble": "Combinado, à porta do cinema. Fixe! Até lá, então! 😄",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Xau, até amanhã!",
+        "bubble": "Xau! 👋",
+        "end_card": true,
+        "coach": null
+      }
+    ],
+    "cena-vizinha": [
+      {
+        "learner": null,
+        "bubble": "Boa tarde! O senhor é o vizinho novo?",
+        "end_card": false,
+        "coach": "💬 إنت على سلم العمارة، ودي Dona Graça جارتك الكبيرة. عرّفها بنفسك 🏢"
+      },
+      {
+        "learner": "Sim, sou eu! Boa tarde.",
+        "bubble": "Bem-vindo! Eu sou a Graça. E como se chama?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Chamo-me Omar.",
+        "bubble": "Muito prazer, {name}! 😊 E mora em que andar?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Moro no segundo esquerdo.",
+        "bubble": "Ah, então somos vizinhos de escada! E é de onde?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Sou do Egito.",
+        "bubble": "Do Egito! Que bonito… as pirâmides! 😍 E trabalha cá em Lisboa?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Não, sou estudante.",
+        "bubble": "Ah, estudante! Boa sorte! 📚 Se precisar de alguma coisa, é só bater à porta, está bem?",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Muito obrigado! A senhora é muito simpática.",
+        "bubble": "De nada, de nada. Bem, vou às compras. Até logo! 😊",
+        "end_card": false,
+        "coach": null
+      },
+      {
+        "learner": "Até logo!",
+        "bubble": "Até logo! 👋",
+        "end_card": true,
+        "coach": null
+      }
+    ]
+  }
+}

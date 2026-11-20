@@ -14,3 +14,6 @@ export {
 } from './mirror';
 
 export { createAnswersConvoProgressWriter } from './writeViaAnswers';
+
+export type { SceneMistakeWriter } from './sceneMistakeWriter';
+export { createAnswersSceneMistakeWriter } from './writeSceneMistakes';

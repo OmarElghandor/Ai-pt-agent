@@ -84,7 +84,7 @@ export function parseTopicsFile(raw: unknown): TopicsFile {
 export function loadTopicsFile(filePath: string = DEFAULT_PATH): TopicsFile {
   if (cached && filePath === DEFAULT_PATH) return cached;
 
-  const raw = JSON.parse(readFileSync(filePath, 'utf8')) as unknown;
+  const raw = JSON.parse(readFileSync(/*turbopackIgnore: true*/ filePath, 'utf8')) as unknown;
   const overrides = parseTopicsFile(raw);
 
   if (filePath !== DEFAULT_PATH) {
@@ -98,7 +98,7 @@ export function loadTopicsFile(filePath: string = DEFAULT_PATH): TopicsFile {
 
 /** Whether a content-file pack exists for this pack id (placeholders stay closed). */
 export function convoPackFileExists(packId: string): boolean {
-  return existsSync(convoPackPath(packId));
+  return existsSync(/*turbopackIgnore: true*/ convoPackPath(packId));
 }
 
 /** Test helper: clear the module cache. */

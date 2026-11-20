@@ -148,6 +148,10 @@ export async function evaluateAnswer(
     throw new Error('beat answers use evaluateBeat');
   }
 
+  if (payload.kind === 'scene_mistake') {
+    throw new Error('scene_mistake answers use processSceneMistake');
+  }
+
   // open (narrowed: remaining AnswerPayload member)
   return evaluateOpenAnswer(payload, ctx, now, errors, finish);
 }

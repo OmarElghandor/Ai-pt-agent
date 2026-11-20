@@ -1,340 +1,733 @@
 {
-  "source": "topic",
+  "id": "cena-restaurante",
   "kind": "scene",
-  "authored": true,
+  "format": 3,
   "target_lang": "pt-PT",
-  "topic_id": "cena-restaurante",
   "title_tl": "Almoço no restaurante",
   "title_ar": "غدا في مطعم",
   "emoji": "🍽️",
-  "scene_eg": "مطعم شعبي بالضهر. Manuel الجرسون.",
-  "intro_eg": "خد ترابيزة، اطلب أكل من غير خنزير، اطلب مشروب، واطلب الحساب.",
-  "scene": {
-    "character_id": "manuel",
-    "place": "Manuel is the waiter in a simple restaurant at lunch",
-    "time_of_day": "afternoon",
-    "address": "formal"
+  "recommended_day": 16,
+  "mission_eg": "خد ترابيزة، اطلب مشروب وأكل من غير خنزير، واسأل عن الشوربة، واطلب الحساب.",
+  "character_id": "manuel",
+  "address": "formal",
+  "opening_coach_eg": "💬 إنت داخل مطعم على الغدا، وManuel الجرسون بيسألك كام فرد. خلّي بالك: carne de porco = لحم خنزير 🍽️",
+  "opening": [
+    {
+      "tl": "Boa tarde! 😊 Mesa para quantas pessoas?",
+      "ar": "مساء الخير! طاولة لكم شخص؟"
+    }
+  ],
+  "global": {
+    "greeting": {
+      "keywords": [
+        "bom dia",
+        "boa tarde",
+        "boa noite",
+        "olá",
+        "ola",
+        "tudo bem"
+      ],
+      "react": [
+        {
+          "tl": "Boa tarde, boa tarde! 😊",
+          "ar": "مساء الخير!"
+        }
+      ]
+    },
+    "thanks": {
+      "keywords": [
+        "obrigado",
+        "obrigada"
+      ],
+      "react": [
+        {
+          "tl": "De nada! 😊",
+          "ar": "عفوًا!"
+        }
+      ]
+    },
+    "side_unknown": {
+      "react": [
+        {
+          "tl": "Isso não sei, desculpe.",
+          "ar": "هذا لا أعرفه، عذرًا."
+        }
+      ]
+    }
   },
-  "opening": {
-    "tl": "Boa tarde! Quantas pessoas?",
-    "ar": "مساء الخير! كم شخصًا؟"
-  },
-  "closing": {
-    "tl": "Até à próxima! 👋",
-    "ar": "إلى المرة القادمة!"
-  },
+  "glossary": [
+    {
+      "ar": [
+        "خنزير"
+      ],
+      "tl": "a carne de porco = لحم خنزير · Não como carne de porco. = مش باكل خنزير"
+    },
+    {
+      "ar": [
+        "فراخ",
+        "دجاج"
+      ],
+      "tl": "o frango = الفراخ"
+    },
+    {
+      "ar": [
+        "سمك"
+      ],
+      "tl": "o peixe = السمك"
+    },
+    {
+      "ar": [
+        "شوربة",
+        "شوربه"
+      ],
+      "tl": "a sopa = الشوربة"
+    },
+    {
+      "ar": [
+        "ماية",
+        "مية",
+        "مياه"
+      ],
+      "tl": "uma água = ماية"
+    },
+    {
+      "ar": [
+        "عصير"
+      ],
+      "tl": "um sumo = عصير"
+    },
+    {
+      "ar": [
+        "ترابيزة",
+        "طاولة",
+        "ترابيزه"
+      ],
+      "tl": "uma mesa = ترابيزة"
+    },
+    {
+      "ar": [
+        "اتنين",
+        "إتنين"
+      ],
+      "tl": "para dois = لاتنين"
+    },
+    {
+      "ar": [
+        "المنيو",
+        "منيو",
+        "قائمة"
+      ],
+      "tl": "a ementa = المنيو"
+    },
+    {
+      "ar": [
+        "حلو",
+        "حلويات"
+      ],
+      "tl": "a sobremesa = الحلو"
+    },
+    {
+      "ar": [
+        "الحساب",
+        "حساب"
+      ],
+      "tl": "a conta = الحساب"
+    },
+    {
+      "ar": [
+        "كان حلو",
+        "لذيذ",
+        "طعم"
+      ],
+      "tl": "estava delicioso = كان لذيذ"
+    },
+    {
+      "ar": [
+        "فيه خنزير",
+        "فيها خنزير"
+      ],
+      "tl": "Isto tem porco? = فيه خنزير؟"
+    },
+    {
+      "ar": [
+        "كارت",
+        "فيزا"
+      ],
+      "tl": "com cartão = بالكارت"
+    },
+    {
+      "ar": [
+        "كاش",
+        "فلوس"
+      ],
+      "tl": "em dinheiro = كاش"
+    }
+  ],
   "goals": [
     {
-      "id": "restaurante.table",
-      "tier": "core",
-      "intent_eg": "يطلب ترابيزة",
+      "id": "table",
       "label_eg": "اطلب ترابيزة",
-      "intent_en": "ask for a table",
-      "ask_tl": "Boa tarde! Quantas pessoas?",
-      "ask_ar": "مساء الخير! كم شخصًا؟",
-      "examples_tl": [
+      "ask": [
+        {
+          "tl": "Quantas pessoas?",
+          "ar": "كم شخصًا؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "dois",
+          "keywords": [
+            "dois",
+            "duas",
+            "somos dois",
+            "2"
+          ],
+          "examples": [
+            "Uma mesa para dois, por favor."
+          ],
+          "react": [
+            {
+              "tl": "Para dois, esta mesa aqui à janela.",
+              "ar": "لشخصين، هذه الطاولة بجانب النافذة."
+            }
+          ]
+        },
+        {
+          "value": "um",
+          "keywords": [
+            "um",
+            "uma",
+            "sozinho",
+            "sozinha",
+            "só eu",
+            "1"
+          ],
+          "examples": [
+            "Para uma pessoa, por favor."
+          ],
+          "react": [
+            {
+              "tl": "Para um, esta mesa aqui.",
+              "ar": "لشخص واحد، هذه الطاولة."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Para quantas pessoas? 😊",
+          "ar": "عذرًا؟ لكم شخص؟"
+        }
+      ],
+      "suggest": [
         "Uma mesa para dois, por favor.",
-        "Para uma pessoa.",
-        "Somos dois."
+        "Para uma pessoa, por favor."
       ],
-      "keywords": [
-        "mesa",
-        "dois",
-        "duas",
-        "uma",
-        "um",
-        "pessoa",
-        "somos"
-      ],
-      "help": {
-        "frame_tl": "Uma mesa para dois, por favor.",
-        "eg": "Quantas pessoas? = كام فرد؟",
-        "chips": [
-          "Uma mesa para dois, por favor.",
-          "Para uma pessoa, por favor."
-        ]
-      }
+      "hint_words": "uma mesa para…"
     },
     {
-      "id": "restaurante.menu",
-      "tier": "core",
-      "intent_eg": "يقول مش بياكل خنزير أو يطلب حاجة تانية",
+      "id": "drink",
+      "label_eg": "اطلب مشروب",
+      "ask": [
+        {
+          "tl": "E para beber?",
+          "ar": "وماذا تشرب؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "água",
+          "keywords": [
+            "água",
+            "agua"
+          ],
+          "examples": [
+            "Uma água, por favor."
+          ],
+          "react": [
+            {
+              "tl": "Uma água, claro.",
+              "ar": "ماء، بالطبع."
+            }
+          ]
+        },
+        {
+          "value": "sumo",
+          "keywords": [
+            "sumo"
+          ],
+          "examples": [
+            "Um sumo de laranja, por favor."
+          ],
+          "react": [
+            {
+              "tl": "Um sumo de laranja natural, muito bem.",
+              "ar": "عصير برتقال طبيعي، حسنًا."
+            }
+          ]
+        },
+        {
+          "value": "chá",
+          "keywords": [
+            "chá",
+            "cha"
+          ],
+          "examples": [
+            "Um chá, por favor."
+          ],
+          "react": [
+            {
+              "tl": "Um chá, muito bem.",
+              "ar": "شاي، حسنًا."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Para beber: água, sumo…?",
+          "ar": "عذرًا؟ للشرب: ماء، عصير…؟"
+        }
+      ],
+      "suggest": [
+        "Uma água, por favor.",
+        "Um sumo de laranja, por favor."
+      ],
+      "hint_words": "uma água · um sumo"
+    },
+    {
+      "id": "menu",
       "label_eg": "قول مش بتاكل خنزير",
-      "intent_en": "say they don't eat pork, or order something else",
-      "ask_tl": "Aqui está a ementa. O prato do dia é carne de porco à alentejana. Pode ser?",
-      "ask_ar": "هذه قائمة الطعام. طبق اليوم لحم خنزير على طريقة ألينتيجو. هل يناسبك؟",
-      "examples_tl": [
+      "ask": [
+        {
+          "tl": "Aqui está a ementa. O prato do dia é carne de porco à alentejana. Pode ser?",
+          "ar": "هذه قائمة الطعام. طبق اليوم لحم خنزير على طريقة ألينتيجو. هل يناسبك؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "no_pork",
+          "keywords": [
+            "porco",
+            "não como",
+            "nao como"
+          ],
+          "examples": [
+            "Não como carne de porco."
+          ],
+          "react": [
+            {
+              "tl": "Sem problema!",
+              "ar": "لا مشكلة!"
+            }
+          ]
+        },
+        {
+          "value": "sim",
+          "keywords": [
+            "sim",
+            "pode ser"
+          ],
+          "examples": [
+            "Sim, pode ser."
+          ],
+          "react": [
+            {
+              "tl": "Muito bem, o prato do dia.",
+              "ar": "حسنًا، طبق اليوم."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? O prato do dia, pode ser?",
+          "ar": "عذرًا؟ طبق اليوم، هل يناسبك؟"
+        }
+      ],
+      "suggest": [
         "Não como carne de porco.",
-        "Para mim, o frango, por favor.",
-        "Queria o peixe, por favor."
+        "Não como porco. O que mais tem?"
       ],
-      "keywords": [
-        "porco",
-        "não como",
-        "frango",
-        "peixe",
-        "salada",
-        "sopa"
-      ],
-      "help": {
-        "frame_tl": "Não como carne de porco.",
-        "eg": "carne de porco = لحم خنزير. الجملة دي هتحتاجها كتير: Não como carne de porco.",
-        "chips": [
-          "Não como carne de porco.",
-          "Para mim, o frango, por favor."
+      "hint_words": "não como · porco"
+    },
+    {
+      "id": "choose",
+      "label_eg": "اختار فراخ أو سمك",
+      "only_if": {
+        "goal": "menu",
+        "options": [
+          "no_pork"
         ]
       },
-      "cue_eg": "طبق اليوم فيه لحم خنزير. قوله إنك مش بتاكله، أو اطلب حاجة تانية."
-    },
-    {
-      "id": "restaurante.choose",
-      "tier": "core",
-      "intent_eg": "يختار فراخ أو سمك",
-      "label_eg": "اختار فراخ أو سمك",
-      "intent_en": "choose chicken or fish",
-      "ask_tl": "Sem problema! Temos frango ou peixe. O que prefere?",
-      "ask_ar": "لا مشكلة! لدينا دجاج أو سمك. ماذا تفضّل؟",
-      "examples_tl": [
+      "ask": [
+        {
+          "tl": "Temos frango grelhado ou peixe do dia. O que prefere?",
+          "ar": "لدينا دجاج مشوي أو سمك اليوم. ماذا تفضّل؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "frango",
+          "keywords": [
+            "frango"
+          ],
+          "examples": [
+            "O frango, por favor."
+          ],
+          "react": [
+            {
+              "tl": "O frango, ótima escolha.",
+              "ar": "الدجاج، اختيار ممتاز."
+            }
+          ]
+        },
+        {
+          "value": "peixe",
+          "keywords": [
+            "peixe"
+          ],
+          "examples": [
+            "O peixe, por favor."
+          ],
+          "react": [
+            {
+              "tl": "O peixe, ótima escolha. É dourada.",
+              "ar": "السمك، اختيار ممتاز. إنه دنيس."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Frango ou peixe?",
+          "ar": "عذرًا؟ دجاج أم سمك؟"
+        }
+      ],
+      "suggest": [
         "O frango, por favor.",
-        "Para mim, o peixe.",
-        "Queria o frango."
+        "O peixe, por favor."
       ],
-      "keywords": [
-        "frango",
-        "peixe"
-      ],
-      "help": {
-        "frame_tl": "Para mim, o frango.",
-        "eg": "اختار: Para mim, o frango. أو o peixe.",
-        "chips": [
-          "Para mim, o frango.",
-          "Para mim, o peixe."
-        ]
-      }
+      "hint_words": "o frango · o peixe"
     },
     {
-      "id": "restaurante.soup",
-      "tier": "core",
-      "intent_eg": "يسأل الشوربة فيها خنزير ولا لأ",
+      "id": "soup",
       "label_eg": "اسأل الشوربة فيها خنزير؟",
-      "intent_en": "ask whether the soup has pork (or accept / refuse it)",
-      "ask_tl": "Quer uma sopa para começar? Hoje é caldo verde.",
-      "ask_ar": "هل تريد حساءً للبداية؟ اليوم كالدو فيردي.",
-      "examples_tl": [
-        "Isto tem porco?",
+      "ask": [
+        {
+          "tl": "Hoje a sopa é caldo verde. Quer uma para começar?",
+          "ar": "حساء اليوم كالدو فيردي. هل تريد واحدًا للبداية؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "ask",
+          "keywords": [
+            "tem porco",
+            "chouriço",
+            "chourico",
+            "tem carne"
+          ],
+          "examples": [
+            "Isto tem porco?",
+            "A sopa tem porco?"
+          ],
+          "react": [
+            {
+              "tl": "Tem uma rodela de chouriço, mas posso tirar. 👍",
+              "ar": "فيه شريحة نقانق، لكن يمكنني إزالتها."
+            }
+          ]
+        },
+        {
+          "value": "sim",
+          "keywords": [
+            "sim",
+            "quero"
+          ],
+          "examples": [
+            "Sim, quero uma sopa."
+          ],
+          "react": [
+            {
+              "tl": "Uma sopa, então.",
+              "ar": "حساء إذن."
+            }
+          ]
+        },
+        {
+          "value": "não",
+          "keywords": [
+            "não",
+            "nao"
+          ],
+          "examples": [
+            "Não, obrigado."
+          ],
+          "react": [
+            {
+              "tl": "Muito bem.",
+              "ar": "حسنًا."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Quer a sopa?",
+          "ar": "عذرًا؟ هل تريد الحساء؟"
+        }
+      ],
+      "suggest": [
         "A sopa tem porco?",
         "Não, obrigado."
       ],
-      "keywords": [
-        "porco",
-        "chouriço",
-        "chourico",
-        "não",
-        "nao",
-        "sim",
-        "quero",
-        "pode ser"
+      "suggest_f": [
+        "A sopa tem porco?",
+        "Não, obrigada."
       ],
-      "help": {
-        "frame_tl": "Isto tem porco?",
-        "eg": "caldo verde = شوربة كرنب، وساعات بيحطوا فيها chouriço (سجق خنزير). اسأل دايمًا.",
-        "chips": [
-          "Isto tem porco?",
-          "Não, obrigado."
-        ],
-        "chips_f": [
-          "Isto tem porco?",
-          "Não, obrigada."
-        ]
-      },
-      "cue_eg": "قالك شوربة اليوم. اسأل فيها خنزير ولا لأ.",
-      "facts_tl": [
-        "O caldo verde tem uma rodela de chouriço (porco), mas pode tirar."
-      ]
+      "hint_words": "tem porco?"
     },
     {
-      "id": "restaurante.drink",
-      "tier": "core",
-      "intent_eg": "يطلب مشروب",
-      "label_eg": "اطلب مشروب",
-      "intent_en": "order a drink",
-      "ask_tl": "E para beber?",
-      "ask_ar": "وماذا تشرب؟",
-      "examples_tl": [
-        "Uma água, por favor.",
-        "Um sumo de laranja, por favor.",
-        "Água, por favor."
-      ],
-      "keywords": [
-        "água",
-        "agua",
-        "sumo",
-        "chá",
-        "cha",
-        "café"
-      ],
-      "help": {
-        "frame_tl": "Uma água, por favor.",
-        "eg": "para beber = تشرب إيه. Uma água, por favor.",
-        "chips": [
-          "Uma água, por favor.",
-          "Um sumo de laranja, por favor."
-        ]
-      }
-    },
-    {
-      "id": "restaurante.all_good",
-      "tier": "core",
-      "intent_eg": "يقول الأكل كان حلو",
+      "id": "all_good",
       "label_eg": "قول الأكل كان حلو",
-      "intent_en": "say the food was good",
-      "ask_tl": "Então, estava tudo bem?",
-      "ask_ar": "إذن، هل كان كل شيء جيدًا؟",
-      "examples_tl": [
+      "ask": [
+        {
+          "tl": "… Então, estava tudo bem?",
+          "ar": "… إذن، هل كان كل شيء جيدًا؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "sim",
+          "keywords": [
+            "sim",
+            "bom",
+            "boa",
+            "ótimo",
+            "otimo",
+            "delicioso",
+            "muito bem"
+          ],
+          "examples": [
+            "Sim, muito bom!"
+          ],
+          "react": [
+            {
+              "tl": "Ainda bem! 😊",
+              "ar": "يسعدني!"
+            }
+          ]
+        },
+        {
+          "value": "não",
+          "keywords": [
+            "não",
+            "nao"
+          ],
+          "examples": [
+            "Não muito, desculpe."
+          ],
+          "react": [
+            {
+              "tl": "Oh, desculpe! Vou dizer ao cozinheiro.",
+              "ar": "أوه، عذرًا! سأخبر الطباخ."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Gostou?",
+          "ar": "عذرًا؟ هل أعجبك؟"
+        }
+      ],
+      "suggest": [
         "Sim, muito bom!",
-        "Sim, obrigado! Muito bom.",
-        "Sim, delicioso!"
+        "Estava delicioso!"
       ],
-      "keywords": [
-        "sim",
-        "bom",
-        "boa",
-        "ótimo",
-        "otimo",
-        "delicioso"
-      ],
-      "help": {
-        "frame_tl": "Sim, muito bom!",
-        "eg": "Estava tudo bem? = كله كان تمام؟ قول: Sim, muito bom!",
-        "chips": [
-          "Sim, muito bom!",
-          "Sim, obrigado! Muito bom."
-        ],
-        "chips_f": [
-          "Sim, muito bom!",
-          "Sim, obrigada! Muito bom."
-        ]
-      }
+      "hint_words": "muito bom"
     },
     {
-      "id": "restaurante.bill",
-      "tier": "core",
-      "intent_eg": "يطلب الحساب",
+      "id": "bill",
       "label_eg": "اطلب الحساب",
-      "intent_en": "ask for the bill",
-      "ask_tl": "Ainda bem! 😊 Uma sobremesa? Um café?",
-      "ask_ar": "يسعدني! حلوى؟ قهوة؟",
-      "examples_tl": [
+      "ask": [
+        {
+          "tl": "Uma sobremesa? Um café?",
+          "ar": "حلوى؟ قهوة؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "conta",
+          "keywords": [
+            "conta",
+            "não",
+            "nao",
+            "nada"
+          ],
+          "examples": [
+            "Não, obrigado. A conta, por favor."
+          ],
+          "react": [
+            {
+              "tl": "Com certeza.",
+              "ar": "بالتأكيد."
+            }
+          ]
+        },
+        {
+          "value": "café",
+          "keywords": [
+            "café",
+            "cafe",
+            "sobremesa",
+            "pudim",
+            "mousse"
+          ],
+          "examples": [
+            "Um café, por favor."
+          ],
+          "react": [
+            {
+              "tl": "Já vem! … Aqui está.",
+              "ar": "حالًا! … تفضّل."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Sobremesa, café… ou a conta?",
+          "ar": "عذرًا؟ حلوى، قهوة… أم الحساب؟"
+        }
+      ],
+      "suggest": [
         "Não, obrigado. A conta, por favor.",
-        "A conta, por favor.",
-        "Só a conta, por favor."
+        "Um café, por favor."
       ],
-      "keywords": [
-        "conta"
+      "suggest_f": [
+        "Não, obrigada. A conta, por favor.",
+        "Um café, por favor."
       ],
-      "help": {
-        "frame_tl": "A conta, por favor.",
-        "eg": "مش عايز حاجة تانية؟ Não, obrigado. A conta, por favor.",
-        "chips": [
-          "A conta, por favor.",
-          "Não, obrigado. A conta, por favor."
-        ],
-        "chips_f": [
-          "A conta, por favor.",
-          "Não, obrigada. A conta, por favor."
-        ]
-      }
+      "hint_words": "a conta"
     },
     {
-      "id": "restaurante.pay",
-      "tier": "core",
-      "intent_eg": "يدفع",
+      "id": "pay",
       "label_eg": "ادفع",
-      "intent_en": "pay (card or cash)",
-      "ask_tl": "Com certeza. São vinte e três euros. Cartão ou dinheiro?",
-      "ask_ar": "بالتأكيد. المجموع ثلاثة وعشرون يورو. بطاقة أم نقدًا؟",
-      "examples_tl": [
-        "Aceita cartão?",
-        "Em dinheiro.",
-        "Com cartão, por favor."
+      "ask": [
+        {
+          "tl": "São vinte e três euros. Cartão ou dinheiro?",
+          "ar": "المجموع ثلاثة وعشرون يورو. بطاقة أم نقدًا؟"
+        }
       ],
-      "keywords": [
-        "cartão",
-        "cartao",
-        "dinheiro",
-        "aqui tem"
+      "options": [
+        {
+          "value": "cartão",
+          "keywords": [
+            "cartão",
+            "cartao",
+            "multibanco"
+          ],
+          "examples": [
+            "Com cartão, por favor."
+          ],
+          "react": [
+            {
+              "tl": "Com cartão, aqui está a máquina. 💳",
+              "ar": "بالبطاقة، هذه الآلة."
+            }
+          ]
+        },
+        {
+          "value": "dinheiro",
+          "keywords": [
+            "dinheiro",
+            "aqui tem",
+            "notas",
+            "trocos"
+          ],
+          "examples": [
+            "Em dinheiro."
+          ],
+          "react": [
+            {
+              "tl": "Obrigado. Aqui tem o troco.",
+              "ar": "شكرًا. تفضّل الباقي."
+            }
+          ]
+        }
       ],
-      "help": {
-        "frame_tl": "Aceita cartão?",
-        "eg": "Aceita cartão? أو Em dinheiro.",
-        "chips": [
-          "Aceita cartão?",
-          "Em dinheiro."
-        ]
-      }
+      "unclear": [
+        {
+          "tl": "Desculpe? Cartão ou dinheiro?",
+          "ar": "عذرًا؟ بطاقة أم نقدًا؟"
+        }
+      ],
+      "suggest": [
+        "Com cartão, por favor.",
+        "Em dinheiro."
+      ],
+      "hint_words": "cartão · dinheiro"
     },
     {
-      "id": "restaurante.bye",
-      "tier": "core",
-      "intent_eg": "يودّعه",
+      "id": "bye",
       "label_eg": "ودّعه",
-      "intent_en": "say goodbye",
-      "ask_tl": "Claro. Obrigado e volte sempre! 😄",
-      "ask_ar": "بالطبع. شكرًا، وعُد دائمًا!",
-      "examples_tl": [
+      "ask": [
+        {
+          "tl": "Muito obrigado e volte sempre! 😊",
+          "ar": "شكرًا جزيلًا وعُد دائمًا!",
+          "ar_f": "شكرًا جزيلًا وعودي دائمًا!"
+        }
+      ],
+      "options": [
+        {
+          "value": "bye",
+          "keywords": [
+            "até",
+            "ate",
+            "adeus",
+            "xau",
+            "tchau",
+            "obrigado",
+            "obrigada",
+            "bom dia",
+            "boa tarde",
+            "boa noite",
+            "igualmente"
+          ],
+          "examples": [
+            "Obrigado! Boa tarde!"
+          ],
+          "react": []
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Volte sempre! 😊",
+          "ar": "عُد دائمًا!"
+        }
+      ],
+      "suggest": [
         "Obrigado! Boa tarde!",
-        "Obrigada! Até à próxima!",
-        "Boa tarde!"
+        "Até à próxima!"
       ],
-      "keywords": [
-        "obrigad",
-        "adeus",
-        "até",
-        "ate",
-        "boa tarde",
-        "bom dia",
-        "xau",
-        "igualmente",
-        "próxima"
+      "suggest_f": [
+        "Obrigada! Boa tarde!",
+        "Até à próxima!"
       ],
-      "help": {
-        "frame_tl": "Obrigado! Boa tarde!",
-        "eg": "ودّعه: Obrigado! Boa tarde!",
-        "chips": [
-          "Obrigado! Boa tarde!",
-          "Até à próxima!"
-        ],
-        "chips_f": [
-          "Obrigada! Boa tarde!",
-          "Até à próxima!"
-        ]
-      },
+      "hint_words": "boa tarde",
       "farewell": true
     }
   ],
-  "suggested_words": [],
-  "required_items": [
-    "phrase.good_afternoon",
-    "phrase.how_are_you",
-    "phrase.no_thanks",
-    "phrase.card_ok",
-    "phrase.cash",
-    "phrase.table_for_two",
-    "word.dish_of_day",
-    "word.fish",
-    "word.menu",
-    "word.soup",
-    "phrase.the_bill",
-    "word.chicken",
-    "word.salad"
+  "end_tips_eg": [
+    "caldo verde (شوربة كرنب) ساعات بيبقى فيها شريحة chouriço (خنزير). اسأل دايمًا: Isto tem porco?",
+    "«prato do dia» = طبق اليوم، وغالبًا أرخص حاجة في المنيو."
   ],
-  "new_items_tl": [
-    "Quantas pessoas?",
-    "a carne de porco",
-    "Não como carne de porco.",
-    "Isto tem porco?",
-    "Estava tudo bem?",
-    "natural ou com gás"
-  ],
-  "recommended_day": 16
+  "closing": [
+    {
+      "tl": "Boa tarde! 👋",
+      "ar": "مساءً سعيدًا!"
+    }
+  ]
 }

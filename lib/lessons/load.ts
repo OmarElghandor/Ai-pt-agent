@@ -20,7 +20,7 @@ const DEFAULT_DIR = path.join(process.cwd(), 'content', 'lessons');
 export function loadLessonPacks(dir = DEFAULT_DIR): LoadReport {
   let files: string[] = [];
   try {
-    files = readdirSync(dir)
+    files = readdirSync(/*turbopackIgnore: true*/ dir)
       .filter((f) => f.endsWith('.json'))
       .sort();
   } catch {
@@ -36,10 +36,10 @@ export function loadLessonPacks(dir = DEFAULT_DIR): LoadReport {
     // Plan seed is not a LessonPack — loaded separately via seedPlan.ts
     if (file.startsWith('lesson-plan-seed')) continue;
 
-    const full = path.join(dir, file);
+    const full = path.join(/*turbopackIgnore: true*/ dir, file);
     let raw: unknown;
     try {
-      raw = JSON.parse(readFileSync(full, 'utf8'));
+      raw = JSON.parse(readFileSync(/*turbopackIgnore: true*/ full, 'utf8'));
     } catch (err) {
       rejected.push({
         file,

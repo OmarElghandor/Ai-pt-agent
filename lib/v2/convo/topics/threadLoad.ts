@@ -27,9 +27,9 @@ export function listThreadTopicIdsFromFiles(
   targetLang: string = 'pt-PT',
   baseDir: string = THREADS_DIR,
 ): string[] {
-  if (!existsSync(baseDir)) return [];
+  if (!existsSync(/*turbopackIgnore: true*/ baseDir)) return [];
   const prefix = `${targetLang}.`;
-  return readdirSync(baseDir)
+  return readdirSync(/*turbopackIgnore: true*/ baseDir)
     .filter((f) => f.startsWith(prefix) && f.endsWith('.json'))
     .map((f) => f.slice(prefix.length, -'.json'.length))
     .sort();
@@ -82,10 +82,10 @@ export function loadThreadTopicFromFile(
   const cacheKey = filePath;
   if (threadCache.has(cacheKey)) return threadCache.get(cacheKey)!;
 
-  if (!existsSync(filePath)) {
+  if (!existsSync(/*turbopackIgnore: true*/ filePath)) {
     throw new Error(`thread file missing: ${filePath}`);
   }
-  const raw = JSON.parse(readFileSync(filePath, 'utf8')) as unknown;
+  const raw = JSON.parse(readFileSync(/*turbopackIgnore: true*/ filePath, 'utf8')) as unknown;
 
   let addressIsTu = true;
   try {

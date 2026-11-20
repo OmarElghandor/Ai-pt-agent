@@ -38,7 +38,7 @@ export function parseCoachBank(raw: unknown): CoachBank {
 
 export function loadCoachBank(filePath: string = DEFAULT_PATH): CoachBank {
   if (cached && filePath === DEFAULT_PATH) return cached;
-  const raw = JSON.parse(readFileSync(filePath, 'utf8')) as unknown;
+  const raw = JSON.parse(readFileSync(/*turbopackIgnore: true*/ filePath, 'utf8')) as unknown;
   const bank = parseCoachBank(raw);
   if (filePath === DEFAULT_PATH) cached = bank;
   return bank;

@@ -6,7 +6,7 @@ Companion to `10-auth.md`. That document says **what** and **why**; this one spl
 
 Give Cursor this prompt, replacing the task id:
 
-> Read docs/langify-v2/10-auth.md (whole), AGENTS.md and 00-decisions.md. Implement task **A-x only**. Do not start the next task. The user id always comes from the session helper, never from the request. Write the tests the task asks for. Stop when "Done when" is met and list the files you changed.
+> Read docs/az-talkie-v2/10-auth.md (whole), AGENTS.md and 00-decisions.md. Implement task **A-x only**. Do not start the next task. The user id always comes from the session helper, never from the request. Write the tests the task asks for. Stop when "Done when" is met and list the files you changed.
 
 Rules for every task:
 
@@ -29,7 +29,7 @@ Milestones:
 ## A0 · Write the decisions
 
 - Depends on: nothing.
-- Do: the changes in `10-auth.md` section that update `00-decisions.md` (§0 identity, new §0b, §4 gender meaning `v2_users.gender`, §11 open items); link `10-auth.md` and this file from `docs/langify-v2/README.md`. Sign-in UI is Calm Kit (not Warm Editorial).
+- Do: the changes in `10-auth.md` section that update `00-decisions.md` (§0 identity, new §0b, §4 gender meaning `v2_users.gender`, §11 open items); link `10-auth.md` and this file from `docs/az-talkie-v2/README.md`. Sign-in UI is Calm Kit (not Warm Editorial).
 - Done when: the docs are updated and nothing else changed.
 
 ---

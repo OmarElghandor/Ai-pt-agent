@@ -20,6 +20,7 @@ export const USER_KEYED_V2_COLLECTIONS = [
   'v2_user_decks',
   'v2_deck_reports',
   'v2_custom_deck_jobs',
+  'v2_card_review_jobs',
   'v2_library_progress',
   'v2_roleplay_sessions',
 ] as const;

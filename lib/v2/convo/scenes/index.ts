@@ -77,11 +77,21 @@ export {
   type SceneLangHelpResult,
 } from './sceneLangHelp';
 export {
+  closeButWrongCoachEg,
+  detectCloseButWrong,
+  detectMissingAccentFix,
+  isAnswerWordInGoal,
+} from './closeButWrong';
+export {
+  accentsOrCedillaMissing,
+  findKeywordHitInMessage,
   isWeakWordOrPhrase,
   messageContainsKeyword,
   messageHasAnyKeyword,
   messageHasStrongKeyword,
   normalizeSceneText,
+  replaceWordInContext,
+  sceneKeywordMatchKind,
   sceneKeywordMatchesToken,
   SCENE_WEAK_WORDS,
 } from './weak';

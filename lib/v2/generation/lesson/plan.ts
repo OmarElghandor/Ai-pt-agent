@@ -61,7 +61,7 @@ const DEFAULT_PLAN_PATH = path.join(
 );
 
 export function loadPlan(planPath = DEFAULT_PLAN_PATH): PlanFile {
-  const raw = JSON.parse(readFileSync(planPath, 'utf8')) as PlanFile;
+  const raw = JSON.parse(readFileSync(/*turbopackIgnore: true*/ planPath, 'utf8')) as PlanFile;
   if (!raw?.days?.length) {
     throw new Error(`Empty plan at ${planPath}`);
   }

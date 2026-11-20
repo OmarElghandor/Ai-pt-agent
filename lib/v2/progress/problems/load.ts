@@ -8,15 +8,19 @@ import {
 import { loadPlan } from '@/lib/v2/generation/lesson/plan';
 
 const cache = new Map<string, ProblemsFile>();
+/** Test-only override (batch-rp-5 R5-3). */
+const testOverride = new Map<string, ProblemsFile>();
 
 function problemsPath(lang: string): string {
   return path.join(process.cwd(), 'content/v2', `problems.${lang}.json`);
 }
 
 export function loadProblemsFile(lang = 'pt-PT'): ProblemsFile {
+  const override = testOverride.get(lang);
+  if (override) return override;
   const hit = cache.get(lang);
   if (hit) return hit;
-  const raw = JSON.parse(readFileSync(problemsPath(lang), 'utf8'));
+  const raw = JSON.parse(readFileSync(/*turbopackIgnore: true*/ problemsPath(lang), 'utf8'));
   const parsed = ProblemsFileSchema.parse(raw);
   cache.set(lang, parsed);
   return parsed;
@@ -25,6 +29,15 @@ export function loadProblemsFile(lang = 'pt-PT'): ProblemsFile {
 /** Test helper / hot reload. */
 export function clearProblemsCache(): void {
   cache.clear();
+  testOverride.clear();
+}
+
+/** Inject a problems file for tests (empty list is valid). */
+export function setProblemsFileForTest(
+  file: ProblemsFile,
+  lang = 'pt-PT',
+): void {
+  testOverride.set(lang, file);
 }
 
 export function listProblems(lang = 'pt-PT'): Problem[] {
@@ -131,7 +144,7 @@ function loadCorePatternIds(lang: string): Set<string> {
       'content/v2/plan',
       `${lang}.core-items.json`,
     );
-    const raw = JSON.parse(readFileSync(file, 'utf8')) as {
+    const raw = JSON.parse(readFileSync(/*turbopackIgnore: true*/ file, 'utf8')) as {
       days?: Array<{ items?: Array<{ id?: string; kind?: string }> }>;
     };
     const ids = new Set<string>();
@@ -141,7 +154,7 @@ function loadCorePatternIds(lang: string): Set<string> {
       }
     }
     // Also collect introduces lists that may only list pattern ids.
-    const text = readFileSync(file, 'utf8');
+    const text = readFileSync(/*turbopackIgnore: true*/ file, 'utf8');
     for (const m of text.matchAll(/"pattern\.[a-z0-9_]+"/g)) {
       ids.add(m[0]!.slice(1, -1));
     }

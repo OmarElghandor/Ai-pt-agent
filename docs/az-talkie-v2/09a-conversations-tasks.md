@@ -6,7 +6,7 @@ Companion to `09-conversations.md`. That document says **what** and **why**; thi
 
 Give Cursor this prompt, replacing the task id:
 
-> Read docs/langify-v2/09-conversations.md (whole), docs/langify-v2/09a-conversations-tasks.md (only the task below and its dependencies), AGENTS.md and 00-decisions.md. Implement task **T-x.y only**. Do not start the next task. Follow 09 section 5 strictly: nothing may be added to the per-turn prompt beyond the six parts in 5.1. Reuse the modules listed in 09 section 10 instead of writing new ones. Write the tests the task asks for. Stop when "Done when" is met and list the files you changed.
+> Read docs/az-talkie-v2/09-conversations.md (whole), docs/az-talkie-v2/09a-conversations-tasks.md (only the task below and its dependencies), AGENTS.md and 00-decisions.md. Implement task **T-x.y only**. Do not start the next task. Follow 09 section 5 strictly: nothing may be added to the per-turn prompt beyond the six parts in 5.1. Reuse the modules listed in 09 section 10 instead of writing new ones. Write the tests the task asks for. Stop when "Done when" is met and list the files you changed.
 
 Rules for every task:
 
@@ -29,7 +29,7 @@ Milestones (what Omar can play):
 
 **T0.1 · Write the decisions**
 - Depends on: nothing.
-- Do: add "§9b Conversations" to `00-decisions.md` summarising 09 sections 2, 3, 5 and 7; mark the beat-based Phase 6 practice as superseded for new work (kept until cut-over); link 09 and 09a from `docs/langify-v2/README.md`.
+- Do: add "§9b Conversations" to `00-decisions.md` summarising 09 sections 2, 3, 5 and 7; mark the beat-based Phase 6 practice as superseded for new work (kept until cut-over); link 09 and 09a from `docs/az-talkie-v2/README.md`.
 - Done when: the three docs are updated and nothing else changed.
 
 ---

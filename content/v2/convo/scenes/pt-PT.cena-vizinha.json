@@ -1,256 +1,536 @@
 {
-  "source": "topic",
+  "id": "cena-vizinha",
   "kind": "scene",
-  "authored": true,
+  "format": 3,
   "target_lang": "pt-PT",
-  "topic_id": "cena-vizinha",
   "title_tl": "A vizinha do primeiro andar",
   "title_ar": "الجارة على السلم",
   "emoji": "🏢",
-  "scene_eg": "سلم العمارة. Dona Graça، جارتك الكبيرة، بتقابلك لأول مرة.",
-  "intro_eg": "عرّفها بنفسك: اسمك، إنت منين، بتشتغل إيه، وساكن في أنهي دور.",
-  "scene": {
-    "character_id": "graca",
-    "place": "Dona Graça is the older neighbour from the first floor, meeting the learner on the stairs",
-    "time_of_day": "afternoon",
-    "address": "formal"
+  "recommended_day": 20,
+  "mission_eg": "عرّف جارتك بنفسك: اسمك، ساكن في أنهي دور، إنت منين، وبتشتغل إيه.",
+  "character_id": "graca",
+  "address": "formal",
+  "opening_coach_eg": "💬 إنت على سلم العمارة، ودي Dona Graça جارتك الكبيرة. عرّفها بنفسك 🏢",
+  "opening": [
+    {
+      "tl": "Boa tarde! O senhor é o vizinho novo?",
+      "ar": "مساء الخير! هل أنت الجار الجديد؟",
+      "tl_f": "Boa tarde! A senhora é a vizinha nova?",
+      "ar_f": "مساء الخير! هل أنتِ الجارة الجديدة؟"
+    }
+  ],
+  "global": {
+    "greeting": {
+      "keywords": [
+        "bom dia",
+        "boa tarde",
+        "boa noite",
+        "olá",
+        "ola",
+        "tudo bem"
+      ],
+      "react": [
+        {
+          "tl": "Boa tarde! 😊",
+          "ar": "مساء الخير!"
+        }
+      ]
+    },
+    "thanks": {
+      "keywords": [
+        "obrigado",
+        "obrigada"
+      ],
+      "react": [
+        {
+          "tl": "De nada! 😊",
+          "ar": "عفوًا!"
+        }
+      ]
+    },
+    "side_unknown": {
+      "react": [
+        {
+          "tl": "Isso não sei, desculpe.",
+          "ar": "هذا لا أعرفه، عذرًا."
+        }
+      ]
+    }
   },
-  "opening": {
-    "tl": "Boa tarde! O senhor é o vizinho novo?",
-    "ar": "مساء الخير! هل أنت الجار الجديد؟",
-    "tl_f": "Boa tarde! A senhora é a vizinha nova?",
-    "ar_f": "مساء الخير! هل أنتِ الجارة الجديدة؟"
-  },
-  "closing": {
-    "tl": "Até logo! 👋",
-    "ar": "إلى اللقاء!"
-  },
+  "glossary": [
+    {
+      "ar": [
+        "اسمي",
+        "اسمى"
+      ],
+      "tl": "Chamo-me… = اسمي…"
+    },
+    {
+      "ar": [
+        "دور",
+        "طابق"
+      ],
+      "tl": "o andar = الدور · o segundo = التاني"
+    },
+    {
+      "ar": [
+        "شمال",
+        "يسار"
+      ],
+      "tl": "esquerdo = شمال"
+    },
+    {
+      "ar": [
+        "يمين"
+      ],
+      "tl": "direito = يمين"
+    },
+    {
+      "ar": [
+        "الأرضي",
+        "ارضي"
+      ],
+      "tl": "o rés-do-chão = الدور الأرضي"
+    },
+    {
+      "ar": [
+        "مصر"
+      ],
+      "tl": "Sou do Egito. = أنا من مصر"
+    },
+    {
+      "ar": [
+        "مصري",
+        "مصرية"
+      ],
+      "tl": "egípcio / egípcia = مصري / مصرية"
+    },
+    {
+      "ar": [
+        "طالب",
+        "طالبة"
+      ],
+      "tl": "sou estudante = أنا طالب"
+    },
+    {
+      "ar": [
+        "مهندس",
+        "مهندسة"
+      ],
+      "tl": "sou engenheiro / engenheira = مهندس / مهندسة"
+    },
+    {
+      "ar": [
+        "بشتغل",
+        "شغل"
+      ],
+      "tl": "trabalho… = بشتغل…"
+    },
+    {
+      "ar": [
+        "جديد",
+        "جديدة"
+      ],
+      "tl": "novo / nova = جديد / جديدة"
+    },
+    {
+      "ar": [
+        "تشرفنا",
+        "اتشرفت"
+      ],
+      "tl": "Muito prazer! = تشرفنا"
+    },
+    {
+      "ar": [
+        "لطيفة",
+        "ذوق"
+      ],
+      "tl": "muito simpática = لطيفة جدًا"
+    }
+  ],
   "goals": [
     {
-      "id": "vizinha.new_neighbour",
-      "tier": "core",
-      "intent_eg": "يسلّم ويقول أيوه",
-      "label_eg": "سلّم عليها",
-      "intent_en": "greet her and say yes",
-      "ask_tl": "Boa tarde! O senhor é o vizinho novo?",
-      "ask_ar": "مساء الخير! هل أنت الجار الجديد؟",
-      "ask_tl_f": "Boa tarde! A senhora é a vizinha nova?",
-      "ask_ar_f": "مساء الخير! هل أنتِ الجارة الجديدة؟",
-      "examples_tl": [
-        "Boa tarde! Sim, sou eu.",
-        "Sim, sou eu!",
-        "Boa tarde! Sim."
+      "id": "yes",
+      "label_eg": "قول أيوه",
+      "ask": [
+        {
+          "tl": "É o vizinho novo?",
+          "ar": "هل أنت الجار الجديد؟",
+          "tl_f": "É a vizinha nova?",
+          "ar_f": "هل أنتِ الجارة الجديدة؟"
+        }
       ],
-      "keywords": [
-        "sim",
-        "sou",
-        "boa tarde",
-        "olá",
-        "ola"
+      "options": [
+        {
+          "value": "sim",
+          "keywords": [
+            "sim",
+            "sou",
+            "novo",
+            "nova",
+            "sou eu"
+          ],
+          "examples": [
+            "Sim, sou eu! Boa tarde."
+          ],
+          "react": [
+            {
+              "tl": "Bem-vindo! Eu sou a Graça.",
+              "ar": "أهلًا بك! أنا غراسا.",
+              "tl_f": "Bem-vinda! Eu sou a Graça.",
+              "ar_f": "أهلًا بكِ! أنا غراسا."
+            }
+          ]
+        }
       ],
-      "help": {
-        "frame_tl": "Boa tarde! Sim, sou eu.",
-        "eg": "o vizinho novo = الجار الجديد. الستات الكبار بيقولوا o senhor / a senhora.",
-        "chips": [
-          "Boa tarde! Sim, sou eu.",
-          "Sim, sou eu!"
-        ]
-      }
+      "unclear": [
+        {
+          "tl": "Desculpe? É o vizinho novo?",
+          "ar": "عذرًا؟ هل أنت الجار الجديد؟",
+          "tl_f": "Desculpe? É a vizinha nova?",
+          "ar_f": "عذرًا؟ هل أنتِ الجارة الجديدة؟"
+        }
+      ],
+      "suggest": [
+        "Sim, sou eu! Boa tarde.",
+        "Sim, sou novo aqui."
+      ],
+      "suggest_f": [
+        "Sim, sou eu! Boa tarde.",
+        "Sim, sou nova aqui."
+      ],
+      "hint_words": "sou eu"
     },
     {
-      "id": "vizinha.name",
-      "tier": "core",
-      "intent_eg": "يقول اسمه وتشرفنا",
+      "id": "name",
       "label_eg": "قول اسمك",
-      "intent_en": "say their name and nice to meet you",
-      "ask_tl": "Bem-vindo! Eu sou a Graça, moro no primeiro andar. E o senhor, como se chama?",
-      "ask_ar": "أهلًا بك! أنا غراسا، أسكن في الطابق الأول. وأنت، ما اسمك؟",
-      "ask_tl_f": "Bem-vinda! Eu sou a Graça, moro no primeiro andar. E a senhora, como se chama?",
-      "ask_ar_f": "أهلًا بكِ! أنا غراسا، أسكن في الطابق الأول. وأنتِ، ما اسمكِ؟",
-      "examples_tl": [
-        "Muito prazer! Chamo-me Omar.",
-        "Muito prazer, Dona Graça. Sou o Omar.",
-        "Chamo-me Omar. Muito prazer!"
+      "ask": [
+        {
+          "tl": "E como se chama?",
+          "ar": "وما اسمك؟",
+          "ar_f": "وما اسمكِ؟"
+        }
       ],
-      "keywords": [
-        "chamo",
-        "prazer",
-        "sou o",
-        "sou a",
-        "nome"
+      "options": [
+        {
+          "value": "nome",
+          "keywords": [
+            "chamo",
+            "sou o",
+            "sou a",
+            "nome",
+            "é o",
+            "é a"
+          ],
+          "examples": [
+            "Chamo-me Omar.",
+            "Sou o Omar."
+          ],
+          "react": [
+            {
+              "tl": "Muito prazer, {name}! 😊",
+              "ar": "تشرفت يا {name}!"
+            }
+          ]
+        }
       ],
-      "help": {
-        "frame_tl": "Muito prazer! Chamo-me ___.",
-        "eg": "قول تشرفنا واسمك: Muito prazer! Chamo-me + اسمك",
-        "chips": [
-          "Muito prazer! Chamo-me Omar.",
-          "Muito prazer! Sou o Omar."
-        ]
-      }
+      "unclear": [
+        {
+          "tl": "Desculpe? Como se chama?",
+          "ar": "عذرًا؟ ما اسمك؟"
+        }
+      ],
+      "suggest": [
+        "Chamo-me Omar. Muito prazer!",
+        "Sou o Omar."
+      ],
+      "suggest_f": [
+        "Chamo-me Nour. Muito prazer!",
+        "Sou a Nour."
+      ],
+      "hint_words": "chamo-me"
     },
     {
-      "id": "vizinha.from",
-      "tier": "core",
-      "intent_eg": "يقول هو منين",
-      "label_eg": "قول إنت منين",
-      "intent_en": "say where they are from",
-      "ask_tl": "E de onde é?",
-      "ask_ar": "ومن أين أنت؟",
-      "examples_tl": [
+      "id": "flat",
+      "label_eg": "ساكن في أنهي دور",
+      "ask": [
+        {
+          "tl": "E mora em que andar?",
+          "ar": "وفي أي طابق تسكن؟",
+          "ar_f": "وفي أي طابق تسكنين؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "andar",
+          "keywords": [
+            "andar",
+            "primeiro",
+            "segundo",
+            "terceiro",
+            "quarto",
+            "esquerdo",
+            "direito",
+            "rés"
+          ],
+          "examples": [
+            "Moro no segundo esquerdo."
+          ],
+          "react": [
+            {
+              "tl": "Ah, então somos vizinhos de escada!",
+              "ar": "آه، إذن نحن جيران على نفس السلم!"
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Em que andar mora?",
+          "ar": "عذرًا؟ في أي طابق تسكن؟"
+        }
+      ],
+      "suggest": [
+        "Moro no segundo esquerdo.",
+        "No terceiro direito."
+      ],
+      "hint_words": "o segundo · esquerdo"
+    },
+    {
+      "id": "from",
+      "label_eg": "إنت منين",
+      "ask": [
+        {
+          "tl": "E é de onde?",
+          "ar": "ومن أين أنت؟",
+          "ar_f": "ومن أين أنتِ؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "egito",
+          "keywords": [
+            "egito",
+            "egípcio",
+            "egipcio",
+            "egípcia",
+            "egipcia",
+            "cairo",
+            "alexandria"
+          ],
+          "examples": [
+            "Sou do Egito."
+          ],
+          "react": [
+            {
+              "tl": "Do Egito! Que bonito… as pirâmides! 😍",
+              "ar": "من مصر! ما أجمل ذلك… الأهرامات!"
+            }
+          ]
+        },
+        {
+          "value": "outro",
+          "keywords": [
+            "sou do",
+            "sou da",
+            "sou de"
+          ],
+          "examples": [
+            "Sou de Marrocos."
+          ],
+          "react": [
+            {
+              "tl": "Que bom!",
+              "ar": "رائع!"
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? De onde é?",
+          "ar": "عذرًا؟ من أين أنت؟"
+        }
+      ],
+      "suggest": [
         "Sou do Egito.",
-        "Sou egípcio. Sou do Cairo.",
-        "Do Egito.",
-        "Sou egípcia. Sou do Cairo."
+        "Sou egípcio, do Cairo."
       ],
-      "keywords": [
-        "egito",
-        "egípci",
-        "egipci",
-        "cairo",
-        "alexandria",
-        "sou de",
-        "sou do"
+      "suggest_f": [
+        "Sou do Egito.",
+        "Sou egípcia, do Cairo."
       ],
-      "help": {
-        "frame_tl": "Sou do Egito.",
-        "eg": "de onde é = إنت منين. Sou do Egito.",
-        "chips": [
-          "Sou do Egito.",
-          "Sou egípcio, do Cairo."
-        ],
-        "chips_f": [
-          "Sou do Egito.",
-          "Sou egípcia, do Cairo."
-        ]
-      }
+      "hint_words": "sou do…"
     },
     {
-      "id": "vizinha.job",
-      "tier": "core",
-      "intent_eg": "يقول شغلته",
-      "label_eg": "قول بتشتغل إيه",
-      "intent_en": "say what their job is",
-      "ask_tl": "E o que faz?",
-      "ask_ar": "وماذا تعمل؟",
-      "examples_tl": [
-        "Sou engenheiro.",
-        "Sou estudante.",
-        "Trabalho num escritório.",
-        "Sou engenheira."
+      "id": "job",
+      "label_eg": "بتشتغل إيه",
+      "ask": [
+        {
+          "tl": "E trabalha cá em Lisboa?",
+          "ar": "وهل تعمل هنا في لشبونة؟",
+          "ar_f": "وهل تعملين هنا في لشبونة؟"
+        }
       ],
-      "keywords": [
-        "sou",
-        "trabalho",
-        "engenheir",
-        "estudante",
-        "professor",
-        "médic",
-        "medic"
+      "options": [
+        {
+          "value": "estudante",
+          "keywords": [
+            "estudante",
+            "estudo"
+          ],
+          "examples": [
+            "Não, sou estudante."
+          ],
+          "react": [
+            {
+              "tl": "Ah, estudante! Boa sorte! 📚",
+              "ar": "آه، طالب! بالتوفيق!",
+              "ar_f": "آه، طالبة! بالتوفيق!"
+            }
+          ]
+        },
+        {
+          "value": "trabalho",
+          "keywords": [
+            "trabalho",
+            "sim",
+            "engenheir",
+            "professor",
+            "médic",
+            "medic"
+          ],
+          "examples": [
+            "Sim, sou engenheiro.",
+            "Sim, trabalho num escritório."
+          ],
+          "react": [
+            {
+              "tl": "Que bom!",
+              "ar": "رائع!"
+            }
+          ]
+        }
       ],
-      "help": {
-        "frame_tl": "Sou ___.",
-        "eg": "O que faz? = بتشتغل إيه؟ Sou engenheiro. / Sou estudante.",
-        "chips": [
-          "Sou engenheiro.",
-          "Sou estudante."
-        ],
-        "chips_f": [
-          "Sou engenheira.",
-          "Sou estudante."
-        ]
-      }
+      "unclear": [
+        {
+          "tl": "Desculpe? Trabalha cá?",
+          "ar": "عذرًا؟ هل تعمل هنا؟"
+        }
+      ],
+      "suggest": [
+        "Sim, sou engenheiro.",
+        "Não, sou estudante."
+      ],
+      "suggest_f": [
+        "Sim, sou engenheira.",
+        "Não, sou estudante."
+      ],
+      "hint_words": "sou engenheiro · trabalho"
     },
     {
-      "id": "vizinha.flat",
-      "tier": "core",
-      "intent_eg": "يقول ساكن فين في العمارة",
-      "label_eg": "قول ساكن في أنهي دور",
-      "intent_en": "say which floor and flat they live in",
-      "ask_tl": "E mora no segundo esquerdo, não é?",
-      "ask_ar": "وتسكن في الطابق الثاني يسار، أليس كذلك؟",
-      "examples_tl": [
-        "Sim, moro no segundo esquerdo.",
-        "Não, moro no terceiro direito.",
-        "Sim, no segundo esquerdo."
+      "id": "help",
+      "label_eg": "اشكرها",
+      "ask": [
+        {
+          "tl": "Se precisar de alguma coisa, é só bater à porta, está bem?",
+          "ar": "إذا احتجت أي شيء، اطرق الباب فقط، حسنًا؟",
+          "ar_f": "إذا احتجتِ أي شيء، اطرقي الباب فقط، حسنًا؟"
+        }
       ],
-      "keywords": [
-        "moro",
-        "segundo",
-        "terceiro",
-        "primeiro",
-        "quarto",
-        "esquerdo",
-        "direito",
-        "sim",
-        "não"
+      "options": [
+        {
+          "value": "ok",
+          "keywords": [
+            "obrigado",
+            "obrigada",
+            "está bem",
+            "esta bem",
+            "simpátic",
+            "simpatic",
+            "sim"
+          ],
+          "examples": [
+            "Muito obrigado! A senhora é muito simpática."
+          ],
+          "react": [
+            {
+              "tl": "De nada, de nada.",
+              "ar": "عفوًا، عفوًا."
+            }
+          ]
+        }
       ],
-      "help": {
-        "frame_tl": "Sim, moro no segundo esquerdo.",
-        "eg": "العنوان في البرتغال: الدور + الشقة. segundo esquerdo = الدور التاني، الشمال · direito = اليمين.",
-        "chips": [
-          "Sim, moro no segundo esquerdo.",
-          "Não, moro no terceiro direito."
-        ]
-      }
+      "unclear": [
+        {
+          "tl": "Desculpe? Se precisar, é só bater à porta. Está bem?",
+          "ar": "عذرًا؟ إذا احتجت، اطرق الباب. حسنًا؟"
+        }
+      ],
+      "suggest": [
+        "Muito obrigado! A senhora é muito simpática.",
+        "Obrigado, Dona Graça!"
+      ],
+      "suggest_f": [
+        "Muito obrigada! A senhora é muito simpática.",
+        "Obrigada, Dona Graça!"
+      ],
+      "hint_words": "muito obrigado"
     },
     {
-      "id": "vizinha.bye",
-      "tier": "core",
-      "intent_eg": "يودّعها",
+      "id": "bye",
       "label_eg": "ودّعها",
-      "intent_en": "say goodbye",
-      "ask_tl": "Bem, vou às compras. Até logo!",
-      "ask_ar": "حسنًا، سأذهب للتسوق. إلى اللقاء!",
-      "examples_tl": [
+      "ask": [
+        {
+          "tl": "Bem, vou às compras. Até logo! 😊",
+          "ar": "حسنًا، سأذهب للتسوق. إلى اللقاء!"
+        }
+      ],
+      "options": [
+        {
+          "value": "bye",
+          "keywords": [
+            "até",
+            "ate",
+            "adeus",
+            "xau",
+            "tchau",
+            "obrigado",
+            "obrigada",
+            "bom dia",
+            "boa tarde",
+            "boa noite",
+            "igualmente",
+            "logo"
+          ],
+          "examples": [
+            "Até logo!"
+          ],
+          "react": []
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Até logo! 😊",
+          "ar": "إلى اللقاء!"
+        }
+      ],
+      "suggest": [
         "Até logo!",
-        "Até logo, Dona Graça!",
-        "Boa tarde! Até logo!"
+        "Até logo, Dona Graça!"
       ],
-      "keywords": [
-        "obrigad",
-        "adeus",
-        "até",
-        "ate",
-        "boa tarde",
-        "bom dia",
-        "xau",
-        "igualmente",
-        "logo"
-      ],
-      "help": {
-        "frame_tl": "Até logo!",
-        "eg": "Até logo = أشوفك بعدين",
-        "chips": [
-          "Até logo!",
-          "Até logo, Dona Graça!"
-        ]
-      },
+      "hint_words": "até logo",
       "farewell": true
     }
   ],
-  "suggested_words": [],
-  "required_items": [
-    "phrase.good_afternoon",
-    "phrase.my_name_is",
-    "phrase.nice_to_meet",
-    "phrase.youre_welcome",
-    "phrase.see_you_later",
-    "phrase.welcome",
-    "word.neighbour_m",
-    "word.door",
-    "phrase.im_egyptian",
-    "phrase.im_from_cairo",
-    "phrase.where_are_you_from",
-    "phrase.im_engineer",
-    "phrase.what_do_you_do",
-    "word.student",
-    "phrase.are_you_ok"
+  "end_tips_eg": [
+    "مع الكبار في السن استخدم «a senhora / o senhor» بدل «tu».",
+    "العنوان في البرتغال = الدور + الشقة: «2.º Esq.» = segundo esquerdo."
   ],
-  "new_items_tl": [
-    "o vizinho novo",
-    "o primeiro andar",
-    "o segundo esquerdo",
-    "é só bater à porta"
-  ],
-  "recommended_day": 20
+  "closing": [
+    {
+      "tl": "Até logo! 👋",
+      "ar": "إلى اللقاء!"
+    }
+  ]
 }

@@ -457,27 +457,37 @@ describe.skip('scenes FINAL SPEC §6–§8 T1–T22', () => {
     assert.equal(started.session.current_goal, 'cafe.order_drink');
   });
 
-  it('T19 · pay «com caráo» → contribuinte ask', async () => {
+  it('T19 · pay «com caráo» → close-but-wrong stop (batch-rp-4)', async () => {
     const { store, started } = await startCafe('t19');
     markDone(started.session, [
-      'cafe.order_drink',
-      'cafe.order_food',
-      'cafe.here_or_go',
-      'cafe.ask_price',
+      'order_drink',
+      'size',
+      'temp',
+      'sugar',
+      'order_food',
+      'water',
+      'water_type',
+      'here_or_go',
+      'ask_price',
     ]);
-    started.session.current_goal = 'cafe.pay';
+    started.session.current_goal = 'pay';
     started.session.last_exchanges = [
       { role: 'character', tl: 'Cartão ou dinheiro?' },
     ];
     await store.save(started.session);
     const { out, events } = await turn(store, started.session, 'com caráo', {
-      stub: { pt: 'Com cartão, muito bem.', goal: 'cafe.pay' },
+      stub: { pt: 'Com cartão, muito bem.', goal: 'pay' },
     });
+    assert.equal(out.session.current_goal, 'pay');
     assert.equal(
-      out.session.goals.find((g) => g.id === 'cafe.pay')?.status,
-      'done',
+      out.session.goals.find((g) => g.id === 'pay')?.status,
+      'open',
     );
-    assert.match(lastCharacterPt(events), /Quer fatura com contribuinte\?$/);
+    assert.equal(lastCharacterPt(events), '');
+    const coach = events.find(
+      (e) => e.type === 'coach' && e.moment === 'close_but_wrong',
+    );
+    assert.ok(coach);
   });
 
   it('T20 · reaction with invented «creme» dropped', async () => {

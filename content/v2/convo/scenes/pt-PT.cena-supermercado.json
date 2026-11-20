@@ -1,285 +1,628 @@
 {
-  "source": "topic",
+  "id": "cena-supermercado",
   "kind": "scene",
-  "authored": true,
+  "format": 3,
   "target_lang": "pt-PT",
-  "topic_id": "cena-supermercado",
   "title_tl": "No supermercado",
   "title_ar": "في السوبر ماركت",
   "emoji": "🛒",
-  "scene_eg": "سوبر ماركت جنب البيت. Rita بتساعدك تلاقي حاجة، وبعدين بتحاسبك على الكاشير.",
-  "intro_eg": "اسأل حاجة مكانها فين، وبعدين ادفع على الكاشير ورد على أسئلتها.",
-  "scene": {
-    "character_id": "rita",
-    "place": "Rita works at the supermarket: first she helps find a product, then she is at the till",
-    "time_of_day": "afternoon",
-    "address": "formal"
-  },
-  "opening": {
-    "tl": "Bom dia! Precisa de ajuda?",
-    "ar": "صباح الخير! هل تحتاج مساعدة؟"
-  },
-  "closing": {
-    "tl": "Boa tarde! 👋",
-    "ar": "مساءً سعيدًا!"
-  },
-  "goals": [
+  "recommended_day": 9,
+  "mission_eg": "اسأل حاجة مكانها فين، وبعدين على الكاشير: الكيس، الكارت، الـ contribuinte، والدفع.",
+  "character_id": "rita",
+  "address": "formal",
+  "opening_coach_eg": "💬 إنت في السوبر ماركت ومش لاقي حاجة. Rita بتشتغل هنا. اسألها الحاجة فين 🛒",
+  "opening": [
     {
-      "id": "supermercado.ask_where",
-      "tier": "core",
-      "intent_eg": "يسأل حاجة مكانها فين",
-      "label_eg": "اسأل حاجة مكانها فين",
-      "intent_en": "ask where a product is",
-      "ask_tl": "Boa tarde! Precisa de ajuda?",
-      "ask_ar": "مساء الخير! هل تحتاج مساعدة؟",
-      "examples_tl": [
-        "Sim! Onde fica o leite?",
-        "Desculpe, onde fica o arroz?",
-        "Onde estão os ovos?"
-      ],
+      "tl": "Bom dia! Precisa de ajuda? 😊",
+      "ar": "صباح الخير! هل تحتاج مساعدة؟"
+    }
+  ],
+  "global": {
+    "greeting": {
       "keywords": [
-        "onde",
-        "leite",
-        "pão",
-        "pao",
-        "ovo",
-        "arroz",
-        "queijo"
+        "bom dia",
+        "boa tarde",
+        "boa noite",
+        "olá",
+        "ola",
+        "tudo bem"
       ],
-      "help": {
-        "frame_tl": "Desculpe, onde fica o ___?",
-        "eg": "Precisa de ajuda? = محتاج مساعدة؟ اسأله: Onde fica + الحاجة?",
-        "chips": [
-          "Sim! Onde fica o leite?",
-          "Desculpe, onde fica o arroz?"
-        ]
-      }
-    },
-    {
-      "id": "supermercado.thanks",
-      "tier": "core",
-      "intent_eg": "يشكره",
-      "label_eg": "اشكرها",
-      "intent_en": "thank him and say goodbye",
-      "ask_tl": "Precisa de mais alguma coisa?",
-      "ask_ar": "هل تحتاج شيئًا آخر؟",
-      "examples_tl": [
-        "Obrigado!",
-        "Muito obrigado!",
-        "Obrigada!",
-        "Não, obrigado!",
-        "Não, obrigada!"
-      ],
-      "keywords": [
-        "obrigad",
-        "não",
-        "nao"
-      ],
-      "help": {
-        "frame_tl": "Obrigado!",
-        "eg": "اشكره: Obrigado! (ولو إنتي: Obrigada!)",
-        "chips": [
-          "Obrigado!",
-          "Muito obrigado!"
-        ],
-        "chips_f": [
-          "Obrigada!",
-          "Muito obrigada!"
-        ]
-      },
-      "facts_tl": [
-        "O leite e o queijo estão lá atrás.",
-        "O pão está ali, à entrada.",
-        "Os ovos e o arroz estão ali."
+      "react": [
+        {
+          "tl": "Bom dia! 😊",
+          "ar": "صباح الخير!"
+        }
       ]
     },
-    {
-      "id": "supermercado.bag",
-      "tier": "core",
-      "intent_eg": "يرد على الكيس",
-      "label_eg": "رد على الكيس",
-      "intent_en": "answer about the bag",
-      "ask_tl": "Precisa de saco?",
-      "ask_ar": "هل تحتاج كيسًا؟",
-      "examples_tl": [
-        "Sim, por favor.",
-        "Não, obrigado.",
-        "Sim, um saco, por favor."
-      ],
+    "thanks": {
       "keywords": [
-        "sim",
-        "não",
-        "nao",
-        "saco"
+        "obrigado",
+        "obrigada"
       ],
-      "help": {
-        "frame_tl": "Sim, por favor.",
-        "eg": "إنت دلوقتي على الكاشير مع Rita. o saco = الكيس (بفلوس هنا).",
-        "chips": [
-          "Sim, por favor.",
-          "Não, obrigado."
-        ],
-        "chips_f": [
-          "Sim, por favor.",
-          "Não, obrigada."
-        ]
-      }
+      "react": [
+        {
+          "tl": "De nada! 😊",
+          "ar": "عفوًا!"
+        }
+      ]
+    },
+    "side_unknown": {
+      "react": [
+        {
+          "tl": "Isso não sei, desculpe.",
+          "ar": "هذا لا أعرفه، عذرًا."
+        }
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "ar": [
+        "لبن",
+        "حليب"
+      ],
+      "tl": "o leite = اللبن"
     },
     {
-      "id": "supermercado.loyalty",
-      "tier": "core",
-      "intent_eg": "يرد على كارت العميل",
-      "label_eg": "رد على كارت العميل",
-      "intent_en": "answer about the loyalty card",
-      "ask_tl": "Tem cartão de cliente?",
-      "ask_ar": "هل لديك بطاقة عميل؟",
-      "examples_tl": [
+      "ar": [
+        "عيش",
+        "خبز"
+      ],
+      "tl": "o pão = العيش"
+    },
+    {
+      "ar": [
+        "بيض"
+      ],
+      "tl": "os ovos = البيض"
+    },
+    {
+      "ar": [
+        "رز",
+        "أرز"
+      ],
+      "tl": "o arroz = الرز"
+    },
+    {
+      "ar": [
+        "زيت"
+      ],
+      "tl": "o azeite = زيت الزيتون"
+    },
+    {
+      "ar": [
+        "فين"
+      ],
+      "tl": "Onde está…? = … فين؟"
+    },
+    {
+      "ar": [
+        "كيس",
+        "شنطة"
+      ],
+      "tl": "o saco = الكيس"
+    },
+    {
+      "ar": [
+        "كارت العميل",
+        "كارت النقط"
+      ],
+      "tl": "o cartão de cliente = كارت العميل"
+    },
+    {
+      "ar": [
+        "ضريبي",
+        "ضرايب"
+      ],
+      "tl": "o contribuinte = الرقم الضريبي"
+    },
+    {
+      "ar": [
+        "كارت",
+        "فيزا"
+      ],
+      "tl": "com cartão = بالكارت"
+    },
+    {
+      "ar": [
+        "كاش",
+        "فلوس"
+      ],
+      "tl": "em dinheiro = كاش"
+    },
+    {
+      "ar": [
+        "لأ",
+        "لا"
+      ],
+      "tl": "não, obrigado = لأ، شكرًا"
+    },
+    {
+      "ar": [
+        "معايا",
+        "عندي"
+      ],
+      "tl": "tenho = معايا"
+    },
+    {
+      "ar": [
+        "ممر",
+        "طرقة"
+      ],
+      "tl": "o corredor = الممر"
+    }
+  ],
+  "goals": [
+    {
+      "id": "find",
+      "label_eg": "اسأل حاجة فين",
+      "ask": [
+        {
+          "tl": "O que procura?",
+          "ar": "عمّ تبحث؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "leite",
+          "keywords": [
+            "leite"
+          ],
+          "examples": [
+            "Onde está o leite?"
+          ],
+          "react": [
+            {
+              "tl": "O leite está no corredor três, ao fundo. 👉",
+              "ar": "الحليب في الممر الثالث، في الآخر."
+            }
+          ]
+        },
+        {
+          "value": "pão",
+          "keywords": [
+            "pão",
+            "pao"
+          ],
+          "examples": [
+            "Onde está o pão?"
+          ],
+          "react": [
+            {
+              "tl": "O pão está à entrada, à direita. 👉",
+              "ar": "الخبز عند المدخل، على اليمين."
+            }
+          ]
+        },
+        {
+          "value": "ovos",
+          "keywords": [
+            "ovo",
+            "ovos"
+          ],
+          "examples": [
+            "Onde está o ovos?"
+          ],
+          "react": [
+            {
+              "tl": "Os ovos estão no corredor cinco. 👉",
+              "ar": "البيض في الممر الخامس."
+            }
+          ]
+        },
+        {
+          "value": "arroz",
+          "keywords": [
+            "arroz"
+          ],
+          "examples": [
+            "Onde está o arroz?"
+          ],
+          "react": [
+            {
+              "tl": "O arroz está no corredor dois. 👉",
+              "ar": "الأرز في الممر الثاني."
+            }
+          ]
+        },
+        {
+          "value": "azeite",
+          "keywords": [
+            "azeite"
+          ],
+          "examples": [
+            "Onde está o azeite?"
+          ],
+          "react": [
+            {
+              "tl": "O azeite está no corredor dois, ao lado do arroz. 👉",
+              "ar": "زيت الزيتون في الممر الثاني، بجانب الأرز."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? O que procura? Leite, pão…? 😊",
+          "ar": "عذرًا؟ عمّ تبحث؟ حليب، خبز…؟"
+        }
+      ],
+      "suggest": [
+        "Onde está o leite?",
+        "Desculpe, onde está o arroz?"
+      ],
+      "hint_words": "onde está · o leite"
+    },
+    {
+      "id": "more",
+      "label_eg": "حاجة تانية؟",
+      "ask": [
+        {
+          "tl": "Precisa de mais alguma coisa?",
+          "ar": "هل تحتاج شيئًا آخر؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "nada",
+          "keywords": [
+            "não",
+            "nao",
+            "nada",
+            "obrigado",
+            "obrigada",
+            "é tudo",
+            "e tudo"
+          ],
+          "examples": [
+            "Não, obrigado!"
+          ],
+          "react": [
+            {
+              "tl": "De nada! Quando quiser, venha à caixa. 😊",
+              "ar": "عفوًا! عندما تريد، تعال إلى الصندوق."
+            }
+          ]
+        },
+        {
+          "value": "outro",
+          "keywords": [
+            "procuro",
+            "também",
+            "tambem"
+          ],
+          "examples": [
+            "Também queria ovos. Onde estão?"
+          ],
+          "react": [
+            {
+              "tl": "Está ali, ao fundo. 👉 Quando quiser, venha à caixa.",
+              "ar": "إنه هناك في الآخر. عندما تريد، تعال إلى الصندوق."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Precisa de mais alguma coisa?",
+          "ar": "عذرًا؟ هل تحتاج شيئًا آخر؟"
+        }
+      ],
+      "suggest": [
+        "Não, obrigado!",
+        "Também queria ovos. Onde estão?"
+      ],
+      "suggest_f": [
+        "Não, obrigada!",
+        "Também queria ovos. Onde estão?"
+      ],
+      "hint_words": "não, obrigado · também"
+    },
+    {
+      "id": "bag",
+      "label_eg": "الكيس",
+      "ask": [
+        {
+          "tl": "Pronto, vamos lá. Precisa de saco?",
+          "ar": "حسنًا، هيا. هل تحتاج كيسًا؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "tenho",
+          "keywords": [
+            "tenho",
+            "trouxe"
+          ],
+          "examples": [
+            "Não, obrigado. Tenho saco."
+          ],
+          "react": [
+            {
+              "tl": "Ótimo!",
+              "ar": "رائع!"
+            }
+          ]
+        },
+        {
+          "value": "sim",
+          "keywords": [
+            "sim",
+            "preciso"
+          ],
+          "examples": [
+            "Sim, um saco, por favor."
+          ],
+          "react": [
+            {
+              "tl": "São dez cêntimos.",
+              "ar": "عشرة سنتات."
+            }
+          ]
+        },
+        {
+          "value": "não",
+          "keywords": [
+            "não",
+            "nao"
+          ],
+          "examples": [
+            "Não, obrigado."
+          ],
+          "react": [
+            {
+              "tl": "Muito bem.",
+              "ar": "حسنًا."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Precisa de saco?",
+          "ar": "عذرًا؟ هل تحتاج كيسًا؟"
+        }
+      ],
+      "suggest": [
+        "Sim, um saco, por favor.",
+        "Não, obrigado. Tenho saco."
+      ],
+      "suggest_f": [
+        "Sim, um saco, por favor.",
+        "Não, obrigada. Tenho saco."
+      ],
+      "hint_words": "o saco"
+    },
+    {
+      "id": "loyalty",
+      "label_eg": "كارت العميل",
+      "ask": [
+        {
+          "tl": "Tem cartão de cliente?",
+          "ar": "هل لديك بطاقة عميل؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "não",
+          "keywords": [
+            "não",
+            "nao"
+          ],
+          "examples": [
+            "Não, não tenho."
+          ],
+          "react": [
+            {
+              "tl": "Não faz mal.",
+              "ar": "لا بأس."
+            }
+          ]
+        },
+        {
+          "value": "sim",
+          "keywords": [
+            "sim",
+            "aqui está"
+          ],
+          "examples": [
+            "Sim, aqui está."
+          ],
+          "react": [
+            {
+              "tl": "Obrigada!",
+              "ar": "شكرًا!"
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? O cartão de cliente, tem?",
+          "ar": "عذرًا؟ بطاقة العميل، هل لديك؟"
+        }
+      ],
+      "suggest": [
         "Não, não tenho.",
-        "Não, obrigado.",
         "Sim, aqui está."
       ],
-      "keywords": [
-        "não",
-        "nao",
-        "sim",
-        "tenho"
-      ],
-      "help": {
-        "frame_tl": "Não, não tenho.",
-        "eg": "cartão de cliente = كارت النقط بتاع السوبر ماركت. معندكش؟ Não, não tenho.",
-        "chips": [
-          "Não, não tenho.",
-          "Sim, aqui está."
-        ]
-      }
+      "hint_words": "não tenho"
     },
     {
-      "id": "supermercado.contribuinte",
-      "tier": "core",
-      "intent_eg": "يرد على رقم الضرايب",
+      "id": "contribuinte",
       "label_eg": "رد على الـ contribuinte",
-      "intent_en": "answer about the tax number on the receipt",
-      "ask_tl": "Contribuinte?",
-      "ask_ar": "رقمك الضريبي؟",
-      "examples_tl": [
+      "coach_before_eg": "💬 contribuinte = رقمك الضريبي (NIF). هتسمعها في كل محل.",
+      "ask": [
+        {
+          "tl": "Contribuinte?",
+          "ar": "رقمك الضريبي؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "não",
+          "keywords": [
+            "não",
+            "nao",
+            "preciso"
+          ],
+          "examples": [
+            "Não, obrigado."
+          ],
+          "react": [
+            {
+              "tl": "Muito bem.",
+              "ar": "حسنًا."
+            }
+          ]
+        },
+        {
+          "value": "sim",
+          "keywords": [
+            "sim"
+          ],
+          "examples": [
+            "Sim, por favor."
+          ],
+          "react": [
+            {
+              "tl": "Pode marcar o número aqui. 👉",
+              "ar": "يمكنك إدخال الرقم هنا."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Quer o contribuinte na fatura?",
+          "ar": "عذرًا؟ هل تريد رقمك الضريبي على الفاتورة؟"
+        }
+      ],
+      "suggest": [
         "Não, obrigado.",
-        "Sim, por favor.",
-        "Não é preciso."
+        "Sim, por favor."
       ],
-      "keywords": [
-        "não",
-        "nao",
-        "sim",
-        "preciso"
+      "suggest_f": [
+        "Não, obrigada.",
+        "Sim, por favor."
       ],
-      "help": {
-        "frame_tl": "Não, obrigado.",
-        "eg": "Contribuinte؟ = عايز رقمك الضريبي على الفاتورة؟ هتسمعها في كل محل.",
-        "chips": [
-          "Não, obrigado.",
-          "Sim, por favor."
-        ],
-        "chips_f": [
-          "Não, obrigada.",
-          "Sim, por favor."
-        ]
-      }
+      "hint_words": "não, obrigado"
     },
     {
-      "id": "supermercado.pay",
-      "tier": "core",
-      "intent_eg": "يدفع",
+      "id": "pay",
       "label_eg": "ادفع",
-      "intent_en": "pay (card or cash)",
-      "ask_tl": "São doze euros e cinquenta. Cartão ou dinheiro?",
-      "ask_ar": "المجموع اثنا عشر يورو وخمسون سنتًا. بطاقة أم نقدًا؟",
-      "examples_tl": [
-        "Aceita cartão?",
+      "ask": [
+        {
+          "tl": "São doze euros e cinquenta. Cartão ou dinheiro?",
+          "ar": "المجموع اثنا عشر يورو وخمسون سنتًا. بطاقة أم نقدًا؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "cartão",
+          "keywords": [
+            "cartão",
+            "cartao",
+            "multibanco"
+          ],
+          "examples": [
+            "Com cartão, por favor."
+          ],
+          "react": [
+            {
+              "tl": "Pode passar o cartão. 💳",
+              "ar": "يمكنك تمرير البطاقة."
+            }
+          ]
+        },
+        {
+          "value": "dinheiro",
+          "keywords": [
+            "dinheiro",
+            "aqui tem",
+            "notas",
+            "trocos"
+          ],
+          "examples": [
+            "Em dinheiro."
+          ],
+          "react": [
+            {
+              "tl": "Obrigada. Aqui tem o troco.",
+              "ar": "شكرًا. تفضّل الباقي."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Cartão ou dinheiro?",
+          "ar": "عذرًا؟ بطاقة أم نقدًا؟"
+        }
+      ],
+      "suggest": [
         "Com cartão, por favor.",
         "Em dinheiro."
       ],
-      "keywords": [
-        "cartão",
-        "cartao",
-        "dinheiro",
-        "aqui tem",
-        "multibanco"
-      ],
-      "help": {
-        "frame_tl": "Aceita cartão?",
-        "eg": "بالكارت؟ Aceita cartão? · كاش؟ Em dinheiro.",
-        "chips": [
-          "Aceita cartão?",
-          "Em dinheiro."
-        ]
-      }
+      "hint_words": "cartão · dinheiro"
     },
     {
-      "id": "supermercado.bye",
-      "tier": "core",
-      "intent_eg": "يودّعها",
+      "id": "bye",
       "label_eg": "ودّعها",
-      "intent_en": "say goodbye",
-      "ask_tl": "Obrigada! Boa tarde!",
-      "ask_ar": "شكرًا! مساءً سعيدًا!",
-      "examples_tl": [
-        "Obrigado! Boa tarde!",
-        "Boa tarde! Adeus!",
-        "Obrigada, igualmente!"
+      "ask": [
+        {
+          "tl": "Obrigada! Bom dia! 😊",
+          "ar": "شكرًا! يومًا سعيدًا!"
+        }
       ],
-      "keywords": [
-        "obrigad",
-        "adeus",
-        "até",
-        "ate",
-        "bom dia",
-        "boa tarde",
-        "xau",
-        "igualmente"
+      "options": [
+        {
+          "value": "bye",
+          "keywords": [
+            "até",
+            "ate",
+            "adeus",
+            "xau",
+            "tchau",
+            "obrigado",
+            "obrigada",
+            "bom dia",
+            "boa tarde",
+            "boa noite",
+            "igualmente"
+          ],
+          "examples": [
+            "Obrigado! Bom dia!"
+          ],
+          "react": []
+        }
       ],
-      "help": {
-        "frame_tl": "Obrigado! Boa tarde!",
-        "eg": "ودّعها: Obrigado! Boa tarde!",
-        "chips": [
-          "Obrigado! Boa tarde!",
-          "Boa tarde!"
-        ],
-        "chips_f": [
-          "Obrigada! Boa tarde!",
-          "Boa tarde!"
-        ]
-      },
+      "unclear": [
+        {
+          "tl": "Bom dia! 😊",
+          "ar": "يومًا سعيدًا!"
+        }
+      ],
+      "suggest": [
+        "Obrigado! Bom dia!",
+        "Até logo!"
+      ],
+      "suggest_f": [
+        "Obrigada! Bom dia!",
+        "Até logo!"
+      ],
+      "hint_words": "bom dia",
       "farewell": true
     }
   ],
-  "suggested_words": [],
-  "required_items": [
-    "phrase.good_afternoon",
-    "phrase.good_morning",
-    "phrase.likewise",
-    "word.milk",
-    "phrase.youre_welcome",
-    "phrase.at_the_back",
-    "phrase.its_over_there",
-    "phrase.where_is_x",
-    "word.bread",
-    "word.cheese",
-    "word.rice",
-    "phrase.need_a_bag",
-    "phrase.its_x_euros",
-    "phrase.no_thanks",
-    "phrase.card_ok",
-    "phrase.cash",
-    "phrase.receipt_nif",
-    "word.change",
-    "phrase.excuse_me",
-    "word.number"
+  "end_tips_eg": [
+    "«Contribuinte?» = عايز رقمك الضريبي على الفاتورة؟ هتسمعها في كل محل.",
+    "الكيس في السوبر ماركت بفلوس (حوالي 10 سنت)."
   ],
-  "new_items_tl": [
-    "Precisa de ajuda?",
-    "cartão de cliente",
-    "Pode passar.",
-    "O terminal não está a funcionar."
-  ],
-  "recommended_day": 9
+  "closing": [
+    {
+      "tl": "Bom dia! 👋",
+      "ar": "يومًا سعيدًا!"
+    }
+  ]
 }

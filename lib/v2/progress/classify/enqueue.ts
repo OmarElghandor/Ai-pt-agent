@@ -41,6 +41,12 @@ export function enqueueClassifyError(opts: {
   promptText?: string;
   itemIds?: string[];
   patternIds?: string[];
+  /** Pair shown on the correction card («caráo → cartão»). */
+  mainError?: string;
+  /** Question key for weak-spot opening (role-play: tool_id). */
+  questionKey?: string;
+  /** Stub classifier (tests). */
+  client?: Parameters<typeof classifyMistake>[0]['client'];
 }): void {
   void (async () => {
     try {
@@ -56,7 +62,13 @@ export function enqueueClassifyError(opts: {
         promptText: opts.promptText,
         itemIds: opts.itemIds,
         patternIds: opts.patternIds,
-        client: allowModel ? undefined : null,
+        mainError: opts.mainError,
+        client:
+          opts.client !== undefined
+            ? opts.client
+            : allowModel
+              ? undefined
+              : null,
       });
       if (result.usedModel) bumpCap(opts.userId, opts.localDate);
       if (result.cardsOnly || !result.label) return;
@@ -101,6 +113,7 @@ export function enqueueClassifyError(opts: {
           wrong: opts.wrong,
           right: result.label.note_tl ?? opts.right,
           itemIds: opts.itemIds ?? [],
+          questionKey: opts.questionKey,
         });
       }
     } catch {

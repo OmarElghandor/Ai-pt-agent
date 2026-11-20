@@ -19,6 +19,12 @@ import type {
 } from '@/lib/v2/convo/turn/types';
 import { checkSceneGoals } from './check';
 import {
+  closeButWrongCoachEg,
+  detectCloseButWrong,
+  detectMissingAccentFix,
+  isAnswerWordInGoal,
+} from './closeButWrong';
+import {
   callSceneQwen,
   sceneQwenCandidatesFromOpen,
   validateSceneQwenResult,
@@ -33,8 +39,19 @@ import {
   isSceneRepeatRequest,
 } from './repeat';
 import { joinLines, pickVariantLine } from './variants';
-import { messageHasAnyKeyword, normalizeSceneText } from './weak';
+import {
+  messageHasAnyKeyword,
+  normalizeSceneText,
+  replaceWordInContext,
+} from './weak';
 import type { SceneLine } from '@/lib/v2/convo/goals/types';
+import type { SceneMistakePayload } from '@/lib/v2/answers/payload';
+import type { SceneMistakeWriter } from '@/lib/v2/convo/progress/sceneMistakeWriter';
+import {
+  diffWordPairs,
+  sceneMistakeAnswerId,
+  sceneMistakeKey,
+} from '@/lib/v2/answers/sceneMistakeHelpers';
 
 export type RunSceneTurnInput = {
   session: ConvoSession;
@@ -59,6 +76,10 @@ export type RunSceneTurnInput = {
   onSceneQwen?: (raw: SceneQwenResult | null) => void;
   /** @deprecated format-2 stub — ignored for format 3. */
   stubReaction?: { pt: string; ar?: string; goal?: string };
+  /** Learner curriculum day (batch-rp-5). Default session.lesson_day ?? 1. */
+  learnerDay?: number;
+  /** Server-side writer for role-play mistake pairs (batch-rp-5). */
+  writeMistake?: SceneMistakeWriter;
 };
 
 function pushExchange(
@@ -381,30 +402,161 @@ function normalizeForCorrectionCompare(text: string): string {
     .trim();
 }
 
+type CorrectionPairs = Array<{ wrong: string; right: string }>;
+
+function pairsForCorrection(
+  original: string,
+  corrected: string,
+  from?: string,
+  to?: string,
+): CorrectionPairs {
+  if (!corrected.trim()) return [];
+  if (
+    normalizeForCorrectionCompare(original) ===
+    normalizeForCorrectionCompare(corrected)
+  ) {
+    return [];
+  }
+  if (from?.trim() && to?.trim() && from.trim() !== to.trim()) {
+    return [{ wrong: from.trim(), right: to.trim() }];
+  }
+  return diffWordPairs(original, corrected);
+}
+
+function emitCorrectionCard(
+  emit: (e: ConvoTurnStreamEvent) => void,
+  opts: {
+    learnerTurnId: string;
+    original: string;
+    corrected: string;
+    noteEg?: string;
+    severity?: 'accent' | 'error';
+    from?: string;
+    to?: string;
+  },
+): CorrectionPairs {
+  const pairs = pairsForCorrection(
+    opts.original,
+    opts.corrected,
+    opts.from,
+    opts.to,
+  );
+  if (!opts.corrected.trim()) return [];
+  if (
+    normalizeForCorrectionCompare(opts.original) ===
+    normalizeForCorrectionCompare(opts.corrected)
+  ) {
+    return [];
+  }
+  const changes =
+    pairs.length > 0
+      ? pairs.map((p) => ({ from: p.wrong, to: p.right }))
+      : opts.from && opts.to
+        ? [{ from: opts.from, to: opts.to }]
+        : [];
+  const main = changes[0] ?? null;
+  emit({
+    type: 'correction',
+    learner_turn_id: opts.learnerTurnId,
+    severity: opts.severity ?? 'error',
+    corrected_tl: opts.corrected,
+    changes,
+    main_error: main
+      ? { from: main.from, to: main.to, type: 'spelling' }
+      : null,
+    note_eg: opts.noteEg ?? '',
+    ar: '',
+    original: opts.original,
+  });
+  return pairs;
+}
+
 function emitCorrectionFromQwen(
   emit: (e: ConvoTurnStreamEvent) => void,
   qwen: SceneQwenResult | null,
   learnerTurnId: string,
   original: string,
-): void {
-  if (!qwen?.has_error || !qwen.corrected?.trim()) return;
-  if (
-    normalizeForCorrectionCompare(original) ===
-    normalizeForCorrectionCompare(qwen.corrected)
-  ) {
-    return;
-  }
-  emit({
-    type: 'correction',
-    learner_turn_id: learnerTurnId,
-    severity: 'error',
-    corrected_tl: qwen.corrected,
-    changes: [],
-    main_error: null,
-    note_eg: qwen.note_eg || '',
-    ar: '',
+): CorrectionPairs {
+  if (!qwen?.has_error || !qwen.corrected?.trim()) return [];
+  return emitCorrectionCard(emit, {
+    learnerTurnId,
     original,
+    corrected: qwen.corrected,
+    noteEg: qwen.note_eg || '',
   });
+}
+
+function emitCloseButWrongStop(
+  emit: (e: ConvoTurnStreamEvent) => void,
+  opts: {
+    learnerTurnId: string;
+    original: string;
+    /** Learner's misspelled token (for the pair). */
+    fromWord: string;
+    answerWord: string;
+    correctedInContext: string;
+  },
+): CorrectionPairs {
+  emit({
+    type: 'coach',
+    id: 'scene_close_but_wrong',
+    eg: closeButWrongCoachEg(opts.answerWord),
+    moment: 'close_but_wrong',
+    suggest: [opts.correctedInContext],
+  });
+  return emitCorrectionCard(emit, {
+    learnerTurnId: opts.learnerTurnId,
+    original: opts.original,
+    corrected: opts.correctedInContext,
+    severity: 'error',
+    from: opts.fromWord,
+    to: opts.answerWord,
+    noteEg: closeButWrongCoachEg(opts.answerWord),
+  });
+}
+
+async function writeSceneMistakePairs(opts: {
+  writeMistake?: SceneMistakeWriter;
+  session: ConvoSession;
+  sceneId: string;
+  goalId: string;
+  promptTl: string;
+  learnerTl: string;
+  correctedTl: string;
+  pairs: CorrectionPairs;
+  stopped: boolean;
+  day: number;
+  turnKey: string;
+  /** Suggestion reuse — not a mistake (batch-rp-5 §1). */
+  skip?: boolean;
+}): Promise<void> {
+  if (!opts.writeMistake || opts.skip || !opts.pairs.length) return;
+  for (const pair of opts.pairs) {
+    const mistakeKey = sceneMistakeKey(pair.wrong, pair.right);
+    const payload: SceneMistakePayload = {
+      kind: 'scene_mistake',
+      answer_id: sceneMistakeAnswerId({
+        sessionId: opts.session.id,
+        turnKey: opts.turnKey,
+        mistakeKey,
+      }),
+      day: opts.day,
+      session_id: opts.session.id,
+      scene_id: opts.sceneId,
+      goal_id: opts.goalId,
+      prompt_tl: opts.promptTl,
+      learner_tl: opts.learnerTl,
+      corrected_tl: opts.correctedTl,
+      wrong: pair.wrong,
+      right: pair.right,
+      stopped: opts.stopped,
+    };
+    try {
+      await opts.writeMistake(payload);
+    } catch (err) {
+      console.error('[scene] mistake write failed', err);
+    }
+  }
 }
 
 function applyAssistedAndNextAsk(opts: {
@@ -493,6 +645,36 @@ export async function runSceneTurn(
   const openGoals = () => openGoalsFromSession(session, bank);
   const current =
     bank.goals.find((g) => g.id === session.current_goal) ?? openGoals()[0];
+  const learnerDay = input.learnerDay ?? session.lesson_day ?? 1;
+  const sceneId = session.topic_id ?? bank.topic_id ?? 'scene';
+  const turnKey = String(
+    (session.learner_lines?.length ?? 0) + (learnerText ? 1 : 0),
+  );
+  const lastCharacterForPrompt = () =>
+    session.last_exchanges.filter((e) => e.role === 'character').at(-1)?.tl ??
+    '';
+  const logPairs = async (args: {
+    goalId: string;
+    pairs: CorrectionPairs;
+    correctedTl: string;
+    stopped?: boolean;
+    skip?: boolean;
+  }) => {
+    await writeSceneMistakePairs({
+      writeMistake: input.writeMistake,
+      session,
+      sceneId,
+      goalId: args.goalId,
+      promptTl: lastCharacterForPrompt(),
+      learnerTl: learnerText,
+      correctedTl: args.correctedTl,
+      pairs: args.pairs,
+      stopped: args.stopped === true,
+      day: learnerDay,
+      turnKey,
+      skip: args.skip,
+    });
+  };
 
   // —— Step 1 · message type ——
   if (
@@ -630,6 +812,64 @@ export async function runSceneTurn(
   // —— Code match (rules 1–2) ——
   if (codeMatch.kind === 'DONE') {
     const furthestGoal = bank.goals.find((g) => g.id === codeMatch.furthestId)!;
+    const close = detectCloseButWrong(
+      learnerText,
+      furthestGoal,
+      codeMatch.optionValue,
+    );
+    if (close && !furthestGoal.farewell) {
+      const streak = session.scene_close_but_wrong_streak ?? 0;
+      if (streak < 1) {
+        // First close-but-wrong → stop; not a miss.
+        session.scene_close_but_wrong_streak = 1;
+        void (await qwenPromise);
+        const pairs = emitCloseButWrongStop(emit, {
+          learnerTurnId,
+          original: learnerText,
+          fromWord: close.hit.token,
+          answerWord: close.answerWord,
+          correctedInContext: close.correctedInContext,
+        });
+        await logPairs({
+          goalId: furthestGoal.id,
+          pairs,
+          correctedTl: close.correctedInContext,
+          stopped: true,
+        });
+        return finish(true);
+      }
+      // Second in a row → accept as assisted + correction card.
+      session.scene_close_but_wrong_streak = 0;
+      const { bubble, nextGoal } = applyDoneAndBuildBubble({
+        session,
+        bank,
+        doneIds: codeMatch.doneIds,
+        skippedIds: codeMatch.skippedIds,
+        furthestId: codeMatch.furthestId,
+        optionValue: codeMatch.optionValue,
+        gender,
+        assisted: true,
+      });
+      emitMatchBubble(bubble, nextGoal, codeMatch.furthestId);
+      void (await qwenPromise);
+      const pairs = emitCorrectionCard(emit, {
+        learnerTurnId,
+        original: learnerText,
+        corrected: close.correctedInContext,
+        severity: 'error',
+        from: close.hit.token,
+        to: close.answerWord,
+      });
+      // Second close-but-wrong is a new occurrence of the same pair.
+      await logPairs({
+        goalId: furthestGoal.id,
+        pairs,
+        correctedTl: close.correctedInContext,
+      });
+      return finish(true);
+    }
+
+    session.scene_close_but_wrong_streak = 0;
     const assisted = assistedFromSuggest(session);
     if (furthestGoal.farewell) {
       applySceneDoneGoals(
@@ -645,7 +885,18 @@ export async function runSceneTurn(
       );
       emitSceneDone(session, bank, emit, topicId, gender);
       const qwen = validateSceneQwenResult(await qwenPromise, candidates);
-      emitCorrectionFromQwen(emit, qwen, learnerTurnId, learnerText);
+      const pairs = emitCorrectionFromQwen(
+        emit,
+        qwen,
+        learnerTurnId,
+        learnerText,
+      );
+      await logPairs({
+        goalId: furthestGoal.id,
+        pairs,
+        correctedTl: qwen?.corrected ?? '',
+        skip: assisted,
+      });
       return finish(true);
     }
     const { bubble, nextGoal } = applyDoneAndBuildBubble({
@@ -660,7 +911,41 @@ export async function runSceneTurn(
     });
     emitMatchBubble(bubble, nextGoal, codeMatch.furthestId);
     const qwen = validateSceneQwenResult(await qwenPromise, candidates);
-    emitCorrectionFromQwen(emit, qwen, learnerTurnId, learnerText);
+    // Missing accents/cedilla → always show a correction card (Qwen or code).
+    const accent = detectMissingAccentFix(
+      learnerText,
+      furthestGoal,
+      codeMatch.optionValue,
+    );
+    if (qwen?.has_error && qwen.corrected?.trim()) {
+      const pairs = emitCorrectionFromQwen(
+        emit,
+        qwen,
+        learnerTurnId,
+        learnerText,
+      );
+      await logPairs({
+        goalId: furthestGoal.id,
+        pairs,
+        correctedTl: qwen.corrected,
+        skip: assisted,
+      });
+    } else if (accent) {
+      const pairs = emitCorrectionCard(emit, {
+        learnerTurnId,
+        original: learnerText,
+        corrected: accent.correctedInContext,
+        severity: 'accent',
+        from: accent.hit.token,
+        to: accent.answerWord,
+      });
+      await logPairs({
+        goalId: furthestGoal.id,
+        pairs,
+        correctedTl: accent.correctedInContext,
+        skip: assisted,
+      });
+    }
     return finish(true);
   }
 
@@ -689,7 +974,17 @@ export async function runSceneTurn(
       });
     }
     const qwen = validateSceneQwenResult(await qwenPromise, candidates);
-    emitCorrectionFromQwen(emit, qwen, learnerTurnId, learnerText);
+    const pairs = emitCorrectionFromQwen(
+      emit,
+      qwen,
+      learnerTurnId,
+      learnerText,
+    );
+    await logPairs({
+      goalId: current?.id ?? 'greeting',
+      pairs,
+      correctedTl: qwen?.corrected ?? '',
+    });
     return finish(true);
   }
 
@@ -718,7 +1013,17 @@ export async function runSceneTurn(
       });
     }
     const qwen = validateSceneQwenResult(await qwenPromise, candidates);
-    emitCorrectionFromQwen(emit, qwen, learnerTurnId, learnerText);
+    const pairs = emitCorrectionFromQwen(
+      emit,
+      qwen,
+      learnerTurnId,
+      learnerText,
+    );
+    await logPairs({
+      goalId: current.id,
+      pairs,
+      correctedTl: qwen?.corrected ?? '',
+    });
     return finish(true);
   }
 
@@ -732,6 +1037,78 @@ export async function runSceneTurn(
     if (idx >= 0) {
       const target = open[idx]!;
       if (!(target.farewell && idx !== 0)) {
+        // Qwen-only close-but-wrong: answer_word in options + misspelled → stop.
+        if (
+          qwen.answer_word &&
+          qwen.answer_word_misspelled &&
+          isAnswerWordInGoal(target, qwen.answer_word) &&
+          !target.farewell
+        ) {
+          const streak = session.scene_close_but_wrong_streak ?? 0;
+          const correctedInContext =
+            qwen.corrected?.trim() ||
+            replaceWordInContext(
+              learnerText,
+              learnerText.trim().split(/\s+/).at(-1) ?? qwen.answer_word,
+              qwen.answer_word,
+            );
+          if (streak < 1) {
+            session.scene_close_but_wrong_streak = 1;
+            const fromWord =
+              learnerText.trim().split(/\s+/).at(-1) ?? qwen.answer_word;
+            const pairs = emitCloseButWrongStop(emit, {
+              learnerTurnId,
+              original: learnerText,
+              fromWord,
+              answerWord: qwen.answer_word,
+              correctedInContext,
+            });
+            await logPairs({
+              goalId: target.id,
+              pairs,
+              correctedTl: correctedInContext,
+              stopped: true,
+            });
+            return finish(true);
+          }
+          session.scene_close_but_wrong_streak = 0;
+          const doneIdsQ: string[] = [];
+          const skippedIdsQ: string[] = [];
+          for (let i = 0; i <= idx; i++) {
+            const id = open[i]!.id;
+            if (id === qwen.goal) doneIdsQ.push(id);
+            else skippedIdsQ.push(id);
+          }
+          const { bubble, nextGoal } = applyDoneAndBuildBubble({
+            session,
+            bank,
+            doneIds: doneIdsQ,
+            skippedIds: skippedIdsQ,
+            furthestId: qwen.goal,
+            optionValue: qwen.option,
+            gender,
+            assisted: true,
+          });
+          emitMatchBubble(bubble, nextGoal, qwen.goal);
+          const fromWord =
+            learnerText.trim().split(/\s+/).at(-1) ?? qwen.answer_word;
+          const pairs = emitCorrectionCard(emit, {
+            learnerTurnId,
+            original: learnerText,
+            corrected: correctedInContext,
+            severity: 'error',
+            from: fromWord,
+            to: qwen.answer_word,
+          });
+          await logPairs({
+            goalId: target.id,
+            pairs,
+            correctedTl: correctedInContext,
+          });
+          return finish(true);
+        }
+
+        session.scene_close_but_wrong_streak = 0;
         const doneIds: string[] = [];
         const skippedIds: string[] = [];
         for (let i = 0; i <= idx; i++) {
@@ -747,7 +1124,18 @@ export async function runSceneTurn(
             optionValue: qwen.option,
           });
           emitSceneDone(session, bank, emit, topicId, gender);
-          emitCorrectionFromQwen(emit, qwen, learnerTurnId, learnerText);
+          const pairs = emitCorrectionFromQwen(
+            emit,
+            qwen,
+            learnerTurnId,
+            learnerText,
+          );
+          await logPairs({
+            goalId: target.id,
+            pairs,
+            correctedTl: qwen.corrected ?? '',
+            skip: assisted,
+          });
           return finish(true);
         }
         const { bubble, nextGoal } = applyDoneAndBuildBubble({
@@ -761,7 +1149,18 @@ export async function runSceneTurn(
           assisted,
         });
         emitMatchBubble(bubble, nextGoal, qwen.goal);
-        emitCorrectionFromQwen(emit, qwen, learnerTurnId, learnerText);
+        const pairs = emitCorrectionFromQwen(
+          emit,
+          qwen,
+          learnerTurnId,
+          learnerText,
+        );
+        await logPairs({
+          goalId: target.id,
+          pairs,
+          correctedTl: qwen.corrected ?? '',
+          skip: assisted,
+        });
         return finish(true);
       }
     }
@@ -786,11 +1185,22 @@ export async function runSceneTurn(
         hintGoal: current,
       });
     }
-    emitCorrectionFromQwen(emit, qwen, learnerTurnId, learnerText);
+    const pairs = emitCorrectionFromQwen(
+      emit,
+      qwen,
+      learnerTurnId,
+      learnerText,
+    );
+    await logPairs({
+      goalId: current.id,
+      pairs,
+      correctedTl: qwen.corrected ?? '',
+    });
     return finish(true);
   }
 
-  // Rule 7 · unclear + miss ladder
+  // Rule 7 · unclear + miss ladder — not a mistake for weak spots (R5-5).
+  session.scene_close_but_wrong_streak = 0;
   if (current) {
     const missesBefore = session.scene_misses ?? 0;
     const nextMiss = missesBefore + 1;

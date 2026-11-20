@@ -1,10 +1,10 @@
-# Langify ↔ ai-agent-talk v2 contract
+# Legacy Langify ↔ ai-agent-talk contract (historical)
 
-> **DEPRECATED.** Do not extend this contract. v2 is a single-repo app in `ai-agent-talk`: progress writes go through `POST /api/v2/answers`; grader and reactor are pure modules under `lib/v2/`. See [`docs/langify-v2/00-decisions.md`](langify-v2/00-decisions.md) §0 and §9, and [`01-architecture.md`](langify-v2/01-architecture.md). Phase 6 migrates useful logic from `/api/grade` and `/api/react` into `lib/v2`, then deletes those routes. This file remains only as a historical reference for the temporary HTTP endpoints.
+> **DEPRECATED.** Do not extend this contract. A-Z Talkie v2 is a single-repo app in `ai-agent-talk`: progress writes go through `POST /api/v2/answers`; grader and reactor are pure modules under `lib/v2/`. See [`docs/az-talkie-v2/00-decisions.md`](az-talkie-v2/00-decisions.md) §0 and §9, and [`01-architecture.md`](az-talkie-v2/01-architecture.md). Phase 6 migrates useful logic from `/api/grade` and `/api/react` into `lib/v2`, then deletes those routes. This file remains only as a historical reference for the temporary HTTP endpoints.
 
-Langify owns learner progress and calls this service for open grading and reactions. Mobile talks only to Langify (`POST /v2/answers`).
+Legacy Langify owned learner progress and called this service for open grading and reactions. Mobile talked only to Langify (`POST /v2/answers`).
 
-Tie-breaker: [`docs/langify-v2/00-decisions.md`](langify-v2/00-decisions.md) §9. Architecture: [`docs/langify-v2/01-architecture.md`](langify-v2/01-architecture.md).
+Tie-breaker: [`docs/az-talkie-v2/00-decisions.md`](az-talkie-v2/00-decisions.md) §9. Architecture: [`docs/az-talkie-v2/01-architecture.md`](az-talkie-v2/01-architecture.md).
 
 ## Auth
 

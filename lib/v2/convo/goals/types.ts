@@ -215,6 +215,11 @@ export type ConvoGoalIssue = {
     | 'opening'
     | 'closing'
     | 'farewell'
-    | 'kind';
+    | 'kind'
+    | 'match'
+    | 'ar'
+    | 'tl'
+    | 'react'
+    | 'format';
   message: string;
 };

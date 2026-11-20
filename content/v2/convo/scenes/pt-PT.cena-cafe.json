@@ -39,7 +39,8 @@
     },
     "thanks": {
       "keywords": [
-        "obrigad"
+        "obrigado",
+        "obrigada"
       ],
       "react": [
         {
@@ -429,8 +430,8 @@
       },
       "ask": [
         {
-          "tl": "Quente ou frio? Também temos com gelo. 🧊",
-          "ar": "ساخن أم بارد؟ لدينا أيضًا بالثلج."
+          "tl": "Também temos com gelo. 🧊 Quente ou frio?",
+          "ar": "لدينا أيضًا بالثلج. ساخن أم بارد؟"
         }
       ],
       "options": [
@@ -853,13 +854,11 @@
           "value": "tudo",
           "keywords": [
             "tudo",
-            "só isto",
-            "so isto",
-            "nada",
             "todo",
             "não",
             "nao",
-            "obrigad"
+            "obrigado",
+            "obrigada"
           ],
           "examples": [
             "É tudo, obrigado.",
@@ -1039,7 +1038,8 @@
             "adeus",
             "xau",
             "tchau",
-            "obrigad",
+            "obrigado",
+            "obrigada",
             "bom dia",
             "boa tarde"
           ],

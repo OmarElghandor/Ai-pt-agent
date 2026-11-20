@@ -5,7 +5,7 @@ alwaysApply: false
 ---
 # v2 UI
 
-- Design spec: `docs/langify-v2/05-design-system.md` and `06-screens.md`. The visual reference is `design/reference/01-content-page-possessives.png` (content pages) and `02-conjugation-endings.png` (verb pages), Warm Editorial look; Stitch HTML in `design/stitch-html/`. Never use colors from `design/archive-v4/`.
+- Design spec: `docs/az-talkie-v2/05-design-system.md` and `06-screens.md`. The visual reference is `design/reference/01-content-page-possessives.png` (content pages) and `02-conjugation-endings.png` (verb pages), Warm Editorial look; Stitch HTML in `design/stitch-html/`. Never use colors from `design/archive-v4/`.
 - Mobile-first web app: the v2 layout is RTL (`dir="rtl"`), with a 390px design width and a centered column of at most 480px. Target-language text is LTR per segment through RichText. Tokens are CSS variables via Tailwind 4 `@theme`; no hex values in components.
 - Fonts via next/font: Newsreader (display + target text), Noto Sans Arabic (all Arabic), Inter (UI Latin). Colors: cream paper, deep teal primary, coral actions, mustard notes — tokens in 05, never hex in components.
 - One tab bar: المسار · الكروت · المكتبة · أنا. No phone status bar drawn in screens. No English or Spanish UI strings; UI copy goes through i18n.

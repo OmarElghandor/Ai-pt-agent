@@ -1,204 +1,408 @@
 {
-  "source": "topic",
+  "id": "cena-encomenda",
   "kind": "scene",
-  "authored": true,
+  "format": 3,
   "target_lang": "pt-PT",
-  "topic_id": "cena-encomenda",
   "title_tl": "A encomenda",
   "title_ar": "الطرد على الباب",
   "emoji": "📦",
-  "scene_eg": "جرس الباب. عامل التوصيل بيتكلم بسرعة ومستعجل.",
-  "intro_eg": "استلم الطرد. لو ما فهمتش، اطلب منه يعيد أو يتكلم أبطأ.",
-  "scene": {
-    "character_id": "tiago",
-    "place": "Tiago is a delivery man at the learner's door, in a hurry",
-    "time_of_day": "afternoon",
-    "address": "formal"
+  "recommended_day": 11,
+  "mission_eg": "استلم الطرد من عامل التوصيل. ولو ما فهمتش، اطلب يعيد أو يتكلم أبطأ.",
+  "character_id": "tiago",
+  "address": "formal",
+  "opening_coach_eg": "💬 جرس الباب! ده عامل التوصيل ومعاه طرد ليك. ولو ما فهمتش كلامه قول: Pode repetir? 📦",
+  "opening": [
+    {
+      "tl": "Boa tarde! Tenho uma encomenda para {name}. É aqui?",
+      "ar": "مساء الخير! معي طرد باسم {name}. هل هو هنا؟"
+    }
+  ],
+  "global": {
+    "greeting": {
+      "keywords": [
+        "bom dia",
+        "boa tarde",
+        "boa noite",
+        "olá",
+        "ola",
+        "tudo bem"
+      ],
+      "react": [
+        {
+          "tl": "Boa tarde! 😊",
+          "ar": "مساء الخير!"
+        }
+      ]
+    },
+    "thanks": {
+      "keywords": [
+        "obrigado",
+        "obrigada"
+      ],
+      "react": [
+        {
+          "tl": "De nada! 😊",
+          "ar": "عفوًا!"
+        }
+      ]
+    },
+    "side_unknown": {
+      "react": [
+        {
+          "tl": "Isso não sei, desculpe.",
+          "ar": "هذا لا أعرفه، عذرًا."
+        }
+      ]
+    }
   },
-  "opening": {
-    "tl": "Boa tarde! Encomenda para {name}?",
-    "ar": "مساء الخير! طرد باسم {name}؟"
-  },
-  "closing": {
-    "tl": "Boa tarde! 👋",
-    "ar": "مساءً سعيدًا!"
-  },
+  "glossary": [
+    {
+      "ar": [
+        "أنا",
+        "انا ده"
+      ],
+      "tl": "sou eu = أنا"
+    },
+    {
+      "ar": [
+        "أمضي",
+        "امضي",
+        "إمضاء",
+        "توقيع"
+      ],
+      "tl": "assinar = يمضي · assino = أمضي"
+    },
+    {
+      "ar": [
+        "شاشة"
+      ],
+      "tl": "o ecrã = الشاشة"
+    },
+    {
+      "ar": [
+        "طرد",
+        "شحنة",
+        "أوردر"
+      ],
+      "tl": "a encomenda = الطرد"
+    },
+    {
+      "ar": [
+        "جار",
+        "جاري",
+        "جارنا"
+      ],
+      "tl": "o vizinho = الجار"
+    },
+    {
+      "ar": [
+        "شوية",
+        "شويه"
+      ],
+      "tl": "um pouco = شوية"
+    },
+    {
+      "ar": [
+        "أبطأ",
+        "براحة",
+        "بالراحة"
+      ],
+      "tl": "Mais devagar, por favor. = أبطأ من فضلك"
+    },
+    {
+      "ar": [
+        "تاني",
+        "عيد",
+        "كرر"
+      ],
+      "tl": "Pode repetir? = ممكن تعيد؟"
+    },
+    {
+      "ar": [
+        "مش فاهم",
+        "مفهمتش"
+      ],
+      "tl": "Não percebi. = ما فهمتش"
+    },
+    {
+      "ar": [
+        "أكيد",
+        "طبعا",
+        "طبعًا"
+      ],
+      "tl": "claro = طبعًا"
+    },
+    {
+      "ar": [
+        "آسف",
+        "معلش"
+      ],
+      "tl": "desculpe = آسف"
+    }
+  ],
   "goals": [
     {
-      "id": "encomenda.its_me",
-      "tier": "core",
-      "intent_eg": "يقول ده هو",
+      "id": "its_me",
       "label_eg": "قول إنه إنت",
-      "intent_en": "say yes, it's me",
-      "ask_tl": "Boa tarde! Encomenda para {name}?",
-      "ask_ar": "مساء الخير! طرد باسم {name}؟",
-      "examples_tl": [
+      "ask": [
+        {
+          "tl": "É aqui?",
+          "ar": "هل هو هنا؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "sim",
+          "keywords": [
+            "sim",
+            "sou eu",
+            "é aqui",
+            "e aqui"
+          ],
+          "examples": [
+            "Sim, sou eu."
+          ],
+          "react": [
+            {
+              "tl": "Ótimo!",
+              "ar": "رائع!"
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? A encomenda é para si?",
+          "ar": "عذرًا؟ هل الطرد لك؟",
+          "ar_f": "عذرًا؟ هل الطرد لكِ؟"
+        }
+      ],
+      "suggest": [
         "Sim, sou eu.",
-        "Boa tarde! Sou eu.",
-        "Sim, sim!"
+        "Sim, é aqui."
       ],
-      "keywords": [
-        "sim",
-        "sou eu"
-      ],
-      "help": {
-        "frame_tl": "Sim, sou eu.",
-        "eg": "a encomenda = الطرد. Sou eu = أنا (هو ده أنا).",
-        "chips": [
-          "Sim, sou eu.",
-          "Boa tarde! Sou eu."
-        ]
-      }
+      "hint_words": "sou eu"
     },
     {
-      "id": "encomenda.sign",
-      "tier": "core",
-      "intent_eg": "يطلب يعيد أو يوافق",
-      "label_eg": "اطلب يعيد لو ما فهمتش",
-      "intent_en": "ask him to repeat or speak slower, or agree",
-      "ask_tl": "Preciso que assine aqui no ecrã, se faz favor. Pode ser?",
-      "ask_ar": "أحتاج أن توقّع هنا على الشاشة من فضلك. هل يمكن؟",
-      "examples_tl": [
-        "Desculpe, pode repetir?",
-        "Mais devagar, por favor.",
-        "Está bem."
+      "id": "sign",
+      "label_eg": "امضي",
+      "ask": [
+        {
+          "tl": "Preciso que assine aqui no ecrã, se faz favor. Pode ser?",
+          "ar": "أحتاج أن توقّع هنا على الشاشة من فضلك. هل يمكن؟"
+        }
       ],
-      "keywords": [
-        "repetir",
-        "devagar",
-        "percebo",
-        "desculpe",
-        "está bem",
-        "sim",
-        "claro"
+      "options": [
+        {
+          "value": "ok",
+          "keywords": [
+            "sim",
+            "claro",
+            "pode",
+            "está bem",
+            "esta bem",
+            "ok",
+            "assino"
+          ],
+          "examples": [
+            "Claro.",
+            "Sim, está bem."
+          ],
+          "react": [
+            {
+              "tl": "Obrigado. ✍️",
+              "ar": "شكرًا."
+            }
+          ]
+        }
       ],
-      "help": {
-        "frame_tl": "Desculpe, pode repetir?",
-        "eg": "ما فهمتش؟ ده أهم موقف: اطلب يعيد. البرتغاليين بيتكلموا بسرعة ومش هيزعلوا.",
-        "chips": [
-          "Desculpe, pode repetir?",
-          "Mais devagar, por favor."
-        ]
-      },
-      "cue_eg": "قال جملة طويلة بسرعة. لو ما فهمتش، اطلب منه يعيد أو يبطّأ."
+      "unclear": [
+        {
+          "tl": "Desculpe? Assine aqui, se faz favor. Pode ser?",
+          "ar": "عذرًا؟ وقّع هنا من فضلك. هل يمكن؟"
+        }
+      ],
+      "suggest": [
+        "Claro.",
+        "Sim, está bem."
+      ],
+      "hint_words": "claro · assinar"
     },
     {
-      "id": "encomenda.speak_pt",
-      "tier": "core",
-      "intent_eg": "يقول بيتكلم شوية",
-      "label_eg": "قول بتتكلم برتغالي شوية",
-      "intent_en": "say they speak a little Portuguese",
-      "ask_tl": "O senhor fala português?",
-      "ask_ar": "هل تتكلم البرتغالية؟",
-      "ask_tl_f": "A senhora fala português?",
-      "ask_ar_f": "هل تتكلمين البرتغالية؟",
-      "examples_tl": [
+      "id": "speak_pt",
+      "label_eg": "بتتكلم برتغالي؟",
+      "ask": [
+        {
+          "tl": "O senhor fala português?",
+          "ar": "هل تتكلم البرتغالية؟",
+          "tl_f": "A senhora fala português?",
+          "ar_f": "هل تتكلمين البرتغالية؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "pouco",
+          "keywords": [
+            "pouco",
+            "falo",
+            "sim"
+          ],
+          "examples": [
+            "Falo um pouco."
+          ],
+          "react": [
+            {
+              "tl": "Fala muito bem! 😄",
+              "ar": "تتكلم جيدًا جدًا!",
+              "ar_f": "تتكلمين جيدًا جدًا!"
+            }
+          ]
+        },
+        {
+          "value": "não",
+          "keywords": [
+            "não",
+            "nao"
+          ],
+          "examples": [
+            "Não muito, desculpe."
+          ],
+          "react": [
+            {
+              "tl": "Não faz mal, eu falo devagar.",
+              "ar": "لا بأس، سأتكلم ببطء."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Fala português?",
+          "ar": "عذرًا؟ هل تتكلم البرتغالية؟"
+        }
+      ],
+      "suggest": [
         "Falo um pouco.",
-        "Sim, um pouco.",
-        "Falo um pouco, desculpe."
+        "Não muito, desculpe."
       ],
-      "keywords": [
-        "falo",
-        "pouco",
-        "sim",
-        "não",
-        "nao"
-      ],
-      "help": {
-        "frame_tl": "Falo um pouco.",
-        "eg": "Falo um pouco = بتكلم شوية",
-        "chips": [
-          "Falo um pouco.",
-          "Sim, um pouco."
-        ]
-      }
+      "hint_words": "um pouco"
     },
     {
-      "id": "encomenda.neighbour_parcel",
-      "tier": "core",
-      "intent_eg": "يوافق يستلم طرد جاره أو يعتذر",
-      "label_eg": "رد على طرد الجار",
-      "intent_en": "agree to keep the neighbour's parcel, or decline",
-      "ask_tl": "Olhe, tenho outra para o vizinho do segundo esquerdo. Pode ficar com ela?",
-      "ask_ar": "انظر، معي طرد آخر لجار الطابق الثاني يسار. هل يمكنك الاحتفاظ به؟",
-      "examples_tl": [
-        "Sim, pode ser.",
+      "id": "neighbour",
+      "label_eg": "طرد الجار",
+      "coach_before_eg": "💬 segundo esquerdo = الدور التاني شمال. عامل التوصيل عايزك تستلم طرد جارك.",
+      "ask": [
+        {
+          "tl": "Tenho outra encomenda para o vizinho do segundo esquerdo. Pode ficar com ela?",
+          "ar": "معي طرد آخر لجار الطابق الثاني يسار. هل يمكنك الاحتفاظ به؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "sim",
+          "keywords": [
+            "sim",
+            "pode",
+            "posso",
+            "claro",
+            "fico"
+          ],
+          "examples": [
+            "Sim, posso ficar com ela."
+          ],
+          "react": [
+            {
+              "tl": "Muito obrigado! Aqui está. 📦",
+              "ar": "شكرًا جزيلًا! تفضّل."
+            }
+          ]
+        },
+        {
+          "value": "não",
+          "keywords": [
+            "não",
+            "nao"
+          ],
+          "examples": [
+            "Não, desculpe."
+          ],
+          "react": [
+            {
+              "tl": "Não faz mal, eu volto amanhã.",
+              "ar": "لا بأس، سأعود غدًا."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? A encomenda do vizinho, pode ficar com ela?",
+          "ar": "عذرًا؟ طرد الجار، هل يمكنك الاحتفاظ به؟"
+        }
+      ],
+      "suggest": [
+        "Sim, posso ficar com ela.",
         "Não, desculpe."
       ],
-      "keywords": [
-        "sim",
-        "pode",
-        "não",
-        "nao",
-        "desculpe"
-      ],
-      "help": {
-        "frame_tl": "Sim, pode ser.",
-        "eg": "ده بيحصل كتير هنا: الجيران بيستلموا لبعض. segundo esquerdo = الدور التاني، الشقة الشمال.",
-        "chips": [
-          "Sim, pode ser.",
-          "Não, desculpe."
-        ]
-      }
+      "hint_words": "posso · não, desculpe"
     },
     {
-      "id": "encomenda.bye",
-      "tier": "core",
-      "intent_eg": "يودّعه",
+      "id": "bye",
       "label_eg": "ودّعه",
-      "intent_en": "say goodbye",
-      "ask_tl": "Obrigado e boa tarde!",
-      "ask_ar": "شكرًا ومساءً سعيدًا!",
-      "examples_tl": [
+      "ask": [
+        {
+          "tl": "Boa tarde, então! 😊",
+          "ar": "مساءً سعيدًا إذن!"
+        }
+      ],
+      "options": [
+        {
+          "value": "bye",
+          "keywords": [
+            "até",
+            "ate",
+            "adeus",
+            "xau",
+            "tchau",
+            "obrigado",
+            "obrigada",
+            "bom dia",
+            "boa tarde",
+            "boa noite",
+            "igualmente"
+          ],
+          "examples": [
+            "Obrigado! Boa tarde!"
+          ],
+          "react": []
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Boa tarde! 😊",
+          "ar": "مساءً سعيدًا!"
+        }
+      ],
+      "suggest": [
         "Obrigado! Boa tarde!",
-        "Boa tarde!",
-        "Obrigada! Igualmente!"
+        "Igualmente!"
       ],
-      "keywords": [
-        "obrigad",
-        "adeus",
-        "até",
-        "ate",
-        "boa tarde",
-        "bom dia",
-        "xau",
-        "igualmente"
+      "suggest_f": [
+        "Obrigada! Boa tarde!",
+        "Igualmente!"
       ],
-      "help": {
-        "frame_tl": "Obrigado! Boa tarde!",
-        "eg": "ودّعه: Obrigado! Boa tarde!",
-        "chips": [
-          "Obrigado! Boa tarde!",
-          "Igualmente!"
-        ],
-        "chips_f": [
-          "Obrigada! Boa tarde!",
-          "Igualmente!"
-        ]
-      },
+      "hint_words": "boa tarde",
       "farewell": true
     }
   ],
-  "suggested_words": [],
-  "required_items": [
-    "phrase.good_afternoon",
-    "phrase.likewise",
-    "phrase.a_little",
-    "phrase.can_you_repeat",
-    "phrase.do_you_speak_pt",
-    "phrase.excuse_me",
-    "phrase.i_dont_understand",
-    "phrase.slower",
-    "phrase.no_problem",
-    "word.neighbour_m",
-    "phrase.are_you_ok"
+  "end_tips_eg": [
+    "«Pode repetir?» و«Mais devagar» أهم جملتين في أول شهور. البرتغاليين بيتكلموا بسرعة ومش بيزعلوا لما تطلب تعيد.",
+    "الجيران هنا بيستلموا الطرود لبعض كتير."
   ],
-  "new_items_tl": [
-    "Sou eu.",
-    "a encomenda",
-    "assinar",
-    "o ecrã",
-    "Pode ficar com ela?"
-  ],
-  "recommended_day": 11
+  "closing": [
+    {
+      "tl": "Boa tarde! 👋",
+      "ar": "مساءً سعيدًا!"
+    }
+  ]
 }

@@ -5,7 +5,7 @@ alwaysApply: false
 ---
 # Content and generation
 
-- Spec: `docs/langify-v2/02-content-schema.md` (fields in English, text in Arabic) and `03-generation-and-learning.md`. Example: `examples/day06-example.json`, which must always pass the validator.
+- Spec: `docs/az-talkie-v2/02-content-schema.md` (fields in English, text in Arabic) and `03-generation-and-learning.md`. Example: `examples/day06-example.json`, which must always pass the validator.
 - Four layers: lesson → page → block → item. Items are written once in the item bank; blocks reference them by id. Item ids are semantic and permanent.
 - Exactly 14 block types: heading, cards, table, compare, vs_pairs, formula, examples, tip, rules_list, dialogue, scene, panel, timeline, practice. No new types and no nesting.
 - Page modes: guided (12–20 steps, no ask in the first 3, an ask at least every 4), explore (controls: reveal_axis, swap, unlock; with locked_until) and static.

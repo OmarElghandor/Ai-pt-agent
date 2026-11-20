@@ -131,6 +131,11 @@ export type ConvoSession = {
   scene_hint_level?: 0 | 1 | 2 | 3 | 4;
   /** Scene: any suggest was shown on the current goal → assisted on complete. */
   scene_suggest_shown?: boolean;
+  /**
+   * batch-rp-4: consecutive close-but-wrong answers on the current goal.
+   * First → stop; second → accept as assisted.
+   */
+  scene_close_but_wrong_streak?: number;
   /** Scene: goal ids whose coach_before_eg was shown or dropped. */
   scene_coach_before_consumed?: string[];
   /** Scene: character bubbles since last coach_before shown. */
