@@ -182,18 +182,60 @@ function validateFormat3SceneBank(bank: ConvoGoalBank): ConvoGoalIssue[] {
         message: 'format 3 goal needs 2 suggest chips',
       });
     }
-    if (
-      !g.hints?.what_eg?.trim() ||
-      !g.hints?.words_eg?.trim() ||
-      !g.hints?.frame_tl?.trim()
-    ) {
+    if (!g.hint_words?.trim()) {
       issues.push({
-        path: `goals[${i}].hints`,
+        path: `goals[${i}].hint_words`,
         rule: 'help',
-        message: 'format 3 goal needs hints {what_eg, words_eg, frame_tl}',
+        message: 'format 3 goal needs hint_words',
       });
     }
+    if (g.only_if) {
+      if (!g.only_if.goal?.trim() || !g.only_if.options?.length) {
+        issues.push({
+          path: `goals[${i}].only_if`,
+          rule: 'shape',
+          message: 'only_if needs goal + options[]',
+        });
+      } else if (!seen.has(g.only_if.goal) && g.only_if.goal !== g.id) {
+        const prior = goals.some(
+          (x, j) => j < i && x.id === g.only_if!.goal,
+        );
+        if (!prior) {
+          issues.push({
+            path: `goals[${i}].only_if.goal`,
+            rule: 'shape',
+            message: `only_if.goal "${g.only_if.goal}" must be an earlier goal`,
+          });
+        }
+      }
+    }
   });
+
+  if (bank.end_tips_eg != null) {
+    if (
+      !Array.isArray(bank.end_tips_eg) ||
+      bank.end_tips_eg.length < 1 ||
+      bank.end_tips_eg.length > 2
+    ) {
+      issues.push({
+        path: 'end_tips_eg',
+        rule: 'shape',
+        message: 'end_tips_eg needs 1–2 tips',
+      });
+    }
+  }
+
+  if (bank.glossary) {
+    bank.glossary.forEach((entry, i) => {
+      if (!entry.tl?.trim() || !entry.ar?.length) {
+        issues.push({
+          path: `glossary[${i}]`,
+          rule: 'shape',
+          message: 'glossary entry needs ar[] and tl',
+        });
+      }
+    });
+  }
 
   return issues;
 }

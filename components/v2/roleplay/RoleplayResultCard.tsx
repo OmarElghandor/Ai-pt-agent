@@ -8,6 +8,8 @@ export type RoleplayResultState = {
   key_phrases: string[];
   corrections: Array<{ tl: string; ar?: string }>;
   summary_eg: string;
+  /** Format 3 culture tips from the scene bank. */
+  end_tips_eg?: string[];
 };
 
 type Props = {
@@ -67,6 +69,19 @@ export function RoleplayResultCard({
       <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
         {result.summary_eg}
       </p>
+      {result.end_tips_eg?.length ? (
+        <ul className="flex flex-col gap-2">
+          {result.end_tips_eg.map((tip) => (
+            <li
+              key={tip}
+              className="rounded-v2-row bg-v2-paper px-3 py-2 font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink ring-1 ring-v2-line"
+              dir="rtl"
+            >
+              {tip}
+            </li>
+          ))}
+        </ul>
+      ) : null}
       <div className="mt-2 flex flex-col gap-2">
         {nextSituationId ? (
           <Link

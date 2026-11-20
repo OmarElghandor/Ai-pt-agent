@@ -128,12 +128,12 @@ describe.skip('scenes S2 · ordered goal matching', () => {
 
 describe('scenes S2 · numbers + open ending', () => {
   it('detects price words in ask_tl and requires them in the reply', () => {
-    const ask = 'São dois euros e sessenta. Cartão ou dinheiro?';
-    assert.ok(numberWordsInAsk(ask).includes('dois'));
-    assert.ok(numberWordsInAsk(ask).includes('sessenta'));
+    const ask = 'São três euros e dez. Cartão ou dinheiro?';
+    assert.ok(numberWordsInAsk(ask).includes('tres'));
+    assert.ok(numberWordsInAsk(ask).includes('dez'));
     assert.ok(numberWordsInAsk(ask).includes('euros'));
     assert.equal(
-      replyKeepsAskNumbers('São dois euros e sessenta. Cartão?', ask),
+      replyKeepsAskNumbers('São três euros e dez. Cartão?', ask),
       true,
     );
     assert.equal(
@@ -192,19 +192,28 @@ describe('scenes S2 · prompt + persona', () => {
   });
 });
 
-describe('scenes S2 · free-talk engine branches', () => {
+describe('scenes S2 · free-talk engine branches (format 3)', () => {
+  const OTHER = {
+    kind: 'other' as const,
+    goal: null,
+    option: null,
+    corrected: '',
+    has_error: false,
+    note_eg: '',
+  };
+
   it('starts cena-cafe directly with opening and no intro coach', async () => {
     const { started } = await startCafe('u-scene-s2');
     assert.equal(started.resumed, false);
     assert.equal(started.session.topic_id, 'cena-cafe');
     assert.equal(started.session.topic_locked, true);
-    assert.equal(started.session.current_goal, 'cafe.order_drink');
+    assert.equal(started.session.current_goal, 'order_drink');
     assert.equal(started.opening.coach_intros.length, 0);
     assert.match(started.opening.character.tl, /Bom dia/i);
     assert.equal(started.session.character_id, 'manuel');
   });
 
-  it('quero um cafe completes order_drink; reaction + Mais alguma coisa?', async () => {
+  it('quero um cafe completes order_drink; react + size ask', async () => {
     const { store, started } = await startCafe('u-scene-s2b');
     const events: Array<{ type: string; [k: string]: unknown }> = [];
     const out = await runFreeConvoTurn({
@@ -212,129 +221,101 @@ describe('scenes S2 · free-talk engine branches', () => {
       learnerText: 'quero um cafe',
       store,
       model: createStubConvoStreamModel({
-        byCandidate: () =>
-          'Um café? Claro! 😊\nAR: قهوة؟ طبعاً!\nGOALS: cafe.order_drink',
+        byCandidate: () => 'SHOULD_NOT_REACH_BUBBLE',
       }),
       emit: (e) => events.push(e as { type: string }),
       learnerGender: 'm',
+      stubSceneQwen: OTHER,
       freeTextGrader: stubGrader,
     });
     assert.equal(
-      out.session.goals.find((g) => g.id === 'cafe.order_drink')?.status,
+      out.session.goals.find((g) => g.id === 'order_drink')?.status,
       'done',
     );
-    assert.equal(out.session.current_goal, 'cafe.order_food');
+    assert.equal(out.session.current_goal, 'size');
     const bubble = events.find((e) => e.type === 'bubble_ar');
     assert.ok(bubble);
-    assert.match(String(bubble?.pt ?? ''), /Claro/i);
-    assert.match(String(bubble?.pt ?? ''), /Mais alguma coisa\?/i);
+    assert.match(String(bubble?.pt ?? ''), /Um café, saindo!/i);
+    assert.match(String(bubble?.pt ?? ''), /Pequeno ou grande/i);
     assert.notEqual(out.session.status, 'done');
   });
 
-  it('single miss gets Desculpe? + ask_tl', async () => {
+  it('single miss gets unclear + suggest coach', async () => {
     const { store, started } = await startCafe('u-scene-s2c');
-    const events: Array<{ type: string; text?: string; pt?: string }> = [];
+    const events: Array<{ type: string; text?: string; pt?: string; suggest?: string[] }> = [];
     const out = await runFreeConvoTurn({
       session: started.session,
-      learnerText: 'sim',
+      learnerText: 'xyz',
       store,
       model: createStubConvoStreamModel({
-        byCandidate: () => 'unused\nAR: x\nGOALS: -',
+        byCandidate: () => 'SHOULD_NOT_REACH_BUBBLE',
       }),
       emit: (e) => events.push(e as { type: string; text?: string; pt?: string }),
+      stubSceneQwen: OTHER,
       freeTextGrader: stubGrader,
     });
     const bubble = [...events].reverse().find((e) => e.type === 'bubble_ar');
-    assert.match(String(bubble?.pt ?? ''), /^Desculpe\?/i);
-    assert.match(String(bubble?.pt ?? ''), /Bom dia! Diga\./i);
-    assert.equal(out.session.current_goal, 'cafe.order_drink');
+    assert.match(String(bubble?.pt ?? ''), /Desculpe/i);
+    assert.equal(out.session.current_goal, 'order_drink');
+    assert.equal(out.session.scene_misses, 1);
   });
 
-  it('closed reaction is kept and ask_tl is appended after a hit', async () => {
+  it('pastel after drink path opens water with coach_before', async () => {
     const { store, started } = await startCafe('u-scene-s2c2');
-    // Advance to order_food first so a non-completing soft reply can still hit the model.
-    started.session.goals = started.session.goals.map((g) =>
-      g.id === 'cafe.order_drink' ? { ...g, status: 'done' as const } : g,
-    );
-    started.session.current_goal = 'cafe.order_food';
-    await store.save(started.session);
-    const events: Array<{ type: string; pt?: string }> = [];
+    let session = started.session;
+    for (const say of ['quero um cafe', 'pequeno', 'quente', 'sem açúcar']) {
+      const r = await runFreeConvoTurn({
+        session,
+        learnerText: say,
+        store,
+        model: createStubConvoStreamModel({
+          byCandidate: () => 'SHOULD_NOT_REACH_BUBBLE',
+        }),
+        emit: () => {},
+        stubSceneQwen: OTHER,
+        freeTextGrader: stubGrader,
+      });
+      session = r.session;
+    }
+    assert.equal(session.current_goal, 'order_food');
+    const events: Array<{ type: string; pt?: string; coach_eg?: string }> = [];
     await runFreeConvoTurn({
-      session: started.session,
+      session,
       learnerText: 'Um pastel de nata, por favor.',
       store,
       model: createStubConvoStreamModel({
-        byCandidate: () =>
-          'Olhe, é tudo fresquinho!\nAR: انظر، كل شيء طازج!\nGOALS: cafe.order_food',
+        byCandidate: () => 'SHOULD_NOT_REACH_BUBBLE',
       }),
-      emit: (e) => events.push(e as { type: string; pt?: string }),
+      emit: (e) => events.push(e as { type: string; pt?: string; coach_eg?: string }),
+      stubSceneQwen: OTHER,
       freeTextGrader: stubGrader,
     });
     const bubble = [...events].reverse().find((e) => e.type === 'bubble_ar');
-    assert.match(String(bubble?.pt ?? ''), /fresquinho/i);
-    assert.match(String(bubble?.pt ?? ''), /aqui ou para levar/i);
+    assert.match(String(bubble?.pt ?? ''), /Boa escolha/i);
+    assert.match(String(bubble?.pt ?? ''), /para beber/i);
+    assert.match(String(bubble?.coach_eg ?? ''), /ماية/);
   });
 
-  it('second Claro opener is stripped; ask_tl still appended', async () => {
-    const { store, started } = await startCafe('u-scene-s2-opener');
-    let session = started.session;
-    const firstEvents: Array<{ type: string; pt?: string }> = [];
-    const first = await runFreeConvoTurn({
-      session,
-      learnerText: 'quero um cafe',
-      store,
-      model: createStubConvoStreamModel({
-        byCandidate: () =>
-          'Claro, um café.\nAR: طبعاً، قهوة.\nGOALS: cafe.order_drink',
-      }),
-      emit: (e) => firstEvents.push(e as { type: string; pt?: string }),
-      freeTextGrader: stubGrader,
-    });
-    session = first.session;
-    assert.match(
-      String(firstEvents.find((e) => e.type === 'bubble_ar')?.pt ?? ''),
-      /^Claro/i,
-    );
-
-    const secondEvents: Array<{ type: string; pt?: string }> = [];
-    await runFreeConvoTurn({
-      session,
-      learnerText: 'Um pastel de nata, por favor.',
-      store,
-      model: createStubConvoStreamModel({
-        byCandidate: () =>
-          'Claro, um pastel.\nAR: طبعاً، باستيل.\nGOALS: cafe.order_food',
-      }),
-      emit: (e) => secondEvents.push(e as { type: string; pt?: string }),
-      freeTextGrader: stubGrader,
-    });
-    const pt = String(
-      [...secondEvents].reverse().find((e) => e.type === 'bubble_ar')?.pt ?? '',
-    );
-    assert.doesNotMatch(pt, /^Claro/i);
-    assert.match(pt, /pastel/i);
-    assert.match(pt, /aqui ou para levar/i);
-  });
-
-  it('farewell completes with closing and no further open ask', async () => {
+  it('farewell completes with closing and end_tips', async () => {
     const { store, started } = await startCafe('u-scene-s2d');
     started.session.goals = started.session.goals.map((g) =>
-      g.id === 'cafe.bye' ? g : { ...g, status: 'done' as const },
+      g.id === 'bye' ? g : { ...g, status: 'done' as const },
     );
-    started.session.current_goal = 'cafe.bye';
+    started.session.current_goal = 'bye';
     await store.save(started.session);
 
-    const events: Array<{ type: string; eg?: string; pt?: string; id?: string }> =
+    const events: Array<{ type: string; eg?: string; pt?: string; id?: string; end_tips_eg?: string[] }> =
       [];
     const out = await runFreeConvoTurn({
       session: started.session,
       learnerText: 'Obrigado! Até amanhã!',
       store,
       model: createStubConvoStreamModel({
-        byCandidate: () => 'should not be used\nAR: x\nGOALS: cafe.bye',
+        byCandidate: () => 'SHOULD_NOT_REACH_BUBBLE',
       }),
       emit: (e) =>
         events.push(e as { type: string; eg?: string; pt?: string; id?: string }),
+      stubSceneQwen: OTHER,
       freeTextGrader: stubGrader,
     });
     assert.equal(out.session.status, 'done');
@@ -345,40 +326,15 @@ describe('scenes S2 · free-talk engine branches', () => {
     const doneCoach = events.find((e) => e.id === 'scene_done');
     assert.ok(doneCoach);
     assert.match(String(doneCoach?.eg ?? ''), /خلصت/);
-    const questions = events.filter((e) => e.type === 'question');
-    assert.equal(questions.length, 1);
-    assert.equal(questions[0]?.id, 'scene.closing');
+    assert.equal((doneCoach as { end_tips_eg?: string[] })?.end_tips_eg?.length, 2);
   });
 
-  it('cue_eg is on ask_price bubble, not order_drink', async () => {
-    const { store, started } = await startCafe('u-scene-s2e');
-    started.session.goals = started.session.goals.map((g) =>
-      ['cafe.order_drink', 'cafe.order_food', 'cafe.here_or_go'].includes(g.id)
-        ? { ...g, status: 'done' as const }
-        : g,
-    );
-    started.session.current_goal = 'cafe.ask_price';
-    await store.save(started.session);
-
-    const events: Array<{ type: string; coach_eg?: string; pt?: string }> = [];
-    await runFreeConvoTurn({
-      session: started.session,
-      learnerText: 'hmm',
-      store,
-      model: createStubConvoStreamModel({
-        byCandidate: () => 'Pronto.\nAR: جاهز.\nGOALS: -',
-      }),
-      emit: (e) =>
-        events.push(e as { type: string; coach_eg?: string; pt?: string }),
-      freeTextGrader: stubGrader,
-    });
-    const bubble = events.find((e) => e.type === 'bubble_ar');
-    assert.ok(bubble?.coach_eg?.includes('الحساب'));
-
+  it('water + contribuinte are the only coach_before goals', async () => {
     const bank = loadSceneBank('cena-cafe');
-    assert.equal(
-      bank.goals.find((g) => g.id === 'cafe.order_drink')?.cue_eg,
-      undefined,
+    const withCoach = bank.goals.filter((g) => g.coach_before_eg?.trim());
+    assert.deepEqual(
+      withCoach.map((g) => g.id),
+      ['water', 'contribuinte'],
     );
   });
 
@@ -389,7 +345,7 @@ describe('scenes S2 · free-talk engine branches', () => {
       { role: 'character', tl: 'Mais alguma coisa?' },
       { role: 'learner', tl: 'um pastel' },
     ];
-    started.session.current_goal = 'cafe.order_food';
+    started.session.current_goal = 'order_food';
     await store.save(started.session);
 
     const again = await startFreeConvoSession({

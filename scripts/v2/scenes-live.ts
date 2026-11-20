@@ -1,12 +1,13 @@
 /**
- * Live (not CI) scene scripts on Qwen — batch-rp-3.
+ * Live (not CI) scene scripts on Qwen — batch-rp-3 (2026-11-20).
  *
  * Prints every turn as:
- *   YOU / CHAR / FIX / HINT
+ *   YOU / CHAR / QWEN (raw JSON) / FIX
  *
  * Usage:
  *   npx tsx scripts/v2/scenes-live.ts
  *   npx tsx scripts/v2/scenes-live.ts g1
+ *   npx tsx scripts/v2/scenes-live.ts extras
  */
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -34,46 +35,65 @@ type LiveScript = {
   id: string;
   topicId: string;
   lines: readonly string[];
+  /** Seed turns before the scripted lines (to reach a goal). */
+  setup?: readonly string[];
 };
+
+/** G1 golden path (2026-11-20). */
+const G1_LINES = [
+  'Bom dia',
+  'quero um galão',
+  'grande',
+  'quente',
+  'sem açúcar',
+  'um pastel de nata',
+  'e uma agua',
+  'fresca',
+  'Comer para aqui.',
+  'é tudo, a conta?',
+  'Cartão',
+  'Nao obrigado',
+  'até amanhã!',
+] as const;
 
 const SCRIPTS: Record<string, LiveScript> = {
   g1: {
     id: 'g1',
     topicId: 'cena-cafe',
-    lines: [
-      'Bom dia',
-      'quero um cafe',
-      'um pastel de nata',
-      'Comer para aqui.',
-      'sem açúcar',
-      'sim, moro aqui perto',
-      'sou do Egito',
-      'a tudo, e quenta?',
-      'Cartão',
-      'Nao obrigado',
-      'até amanhã!',
-    ],
+    lines: G1_LINES,
   },
   cafe: {
     id: 'cafe',
     topicId: 'cena-cafe',
-    lines: [
+    lines: G1_LINES,
+  },
+  extras: {
+    id: 'extras',
+    topicId: 'cena-cafe',
+    // Reach contexts for the four extra messages from the spec.
+    setup: [
       'Bom dia',
-      'quero um cafe',
-      'um pastel de nata',
-      'Comer para aqui.',
+      'quero um galão',
+      'grande',
+      'quente',
       'sem açúcar',
-      'sim, moro aqui perto',
-      'sou do Egito',
-      'a tudo, e quenta?',
-      'Cartão',
-      'Nao obrigado',
-      'até amanhã!',
+    ],
+    lines: [
+      // at order_food
+      'Sim qureia um pastel de nata',
+      // continue to sugar-ish / already past sugar — re-seed a sugar turn via unclear path is hard;
+      // play si acucar while still early: after drink path reset via water skip is messy.
+      // Spec: «si acucar» → «com açúcar»; run after returning to sugar-adjacent by jumping:
     ],
   },
 };
 
-async function main() {
+async function playLines(opts: {
+  scriptId: string;
+  topicId: string;
+  lines: readonly string[];
+  label?: string;
+}) {
   const {
     MemoryConvoSessionStore,
     startFreeConvoSession,
@@ -82,97 +102,232 @@ async function main() {
     createLiveConvoStreamModel,
     runFreeConvoTurn,
   } = await import('../../lib/v2/convo/turn');
-  type ConvoTurnStreamEvent = import('../../lib/v2/convo/turn').ConvoTurnStreamEvent;
+  type ConvoTurnStreamEvent =
+    import('../../lib/v2/convo/turn').ConvoTurnStreamEvent;
 
+  console.log(
+    `\n======== ${opts.label ?? opts.scriptId} (${opts.topicId}) ========`,
+  );
+  const store = new MemoryConvoSessionStore();
+  const started = await startFreeConvoSession({
+    userId: `live-${opts.scriptId}`,
+    topicId: opts.topicId,
+    store,
+    learnerName: null,
+    learnerLevel: 9,
+    newId: () => `live-${opts.scriptId}-sess`,
+  });
+  let session = started.session;
+  console.log(`CHAR: ${started.opening.character.tl}`);
+  if (started.opening.character.ar) {
+    console.log(`AR:   ${started.opening.character.ar}`);
+  }
+  const model = createLiveConvoStreamModel({ sceneMode: true });
+
+  for (const line of opts.lines) {
+    const events: ConvoTurnStreamEvent[] = [];
+    let rawQwen: unknown = undefined;
+    const out = await runFreeConvoTurn({
+      session,
+      learnerText: line,
+      store,
+      model,
+      emit: (e) => events.push(e),
+      onSceneQwen: (raw) => {
+        rawQwen = raw;
+      },
+    });
+    session = out.session;
+
+    const chars = events.filter(
+      (e): e is Extract<ConvoTurnStreamEvent, { type: 'bubble_ar' }> =>
+        e.type === 'bubble_ar',
+    );
+    const fixes = events.filter(
+      (e): e is Extract<ConvoTurnStreamEvent, { type: 'correction' }> =>
+        e.type === 'correction',
+    );
+    const coaches = events.filter(
+      (e) => e.type === 'coach' && e.id !== 'scene_done',
+    );
+
+    console.log(`YOU:  ${line}`);
+    for (const c of chars) {
+      console.log(`CHAR: ${c.pt}`);
+      if (c.coach_eg) console.log(`COACH:${c.coach_eg}`);
+    }
+    if (!chars.length) console.log('CHAR: (none)');
+    console.log(`QWEN: ${JSON.stringify(rawQwen ?? null)}`);
+    for (const f of fixes) {
+      console.log(
+        `FIX:  ${f.corrected_tl}${f.note_eg ? ` · ${f.note_eg}` : ''}`,
+      );
+    }
+    if (!fixes.length) console.log('FIX:  (none)');
+    for (const c of coaches) {
+      if (c.type === 'coach') {
+        console.log(
+          `HELP: ${c.eg}${c.suggest?.length ? ` [${c.suggest.join(' | ')}]` : ''}`,
+        );
+      }
+    }
+    console.log('---');
+    if (session.status === 'done') {
+      const done = events.find(
+        (e) => e.type === 'coach' && e.id === 'scene_done',
+      );
+      if (done && done.type === 'coach' && done.end_tips_eg?.length) {
+        console.log(`TIPS: ${done.end_tips_eg.join(' · ')}`);
+      }
+      console.log('(scene finished)');
+      break;
+    }
+  }
+  return session;
+}
+
+async function playExtras() {
+  const {
+    MemoryConvoSessionStore,
+    startFreeConvoSession,
+  } = await import('../../lib/v2/convo/session');
+  const {
+    createLiveConvoStreamModel,
+    runFreeConvoTurn,
+  } = await import('../../lib/v2/convo/turn');
+  type ConvoTurnStreamEvent =
+    import('../../lib/v2/convo/turn').ConvoTurnStreamEvent;
+
+  const model = createLiveConvoStreamModel({ sceneMode: true });
+
+  async function turnAt(
+    label: string,
+    setup: string[],
+    line: string,
+  ) {
+    console.log(`\n======== extra · ${label} ========`);
+    const store = new MemoryConvoSessionStore();
+    const started = await startFreeConvoSession({
+      userId: `live-extra-${label}`,
+      topicId: 'cena-cafe',
+      store,
+      learnerName: null,
+      learnerLevel: 9,
+      newId: () => `live-extra-${label}-sess`,
+    });
+    let session = started.session;
+    for (const s of setup) {
+      const out = await runFreeConvoTurn({
+        session,
+        learnerText: s,
+        store,
+        model,
+        emit: () => {},
+      });
+      session = out.session;
+    }
+    console.log(`goal: ${session.current_goal}`);
+    const events: ConvoTurnStreamEvent[] = [];
+    let rawQwen: unknown = undefined;
+    const out = await runFreeConvoTurn({
+      session,
+      learnerText: line,
+      store,
+      model,
+      emit: (e) => events.push(e),
+      onSceneQwen: (raw) => {
+        rawQwen = raw;
+      },
+    });
+    session = out.session;
+    const chars = events.filter((e) => e.type === 'bubble_ar');
+    const fixes = events.filter((e) => e.type === 'correction');
+    console.log(`YOU:  ${line}`);
+    for (const c of chars) {
+      if (c.type === 'bubble_ar') console.log(`CHAR: ${c.pt}`);
+    }
+    if (!chars.length) console.log('CHAR: (none)');
+    console.log(`QWEN: ${JSON.stringify(rawQwen ?? null)}`);
+    for (const f of fixes) {
+      if (f.type === 'correction') {
+        console.log(
+          `FIX:  ${f.corrected_tl}${f.note_eg ? ` · ${f.note_eg}` : ''}`,
+        );
+      }
+    }
+    if (!fixes.length) console.log('FIX:  (none)');
+    console.log(`goal→ ${session.current_goal}`);
+  }
+
+  // «Sim qureia um pastel de nata» at order_food
+  await turnAt(
+    'Sim qureia um pastel de nata',
+    ['quero um galão', 'grande', 'quente', 'sem açúcar'],
+    'Sim qureia um pastel de nata',
+  );
+  // «si acucar» at sugar
+  await turnAt(
+    'si acucar',
+    ['quero um galão', 'grande', 'quente'],
+    'si acucar',
+  );
+  // «e todo» at ask_price
+  await turnAt(
+    'e todo @ ask_price',
+    [
+      'quero um galão',
+      'grande',
+      'quente',
+      'sem açúcar',
+      'um pastel de nata',
+      'e uma agua',
+      'fresca',
+      'Comer para aqui.',
+    ],
+    'e todo',
+  );
+  // «con carto» at pay
+  await turnAt(
+    'con carto @ pay',
+    [
+      'quero um galão',
+      'grande',
+      'quente',
+      'sem açúcar',
+      'um pastel de nata',
+      'e uma agua',
+      'fresca',
+      'Comer para aqui.',
+      'é tudo, a conta?',
+    ],
+    'con carto',
+  );
+}
+
+async function main() {
   const args = process.argv.slice(2).filter((a) => !a.startsWith('-'));
-  const ids = args.length ? args : ['g1'];
+  const ids = args.length ? args : ['g1', 'extras'];
 
   for (const id of ids) {
+    if (id === 'extras') {
+      await playExtras();
+      continue;
+    }
     const script =
       SCRIPTS[id] ??
       (id === 'cafe-off' || id === 'cafe-jump' || id === 'cafe-typos'
         ? SCRIPTS.g1
         : undefined);
     if (!script) {
-      console.error(`Unknown script: ${id}. Use: g1 | cafe`);
+      console.error(`Unknown script: ${id}. Use: g1 | cafe | extras`);
       process.exitCode = 1;
       continue;
     }
-
-    console.log(`\n======== ${script.id} (${script.topicId}) ========`);
-    const store = new MemoryConvoSessionStore();
-    const started = await startFreeConvoSession({
-      userId: `live-${script.id}`,
+    await playLines({
+      scriptId: script.id,
       topicId: script.topicId,
-      store,
-      learnerName: null,
-      learnerLevel: 9,
-      newId: () => `live-${script.id}-sess`,
+      lines: script.lines,
     });
-    let session = started.session;
-    console.log(`CHAR: ${started.opening.character.tl}`);
-    if (started.opening.character.ar) {
-      console.log(`AR:   ${started.opening.character.ar}`);
-    }
-    const model = createLiveConvoStreamModel({ sceneMode: true });
-
-    for (const line of script.lines) {
-      const events: ConvoTurnStreamEvent[] = [];
-      const out = await runFreeConvoTurn({
-        session,
-        learnerText: line,
-        store,
-        model,
-        emit: (e) => events.push(e),
-      });
-      session = out.session;
-
-      const chars = events.filter(
-        (e): e is Extract<ConvoTurnStreamEvent, { type: 'bubble_ar' }> =>
-          e.type === 'bubble_ar',
-      );
-      const fixes = events.filter(
-        (e): e is Extract<ConvoTurnStreamEvent, { type: 'correction' }> =>
-          e.type === 'correction',
-      );
-      const hints = events
-        .filter((e) => e.type === 'coach' && e.moment === 'help')
-        .map((e) => (e.type === 'coach' ? e.eg : ''));
-
-      console.log(`YOU: ${line}`);
-      for (const c of chars) {
-        console.log(`CHAR: ${c.pt}`);
-        if (c.ar) console.log(`AR:   ${c.ar}`);
-      }
-      if (!chars.length) console.log('CHAR: (none)');
-      for (const f of fixes) {
-        console.log(
-          `FIX:  ${f.corrected_tl}${f.note_eg ? ` · ${f.note_eg}` : ''}`,
-        );
-      }
-      if (!fixes.length) console.log('FIX:  (none)');
-      if (hints.length) console.log(`HINT: ${hints.join(' | ')}`);
-      // batch-rp-3 Change 2026-11-19: spotlight these corrections in the live log
-      if (
-        /quero um cafe|par aqui|e cont|Nao obrigado|sem açúcar|sim, moro aqui perto/i.test(
-          line,
-        )
-      ) {
-        console.log(
-          `QWEN: ${JSON.stringify(
-            fixes.map((f) => ({
-              corrected: f.corrected_tl,
-              note_eg: f.note_eg,
-            })),
-          )}`,
-        );
-      }
-      console.log('---');
-      if (session.status === 'done') {
-        console.log('(scene finished)');
-        break;
-      }
-    }
   }
 }
 

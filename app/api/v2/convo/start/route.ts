@@ -34,6 +34,7 @@ import {
   levelOverrideFromBody,
 } from '@/lib/v2/convo/level/learnerLevel';
 import { openingChipsForLevel } from '@/lib/v2/convo/topics/openingChips';
+import { checklistGoals } from '@/lib/v2/convo/goals';
 
 export const runtime = 'nodejs';
 /** Generation runs in the worker; start returns preparing immediately (P3). */
@@ -183,24 +184,30 @@ export async function POST(req: Request) {
         const title_ar = bank?.title_ar?.trim() || topic.title_ar;
         const sceneMission =
           bank?.kind === 'scene'
-            ? {
-                intro_eg: bank.intro_eg?.trim() || '',
-                goals: bank.goals
-                  .filter((g) => !g.farewell)
-                  .map((g) => ({
-                    id: g.id,
-                    label_eg: g.label_eg?.trim() || g.intent_eg || g.id,
-                  })),
-                current_goal: result.session.current_goal,
-                done_ids: result.session.goals
-                  .filter(
-                    (g) => g.status === 'done' || g.status === 'assisted',
-                  )
-                  .map((g) => g.id),
-                skipped_ids: result.session.goals
-                  .filter((g) => g.status === 'skipped')
-                  .map((g) => g.id),
-              }
+            ? (() => {
+                const currentDef = bank.goals.find(
+                  (g) => g.id === result.session.current_goal,
+                );
+                return {
+                  intro_eg: bank.intro_eg?.trim() || '',
+                  goals: checklistGoals(bank, result.session.goals).map(
+                    (g) => ({
+                      id: g.id,
+                      label_eg: g.label_eg?.trim() || g.intent_eg || g.id,
+                    }),
+                  ),
+                  current_goal: result.session.current_goal,
+                  hint_words: currentDef?.hint_words?.trim() || '',
+                  done_ids: result.session.goals
+                    .filter(
+                      (g) => g.status === 'done' || g.status === 'assisted',
+                    )
+                    .map((g) => g.id),
+                  skipped_ids: result.session.goals
+                    .filter((g) => g.status === 'skipped')
+                    .map((g) => g.id),
+                };
+              })()
             : null;
         return NextResponse.json({
           session_id: result.session.id,

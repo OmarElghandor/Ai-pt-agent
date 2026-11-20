@@ -1,4 +1,5 @@
 import type { ConvoGoal, ConvoGoalBank, ConvoGoalState } from './types';
+import { firstActiveOpenGoalId } from './onlyIf';
 
 /** Minimal session slice for scene goal healing (avoids importing session types). */
 export type SceneHealSession = {
@@ -6,7 +7,11 @@ export type SceneHealSession = {
   current_goal: string | null;
   scene_misses?: number;
   scene_hint_level?: 0 | 1 | 2 | 3 | 4;
+  scene_suggest_shown?: boolean;
   scene_format?: 2 | 3;
+  scene_coach_before_consumed?: string[];
+  scene_char_bubbles_since_coach?: number;
+  scene_coach_ever_shown?: boolean;
   pending_frame: { tl: string; eg: string; chips: string[] } | null;
   pending_question: {
     id: string;
@@ -79,8 +84,12 @@ export function healSceneSessionAgainstBank(
     session.goals = goalStatesFromBank(bank);
     session.scene_misses = 0;
     session.scene_hint_level = 0;
+    session.scene_suggest_shown = false;
+    session.scene_coach_before_consumed = [];
+    session.scene_char_bubbles_since_coach = 0;
+    session.scene_coach_ever_shown = false;
     session.scene_format = bankFormat;
-    session.current_goal = firstOpenGoalId(session.goals);
+    session.current_goal = firstActiveOpenGoalId(bank, session.goals);
     const current = bank.goals.find((g) => g.id === session.current_goal);
     session.pending_frame = pendingFrameFromGoal(current, gender);
     if (session.current_goal) {
@@ -102,7 +111,7 @@ export function healSceneSessionAgainstBank(
       session.current_goal &&
       !bank.goals.some((g) => g.id === session.current_goal)
     ) {
-      session.current_goal = firstOpenGoalId(session.goals);
+      session.current_goal = firstActiveOpenGoalId(bank, session.goals);
       return true;
     }
     return false;
@@ -114,8 +123,9 @@ export function healSceneSessionAgainstBank(
     session.goals = goalStatesFromBank(bank);
     session.scene_misses = 0;
     session.scene_hint_level = 0;
+    session.scene_suggest_shown = false;
   }
-  session.current_goal = firstOpenGoalId(session.goals);
+  session.current_goal = firstActiveOpenGoalId(bank, session.goals);
   const current = bank.goals.find((g) => g.id === session.current_goal);
   session.pending_frame = pendingFrameFromGoal(current, gender);
   if (session.current_goal) {
@@ -134,11 +144,11 @@ export function pendingFrameFromGoal(
   gender: 'm' | 'f' = 'm',
 ): { tl: string; eg: string; chips: string[] } | null {
   if (!goal) return null;
-  // Format 3 progressive hints: suggest chips only appear at ladder level 4.
-  if (goal.hints) {
+  // Format 3: no automatic chips — suggests appear only after mistakes.
+  if (goal.hint_words || goal.hints || goal.ask?.length) {
     return {
-      tl: goal.hints.frame_tl,
-      eg: goal.hints.what_eg,
+      tl: goal.hints?.frame_tl || goal.suggest?.[0] || goal.ask_tl || '',
+      eg: goal.hints?.what_eg || goal.hint_words || '',
       chips: [],
     };
   }

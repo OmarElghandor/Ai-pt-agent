@@ -7,9 +7,10 @@
   "title_ar": "في الكافيه",
   "emoji": "☕",
   "recommended_day": 9,
-  "mission_eg": "اطلب مشروب وحاجة تاكلها، دردش شوية مع Manuel، اسأل الحساب كام، وادفع.",
+  "mission_eg": "اطلب مشروب وحاجة تاكلها وماية، اسأل الحساب كام، وادفع.",
   "character_id": "manuel",
   "address": "formal",
+  "opening_coach_eg": "💬 إنت في كافيه الحي الصبح، وManuel ورا الكاونتر بيسألك تطلب إيه. اطلب مشروب ☕",
   "opening": [
     {
       "tl": "Bom dia! 😊 Então, o que vai ser hoje?",
@@ -56,6 +57,204 @@
       ]
     }
   },
+  "glossary": [
+    {
+      "ar": [
+        "ساقع",
+        "ساقعة",
+        "بارد",
+        "باردة"
+      ],
+      "tl": "fresca = ساقعة (للماية) · frio = ساقع (للمشروب)"
+    },
+    {
+      "ar": [
+        "سخن",
+        "سخنة",
+        "ساخن"
+      ],
+      "tl": "quente = سخن"
+    },
+    {
+      "ar": [
+        "تلج",
+        "ثلج"
+      ],
+      "tl": "com gelo = بالتلج"
+    },
+    {
+      "ar": [
+        "سكر"
+      ],
+      "tl": "com açúcar = بسكر · sem açúcar = من غير سكر"
+    },
+    {
+      "ar": [
+        "ماية",
+        "مية",
+        "مياه",
+        "ميه"
+      ],
+      "tl": "uma água = ماية · uma garrafa de água = إزازة ماية"
+    },
+    {
+      "ar": [
+        "إزازة",
+        "ازازة",
+        "زجاجة"
+      ],
+      "tl": "uma garrafa = إزازة"
+    },
+    {
+      "ar": [
+        "قهوة بلبن",
+        "بلبن",
+        "لبن",
+        "حليب"
+      ],
+      "tl": "um galão = قهوة بلبن"
+    },
+    {
+      "ar": [
+        "قهوة",
+        "قهوه"
+      ],
+      "tl": "um café = قهوة (إسبريسو صغير)"
+    },
+    {
+      "ar": [
+        "شاي"
+      ],
+      "tl": "um chá = شاي"
+    },
+    {
+      "ar": [
+        "صغير",
+        "صغيرة"
+      ],
+      "tl": "pequeno = صغير"
+    },
+    {
+      "ar": [
+        "كبير",
+        "كبيرة"
+      ],
+      "tl": "grande = كبير"
+    },
+    {
+      "ar": [
+        "هنا"
+      ],
+      "tl": "para comer aqui = آكل هنا"
+    },
+    {
+      "ar": [
+        "تيك أواي",
+        "تيك اواي",
+        "آخده معايا",
+        "اخده معايا",
+        "معايا"
+      ],
+      "tl": "para levar = تيك أواي"
+    },
+    {
+      "ar": [
+        "الحساب",
+        "حساب"
+      ],
+      "tl": "a conta = الحساب · Quanto é? = بكام؟"
+    },
+    {
+      "ar": [
+        "بكام",
+        "كام"
+      ],
+      "tl": "Quanto é? = بكام؟"
+    },
+    {
+      "ar": [
+        "كارت",
+        "فيزا",
+        "بطاقة"
+      ],
+      "tl": "com cartão = بالكارت"
+    },
+    {
+      "ar": [
+        "كاش",
+        "نقدي",
+        "فلوس"
+      ],
+      "tl": "em dinheiro = كاش"
+    },
+    {
+      "ar": [
+        "شكرا",
+        "شكراً",
+        "متشكر"
+      ],
+      "tl": "obrigado = شكرًا (لو إنتي: obrigada)"
+    },
+    {
+      "ar": [
+        "لأ",
+        "لا"
+      ],
+      "tl": "não = لأ · não, obrigado = لأ، شكرًا"
+    },
+    {
+      "ar": [
+        "أيوه",
+        "ايوه",
+        "نعم",
+        "آه"
+      ],
+      "tl": "sim = أيوه"
+    },
+    {
+      "ar": [
+        "من فضلك",
+        "لو سمحت"
+      ],
+      "tl": "por favor = من فضلك"
+    },
+    {
+      "ar": [
+        "عايز",
+        "عاوز",
+        "عايزة",
+        "أنا عايز",
+        "اطلب"
+      ],
+      "tl": "queria… = كنت عايز… (أذوق من quero)"
+    },
+    {
+      "ar": [
+        "بس كده",
+        "بس كدا",
+        "خلاص"
+      ],
+      "tl": "é tudo = بس كده · só isto = بس ده"
+    },
+    {
+      "ar": [
+        "فطار",
+        "باتيه",
+        "حلو",
+        "آكل",
+        "اكل"
+      ],
+      "tl": "um pastel de nata = باستيل دي ناتا · uma torrada = توست"
+    },
+    {
+      "ar": [
+        "مع السلامة",
+        "باي",
+        "سلام"
+      ],
+      "tl": "até amanhã = أشوفك بكره · adeus = مع السلامة"
+    }
+  ],
   "goals": [
     {
       "id": "order_drink",
@@ -152,11 +351,203 @@
         "Queria um café, por favor.",
         "Queria um galão, por favor."
       ],
-      "hints": {
-        "what_eg": "Manuel بيسألك تشرب إيه. اطلب بـ Queria + المشروب + por favor.",
-        "words_eg": "café = قهوة · galão = قهوة بلبن · chá = شاي",
-        "frame_tl": "Queria um ___, por favor."
-      }
+      "hint_words": "um café · um galão"
+    },
+    {
+      "id": "size",
+      "label_eg": "الحجم",
+      "only_if": {
+        "goal": "order_drink",
+        "options": [
+          "café",
+          "galão",
+          "chá"
+        ]
+      },
+      "ask": [
+        {
+          "tl": "Pequeno ou grande?",
+          "ar": "صغير أم كبير؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "pequeno",
+          "keywords": [
+            "pequeno",
+            "pequena",
+            "normal"
+          ],
+          "examples": [
+            "Pequeno, por favor."
+          ],
+          "react": [
+            {
+              "tl": "Pequeno, muito bem.",
+              "ar": "صغير، حسنًا."
+            }
+          ]
+        },
+        {
+          "value": "grande",
+          "keywords": [
+            "grande"
+          ],
+          "examples": [
+            "Grande, por favor."
+          ],
+          "react": [
+            {
+              "tl": "Grande, muito bem.",
+              "ar": "كبير، حسنًا."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Pequeno ou grande? 😊",
+          "ar": "عذرًا؟ صغير أم كبير؟"
+        }
+      ],
+      "suggest": [
+        "Pequeno, por favor.",
+        "Grande, por favor."
+      ],
+      "hint_words": "pequeno · grande"
+    },
+    {
+      "id": "temp",
+      "label_eg": "سخن ولا ساقع",
+      "only_if": {
+        "goal": "order_drink",
+        "options": [
+          "café",
+          "galão",
+          "chá"
+        ]
+      },
+      "ask": [
+        {
+          "tl": "Quente ou frio? Também temos com gelo. 🧊",
+          "ar": "ساخن أم بارد؟ لدينا أيضًا بالثلج."
+        }
+      ],
+      "options": [
+        {
+          "value": "frio",
+          "keywords": [
+            "frio",
+            "fria",
+            "gelo",
+            "gelado",
+            "gelada"
+          ],
+          "examples": [
+            "Frio, com gelo, por favor."
+          ],
+          "react": [
+            {
+              "tl": "Com gelo, então! 🧊",
+              "ar": "بالثلج إذن!"
+            }
+          ]
+        },
+        {
+          "value": "quente",
+          "keywords": [
+            "quente"
+          ],
+          "examples": [
+            "Quente, por favor."
+          ],
+          "react": [
+            {
+              "tl": "Quente, claro.",
+              "ar": "ساخن، بالطبع."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Quente ou frio? 😊",
+          "ar": "عذرًا؟ ساخن أم بارد؟"
+        }
+      ],
+      "suggest": [
+        "Quente, por favor.",
+        "Frio, com gelo, por favor."
+      ],
+      "hint_words": "quente · frio"
+    },
+    {
+      "id": "sugar",
+      "label_eg": "بسكر ولا من غير",
+      "only_if": {
+        "goal": "order_drink",
+        "options": [
+          "café",
+          "galão",
+          "chá"
+        ]
+      },
+      "ask": [
+        {
+          "tl": "Com açúcar ou sem açúcar?",
+          "ar": "بالسكر أم بدون سكر؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "sem",
+          "keywords": [
+            "sem",
+            "não",
+            "nao",
+            "preciso"
+          ],
+          "examples": [
+            "Sem açúcar, por favor.",
+            "Não, obrigado."
+          ],
+          "react": [
+            {
+              "tl": "Sem açúcar, muito bem.",
+              "ar": "بدون سكر، حسنًا."
+            }
+          ]
+        },
+        {
+          "value": "com",
+          "keywords": [
+            "com açúcar",
+            "com acucar",
+            "açúcar",
+            "acucar"
+          ],
+          "examples": [
+            "Com açúcar, por favor."
+          ],
+          "react": [
+            {
+              "tl": "Com açúcar, aqui tem o pacotinho.",
+              "ar": "بالسكر، تفضّل الكيس."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Com açúcar ou sem? 😊",
+          "ar": "عذرًا؟ بالسكر أم بدون؟"
+        }
+      ],
+      "suggest": [
+        "Sem açúcar, por favor.",
+        "Com açúcar, por favor."
+      ],
+      "hint_words": "com · sem açúcar"
     },
     {
       "id": "order_food",
@@ -260,11 +651,137 @@
         "Um pastel de nata, por favor.",
         "Só isto, obrigada."
       ],
-      "hints": {
-        "what_eg": "بيسألك عايز تاكل حاجة معاها؟ اطلب، أو قول Só isto = بس كده.",
-        "words_eg": "um pastel de nata = باستيل دي ناتا · uma torrada = توست · só isto = بس كده",
-        "frame_tl": "Um ___, por favor."
-      }
+      "hint_words": "um pastel de nata"
+    },
+    {
+      "id": "water",
+      "label_eg": "اطلب ماية",
+      "only_if": {
+        "goal": "order_drink",
+        "options": [
+          "café",
+          "galão",
+          "chá"
+        ]
+      },
+      "coach_before_eg": "💬 جرّب تطلب ماية كمان مع الأوردر.",
+      "ask": [
+        {
+          "tl": "E para beber, mais alguma coisa?",
+          "ar": "وللشرب، شيء آخر؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "água",
+          "keywords": [
+            "água",
+            "agua",
+            "garrafa"
+          ],
+          "examples": [
+            "E uma água, por favor.",
+            "Uma garrafa de água, por favor."
+          ],
+          "react": [
+            {
+              "tl": "Uma água, claro!",
+              "ar": "ماء، بالطبع!"
+            }
+          ]
+        },
+        {
+          "value": "não",
+          "keywords": [
+            "não",
+            "nao",
+            "só isto",
+            "so isto",
+            "nada"
+          ],
+          "examples": [
+            "Não, obrigado."
+          ],
+          "react": [
+            {
+              "tl": "Muito bem.",
+              "ar": "حسنًا."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? Quer uma água, um sumo…? 😊",
+          "ar": "عذرًا؟ تريد ماءً، عصيرًا…؟"
+        }
+      ],
+      "suggest": [
+        "E uma água, por favor.",
+        "Uma garrafa de água, por favor."
+      ],
+      "hint_words": "uma água"
+    },
+    {
+      "id": "water_type",
+      "label_eg": "ماية عادية ولا ساقعة",
+      "only_if": {
+        "goal": "water",
+        "options": [
+          "água"
+        ]
+      },
+      "ask": [
+        {
+          "tl": "Natural ou fresca?",
+          "ar": "بدرجة حرارة الغرفة أم باردة؟"
+        }
+      ],
+      "options": [
+        {
+          "value": "fresca",
+          "keywords": [
+            "fresca",
+            "fria",
+            "gelada"
+          ],
+          "examples": [
+            "Fresca, por favor."
+          ],
+          "react": [
+            {
+              "tl": "Fresca, muito bem.",
+              "ar": "باردة، حسنًا."
+            }
+          ]
+        },
+        {
+          "value": "natural",
+          "keywords": [
+            "natural"
+          ],
+          "examples": [
+            "Natural, por favor."
+          ],
+          "react": [
+            {
+              "tl": "Natural, muito bem.",
+              "ar": "عادية، حسنًا."
+            }
+          ]
+        }
+      ],
+      "unclear": [
+        {
+          "tl": "Desculpe? A água, natural ou fresca? 😊",
+          "ar": "عذرًا؟ الماء، عادي أم بارد؟"
+        }
+      ],
+      "suggest": [
+        "Fresca, por favor.",
+        "Natural, por favor."
+      ],
+      "hint_words": "natural · fresca"
     },
     {
       "id": "here_or_go",
@@ -287,7 +804,7 @@
           ],
           "react": [
             {
-              "tl": "Então sente-se à vontade. 😊",
+              "tl": "Então sente-se à vontade.",
               "ar": "إذن تفضّل بالجلوس براحتك.",
               "ar_f": "إذن تفضّلي بالجلوس براحتكِ."
             }
@@ -319,238 +836,16 @@
         "Para comer aqui.",
         "Para levar."
       ],
-      "hints": {
-        "what_eg": "aqui = هنا · para levar = تاخده معاك.",
-        "words_eg": "aqui = هنا · levar = تاخده معاك",
-        "frame_tl": "Para comer ___."
-      }
-    },
-    {
-      "id": "sugar",
-      "label_eg": "بسكر ولا من غير",
-      "ask": [
-        {
-          "tl": "Com açúcar ou sem açúcar?",
-          "ar": "بالسكر أم بدون سكر؟"
-        }
-      ],
-      "options": [
-        {
-          "value": "sem",
-          "keywords": [
-            "sem"
-          ],
-          "examples": [
-            "Sem açúcar, por favor."
-          ],
-          "react": [
-            {
-              "tl": "Sem açúcar, muito bem.",
-              "ar": "بدون سكر، حسنًا."
-            }
-          ]
-        },
-        {
-          "value": "com",
-          "keywords": [
-            "com açúcar",
-            "com acucar",
-            "açúcar",
-            "acucar"
-          ],
-          "examples": [
-            "Com açúcar, por favor."
-          ],
-          "react": [
-            {
-              "tl": "Com açúcar, aqui tem o pacotinho.",
-              "ar": "بالسكر، تفضّل الكيس."
-            }
-          ]
-        }
-      ],
-      "unclear": [
-        {
-          "tl": "Desculpe? Com açúcar ou sem? 😊",
-          "ar": "عذرًا؟ بالسكر أم بدون؟"
-        }
-      ],
-      "suggest": [
-        "Sem açúcar, por favor.",
-        "Com açúcar, por favor."
-      ],
-      "hints": {
-        "what_eg": "بيسألك عايزه بسكر ولا من غير.",
-        "words_eg": "com = بـ · sem = من غير · o açúcar = السكر",
-        "frame_tl": "___ açúcar, por favor."
-      }
-    },
-    {
-      "id": "first_time",
-      "label_eg": "دردش: أول مرة هنا؟",
-      "ask": [
-        {
-          "tl": "É a primeira vez que vem cá? Nunca o vi por aqui! 😊",
-          "ar": "هل هذه أول مرة تأتي إلى هنا؟ لم أرك هنا من قبل!",
-          "tl_f": "É a primeira vez que vem cá? Nunca a vi por aqui! 😊",
-          "ar_f": "هل هذه أول مرة تأتين إلى هنا؟ لم أرك هنا من قبل!"
-        }
-      ],
-      "options": [
-        {
-          "value": "perto",
-          "keywords": [
-            "moro",
-            "perto"
-          ],
-          "examples": [
-            "Sim, moro aqui perto."
-          ],
-          "react": [
-            {
-              "tl": "Ah, então somos vizinhos!",
-              "ar": "آه، إذن نحن جيران!"
-            }
-          ]
-        },
-        {
-          "value": "sim",
-          "keywords": [
-            "primeira",
-            "novo",
-            "nova",
-            "sim"
-          ],
-          "examples": [
-            "Sim, é a primeira vez.",
-            "Sim, sou novo no bairro."
-          ],
-          "react": [
-            {
-              "tl": "Então, bem-vindo ao bairro!",
-              "ar": "إذن، أهلًا بك في الحي!",
-              "tl_f": "Então, bem-vinda ao bairro!",
-              "ar_f": "إذن، أهلًا بكِ في الحي!"
-            }
-          ]
-        },
-        {
-          "value": "não",
-          "keywords": [
-            "não",
-            "nao",
-            "já",
-            "ja"
-          ],
-          "examples": [
-            "Não, já vim cá."
-          ],
-          "react": [
-            {
-              "tl": "Ah, desculpe! Então, bem-vindo de volta!",
-              "ar": "آه، عذرًا! إذن، أهلًا بعودتك!",
-              "tl_f": "Ah, desculpe! Então, bem-vinda de volta!",
-              "ar_f": "آه، عذرًا! إذن، أهلًا بعودتكِ!"
-            }
-          ]
-        }
-      ],
-      "unclear": [
-        {
-          "tl": "Desculpe? É a primeira vez aqui? 😊",
-          "ar": "عذرًا؟ هل هي أول مرة هنا؟"
-        }
-      ],
-      "suggest": [
-        "Sim, é a primeira vez.",
-        "Sim, moro aqui perto."
-      ],
-      "hints": {
-        "what_eg": "Manuel بيدردش معاك وهو بيعمل القهوة: أول مرة تيجي هنا؟",
-        "words_eg": "a primeira vez = أول مرة · moro aqui perto = ساكن قريب",
-        "frame_tl": "Sim, é a ___ vez."
-      }
-    },
-    {
-      "id": "origin",
-      "label_eg": "دردش: إنت منين",
-      "ask": [
-        {
-          "tl": "E de onde é?",
-          "ar": "ومن أين أنت؟",
-          "ar_f": "ومن أين أنتِ؟"
-        }
-      ],
-      "options": [
-        {
-          "value": "egito",
-          "keywords": [
-            "egito",
-            "egípcio",
-            "egipcio",
-            "egípcia",
-            "egipcia",
-            "cairo",
-            "alexandria"
-          ],
-          "examples": [
-            "Sou do Egito.",
-            "Sou egípcio."
-          ],
-          "react": [
-            {
-              "tl": "Do Egito! Que bom! Adoro as pirâmides. 😍",
-              "ar": "من مصر! رائع! أحب الأهرامات."
-            }
-          ]
-        },
-        {
-          "value": "outro",
-          "keywords": [
-            "sou do",
-            "sou da",
-            "sou de"
-          ],
-          "examples": [
-            "Sou de Marrocos."
-          ],
-          "react": [
-            {
-              "tl": "Que bom! Bem-vindo a Lisboa!",
-              "ar": "رائع! أهلًا بك في لشبونة!",
-              "tl_f": "Que bom! Bem-vinda a Lisboa!",
-              "ar_f": "رائع! أهلًا بكِ في لشبونة!"
-            }
-          ]
-        }
-      ],
-      "unclear": [
-        {
-          "tl": "Desculpe? De onde é? 😊",
-          "ar": "عذرًا؟ من أين أنت؟"
-        }
-      ],
-      "suggest": [
-        "Sou do Egito.",
-        "Sou egípcio, do Cairo."
-      ],
-      "suggest_f": [
-        "Sou do Egito.",
-        "Sou egípcia, do Cairo."
-      ],
-      "hints": {
-        "what_eg": "بيسألك إنت منين.",
-        "words_eg": "Sou do Egito = أنا من مصر · egípcio / egípcia = مصري / مصرية",
-        "frame_tl": "Sou do ___."
-      }
+      "hint_words": "aqui · levar"
     },
     {
       "id": "ask_price",
       "label_eg": "اسأل الحساب كام",
       "ask": [
         {
-          "tl": "Aqui está! 😊 Mais alguma coisa, ou é tudo?",
-          "ar": "تفضّل! شيء آخر، أم هذا كل شيء؟"
+          "tl": "Aqui está! 😊 Bom apetite! Precisa de mais alguma coisa?",
+          "ar": "تفضّل! بالهناء والشفاء! هل تحتاج شيئًا آخر؟",
+          "ar_f": "تفضّلي! بالهناء والشفاء! هل تحتاجين شيئًا آخر؟"
         }
       ],
       "options": [
@@ -560,11 +855,16 @@
             "tudo",
             "só isto",
             "so isto",
-            "nada"
+            "nada",
+            "todo",
+            "não",
+            "nao",
+            "obrigad"
           ],
           "examples": [
             "É tudo, obrigado.",
-            "É tudo. A conta, por favor."
+            "É tudo. A conta, por favor.",
+            "Não, obrigado. É tudo."
           ],
           "react": [
             {
@@ -593,27 +893,23 @@
       ],
       "unclear": [
         {
-          "tl": "Desculpe? Mais alguma coisa, ou é tudo?",
-          "ar": "عذرًا؟ شيء آخر، أم هذا كل شيء؟"
+          "tl": "Desculpe? Precisa de mais alguma coisa, ou é tudo?",
+          "ar": "عذرًا؟ هل تحتاج شيئًا آخر، أم هذا كل شيء؟"
         }
       ],
       "suggest": [
         "É tudo. A conta, por favor.",
         "Quanto é?"
       ],
-      "hints": {
-        "what_eg": "خلصت؟ قول É tudo = بس كده، واطلب الحساب: A conta, por favor.",
-        "words_eg": "é tudo = بس كده · a conta = الحساب",
-        "frame_tl": "É tudo. A ___, por favor."
-      }
+      "hint_words": "é tudo · a conta"
     },
     {
       "id": "pay",
       "label_eg": "ادفع",
       "ask": [
         {
-          "tl": "São dois euros e sessenta. Cartão ou dinheiro?",
-          "ar": "المجموع يوروان وستون سنتًا. بطاقة أم نقدًا؟"
+          "tl": "São três euros e dez. Cartão ou dinheiro?",
+          "ar": "المجموع ثلاثة يوروهات وعشرة سنتات. بطاقة أم نقدًا؟"
         }
       ],
       "options": [
@@ -663,15 +959,12 @@
         "Com cartão, por favor.",
         "Em dinheiro."
       ],
-      "hints": {
-        "what_eg": "بالكارت: Com cartão · كاش: Em dinheiro.",
-        "words_eg": "cartão = كارت · dinheiro = كاش",
-        "frame_tl": "Com ___, por favor."
-      }
+      "hint_words": "cartão · dinheiro"
     },
     {
       "id": "contribuinte",
       "label_eg": "رد على الـ contribuinte",
+      "coach_before_eg": "💬 contribuinte = رقمك الضريبي (NIF). هتسمع السؤال ده في أي محل.",
       "ask": [
         {
           "tl": "Quer fatura com contribuinte?",
@@ -726,16 +1019,11 @@
         "Não, obrigada.",
         "Sim, por favor."
       ],
-      "hints": {
-        "what_eg": "contribuinte = رقمك الضريبي (NIF). أغلب الناس في الكافيه بيقولوا Não, obrigado.",
-        "words_eg": "sim = أيوه · não = لأ",
-        "frame_tl": "Não, ___."
-      }
+      "hint_words": "não, obrigado"
     },
     {
       "id": "bye",
       "label_eg": "ودّعه",
-      "farewell": true,
       "ask": [
         {
           "tl": "Obrigado e bom dia! Até amanhã? 😊",
@@ -776,12 +1064,13 @@
         "Até amanhã!",
         "Obrigada, bom dia!"
       ],
-      "hints": {
-        "what_eg": "ودّعه: Até amanhã! (في لشبونة بيقولوها للي بيشوفوه كل يوم)",
-        "words_eg": "até amanhã = أشوفك بكره",
-        "frame_tl": "Até ___!"
-      }
+      "hint_words": "até amanhã",
+      "farewell": true
     }
+  ],
+  "end_tips_eg": [
+    "في البرتغال بيسألوا الماية «natural» (حرارة الأوضة) ولا «fresca» (من التلاجة).",
+    "«Diga» = اؤمر، و«Até amanhã» بيقولوها للي بيشوفوه كل يوم."
   ],
   "closing": [
     {

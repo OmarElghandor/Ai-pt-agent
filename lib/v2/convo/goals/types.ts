@@ -71,16 +71,25 @@ export type ConvoGoal = {
   options?: SceneOption[];
   /** Format 3: unclear turn variants. */
   unclear?: SceneLine[];
-  /** Format 3: suggestion chips. */
+  /** Format 3: suggestion chips (shown only after a mistake). */
   suggest?: string[];
   suggest_f?: string[];
   /**
-   * Format 3: Egyptian hint (legacy). Prefer `hints`.
+   * Format 3: Egyptian hint (legacy). Prefer `hint_words`.
    * Kept for soft-compat when loading older banks.
    */
   hint_eg?: string;
-  /** Format 3: progressive hint ladder (what → words → frame). */
+  /** Format 3 (legacy): progressive hint ladder. Prefer `hint_words`. */
   hints?: SceneHints;
+  /** Format 3: 💡 words only (never a full sentence). */
+  hint_words?: string;
+  /** Format 3: rare coach line under the bubble that opens this goal. */
+  coach_before_eg?: string;
+  /**
+   * Format 3: goal is active only if that earlier goal was completed
+   * with one of these option values. Otherwise omitted silently.
+   */
+  only_if?: { goal: string; options: string[] };
 };
 
 /** Format 3 progressive hints (batch-rp-3 Change 2026-11-19). */
@@ -118,6 +127,8 @@ export type ConvoGoalStatus = 'open' | 'done' | 'assisted' | 'skipped';
 export type ConvoGoalState = {
   id: string;
   status: ConvoGoalStatus;
+  /** Format 3: winning option value when done/assisted (for only_if). */
+  option?: string | null;
 };
 
 export type ConvoScene = {
@@ -171,6 +182,12 @@ export type ConvoGoalBank = {
   closing_lines?: SceneLine[];
   /** Format 3: greeting / thanks / side_unknown. */
   global?: SceneGlobalBlock;
+  /** Format 3: 1–2 culture tips on the end card. */
+  end_tips_eg?: string[];
+  /** Format 3: coach line under the opening bubble (once). */
+  opening_coach_eg?: string;
+  /** Format 3: Arabic→PT glossary for language-help fallback. */
+  glossary?: Array<{ ar: string[]; tl: string }>;
   /** Scene entry card emoji. */
   emoji?: string;
   /** Scene path metadata: suggested curriculum day. */

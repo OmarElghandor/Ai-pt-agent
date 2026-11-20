@@ -49,9 +49,8 @@ describe('scenes S1 · loader (batch-rp-3 path)', () => {
     assert.ok(cafe.goals[0].ask?.length);
     assert.ok(cafe.goals[0].options?.length);
     assert.ok(cafe.goals[0].suggest?.length === 2);
-    assert.ok(cafe.goals[0].hints?.what_eg?.trim());
-    assert.ok(cafe.goals[0].hints?.words_eg?.trim());
-    assert.ok(cafe.goals[0].hints?.frame_tl?.trim());
+    assert.ok(cafe.goals[0].hint_words?.trim());
+    assert.equal(cafe.end_tips_eg?.length, 2);
     assert.equal(cafe.goals[cafe.goals.length - 1]?.farewell, true);
     for (const g of cafe.goals) {
       if (g.farewell) continue;

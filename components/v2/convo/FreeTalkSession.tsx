@@ -189,6 +189,9 @@ export function FreeTalkSession({
             key_phrases: said,
             corrections,
             summary_eg: event.eg,
+            ...(event.end_tips_eg?.length
+              ? { end_tips_eg: [...event.end_tips_eg] }
+              : {}),
           });
           return;
         }
@@ -200,6 +203,7 @@ export function FreeTalkSession({
             eg: event.eg,
             moment: event.moment,
             ...(event.segments ? { segments: event.segments } : {}),
+            ...(event.suggest?.length ? { suggest: [...event.suggest] } : {}),
           },
         ];
         bubblesRef.current = next;
@@ -232,36 +236,13 @@ export function FreeTalkSession({
         return;
       }
       if (event.type === 'free_frame') {
+        // Scenes never use free_frame chips (miss/stuck help uses coach.suggest).
+        if (sceneMode) return;
         setFrame({
           tl: event.tl,
           eg: event.eg,
           chips: event.chips,
         });
-        // Scene ladder L4: put suggest chips on the latest character bubble.
-        if (sceneMode) {
-          const chips = event.chips ?? [];
-          let lastChar = -1;
-          for (let i = bubblesRef.current.length - 1; i >= 0; i--) {
-            if (bubblesRef.current[i]?.role === 'character') {
-              lastChar = i;
-              break;
-            }
-          }
-          if (lastChar >= 0) {
-            const next = bubblesRef.current.map((b, i) => {
-              if (b.role !== 'character') return b;
-              if (i === lastChar) {
-                return chips.length
-                  ? { ...b, suggest: [...chips] }
-                  : { ...b, suggest: undefined };
-              }
-              if (b.suggest) return { ...b, suggest: undefined };
-              return b;
-            });
-            bubblesRef.current = next;
-            syncAuthoritative(next);
-          }
-        }
         return;
       }
       if (event.type === 'topic_lock') {
@@ -452,6 +433,7 @@ export function FreeTalkSession({
             intro_eg: string;
             goals: SceneMissionGoal[];
             current_goal: string | null;
+            hint_words?: string;
             done_ids: string[];
             skipped_ids?: string[];
           };
@@ -505,12 +487,18 @@ export function FreeTalkSession({
           }
           const openTl = data.opening.character.tl?.trim() ?? '';
           if (openTl) {
+            const openCoach = data.opening.character.coach_eg?.trim();
             next.push({
               id: newId('open'),
               role: 'character',
               tl: openTl,
               ar: data.opening.character.ar,
-              // Scene suggest chips only after hint ladder level 4 — never on open.
+              ...(openCoach
+                ? { coachEg: openCoach, coachRevealed: true }
+                : {}),
+              ...(sceneMode && data.scene_mission?.hint_words?.trim()
+                ? { hintWords: data.scene_mission.hint_words.trim() }
+                : {}),
             });
           }
         }
@@ -776,19 +764,17 @@ export function FreeTalkSession({
                   typing={b.typing}
                   ttsEpoch={b.ttsEpoch}
                   playbackRate={b.playbackRate ?? 1}
-                  alwaysShowMeaning={sceneMode}
+                  alwaysShowMeaning={false}
                   suggest={sceneMode ? b.suggest : undefined}
+                  hintWords={
+                    sceneMode && isLatestCharacter && !b.suggest?.length
+                      ? b.hintWords
+                      : undefined
+                  }
                   onSuggestChip={
                     sceneMode
                       ? (chip) => {
                           setComposeFill(chip);
-                        }
-                      : undefined
-                  }
-                  onHintPress={
-                    isLatestCharacter && !b.suggest?.length
-                      ? () => {
-                          void runTurn('تلميح');
                         }
                       : undefined
                   }
@@ -857,22 +843,40 @@ export function FreeTalkSession({
               const isCorrection =
                 moment === 'recast' || moment === 'correction';
               return (
-                <CoachCard
-                  key={b.id}
-                  label={
-                    isCorrection
-                      ? 'تصحيح لطيف'
-                      : isSide
-                        ? 'المساعد اللغوي'
-                        : moment === 'intro'
-                          ? 'نصيحة المحادثة'
-                          : undefined
-                  }
-                  correction={isCorrection}
-                  segments={b.segments}
-                >
-                  {b.eg}
-                </CoachCard>
+                <div key={b.id} className="flex w-full flex-col gap-1.5">
+                  <CoachCard
+                    label={
+                      isCorrection
+                        ? 'تصحيح لطيف'
+                        : isSide
+                          ? 'المساعد اللغوي'
+                          : moment === 'intro'
+                            ? 'نصيحة المحادثة'
+                            : undefined
+                    }
+                    correction={isCorrection}
+                    segments={b.segments}
+                  >
+                    {b.eg}
+                  </CoachCard>
+                  {b.suggest?.length ? (
+                    <div
+                      dir="rtl"
+                      className="flex w-full flex-wrap items-center gap-1.5 px-1"
+                    >
+                      {b.suggest.map((chip) => (
+                        <button
+                          key={chip}
+                          type="button"
+                          onClick={() => setComposeFill(chip)}
+                          className="rounded-lg bg-[color-mix(in_srgb,var(--ft-mist)_55%,transparent)] px-2.5 py-1 font-[family-name:var(--font-ft-pt)] text-[12px] text-[var(--ft-ink)] ring-1 ring-[var(--ft-border)]"
+                        >
+                          {chip}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
               );
             }
             return null;

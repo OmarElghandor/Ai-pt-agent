@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { isolatePtInText } from '@/lib/v2/convo/ui/isolatePt';
 
 export type CorrectionHintData = {
@@ -10,7 +9,7 @@ export type CorrectionHintData = {
   note_eg: string;
   ar: string;
   original: string;
-  /** 0-based index of this correction in the session (first 3 expanded). */
+  /** 0-based index of this correction in the session. */
   index: number;
 };
 
@@ -76,10 +75,8 @@ async function playPt(tl: string) {
   }
 }
 
-/** Attached correction card under the learner sage bubble (K3). */
+/** Attached correction card under the learner sage bubble — always expanded. */
 export function CorrectionHint({ data, onAddCard }: Props) {
-  const startCollapsed = data.index >= 3;
-  const [expanded, setExpanded] = useState(!startCollapsed);
   const accentToken =
     data.changes[0]?.to || data.corrected_tl.split(/\s+/).find(Boolean) || '';
 
@@ -99,18 +96,6 @@ export function CorrectionHint({ data, onAddCard }: Props) {
           </bdi>
         </p>
       </div>
-    );
-  }
-
-  if (!expanded) {
-    return (
-      <button
-        type="button"
-        onClick={() => setExpanded(true)}
-        className="mt-1.5 inline-flex items-center gap-1 self-end rounded-full border border-[var(--ft-border)] bg-[var(--ft-coach)] px-2.5 py-1 font-[family-name:var(--font-ft-ar)] text-[12px] text-[var(--ft-correction-text)]"
-      >
-        <span aria-hidden>✏️</span> تصحيح
-      </button>
     );
   }
 

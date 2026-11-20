@@ -33,6 +33,8 @@ export type TalkBubble =
       playbackRate?: number;
       /** Format 3 scene: suggestion chips under the latest character bubble. */
       suggest?: string[];
+      /** Format 3: 💡 words (client toggles). */
+      hintWords?: string;
     }
   | {
       id: string;
@@ -58,6 +60,8 @@ export type TalkBubble =
       eg: string;
       moment?: string;
       segments?: Array<{ type: 'eg' | 'tl'; text: string }>;
+      /** Scene miss/stuck help: tappable sentences. */
+      suggest?: string[];
       typing?: boolean;
     }
   | {

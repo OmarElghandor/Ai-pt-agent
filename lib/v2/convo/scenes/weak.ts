@@ -66,11 +66,13 @@ export function messageContainsKeyword(
   const msg = normalizeSceneText(message);
   const k = normalizeSceneText(keyword);
   if (!msg || !k) return false;
+  // Multi-word phrases: substring is fine («só isto»).
   if (k.includes(' ')) return msg.includes(k);
+  // Single tokens: whole-word or §8.2 fuzzy only — never bare substring
+  // (e.g. keyword «so» must not hit inside «perciso»).
   const tokens = msg.split(/\s+/).filter(Boolean);
   if (tokens.some((t) => t === k)) return true;
-  if (tokens.some((t) => sceneKeywordMatchesToken(k, t))) return true;
-  return k.length >= 2 && msg.includes(k);
+  return tokens.some((t) => sceneKeywordMatchesToken(k, t));
 }
 
 export function messageHasStrongKeyword(

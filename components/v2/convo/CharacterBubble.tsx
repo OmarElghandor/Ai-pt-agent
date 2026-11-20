@@ -34,14 +34,14 @@ type Props = {
   voice?: string;
   /** Increment to abort in-flight TTS (G2 reaction_reset). */
   ttsEpoch?: number;
-  /** Format 3 scene: always show Arabic under the PT. */
+  /** Format 3 scene: always show Arabic under the PT (legacy; prefer hidden + toggle). */
   alwaysShowMeaning?: boolean;
-  /** Format 3 scene: suggestion chips under the latest bubble (ladder level 4). */
+  /** Format 3 scene: suggestion chips under the latest bubble (after a mistake). */
   suggest?: string[];
   /** Called when the learner taps a suggest chip (fills input). */
   onSuggestChip?: (text: string) => void;
-  /** Format 3 scene: progressive hint button (before level 4). */
-  onHintPress?: () => void;
+  /** Format 3: 💡 words (toggle locally; never a full sentence). */
+  hintWords?: string;
   /** Disable the hint button while a turn is in flight. */
   hintDisabled?: boolean;
 };
@@ -107,10 +107,11 @@ export function CharacterBubble({
   alwaysShowMeaning = false,
   suggest,
   onSuggestChip,
-  onHintPress,
+  hintWords,
   hintDisabled = false,
 }: Props) {
   const [showMeaning, setShowMeaning] = useState(alwaysShowMeaning);
+  const [showHintWords, setShowHintWords] = useState(false);
   const [playing, setPlaying] = useState(false);
   const playedRef = useRef<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -292,16 +293,26 @@ export function CharacterBubble({
             </button>
           ))}
         </div>
-      ) : onHintPress ? (
-        <div dir="rtl" className="flex w-full items-center px-1">
+      ) : hintWords?.trim() ? (
+        <div dir="rtl" className="flex w-full flex-col items-start gap-1 px-1">
           <button
             type="button"
-            onClick={onHintPress}
+            onClick={() => setShowHintWords((v) => !v)}
             disabled={hintDisabled}
+            aria-pressed={showHintWords}
             className="rounded-lg px-2.5 py-1 font-[family-name:var(--font-ft-ar)] text-[12px] text-[var(--ft-sage)] ring-1 ring-[var(--ft-border)] hover:bg-[color-mix(in_srgb,var(--ft-mist)_40%,transparent)] disabled:opacity-50"
           >
-            💡 تلميح
+            💡
           </button>
+          {showHintWords ? (
+            <p
+              dir="ltr"
+              lang="pt"
+              className="font-[family-name:var(--font-ft-pt)] text-[12px] text-[var(--ft-ink)]"
+            >
+              {hintWords}
+            </p>
+          ) : null}
         </div>
       ) : null}
     </div>

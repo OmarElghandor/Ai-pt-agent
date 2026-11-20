@@ -3,6 +3,7 @@ import type {
   ConvoGoalState,
   SceneOption,
 } from '@/lib/v2/convo/goals/types';
+import { isGoalActive } from '@/lib/v2/convo/goals/onlyIf';
 import { isAtLeast80Similar } from './similarity';
 import {
   messageHasAnyKeyword,
@@ -29,7 +30,9 @@ function openGoalsInBankOrder(
   const open = new Set(
     states.filter((g) => g.status === 'open').map((g) => g.id),
   );
-  return bankGoals.filter((g) => open.has(g.id));
+  return bankGoals.filter(
+    (g) => open.has(g.id) && isGoalActive(g, states),
+  );
 }
 
 function letterCount(text: string): number {

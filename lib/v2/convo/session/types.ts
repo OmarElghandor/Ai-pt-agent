@@ -127,8 +127,16 @@ export type ConvoSession = {
   learner_lines: string[];
   /** Scene: consecutive misses on the current goal (§3 Step D). */
   scene_misses?: number;
-  /** Scene: hint ladder level on the current goal (0–4). */
+  /** Scene: legacy hint ladder level (0–4); unused in 2026-11-20 help. */
   scene_hint_level?: 0 | 1 | 2 | 3 | 4;
+  /** Scene: any suggest was shown on the current goal → assisted on complete. */
+  scene_suggest_shown?: boolean;
+  /** Scene: goal ids whose coach_before_eg was shown or dropped. */
+  scene_coach_before_consumed?: string[];
+  /** Scene: character bubbles since last coach_before shown. */
+  scene_char_bubbles_since_coach?: number;
+  /** Scene: at least one coach_before was shown this session. */
+  scene_coach_ever_shown?: boolean;
   /** Scene bank format when the session was created (reject mismatch on open). */
   scene_format?: 2 | 3;
   /** Format 3: variant counters for ask/react/global/opening/closing arrays. */
@@ -152,7 +160,7 @@ export type ConvoSession = {
 
 export type ConvoOpeningBubbles = {
   /** Character opening line (free: opening + share + ask in one bubble). */
-  character: { tl: string; ar?: string; say?: string };
+  character: { tl: string; ar?: string; say?: string; coach_eg?: string };
   /** One Egyptian line that introduces the whole group (Learn). */
   intro_eg?: string;
   /** Group-1 coach intros / free intro_eg (behind «إزاي أفتكرها؟» on mini cards). */

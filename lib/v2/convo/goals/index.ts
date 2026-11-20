@@ -90,6 +90,13 @@ export {
   openGoalsFromSession,
 } from './advance';
 export {
+  activeOpenGoals,
+  checklistGoals,
+  completedOptionValue,
+  firstActiveOpenGoalId,
+  isGoalActive,
+} from './onlyIf';
+export {
   isStuckHelpRequest,
   steerActionForTurns,
   sceneHintLevel1,

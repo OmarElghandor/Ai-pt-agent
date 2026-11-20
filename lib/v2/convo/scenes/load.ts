@@ -173,18 +173,35 @@ function parseHints(raw: unknown): ConvoGoal['hints'] | undefined {
 function synthesizeHelp(goal: {
   hint_eg?: string;
   hints?: ConvoGoal['hints'];
+  hint_words?: string;
   suggest?: string[];
   suggest_f?: string[];
 }): ConvoGoalHelp {
   const chips = goal.suggest?.length ? [...goal.suggest] : ['…'];
   const eg =
-    goal.hints?.what_eg?.trim() || goal.hint_eg?.trim() || '';
+    goal.hints?.what_eg?.trim() ||
+    goal.hint_eg?.trim() ||
+    goal.hint_words?.trim() ||
+    '';
   return {
     frame_tl: goal.hints?.frame_tl?.trim() || chips[0] || '…',
     eg,
     chips,
     ...(goal.suggest_f?.length ? { chips_f: [...goal.suggest_f] } : {}),
   };
+}
+
+function parseOnlyIf(
+  raw: unknown,
+): ConvoGoal['only_if'] | undefined {
+  if (!raw || typeof raw !== 'object') return undefined;
+  const o = raw as Record<string, unknown>;
+  const goal = typeof o.goal === 'string' ? o.goal.trim() : '';
+  const options = Array.isArray(o.options)
+    ? o.options.map((x) => String(x).trim()).filter(Boolean)
+    : [];
+  if (!goal || !options.length) return undefined;
+  return { goal, options };
 }
 
 function parseFormat3Goal(raw: Record<string, unknown>): ConvoGoal {
@@ -205,6 +222,13 @@ function parseFormat3Goal(raw: Record<string, unknown>): ConvoGoal {
     ? raw.suggest_f.map((s) => String(s)).filter(Boolean)
     : undefined;
   const hints = parseHints(raw.hints);
+  const hint_words =
+    typeof raw.hint_words === 'string' ? raw.hint_words.trim() : '';
+  const coach_before_eg =
+    typeof raw.coach_before_eg === 'string'
+      ? raw.coach_before_eg.trim()
+      : '';
+  const only_if = parseOnlyIf(raw.only_if);
   const hint_eg =
     typeof raw.hint_eg === 'string'
       ? raw.hint_eg.trim()
@@ -229,9 +253,18 @@ function parseFormat3Goal(raw: Record<string, unknown>): ConvoGoal {
     suggest,
     ...(suggest_f?.length ? { suggest_f } : {}),
     ...(hints ? { hints } : {}),
+    ...(hint_words ? { hint_words } : {}),
+    ...(coach_before_eg ? { coach_before_eg } : {}),
+    ...(only_if ? { only_if } : {}),
     ...(hint_eg ? { hint_eg } : {}),
     ...(farewell ? { farewell: true } : {}),
-    help: synthesizeHelp({ hint_eg, hints, suggest, suggest_f }),
+    help: synthesizeHelp({
+      hint_eg,
+      hints,
+      hint_words,
+      suggest,
+      suggest_f,
+    }),
   };
 }
 
@@ -318,6 +351,30 @@ function parseFormat3SceneBank(doc: Record<string, unknown>): ConvoGoalBank {
   if (typeof doc.emoji === 'string') bank.emoji = doc.emoji;
   if (typeof doc.recommended_day === 'number') {
     bank.recommended_day = doc.recommended_day;
+  }
+  if (Array.isArray(doc.end_tips_eg)) {
+    const tips = doc.end_tips_eg
+      .map((t) => String(t).trim())
+      .filter(Boolean);
+    if (tips.length) bank.end_tips_eg = tips;
+  }
+  if (typeof doc.opening_coach_eg === 'string' && doc.opening_coach_eg.trim()) {
+    bank.opening_coach_eg = doc.opening_coach_eg.trim();
+  }
+  if (Array.isArray(doc.glossary)) {
+    const glossary = doc.glossary
+      .map((raw) => {
+        if (!raw || typeof raw !== 'object') return null;
+        const o = raw as Record<string, unknown>;
+        const tl = typeof o.tl === 'string' ? o.tl.trim() : '';
+        const ar = Array.isArray(o.ar)
+          ? o.ar.map((a) => String(a).trim()).filter(Boolean)
+          : [];
+        if (!tl || !ar.length) return null;
+        return { ar, tl };
+      })
+      .filter((e): e is { ar: string[]; tl: string } => Boolean(e));
+    if (glossary.length) bank.glossary = glossary;
   }
 
   return bank;

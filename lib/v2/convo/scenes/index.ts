@@ -67,6 +67,16 @@ export {
   type SceneQwenResult,
 } from './qwenScene';
 export {
+  buildSceneLangHelpLexicon,
+  callSceneLangHelp,
+  matchGlossaryEntry,
+  parseSceneLangHelpJson,
+  resolveSceneLangHelp,
+  sceneLangHelpPassesCheck,
+  type SceneLangHelpCoach,
+  type SceneLangHelpResult,
+} from './sceneLangHelp';
+export {
   isWeakWordOrPhrase,
   messageContainsKeyword,
   messageHasAnyKeyword,

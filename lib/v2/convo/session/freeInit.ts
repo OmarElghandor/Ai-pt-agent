@@ -11,6 +11,7 @@ import {
   openingNextLine,
 } from '@/lib/v2/convo/free';
 import {
+  firstActiveOpenGoalId,
   firstOpenGoalId,
   goalStatesFromBank,
   loadGoalsForDay,
@@ -137,10 +138,15 @@ export function buildFreeOpeningBubbles(
       isSceneBank(bank) || !introEg
         ? []
         : [{ item_id: topic.id, coach_intro_eg: introEg }];
+    const openingCoach =
+      isSceneBank(bank) && bank.opening_coach_eg?.trim()
+        ? bank.opening_coach_eg.trim()
+        : undefined;
     return {
       character: {
         tl: fillNameSlot(lines.tl, opts?.learnerName),
         ar: fillNameSlot(lines.ar, opts?.learnerName),
+        ...(openingCoach ? { coach_eg: openingCoach } : {}),
       },
       coach_intros,
       card_ids: [],
@@ -240,7 +246,9 @@ export function createFreeConvoSessionDoc(opts: {
     timeOfDay: opts.timeOfDay,
   });
   const goals = bank ? goalStatesFromBank(bank) : [];
-  const current_goal = firstOpenGoalId(goals);
+  const current_goal = bank
+    ? firstActiveOpenGoalId(bank, goals)
+    : firstOpenGoalId(goals);
   const currentDef = bank?.goals.find((g) => g.id === current_goal);
   const scene = bank?.scene
     ? {
@@ -378,6 +386,12 @@ export function createFreeConvoSessionDoc(opts: {
     learner_lines: [],
     scene_misses: 0,
     scene_hint_level: 0,
+    scene_suggest_shown: false,
+    scene_coach_before_consumed: [],
+    scene_char_bubbles_since_coach: 0,
+    scene_coach_ever_shown: Boolean(
+      isSceneBank(bank) && bank.opening_coach_eg?.trim(),
+    ),
     ...(bank?.format === 2 || bank?.format === 3
       ? { scene_format: bank.format }
       : {}),

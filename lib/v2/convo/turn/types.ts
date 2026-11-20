@@ -14,6 +14,10 @@ export type ConvoTurnStreamEvent =
       moment: CoachMoment | string;
       /** Structured EG/TL segments (K6); preferred over parsing eg. */
       segments?: Array<{ type: 'eg' | 'tl'; text: string }>;
+      /** Scene miss/stuck help: tappable full-sentence suggests (no free_frame). */
+      suggest?: string[];
+      /** scene_done: culture tips for the end card. */
+      end_tips_eg?: string[];
     }
   | {
       type: 'group_advance';
@@ -71,8 +75,10 @@ export type ConvoTurnStreamEvent =
       teach_goal_id?: string;
       /** Scene repeat / Mais devagar — client TTS slower (0.85). */
       playback?: 'normal' | 'slow';
-      /** Format 3 scene: suggestion chips under this bubble. */
+      /** Format 3 scene: suggestion chips under this bubble (after a mistake). */
       suggest?: string[];
+      /** Format 3: 💡 words for the current goal (client toggles locally). */
+      hint_words?: string;
     }
   | {
       type: 'visual';

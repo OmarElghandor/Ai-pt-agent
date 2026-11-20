@@ -138,6 +138,9 @@ export function reduceFreeTalkStream(
     const suggestFields = event.suggest?.length
       ? { suggest: [...event.suggest] }
       : {};
+    const hintFields = event.hint_words?.trim()
+      ? { hintWords: event.hint_words.trim() }
+      : {};
     const clearOldSuggest = (list: TalkBubble[]): TalkBubble[] =>
       event.suggest?.length
         ? list.map((b) =>
@@ -165,6 +168,7 @@ export function reduceFreeTalkStream(
             final: true,
             ...teachFields,
             ...suggestFields,
+            ...hintFields,
             ...(event.say ? { say: event.say } : {}),
           });
         }
@@ -180,6 +184,7 @@ export function reduceFreeTalkStream(
               streaming: false,
               ...teachFields,
               ...suggestFields,
+              ...hintFields,
               ...(event.say ? { say: event.say } : {}),
             }
           : b,
@@ -204,6 +209,7 @@ export function reduceFreeTalkStream(
             final: true,
             ...teachFields,
             ...suggestFields,
+            ...hintFields,
             ...(event.say ? { say: event.say } : {}),
           },
         ],

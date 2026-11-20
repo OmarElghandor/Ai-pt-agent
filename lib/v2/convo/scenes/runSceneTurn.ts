@@ -1,21 +1,14 @@
-import { getCharacter } from '@/lib/v2/characters/registry';
 import {
   applySceneDoneGoals,
-  firstOpenGoalId,
+  firstActiveOpenGoalId,
   healSceneSessionAgainstBank,
   isStuckHelpRequest,
   openGoalsFromSession,
   type ConvoGoal,
   type ConvoGoalBank,
 } from '@/lib/v2/convo/goals';
-import {
-  classifySideChannel,
-  collectFreeContextCandidates,
-} from '@/lib/v2/convo/sideChannel';
-import {
-  handleFreeArabicSide,
-  setCoachPhrase,
-} from '@/lib/v2/convo/free';
+import { classifySideChannel } from '@/lib/v2/convo/sideChannel';
+import { setCoachPhrase } from '@/lib/v2/convo/free';
 import type { ConvoCoachCaller } from '@/lib/v2/convo/sideChannel/coachCall';
 import { pushLearnerLine } from '@/lib/v2/convo/result/summary';
 import type { ConvoSession, ConvoSessionStore } from '@/lib/v2/convo/session';
@@ -25,7 +18,6 @@ import type {
   ConvoTurnStreamEvent,
 } from '@/lib/v2/convo/turn/types';
 import { checkSceneGoals } from './check';
-import { collectSceneFacts } from './prompt';
 import {
   callSceneQwen,
   sceneQwenCandidatesFromOpen,
@@ -33,11 +25,15 @@ import {
   type SceneQwenResult,
 } from './qwenScene';
 import {
+  resolveSceneLangHelp,
+  type SceneLangHelpResult,
+} from './sceneLangHelp';
+import {
   goalExamplesIncludeRepeat,
   isSceneRepeatRequest,
 } from './repeat';
 import { joinLines, pickVariantLine } from './variants';
-import { messageHasAnyKeyword } from './weak';
+import { messageHasAnyKeyword, normalizeSceneText } from './weak';
 import type { SceneLine } from '@/lib/v2/convo/goals/types';
 
 export type RunSceneTurnInput = {
@@ -52,8 +48,15 @@ export type RunSceneTurnInput = {
   assisted?: boolean;
   learnerTurnId?: string;
   coachCaller?: ConvoCoachCaller;
-  /** Stub the Qwen JSON call (tests). May be a delayed Promise (G10). */
+  /** Stub the Qwen JSON call (tests). May be a delayed Promise (G7). */
   stubQwen?: SceneQwenResult | Promise<SceneQwenResult>;
+  /** Format 3: stub language-help Qwen (or 'timeout'). */
+  stubLangHelp?:
+    | SceneLangHelpResult
+    | Promise<SceneLangHelpResult | null>
+    | 'timeout';
+  /** Live check: observe the raw Qwen JSON (before validation). */
+  onSceneQwen?: (raw: SceneQwenResult | null) => void;
   /** @deprecated format-2 stub — ignored for format 3. */
   stubReaction?: { pt: string; ar?: string; goal?: string };
 };
@@ -70,6 +73,49 @@ function pushExchange(
   ].slice(-3);
 }
 
+/** Best matching authored ar for a character pt line (exact or prefix). */
+function findAuthoredArForPt(
+  bank: ConvoGoalBank,
+  pt: string,
+  gender: 'm' | 'f',
+): string | undefined {
+  const needle = normalizeSceneText(pt);
+  if (!needle) return undefined;
+  const candidates: SceneLine[] = [];
+  const push = (line: SceneLine | undefined | null) => {
+    if (line?.tl?.trim()) candidates.push(line);
+  };
+  for (const l of bank.opening_lines ?? []) push(l);
+  if (bank.opening) push(bank.opening);
+  for (const g of bank.goals) {
+    for (const l of g.ask ?? []) push(l);
+    for (const l of g.unclear ?? []) push(l);
+    for (const o of g.options ?? []) {
+      for (const l of o.react) push(l);
+    }
+  }
+  if (bank.global) {
+    for (const l of bank.global.greeting.react) push(l);
+    for (const l of bank.global.thanks.react) push(l);
+    for (const l of bank.global.side_unknown.react) push(l);
+  }
+  let best: SceneLine | null = null;
+  let bestLen = 0;
+  for (const line of candidates) {
+    const tl = normalizeSceneText(line.tl);
+    if (!tl) continue;
+    if (tl === needle || needle.startsWith(tl) || tl.startsWith(needle)) {
+      if (tl.length > bestLen) {
+        best = line;
+        bestLen = tl.length;
+      }
+    }
+  }
+  if (!best) return undefined;
+  if (gender === 'f' && best.ar_f?.trim()) return best.ar_f.trim();
+  return best.ar?.trim() || undefined;
+}
+
 function suggestForGoal(
   goal: ConvoGoal | undefined,
   gender: 'm' | 'f',
@@ -80,120 +126,46 @@ function suggestForGoal(
   return [];
 }
 
-type SceneHintLevel = 0 | 1 | 2 | 3 | 4;
-
-function hintLevel(session: ConvoSession): SceneHintLevel {
-  const n = session.scene_hint_level ?? 0;
-  if (n <= 0) return 0;
-  if (n >= 4) return 4;
-  return n as SceneHintLevel;
-}
-
-/** Advance the progressive hint ladder by one (cap at 4). */
-function advanceHintLevel(session: ConvoSession): SceneHintLevel {
-  const next = Math.min(4, hintLevel(session) + 1) as SceneHintLevel;
-  session.scene_hint_level = next;
-  return next;
-}
-
-function hintTextForLevel(
-  goal: ConvoGoal,
-  level: SceneHintLevel,
-): string {
-  if (level <= 0) return '';
-  if (goal.hints) {
-    if (level === 1) return goal.hints.what_eg;
-    if (level === 2) return goal.hints.words_eg;
-    if (level === 3) return goal.hints.frame_tl;
-    return '';
-  }
-  return goal.hint_eg?.trim() || goal.help.eg || '';
-}
-
-/** Suggest chips only when the ladder is at level 4. */
-function suggestIfLevel4(
-  session: ConvoSession,
-  goal: ConvoGoal | undefined,
-  gender: 'm' | 'f',
-): string[] | undefined {
-  if (hintLevel(session) < 4) return undefined;
-  const chips = suggestForGoal(goal, gender);
-  return chips.length ? chips : undefined;
-}
-
-function emitSuggestFrame(
-  session: ConvoSession,
-  emit: (e: ConvoTurnStreamEvent) => void,
-  goal: ConvoGoal | undefined,
-  gender: 'm' | 'f',
-): void {
-  const level = hintLevel(session);
-  const chips = level >= 4 ? suggestForGoal(goal, gender) : [];
-  const eg =
-    level >= 1 && level <= 3
-      ? hintTextForLevel(goal!, level)
-      : goal?.hints?.what_eg?.trim() ||
-        goal?.hint_eg?.trim() ||
-        goal?.help.eg ||
-        '';
-  const frameTl =
-    level === 3
-      ? goal?.hints?.frame_tl || chips[0] || ''
-      : level >= 4
-        ? chips[0] ?? ''
-        : goal?.hints?.frame_tl || chips[0] || '';
-  session.pending_frame = {
-    tl: frameTl,
-    eg,
-    chips,
-  };
-  emit({
-    type: 'free_frame',
-    tl: frameTl,
-    eg,
-    chips,
-  });
-}
-
-/** Show only the current ladder level on the hint/coach card. */
-function emitHintCard(
-  session: ConvoSession,
-  emit: (e: ConvoTurnStreamEvent) => void,
+/** Miss/stuck help level: 1 = suggest[0], 2 = both, 3 = assisted. */
+function helpSuggestsForLevel(
   goal: ConvoGoal,
   gender: 'm' | 'f',
-): void {
-  const level = hintLevel(session);
-  const chips = level >= 4 ? suggestForGoal(goal, gender) : [];
-  const eg = level >= 4 ? '' : hintTextForLevel(goal, level);
-  const frameTl =
-    level === 3
-      ? goal.hints?.frame_tl || ''
-      : level >= 4
-        ? chips[0] ?? ''
-        : goal.hints?.frame_tl || '';
-  session.pending_frame = {
-    tl: frameTl,
-    eg,
-    chips,
-  };
-  if (eg.trim() || level >= 1) {
-    emit({
-      type: 'coach',
-      id: `scene_hint:${goal.id}:L${level}`,
-      eg: eg || (level >= 4 ? chips[0] || '' : ''),
-      moment: 'help',
-    });
-  }
-  emit({
-    type: 'free_frame',
-    tl: frameTl,
-    eg,
-    chips,
-  });
+  level: 1 | 2,
+): string[] {
+  const all = suggestForGoal(goal, gender);
+  if (level <= 1) return all.slice(0, 1);
+  return all.slice(0, 2);
 }
 
-function assistedFromHintLadder(session: ConvoSession): boolean {
-  return hintLevel(session) >= 4;
+function markSuggestShown(session: ConvoSession): void {
+  session.scene_suggest_shown = true;
+}
+
+function assistedFromSuggest(session: ConvoSession): boolean {
+  return Boolean(session.scene_suggest_shown);
+}
+
+/**
+ * At most one coach_before every 3 character bubbles; sooner → drop.
+ * Returns the coach text to attach, or undefined if none / dropped.
+ */
+function takeCoachBeforeEg(
+  session: ConvoSession,
+  goal: ConvoGoal | undefined,
+): string | undefined {
+  if (!goal?.coach_before_eg?.trim()) return undefined;
+  const consumed = session.scene_coach_before_consumed ?? [];
+  if (consumed.includes(goal.id)) return undefined;
+
+  const ever = Boolean(session.scene_coach_ever_shown);
+  const since = session.scene_char_bubbles_since_coach ?? 0;
+  const allow = !ever || since >= 3;
+  session.scene_coach_before_consumed = [...consumed, goal.id];
+  if (!allow) return undefined;
+
+  session.scene_coach_ever_shown = true;
+  session.scene_char_bubbles_since_coach = 0;
+  return goal.coach_before_eg.trim();
 }
 
 function emitCharacterBubble(opts: {
@@ -204,9 +176,24 @@ function emitCharacterBubble(opts: {
   playback?: 'slow';
   topicId: string;
   suggest?: string[];
+  /** Goal whose ask is opening (for coach_before + hint_words). */
+  openingGoal?: ConvoGoal | null;
+  hintGoal?: ConvoGoal | null;
 }): void {
   const { session, emit, line } = opts;
   if (!line.tl.trim()) return;
+
+  const coachEg = takeCoachBeforeEg(
+    session,
+    opts.openingGoal ?? undefined,
+  );
+  // Count this bubble for spacing (after takeCoachBefore so a shown coach resets first).
+  if (!coachEg) {
+    session.scene_char_bubbles_since_coach =
+      (session.scene_char_bubbles_since_coach ?? 0) + 1;
+  }
+
+  const hintGoal = opts.hintGoal ?? opts.openingGoal ?? null;
   pushExchange(session, 'character', line.tl);
   emit({
     type: 'bubble_ar',
@@ -214,6 +201,10 @@ function emitCharacterBubble(opts: {
     pt: line.tl,
     ...(opts.playback ? { playback: opts.playback } : {}),
     ...(opts.suggest?.length ? { suggest: opts.suggest } : {}),
+    ...(coachEg ? { coach_eg: coachEg } : {}),
+    ...(hintGoal?.hint_words?.trim()
+      ? { hint_words: hintGoal.hint_words.trim() }
+      : {}),
   });
   const lineId = opts.goalId ?? 'scene.ask';
   emit({
@@ -249,6 +240,8 @@ function emitSceneDone(
         }
       : { tl: 'Até logo!', ar: 'إلى اللقاء!' });
   pushExchange(session, 'character', closing.tl);
+  session.scene_char_bubbles_since_coach =
+    (session.scene_char_bubbles_since_coach ?? 0) + 1;
   emit({ type: 'bubble_ar', ar: closing.ar, pt: closing.tl });
   emit({
     type: 'question',
@@ -264,12 +257,16 @@ function emitSceneDone(
     id: 'scene_done',
     eg: `خلصت ✓. ${said.length ? `قلت: ${said.join(' · ')}` : 'خلصت المكالمة.'}`,
     moment: 'summary',
+    ...(bank.end_tips_eg?.length
+      ? { end_tips_eg: [...bank.end_tips_eg] }
+      : {}),
   });
   session.status = 'done';
   session.phase = 'closing';
   session.pending_frame = null;
   session.scene_misses = 0;
   session.scene_hint_level = 0;
+  session.scene_suggest_shown = false;
 }
 
 function findOption(goal: ConvoGoal, value: string | null | undefined) {
@@ -359,7 +356,11 @@ function applyDoneAndBuildBubble(opts: {
     opts.bank,
     opts.doneIds,
     opts.skippedIds,
-    { assisted: opts.assisted, learnerGender: opts.gender },
+    {
+      assisted: opts.assisted,
+      learnerGender: opts.gender,
+      optionValue: opts.optionValue,
+    },
   );
   const nextId = opts.session.current_goal;
   const nextGoal = opts.bank.goals.find((g) => g.id === nextId);
@@ -371,6 +372,15 @@ function applyDoneAndBuildBubble(opts: {
   return { bubble, nextGoal };
 }
 
+/** Lowercase + strip punctuation; used to drop punctuation-only corrections. */
+function normalizeForCorrectionCompare(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function emitCorrectionFromQwen(
   emit: (e: ConvoTurnStreamEvent) => void,
   qwen: SceneQwenResult | null,
@@ -378,6 +388,12 @@ function emitCorrectionFromQwen(
   original: string,
 ): void {
   if (!qwen?.has_error || !qwen.corrected?.trim()) return;
+  if (
+    normalizeForCorrectionCompare(original) ===
+    normalizeForCorrectionCompare(qwen.corrected)
+  ) {
+    return;
+  }
   emit({
     type: 'correction',
     learner_turn_id: learnerTurnId,
@@ -391,8 +407,38 @@ function emitCorrectionFromQwen(
   });
 }
 
+function applyAssistedAndNextAsk(opts: {
+  session: ConvoSession;
+  bank: ConvoGoalBank;
+  goal: ConvoGoal;
+  gender: 'm' | 'f';
+  topicId: string;
+  emit: (e: ConvoTurnStreamEvent) => void;
+}): void {
+  applySceneDoneGoals(opts.session, opts.bank, [opts.goal.id], [], {
+    assisted: true,
+    learnerGender: opts.gender,
+    optionValue: null,
+  });
+  const nextGoal = opts.bank.goals.find(
+    (g) => g.id === opts.session.current_goal,
+  );
+  const ask = pickAsk(opts.session, nextGoal, opts.gender);
+  if (ask) {
+    emitCharacterBubble({
+      session: opts.session,
+      emit: opts.emit,
+      line: ask,
+      goalId: nextGoal?.id ?? null,
+      topicId: opts.topicId,
+      openingGoal: nextGoal,
+      hintGoal: nextGoal,
+    });
+  }
+}
+
 /**
- * batch-rp-3: authored character bubbles; Qwen JSON for match + correction only.
+ * batch-rp-3 (2026-11-20): authored bubbles; Qwen JSON for match + correction.
  */
 export async function runSceneTurn(
   input: RunSceneTurnInput,
@@ -442,7 +488,6 @@ export async function runSceneTurn(
     return { session, metrics };
   };
 
-  // Format-3 cut-over: old Mongo sessions still carry `cafe.*` goal ids.
   healSceneSessionAgainstBank(session, bank, gender);
 
   const openGoals = () => openGoalsFromSession(session, bank);
@@ -454,58 +499,70 @@ export async function runSceneTurn(
     learnerText &&
     classifySideChannel(learnerText) === 'language_question'
   ) {
-    const currentAsk = current
-      ? pickAsk(session, current, gender) ??
-        (current.ask_tl
-          ? { tl: current.ask_tl, ar: current.ask_ar ?? '' }
-          : null)
-      : null;
-    const frame = current
-      ? {
-          tl: currentAsk?.tl ?? current.ask_tl ?? '',
-          eg:
-            current.hints?.what_eg ??
-            current.hint_eg ??
-            current.help.eg,
-          chips: [
-            ...(suggestIfLevel4(session, current, gender) ?? []),
-            ...collectSceneFacts(bank),
-          ],
-        }
-      : session.pending_frame;
-    const recentCharacterTls = session.last_exchanges
-      .filter((e) => e.role === 'character')
-      .slice(-3)
-      .map((e) => e.tl);
-    const candidates = collectFreeContextCandidates({
-      share: null,
-      ask: currentAsk ? { tl: currentAsk.tl, ar: currentAsk.ar } : null,
-      followUps: [],
-      frame: frame ?? null,
-      recentCharacterTls,
-      arByTl: new Map(),
+    const lastChar = [...session.last_exchanges]
+      .reverse()
+      .find((e) => e.role === 'character');
+    const lastPt =
+      lastChar?.tl?.trim() ||
+      pickAsk(session, current, gender)?.tl ||
+      current?.ask_tl ||
+      '';
+    const lastAr = findAuthoredArForPt(bank, lastPt, gender);
+    const help = await resolveSceneLangHelp({
+      lastCharacterPt: lastPt,
+      lastCharacterAr: lastAr,
+      learnerQuestion: learnerText,
+      goal: current ?? null,
+      bank,
+      gender,
+      ...(input.stubLangHelp !== undefined
+        ? { stub: input.stubLangHelp }
+        : {}),
     });
-    const characterId = session.character_id ?? bank.scene?.character_id;
-    const characterName =
-      (characterId ? getCharacter(characterId)?.name : null) ?? null;
-    const side = await handleFreeArabicSide({
-      kind: 'language_question',
-      learnerText,
-      frame,
-      emit,
-      context: { candidates, characterName },
-      ...(input.coachCaller ? { coachCaller: input.coachCaller } : {}),
+    emit({
+      type: 'coach',
+      id: 'scene_lang_help',
+      eg: help.eg,
+      segments: help.segments,
+      moment: 'language_question',
+      ...(help.suggest.length ? { suggest: help.suggest } : {}),
     });
-    if (side.coachPhrase) {
-      session.coach_phrase = setCoachPhrase(side.coachPhrase);
+    if (help.suggest[0]) {
+      session.coach_phrase = setCoachPhrase(help.suggest[0]);
     }
     return finish(true);
   }
 
   if (isStuckHelpRequest(learnerText) || !learnerText) {
     if (current) {
-      advanceHintLevel(session);
-      emitHintCard(session, emit, current, gender);
+      const missesBefore = session.scene_misses ?? 0;
+      const level = Math.min(3, missesBefore + 1) as 1 | 2 | 3;
+      if (level >= 3) {
+        applyAssistedAndNextAsk({
+          session,
+          bank,
+          goal: current,
+          gender,
+          topicId,
+          emit,
+        });
+      } else {
+        const suggests = helpSuggestsForLevel(
+          current,
+          gender,
+          level as 1 | 2,
+        );
+        markSuggestShown(session);
+        if (suggests.length) {
+          emit({
+            type: 'coach',
+            id: `scene_help:${current.id}:L${level}`,
+            eg: 'ممكن تقول:',
+            moment: 'help',
+            suggest: suggests,
+          });
+        }
+      }
     }
     return finish(true);
   }
@@ -525,9 +582,8 @@ export async function runSceneTurn(
         goalId: current?.id ?? null,
         playback: 'slow',
         topicId,
-        suggest: suggestIfLevel4(session, current, gender),
+        hintGoal: current,
       });
-      emitSuggestFrame(session, emit, current, gender);
     }
     return finish(true);
   }
@@ -548,146 +604,44 @@ export async function runSceneTurn(
     learnerText,
     candidates,
     stub: input.stubQwen,
+  }).then((raw) => {
+    input.onSceneQwen?.(raw);
+    return raw;
   });
 
   const codeMatch = checkSceneGoals(learnerText, bank.goals, session.goals);
 
-  const afterMissesAtLeast3 = (session.scene_misses ?? 0) >= 3;
-
-  const resolveMatch = async (): Promise<{
-    kind: 'DONE' | 'NONE';
-    furthestId?: string;
-    optionValue?: string | null;
-    doneIds?: string[];
-    skippedIds?: string[];
-    qwen: SceneQwenResult | null;
-    fromQwen?: boolean;
-  }> => {
-    if (codeMatch.kind === 'DONE') {
-      const qwen = await qwenPromise;
-      const validated = validateSceneQwenResult(qwen, candidates);
-      return {
-        kind: 'DONE',
-        furthestId: codeMatch.furthestId,
-        optionValue: codeMatch.optionValue,
-        doneIds: codeMatch.doneIds,
-        skippedIds: codeMatch.skippedIds,
-        qwen: validated ?? qwen,
-      };
-    }
-
-    const raw = await qwenPromise;
-    const qwen = validateSceneQwenResult(raw, candidates);
-    if (qwen?.kind === 'answer' && qwen.goal && qwen.option) {
-      // Build DONE span like checkSceneGoals for this goal.
-      const open = openGoals();
-      const idx = open.findIndex((g) => g.id === qwen.goal);
-      if (idx >= 0) {
-        const target = open[idx]!;
-        // Farewell from Qwen only if current.
-        if (target.farewell && idx !== 0) {
-          return { kind: 'NONE', qwen };
-        }
-        const doneIds: string[] = [];
-        const skippedIds: string[] = [];
-        for (let i = 0; i <= idx; i++) {
-          const id = open[i]!.id;
-          if (id === qwen.goal) doneIds.push(id);
-          else skippedIds.push(id);
-        }
-        return {
-          kind: 'DONE',
-          furthestId: qwen.goal,
-          optionValue: qwen.option,
-          doneIds,
-          skippedIds,
-          qwen,
-          fromQwen: true,
-        };
-      }
-    }
-    return { kind: 'NONE', qwen: qwen ?? raw };
-  };
-
-  // —— After 3rd miss: next message ——
-  if (afterMissesAtLeast3 && current) {
-    const resolved = await resolveMatch();
-    if (resolved.kind === 'DONE' && resolved.furthestId) {
-      const furthestGoal = bank.goals.find((g) => g.id === resolved.furthestId)!;
-      const assisted = assistedFromHintLadder(session);
-      if (furthestGoal.farewell) {
-        applySceneDoneGoals(
-          session,
-          bank,
-          resolved.doneIds ?? [resolved.furthestId],
-          resolved.skippedIds ?? [],
-          { assisted, learnerGender: gender },
-        );
-        emitSceneDone(session, bank, emit, topicId, gender);
-        emitCorrectionFromQwen(
-          emit,
-          resolved.qwen,
-          learnerTurnId,
-          learnerText,
-        );
-        return finish(true);
-      }
-      const { bubble, nextGoal } = applyDoneAndBuildBubble({
-        session,
-        bank,
-        doneIds: resolved.doneIds ?? [resolved.furthestId],
-        skippedIds: resolved.skippedIds ?? [],
-        furthestId: resolved.furthestId,
-        optionValue: resolved.optionValue ?? null,
-        gender,
-        assisted,
-      });
-      emitCharacterBubble({
-        session,
-        emit,
-        line: bubble,
-        goalId: nextGoal?.id ?? resolved.furthestId,
-        topicId,
-        suggest: suggestIfLevel4(session, nextGoal, gender),
-      });
-      emitSuggestFrame(session, emit, nextGoal, gender);
-      emitCorrectionFromQwen(emit, resolved.qwen, learnerTurnId, learnerText);
-      return finish(true);
-    }
-
-    // No match → assisted + next ask only
-    applySceneDoneGoals(session, bank, [current.id], [], {
-      assisted: true,
-      learnerGender: gender,
+  const emitMatchBubble = (
+    bubble: SceneLine,
+    nextGoal: ConvoGoal | undefined,
+    goalId: string,
+  ) => {
+    emitCharacterBubble({
+      session,
+      emit,
+      line: bubble,
+      goalId: nextGoal?.id ?? goalId,
+      topicId,
+      openingGoal: nextGoal,
+      hintGoal: nextGoal,
     });
-    const nextGoal = bank.goals.find((g) => g.id === session.current_goal);
-    const ask = pickAsk(session, nextGoal, gender);
-    if (ask) {
-      emitCharacterBubble({
-        session,
-        emit,
-        line: ask,
-        goalId: nextGoal?.id ?? null,
-        topicId,
-        suggest: suggestIfLevel4(session, nextGoal, gender),
-      });
-      emitSuggestFrame(session, emit, nextGoal, gender);
-    }
-    emitCorrectionFromQwen(emit, resolved.qwen, learnerTurnId, learnerText);
-    return finish(true);
-  }
+  };
 
   // —— Code match (rules 1–2) ——
   if (codeMatch.kind === 'DONE') {
     const furthestGoal = bank.goals.find((g) => g.id === codeMatch.furthestId)!;
-    const assisted = assistedFromHintLadder(session);
+    const assisted = assistedFromSuggest(session);
     if (furthestGoal.farewell) {
       applySceneDoneGoals(
         session,
         bank,
         codeMatch.doneIds,
         codeMatch.skippedIds,
-        { assisted, learnerGender: gender },
+        {
+          assisted,
+          learnerGender: gender,
+          optionValue: codeMatch.optionValue,
+        },
       );
       emitSceneDone(session, bank, emit, topicId, gender);
       const qwen = validateSceneQwenResult(await qwenPromise, candidates);
@@ -704,15 +658,7 @@ export async function runSceneTurn(
       gender,
       assisted,
     });
-    emitCharacterBubble({
-      session,
-      emit,
-      line: bubble,
-      goalId: nextGoal?.id ?? codeMatch.furthestId,
-      topicId,
-      suggest: suggestIfLevel4(session, nextGoal, gender),
-    });
-    emitSuggestFrame(session, emit, nextGoal, gender);
+    emitMatchBubble(bubble, nextGoal, codeMatch.furthestId);
     const qwen = validateSceneQwenResult(await qwenPromise, candidates);
     emitCorrectionFromQwen(emit, qwen, learnerTurnId, learnerText);
     return finish(true);
@@ -739,9 +685,8 @@ export async function runSceneTurn(
         line: bubble,
         goalId: current?.id ?? null,
         topicId,
-        suggest: suggestIfLevel4(session, current, gender),
+        hintGoal: current,
       });
-      emitSuggestFrame(session, emit, current, gender);
     }
     const qwen = validateSceneQwenResult(await qwenPromise, candidates);
     emitCorrectionFromQwen(emit, qwen, learnerTurnId, learnerText);
@@ -769,9 +714,8 @@ export async function runSceneTurn(
         line: bubble,
         goalId: current?.id ?? null,
         topicId,
-        suggest: suggestIfLevel4(session, current, gender),
+        hintGoal: current,
       });
-      emitSuggestFrame(session, emit, current, gender);
     }
     const qwen = validateSceneQwenResult(await qwenPromise, candidates);
     emitCorrectionFromQwen(emit, qwen, learnerTurnId, learnerText);
@@ -795,11 +739,12 @@ export async function runSceneTurn(
           if (id === qwen.goal) doneIds.push(id);
           else skippedIds.push(id);
         }
-        const assisted = assistedFromHintLadder(session);
+        const assisted = assistedFromSuggest(session);
         if (target.farewell) {
           applySceneDoneGoals(session, bank, doneIds, skippedIds, {
             assisted,
             learnerGender: gender,
+            optionValue: qwen.option,
           });
           emitSceneDone(session, bank, emit, topicId, gender);
           emitCorrectionFromQwen(emit, qwen, learnerTurnId, learnerText);
@@ -815,15 +760,7 @@ export async function runSceneTurn(
           gender,
           assisted,
         });
-        emitCharacterBubble({
-          session,
-          emit,
-          line: bubble,
-          goalId: nextGoal?.id ?? qwen.goal,
-          topicId,
-          suggest: suggestIfLevel4(session, nextGoal, gender),
-        });
-        emitSuggestFrame(session, emit, nextGoal, gender);
+        emitMatchBubble(bubble, nextGoal, qwen.goal);
         emitCorrectionFromQwen(emit, qwen, learnerTurnId, learnerText);
         return finish(true);
       }
@@ -846,9 +783,8 @@ export async function runSceneTurn(
         line: bubble,
         goalId: current.id,
         topicId,
-        suggest: suggestIfLevel4(session, current, gender),
+        hintGoal: current,
       });
-      emitSuggestFrame(session, emit, current, gender);
     }
     emitCorrectionFromQwen(emit, qwen, learnerTurnId, learnerText);
     return finish(true);
@@ -856,25 +792,44 @@ export async function runSceneTurn(
 
   // Rule 7 · unclear + miss ladder
   if (current) {
-    const unclear = pickUnclear(session, current, gender);
-    const misses = (session.scene_misses ?? 0) + 1;
-    session.scene_misses = misses;
-    if (unclear) {
-      emitCharacterBubble({
+    const missesBefore = session.scene_misses ?? 0;
+    const nextMiss = missesBefore + 1;
+    if (nextMiss >= 3) {
+      session.scene_misses = nextMiss;
+      applyAssistedAndNextAsk({
         session,
-        emit,
-        line: unclear,
-        goalId: current.id,
+        bank,
+        goal: current,
+        gender,
         topicId,
-        suggest: suggestIfLevel4(session, current, gender),
+        emit,
       });
-    }
-    if (misses >= 2) {
-      // 2nd miss onward: advance one level (or from prior تلميح presses).
-      advanceHintLevel(session);
-      emitHintCard(session, emit, current, gender);
     } else {
-      emitSuggestFrame(session, emit, current, gender);
+      session.scene_misses = nextMiss;
+      const level = nextMiss as 1 | 2;
+      const suggests = helpSuggestsForLevel(current, gender, level);
+      markSuggestShown(session);
+      const unclear = pickUnclear(session, current, gender);
+      if (unclear) {
+        // One «ممكن تقول:» under the unclear bubble — no duplicate help coach.
+        emitCharacterBubble({
+          session,
+          emit,
+          line: unclear,
+          goalId: current.id,
+          topicId,
+          suggest: suggests,
+          hintGoal: current,
+        });
+      } else if (suggests.length) {
+        emit({
+          type: 'coach',
+          id: `scene_help:${current.id}:L${level}`,
+          eg: 'ممكن تقول:',
+          moment: 'help',
+          suggest: suggests,
+        });
+      }
     }
   }
 
@@ -885,6 +840,6 @@ export async function runSceneTurn(
     learnerText,
   );
 
-  session.current_goal = firstOpenGoalId(session.goals);
+  session.current_goal = firstActiveOpenGoalId(bank, session.goals);
   return finish(true);
 }

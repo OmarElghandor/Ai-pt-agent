@@ -135,6 +135,15 @@ export type RunFreeConvoTurnInput = {
   learnerGender?: 'm' | 'f';
   /** Scene tests: force PT/AR/GOAL without calling the model. */
   stubSceneReaction?: { pt: string; ar?: string; goal?: string };
+  /** Live check: observe raw scene Qwen JSON. */
+  onSceneQwen?: (raw: {
+    kind: 'answer' | 'side_question' | 'other';
+    goal: string | null;
+    option: string | null;
+    corrected: string;
+    has_error: boolean;
+    note_eg: string;
+  } | null) => void;
   /** Format 3 scene: stub the Qwen JSON match+correction call. */
   stubSceneQwen?:
     | {
@@ -153,6 +162,11 @@ export type RunFreeConvoTurnInput = {
         has_error: boolean;
         note_eg: string;
       }>;
+  /** Format 3 scene: stub language-help Qwen (or 'timeout'). */
+  stubSceneLangHelp?:
+    | { pt: string; note_eg: string }
+    | Promise<{ pt: string; note_eg: string } | null>
+    | 'timeout';
 };
 
 function pushExchange(
@@ -637,6 +651,8 @@ export async function runFreeConvoTurn(
         coachCaller: input.coachCaller,
         stubReaction: input.stubSceneReaction,
         stubQwen: input.stubSceneQwen,
+        stubLangHelp: input.stubSceneLangHelp,
+        onSceneQwen: input.onSceneQwen,
       });
     }
   }

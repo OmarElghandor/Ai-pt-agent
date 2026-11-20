@@ -1,183 +1,204 @@
-# Role-play v3 · The café first: authored conversation, Qwen understands and corrects
+# Role-play v3 · The café: authored conversation, Qwen understands and corrects
 
-Decided by Omar on 2026-11-18. **This replaces how a scene turn is built** in batch-rp-2.
+**Version 2026-11-20. This whole file replaces the previous batch-rp-3** (including its «Change 2026-11-19» sections).
 
 Kept from batch-rp-2:
 - the entry button;
 - the mission strip;
 - the end card;
-- the scene-out-of-free-talk rule;
-- Step B matching (WEAK words, jump ahead, farewell only when current, the one-typo tolerance of 8.2).
+- scenes out of free talk;
+- Step B matching (WEAK words, jump ahead, farewell only when current, one-typo tolerance for keywords of 5+ letters).
 
-Everything else about how the character's bubble is made is replaced by this file. If something here is unclear, **stop and ask Omar**.
+If something here is unclear, **stop and ask Omar**.
 
-## Why
+## The principle
 
-The character's words now come **only from the scene file** (authored, natural, with variants). **Qwen never writes text that appears in a character bubble.** Qwen does two things it's good at:
-- understanding what the learner meant;
-- correcting the learner's sentence.
+- **Every character bubble comes from the scene file.** Qwen never writes text that appears in a bubble.
+- **Qwen does one JSON call per learner message:** it understands what the learner meant, and corrects the learner's sentence.
+- **Let the learner try first.** No answer is given before the learner has tried. The full answer appears only after a mistake.
 
-## Scope of this pass
+## Scope
 
-- **Only `cena-cafe`**, in the new format (`format: 3`).
-- `content/v2/convo/scenes/pt-PT.index.json` lists **only the café** for now. The other 14 bank files stay in the repo, untouched, out of the path.
-- The free-talk engine is used as today for loading, session, mission strip and end card. Only the scene turn changes.
+- Only `cena-cafe` (`format: 3`). The index lists only the café.
+- Sessions from an older format never resume; they start fresh.
 
 ## The file format (`format: 3`)
 
 **Top level:**
-- `id`, `kind: "scene"`, `format: 3`, `title_tl`, `title_ar`, `emoji`, `recommended_day`;
-- `mission_eg`: the mission strip text;
-- `character_id`, `address`;
-- `opening[]`: the first character bubble;
-- `global`:
-  - `greeting` {keywords, react[]};
-  - `thanks` {keywords, react[]};
-  - `side_unknown` {react[]};
-- `goals[]`, in order;
+- `id`, `kind: "scene"`, `format: 3`, titles, `emoji`, `recommended_day`;
+- `mission_eg`, `character_id`, `address`;
+- `opening[]`;
+- `global` {greeting, thanks, side_unknown};
+- `goals[]` in order;
+- `end_tips_eg[]`: 1–2 culture tips shown on the end card;
 - `closing[]`.
 
+**Lines:** every line is {tl, ar} + optional `tl_f`, `ar_f` (used when the learner is female).
+
 **Each goal:**
-- `id`, `label_eg` (checklist);
-- `ask[]`: the character's line(s) that open this goal. They are variants; each ends with a question or an invitation;
-- `options[]`: each has {value, keywords[], examples[], react[]}. `react[]` = what the character says when the learner picks this option; reacts are statements, never questions;
-- `unclear[]`: a complete character turn for when the learner's message isn't understood (it ends with a question);
-- `suggest[]` (+ optional `suggest_f[]`): the 2 suggestion chips;
-- `hint_eg`: the Egyptian hint;
+- `id`, `label_eg`;
+- `only_if` (optional) {goal, options[]}: the goal is active only if that earlier goal was completed with one of those option values. Otherwise it's silently left out (not shown in the checklist, not counted, not skipped). Example: `size`, `temp`, `sugar` and `water` are only for café, galão and chá, not for água;
+- `coach_before_eg` (optional): an Arabic coach message shown **once**, right under the character bubble that opens this goal. Example: water → «💬 جرّب تطلب ماية كمان مع الأوردر.». These are rare on purpose (2 in the café), so the learner thinks for themselves. **Spacing rule (code):** at most one coach message every 3 character bubbles; if one is due sooner, drop it;
+- `ask[]`: the variants of the character line that opens the goal. They end with a question;
+- `options[]` {value, keywords[], examples[], react[]}: reacts are statements;
+- `unclear[]`: the character's full turn when not understood (ends with a question);
+- `suggest[]` (+ `suggest_f[]`): full example answers, shown **only after a mistake** (see Help);
+- `hint_words`: 1–3 Portuguese words, the 💡 hint («um café · um galão»);
 - `farewell: true` on the last goal.
 
-**Lines:** every line is {tl, ar}.
+**Variants:** a per-session counter for each `ask[]` / `react[]`. The first use takes [0], then [1], then it wraps.
 
-**Variants:** for each `ask[]` and each `react[]`, keep a counter per session. The first use takes [0], the next takes [1], then it wraps around.
+## The screen
 
-## The screen (changes only)
+1. **The character bubble:** the Portuguese text + 🔊 + a **translate icon**. The Arabic is **hidden by default**; the icon shows or hides it for that bubble.
+2. **Under the latest character bubble:**
+   - one small button «💡» → shows `hint_words` (just the words, e.g. «um café · um galão»). Pressing it again hides it. It never shows a full sentence;
+   - if the goal has `coach_before_eg`, it shows once as a small coach line.
+3. **The correction card** under the learner's bubble when Qwen returns `has_error: true`: the corrected sentence + `note_eg`. It arrives as its own event after the character bubble; the stream stays open until Qwen returns or times out (4 s).
+4. **Nothing is shown automatically at the start of a goal** except `coach_before_eg`: no hint card, no chips.
+5. Unchanged: the mission strip, one character bubble per turn, the typing pacing, one audio per bubble.
 
-1. **Under every character bubble:** the Arabic (`ar`) is **always visible**, in small grey text. It's no longer hidden behind a tap.
-2. **Under the latest character bubble:** a row «ممكن تقول:» + the current goal's 2 `suggest` chips (`suggest_f` for a female learner). Tapping a chip puts it in the input; the learner sends it. The row moves to the newest bubble every turn.
-3. **The correction card** under the learner's bubble whenever Qwen says `has_error: true`: the corrected sentence + `note_eg`.
-4. **The hint card** (coach) only for «مش عارف» / «ساعدني», or on the second miss of a goal: `hint_eg`.
-5. Unchanged: the mission strip; one character bubble per turn; the typing pacing; one audio per bubble.
+## Guidance philosophy (Omar, 2026-11-20)
+
+The learner should think and use the language from their own head:
+- **The character steers with its questions** (the `ask` lines invite the next move: «E para beber, mais alguma coisa?»). That's the main guidance.
+- **Coach messages are rare** (the spacing rule).
+- **The 💡 words** appear only when the learner asks for them.
+- **A full sentence** appears only after a mistake.
+
+## Help (after mistakes only)
+
+| Event on the current goal | What appears |
+|---|---|
+| 1st miss | The `unclear` bubble + a coach line «ممكن تقول: `suggest[0]`» (`suggest_f[0]` if female), with the sentence tappable |
+| 2nd miss | The `unclear` bubble + the coach line with both `suggest` sentences, tappable |
+| 3rd miss | The goal is marked `assisted`; the bubble = the next active goal's `ask` |
+| «مش عارف» / «ساعدني» | Same as the next miss level, but no character bubble and it doesn't count as a miss |
+
+A goal completed after any `suggest` was shown is marked `assisted`.
 
 ## One learner turn
 
-**Step 1 · The type of message (code).**
-- An Arabic or English language question → the existing coach side channel. No character bubble.
-- «مش عارف» / «ساعدني» / empty STT → the hint card (`hint_eg`). No character bubble. It doesn't count as a miss.
-- A repeat request («Pode repetir?», «Mais devagar», «Não percebi», «مش فاهم», «تاني») → replay the last character bubble, TTS rate 0.85.
-- Anything else → Step 2.
+**Step 1 · The message type (code):**
+- an Arabic or English language question → the existing coach side channel (no bubble);
+- «مش عارف» / «ساعدني» → Help (no bubble);
+- a repeat request («Pode repetir?», «Mais devagar», «Não percebi», «مش فاهم», «تاني») → replay the last character bubble at TTS 0.85;
+- anything else → Step 2.
 
-**Step 2 · Start the Qwen call (in parallel) and run code matching.**
-- The Qwen call (below) starts at once, for every Step 2 message. It's needed for the correction card anyway.
-- Code matching = batch-rp-2 Step B, on the goals' `options[].keywords` and `options[].examples`. The first matching option of a goal wins. The result is `DONE(goal, option)` or nothing.
+**Step 2 · Start the Qwen call (in parallel) + code matching** over the **active** goals (Step B rules; `only_if` goals that are inactive are ignored).
 
-**Step 3 · Decide.** Take the first rule that applies:
+**Step 3 · Decide** (the first rule that applies):
 
 | # | Condition | Character bubble | State |
 |---|---|---|---|
 | 1 | Code matched the farewell goal | `closing`, then the end card | finished |
-| 2 | Code matched a goal | option `react` + « » + the next open goal's `ask` | matched goal done (gaps skipped) |
-| 3 | No code match, and the message contains a `global.greeting` keyword | greeting `react` + « » + the current goal's `ask` | no change |
-| 4 | No code match, and the message contains a `global.thanks` keyword (farewell isn't current) | thanks `react` + « » + the current goal's `ask` | no change |
-| 5 | No code match → wait for Qwen. Qwen returns a goal + option that pass validation | the same as rule 2 (or rule 1 if it's farewell and farewell is current) | the same |
-| 6 | Qwen says `side_question` | `side_unknown` react + « » + the current goal's `ask` | no change |
-| 7 | Otherwise (Qwen says `other`, or it failed / timed out) | the current goal's `unclear` | misses +1; on the 2nd miss also show the hint card; on the 3rd miss the hint card shows `suggest[0]` as the full sentence and the goal is marked assisted when the learner sends anything |
+| 2 | Code matched a goal | option `react` + « » + the next active open goal's `ask` | done (gaps skipped) |
+| 3 | No match; a `global.greeting` keyword | greeting `react` + « » + the current `ask` | — |
+| 4 | No match; a `global.thanks` keyword, and farewell isn't current | thanks `react` + « » + the current `ask` | — |
+| 5 | No code match; Qwen returns a valid goal + option | as rule 2 (or rule 1) | as rule 2 |
+| 6 | Qwen `side_question` | `side_unknown` react + « » + the current `ask` | — |
+| 7 | Otherwise | Help (the miss ladder above) | misses +1 |
 
-**Nothing else is ever added to a bubble.**
+**The next active goal** = the first goal after the current one that is not done or skipped and whose `only_if` (if any) is satisfied.
 
-**Step 4 · The correction card.** When the Qwen result arrives with `has_error: true`, show it under the learner's bubble. It can arrive after the character bubble; that's fine.
+## The Qwen call (JSON only)
 
-## The Qwen call (JSON only, never shown as a bubble)
-
-- **Model:** `getChatModel()` (Qwen), temperature 0, max tokens 150, timeout 4 s, JSON mode if the provider supports it.
-- **System:** «You read one message from a beginner learner of European Portuguese in a role-play. Return JSON only.»
+- **Model:** `getChatModel()`, temperature 0, max tokens 150, timeout 4 s.
 - **Input:**
   - the character's last line;
   - the learner's message;
-  - the candidate goals: the current goal + the next 2 non-farewell goals (+ farewell only if it's current), each with its options (value + examples).
+  - the candidate goals: the current goal + the next 2 active non-farewell goals (+ farewell if current), with their option values and examples.
 - **Output:**
-  `{"kind": "answer" | "side_question" | "other", "goal": "<id or null>", "option": "<value or null>", "corrected": "<the learner's sentence with ALL mistakes fixed, pt-PT>", "has_error": true/false, "note_eg": "<one short Egyptian Arabic line naming the main fix, or empty>"}`
+  `{"kind": "answer" | "side_question" | "other", "goal", "option", "corrected", "has_error", "note_eg"}`
 - **Rules given to Qwen:**
-  - fix every mistake (spelling, accents, missing or wrong words), and keep the learner's words where they are correct;
-  - when the learner's meaning matches an example, prefer the example's wording (quero → queria);
-  - `has_error` is false if the only differences are capital letters or final punctuation.
-- **Validation (code):**
-  - `goal` must be one of the candidates and `option` one of its values; otherwise treat it as no match;
-  - invalid JSON or a timeout → no correction card, and the matching result is «no match».
-
-## Remove from the scene path
-
-Remove the model reaction text, the reaction guards, the opener strip, the `GOAL:` line parsing, and any streaming of model text into a scene bubble.
+  - fix ALL mistakes;
+  - keep the learner's words where they are correct;
+  - prefer the matching example's wording («qureia» → «queria», never «quero»);
+  - `has_error` is false if only capital letters or punctuation differ;
+  - `note_eg` is one short Egyptian line naming the main fix as «غلط → صح».
+- **Validation:**
+  - the goal must be a candidate and the option one of its values;
+  - invalid JSON or a timeout → no match and no correction.
 
 ## Acceptance
 
-**Test G1: the golden café run** (Qwen stubbed with `has_error: false`, `kind: "other"`). Each line must match **exactly**:
+**G1 · Golden run** (stub Qwen: `kind: "other"`, `has_error: false`). Every bubble must match exactly:
 
-| Learner | Character bubble |
-|---|---|
-| (start) | Bom dia! 😊 Então, o que vai ser hoje? |
-| Bom dia | Bom dia, bom dia! Está frio hoje, hã? ☕ O que lhe sirvo? |
-| quero um cafe | Um café, saindo! Os pastéis de nata acabaram de sair do forno. 😋 Quer um para acompanhar? |
-| um pastel de nata | Boa escolha! É para comer aqui ou para levar? |
-| Comer para aqui. | Então sente-se à vontade. 😊 Com açúcar ou sem açúcar? |
-| sem açúcar | Sem açúcar, muito bem. É a primeira vez que vem cá? Nunca o vi por aqui! 😊 |
-| sim, moro aqui perto | Ah, então somos vizinhos! E de onde é? |
-| sou do Egito | Do Egito! Que bom! Adoro as pirâmides. 😍 Aqui está! 😊 Mais alguma coisa, ou é tudo? |
-| a tudo, e quenta? | É tudo, então! São dois euros e sessenta. Cartão ou dinheiro? |
-| Cartão | Com cartão, sem problema. Pode passar aqui. 💳 Quer fatura com contribuinte? |
-| Nao obrigado | Muito bem. Obrigado e bom dia! Até amanhã? 😊 |
-| até amanhã! | Até amanhã! 👋 → end card |
-
-**Other tests** (stub):
-- **G2:** «xyz» at order_drink → «Desculpe, não percebi… Um café? Um galão? 😊»; a second «xyz» → the same + the hint card.
-- **G3:** «مش عارف» → the hint card only, no character bubble, no miss.
-- **G4:** «Quanto é?» at order_food → «Claro! São dois euros e sessenta. Cartão ou dinheiro?»; order_food, here_or_go and ask_price are marked skipped / done as in Step B.
-- **G5:** the stub Qwen returns goal «pay» at order_drink (not a candidate) → ignored → unclear.
-- **G6:** under every character bubble, `ar` is rendered; under the latest bubble, the 2 `suggest` chips of the current goal.
-- **G7:** no scene turn ever makes a model call whose text reaches a bubble (assert).
-
-**Live check (real Qwen, not CI):** run the G1 learner messages and print the bubble + the correction card for each. Expected corrections (contain):
-- «quero um cafe» → «café»;
-- «Comer para aqui.» → «Para comer aqui»;
-- «a tudo, e quenta?» → «É tudo» and «conta»;
-- «Nao obrigado» → «Não, obrigado».
-
-Bubbles must be identical to G1.
-
----
-
-## Change 2026-11-19 (Omar's test). This section wins over the sections above
-
-**1. Hints, not answers.** The «ممكن تقول:» row gave the learner the full answer to tap. Remove it.
-- Under the latest character bubble there is now one small button: **«💡 تلميح»**.
-- Each goal has `hints` {what_eg, words_eg, frame_tl} (in the café file; `hint_eg` was replaced by `hints.what_eg`). `suggest[]` is kept as the last level only.
-- **The hint ladder per goal.** Each press of «💡 تلميح», each «مش عارف» / «ساعدني», and each miss from the 2nd one on, moves one level up. The hint card shows only the current level:
-
-| Level | The hint card shows | Example (order_drink) |
+| Learner | Character bubble | Coach line |
 |---|---|---|
-| 1 | `what_eg` (what to do) | «Manuel بيسألك تشرب إيه. اطلب بـ Queria + المشروب + por favor.» |
-| 2 | `words_eg` (the words you need, with their meaning) | «café = قهوة · galão = قهوة بلبن · chá = شاي» |
-| 3 | `frame_tl` (a sentence with a blank, not tappable) | «Queria um ___, por favor.» |
-| 4 | `suggest[]` as tappable chips (the full answer) | `Queria um café, por favor.` |
+| (start) | Bom dia! 😊 Então, o que vai ser hoje? | — |
+| Bom dia | Bom dia, bom dia! Está frio hoje, hã? ☕ O que lhe sirvo? | — |
+| quero um galão | Um galão, saindo! Pequeno ou grande? | — |
+| grande | Grande, muito bem. Quente ou frio? Também temos com gelo. 🧊 | — |
+| quente | Quente, claro. Com açúcar ou sem açúcar? | — |
+| sem açúcar | Sem açúcar, muito bem. Os pastéis de nata acabaram de sair do forno. 😋 Quer um para acompanhar? | — |
+| um pastel de nata | Boa escolha! E para beber, mais alguma coisa? | 💬 جرّب تطلب ماية كمان مع الأوردر. |
+| e uma agua | Uma água, claro! Natural ou fresca? | — |
+| fresca | Fresca, muito bem. É para comer aqui ou para levar? | — |
+| Comer para aqui. | Então sente-se à vontade. Aqui está! 😊 Bom apetite! Precisa de mais alguma coisa? | — |
+| é tudo, a conta? | É tudo, então! São três euros e dez. Cartão ou dinheiro? | — |
+| Cartão | Com cartão, sem problema. Pode passar aqui. 💳 Quer fatura com contribuinte? | 💬 contribuinte = رقمك الضريبي (NIF). هتسمع السؤال ده في أي محل. |
+| Nao obrigado | Muito bem. Obrigado e bom dia! Até amanhã? 😊 | — |
+| até amanhã! | Até amanhã! 👋 → end card | — |
 
-- If the goal is completed after level 4 was shown, it's marked `assisted`, not done.
-- The ladder resets for each new goal.
-- Misses: the 1st miss = the `unclear` bubble only; the 2nd miss = `unclear` + level 1 (or one level up if the learner already pressed).
+**Other tests (stub):**
+- **G2 · water path:** «quero uma água» at order_drink → `size`, `temp` and `sugar` are inactive; the bubble = «Uma água, claro! Os pastéis de nata acabaram de sair do forno. 😋 Quer um para acompanhar?»; the checklist doesn't list size, temp, sugar, water or water_type.
+- **G3 · help ladder:** at order_drink:
+  - «xyz» → «Desculpe, não percebi… Um café? Um galão? 😊» + the coach line «ممكن تقول: Queria um café, por favor.»;
+  - «xyz» again → the same bubble + both suggestions;
+  - «xyz» a third time → order_drink is assisted with no option, so `size`, `temp`, `sugar` and `water` are inactive, and the bubble = the order_food `ask` («Os pastéis de nata acabaram de sair do forno. 😋 Quer um para acompanhar?»).
+- **G4 · no automatic help:** a fresh start shows no hint and no suggestions; only the opening bubble and the «💡» button.
+- **G5 · 💡:** pressing it at order_drink shows exactly «um café · um galão».
+- **G6 · translation:** the Arabic is hidden by default; the translate icon toggles it.
+- **G7 · correction after the bubble:** a stub Qwen with a 1 s delay `{has_error: true, corrected: "Para comer aqui.", note_eg: "comer para → para comer"}` → the bubble first, then the correction card.
+- **G8 · Qwen never writes bubbles:** assert that every bubble ⊆ authored lines.
+- **G9 · old session:** an older-format session starts fresh.
+- **G10 · coach spacing:** two goals with `coach_before_eg` opened 2 bubbles apart → only the first coach message shows.
+- **G11 · end card** shows the 2 `end_tips_eg`.
 
-**2. The correction card never appeared.** «par aqui» and «e cont» were matched by code and got the right bubble, but no correction card showed. The likely cause: on a code match, the turn's stream closes after the bubble, so the Qwen result (which arrives later) is lost. Fix:
-- keep the turn's stream open until the Qwen call finishes (or times out at 4 s), and send the correction as its own event after the bubble;
-- the UI must accept a correction event after the bubble.
-- Then print the raw Qwen JSON for «par aqui», «e cont», «Nao obrigado» and «quero um cafe» in the live check.
+**Live check (real Qwen):** play G1, and print the bubble + correction for each turn. Also play these, printing the correction:
+- «Sim qureia um pastel de nata» → contains «queria»;
+- «si acucar» → «com açúcar»;
+- «e todo» at ask_price → understood (matches ask_price) + a correction «É tudo»;
+- «con carto» → «Com cartão».
 
-**3. Old sessions.** One screen showed a bubble from the old format («Não obrigado? Claro! …» with Arabic that doesn't match). A scene session made with an older format must not resume: on open, if the session's format ≠ the bank's `format`, start fresh.
+## Fixes after Omar's run (2026-11-20, noon)
 
-**New tests:**
-- **G9:** at order_drink, press «💡 تلميح» 4 times → the card shows `what_eg`, then `words_eg`, then `frame_tl`, then the 2 `suggest` chips; then «Queria um café, por favor.» → order_drink is `assisted`.
-- **G10:** at here_or_go, «par aqui» with a stub Qwen `{has_error: true, corrected: "Para comer aqui."}` delayed 1 s → the bubble first, then the correction event; the UI reducer renders the card.
-- **G11:** an old-format session for cena-cafe → opening the scene starts a fresh session.
-- **G6 changes:** no `suggest` chips are rendered unless the ladder is at level 4.
+1. **«não obrigado» at ask_price got «Desculpe?».** Content fix: the `tudo` option of `ask_price` now also matches «não» and «obrigado» (answering «Precisa de mais alguma coisa?» with «Não, obrigado» means "that's all").
+2. **A correction card for punctuation only.** «Pequeno por favor» → «Pequeno, por favor.» was shown as a mistake. Enforce it in code, don't trust Qwen: lowercase both texts and remove punctuation; if the learner's text equals the corrected text → no card.
+3. **Corrections show collapsed («✏️ تصحيح»)** for some messages. Always show the card expanded (the corrected sentence + `note_eg`).
+4. **The miss suggestion is shown twice:** once as chips under the bubble, and again as a coach card with an empty «ممكن تقول:» + the same chip. Show it **once**: the «ممكن تقول:» line with the tappable sentence(s), under the `unclear` bubble. Never render an empty coach card.
 
-## Change 2026-11-19 (2): a longer café
+Tests:
+- **G12:** «Pequeno por favor» with a stub Qwen `corrected: "Pequeno, por favor."`, `has_error: true` → no correction card.
+- **G13:** at ask_price, «não obreigado» → `tudo` (typo tolerance on «obrigad» isn't needed; «não» matches) → «É tudo, então! São três euros e dez. Cartão ou dinheiro?».
+- **G14:** one miss → exactly one «ممكن تقول:» element in the rendered output.
 
-- The café now has **10 goals**: order_drink, order_food, here_or_go, **sugar**, **first_time** (small talk), **origin** (small talk), ask_price, pay, contribuinte, bye. The **G1 table above is updated** to the new golden run.
-- **Lines may have `tl_f` / `ar_f`:** use them for a female learner (e.g. «Nunca a vi por aqui!», «bem-vinda»).
-- **The live check uses the new G1 learner messages**, and adds these expected corrections: «sem açúcar» → none; «sim, moro aqui perto» → «Sim, moro aqui perto.» (only capital/punctuation → `has_error` false).
+## Fixes after Omar's run (2026-11-20, 12:10)
+
+1. **Arabic help gave a wrong answer** («ازاي اقول ساقع؟» → «Saquei», an invented word). **Omar's decision: Qwen answers it, in context, grounded and checked.**
+   - **The Qwen call (JSON):**
+     - **Input:**
+       - the character's last line (pt + ar);
+       - the current goal's option values + `examples`;
+       - the scene `glossary` (as the preferred words);
+       - the learner's Arabic/English question.
+     - **Instruction:** «The learner is in this role-play and asks how to say something. Give ONE short pt-PT sentence they can say now, as a reply to the character's last line. Prefer the words in the glossary and examples. Then one short Egyptian Arabic note about the key word.»
+     - **Output:** `{"pt": "<the sentence>", "note_eg": "<short note>"}`. Temperature 0, max tokens 120, timeout 4 s.
+   - **The coach card shows:** «تقدر تقول: **<pt>** 🔊» + `note_eg`. The «pt» sentence is tappable (it fills the input). The character waits (no bubble).
+   - **The check (code), before showing:**
+     - `pt` must be Latin script and at most 10 words;
+     - every content word in `pt` must appear in the scene's own Portuguese (`ask`, `react`, `unclear`, `examples`, `suggest`, glossary `tl`) or the common-words list.
+     - «Saquei» fails this check.
+   - **If the check fails, or Qwen times out:** answer from the `glossary` (normalized Arabic, longest keyword first; keywords of 2 letters or fewer must match a whole word) as «تقدر تقول: <the entry tl>». If the glossary has nothing, show «تقدر تقول: <suggest[0]>» for the current goal.
+   - **Example:** the character's last line «Natural ou fresca?» + «ازاي اقول ساقع؟» → «تقدر تقول: **Fresca, por favor.** 🔊 — fresca = ساقعة (للماية)».
+2. **The first line needs an instruction.** The bank has a new `opening_coach_eg`, shown once under the opening bubble on a fresh start. It counts for the coach spacing rule (so the next coach message can come only 3 bubbles later). The water coach is far enough away.
+3. **«Nao perciso» at `sugar` was matched to `order_food` («só isso»)** and skipped sugar. Content fix: `sugar` › `sem` now also matches «não», «nao» and «preciso», so the current goal wins first.
+4. **«não obrigao» at ask_price got «De nada!»** (the thanks rule). It's already fixed by the previous zip's `ask_price` content change (rule 2 runs before rule 4); make sure that file is applied.
+
+Tests:
+- **G15:** at water_type, a stub Qwen returns `{pt: "Fresca, por favor.", note_eg: "fresca = ساقعة"}` for «ازاي اقول ساقع؟» → the coach shows «تقدر تقول: Fresca, por favor.» + the note, and there's no character bubble.
+- **G15b:** a stub Qwen returns `{pt: "Saquei"}` → the check fails → the glossary answer «تقدر تقول: fresca = ساقعة (للماية) · frio = ساقع (للمشروب)».
+- **G16:** Qwen times out, and «ازاي اقول مطار؟» isn't in the glossary → «تقدر تقول: <current suggest[0]>».
+- **G17:** a fresh start → the opening bubble, then `opening_coach_eg` once.
+- **G18:** at sugar, «Nao perciso» → «Sem açúcar, muito bem.» + the next active `ask`.
