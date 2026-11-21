@@ -19,10 +19,19 @@ export { findExistingDecksForTopic, matchTopicAgainstDeck } from './find';
 export { saveCustomDeckDraft, filterPreviewWords } from './save';
 export {
   buildCustomDeckSession,
+  buildSituationDeckSession,
   pickSessionQueue,
   blankStatesAfterReset,
   CUSTOM_DECK_NEW_PER_DAY,
 } from './session';
+export {
+  ensureSituationCardBank,
+  getSituationCardItems,
+} from './situationBank';
+export {
+  enrichFlashcardExamples,
+  itemsNeedingExampleEnrichment,
+} from './enrichExamples';
 export { getAnyDeckDetail } from './detail';
 export {
   resetDeck,

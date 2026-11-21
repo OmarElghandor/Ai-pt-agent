@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type Props = {
   /** Shown only when there is something to generate. */
@@ -95,9 +95,8 @@ async function pollUntilReady(
 }
 
 /**
- * Demo overlay: calls the server-gated admin generate route.
+ * Demo overlay: enqueue + poll image generation for any signed-in user.
  * Always force-regenerates so a click overwrites the existing asset.
- * The route itself enforces denyUnlessV2Admin — this is just UI.
  * Generate is async (enqueue + drain); we poll until ready with a url.
  */
 export function DemoImageGenerate({

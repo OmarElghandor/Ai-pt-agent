@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
+import { requireV2User } from '@/lib/v2/auth/session';
 import { denyUnlessV2Admin } from '@/lib/v2/generation/adminGate';
+import { isV2Enabled } from '@/lib/v2/flags';
 import { connectMongo, mongoConfigured } from '@/lib/mongo';
 import {
   buildImageManifest,
@@ -45,8 +47,11 @@ function previewFinalPrompt(opts: {
 }
 
 export async function GET(req: Request) {
-  const denied = await denyUnlessV2Admin();
-  if (denied) return denied;
+  if (!isV2Enabled()) {
+    return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  }
+  const auth = await requireV2User();
+  if (auth.error) return auth.error;
   if (!mongoConfigured()) {
     return NextResponse.json({ error: 'MongoDB not configured' }, { status: 503 });
   }

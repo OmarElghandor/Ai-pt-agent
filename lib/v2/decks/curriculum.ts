@@ -14,6 +14,10 @@ import { V2ItemStateModel, V2LessonModel } from '@/lib/v2/mongo/models';
 import type { ItemState } from '@/lib/v2/progress';
 import { loadWeakItemIds } from '@/lib/v2/progress/weakItems';
 import { itemTargetText } from '@/lib/v2/render/speechTarget';
+import {
+  loadAllReadyBanks,
+  getSituationCardItems,
+} from '@/lib/v2/decks/situationBank';
 
 export type PlanDay = {
   day: number;
@@ -36,6 +40,8 @@ export type SituationDeckSummary = {
   total: number;
   today: number;
   graduated: number;
+  /** True when a published lesson or ready bank already has cards. */
+  generated: boolean;
   /** Flashcard ids in this deck. The listing intersects these with today's queue. */
   item_ids: string[];
   status: DeckStatus;
@@ -71,6 +77,8 @@ export type DeckDetail = {
   today: number;
   graduated: number;
   items: DeckItemRow[];
+  /** Situation deck with no published lesson and no ready bank yet. */
+  needs_generate?: boolean;
   /** Custom/official only */
   added?: boolean;
   added_count?: number;
@@ -155,7 +163,7 @@ function docToLightState(doc: Record<string, unknown>): ItemState {
   };
 }
 
-/** Load flashcard items from all published lessons with day ≤ currentDay. */
+/** Load flashcard items from published lessons with day ≤ currentDay (daily 15). */
 export async function loadPublishedFlashcardsThrough(
   currentDay: number,
   targetLang = 'pt-PT',
@@ -186,12 +194,51 @@ export async function loadPublishedFlashcardsThrough(
   return { byDay, byId };
 }
 
+/**
+ * All situation flashcard banks for listing/detail: every published day
+ * plus ready standalone banks where no published pack exists. No day gate.
+ */
+export async function loadSituationFlashcardsAll(
+  targetLang = 'pt-PT',
+): Promise<{ byDay: Map<number, Item[]>; byId: Map<string, Item> }> {
+  const byDay = new Map<number, Item[]>();
+  const byId = new Map<string, Item>();
+  if (!mongoConfigured()) return { byDay, byId };
+  await connectMongo();
+  const docs = await V2LessonModel()
+    .find({
+      target_lang: targetLang,
+      status: 'published',
+    })
+    .sort({ day: 1, version: -1 })
+    .lean();
+
+  const seen = new Set<number>();
+  for (const doc of docs) {
+    if (seen.has(doc.day)) continue;
+    seen.add(doc.day);
+    const items = flashcardItems(
+      ((doc.data as { items?: Item[] })?.items ?? []) as Item[],
+    );
+    byDay.set(doc.day, items);
+    for (const item of items) byId.set(item.id, item);
+  }
+
+  const banks = await loadAllReadyBanks(targetLang);
+  for (const [day, items] of banks) {
+    if (byDay.has(day)) continue;
+    byDay.set(day, items);
+    for (const item of items) byId.set(item.id, item);
+  }
+  return { byDay, byId };
+}
+
 export async function buildDecksListing(opts: {
   user_id: string;
   currentDay: number;
 }): Promise<DecksListing> {
   const plan = loadDayPlan();
-  const { byDay, byId } = await loadPublishedFlashcardsThrough(opts.currentDay);
+  const { byDay, byId } = await loadSituationFlashcardsAll();
 
   let states: ItemState[] = [];
   if (mongoConfigured()) {
@@ -230,10 +277,6 @@ export async function buildDecksListing(opts: {
       if (st.card.masteryLevel === 'mastered') return false;
       return true;
     }).length;
-    let status: DeckStatus = 'future';
-    if (d.day > opts.currentDay) status = 'future';
-    else if (!byDay.has(d.day)) status = 'locked';
-    else status = 'open';
 
     return {
       id: `day:${d.day}`,
@@ -244,20 +287,16 @@ export async function buildDecksListing(opts: {
       situation_eg: d.situation_eg,
       situation_tl: d.generation?.situation_tl ?? d.title_tl,
       total: items.length,
-      today: status === 'open' ? Math.min(today, items.length) : 0,
+      today: Math.min(today, items.length),
       graduated,
-      item_ids: status === 'open' ? items.map((i) => i.id) : [],
-      status,
+      generated: items.length > 0,
+      item_ids: items.map((i) => i.id),
+      status: 'open' as const,
     };
   });
 
-  // Reached days newest first; future days soonest first.
-  situations.sort((a, b) => {
-    const af = a.status === 'future' ? 1 : 0;
-    const bf = b.status === 'future' ? 1 : 0;
-    if (af !== bf) return af - bf;
-    return af === 1 ? a.day - b.day : b.day - a.day;
-  });
+  // Day 1 → N.
+  situations.sort((a, b) => a.day - b.day);
 
   const seed = loadConjugationSeed();
   const verbs: VerbDeckSummary[] = seed.verbs
@@ -304,7 +343,7 @@ export async function getDeckDetail(opts: {
   deckId: string;
   currentDay: number;
 }): Promise<DeckDetail | null> {
-  const { byDay, byId } = await loadPublishedFlashcardsThrough(opts.currentDay);
+  const { byDay, byId } = await loadSituationFlashcardsAll();
   let states: ItemState[] = [];
   if (mongoConfigured()) {
     await connectMongo();
@@ -338,7 +377,8 @@ export async function getDeckDetail(opts: {
     const day = Number(opts.deckId.slice(4));
     if (!Number.isFinite(day)) return null;
     const plan = loadDayPlan().days.find((d) => d.day === day);
-    const items = byDay.get(day) ?? [];
+    if (!plan) return null;
+    const items = byDay.get(day) ?? (await getSituationCardItems(day));
     // Title extras from the pack are optional — some published drafts fail pack parse.
     let publishedSituation: { tl?: string; eg?: string } | undefined;
     try {
@@ -355,16 +395,17 @@ export async function getDeckDetail(opts: {
       kind: 'situation',
       day,
       title_tl:
-        plan?.title_tl ??
+        plan.title_tl ??
         publishedSituation?.tl ??
         `Dia ${day}`,
-      title_ar: plan?.title_ar ?? '',
-      situation_eg: plan?.situation_eg ?? publishedSituation?.eg,
+      title_ar: plan.title_ar ?? '',
+      situation_eg: plan.situation_eg ?? publishedSituation?.eg,
       total: items.length,
       today: items.filter((i) => stateById.get(i.id)?.card.masteryLevel !== 'mastered')
         .length,
       graduated,
       items: items.map((i) => rowFromItem(i, stateById.get(i.id), weakIds)),
+      needs_generate: items.length === 0,
     };
   }
 
@@ -490,6 +531,42 @@ function resolveExampleTl(
   return undefined;
 }
 
+/** MSA for the example: inline example_ar, else ar of a resolved example id. */
+function resolveExampleAr(
+  item: Item,
+  itemsById?: Map<string, Item>,
+): string | undefined {
+  const inline =
+    'example_ar' in item && typeof (item as { example_ar?: unknown }).example_ar === 'string'
+      ? String((item as { example_ar: string }).example_ar).trim()
+      : '';
+  if (inline) return inline;
+
+  const raw =
+    'example' in item && typeof item.example === 'string'
+      ? item.example.trim()
+      : '';
+  if (raw && itemsById?.has(raw)) {
+    const ref = itemsById.get(raw)!;
+    if ('ar' in ref && typeof ref.ar === 'string' && ref.ar.trim()) {
+      return ref.ar.trim();
+    }
+  }
+
+  const refs =
+    'examples' in item && Array.isArray(item.examples)
+      ? (item.examples as string[])
+      : [];
+  const first = refs[0];
+  if (first && itemsById?.has(first)) {
+    const ref = itemsById.get(first)!;
+    if ('ar' in ref && typeof ref.ar === 'string' && ref.ar.trim()) {
+      return ref.ar.trim();
+    }
+  }
+  return undefined;
+}
+
 function wordPlural(item: Extract<Item, { type: 'word' }>): string | undefined {
   const withTl = item as Extract<Item, { type: 'word' }> & {
     plural_tl?: string;
@@ -548,6 +625,7 @@ export function cardFaceFromItem(
       };
     });
     const exampleTl = resolveExampleTl(item, lemma, itemsById);
+    const exampleAr = resolveExampleAr(item, itemsById);
     return {
       item_id: item.id,
       kind: 'verb',
@@ -555,6 +633,7 @@ export function cardFaceFromItem(
       ar: 'ar' in item ? item.ar : '',
       say: 'say' in item ? item.say : undefined,
       example: exampleTl,
+      example_ar: exampleAr,
       hint_tl: exampleTl,
       lemma,
       verbClass: cls,
@@ -564,6 +643,7 @@ export function cardFaceFromItem(
 
   if (item.type === 'word') {
     const exampleTl = resolveExampleTl(item, item.tl, itemsById);
+    const exampleAr = resolveExampleAr(item, itemsById);
     return {
       item_id: item.id,
       kind: 'word',
@@ -573,6 +653,7 @@ export function cardFaceFromItem(
       gender: item.gender,
       plural: wordPlural(item),
       example: exampleTl,
+      example_ar: exampleAr,
       hint_tl: exampleTl,
     };
   }
@@ -614,13 +695,23 @@ async function fillFacesFromAnyLesson(
       if (!byId.has(item.id)) byId.set(item.id, item);
     }
   }
+  const stillMissing = itemIds.filter((id) => !byId.has(id));
+  if (!stillMissing.length) return;
+  const banks = await loadAllReadyBanks();
+  for (const items of banks.values()) {
+    for (const item of items) {
+      if (!byId.has(item.id)) byId.set(item.id, item);
+    }
+  }
 }
 
 export async function hydrateCardFaces(
   itemIds: string[],
   currentDay: number,
 ): Promise<Map<string, CardFacePayload>> {
-  const { byId } = await loadPublishedFlashcardsThrough(currentDay);
+  const { byId } = await loadSituationFlashcardsAll();
+  // currentDay kept for call-site compatibility (daily queue still passes it).
+  void currentDay;
   await fillFacesFromAnyLesson(byId, itemIds);
   // Also pull verb lemmas from seed even if not in a lesson pack yet
   const seed = loadConjugationSeed();

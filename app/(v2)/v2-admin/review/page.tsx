@@ -124,11 +124,8 @@ export default function V2AdminReviewPage() {
   };
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-3xl flex-col gap-4 px-4 py-6">
+    <main className="flex w-full flex-1 flex-col gap-4 pb-12">
       <header className="space-y-1">
-        <p className="text-sm text-v2-muted">
-          <Link href="/v2-admin">← v2-admin</Link>
-        </p>
         <h1 className="font-[family-name:var(--font-v2-display-ar)] text-2xl text-v2-ink">
           طابور المراجعة
         </h1>

@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
 type ImageRow = {
@@ -98,16 +97,10 @@ export default function CharactersAdminPage() {
   }
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8" dir="rtl">
+    <main className="flex w-full flex-1 flex-col pb-12" dir="rtl">
       <header className="mb-6 flex items-center justify-between gap-3">
         <div>
-          <p className="text-sm text-neutral-500">
-            <Link href="/v2-admin" className="underline">
-              v2-admin
-            </Link>
-            {' · '}الشخصيات
-          </p>
-          <h1 className="mt-1 text-2xl font-semibold">شخصيات المرجع</h1>
+          <h1 className="text-2xl font-semibold">شخصيات المرجع</h1>
           <p className="mt-1 text-sm text-neutral-600">
             تسعة شخصيات من characters.json — ولّد أو ارفع صور المرجع (جودة عالية).
           </p>

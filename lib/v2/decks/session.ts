@@ -8,7 +8,12 @@ import {
 } from '@/lib/v2/mongo/models';
 import type { ItemState } from '@/lib/v2/progress';
 import { createItemState } from '@/lib/v2/progress/srs';
-import { hydrateCardFaces, type CardFacePayload } from './curriculum';
+import {
+  hydrateCardFaces,
+  loadDayPlan,
+  type CardFacePayload,
+} from './curriculum';
+import { getSituationCardItems } from './situationBank';
 import { isCustomItemId } from './keys';
 
 export const CUSTOM_DECK_NEW_PER_DAY = 10;
@@ -21,7 +26,7 @@ export type CustomDeckSessionCard = {
 
 export type CustomDeckSession = {
   deck_id: string;
-  deck_kind: 'custom' | 'official';
+  deck_kind: 'custom' | 'official' | 'situation';
   title_tl: string;
   title_ar: string;
   local_date: string;
@@ -196,6 +201,128 @@ export async function buildCustomDeckSession(opts: {
     deck_kind: parsed.kind,
     title_tl,
     title_ar,
+    local_date: opts.local_date,
+    cards: ordered.map((item_id) => ({
+      item_id,
+      kind: due.includes(item_id) ? 'due' : 'new',
+      face: faces.get(item_id) ?? null,
+    })),
+    ratings_for_streak_threshold: 10,
+  };
+}
+
+/**
+ * Per-situation-deck review: due first, then ≤10 new / local day.
+ * Independent of the curriculum daily 15.
+ */
+export async function buildSituationDeckSession(opts: {
+  user_id: string;
+  deckId: string;
+  local_date: string;
+  now?: Date;
+  currentDay?: number;
+}): Promise<CustomDeckSession | null> {
+  if (!opts.deckId.startsWith('day:')) return null;
+  const day = Number(opts.deckId.slice(4));
+  if (!Number.isFinite(day) || day < 1) return null;
+  if (!mongoConfigured()) return null;
+  await connectMongo();
+
+  const plan = loadDayPlan().days.find((d) => d.day === day);
+  if (!plan) return null;
+
+  const items = await getSituationCardItems(day);
+  const item_ids = items.map((i) => i.id);
+  if (!item_ids.length) {
+    return {
+      deck_id: opts.deckId,
+      deck_kind: 'situation',
+      title_tl: plan.title_tl,
+      title_ar: plan.title_ar,
+      local_date: opts.local_date,
+      cards: [],
+      ratings_for_streak_threshold: 10,
+    };
+  }
+
+  const states = await V2ItemStateModel()
+    .find({ user_id: opts.user_id, item_id: { $in: item_ids } })
+    .lean();
+  const stateById = new Map(
+    states.map((d) => [
+      String(d.item_id),
+      docToState(d as unknown as Record<string, unknown>),
+    ]),
+  );
+
+  const now = opts.now ?? new Date();
+  const due: string[] = [];
+  const unseen: string[] = [];
+  for (const id of item_ids) {
+    const st = stateById.get(id);
+    if (!st) {
+      unseen.push(id);
+      continue;
+    }
+    if (st.card.masteryLevel === 'mastered' && !st.card.knowCheckDueAt) {
+      continue;
+    }
+    if (st.card.dueAt && new Date(st.card.dueAt) <= now) {
+      due.push(id);
+    } else if (!st.card.dueAt) {
+      due.push(id);
+    }
+  }
+
+  const userDeck = await V2UserDeckModel()
+    .findOne({ user_id: opts.user_id, deck_id: opts.deckId })
+    .lean();
+  const byDay =
+    (userDeck?.new_cards_by_day as Record<string, number> | undefined) ?? {};
+  const alreadyNew = Number(byDay[opts.local_date] ?? 0);
+  const newSlots = Math.max(0, CUSTOM_DECK_NEW_PER_DAY - alreadyNew);
+  const newIds = unseen.slice(0, newSlots);
+  const introducedDay = opts.currentDay ?? day;
+
+  for (const id of newIds) {
+    if (stateById.has(id)) continue;
+    const blank = createItemState({
+      user_id: opts.user_id,
+      item_id: id,
+      target_lang: 'pt-PT',
+      introducedDay,
+    });
+    await V2ItemStateModel().updateOne(
+      { user_id: opts.user_id, item_id: id },
+      { $setOnInsert: blank },
+      { upsert: true },
+    );
+  }
+
+  if (newIds.length > 0) {
+    await V2UserDeckModel().updateOne(
+      { user_id: opts.user_id, deck_id: opts.deckId },
+      {
+        $setOnInsert: {
+          user_id: opts.user_id,
+          deck_id: opts.deckId,
+          deck_kind: 'situation',
+          added_at: new Date(),
+        },
+        $inc: { [`new_cards_by_day.${opts.local_date}`]: newIds.length },
+      },
+      { upsert: true },
+    );
+  }
+
+  const ordered = [...due, ...newIds.filter((id) => !due.includes(id))];
+  const faces = await hydrateCardFaces(ordered, 999);
+
+  return {
+    deck_id: opts.deckId,
+    deck_kind: 'situation',
+    title_tl: plan.title_tl,
+    title_ar: plan.title_ar,
     local_date: opts.local_date,
     cards: ordered.map((item_id) => ({
       item_id,

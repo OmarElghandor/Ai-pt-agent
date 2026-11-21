@@ -55,6 +55,13 @@ function isCustomOrOfficialDeck(deckId: string | undefined): deckId is string {
   );
 }
 
+/** Per-deck session (due+new), not the curriculum daily 15. */
+function isDeckSessionMode(deckId: string | undefined): deckId is string {
+  if (!deckId) return false;
+  if (deckId.startsWith('day:')) return true;
+  return isCustomOrOfficialDeck(deckId);
+}
+
 function newAnswerId(): string {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
     return crypto.randomUUID();
@@ -77,7 +84,8 @@ export function ReviewSession({
   itemId?: string;
   previewFace?: CardFacePayload | null;
 }) {
-  const customMode = isCustomOrOfficialDeck(deckId);
+  const deckSessionMode = isDeckSessionMode(deckId);
+  const customMode = deckSessionMode;
 
   const [data, setData] = useState<TodayPayload | null>(null);
   const [deckMeta, setDeckMeta] = useState<DeckDetail | null | undefined>(
@@ -103,11 +111,12 @@ export function ReviewSession({
     return (await res.json()) as TodayPayload;
   }, [dayOverride]);
 
-  const loadCustom = useCallback(async () => {
+  const loadDeckSession = useCallback(async () => {
     if (!deckId) throw new Error('missing_deck');
-    const res = await fetch(
-      `/api/v2/custom-decks/${encodeURIComponent(deckId)}/session`,
-    );
+    const path = deckId.startsWith('day:')
+      ? `/api/v2/decks/${encodeURIComponent(deckId)}/session`
+      : `/api/v2/custom-decks/${encodeURIComponent(deckId)}/session`;
+    const res = await fetch(path);
     if (!res.ok) throw new Error(String(res.status));
     return (await res.json()) as CustomSessionPayload;
   }, [deckId]);
@@ -134,7 +143,7 @@ export function ReviewSession({
     let cancelled = false;
     (async () => {
       try {
-        const session = await loadCustom();
+        const session = await loadDeckSession();
         if (cancelled) return;
         setCustomSession(session);
         if (session.cards.length === 0) setCustomDone(true);
@@ -145,7 +154,7 @@ export function ReviewSession({
     return () => {
       cancelled = true;
     };
-  }, [customMode, deckId, loadCustom]);
+  }, [customMode, deckId, loadDeckSession]);
 
   useEffect(() => {
     if (customMode || !deckId) {
@@ -262,13 +271,16 @@ export function ReviewSession({
       }
       setBusy(false);
 
+      const answerDay = deckId.startsWith('day:')
+        ? Number(deckId.slice(4)) || 1
+        : 1;
       void fetch('/api/v2/answers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           kind: 'card_review',
           answer_id: newAnswerId(),
-          day: 1,
+          day: answerDay,
           item_id: itemIdRated,
           rating,
           deck_id: deckId,
@@ -418,7 +430,9 @@ export function ReviewSession({
     : Math.min(ratedInPool + (card ? 1 : 0), Math.max(total, 1));
   const progressValue = total ? ratedInPool / total : 0;
   const day = customMode
-    ? null
+    ? deckId?.startsWith('day:')
+      ? Number(deckId.slice(4)) || dayOverride || 1
+      : null
     : (data?.current_day ?? dayOverride ?? 1);
   const headerTitle = customMode
     ? customSession?.title_tl?.trim() ||

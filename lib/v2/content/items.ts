@@ -93,6 +93,8 @@ const WordItemSchema = z.object({
   image: ItemImageLinkSchema.optional(),
   /** Example sentence TL, or an item id that resolves to one. */
   example: z.string().optional(),
+  /** Simple MSA translation of the example sentence (when example is inline TL). */
+  example_ar: z.string().optional(),
   /** Optional: item beyond the day's core list (max 2 per day). */
   extra: ExtraFlag,
   has_card: HasCardFlag,

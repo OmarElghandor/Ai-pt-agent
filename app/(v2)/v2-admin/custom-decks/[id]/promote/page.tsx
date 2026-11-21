@@ -85,11 +85,13 @@ export default function PromoteCustomDeckPage() {
   }
 
   return (
-    <main dir="ltr" style={{ padding: 16, maxWidth: 720, margin: '0 auto' }}>
-      <p>
-        <Link href="/v2-admin/custom-decks">← Decks</Link>
+    <main dir="ltr" className="mx-auto flex w-full max-w-xl flex-1 flex-col gap-3 pb-12">
+      <p className="text-sm text-v2-ink-muted">
+        <Link href="/v2-admin/flashcards?tab=custom" className="underline">
+          ← Flashcards
+        </Link>
       </p>
-      <h1>حوّله لديك رسمي</h1>
+      <h1 className="text-2xl font-semibold">حوّله لديك رسمي</h1>
       {error && <p style={{ color: '#dc2626' }}>{error}</p>}
       {officialId ? (
         <>

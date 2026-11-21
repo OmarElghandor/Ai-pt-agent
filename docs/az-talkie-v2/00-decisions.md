@@ -28,6 +28,17 @@ Full detail: `10-auth.md`. Tasks: `10-auth-tasks.md`.
 - **Deletion:** "امسح حسابي" deletes the v2 user, sessions, accounts, and every v2 document keyed by their id. Langify and shared content are untouched.
 - **Env (server only):** `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ADMIN_EMAILS`. Dev-only test sign-in route; must not be reachable in production.
 
+## 0c. Admin dashboard (new, 2026-11-21)
+
+Full detail: `15-admin-dashboard.md`. Tasks D0–D8. Where that doc disagrees with older per-lesson admin pages or with `12` about who may generate decks, **15 and this section win**.
+
+- **Shell:** `/v2-admin` is a full-screen admin app (not the 390px learner frame). RTL Egyptian UI chrome; mint tokens only. Guarded by `role: admin` / `denyUnlessV2Admin`. Side rail: الرئيسية · الدروس · الكروت · الصور · الشغل · التكلفة · المكتبة · الشخصيات.
+- **Paid work:** nothing paid runs without an admin click. Every paid step shows an estimate first. Same input hash → reuse (never pay twice). Changing an earlier stage marks later ones **stale** (amber); nothing rebuilds automatically until Omar clicks.
+- **Standard cards before the lesson:** a day's standard cards may be built straight from approved core-items, with no lesson run. Same stable item ids written once into the item bank; the lesson `items` stage later fills only missing fields and never overwrites existing card fields. Function words get no card (§5). Situation decks appear on their day from the item bank whether or not the lesson exists; unpublished lessons still never unlock early.
+- **Admin themed decks:** Omar may generate a deck from a topic (same generator and checks as `12` §2.3–§2.4, no learner quota). Result is a draft official deck (`v2_official_decks`, `status: draft`, `origin: admin_topic`); learners never see it until published.
+- **Images:** one bulk image queue for lessons, standard cards, themed/learner decks, and library. Pre-lesson `image_specs` may run from core-items alone (`spec_source: pre_lesson`) and are **kept by default** when the lesson is later generated (not rewritten automatically). Deck images use the deck pipeline; lesson images use the lesson pipeline (§10 / `12` §2.10).
+- **Jobs and cost:** every paid action is a background job on the existing job runner. Batches group many jobs; closing the tab never cancels work. Cost totals must match job logs.
+
 ## 1. Product shape
 
 - Audience: Egyptian Arabic speakers living in Portugal, A0–A1. Target language: European Portuguese (pt-PT). Later: English and German on the same engine.
@@ -334,7 +345,7 @@ Full detail: `14-library.md`, content `14b-library-content.md`, design `14c-libr
 - **(new) Deck listing:**
   - Hero card "مراجعة النهارده": 15 cards · 3 minutes, a breakdown line and an "ابدأ" button. **(changed 2026-11-12)** The daily 15 stays curriculum-only; custom and official themed decks are separate sessions (§5b, `12`).
   - A "اللي بتغلط فيه" row.
-  - **(changed 2026-11-12)** Tabs: المواقف (situation decks, auto-built per day, newest first, future ones locked with "يفتح Dia N") · الأفعال (verb tiles colored by class, ⚡ for irregular) · **مواضيع** (official themed decks) · **من المتعلمين** (learner-generated public decks).
+  - **(changed 2026-11-20)** Tabs: المواقف (situation decks, auto-built per day, newest first, **all open** — no day locks; opening a day with no cards yet generates a standalone items bank from that day's core_items, separate from full lesson publish) · الأفعال (verb tiles colored by class, ⚡ for irregular) · **مواضيع** (official themed decks) · **من المتعلمين** (learner-generated public decks).
   - A collapsed "اتخرّجت ✓ N" row.
   - Progress is shown as a count of graduated cards, never a percentage.
   - Deck detail lists items with no Arabic meanings, so the list itself works as a self-test.

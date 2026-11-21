@@ -355,6 +355,93 @@ export default function V2AdminLessonPage() {
     }
   }
 
+  async function generateQuestions() {
+    setBusy(true);
+    setMessage(null);
+    setError(null);
+    try {
+      const res = await fetch(`/api/v2/admin/generate/questions/${day}`, {
+        method: 'POST',
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? res.statusText);
+      setMessage(json.message ?? `Questions regenerating v${json.version}`);
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function warmAudio() {
+    setBusy(true);
+    setMessage(null);
+    setError(null);
+    try {
+      const res = await fetch(`/api/v2/admin/lessons/${day}/warm-audio`, {
+        method: 'POST',
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? res.statusText);
+      setMessage(
+        json.message ??
+          `Warm audio: ${json.warmed ?? json.count ?? 'done'}`,
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function setLessonStatus(status: 'reviewed' | 'published' | 'draft') {
+    setBusy(true);
+    setMessage(null);
+    setError(null);
+    try {
+      const res = await fetch(`/api/v2/admin/lessons/${day}/status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status,
+          ...(data?.version != null ? { version: data.version } : {}),
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? res.statusText);
+      setMessage(`Lesson → ${status}${json.version != null ? ` v${json.version}` : ''}`);
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function generateMissingImages(force = false) {
+    setBusy(true);
+    setMessage(null);
+    setError(null);
+    try {
+      const res = await fetch('/api/v2/admin/images/generate-missing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ day, force }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? res.statusText);
+      setMessage(
+        json.message ??
+          `Images: enqueued ${json.enqueued ?? json.queued ?? 0}`,
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function rerunStale() {
     setBusy(true);
     try {
@@ -427,72 +514,170 @@ export default function V2AdminLessonPage() {
       : null;
 
   return (
-    <main dir="ltr" style={{ padding: 16, maxWidth: 1100, margin: '0 auto' }}>
-      <p>
-        <Link href="/v2-admin">← Admin</Link>
+    <main dir="ltr" className="flex flex-1 flex-col gap-5 pb-12">
+      <p className="text-sm text-v2-ink-muted">
+        <Link href={`/day/${day}`} className="underline">
+          Player
+        </Link>
         {' · '}
-        <Link href="/v2-admin/quality">Quality</Link>
+        <Link href={`/practice/${day}?dev=1`} className="underline">
+          Practice
+        </Link>
         {' · '}
-        <Link href={`/day/${day}`}>Player</Link>
+        <Link href={`/talk/free/open?day=${day}`} className="underline">
+          Talk
+        </Link>
+        {isRolePlayDay(day) ? (
+          <>
+            {' · '}
+            <Link href={`/talk/pt-PT.day-${day}`} className="underline">
+              Role-play
+            </Link>
+          </>
+        ) : null}
       </p>
 
-      {error && <p style={{ color: '#dc2626' }}>{error}</p>}
-      {message && <p style={{ color: '#16a34a' }}>{message}</p>}
+      {error && (
+        <p className="rounded-v2-row border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+          {error}
+        </p>
+      )}
+      {message && (
+        <p className="rounded-v2-row border border-v2-rule bg-v2-card px-3 py-2 text-sm text-emerald-800">
+          {message}
+        </p>
+      )}
 
-      <header style={{ marginBottom: 16 }}>
-        <h1 style={{ margin: 0 }}>
-          Day {day}
-          {data ? ` · ${data.plan.title_tl}` : ''}
-        </h1>
-        {data && (
-          <p style={{ margin: '4px 0', opacity: 0.8 }}>
-            {data.plan.title_ar} · v{data.version ?? '—'} · {statusLabel} ·{' '}
-            {(data.total_duration_ms / 1000).toFixed(1)}s · $
-            {data.total_usd_estimate.toFixed(4)}
-            {data.stale_count ? ` · stale ${data.stale_count}` : ''}
-          </p>
-        )}
-        <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
-          <button type="button" disabled={busy} onClick={() => void generate()}>
-            Generate from scratch
-          </button>
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => void regenerateStory()}
-          >
-            Regenerate story
-          </button>
-          <button type="button" disabled={busy} onClick={() => void rerunStale()}>
-            Rerun stale
-          </button>
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => void generatePack()}
-          >
-            Generate pack
-          </button>
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => void publishPack()}
-          >
-            Publish pack
-          </button>
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => void generateConvoPack()}
-          >
-            Generate conversation pack
-          </button>
-          <Link href={`/practice/${day}?dev=1`}>Open practice</Link>
-          <Link href={`/talk/free/open?day=${day}`}>Open talk</Link>
-          {isRolePlayDay(day) ? (
-            <Link href={`/talk/pt-PT.day-${day}`}>Role-play</Link>
-          ) : null}
+      <header className="space-y-3">
+        <div>
+          <h1 className="font-[family-name:var(--font-v2-display-ar)] text-3xl text-v2-ink">
+            Day {day}
+            {data ? ` · ${data.plan.title_tl}` : ''}
+          </h1>
+          {data && (
+            <p className="mt-1 text-sm text-v2-ink-muted">
+              {data.plan.title_ar} · v{data.version ?? '—'} · {statusLabel} ·{' '}
+              {(data.total_duration_ms / 1000).toFixed(1)}s · $
+              {data.total_usd_estimate.toFixed(4)}
+              {data.stale_count ? ` · stale ${data.stale_count}` : ''}
+            </p>
+          )}
         </div>
+
+        <section className="rounded-v2-row border border-v2-rule bg-v2-card p-4">
+          <h2 className="mb-2 text-sm font-semibold text-v2-ink">Generate parts</h2>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void generate()}
+              className="rounded-v2-chip bg-v2-action px-3 py-1.5 text-sm text-white disabled:opacity-50"
+            >
+              Full lesson
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void regenerateStory()}
+              className="rounded-v2-chip border border-v2-rule bg-v2-paper px-3 py-1.5 text-sm disabled:opacity-50"
+            >
+              Story
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void generateQuestions()}
+              className="rounded-v2-chip border border-v2-rule bg-v2-paper px-3 py-1.5 text-sm disabled:opacity-50"
+            >
+              Questions
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void generateMissingImages(false)}
+              className="rounded-v2-chip border border-v2-rule bg-v2-paper px-3 py-1.5 text-sm disabled:opacity-50"
+            >
+              Images (missing)
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => {
+                if (!window.confirm('Force regenerate all lesson images?')) return;
+                void generateMissingImages(true);
+              }}
+              className="rounded-v2-chip border border-v2-rule bg-v2-paper px-3 py-1.5 text-sm disabled:opacity-50"
+            >
+              Images (force)
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void generatePack()}
+              className="rounded-v2-chip border border-v2-rule bg-v2-paper px-3 py-1.5 text-sm disabled:opacity-50"
+            >
+              Pack
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void generateConvoPack()}
+              className="rounded-v2-chip border border-v2-rule bg-v2-paper px-3 py-1.5 text-sm disabled:opacity-50"
+            >
+              Convo pack
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void warmAudio()}
+              className="rounded-v2-chip border border-v2-rule bg-v2-paper px-3 py-1.5 text-sm disabled:opacity-50"
+            >
+              Warm audio
+            </button>
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2 border-t border-v2-rule pt-3">
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void rerunStale()}
+              className="rounded-v2-chip border border-v2-rule bg-v2-paper px-3 py-1.5 text-sm disabled:opacity-50"
+            >
+              Rerun stale
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void setLessonStatus('reviewed')}
+              className="rounded-v2-chip border border-v2-rule bg-v2-paper px-3 py-1.5 text-sm disabled:opacity-50"
+            >
+              Mark reviewed
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void setLessonStatus('published')}
+              className="rounded-v2-chip bg-emerald-700 px-3 py-1.5 text-sm text-white disabled:opacity-50"
+            >
+              Publish lesson
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void publishPack()}
+              className="rounded-v2-chip border border-v2-rule bg-v2-paper px-3 py-1.5 text-sm disabled:opacity-50"
+            >
+              Publish pack
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void setLessonStatus('draft')}
+              className="rounded-v2-chip border border-v2-rule bg-v2-paper px-3 py-1.5 text-sm text-v2-ink-muted disabled:opacity-50"
+            >
+              Revert to draft
+            </button>
+          </div>
+        </section>
       </header>
 
       {data &&

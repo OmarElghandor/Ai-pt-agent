@@ -135,6 +135,50 @@
   overflow-x: hidden;
 }
 
+/* Admin tools need desktop width; learners stay at 480px. */
+.v2-shell:has([data-v2-admin]) .v2-app-column {
+  max-width: none;
+  width: 100%;
+}
+
+/* Admin dashboard shell (§15 D1): rail width + label/icon modes. */
+.v2-admin-root .v2-admin-rail {
+  width: 3.5rem;
+}
+.v2-admin-root .v2-admin-rail .v2-admin-rail-label {
+  display: none;
+}
+.v2-admin-root .v2-admin-rail .v2-admin-rail-icon {
+  display: flex;
+}
+
+@media (min-width: 1280px) {
+  .v2-admin-root .v2-admin-rail {
+    width: 13rem;
+  }
+  .v2-admin-root .v2-admin-rail .v2-admin-rail-label {
+    display: block;
+  }
+  .v2-admin-root .v2-admin-rail .v2-admin-rail-icon {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1279px) {
+  .v2-admin-root .v2-admin-rail:hover,
+  .v2-admin-root .v2-admin-rail:focus-within {
+    width: 13rem;
+  }
+  .v2-admin-root .v2-admin-rail:hover .v2-admin-rail-label,
+  .v2-admin-root .v2-admin-rail:focus-within .v2-admin-rail-label {
+    display: block;
+  }
+  .v2-admin-root .v2-admin-rail:hover .v2-admin-rail-icon,
+  .v2-admin-root .v2-admin-rail:focus-within .v2-admin-rail-icon {
+    display: none;
+  }
+}
+
 .v2-shell a {
   color: inherit;
   text-decoration: none;

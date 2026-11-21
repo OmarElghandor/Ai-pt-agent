@@ -1,6 +1,7 @@
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { auth } from './index';
+import { isAdminEmail } from './env';
 import {
   normalizeGender,
   normalizeNativeLang,
@@ -56,7 +57,16 @@ export async function getCurrentV2User(): Promise<V2User | null> {
       user.name = String(doc.name ?? user.name);
       user.gender = normalizeGender(doc.gender);
       user.onboarded_at = (doc.onboarded_at as Date | string | null) ?? null;
-      user.role = normalizeRole(doc.role);
+      // ADMIN_EMAILS wins over a stale DB role (no re-sign-in required).
+      const email = String(doc.email ?? user.email);
+      const roleFromEnv: V2UserRole = isAdminEmail(email) ? 'admin' : 'learner';
+      user.role = roleFromEnv;
+      if (normalizeRole(doc.role) !== roleFromEnv) {
+        const { updateV2UserDoc } = await import('./v2UserDoc');
+        await updateV2UserDoc(db, user.id, { role: roleFromEnv }).catch(
+          () => undefined,
+        );
+      }
       user.langify_user_id = doc.langify_user_id
         ? String(doc.langify_user_id)
         : null;

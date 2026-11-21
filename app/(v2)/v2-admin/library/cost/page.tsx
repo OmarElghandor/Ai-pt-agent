@@ -23,7 +23,7 @@ export default function LibraryCostPage() {
   return (
     <main
       dir="rtl"
-      className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-4 px-4 py-6 font-[family-name:var(--font-v2-arabic)]"
+      className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-4 pb-12 font-[family-name:var(--font-v2-arabic)]"
     >
       <p className="text-sm text-v2-ink-muted">
         <Link href="/v2-admin/library" className="underline">

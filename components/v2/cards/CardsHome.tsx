@@ -338,66 +338,62 @@ function SituationRow({
   dayOverride: number | null;
   queueIds: Set<string>;
 }) {
-  const locked = deck.status !== 'open';
   const todayCount = deck.item_ids.filter((id) => queueIds.has(id)).length;
-  const inner = (
-    <div
-      className={[
-        'flex gap-3 rounded-v2-card bg-v2-card p-3 shadow-[var(--shadow-v2-soft)]',
-        locked ? 'opacity-50' : '',
-      ].join(' ')}
-    >
-      <ImageSlot
-        variant="deckRow"
-        placeholderIcon={locked ? 'lock' : 'image'}
-      />
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold text-v2-primary">
-          <RichText
-            segments={[
-              { text: deck.situation_tl, lang: 'tl', bold: true },
-              { text: ' · ', lang: 'tl' },
-              { text: deck.situation_eg, lang: 'eg' },
-            ]}
-          />
-        </p>
-        <p className="mt-1 text-xs text-v2-ink-muted">
-          <RichText
-            segments={
-              locked
-                ? [
-                    { text: 'يفتح ', lang: 'eg' },
-                    { text: `Dia ${deck.day}`, lang: 'tl' },
-                  ]
-                : [{ text: `Dia ${deck.day}`, lang: 'tl' }]
-            }
-          />
-        </p>
-        {locked ? null : (
-          <>
-            <p className="mt-2 font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
-              {toArDigits(deck.total)} كارت · {toArDigits(todayCount)} النهارده
-            </p>
-            <div className="mt-2">
-              <ProgressBar
-                value={deck.total ? deck.graduated / deck.total : 0}
-                label={`${toArDigits(deck.graduated)} اتخرّجوا`}
-              />
-              <p className="mt-1 font-[family-name:var(--font-v2-arabic)] text-[11px] text-v2-ink-muted">
-                {toArDigits(deck.graduated)} اتخرّجوا
-              </p>
-            </div>
-          </>
-        )}
-      </div>
-    </div>
-  );
-
-  if (locked) return <li>{inner}</li>;
+  const generated = deck.generated ?? deck.total > 0;
   return (
     <li>
-      <Link href={cardsHref(`/cards/deck/${encodeURIComponent(deck.id)}`, dayOverride)}>
-        {inner}
+      <Link
+        href={cardsHref(
+          `/cards/deck/${encodeURIComponent(deck.id)}`,
+          dayOverride,
+        )}
+        className="flex gap-3 rounded-v2-card bg-v2-card p-3 shadow-[var(--shadow-v2-soft)]"
+      >
+        <div className="relative shrink-0">
+          <ImageSlot variant="deckRow" placeholderIcon="image" />
+          <span
+            className={[
+              'absolute -bottom-1 -end-1 flex h-6 w-6 items-center justify-center rounded-full shadow-[var(--shadow-v2-soft)]',
+              generated
+                ? 'bg-v2-primary text-white'
+                : 'bg-v2-paper-deep text-v2-ink-muted',
+            ].join(' ')}
+            title={generated ? 'اتعمل' : 'لسه'}
+            aria-label={generated ? 'اتعمل' : 'لسه'}
+          >
+            <Icon
+              name={generated ? 'auto_awesome' : 'pending'}
+              size={20}
+              fill={generated}
+            />
+          </span>
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-semibold text-v2-primary">
+            <RichText
+              segments={[
+                { text: deck.situation_tl, lang: 'tl', bold: true },
+                { text: ' · ', lang: 'tl' },
+                { text: deck.situation_eg, lang: 'eg' },
+              ]}
+            />
+          </p>
+          <p className="mt-1 text-xs text-v2-ink-muted">
+            <RichText segments={[{ text: `Dia ${deck.day}`, lang: 'tl' }]} />
+          </p>
+          <p className="mt-2 font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
+            {toArDigits(deck.total)} كارت · {toArDigits(todayCount)} النهارده
+          </p>
+          <div className="mt-2">
+            <ProgressBar
+              value={deck.total ? deck.graduated / deck.total : 0}
+              label={`${toArDigits(deck.graduated)} اتخرّجوا`}
+            />
+            <p className="mt-1 font-[family-name:var(--font-v2-arabic)] text-[11px] text-v2-ink-muted">
+              {toArDigits(deck.graduated)} اتخرّجوا
+            </p>
+          </div>
+        </div>
       </Link>
     </li>
   );

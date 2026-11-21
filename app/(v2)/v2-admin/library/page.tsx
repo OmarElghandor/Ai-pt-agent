@@ -219,15 +219,9 @@ export default function LibraryAdminPage() {
   return (
     <main
       dir="rtl"
-      className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-5 overflow-y-auto px-4 py-6 pb-28 font-[family-name:var(--font-v2-arabic)]"
+      className="flex w-full flex-1 flex-col gap-5 overflow-y-auto pb-12 font-[family-name:var(--font-v2-arabic)]"
     >
       <header className="space-y-2">
-        <p className="text-sm text-v2-ink-muted">
-          <Link href="/v2-admin" className="underline">
-            v2-admin
-          </Link>
-          {' · '}المكتبة
-        </p>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="font-[family-name:var(--font-v2-display-ar)] text-3xl text-v2-ink">
             المكتبة

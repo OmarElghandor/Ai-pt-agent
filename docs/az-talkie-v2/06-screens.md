@@ -74,7 +74,7 @@ All screens are routes under `app/(v2)/` in `ai-agent-talk`. Each screen lists i
   - A hero card "مراجعة النهارده": "١٥ كارت · ٣ دقايق", a breakdown line ("٩ من الأسبوع ده · ٤ بتغلط فيها · ٢ قديمة") and an "ابدأ" button.
   - A coral-outlined row "اللي بتغلط فيه · N كروت" with "راجعهم".
   - A segmented control: المواقف | الأفعال.
-- **المواقف tab:** situation decks, newest first. Each row has a thumbnail, "No Supermercado · السوبرماركت", "Dia 3", "٢٤ كارت · ٥ النهارده", and a graduated-count bar labeled "١٠ اتخرّجوا". Future decks are faded, with a lock and "يفتح Dia N".
+- **المواقف tab:** situation decks, newest first. Each row has a thumbnail, "No Supermercado · السوبرماركت", "Dia 3", "٢٤ كارت · ٥ النهارده", and a graduated-count bar labeled "١٠ اتخرّجوا". All days are open (no locks); opening a day with no cards yet generates its flashcard bank on click.
 - **الأفعال tab:** a 2-column grid of verb tiles. The verb is shown big in its class color, with the Arabic meaning under it, "⚡ شاذ" when irregular, and a thin graduated line.
 - Bottom: a collapsed row "اتخرّجت ✓ N كلمة وجملة".
 - Never show a backlog number.

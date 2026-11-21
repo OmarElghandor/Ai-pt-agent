@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { denyUnlessV2Admin } from '@/lib/v2/generation/adminGate';
+import { requireV2User } from '@/lib/v2/auth/session';
+import { isV2Enabled } from '@/lib/v2/flags';
 import { mongoConfigured } from '@/lib/mongo';
 import {
   enqueueLessonImages,
@@ -24,8 +25,11 @@ type Body = {
  * Enqueue one content image job (async). Poll GET /api/v2/admin/images?day=.
  */
 export async function POST(req: Request) {
-  const denied = await denyUnlessV2Admin();
-  if (denied) return denied;
+  if (!isV2Enabled()) {
+    return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  }
+  const auth = await requireV2User();
+  if (auth.error) return auth.error;
   if (!mongoConfigured()) {
     return NextResponse.json({ error: 'MongoDB not configured' }, { status: 503 });
   }

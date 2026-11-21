@@ -1324,7 +1324,7 @@ const v2UserDeckSchema = new Schema(
     deck_kind: {
       type: String,
       required: true,
-      enum: ['custom', 'official'],
+      enum: ['custom', 'official', 'situation'],
       default: 'custom',
     },
     added_at: { type: Date, required: true, default: () => new Date() },
@@ -1502,6 +1502,42 @@ export function V2OfficialDeckModel(): Model<V2OfficialDeckDoc> {
   return (
     (mongoose.models.V2OfficialDeck as Model<V2OfficialDeckDoc>) ||
     mongoose.model<V2OfficialDeckDoc>('V2OfficialDeck', v2OfficialDeckSchema)
+  );
+}
+
+/** Standalone situation flashcard banks (items-only; not a full lesson). */
+const v2SituationCardBankSchema = new Schema(
+  {
+    day: { type: Number, required: true, index: true },
+    target_lang: { type: String, required: true, index: true },
+    status: {
+      type: String,
+      required: true,
+      enum: ['generating', 'ready', 'failed'],
+      default: 'generating',
+      index: true,
+    },
+    items: { type: Schema.Types.Mixed, required: true, default: [] },
+    error: { type: String, required: false },
+  },
+  { timestamps: true, collection: 'v2_situation_card_banks' },
+);
+
+v2SituationCardBankSchema.index({ day: 1, target_lang: 1 }, { unique: true });
+
+export type V2SituationCardBankDoc = InferSchemaType<
+  typeof v2SituationCardBankSchema
+> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2SituationCardBankModel(): Model<V2SituationCardBankDoc> {
+  return (
+    (mongoose.models.V2SituationCardBank as Model<V2SituationCardBankDoc>) ||
+    mongoose.model<V2SituationCardBankDoc>(
+      'V2SituationCardBank',
+      v2SituationCardBankSchema,
+    )
   );
 }
 

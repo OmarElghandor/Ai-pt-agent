@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 
 type Run = {
   id: string;
@@ -64,11 +63,8 @@ export default function V2AdminQualityPage() {
   }
 
   return (
-    <main dir="ltr" style={{ padding: 16, maxWidth: 1200, margin: '0 auto' }}>
-      <p>
-        <Link href="/v2-admin">← Admin</Link>
-      </p>
-      <h1>Quality · gen-sample runs</h1>
+    <main dir="ltr" className="flex flex-1 flex-col gap-3 pb-12">
+      <h1 className="text-2xl font-semibold">Quality · gen-sample runs</h1>
       <p style={{ fontSize: 13, opacity: 0.8 }}>
         Persisted from <code>npm run v2:gen-sample -- --profile …</code>. Green
         deltas = fewer issues / less over-budget vs previous run.

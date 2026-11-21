@@ -1,12 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AudioButton } from '@/components/v2/AudioButton';
 import { Icon } from '@/components/v2/Icon';
 import { ImageSlot } from '@/components/v2/ImageSlot';
 import { PrimaryButton } from '@/components/v2/PrimaryButton';
 import { RichText } from '@/components/v2/RichText';
+import { ScreenLoading } from '@/components/v2/ScreenLoading';
 import { TargetWord } from '@/components/v2/cards/TargetWord';
 import { apiQuery, cardsHref } from '@/components/v2/cards/href';
 import { toArDigits } from '@/lib/v2/formatAr';
@@ -31,17 +32,79 @@ export function DeckDetailView({
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [generating, setGenerating] = useState(false);
+  const [genError, setGenError] = useState<string | null>(null);
+  const generateStarted = useRef(false);
+
+  const loadDeck = useCallback(async () => {
+    const res = await fetch(
+      `/api/v2/decks/${encodeURIComponent(deckId)}${apiQuery(dayOverride)}`,
+    );
+    if (!res.ok) throw new Error(String(res.status));
+    return (await res.json()) as DeckDetail;
+  }, [deckId, dayOverride]);
+
+  const generateDeck = useCallback(async () => {
+    setGenerating(true);
+    setGenError(null);
+    try {
+      const res = await fetch(
+        `/api/v2/decks/${encodeURIComponent(deckId)}/generate`,
+        { method: 'POST' },
+      );
+      const body = (await res.json().catch(() => null)) as {
+        status?: string;
+        message_eg?: string;
+      } | null;
+      if (!res.ok || body?.status === 'failed') {
+        setGenError(body?.message_eg ?? 'ما قدرناش نجهّز الكروت دلوقتي');
+        return;
+      }
+      if (body?.status === 'generating') {
+        await new Promise((r) => setTimeout(r, 2000));
+        const retry = await fetch(
+          `/api/v2/decks/${encodeURIComponent(deckId)}/generate`,
+          { method: 'POST' },
+        );
+        const retryBody = (await retry.json().catch(() => null)) as {
+          status?: string;
+          message_eg?: string;
+        } | null;
+        if (!retry.ok || retryBody?.status === 'failed') {
+          setGenError(retryBody?.message_eg ?? 'ما قدرناش نجهّز الكروت دلوقتي');
+          return;
+        }
+      }
+      const data = await loadDeck();
+      setDeck(data);
+      if (data.needs_generate || data.total === 0) {
+        setGenError('ما قدرناش نجهّز الكروت دلوقتي');
+      }
+    } catch {
+      setGenError('ما قدرناش نجهّز الكروت دلوقتي');
+    } finally {
+      setGenerating(false);
+    }
+  }, [deckId, loadDeck]);
 
   useEffect(() => {
+    generateStarted.current = false;
+    setGenError(null);
+    setGenerating(false);
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(
-          `/api/v2/decks/${encodeURIComponent(deckId)}${apiQuery(dayOverride)}`,
-        );
-        if (!res.ok) throw new Error(String(res.status));
-        const data = (await res.json()) as DeckDetail;
-        if (!cancelled) setDeck(data);
+        const data = await loadDeck();
+        if (cancelled) return;
+        setDeck(data);
+        if (
+          data.kind === 'situation' &&
+          (data.needs_generate || data.total === 0) &&
+          !generateStarted.current
+        ) {
+          generateStarted.current = true;
+          await generateDeck();
+        }
       } catch {
         if (!cancelled) setError('failed');
       }
@@ -61,7 +124,7 @@ export function DeckDetailView({
     return () => {
       cancelled = true;
     };
-  }, [deckId, dayOverride]);
+  }, [deckId, dayOverride, loadDeck, generateDeck]);
 
   if (error) {
     return (
@@ -71,10 +134,61 @@ export function DeckDetailView({
     );
   }
   if (!deck) {
+    return <ScreenLoading label="بنحمّل…" />;
+  }
+  if (generating || (deck.needs_generate && !genError)) {
     return (
-      <p className="font-[family-name:var(--font-v2-arabic)] text-v2-ink-muted">
-        بنحمّل…
-      </p>
+      <main className="flex flex-1 flex-col pb-8">
+        <header className="flex items-center gap-2 px-0 pt-0">
+          <Link
+            href={cardsHref('/cards', dayOverride)}
+            aria-label="رجوع"
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-v2-primary"
+          >
+            <Icon name="arrow_forward" size={24} />
+          </Link>
+          <h1 className="truncate font-[family-name:var(--font-v2-target)] text-lg font-semibold text-v2-primary">
+            <RichText
+              segments={[{ text: deck.title_tl, lang: 'tl', bold: true }]}
+            />
+          </h1>
+        </header>
+        <ScreenLoading label="بنجهّز الكروت…" />
+      </main>
+    );
+  }
+  if (genError && (deck.needs_generate || deck.total === 0)) {
+    return (
+      <main className="flex flex-1 flex-col gap-4 pb-8">
+        <header className="flex items-center gap-2">
+          <Link
+            href={cardsHref('/cards', dayOverride)}
+            aria-label="رجوع"
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-v2-primary"
+          >
+            <Icon name="arrow_forward" size={24} />
+          </Link>
+          <h1 className="truncate font-[family-name:var(--font-v2-target)] text-lg font-semibold text-v2-primary">
+            <RichText
+              segments={[{ text: deck.title_tl, lang: 'tl', bold: true }]}
+            />
+          </h1>
+        </header>
+        <p className="font-[family-name:var(--font-v2-arabic)] text-v2-ink-muted">
+          {genError}
+        </p>
+        <PrimaryButton
+          type="button"
+          className="w-full"
+          disabled={busy || generating}
+          onClick={() => {
+            generateStarted.current = true;
+            void generateDeck();
+          }}
+        >
+          جرّب تاني
+        </PrimaryButton>
+      </main>
     );
   }
 
