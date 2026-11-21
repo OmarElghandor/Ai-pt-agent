@@ -103,6 +103,11 @@ function createAuth() {
           defaultValue: 'pt-PT',
           input: true,
         },
+        practice: {
+          type: 'json',
+          required: false,
+          input: false,
+        },
       },
     },
     session: {

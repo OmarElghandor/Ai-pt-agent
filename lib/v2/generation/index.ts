@@ -25,7 +25,7 @@ export {
   summarizeJobGraph,
   listJobsForVersion,
 } from './jobs';
-export { drainLessonImageJobs } from './drainImages';
+export { drainLessonImageJobs, drainDeckImageJobs } from './drainImages';
 export { rehashAfterItemEdit } from './lesson/graph';
 export {
   loadKnownItems,

@@ -99,7 +99,11 @@ export async function uploadImage(opts: {
     };
   }
 
-  // Local disk (dev)
+  // Local disk (dev) — URLs only work where /api/v2/dev/local-images is reachable
+  console.warn(
+    `[v2-images] CLOUDINARY_URL unset — saving ${opts.key} to local disk (${LOCAL_DIR}). ` +
+      'Set CLOUDINARY_URL for production-usable URLs.',
+  );
   mkdirSync(LOCAL_DIR, { recursive: true });
   const filename = safeImageFilename(opts.key);
   const out = path.join(LOCAL_DIR, filename);

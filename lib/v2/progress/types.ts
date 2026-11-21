@@ -2,7 +2,8 @@ import type { Skill } from '@/lib/v2/content/lesson';
 
 export type CardRating = 'again' | 'hard' | 'easy' | 'know';
 export type MasteryLevel = 'learning' | 'mastered';
-export type CardBucket = 'recent' | 'weak' | 'older';
+/** @deprecated Prefer CardSlotReason from practice/dailyCards (16 §4). */
+export type CardBucket = 'recent' | 'weak' | 'older' | 'window' | 'maint';
 
 export type SkillSrs = {
   interval: number;
@@ -40,6 +41,12 @@ export type ItemState = {
   weakToolIds: string[];
   /** Per-user card opt-in (real-world «+ للكروت»). */
   opt_in_card?: boolean;
+  /** Mastery stage 1–4 (16 §6). */
+  stage?: 1 | 2 | 3 | 4;
+  /** Local date when the current stage was reached. */
+  stage_at?: string | null;
+  first_recognition_at?: string | null;
+  first_recall_at?: string | null;
 };
 
 export type ProgressError = {

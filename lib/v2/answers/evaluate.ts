@@ -6,10 +6,12 @@ import {
   applyImplicitCorrectUse,
   applyImplicitWrongUse,
   applyKnow,
+  applyStageEvidence,
   bumpLevelsForSkill,
   bumpSkill,
   createItemState,
   endOfTomorrow,
+  situationId,
   tryGraduate,
   type ItemState,
   type ProgressError,
@@ -171,7 +173,7 @@ function evaluateCardReview(
   state = { ...state, opt_in_card: true };
 
   if (payload.rating === 'know') {
-    state = applyKnow(state, now);
+    state = applyKnow(state, now, ctx.localDate);
   } else {
     const rating =
       payload.hint && payload.rating === 'easy' ? 'hard' : payload.rating;
@@ -180,6 +182,23 @@ function evaluateCardReview(
       card: applyCardRating(state.card, rating, now),
     };
     state = tryGraduate(state);
+    if (rating === 'again') {
+      state = applyStageEvidence(state, {
+        kind: 'miss',
+        localDate: ctx.localDate,
+        fromCard: true,
+      });
+    } else if (!payload.hint && (rating === 'hard' || rating === 'easy')) {
+      // Card recognition only — never a situation, never past stage 2
+      state = applyStageEvidence(state, {
+        kind: 'recognition',
+        localDate: ctx.localDate,
+        correct: true,
+        firstTry: true,
+        fromCard: true,
+        hint: false,
+      });
+    }
   }
 
   // TODO(P11): when streak exists, a finished custom-deck session (≥10 ratings)
@@ -427,6 +446,10 @@ function applyClosedResult(opts: {
       });
     } else if (ctx.itemState) {
       state = applyImplicitWrongUse(ctx.itemState, now);
+      state = applyStageEvidence(state, {
+        kind: 'miss',
+        localDate: ctx.localDate,
+      });
     } else {
       state = createItemState({
         user_id: ctx.user_id,
@@ -434,6 +457,10 @@ function applyClosedResult(opts: {
         introducedDay: ctx.introducedDay ?? day,
       });
       state = applyImplicitWrongUse(state, now);
+      state = applyStageEvidence(state, {
+        kind: 'miss',
+        localDate: ctx.localDate,
+      });
     }
   }
   return {
@@ -448,6 +475,13 @@ function applyClosedResult(opts: {
     item_state: state,
     errors: [],
   };
+}
+
+function stageKindForSkill(skill: Skill): 'recognition' | 'production' {
+  if (skill === 'listening' || skill === 'reading' || skill === 'grammar') {
+    return 'recognition';
+  }
+  return 'production';
 }
 
 function updateStateCorrect(opts: {
@@ -473,7 +507,17 @@ function updateStateCorrect(opts: {
     localDate: ctx.localDate,
     now,
   });
-  return tryGraduate(imp.state);
+  state = tryGraduate(imp.state);
+  const kind = stageKindForSkill(skill);
+  state = applyStageEvidence(state, {
+    kind,
+    localDate: ctx.localDate,
+    correct: true,
+    firstTry: true,
+    situationId: kind === 'production' ? situationId(day) : null,
+    fromCard: false,
+  });
+  return state;
 }
 
 /**
@@ -524,6 +568,16 @@ function evaluateConvoRung(
       now,
     });
     state = tryGraduate(imp.state);
+    const kind =
+      payload.rung === 'said' ? 'production' : ('recognition' as const);
+    state = applyStageEvidence(state, {
+      kind,
+      localDate: ctx.localDate,
+      correct: true,
+      firstTry: true,
+      situationId: kind === 'production' ? situationId(payload.day) : null,
+      fromCard: false,
+    });
   }
 
   return {

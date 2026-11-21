@@ -58,7 +58,7 @@ export type CardDeckRecord = {
   local_date: string;
   cards: Array<{
     item_id: string;
-    slot: 'recent' | 'weak' | 'older';
+    slot: 'recent' | 'weak' | 'older' | 'window' | 'maint';
     rating?: 'again' | 'hard' | 'easy' | 'know';
     hint?: boolean;
     rated_at?: Date;

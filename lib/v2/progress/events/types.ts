@@ -58,7 +58,7 @@ export const ProgressEventSchema = z.discriminatedUnion('kind', [
       .array(
         z.object({
           item_id: z.string().min(1),
-          slot: z.enum(['recent', 'weak', 'older']),
+          slot: z.enum(['recent', 'weak', 'older', 'window', 'maint']),
         }),
       )
       .optional(),
@@ -79,6 +79,30 @@ export const ProgressEventSchema = z.discriminatedUnion('kind', [
     kind: z.literal('active_minutes'),
     minutes: z.number().nonnegative(),
     day: z.number().int().positive().optional(),
+  }),
+  base.extend({
+    kind: z.literal('review_step_answered'),
+    local_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+    step_index: z.number().int().nonnegative(),
+    lesson_day: z.number().int().positive(),
+    item_id: z.string().min(1),
+    skill: z.string().min(1),
+    question_type: z.string().min(1),
+    correct: z.boolean(),
+    pairs: z
+      .array(
+        z.object({
+          item_id: z.string().min(1),
+          skill: z.string().min(1),
+          form: z.string().optional(),
+        }),
+      )
+      .optional(),
+  }),
+  base.extend({
+    kind: z.literal('review_round_done'),
+    local_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+    round: z.number().int().positive(),
   }),
 ]);
 

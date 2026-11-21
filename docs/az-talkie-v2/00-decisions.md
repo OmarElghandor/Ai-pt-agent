@@ -332,7 +332,7 @@ Full detail: `14-library.md`, content `14b-library-content.md`, design `14c-libr
 
 - Cards exist for words, phrases and verbs. Function words get no cards.
 - A card enters on the day its item is introduced (`introducedDay`).
-- **Daily cap: 15 cards**, about 3 minutes, made of 9 from the last 7 days, 4 from weak items and 2 older ones. If a slot can't be filled, it goes to recent items. Missed days never pile up into a backlog, and backlog counts are never shown.
+- **Daily cap (legacy 9 / 4 / 2):** 15 cards, about 3 minutes, made of 9 from the last 7 days, 4 from weak items and 2 older ones. If a slot can't be filled, it goes to recent items. Missed days never pile up into a backlog, and backlog counts are never shown. **(replaced 2026-11-21 for the home daily loop)** The home daily cards + review session follow §5c and `16-practice-engine.md` instead of this fixed 15 / 9·4·2 mix. Custom and official themed decks stay on their own sessions (§5b).
 - A correct use of the item inside a lesson or practice counts as an implicit review.
 - **(changed 2026-10-28)** Buttons: **صعب** (= again: the card comes back later in this session and its interval resets) / **متوسط** (= hard) / **سهل** (= easy). The API values stay again | hard | easy | know; only the labels change. There is also a "عارفها" option that skips an item the learner already knows. After a hint, only صعب and متوسط are enabled.
 - **(new 2026-11-19) Essential items come first in review.**
@@ -343,7 +343,7 @@ Full detail: `14-library.md`, content `14b-library-content.md`, design `14c-libr
 - **(new) Retrieval first.** The front shows only the target word plus audio: a speaker button and a slow (turtle) button. Audio does not autoplay on the front. "محتاج تلميح" shows the word inside a sentence with no Arabic, and using it forces the rating to صعبة. Flipping plays the word once. The back shows the answer first (meaning, pronunciation, picture), then details.
 - **(new) Verb card back** is a conjugation poster, 5 rows. Endings are colored by class: -ar orange, -er blue, -ir green. Irregular forms are purple with ⚡ (in pt-PT usually just `eu`, like DURMO). Regular forms are marked "عادي". Then examples and one tip.
 - **(new) Deck listing:**
-  - Hero card "مراجعة النهارده": 15 cards · 3 minutes, a breakdown line and an "ابدأ" button. **(changed 2026-11-12)** The daily 15 stays curriculum-only; custom and official themed decks are separate sessions (§5b, `12`).
+  - Hero entries (see §5c / `16`): **"مراجعة النهارده"** (time-budgeted question review) and **"كروت النهارده"** (cards warm-up). **(changed 2026-11-12)** The daily loop stays curriculum-only; custom and official themed decks are separate sessions (§5b, `12`).
   - A "اللي بتغلط فيه" row.
   - **(changed 2026-11-20)** Tabs: المواقف (situation decks, auto-built per day, newest first, **all open** — no day locks; opening a day with no cards yet generates a standalone items bank from that day's core_items, separate from full lesson publish) · الأفعال (verb tiles colored by class, ⚡ for irregular) · **مواضيع** (official themed decks) · **من المتعلمين** (learner-generated public decks).
   - A collapsed "اتخرّجت ✓ N" row.
@@ -351,6 +351,18 @@ Full detail: `14-library.md`, content `14b-library-content.md`, design `14c-libr
   - Deck detail lists items with no Arabic meanings, so the list itself works as a self-test.
   - **(new 2026-11-13)** Deck detail has "ابدأ الديك من الأول": resets **this learner's** card SRS for that deck's items only (shared decks / other users untouched). Same control for situation, verb, weak, custom and official decks.
   - **(changed 2026-11-12)** Learners can create decks from a topic ("اعمل ديك"); full rules in §5b and `12-custom-decks.md`.
+
+## 5c. Practice engine (new, 2026-11-21)
+
+Full detail: `16-practice-engine.md`. Where that doc disagrees with older §5 daily-deck notes or with `11` §5.1 about the home daily mix, **16 and this section win**.
+
+- **30-minute daily budget** (default; `v2_users.practice.daily_minutes`, env `PRACTICE_DAILY_MINUTES`). Review takes the largest share (14 min with a new lesson, 21 without); cards are a shorter warm-up (6 / 9). Of time freed when there is no lesson, review gets 70% and cards 30%; cards stay at least 3 minutes at any size. Time is planned, not enforced (no on-screen timer).
+- **Review first in priority and on بكرة suggestions.** Order suggested: cards warm-up → lesson → review. Review is never skipped in suggestions.
+- **Grammar and sentence building:** at least 40% of review time; `build_sentence` for every phrase; 4 checks per pattern; cumulative grammar from lessons before the window.
+- **Window:** the 3 most recent completed **core** lessons before the current day (story days skipped). Shared by cards and review; built once a day.
+- **Mastery stages** on `v2_item_state`: اتعرّفت → راجعتها → افتكرتها → اتحفظت (different local day per advance). Cards and micro checks / «لاقي الصورة» are recognition only. Only `/api/v2/answers` writes stages.
+- **Reuse-only screens:** every step uses the existing card, day-question, micro-check, or `FindImageStep` UI. No new screens.
+- **Writers unchanged:** answers → item state/stages; progress/events → card decks, review sessions, coverage plans, activity. Streak: finished cards **or** review round 1.
 
 ## 5b. Custom decks (new, 2026-11-12; images 2026-11-13)
 
@@ -455,10 +467,10 @@ Full detail: `11-profile-progress.md`. Where that doc and this section disagree 
   - Content regeneration never breaks progress: completed stays completed; new items appear as new.
   - **Step ticks, next-step resume, and the home stations hero:** `13-step-progress.md` (where it disagrees with `11` on those points, **13 wins**).
 - **Problems and weak spots.** Words are reviewed on cards (item SRS). Problems (rules/patterns) are reviewed in "نواقصك". One mistake can feed both. Weak slots in the daily card deck come from item misses, not problems.
-- **Daily deck** (`v2_card_decks`, one per user × local date): built once (9 recent / 4 weak items / 2 older); ratings go to answers (SRS) and to progress events (deck). No backlog.
-- **Activity** (`v2_activity_days`) and **streak** on `v2_users`: a day counts for the streak after a real learning action (lesson step, finished daily deck, نواقصك session, conversation with ≥5 learner turns, **or** a finished custom / official themed deck session with ≥10 cards rated — `12` / `11` §7.2). **Two grace days** in any rolling 7-day window; the shown count is active days only. Calm Kit, no flame. No Langify progress import — every learner starts at day 1.
+- **Daily cards + review** (`16` / §5c): `v2_card_decks` (time-budgeted window mix) and `v2_review_sessions` (coverage-sized review); `v2_coverage_plans` per lesson. Ratings/answers go to answers (SRS + stages) and to progress events (sessions / coverage). No backlog.
+- **Activity** (`v2_activity_days`) and **streak** on `v2_users`: a day counts for the streak after a real learning action (lesson step, **finished daily cards or review round 1**, نواقصك session, conversation with ≥5 learner turns, **or** a finished custom / official themed deck session with ≥10 cards rated — `12` / `11` §7.2 / `16`). **Two grace days** in any rolling 7-day window; the shown count is active days only. Calm Kit, no flame. No Langify progress import — every learner starts at day 1.
 - **Summary:** `GET /api/v2/me/summary` for home, path and settings (indexed reads only; optional 60s cache). No percentages, no backlog counts.
-- New user-keyed collections join the account-deletion list (A5): `v2_lesson_progress`, `v2_weak_spots`, `v2_card_decks`, `v2_activity_days`, `v2_problem_requests`.
+- New user-keyed collections join the account-deletion list (A5): `v2_lesson_progress`, `v2_weak_spots`, `v2_card_decks`, `v2_activity_days`, `v2_problem_requests`, `v2_review_sessions`, `v2_coverage_plans`.
 
 ## 9. Practice agent
 

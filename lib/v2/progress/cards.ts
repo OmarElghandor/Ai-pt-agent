@@ -6,18 +6,31 @@ import type {
   CardsSession,
   ItemState,
 } from './types';
+import {
+  approxCardCount,
+  buildDailyCards,
+  buildPracticeWindow,
+  cardsBudgetSeconds,
+  splitDailyBudget,
+  type DailyCardCandidate,
+  type WindowLesson,
+} from '@/lib/v2/practice';
 
+/** @deprecated Use time-budgeted build (16). Kept for older tests. */
 export const DAILY_CARD_CAP = 15;
 export const MIX_RECENT = 9;
 export const MIX_WEAK = 4;
 export const MIX_OLDER = 2;
 
 export type BuildQueueInput = {
-  /** Curriculum "today" day number for recent window. */
   currentDay: number;
   now?: Date;
-  /** Eligible candidates (already filtered for has_card / reports). */
   candidates: CardCandidate[];
+  /** When set, uses 16 §4 window builder instead of legacy 9/4/2. */
+  window?: WindowLesson[];
+  budgetSeconds?: number;
+  hasLessonToday?: boolean;
+  dailyMinutes?: number;
 };
 
 /** Card/topic due: mastered → know-check; learning with no dueAt → due; else dueAt ≤ now. */
@@ -25,8 +38,80 @@ export function isDue(state: ItemState, now: Date): boolean {
   if (state.card.masteryLevel === 'mastered') {
     return isKnowCheckDue(state, now);
   }
-  if (!state.card.dueAt) return true; // never reviewed → due
+  if (!state.card.dueAt) return true;
   return new Date(state.card.dueAt).getTime() <= now.getTime();
+}
+
+function toDailyCandidate(
+  c: CardCandidate,
+  windowDays: Set<number>,
+  now: Date,
+): DailyCardCandidate {
+  const outside = !windowDays.has(c.introducedDay);
+  const stage = c.state.stage ?? 1;
+  const mastered = c.state.card.masteryLevel === 'mastered';
+  const due = isDue(c.state, now);
+  const isNew = !c.state.card.dueAt && c.state.card.interval === 0;
+  const overdueMs =
+    c.state.card.dueAt && due
+      ? now.getTime() - new Date(c.state.card.dueAt).getTime()
+      : 0;
+  return {
+    item_id: c.item_id,
+    lessonDay: c.introducedDay,
+    essential: false, // caller may enrich via item.priority later
+    isWeak: c.isWeak || (c.state.weakToolIds?.length ?? 0) > 0,
+    outsideWindow: outside,
+    isDue: due,
+    isNew,
+    overdueMs,
+    stage,
+    forMaint: outside && stage >= 3 && due && !mastered,
+    masteredCheck: mastered && due,
+  };
+}
+
+/**
+ * Build today's card queue.
+ * With `window` / budget → 16 §4. Without → legacy 9/4/2 (tests).
+ */
+export function buildTodayQueue(input: BuildQueueInput): CardQueueEntry[] {
+  const now = input.now ?? new Date();
+
+  if (input.window || input.budgetSeconds != null) {
+    const window =
+      input.window ??
+      buildPracticeWindow({
+        currentDay: input.currentDay,
+        completedDays: Array.from({ length: input.currentDay - 1 }, (_, i) => i + 1),
+      });
+    const split = splitDailyBudget({
+      daily_minutes: input.dailyMinutes ?? 30,
+      has_lesson_today: input.hasLessonToday ?? true,
+    });
+    const budgetSeconds =
+      input.budgetSeconds ?? cardsBudgetSeconds(split.cards_minutes);
+    const windowDays = new Set(window.map((w) => w.day));
+    const eligible = input.candidates.filter(
+      (c) => c.eligible && !c.hasOpenReports,
+    );
+    const dailyCandidates = eligible.map((c) =>
+      toDailyCandidate(c, windowDays, now),
+    );
+    // Enrich essential from weakToolIds placeholder — real essential comes from items
+    const built = buildDailyCards({
+      window,
+      candidates: dailyCandidates,
+      budgetSeconds,
+    });
+    return built.map((b) => ({
+      item_id: b.item_id,
+      bucket: b.slot as CardBucket,
+    }));
+  }
+
+  // Legacy 9/4/2
+  return buildLegacy942(input, now);
 }
 
 function isRecent(introducedDay: number, currentDay: number): boolean {
@@ -37,14 +122,11 @@ function isOlder(introducedDay: number, currentDay: number): boolean {
   return introducedDay < currentDay - 6;
 }
 
-/**
- * Pure 9/4/2 mix. Cap 15. Spill unfilled slots toward recent.
- * Missed days never create a backlog count — just pick ≤15 due/weak/recent.
- */
-export function buildTodayQueue(input: BuildQueueInput): CardQueueEntry[] {
-  const now = input.now ?? new Date();
+function buildLegacy942(
+  input: BuildQueueInput,
+  now: Date,
+): CardQueueEntry[] {
   const currentDay = input.currentDay;
-
   const eligible = input.candidates.filter((c) => {
     if (!c.eligible || c.hasOpenReports) return false;
     if (c.state.card.masteryLevel === 'mastered') {
@@ -59,19 +141,15 @@ export function buildTodayQueue(input: BuildQueueInput): CardQueueEntry[] {
 
   for (const c of eligible) {
     if (c.isWeak || (c.state.weakToolIds?.length ?? 0) > 0) {
-      // weak bucket prefers weak; still only if due-ish or recent miss
       if (isDue(c.state, now) || c.isWeak) weak.push(c);
     }
     if (isRecent(c.introducedDay, currentDay) && isDue(c.state, now)) {
       recent.push(c);
     } else if (isOlder(c.introducedDay, currentDay) && isDue(c.state, now)) {
       older.push(c);
-    } else if (isDue(c.state, now) && isRecent(c.introducedDay, currentDay)) {
-      recent.push(c);
     }
   }
 
-  // Also include never-reviewed recent items even if dueAt null already handled
   for (const c of eligible) {
     if (
       isRecent(c.introducedDay, currentDay) &&
@@ -94,31 +172,26 @@ export function buildTodayQueue(input: BuildQueueInput): CardQueueEntry[] {
       out.push({ item_id: c.item_id, bucket });
       taken += 1;
     }
-    return n - taken; // remaining slots
+    return n - taken;
   };
 
   let remRecent = take(recent, MIX_RECENT, 'recent');
   let remWeak = take(weak, MIX_WEAK, 'weak');
   let remOlder = take(older, MIX_OLDER, 'older');
-
-  // Spill toward recent, then weak, then older
-  const spillPool = [...recent, ...weak, ...older, ...eligible];
   const spill = remRecent + remWeak + remOlder;
   if (spill > 0) {
-    take(spillPool, spill, 'recent');
+    take([...recent, ...weak, ...older, ...eligible], spill, 'recent');
   }
-
   return out.slice(0, DAILY_CARD_CAP);
 }
 
-/**
- * Frozen session helpers (pure). Persistence is outside.
- */
 export function createCardsSession(opts: {
   user_id: string;
   local_date: string;
   queue: CardQueueEntry[];
   tz?: string;
+  window?: WindowLesson[];
+  budget_minutes?: number;
 }): CardsSession {
   return {
     user_id: opts.user_id,
@@ -131,7 +204,6 @@ export function createCardsSession(opts: {
 }
 
 export function reopenCardsSession(session: CardsSession): CardsSession {
-  // Same queue; if done stays done — no refill
   return {
     ...session,
     queue: session.queue.map((q) => ({ ...q })),
@@ -157,3 +229,5 @@ export function markCardRated(
     status: allRated ? 'done' : 'open',
   };
 }
+
+export { approxCardCount };

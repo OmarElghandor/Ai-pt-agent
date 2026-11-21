@@ -35,6 +35,10 @@ export function createItemState(opts: {
     card: emptyCardSrs(),
     lastImplicitReviewLocalDate: null,
     weakToolIds: [],
+    stage: 1,
+    stage_at: null,
+    first_recognition_at: null,
+    first_recall_at: null,
   };
 }
 

@@ -334,6 +334,11 @@ const v2ItemStateSchema = new Schema(
     weakToolIds: { type: [String], default: [] },
     /** Per-user flashcard opt-in (real-world «+ للكروت»). */
     opt_in_card: { type: Boolean, required: false, default: false },
+    /** Mastery stages (16 §6): 1 اتعرّفت … 4 اتحفظت. */
+    stage: { type: Number, required: false, min: 1, max: 4, default: 1 },
+    stage_at: { type: String, required: false, default: null },
+    first_recognition_at: { type: String, required: false, default: null },
+    first_recall_at: { type: String, required: false, default: null },
   },
   { timestamps: true, collection: 'v2_item_state' },
 );
@@ -1078,7 +1083,7 @@ const cardDeckCardSchema = new Schema(
     slot: {
       type: String,
       required: true,
-      enum: ['recent', 'weak', 'older'],
+      enum: ['recent', 'weak', 'older', 'window', 'maint'],
     },
     rating: {
       type: String,
@@ -1087,6 +1092,7 @@ const cardDeckCardSchema = new Schema(
     },
     hint: { type: Boolean, required: false },
     rated_at: { type: Date, required: false },
+    round: { type: Number, required: false },
   },
   { _id: false },
 );
@@ -1104,6 +1110,9 @@ const v2CardDeckSchema = new Schema(
     },
     built_at: { type: Date, required: true, default: () => new Date() },
     done_at: { type: Date, required: false },
+    window: { type: Schema.Types.Mixed, required: false },
+    budget_minutes: { type: Number, required: false },
+    round: { type: Number, required: false, default: 1 },
   },
   { timestamps: true, collection: 'v2_card_decks' },
 );
@@ -1118,6 +1127,111 @@ export function V2CardDeckModel(): Model<V2CardDeckDoc> {
   return (
     (mongoose.models.V2CardDeck as Model<V2CardDeckDoc>) ||
     mongoose.model<V2CardDeckDoc>('V2CardDeck', v2CardDeckSchema)
+  );
+}
+
+const coveragePairSchema = new Schema(
+  {
+    item_id: { type: String, required: true },
+    skill: { type: String, required: true },
+    form: { type: String, required: false },
+    status: {
+      type: String,
+      required: true,
+      enum: ['open', 'covered', 'carried_to_weak'],
+      default: 'open',
+    },
+  },
+  { _id: false },
+);
+
+const v2CoveragePlanSchema = new Schema(
+  {
+    user_id: { type: String, required: true, index: true },
+    lesson_day: { type: Number, required: true },
+    pairs: { type: [coveragePairSchema], default: [] },
+  },
+  { timestamps: true, collection: 'v2_coverage_plans' },
+);
+
+v2CoveragePlanSchema.index({ user_id: 1, lesson_day: 1 }, { unique: true });
+
+export type V2CoveragePlanDoc = InferSchemaType<typeof v2CoveragePlanSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2CoveragePlanModel(): Model<V2CoveragePlanDoc> {
+  return (
+    (mongoose.models.V2CoveragePlan as Model<V2CoveragePlanDoc>) ||
+    mongoose.model<V2CoveragePlanDoc>('V2CoveragePlan', v2CoveragePlanSchema)
+  );
+}
+
+const reviewStepSchema = new Schema(
+  {
+    kind: {
+      type: String,
+      required: true,
+      enum: ['question', 'micro_check', 'find_image'],
+    },
+    lesson_day: { type: Number, required: true },
+    pairs: { type: Schema.Types.Mixed, default: [] },
+    slot_reason: {
+      type: String,
+      required: true,
+      enum: [
+        'last_chance',
+        'weak',
+        'grammar',
+        'cumulative_grammar',
+        'plan',
+        'retest',
+        'maint',
+      ],
+    },
+    estimated_seconds: { type: Number, required: true },
+    round: { type: Number, required: true },
+    question: { type: Schema.Types.Mixed, required: false },
+    result: { type: Schema.Types.Mixed, required: false },
+  },
+  { _id: false },
+);
+
+const v2ReviewSessionSchema = new Schema(
+  {
+    user_id: { type: String, required: true, index: true },
+    local_date: { type: String, required: true, index: true },
+    window: { type: Schema.Types.Mixed, default: [] },
+    budget_minutes: { type: Number, required: true },
+    has_lesson_today: { type: Boolean, required: true, default: true },
+    steps: { type: [reviewStepSchema], default: [] },
+    rounds_total: { type: Number, required: true, default: 1 },
+    rounds_done: { type: Number, required: true, default: 0 },
+    status: {
+      type: String,
+      required: true,
+      enum: ['open', 'done'],
+      default: 'open',
+    },
+  },
+  { timestamps: true, collection: 'v2_review_sessions' },
+);
+
+v2ReviewSessionSchema.index({ user_id: 1, local_date: 1 }, { unique: true });
+
+export type V2ReviewSessionDoc = InferSchemaType<
+  typeof v2ReviewSessionSchema
+> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2ReviewSessionModel(): Model<V2ReviewSessionDoc> {
+  return (
+    (mongoose.models.V2ReviewSession as Model<V2ReviewSessionDoc>) ||
+    mongoose.model<V2ReviewSessionDoc>(
+      'V2ReviewSession',
+      v2ReviewSessionSchema,
+    )
   );
 }
 

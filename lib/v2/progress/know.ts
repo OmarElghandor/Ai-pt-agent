@@ -1,5 +1,6 @@
 import type { ItemState } from './types';
 import { applyCardRating } from './srs';
+import { applyStageEvidence } from './stages';
 
 function addDaysIso(from: Date, days: number): string {
   const d = new Date(from.getTime());
@@ -8,13 +9,14 @@ function addDaysIso(from: Date, days: number): string {
 }
 
 /**
- * "عارفها" / know: graduate immediately and schedule one check at +21 days.
+ * "عارفها" / know: card SRS check at +21 days; mastery stage stops at 3 (16 §6).
  */
 export function applyKnow(
   state: ItemState,
   now: Date = new Date(),
+  localDate?: string,
 ): ItemState {
-  return {
+  const withCard: ItemState = {
     ...state,
     card: {
       ...state.card,
@@ -25,6 +27,10 @@ export function applyKnow(
       consecutiveCorrect: Math.max(state.card.consecutiveCorrect, 1),
     },
   };
+  const day =
+    localDate ??
+    `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`;
+  return applyStageEvidence(withCard, { kind: 'know', localDate: day });
 }
 
 /**
@@ -34,15 +40,23 @@ export function applyKnow(
 export function failKnowCheck(
   state: ItemState,
   now: Date = new Date(),
+  localDate?: string,
 ): ItemState {
-  return {
-    ...state,
-    card: {
-      ...applyCardRating(state.card, 'again', now),
-      masteryLevel: 'learning',
-      knowCheckDueAt: null,
+  const day =
+    localDate ??
+    `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`;
+  const demoted = applyStageEvidence(
+    {
+      ...state,
+      card: {
+        ...applyCardRating(state.card, 'again', now),
+        masteryLevel: 'learning',
+        knowCheckDueAt: null,
+      },
     },
-  };
+    { kind: 'miss', localDate: day, fromCard: true },
+  );
+  return demoted;
 }
 
 export function isKnowCheckDue(state: ItemState, now: Date = new Date()): boolean {

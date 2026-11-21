@@ -16,6 +16,8 @@ export const USER_KEYED_V2_COLLECTIONS = [
   'v2_card_decks',
   'v2_activity_days',
   'v2_problem_requests',
+  'v2_review_sessions',
+  'v2_coverage_plans',
   'v2_progress_event_idempotency',
   'v2_user_decks',
   'v2_deck_reports',

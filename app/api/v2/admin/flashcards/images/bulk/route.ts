@@ -6,8 +6,11 @@ import {
   previewBulkFlashcardImages,
   type BulkImagesKind,
 } from '@/lib/v2/decks/bulkImages';
+import { drainDeckImageJobs } from '@/lib/v2/generation/drainImages';
+import { cloudinaryConfigured } from '@/lib/v2/images/storage';
 
 export const runtime = 'nodejs';
+export const maxDuration = 300;
 
 function parseKind(v: unknown): BulkImagesKind | null {
   if (v === 'custom' || v === 'official') return v;
@@ -73,5 +76,32 @@ export async function POST(req: Request) {
           : 400;
     return NextResponse.json(result, { status });
   }
-  return NextResponse.json(result);
+
+  const storage = cloudinaryConfigured() ? 'cloudinary' : 'local';
+  const started = result.totals.enqueued > 0;
+  if (started) {
+    void drainDeckImageJobs()
+      .then((n) => {
+        console.info(
+          '[v2-admin flashcards images bulk] drain done',
+          `processed=${n}`,
+          `enqueued=${result.totals.enqueued}`,
+        );
+      })
+      .catch((err) => {
+        console.error(
+          '[v2-admin flashcards images bulk] drain failed',
+          err instanceof Error ? err.message : err,
+        );
+      });
+  }
+
+  return NextResponse.json({
+    ...result,
+    started,
+    storage,
+    message: started
+      ? 'Image jobs enqueued. Drain started in background.'
+      : 'No images to generate.',
+  });
 }

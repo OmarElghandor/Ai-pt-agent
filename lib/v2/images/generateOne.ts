@@ -335,16 +335,37 @@ async function finalizeReady(opts: {
     extraUsedBy: opts.usedByExtra,
   });
 
-  // Unblock content images waiting on this character sheet
-  if (isCharacterKey(opts.key)) {
-    await Model.updateMany(
-      { status: 'blocked', reason: 'no sheet' },
-      // leave blocked until next generate attempt — just clear isn't enough without knowing which
-      {},
-    );
-  }
+  await requeueBlockedWaitingOnSheet(opts.key);
 
   return toLean(updated!);
+}
+
+/** After a character sheet is ready, re-queue content blocked on that sheet. */
+async function requeueBlockedWaitingOnSheet(key: string): Promise<void> {
+  if (!isCharacterKey(key)) return;
+  const characterId = characterIdFromKey(key);
+  if (!characterId) return;
+  await connectMongo();
+  const Model = V2ImageModel();
+  const filter = {
+    status: 'blocked' as const,
+    reason: 'no sheet',
+    $or: [
+      { 'spec.characters': characterId },
+      ...(characterId === 'yassin'
+        ? [{ 'spec.characters': 'learner' as const }]
+        : []),
+    ],
+  };
+  const res = await Model.updateMany(filter, {
+    $set: { status: 'queued', reason: null },
+    $unset: { generating_started_at: 1 },
+  });
+  if (res.modifiedCount > 0) {
+    console.info(
+      `[v2-images] re-queued ${res.modifiedCount} blocked images after sheet ${key}`,
+    );
+  }
 }
 
 async function markStatus(
@@ -694,9 +715,25 @@ export async function generateContentImage(opts: {
             public_id: uploaded.public_id,
             cloudinary_version: uploaded.version,
           },
+          ...(opts.usedBy?.length
+            ? { $addToSet: { used_by: { $each: opts.usedBy } } }
+            : {}),
         },
       );
-      return { doc: { ...doc, url: uploaded.url }, skipped: false };
+      // Flagged still has a usable Cloudinary URL — link it onto lessons/decks.
+      await denormalizeReadyImage({
+        key,
+        url: uploaded.url,
+        extraUsedBy: opts.usedBy,
+      });
+      return {
+        doc: {
+          ...doc,
+          url: uploaded.url,
+          public_id: uploaded.public_id,
+        },
+        skipped: false,
+      };
     }
 
     const doc = await finalizeReady({
@@ -759,6 +796,7 @@ export async function uploadImageBytes(opts: {
     { upsert: true, returnDocument: 'after' },
   );
   await denormalizeReadyImage({ key: opts.key, url: uploaded.url });
+  await requeueBlockedWaitingOnSheet(opts.key);
   return toLean(updated!);
 }
 

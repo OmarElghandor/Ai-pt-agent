@@ -4,7 +4,12 @@ import {
   V2ConvoSessionModel,
   V2ItemStateModel,
   V2LessonProgressModel,
+  V2ReviewSessionModel,
 } from '@/lib/v2/mongo/models';
+import {
+  computeMasterySummary,
+  masteryLineEg,
+} from '@/lib/v2/practice/masterySummary';
 import type { V2User } from '@/lib/v2/auth/types';
 import { normalizeStreak } from '@/lib/v2/auth/types';
 import { countHomeNumbers } from '@/lib/v2/progress/levels';
@@ -59,13 +64,32 @@ export type MeSummary = {
   };
   levels: { understood: number; said: number };
   deck: { left: number; total: number; done: boolean };
+  /** Daily review session (16). */
+  review: {
+    budget_minutes: number;
+    rounds_total: number;
+    rounds_done: number;
+    done: boolean;
+    in_progress: boolean;
+  } | null;
+  mastery: {
+    mastered_words: number;
+    mastered_phrases: number;
+    recalled: number;
+    reviewing: number;
+    mastered_today: number;
+    line_eg: string;
+  };
   weak_spots: Array<{
     problem: string;
     title_ar: string;
     example: { wrong: string; right: string } | null;
   }>;
   last_conversation: { label: string; at: string | null } | null;
-  suggestion: { kind: 'topic' | 'problem' | 'deck' | 'convo'; text: string } | null;
+  suggestion: {
+    kind: 'topic' | 'problem' | 'deck' | 'convo' | 'review';
+    text: string;
+  } | null;
 };
 
 const cache = new Map<string, { at: number; value: MeSummary }>();
@@ -103,6 +127,10 @@ function docToState(doc: Record<string, unknown>): ItemState {
     },
     lastImplicitReviewLocalDate: null,
     weakToolIds: [],
+    stage: ([1, 2, 3, 4].includes(Number(doc.stage))
+      ? Number(doc.stage)
+      : 1) as 1 | 2 | 3 | 4,
+    stage_at: (doc.stage_at as string | null) ?? null,
   };
 }
 
@@ -121,6 +149,7 @@ export async function buildMeSummary(user: V2User): Promise<MeSummary> {
     activity,
     spots,
     lastConvo,
+    reviewDoc,
   ] = await Promise.all([
     buildPathPayload(),
     V2LessonProgressModel().countDocuments({
@@ -137,6 +166,9 @@ export async function buildMeSummary(user: V2User): Promise<MeSummary> {
       .findOne({ user_id: user.id })
       .sort({ updatedAt: -1 })
       .select({ module: 1, pack_id: 1, updatedAt: 1 })
+      .lean(),
+    V2ReviewSessionModel()
+      .findOne({ user_id: user.id, local_date: today })
       .lean(),
   ]);
 
@@ -215,11 +247,44 @@ export async function buildMeSummary(user: V2User): Promise<MeSummary> {
   const rated = deckCards.filter((c) => c.rating).length;
   const deckDone = deck?.status === 'done' || (deckCards.length > 0 && rated >= deckCards.length);
 
+  const masteryComputed = computeMasterySummary(
+    itemDocs.map((d) => ({
+      item_id: String(d.item_id),
+      stage: (d as { stage?: number }).stage ?? 1,
+      stage_at: (d as { stage_at?: string | null }).stage_at ?? null,
+      item_type: String(d.item_id).startsWith('phrase.')
+        ? 'phrase'
+        : String(d.item_id).startsWith('pattern.')
+          ? 'pattern'
+          : 'word',
+    })),
+    today,
+  );
+
+  const review =
+    reviewDoc != null
+      ? {
+          budget_minutes: Number(reviewDoc.budget_minutes ?? 14),
+          rounds_total: Number(reviewDoc.rounds_total ?? 1),
+          rounds_done: Number(reviewDoc.rounds_done ?? 0),
+          done: reviewDoc.status === 'done',
+          in_progress:
+            reviewDoc.status === 'open' &&
+            Number(reviewDoc.rounds_done ?? 0) > 0,
+        }
+      : {
+          budget_minutes: 14,
+          rounds_total: 3,
+          rounds_done: 0,
+          done: false,
+          in_progress: false,
+        };
+
   let suggestion: MeSummary['suggestion'] = null;
   if (bakra && !activity?.counts_for_streak) {
     suggestion = {
-      kind: 'deck',
-      text: 'النهارده بكرة على الدرس — الكروت أو نواقصك بتكمل السلسلة',
+      kind: 'review',
+      text: 'النهارده بكرة على الدرس — ابدأ بمراجعة النهارده',
     };
   } else if (spots[0]) {
     suggestion = {
@@ -259,6 +324,11 @@ export async function buildMeSummary(user: V2User): Promise<MeSummary> {
       left: Math.max(0, deckCards.length - rated),
       total: deckCards.length,
       done: deckDone,
+    },
+    review,
+    mastery: {
+      ...masteryComputed,
+      line_eg: masteryLineEg(masteryComputed),
     },
     weak_spots: spots.map((s) => ({
       problem: s.problem,

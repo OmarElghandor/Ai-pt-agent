@@ -3,6 +3,7 @@ import { denyUnlessV2Admin } from '@/lib/v2/generation/adminGate';
 import { mongoConfigured } from '@/lib/mongo';
 import { enqueueLessonImages } from '@/lib/v2/images';
 import { drainLessonImageJobs } from '@/lib/v2/generation/drainImages';
+import { cloudinaryConfigured } from '@/lib/v2/images/storage';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300;
@@ -32,6 +33,7 @@ export async function POST(req: Request) {
       force: Boolean(body?.force),
     });
 
+    const storage = cloudinaryConfigured() ? 'cloudinary' : 'local';
     if (enqueued.jobIds.length > 0) {
       void drainLessonImageJobs({
         day: enqueued.day,
@@ -44,12 +46,33 @@ export async function POST(req: Request) {
             `processed=${n}`,
           );
         })
-        .catch((err) => {
+        .catch(async (err) => {
+          const msg = err instanceof Error ? err.message : String(err);
           console.error(
             '[v2-admin images generate-missing] drain failed',
             day,
-            err instanceof Error ? err.message : err,
+            msg,
           );
+          try {
+            const { V2ImageModel } = await import('@/lib/v2/mongo/models');
+            if (enqueued.keys.length) {
+              await V2ImageModel().updateMany(
+                {
+                  key: { $in: enqueued.keys },
+                  status: { $in: ['queued', 'generating'] },
+                },
+                {
+                  $set: {
+                    status: 'failed',
+                    reason: `drain failed: ${msg.slice(0, 400)}`,
+                  },
+                  $unset: { generating_started_at: 1 },
+                },
+              );
+            }
+          } catch {
+            // best-effort status for operators polling GET /images
+          }
         });
     }
 
@@ -63,6 +86,7 @@ export async function POST(req: Request) {
       estimate_usd: enqueued.estimateUsd,
       jobIds: enqueued.jobIds,
       keys: enqueued.keys,
+      storage,
       message:
         enqueued.jobIds.length === 0
           ? 'No missing images to generate.'

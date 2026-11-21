@@ -5,8 +5,11 @@ import {
   enqueueCustomDeckImages,
   planDeckImages,
 } from '@/lib/v2/decks/images';
+import { drainDeckImageJobs } from '@/lib/v2/generation/drainImages';
+import { cloudinaryConfigured } from '@/lib/v2/images/storage';
 
 export const runtime = 'nodejs';
+export const maxDuration = 300;
 
 export async function GET(
   _req: Request,
@@ -65,5 +68,33 @@ export async function POST(
           : 400;
     return NextResponse.json(result, { status });
   }
-  return NextResponse.json(result);
+
+  const storage = cloudinaryConfigured() ? 'cloudinary' : 'local';
+  const started = result.enqueued > 0;
+  if (started) {
+    void drainDeckImageJobs()
+      .then((n) => {
+        console.info(
+          '[v2-admin custom-deck images] drain done',
+          id,
+          `processed=${n}`,
+        );
+      })
+      .catch((err) => {
+        console.error(
+          '[v2-admin custom-deck images] drain failed',
+          id,
+          err instanceof Error ? err.message : err,
+        );
+      });
+  }
+
+  return NextResponse.json({
+    ...result,
+    started,
+    storage,
+    message: started
+      ? 'Image jobs enqueued. Drain started in background.'
+      : 'No images to generate.',
+  });
 }

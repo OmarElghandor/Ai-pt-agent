@@ -8,6 +8,7 @@ import {
   storySceneKey,
 } from '@/lib/v2/images';
 import { drainLessonImageJobs } from '@/lib/v2/generation/drainImages';
+import { cloudinaryConfigured } from '@/lib/v2/images/storage';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300;
@@ -87,6 +88,7 @@ export async function POST(req: Request) {
       force: body.force !== false,
     });
 
+    const storage = cloudinaryConfigured() ? 'cloudinary' : 'local';
     if (enqueued.jobIds.length > 0) {
       void drainLessonImageJobs({
         day: enqueued.day,
@@ -99,12 +101,24 @@ export async function POST(req: Request) {
             `processed=${n}`,
           );
         })
-        .catch((err) => {
-          console.error(
-            '[v2-admin images generate] drain failed',
-            key,
-            err instanceof Error ? err.message : err,
-          );
+        .catch(async (err) => {
+          const msg = err instanceof Error ? err.message : String(err);
+          console.error('[v2-admin images generate] drain failed', key, msg);
+          try {
+            const { V2ImageModel } = await import('@/lib/v2/mongo/models');
+            await V2ImageModel().updateOne(
+              { key, status: { $in: ['queued', 'generating'] } },
+              {
+                $set: {
+                  status: 'failed',
+                  reason: `drain failed: ${msg.slice(0, 400)}`,
+                },
+                $unset: { generating_started_at: 1 },
+              },
+            );
+          } catch {
+            // best-effort status for operators polling GET /images
+          }
         });
     }
 
@@ -117,6 +131,7 @@ export async function POST(req: Request) {
       estimate_usd: enqueued.estimateUsd,
       jobId: enqueued.jobIds[0] ?? null,
       jobIds: enqueued.jobIds,
+      storage,
       message: 'Image job enqueued. Poll GET /api/v2/admin/images?day= for status.',
     });
   } catch (err) {

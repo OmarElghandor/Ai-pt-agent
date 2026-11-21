@@ -20,7 +20,13 @@ type TodayRes = {
   status: string;
   progress: { rated: number; total: number };
   tomorrow: number;
-  mix: { recent: number; weak: number; older: number };
+  mix: {
+    recent: number;
+    weak: number;
+    older: number;
+    window?: number;
+    maint?: number;
+  };
   cards: { item_id: string }[];
 };
 
@@ -48,6 +54,12 @@ export function CardsHome({ dayOverride }: { dayOverride: number | null }) {
   const [error, setError] = useState<string | null>(null);
   const [learnerDecks, setLearnerDecks] = useState<PublicTile[]>([]);
   const [themeDecks, setThemeDecks] = useState<PublicTile[]>([]);
+  const [reviewMinutes, setReviewMinutes] = useState(14);
+  const [reviewRounds, setReviewRounds] = useState(3);
+  const [reviewRound, setReviewRound] = useState(1);
+  const [reviewDone, setReviewDone] = useState(false);
+  const [reviewInProgress, setReviewInProgress] = useState(false);
+  const [masteryLine, setMasteryLine] = useState<string | null>(null);
   const [learnerSort, setLearnerSort] = useState<'popular' | 'new'>('popular');
   const [learnerQ, setLearnerQ] = useState('');
 
@@ -56,9 +68,10 @@ export function CardsHome({ dayOverride }: { dayOverride: number | null }) {
     const q = apiQuery(dayOverride);
     (async () => {
       try {
-        const [dRes, tRes] = await Promise.all([
+        const [dRes, tRes, sRes] = await Promise.all([
           fetch(`/api/v2/decks${q}`),
           fetch(`/api/v2/cards/today${q}`),
+          fetch('/api/v2/me/summary'),
         ]);
         if (!dRes.ok) throw new Error(`decks ${dRes.status}`);
         if (!tRes.ok) throw new Error(`today ${tRes.status}`);
@@ -67,6 +80,26 @@ export function CardsHome({ dayOverride }: { dayOverride: number | null }) {
         if (!cancelled) {
           setListing(d);
           setToday(t);
+          if (sRes.ok) {
+            const s = (await sRes.json()) as {
+              review?: {
+                budget_minutes: number;
+                rounds_total: number;
+                rounds_done: number;
+                done: boolean;
+                in_progress: boolean;
+              };
+              mastery?: { line_eg: string };
+            };
+            if (s.review) {
+              setReviewMinutes(s.review.budget_minutes);
+              setReviewRounds(s.review.rounds_total);
+              setReviewRound(Math.max(1, s.review.rounds_done + 1));
+              setReviewDone(s.review.done);
+              setReviewInProgress(s.review.in_progress);
+            }
+            if (s.mastery?.line_eg) setMasteryLine(s.mastery.line_eg);
+          }
         }
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : 'failed');
@@ -144,20 +177,52 @@ export function CardsHome({ dayOverride }: { dayOverride: number | null }) {
             مراجعة النهارده
           </span>
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
-            <Icon name="style" size={24} className="text-white" />
+            <Icon name="layers" size={24} className="text-white" />
           </span>
         </div>
         <h2 className="mb-1 font-[family-name:var(--font-v2-display-ar)] text-2xl font-bold leading-8">
+          {reviewDone
+            ? 'خلّصت مراجعة النهارده ✓'
+            : reviewInProgress
+              ? `جولة ${toArDigits(reviewRound)} من ${toArDigits(reviewRounds)}`
+              : `مراجعة النهارده · ${toArDigits(reviewMinutes)} دقيقة · ${toArDigits(reviewRounds)} جولات`}
+        </h2>
+        <p className="mb-4 font-[family-name:var(--font-v2-arabic)] text-sm text-white/80">
+          آخر ٣ دروس · تركيز على القواعد وبناء الجمل
+        </p>
+        {reviewDone ? null : (
+          <PrimaryButton href="/review" className="w-full">
+            {reviewInProgress ? 'كمّل' : 'ابدأ'}
+          </PrimaryButton>
+        )}
+      </section>
+
+      <section className="overflow-hidden rounded-v2-card bg-v2-card p-4 shadow-[var(--shadow-v2-soft)]">
+        <div className="mb-2 flex items-start justify-between">
+          <span className="inline-flex items-center gap-2 rounded-full bg-v2-primary-tint px-3 py-1 font-[family-name:var(--font-v2-arabic)] text-xs font-semibold text-v2-primary">
+            كروت النهارده
+          </span>
+          {done ? (
+            <span className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-primary">
+              ✓
+            </span>
+          ) : null}
+        </div>
+        <h2 className="mb-1 font-[family-name:var(--font-v2-display-ar)] text-xl font-bold leading-7 text-v2-ink">
           {done
             ? `خلّصت ${toArDigits(total)} · بكرة ${toArDigits(today.tomorrow)}`
             : total === 0
               ? 'مفيش كروت النهارده'
-              : `${toArDigits(total)} كارت · ٣ دقايق`}
+              : `${toArDigits(total)} كارت · حوالي ٦ دقايق`}
         </h2>
-        <p className="mb-4 font-[family-name:var(--font-v2-arabic)] text-sm text-white/80">
-          {toArDigits(today.mix.recent)} من الأسبوع ده ·{' '}
-          {toArDigits(today.mix.weak)} بتغلط فيها ·{' '}
-          {toArDigits(today.mix.older)} قديمة
+        <p className="mb-3 font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
+          {toArDigits(
+            (today.mix.recent ?? 0) +
+              (today.mix.window ?? 0) +
+              (today.mix.older ?? 0),
+          )}{' '}
+          من الدروس · {toArDigits(today.mix.weak)} بتغلط فيها ·{' '}
+          {toArDigits(today.mix.maint ?? 0)} تثبيت
         </p>
         {done || total === 0 ? null : (
           <PrimaryButton
@@ -168,6 +233,12 @@ export function CardsHome({ dayOverride }: { dayOverride: number | null }) {
           </PrimaryButton>
         )}
       </section>
+
+      {masteryLine ? (
+        <p className="rounded-v2-row bg-v2-primary-tint px-4 py-3 font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-v2-primary">
+          {masteryLine}
+        </p>
+      ) : null}
 
       {listing.weakCount > 0 ? (
         <Link

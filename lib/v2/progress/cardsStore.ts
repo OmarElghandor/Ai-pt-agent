@@ -9,6 +9,7 @@ import {
 import {
   applyCardRating,
   applyKnow,
+  applyStageEvidence,
   buildTodayQueue,
   createCardsSession,
   createItemState,
@@ -62,6 +63,12 @@ function docToState(doc: Record<string, unknown>): ItemState {
       ? (doc.weakToolIds as string[])
       : [],
     opt_in_card: Boolean(doc.opt_in_card),
+    stage: ([1, 2, 3, 4].includes(Number(doc.stage))
+      ? Number(doc.stage)
+      : 1) as 1 | 2 | 3 | 4,
+    stage_at: (doc.stage_at as string | null) ?? null,
+    first_recognition_at: (doc.first_recognition_at as string | null) ?? null,
+    first_recall_at: (doc.first_recall_at as string | null) ?? null,
   };
 }
 
@@ -88,6 +95,10 @@ async function saveState(state: ItemState): Promise<void> {
         lastImplicitReviewLocalDate: state.lastImplicitReviewLocalDate,
         weakToolIds: state.weakToolIds,
         ...(state.opt_in_card ? { opt_in_card: true } : {}),
+        stage: state.stage ?? 1,
+        stage_at: state.stage_at ?? null,
+        first_recognition_at: state.first_recognition_at ?? null,
+        first_recall_at: state.first_recall_at ?? null,
       },
     },
     { upsert: true },
@@ -165,16 +176,79 @@ export async function getOrCreateTodayCards(opts: {
     items: opts.items,
   });
 
+  const { V2LessonProgressModel } = await import('@/lib/v2/mongo/models');
+  const {
+    PHASE1_STORY_DAYS,
+    buildPracticeWindow,
+    cardsBudgetSeconds,
+    normalizeUserPractice,
+    splitDailyBudget,
+  } = await import('@/lib/v2/practice');
+  const mongoose = await import('mongoose');
+
+  const completedDocs = await V2LessonProgressModel()
+    .find({
+      user_id: opts.user_id,
+      status: 'completed',
+      day: { $lt: opts.currentDay },
+    })
+    .select('day')
+    .lean();
+  const completedDays = completedDocs.map((d) => Number(d.day));
+  const window = buildPracticeWindow({
+    currentDay: opts.currentDay,
+    completedDays,
+    storyDays: PHASE1_STORY_DAYS,
+  });
+
+  const currentProgress = await V2LessonProgressModel()
+    .findOne({ user_id: opts.user_id, day: opts.currentDay })
+    .select('status')
+    .lean();
+  const hasLessonToday =
+    currentProgress?.status !== 'completed' &&
+    currentProgress?.status !== 'scheduled';
+
+  let dailyMinutes = 30;
+  try {
+    const db = mongoose.default.connection.db;
+    if (db) {
+      const userDoc = await db.collection('v2_users').findOne({
+        $or: [
+          { _id: opts.user_id as unknown as import('mongoose').Types.ObjectId },
+          { id: opts.user_id },
+        ],
+      });
+      dailyMinutes = normalizeUserPractice(
+        (userDoc as { practice?: unknown } | null)?.practice,
+      ).daily_minutes;
+    }
+  } catch {
+    // default
+  }
+
+  const split = splitDailyBudget({
+    daily_minutes: dailyMinutes,
+    has_lesson_today: Boolean(hasLessonToday),
+  });
+  const budgetSeconds = cardsBudgetSeconds(split.cards_minutes);
+
   const queue = buildTodayQueue({
     currentDay: opts.currentDay,
     now,
     candidates,
+    window,
+    budgetSeconds,
+    hasLessonToday: Boolean(hasLessonToday),
+    dailyMinutes,
   });
   const session = createCardsSession({
     user_id: opts.user_id,
     local_date,
     queue,
     tz,
+    window,
+    budget_minutes: split.cards_minutes,
   });
 
   await V2SessionModel().create({
@@ -186,7 +260,7 @@ export async function getOrCreateTodayCards(opts: {
     tz,
   });
 
-  // Mirror into v2_card_decks (doc 11) — build once per local date.
+  // Mirror into v2_card_decks (doc 11 / 16) — build once per local date.
   try {
     const { randomUUID } = await import('node:crypto');
     const { createMongoProgressStore, handleProgressEvent } = await import(
@@ -200,7 +274,12 @@ export async function getOrCreateTodayCards(opts: {
         local_date,
         cards: session.queue.map((q) => ({
           item_id: q.item_id,
-          slot: q.bucket,
+          slot: q.bucket as
+            | 'recent'
+            | 'weak'
+            | 'older'
+            | 'window'
+            | 'maint',
         })),
       },
       {
@@ -208,6 +287,17 @@ export async function getOrCreateTodayCards(opts: {
         timezone: tz,
         now,
         store: createMongoProgressStore(),
+      },
+    );
+    const { V2CardDeckModel } = await import('@/lib/v2/mongo/models');
+    await V2CardDeckModel().updateOne(
+      { user_id: opts.user_id, local_date },
+      {
+        $set: {
+          window,
+          budget_minutes: split.cards_minutes,
+          round: 1,
+        },
       },
     );
   } catch {
@@ -339,6 +429,7 @@ export async function reviewCard(opts: {
   user_id: string;
   item_id: string;
   rating: CardRating;
+  hint?: boolean;
   timeZone?: string;
   now?: Date;
 }): Promise<{ session: CardsSession; state: ItemState } | { error: string }> {
@@ -387,14 +478,20 @@ export async function reviewCard(opts: {
         introducedDay: 1,
       });
 
+  const beforeStage = state.stage;
   if (opts.rating === 'know') {
-    state = applyKnow(state, now);
+    state = applyKnow(state, now, local_date);
   } else if (
     state.card.masteryLevel === 'mastered' &&
     isKnowCheckDue(state, now) &&
     opts.rating === 'again'
   ) {
     state = failKnowCheck(state, now);
+    state = applyStageEvidence(state, {
+      kind: 'miss',
+      localDate: local_date,
+      fromCard: true,
+    });
   } else if (
     state.card.masteryLevel === 'mastered' &&
     isKnowCheckDue(state, now) &&
@@ -419,9 +516,36 @@ export async function reviewCard(opts: {
       card: applyCardRating(state.card, opts.rating, now),
     };
     state = tryGraduate(state);
+    if (opts.rating === 'again') {
+      state = applyStageEvidence(state, {
+        kind: 'miss',
+        localDate: local_date,
+        fromCard: true,
+      });
+    } else if (
+      !opts.hint &&
+      (opts.rating === 'hard' || opts.rating === 'easy')
+    ) {
+      state = applyStageEvidence(state, {
+        kind: 'recognition',
+        localDate: local_date,
+        correct: true,
+        firstTry: true,
+        fromCard: true,
+        hint: false,
+      });
+    }
   }
 
   await saveState(state);
+  if (state.stage !== beforeStage) {
+    try {
+      const { invalidateMeSummary } = await import('@/lib/v2/progress/summary');
+      invalidateMeSummary(opts.user_id);
+    } catch {
+      // best-effort
+    }
+  }
   session = markCardRated(session, opts.item_id, opts.rating, now);
 
   await V2SessionModel().updateOne(

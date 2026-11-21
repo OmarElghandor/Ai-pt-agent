@@ -5,6 +5,7 @@ export * from './know';
 export * from './levels';
 export * from './weakAreas';
 export * from './cards';
+export * from './stages';
 export * from './localDate';
 export * from './lessonProgressTypes';
 export * from './userLocalDate';

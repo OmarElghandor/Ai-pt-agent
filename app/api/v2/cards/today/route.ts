@@ -60,9 +60,15 @@ export async function GET(req: Request) {
   );
 
   const rated = session.queue.filter((q) => q.rating).length;
-  const buckets = { recent: 0, weak: 0, older: 0 };
+  const buckets: Record<string, number> = {
+    recent: 0,
+    weak: 0,
+    older: 0,
+    window: 0,
+    maint: 0,
+  };
   for (const q of session.queue) {
-    buckets[q.bucket] += 1;
+    buckets[q.bucket] = (buckets[q.bucket] ?? 0) + 1;
   }
 
   return NextResponse.json({

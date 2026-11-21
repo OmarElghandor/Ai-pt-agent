@@ -158,20 +158,9 @@ Card SRS per item stays in `v2_item_state` (unchanged). New:
 
 ### 5.1 The daily deck
 
-New collection `v2_card_decks`, one document per user × local date:
+**(replaced 2026-11-21 by `16-practice-engine.md` / `00` §5c.)** The home daily loop is no longer a fixed 15-card / 9·4·2 mix. **"كروت النهارده"** is a time-budgeted flashcard warm-up from a sliding window of the last 3 completed lessons; **"مراجعة النهارده"** is a separate coverage-sized review session. See `16` for builders, slots, stages, streak, and collections (`v2_card_decks` fields, `v2_review_sessions`, `v2_coverage_plans`).
 
-- `cards`: the item ids chosen for today, in order, each with its slot (recent | weak | older) and its rating once given (again | hard | easy | know, with the hint flag).
-- `status`: open | done.
-- `built_at`, `done_at`.
-
-Rules:
-
-- The deck is **built once**, the first time the learner opens cards that day, with the §5 mix (9 recent, 4 weak, 2 older; empty slots go to recent). **Weak** here means items with a first-try miss or an "again" rating in the last 7 days, from `v2_item_state`; it's about words, not problems.
-- It doesn't change during the day, so leaving and returning continues the same deck.
-- A "صعب" card comes back later in the same session, as now; it isn't added to the deck twice.
-- Each rating is sent to `/api/v2/answers` (which updates the card SRS) **and** recorded on the deck through `/api/v2/progress/events`, with the same `event_id`.
-- Missed days build nothing; there's no backlog (§5).
-- **(changed 2026-11-12, from `12`)** Custom items and custom / official themed deck sessions **never** enter the daily 15. The daily deck stays curriculum-only (lesson flashcards + opt-in lesson cards). Per-deck review for learner and themed decks is separate (`12` §2.6).
+Legacy notes kept for history: `v2_card_decks` is one document per user × local date; built once and resumable; ratings go to `/api/v2/answers` and `/api/v2/progress/events` with the same `event_id`; custom / official themed decks never enter the daily loop (`12` §2.6).
 
 ### 5.2 Deck listing numbers
 
@@ -197,8 +186,8 @@ New collection `v2_activity_days`, one document per user × local date: minutes,
 
 ### 7.2 Streak (decided 2026-11-12: shown, two grace days per week)
 
-- **A day counts** when the learner did at least one real piece of learning that local day: completed a lesson step, **or** finished the daily deck, **or** finished a "نواقصك" session, **or** finished a conversation (lesson or free chat, at least 5 learner turns), **or** finished a custom / official themed deck review session with at least 10 cards rated (`12` §2.6). Opening the app alone doesn't count. Replays count.
-- **Because new lessons open once a day, the streak must be reachable without a new lesson**: on a "بكرة" day, the daily deck, "نواقصك", a conversation, or a custom / themed deck session keeps the streak.
+- **A day counts** when the learner did at least one real piece of learning that local day: completed a lesson step, **or** finished the daily cards **or** completed review round 1 (`16` §7), **or** finished a "نواقصك" session, **or** finished a conversation (lesson or free chat, at least 5 learner turns), **or** finished a custom / official themed deck review session with at least 10 cards rated (`12` §2.6). Opening the app alone doesn't count. Replays count.
+- **Because new lessons open once a day, the streak must be reachable without a new lesson**: on a "بكرة" day, the daily cards, review round 1, "نواقصك", a conversation, or a custom / themed deck session keeps the streak.
 - **Two grace days per week:** in any rolling 7-day window, up to **2** missed days don't break the streak. A third missed day inside the same window breaks it. Grace days are automatic; there's nothing to buy, earn or tap.
 - **What the number counts:** active days only. A grace day keeps the streak alive but doesn't add 1 to it. Example: active Mon–Thu, nothing Fri–Sat, active Sun → the streak is 5, not 7.
 - **Stored on `v2_users`:** `streak.current`, `streak.best`, `streak.last_active_day`, and `streak.missed_days` (the local dates missed inside the current 7-day window, max 2). Code updates them when an activity day first becomes `counts_for_streak`, and checks the gap since `last_active_day` at that moment: if the missed days in the last 7 would be more than 2, `current` restarts at 1.

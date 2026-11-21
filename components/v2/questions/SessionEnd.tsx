@@ -36,13 +36,19 @@ function skillStatus(
   return 'راجع تاني';
 }
 
-/** Design 12c-q07 — session complete. */
+/** Design 12c-q07 — session complete (also fed by daily review, 16 §5.8). */
 export function SessionEnd({
   day,
   stats,
+  titleOverride,
+  extraLines,
+  onDoneHref,
 }: {
   day: number;
   stats: SessionStats;
+  titleOverride?: string;
+  extraLines?: string[];
+  onDoneHref?: string;
 }) {
   const gridSkills: Skill[] = ['listening', 'writing', 'speaking', 'grammar'];
 
@@ -53,7 +59,7 @@ export function SessionEnd({
           ✓ جلسة اليوم اكتملت
         </span>
         <Link
-          href={`/day/${day}`}
+          href={onDoneHref ?? `/day/${day}`}
           className="text-v2-ink"
           aria-label="إغلاق"
         >
@@ -66,11 +72,18 @@ export function SessionEnd({
           {easternDigits(stats.correct)} من {easternDigits(stats.total)}
         </p>
         <h1 className="mt-2 font-[family-name:var(--font-v2-arabic)] text-xl font-bold">
-          خلّصت أسئلة اليوم
+          {titleOverride ?? 'خلّصت أسئلة اليوم'}
         </h1>
         <p className="mt-2 font-[family-name:var(--font-v2-arabic)] text-sm text-white/80">
           كويس — كمّل للمحادثة عشان تثبّت اللي اتقال
         </p>
+        {extraLines?.length ? (
+          <ul className="mt-3 space-y-1 text-start font-[family-name:var(--font-v2-arabic)] text-sm text-white/90">
+            {extraLines.map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
+        ) : null}
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-3">

@@ -536,11 +536,11 @@ function reviewHeaderTitle(
   deckId: string | undefined,
   deckMeta: DeckDetail | null | undefined,
 ): string {
-  if (!deckId) return 'مراجعة النهارده';
+  if (!deckId) return 'كروت النهارده';
   if (deckId === 'weak') return 'اللي بتغلط فيه';
   if (deckMeta?.title_tl?.trim()) return deckMeta.title_tl.trim();
   if (deckMeta?.title_ar?.trim()) return deckMeta.title_ar.trim();
-  return 'مراجعة النهارده';
+  return 'كروت النهارده';
 }
 
 function EndScreen({

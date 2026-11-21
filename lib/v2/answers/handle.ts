@@ -88,6 +88,12 @@ function docToState(doc: Record<string, unknown>): ItemState {
     weakToolIds: Array.isArray(doc.weakToolIds)
       ? (doc.weakToolIds as string[])
       : [],
+    stage: ([1, 2, 3, 4].includes(Number(doc.stage))
+      ? Number(doc.stage)
+      : 1) as 1 | 2 | 3 | 4,
+    stage_at: (doc.stage_at as string | null) ?? null,
+    first_recognition_at: (doc.first_recognition_at as string | null) ?? null,
+    first_recall_at: (doc.first_recall_at as string | null) ?? null,
   };
 }
 
@@ -124,6 +130,10 @@ async function saveItemState(state: ItemState): Promise<void> {
         },
         lastImplicitReviewLocalDate: state.lastImplicitReviewLocalDate,
         weakToolIds: state.weakToolIds,
+        stage: state.stage ?? 1,
+        stage_at: state.stage_at ?? null,
+        first_recognition_at: state.first_recognition_at ?? null,
+        first_recall_at: state.first_recall_at ?? null,
       },
     },
     { upsert: true },
@@ -593,9 +603,20 @@ export async function handleAnswerRequest(
   try {
     const verdict = await withIdempotency(payload.answer_id, store, async () => {
       const ctx = await buildContext(payload, userId, tz);
+      const beforeStage = ctx.itemState?.stage;
       const result = await evaluateAnswer(payload, ctx);
       if (!result.duplicate && result.item_state) {
         await saveItemState(result.item_state);
+        if (result.item_state.stage !== beforeStage) {
+          try {
+            const { invalidateMeSummary } = await import(
+              '@/lib/v2/progress/summary'
+            );
+            invalidateMeSummary(userId);
+          } catch {
+            // cache invalidation is best-effort
+          }
+        }
       }
       if (!result.duplicate && result.errors.length) {
         await appendErrors(result.errors, {

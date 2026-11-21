@@ -26,6 +26,15 @@ export type V2User = {
   langify_user_id: string | null;
   timezone: string | null;
   streak: V2UserStreak | null;
+  /** Practice engine budget (16 §2.2 / §7). */
+  practice?: {
+    daily_minutes: number;
+    split?: {
+      lesson_minutes?: number;
+      review_minutes?: number;
+      cards_minutes?: number;
+    } | null;
+  } | null;
   createdAt: Date | string;
   updatedAt: Date | string;
 };

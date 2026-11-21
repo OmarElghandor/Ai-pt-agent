@@ -484,6 +484,105 @@ export async function handleProgressEvent(
       });
       break;
     }
+    case 'review_step_answered': {
+      activity = await bumpActivity(store, userId, localDate, {
+        questions_answered: 1,
+      });
+      if (event.correct && event.pairs?.length) {
+        try {
+          const { V2CoveragePlanModel } = await import(
+            '@/lib/v2/mongo/models'
+          );
+          const { applyCoverageResult } = await import('@/lib/v2/practice');
+          const planDoc = await V2CoveragePlanModel()
+            .findOne({
+              user_id: userId,
+              lesson_day: event.lesson_day,
+            })
+            .lean();
+          if (planDoc) {
+            const plan = {
+              user_id: userId,
+              lesson_day: event.lesson_day,
+              pairs: (planDoc.pairs ?? []).map((p) => ({
+                item_id: String(p.item_id),
+                skill: p.skill as import('@/lib/v2/practice').CoverageSkill,
+                form: p.form ?? undefined,
+                status: p.status as
+                  | 'open'
+                  | 'covered'
+                  | 'carried_to_weak',
+              })),
+            };
+            const updated = applyCoverageResult({
+              plan,
+              questionType: event.question_type,
+              item_id: event.item_id,
+            });
+            await V2CoveragePlanModel().updateOne(
+              { user_id: userId, lesson_day: event.lesson_day },
+              { $set: { pairs: updated.pairs } },
+            );
+          }
+        } catch {
+          // coverage update best-effort
+        }
+      }
+      try {
+        const { V2ReviewSessionModel } = await import(
+          '@/lib/v2/mongo/models'
+        );
+        await V2ReviewSessionModel().updateOne(
+          { user_id: userId, local_date: localDate },
+          {
+            $set: {
+              [`steps.${event.step_index}.result`]: {
+                correct: event.correct,
+                at: now.toISOString(),
+              },
+            },
+          },
+        );
+      } catch {
+        // session update best-effort
+      }
+      break;
+    }
+    case 'review_round_done': {
+      try {
+        const { V2ReviewSessionModel } = await import(
+          '@/lib/v2/mongo/models'
+        );
+        const sess = await V2ReviewSessionModel()
+          .findOne({ user_id: userId, local_date: localDate })
+          .lean();
+        if (sess) {
+          const roundsDone = Math.max(
+            Number(sess.rounds_done ?? 0),
+            event.round,
+          );
+          const done = roundsDone >= Number(sess.rounds_total ?? 1);
+          await V2ReviewSessionModel().updateOne(
+            { user_id: userId, local_date: localDate },
+            {
+              $set: {
+                rounds_done: roundsDone,
+                status: done ? 'done' : 'open',
+              },
+            },
+          );
+          if (event.round === 1) {
+            activity = await bumpActivity(store, userId, localDate, {
+              markStreak: true,
+            });
+            markStreak = true;
+          }
+        }
+      } catch {
+        // best-effort
+      }
+      break;
+    }
     default: {
       const _exhaustive: never = event;
       void _exhaustive;

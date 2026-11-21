@@ -81,7 +81,12 @@ export type WeakSpot = {
   resolved_at: string | null;
 };
 
-export type CardDeckSlot = 'recent' | 'weak' | 'older';
+export type CardDeckSlot =
+  | 'recent'
+  | 'weak'
+  | 'older'
+  | 'window'
+  | 'maint';
 export type CardDeckRating = 'again' | 'hard' | 'easy' | 'know';
 
 export type CardDeckCard = {
