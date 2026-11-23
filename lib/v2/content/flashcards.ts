@@ -77,11 +77,17 @@ export function isFlashcardItem(item: Item): boolean {
   if (item.type === 'sentence') return false;
 
   if (flagged.has_card === true) {
-    return item.type === 'word' || item.type === 'phrase';
+    return (
+      item.type === 'word' || item.type === 'phrase' || item.type === 'verb'
+    );
   }
 
   // Flag omitted — infer, with lemma fallback for legacy packs.
-  if (item.type === 'word' || item.type === 'phrase') {
+  if (
+    item.type === 'word' ||
+    item.type === 'phrase' ||
+    item.type === 'verb'
+  ) {
     if (NO_CARD_LEMMAS.has(lemmaKey(item))) return false;
     return true;
   }

@@ -2,7 +2,10 @@ import { NextResponse } from 'next/server';
 import { getCurrentV2UserId } from '@/lib/v2/auth/session';
 import { mongoConfigured } from '@/lib/mongo';
 import { isV2Enabled } from '@/lib/v2/flags';
-import { getOrCreateTodayReview } from '@/lib/v2/practice/reviewStore';
+import {
+  getOrCreateTodayReview,
+  peekTodayReview,
+} from '@/lib/v2/practice/reviewStore';
 import {
   dayOverrideFromSearch,
   resolveLearnerDay,
@@ -33,6 +36,16 @@ export async function GET(req: Request) {
     req.headers.get('x-timezone') ??
     url.searchParams.get('tz') ??
     'UTC';
+
+  // Tab-bar dot: never build a session
+  if (url.searchParams.get('peek') === '1') {
+    const peek = await peekTodayReview({
+      user_id: userId,
+      currentDay,
+      timeZone: tz,
+    });
+    return NextResponse.json({ ...peek, current_day: currentDay });
+  }
 
   const session = await getOrCreateTodayReview({
     user_id: userId,

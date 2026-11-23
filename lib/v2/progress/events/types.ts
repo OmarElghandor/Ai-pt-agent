@@ -89,6 +89,8 @@ export const ProgressEventSchema = z.discriminatedUnion('kind', [
     skill: z.string().min(1),
     question_type: z.string().min(1),
     correct: z.boolean(),
+    /** Same answer_id as POST /api/v2/answers (for coverage pair linkage). */
+    answer_id: z.string().uuid().optional(),
     pairs: z
       .array(
         z.object({

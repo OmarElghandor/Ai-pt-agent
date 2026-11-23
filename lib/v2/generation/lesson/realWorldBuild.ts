@@ -286,7 +286,8 @@ function coreWordHits(
 }
 
 /**
- * Validate + enrich raw phrases. Drop failing ones. Hide when <3 remain.
+ * Validate + enrich raw phrases. Authored phrases skip content gates.
+ * Hide only when zero phrases remain (show whenever ≥1).
  */
 export function processRealWorldPhrases(opts: {
   raw: RealWorldPhraseRaw[];
@@ -329,6 +330,7 @@ export function processRealWorldPhrases(opts: {
   const todayIds = new Set(
     opts.items.map((it) => it.id).filter((id): id is string => Boolean(id)),
   );
+  const authored = Boolean(opts.authored);
 
   for (const [i, p] of opts.raw.entries()) {
     const path = `phrases[${i}]`;
@@ -338,6 +340,44 @@ export function processRealWorldPhrases(opts: {
     const eg_note = (p.eg_note ?? '').trim();
     const tag = (p.tag ?? '').trim();
     const usesRaw = Array.isArray(p.uses) ? p.uses : [];
+
+    // Authored: trusted — only drop empty tl/ar; keep uses as authored.
+    if (authored) {
+      if (!tl || !ar) {
+        issues.push(`${path}: dropped — missing tl/ar`);
+        continue;
+      }
+      const uses = [
+        ...new Set(
+          usesRaw.filter(
+            (id): id is string => typeof id === 'string' && id.length > 0,
+          ),
+        ),
+      ];
+      let slug = slugFromTl(tl);
+      let id = `phrase.rw.${slug}`;
+      let n_try = 2;
+      while (usedIds.has(id) || opts.items.some((it) => it.id === id)) {
+        id = `phrase.rw.${slug}_${n_try++}`;
+      }
+      usedIds.add(id);
+      const category = categoryFromTag(tag || 'other', tl);
+      kept.push({
+        id,
+        tl,
+        ...(tl_f ? { tl_f } : {}),
+        ar,
+        eg_note: eg_note || tag || 'عبارة من الشارع',
+        tag: tag || 'أخرى',
+        category,
+        say: transliteratePtToSay(tl),
+        cloze: pickCloze(tl),
+        audio: `audio:${id}`,
+        uses,
+      });
+      continue;
+    }
+
     const uses = [
       ...new Set(
         usesRaw
@@ -414,7 +454,6 @@ export function processRealWorldPhrases(opts: {
       );
       category = fallback && allowed.has(fallback) ? fallback : 'other';
       if (!allowed.has(category)) {
-        // Still outside — keep as other only if allowed, else first allowed
         category = [...allowed][0] ?? 'other';
       }
     }
@@ -434,47 +473,22 @@ export function processRealWorldPhrases(opts: {
     });
   }
 
-  // Set-level: at least 2 phrases reuse today's grammar or core words
-  const hits = kept.filter((p) =>
-    coreWordHits(p.tl, opts.coreTls, grammarTokens),
-  );
-  if (kept.length >= 3 && hits.length < 2) {
-    issues.push(
-      `set: only ${hits.length} phrases reuse today grammar/core — need ≥2`,
-    );
-    // Keep phrases that hit; if still <2 hits, hide later via count
-    if (hits.length > 0) {
-      const hitIds = new Set(hits.map((h) => h.id));
-      const dropped = kept.filter((p) => !hitIds.has(p.id));
-      for (const d of dropped.slice(0, Math.max(0, kept.length - Math.max(hits.length, 2)))) {
-        issues.push(`${d.id}: dropped — set grammar/core coverage`);
-      }
-      // Prefer keeping hits + enough fillers to try reach 3 only if hits≥2
-      if (hits.length < 2) {
-        kept.length = 0;
-        kept.push(...hits);
-      }
-    } else {
-      kept.length = 0;
-    }
-  }
-
-  // Cap at 5
+  // Cap at 5 (generated and authored)
   if (kept.length > 5) {
     issues.push(`trimmed ${kept.length - 5} phrases over cap 5`);
     kept.splice(5);
   }
 
-  const hide = kept.length < 3;
+  const hide = kept.length < 1;
   if (hide) {
-    issues.push(`hide page — only ${kept.length} phrases remain (need ≥3)`);
+    issues.push('hide page — no phrases remain');
   }
 
   let tip = opts.tip;
   if (opts.keepTip === false) {
     tip = EMPTY_TIP;
     issues.push('tip dropped — does not match today situation');
-  } else if (kept.length >= 3) {
+  } else if (kept.length >= 1) {
     const fit = tipFitsSituation(tip, {
       coreTls: opts.coreTls,
       phraseTls: kept.map((p) => p.tl),
@@ -492,7 +506,7 @@ export function processRealWorldPhrases(opts: {
     tip,
     hide,
     issues,
-    authored: Boolean(opts.authored),
+    authored,
   };
 }
 
@@ -549,7 +563,7 @@ export function buildRealWorldPage(opts: {
   situationTl?: string;
   handoff: RealWorldHandoff;
 }): Page | null {
-  if (opts.handoff.hide || opts.handoff.phrases.length < 3) return null;
+  if (opts.handoff.hide || opts.handoff.phrases.length < 1) return null;
 
   const cats = new Map<string, string>();
   for (const p of opts.handoff.phrases) {

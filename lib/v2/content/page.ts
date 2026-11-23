@@ -144,7 +144,7 @@ export const PageObjectSchema = z.object({
    */
   real_world: z
     .object({
-      phrase_ids: z.array(z.string().min(1)).min(3).max(5),
+      phrase_ids: z.array(z.string().min(1)).min(1).max(5),
       categories: z
         .array(
           z.object({

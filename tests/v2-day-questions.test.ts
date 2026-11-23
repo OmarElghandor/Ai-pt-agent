@@ -835,6 +835,259 @@ describe('day question set planner', () => {
     );
   });
 
+  it('grammar_focus maps recycle pattern into todayPatterns (day-4 style)', () => {
+    // Day 4: polite.queria focus, pattern.queria_um_uma only in recycle — not core.
+    const corePhraseIds = [
+      'phrase.how_much_is_it',
+      'phrase.i_like_coffee',
+      'phrase.youre_welcome',
+      'phrase.excuse_me_pass',
+      'phrase.then_how_much',
+      'phrase.ok_thanks',
+      'phrase.order_coffee',
+      'phrase.with_milk',
+      'phrase.hello',
+      'phrase.good_morning',
+      'phrase.fine_thanks',
+    ];
+    const items: Item[] = [
+      {
+        type: 'phrase',
+        id: 'phrase.how_much_is_it',
+        tl: 'Quanto é?',
+        ar: 'كام؟',
+        context_eg: 'حساب',
+        cloze: 'Quanto',
+      },
+      {
+        type: 'phrase',
+        id: 'phrase.i_like_coffee',
+        tl: 'Gosto de café.',
+        ar: 'بحب القهوة',
+        context_eg: 'تفضيل',
+        cloze: 'Gosto',
+      },
+      {
+        type: 'phrase',
+        id: 'phrase.youre_welcome',
+        tl: 'De nada.',
+        ar: 'العفو',
+        context_eg: 'رد',
+        cloze: 'nada',
+      },
+      {
+        type: 'phrase',
+        id: 'phrase.excuse_me_pass',
+        tl: 'Com licença.',
+        ar: 'لو سمحت',
+        context_eg: 'مرور',
+        cloze: 'licença',
+      },
+      {
+        type: 'phrase',
+        id: 'phrase.then_how_much',
+        tl: 'Então, quanto é?',
+        ar: 'طيب كام؟',
+        context_eg: 'حساب',
+        cloze: 'Então',
+      },
+      {
+        type: 'phrase',
+        id: 'phrase.ok_thanks',
+        tl: 'Pronto, obrigado.',
+        ar: 'تمام شكراً',
+        context_eg: 'ختام',
+        cloze: 'Pronto',
+      },
+      {
+        type: 'phrase',
+        id: 'phrase.order_coffee',
+        tl: 'Queria um café, por favor.',
+        ar: 'عايز قهوة',
+        context_eg: 'طلب',
+        cloze: 'Queria',
+      },
+      {
+        type: 'phrase',
+        id: 'phrase.with_milk',
+        tl: 'Com leite?',
+        ar: 'بلبن؟',
+        context_eg: 'سؤال',
+        cloze: 'leite',
+      },
+      {
+        type: 'phrase',
+        id: 'phrase.hello',
+        tl: 'Olá!',
+        ar: 'أهلاً',
+        context_eg: 'تحية',
+        cloze: 'Olá',
+      },
+      {
+        type: 'phrase',
+        id: 'phrase.good_morning',
+        tl: 'Bom dia!',
+        ar: 'صباح الخير',
+        context_eg: 'صباح',
+        cloze: 'Bom',
+      },
+      {
+        type: 'phrase',
+        id: 'phrase.fine_thanks',
+        tl: 'Tudo bem, obrigado.',
+        ar: 'كويس شكراً',
+        context_eg: 'رد',
+        cloze: 'Tudo',
+      },
+      {
+        type: 'word',
+        id: 'word.toast',
+        tl: 'a torrada',
+        ar: 'توست',
+        gender: 'f',
+      },
+      {
+        type: 'pattern',
+        id: 'pattern.queria_um_uma',
+        tl: 'Queria + um/uma + حاجة, por favor.',
+        ar: 'الطلب بأدب',
+        examples: [
+          'pattern.queria_um_uma.ex.1',
+          'pattern.queria_um_uma.ex.2',
+        ],
+      },
+      {
+        type: 'phrase',
+        id: 'pattern.queria_um_uma.ex.1',
+        tl: 'Queria uma torrada, por favor.',
+        ar: 'عايز توست',
+        context_eg: 'مثال',
+        cloze: 'Queria',
+        derived: true,
+      },
+      {
+        type: 'phrase',
+        id: 'pattern.queria_um_uma.ex.2',
+        tl: 'Queria um sumo, por favor.',
+        ar: 'عايز عصير',
+        context_eg: 'مثال',
+        cloze: 'Queria',
+        derived: true,
+      },
+      // Unrelated recycle pattern — must still not steal grammar budget.
+      {
+        type: 'pattern',
+        id: 'pattern.contractions',
+        slots: [{ tl: 'de+o=do' }, { name_eg: 'كلمة', kind: 'word' }],
+        examples: ['pattern.contractions.ex.1'],
+      } as Item,
+      {
+        type: 'phrase',
+        id: 'pattern.contractions.ex.1',
+        tl: 'do centro',
+        ar: 'من الوسط',
+        context_eg: 'مثال',
+        cloze: 'do',
+        derived: true,
+      },
+    ];
+    const priorityIds = [...corePhraseIds, 'word.toast'];
+    const outline: OutlineResult = {
+      items,
+      pages: [
+        {
+          index: 0,
+          page_id: 'p0',
+          preset: 'story',
+          mode: 'static',
+          role: 'intro',
+          title: 'قصة',
+          purpose: 'intro',
+          introduces: [],
+          assumes: [],
+          handoff: '',
+        },
+        {
+          index: 1,
+          page_id: 'p1',
+          preset: 'phrases',
+          mode: 'static',
+          title: 'جمل',
+          purpose: 'phrases',
+          introduces: corePhraseIds,
+          assumes: [],
+          handoff: '',
+        },
+        {
+          index: 2,
+          page_id: 'p2',
+          preset: 'pattern',
+          mode: 'sections',
+          title: 'Queria',
+          purpose: 'pattern',
+          introduces: ['pattern.queria_um_uma'],
+          assumes: ['phrase.order_coffee'],
+          handoff: '',
+        },
+      ],
+    };
+
+    const withoutFocus = planQuestionSlots({
+      outline,
+      items,
+      priorityIds,
+    });
+    assert.equal(
+      withoutFocus.slots.filter((s) => s.skill === 'grammar').length,
+      0,
+      'without grammarFocusId, recycle pattern must not get grammar slots',
+    );
+
+    const { slots } = planQuestionSlots({
+      outline,
+      items,
+      priorityIds,
+      grammarFocusId: 'polite.queria',
+      coreItems: [],
+    });
+    const grammar = slots.filter((s) => s.skill === 'grammar');
+    const queriaGrammar = grammar.filter(
+      (s) =>
+        s.tests === 'pattern.queria_um_uma' ||
+        s.tests.startsWith('pattern.queria_um_uma.'),
+    );
+    assert.ok(
+      queriaGrammar.length >= 2,
+      `queria grammar=${queriaGrammar.length}; all=${grammar.map((s) => `${s.type}:${s.tests}`).join(',')}`,
+    );
+    assert.ok(
+      !grammar.some(
+        (s) =>
+          s.tests === 'pattern.contractions' ||
+          s.tests.startsWith('pattern.contractions.'),
+      ),
+      'unrelated recycle pattern must not get grammar slots',
+    );
+
+    const questions: Question[] = [];
+    for (const [i, slot] of slots.entries()) {
+      const built = assembleSlotQuestion(
+        slot,
+        { slot_id: slot.slot_id, prompt_eg: 'السؤال' },
+        { bank: items, index: i },
+      );
+      if (built.question) questions.push(built.question);
+    }
+    const result = validateDayQuestionQuotas(questions, priorityIds, {
+      items,
+      plannedCount: slots.length,
+    });
+    assert.ok(
+      !result.fatals.some((f) => f.startsWith('grammar ')),
+      result.fatals.join('; '),
+    );
+  });
+
   it('detects arabic option near-dupes and variant context', () => {
     assert.equal(arabicOptionsAreNearDupes('صباح الخير', 'صباح'), true);
     assert.equal(arabicOptionsAreNearDupes('أهلاً', 'مع السلامة'), false);

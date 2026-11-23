@@ -79,25 +79,40 @@ export function applyCommonMistakesToQuestions(
 
   const nextPages = pages.map((page) => {
     if (page.mode !== 'sections') return page;
-    const pairs = extractCommonMistakes(page.explain);
+    const structured = Array.isArray(page.common_mistakes)
+      ? page.common_mistakes.filter(
+          (p): p is CommonMistakePair =>
+            Boolean(p?.wrong?.trim() && p?.right?.trim() && p?.why_eg?.trim()),
+        )
+      : [];
+    // Prefer structured output; fall back to explain only if none provided.
+    const pairs =
+      structured.length > 0
+        ? structured.slice(0, 2)
+        : extractCommonMistakes(page.explain);
     if (!pairs.length) return page;
     const introduces = Array.isArray(
       (page as unknown as { introduces?: string[] }).introduces,
     )
       ? ((page as unknown as { introduces: string[] }).introduces ?? [])
       : [];
-    // Also look at formula / examples block item refs
+    // Formula block uses top-level `pattern` (not nested formula.pattern).
     const blockIds: string[] = [];
     for (const b of page.blocks ?? []) {
       if (!b || typeof b !== 'object') continue;
       const items = (b as { items?: string[] }).items;
       if (Array.isArray(items)) blockIds.push(...items.map(String));
-      const formula = (b as { formula?: { pattern?: string } }).formula;
-      if (formula?.pattern) blockIds.push(formula.pattern);
+      if (b.type === 'formula') {
+        const patternId = (b as { pattern?: string }).pattern;
+        if (patternId) blockIds.push(patternId);
+      }
     }
+    const patternIds = [...introduces, ...blockIds].filter(
+      (id) => id.startsWith('pattern.') && !/\.ex\.\d+$/.test(id),
+    );
     pairsBySource.push({
       pageId: page.id,
-      introduces: [...introduces, ...blockIds],
+      introduces: patternIds.length ? patternIds : [...introduces, ...blockIds],
       pairs,
     });
     for (const p of pairs) {
@@ -114,12 +129,7 @@ export function applyCommonMistakesToQuestions(
   if (allKnown.length) registerKnownNearMisses(allKnown);
   if (!pairsBySource.length) return { pages: nextPages, questions };
 
-  const items = opts?.items ?? [];
-  const itemTl = (id: string) => {
-    const it = items.find((i) => i.id === id);
-    return it && typeof it.tl === 'string' ? it.tl : '';
-  };
-
+  /** Attach near_miss only when question.tests includes the pattern (or .ex). */
   const questionMatchesPairs = (
     q: Question,
     source: (typeof pairsBySource)[number],
@@ -132,18 +142,6 @@ export function applyCommonMistakesToQuestions(
         if (t.startsWith(`${intro}.`) || intro.startsWith(`${t}.`)) return true;
         if (t.replace(/\.ex\.\d+$/, '') === intro) return true;
       }
-      const tl = itemTl(t).toLowerCase();
-      if (!tl) continue;
-      for (const p of source.pairs) {
-        const right = p.right.toLowerCase();
-        if (right && (tl.includes(right) || right.includes(tl.split(/\s+/)[0]!))) {
-          return true;
-        }
-      }
-    }
-    // Grammar skill + pattern page → attach
-    if (q.skill === 'grammar') {
-      return source.introduces.some((id) => id.startsWith('pattern.'));
     }
     return false;
   };

@@ -314,10 +314,19 @@ ${weekLines || '(none)'}
       ...(line.extra != null ? { extra: line.extra } : {}),
       ...(line.replies_to != null ? { replies_to: line.replies_to } : {}),
     }));
+    // Only today's core + real_world ids get highlighted in line.ids.
+    const highlightIds = new Set(
+      coreItems.map((c) => c.id).concat(
+        opts.items
+          .filter((i) => Boolean((i as { real_world?: boolean }).real_world))
+          .map((i) => i.id),
+      ),
+    );
     const autofix = autoFixStoryLines(rawLines, itemsById, {
       allowedTokens,
       coreItems,
       knownIds,
+      highlightIds,
     });
     fixes.push(...autofix.fixes);
 

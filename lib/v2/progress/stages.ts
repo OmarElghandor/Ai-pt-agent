@@ -36,7 +36,34 @@ export type StageEvidence = {
   essential?: boolean;
   /** Hint on a card forces no recognition advance (متوسط/سهل without hint only). */
   hint?: boolean;
+  /** Answer id that caused this evidence (recorded on stage moves). */
+  answerId?: string;
 };
+
+export type StageMove = {
+  item_id: string;
+  from: number;
+  to: number;
+  answer_id?: string;
+};
+
+/** Diff before/after state; returns a move when the stage number changed. */
+export function stageMoveFrom(
+  before: ItemState | null | undefined,
+  after: ItemState | null | undefined,
+  answerId?: string,
+): StageMove | null {
+  if (!after) return null;
+  const from = (before?.stage ?? 1) as number;
+  const to = (after.stage ?? 1) as number;
+  if (from === to) return null;
+  return {
+    item_id: after.item_id,
+    from,
+    to,
+    answer_id: answerId ?? after.stage_answer_id ?? undefined,
+  };
+}
 
 export function defaultStageFields(introducedDay?: number): Pick<
   ItemState,
@@ -55,8 +82,24 @@ function situationsNeeded(essential: boolean): number {
   return essential ? 3 : 2;
 }
 
+function withStageMove(
+  next: ItemState,
+  from: MasteryStage,
+  to: MasteryStage,
+  evidence: StageEvidence,
+): ItemState {
+  if (from === to) return next;
+  return {
+    ...next,
+    stage: to,
+    stage_at: evidence.localDate,
+    stage_answer_id: evidence.answerId ?? next.stage_answer_id ?? null,
+  };
+}
+
 /**
  * Apply one piece of evidence. Same-day advances stop at the next stage only.
+ * Works for words, phrases, and patterns (`pattern.*` item ids).
  */
 export function applyStageEvidence(
   state: ItemState,
@@ -68,6 +111,7 @@ export function applyStageEvidence(
     ...state,
     stage,
     stage_at: stageAt ?? null,
+    stage_answer_id: state.stage_answer_id ?? null,
     first_recognition_at: state.first_recognition_at ?? null,
     first_recall_at: state.first_recall_at ?? null,
     usedCorrectlyIn: [...(state.usedCorrectlyIn ?? [])],
@@ -75,7 +119,7 @@ export function applyStageEvidence(
 
   if (evidence.kind === 'seen') {
     if (!next.stage || next.stage < 1) {
-      next = { ...next, stage: 1, stage_at: evidence.localDate };
+      next = withStageMove(next, stage, 1, evidence);
     }
     return next;
   }
@@ -85,32 +129,22 @@ export function applyStageEvidence(
     const target: MasteryStage = 3;
     if (stage < target) {
       next = {
-        ...next,
-        stage: target,
-        stage_at: evidence.localDate,
+        ...withStageMove(next, stage, target, evidence),
         first_recall_at: next.first_recall_at ?? evidence.localDate,
       };
     } else if (stage === 4) {
       // know does not keep 4; clamp to 3 for this rating path
-      next = { ...next, stage: 3, stage_at: evidence.localDate };
+      next = withStageMove(next, stage, 3, evidence);
     }
     return next;
   }
 
   if (evidence.kind === 'miss') {
     if (stage === 4) {
-      return {
-        ...next,
-        stage: 3,
-        stage_at: evidence.localDate,
-      };
+      return withStageMove(next, stage, 3, evidence);
     }
     if (stage === 3) {
-      return {
-        ...next,
-        stage: 2,
-        stage_at: evidence.localDate,
-      };
+      return withStageMove(next, stage, 2, evidence);
     }
     // stage 2 miss → stay 2; stage 1 → stay 1
     return next;
@@ -132,9 +166,7 @@ export function applyStageEvidence(
     // stage 1 → 2 needs a different local day from stage_at (intro day)
     if (stageAt && stageAt === evidence.localDate) return next;
     next = {
-      ...next,
-      stage: 2,
-      stage_at: evidence.localDate,
+      ...withStageMove(next, stage, 2, evidence),
       first_recognition_at: next.first_recognition_at ?? evidence.localDate,
     };
     return next;
@@ -161,9 +193,7 @@ export function applyStageEvidence(
       const prior = stageAt;
       if (!prior || prior !== evidence.localDate) {
         next = {
-          ...next,
-          stage: 2,
-          stage_at: evidence.localDate,
+          ...withStageMove(next, stage, 2, evidence),
           first_recognition_at: next.first_recognition_at ?? evidence.localDate,
         };
       }
@@ -176,9 +206,7 @@ export function applyStageEvidence(
         return next;
       }
       next = {
-        ...next,
-        stage: 3,
-        stage_at: evidence.localDate,
+        ...withStageMove(next, stage, 3, evidence),
         first_recall_at: next.first_recall_at ?? evidence.localDate,
       };
       return next;
@@ -201,11 +229,7 @@ export function applyStageEvidence(
         (customOnly || situationsOk) &&
         (!stageAt || stageAt !== evidence.localDate)
       ) {
-        next = {
-          ...next,
-          stage: 4,
-          stage_at: evidence.localDate,
-        };
+        next = withStageMove(next, stage, 4, evidence);
       }
     }
     return next;

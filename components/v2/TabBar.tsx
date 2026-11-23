@@ -2,18 +2,53 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { Icon } from '@/components/v2/Icon';
 
+/** Tab order (16 §8): المسار · مراجعة · الكروت · اتكلّم · المكتبة */
 const TABS = [
-  { href: '/path', label: 'المسار', icon: 'signpost', today: true },
-  { href: '/talk', label: 'المحادثات', icon: 'chat', today: false },
-  { href: '/cards', label: 'الكروت', icon: 'layers', today: false },
-  { href: '/library', label: 'المكتبة', icon: 'local_library', today: false },
-  { href: '/me', label: 'أنا', icon: 'person', today: false },
+  { href: '/path', label: 'المسار', icon: 'signpost', reviewDot: false },
+  { href: '/review', label: 'مراجعة', icon: 'autorenew', reviewDot: true },
+  { href: '/cards', label: 'الكروت', icon: 'layers', reviewDot: false },
+  { href: '/talk', label: 'اتكلّم', icon: 'chat', reviewDot: false },
+  { href: '/library', label: 'المكتبة', icon: 'local_library', reviewDot: false },
 ] as const;
 
 export function TabBar() {
   const pathname = usePathname();
+  const [reviewPending, setReviewPending] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetch('/api/v2/review/today?peek=1', {
+      headers: {
+        'x-timezone':
+          typeof Intl !== 'undefined'
+            ? Intl.DateTimeFormat().resolvedOptions().timeZone
+            : 'UTC',
+      },
+    })
+      .then(async (res) => {
+        if (!res.ok) return null;
+        return res.json() as Promise<{
+          empty?: boolean;
+          status?: string;
+        }>;
+      })
+      .then((json) => {
+        if (cancelled || !json) return;
+        // Dot while today's review isn't finished; none on empty window / day 1
+        setReviewPending(
+          Boolean(!json.empty && json.status !== 'done' && json.status !== 'none'),
+        );
+      })
+      .catch(() => {
+        if (!cancelled) setReviewPending(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [pathname]);
 
   return (
     <nav
@@ -24,6 +59,7 @@ export function TabBar() {
         {TABS.map((tab) => {
           const active =
             pathname === tab.href || pathname.startsWith(`${tab.href}/`);
+          const showDot = tab.reviewDot && reviewPending && !active;
           return (
             <li key={tab.href} className="relative flex flex-1">
               <Link
@@ -43,7 +79,7 @@ export function TabBar() {
                   />
                 </span>
                 <span>{tab.label}</span>
-                {tab.today && !active ? (
+                {showDot ? (
                   <span
                     className="absolute end-[calc(50%-18px)] top-1 h-1.5 w-1.5 rounded-full bg-v2-primary"
                     aria-hidden

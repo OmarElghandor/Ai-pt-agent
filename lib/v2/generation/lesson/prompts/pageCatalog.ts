@@ -20,9 +20,7 @@ const SECTIONS = `SECTIONS (grammar pages): no steps, no asks, no chapters, no a
 Write:
 1) the main rule block(s) listed for the preset
 2) explain: Egyptian rich text (rt), 2–4 short sentences; highlight TL words with lang "tl"
-3) End explain with 1–2 common-mistake pairs typical of Arabic/English speakers:
-   each pair = TL segment with wrong:true (the bad form) → TL segment (the correct form) → short Egyptian why.
-   Example shape: {text:"Sou cansado", lang:"tl", wrong:true} then {text:"Estou cansado", lang:"tl"} then {text:"الحالة بـ estar", lang:"eg"}
+3) common_mistakes: REQUIRED structured array of 1–2 pairs {wrong, right, why_eg} (typical Arabic/English speaker mistakes). Do NOT rely on parsing explain for these.
 4) examples block when code cannot fill them (pattern: code fills 3–5 — you may leave a stub)
 5) omit check / quiz ids — code assigns check from the questions job
 Do NOT write steps. Conjugation dial/swap controls are allowed on conjugation pages.`;
@@ -139,6 +137,6 @@ COMMON
 - compare.columns use head (rt), group (a|b|c), entries [{ref, label}].
 - Colors are meanings: group ∈ a,b,c,m,f,verb,prep,pron,neg,neutral.
 - Mixed Arabic+TL text is rich text segments {text, lang: eg|ar|tl}.
-- For sections: explain is required (Egyptian rt, 2–4 sentences) and must end with 1–2 wrong→right TL pairs (wrong:true on the bad form).
+- For sections: explain is required (Egyptian rt, 2–4 sentences) plus common_mistakes: [{wrong, right, why_eg}] (1–2 pairs).
 `.trim();
 }

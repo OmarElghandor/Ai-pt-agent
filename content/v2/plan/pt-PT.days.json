@@ -103,20 +103,10 @@
           "ترد إنك كويس وتشكر (obrigado لو راجل، obrigada لو ست)",
           "تودّع وتقول أشوفك بكرة"
         ],
-        "grammar_focus": {
-          "id": "pronouns.clitic_after",
-          "description": "Object/reflexive pronoun after the verb with hyphen (Chamo-me)",
-          "layout": "formula"
-        },
+        "grammar_focus": null,
         "chat_character": "ines",
         "dictionary_category": "greetings",
-        "micro_step": {
-          "series": "introduce_yourself",
-          "step": 1,
-          "of": 4,
-          "previous": null,
-          "today": "تمرين: Chamo-me + name"
-        },
+        "micro_step": null,
         "tomorrow": {
           "tl": "Conversação Básica",
           "eg": "كلام أساسي"
@@ -268,20 +258,10 @@
           "تسأل الحساب كام وتفهم الرقم",
           "ترد على شكراً بـ De nada وتستأذن بـ Com licença"
         ],
-        "grammar_focus": {
-          "id": "polite.queria",
-          "description": "Polite request with Queria + um/uma",
-          "layout": "formula"
-        },
+        "grammar_focus": null,
         "chat_character": "manuel",
         "dictionary_category": "cafe",
-        "micro_step": {
-          "series": "order_anything",
-          "step": 1,
-          "of": 5,
-          "previous": null,
-          "today": "تمرين: Queria + thing"
-        },
+        "micro_step": null,
         "tomorrow": {
           "tl": "Gramática Básica",
           "eg": "قواعد أساسية"
@@ -449,13 +429,7 @@
         },
         "chat_character": "rita",
         "dictionary_category": "food",
-        "micro_step": {
-          "series": "order_anything",
-          "step": 2,
-          "of": 5,
-          "previous": "Queria + thing",
-          "today": "تمرين: Queria + um/uma + today's noun (numbers wait until day 8)"
-        },
+        "micro_step": null,
         "tomorrow": {
           "tl": "O Primeiro Dia",
           "eg": "قصة ١"

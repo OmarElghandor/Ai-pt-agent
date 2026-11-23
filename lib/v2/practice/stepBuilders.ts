@@ -2,6 +2,7 @@
  * Code-built review steps (16 §5.6) — no model calls.
  */
 
+import { practiceQuestionId } from '@/lib/v2/review/questions';
 import { estimatedSecondsForType } from './stepTimes';
 import type { CoverageSkill } from './coverage';
 
@@ -34,6 +35,8 @@ export type BuiltStep = {
   lesson_day: number;
   skill: CoverageSkill;
   estimated_seconds: number;
+  /** Deterministic shared question id (16 §9.1) for code-built steps. */
+  question_id?: string;
   /** Payload the existing QuestionSession / FindImage / micro UI can render. */
   payload: Record<string, unknown>;
 };
@@ -49,6 +52,8 @@ export type BuildStepInput = {
   todayCardIds?: Set<string>;
   /** Question ids answered in the last 3 days. */
   recentQuestionIds?: Set<string>;
+  /** Flagged question ids — never returned. */
+  flaggedQuestionIds?: Set<string>;
   knownMistakeTiles?: string[];
 };
 
@@ -115,6 +120,7 @@ export function canBuildFindImageBlock(items: BankItem[]): boolean {
  */
 export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
   const recent = input.recentQuestionIds ?? new Set();
+  const flagged = input.flaggedQuestionIds ?? new Set();
   const cardIds = input.todayCardIds ?? new Set();
 
   const crafted = preferCrafted(
@@ -124,7 +130,9 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
     recent,
   );
   if (crafted) {
-    if (cardIds.has(input.item.id) && MEANING_TYPES.has(crafted.type)) {
+    if (flagged.has(crafted.id) || recent.has(crafted.id)) {
+      // skip — fall through to code template
+    } else if (cardIds.has(input.item.id) && MEANING_TYPES.has(crafted.type)) {
       // fall through to production/building template
     } else {
       return {
@@ -134,24 +142,30 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
         lesson_day: input.item.day,
         skill: input.skill,
         estimated_seconds: estimatedSecondsForType(crafted.type),
-        payload: { ...crafted, origin: 'crafted' },
+        question_id: crafted.id,
+        payload: { ...crafted, origin: 'crafted', question_id: crafted.id },
       };
     }
   }
 
+  // Never pull distractors from future days
   const taught = input.taughtItems.filter((i) => i.day <= input.currentDay);
-  const distractors = taught
-    .filter((i) => i.id !== input.item.id && i.tl)
-    .slice(0, 3);
 
   if (input.skill === 'building' || input.skill === 'writing') {
     const tl = input.item.tl ?? '';
     if (!tl) return null;
     if (input.skill === 'building') {
-      const mistakeTiles = (input.knownMistakeTiles ?? []).filter((t) =>
-        taught.some((i) => i.tl?.includes(t) || i.id.includes(t)),
+      const mistakeTiles = allowedDistractorTiles(
+        input.knownMistakeTiles ?? [],
+        taught,
+        input.currentDay,
       );
       const { tiles, answer } = buildSentenceTiles(tl, mistakeTiles);
+      const question_id = codeQuestionId({
+        type: 'build_sentence',
+        item: input.item,
+        skill: 'building',
+      });
       // Ensure tiles rebuild the sentence
       const rebuilt = answer.map((i) => tiles[i]).join(' ');
       if (rebuilt.replace(/\s+/g, ' ') !== tl.replace(/\s+/g, ' ')) {
@@ -164,12 +178,14 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
           lesson_day: input.item.day,
           skill: 'building',
           estimated_seconds: estimatedSecondsForType('build_sentence'),
+          question_id,
           payload: {
             type: 'build_sentence',
             tests: [input.item.id],
             tiles: [...parts, ...(mistakeTiles.slice(0, 2))],
             answer: parts.map((_, i) => i),
             origin: 'code',
+            question_id,
           },
         };
       }
@@ -180,15 +196,22 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
         lesson_day: input.item.day,
         skill: 'building',
         estimated_seconds: estimatedSecondsForType('build_sentence'),
+        question_id,
         payload: {
           type: 'build_sentence',
           tests: [input.item.id],
           tiles,
           answer,
           origin: 'code',
+          question_id,
         },
       };
     }
+    const question_id = codeQuestionId({
+      type: 'translate_write',
+      item: input.item,
+      skill: 'writing',
+    });
     return {
       kind: 'question',
       type: 'translate_write',
@@ -196,12 +219,14 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
       lesson_day: input.item.day,
       skill: 'writing',
       estimated_seconds: estimatedSecondsForType('translate_write'),
+      question_id,
       payload: {
         type: 'translate_write',
         tests: [input.item.id],
         prompt_eg: input.item.ar ?? '',
         accepted: [tl],
         origin: 'code',
+        question_id,
       },
     };
   }
@@ -212,6 +237,11 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
       input.item.has_card &&
       input.item.image_url
     ) {
+      const question_id = codeQuestionId({
+        type: 'listen_pick_image',
+        item: input.item,
+        skill: 'listening',
+      });
       return {
         kind: 'find_image',
         type: 'listen_pick_image',
@@ -219,6 +249,7 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
         lesson_day: input.item.day,
         skill: 'listening',
         estimated_seconds: estimatedSecondsForType('listen_pick_image'),
+        question_id,
         payload: {
           type: 'listen_pick_image',
           tests: [input.item.id],
@@ -231,9 +262,15 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
             correct: i.id === input.item.id,
           })),
           origin: 'code',
+          question_id,
         },
       };
     }
+    const question_id = codeQuestionId({
+      type: 'listen_meaning',
+      item: input.item,
+      skill: 'listening',
+    });
     return {
       kind: 'question',
       type: 'listen_meaning',
@@ -241,6 +278,7 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
       lesson_day: input.item.day,
       skill: 'listening',
       estimated_seconds: estimatedSecondsForType('listen_meaning'),
+      question_id,
       payload: {
         type: 'listen_meaning',
         tests: [input.item.id],
@@ -253,11 +291,17 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
           })),
         ],
         origin: 'code',
+        question_id,
       },
     };
   }
 
   if (input.skill === 'recognition') {
+    const question_id = codeQuestionId({
+      type: 'pick_meaning',
+      item: input.item,
+      skill: 'recognition',
+    });
     return {
       kind: 'micro_check',
       type: 'pick_meaning',
@@ -265,6 +309,7 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
       lesson_day: input.item.day,
       skill: 'recognition',
       estimated_seconds: estimatedSecondsForType('pick_meaning'),
+      question_id,
       payload: {
         type: 'pick_meaning',
         tests: [input.item.id],
@@ -278,11 +323,17 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
           })),
         ],
         origin: 'code',
+        question_id,
       },
     };
   }
 
   if (input.skill === 'speaking' || input.skill === 'use') {
+    const question_id = codeQuestionId({
+      type: 'say_it',
+      item: input.item,
+      skill: input.skill,
+    });
     return {
       kind: 'question',
       type: 'say_it',
@@ -290,18 +341,59 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
       lesson_day: input.item.day,
       skill: input.skill,
       estimated_seconds: estimatedSecondsForType('say_it'),
+      question_id,
       payload: {
         type: 'say_it',
         tests: [input.item.id],
         prompt_eg: input.item.ar ?? '',
         accepted: input.item.tl ? [input.item.tl] : [],
         origin: 'code',
+        question_id,
       },
     };
   }
 
-  void distractors;
   return null;
+}
+
+function codeQuestionId(opts: {
+  type: string;
+  item: BankItem;
+  skill: CoverageSkill;
+}): string {
+  return practiceQuestionId({
+    target_lang: 'pt-PT',
+    type: opts.type,
+    item_ids: [opts.item.id],
+    source_id: `code:${opts.skill}:${opts.item.id}:${opts.item.tl ?? ''}`,
+  });
+}
+
+/**
+ * Distractor tiles: known mistake forms, or tokens from taught (≤ current day) items.
+ * Never from future-day content.
+ */
+export function allowedDistractorTiles(
+  knownMistakeTiles: string[],
+  taughtItems: BankItem[],
+  currentDay: number,
+): string[] {
+  const taught = taughtItems.filter((i) => i.day <= currentDay);
+  const taughtTokens = new Set(
+    taught.flatMap((i) => (i.tl ?? '').split(/\s+/).filter(Boolean)),
+  );
+  const known = new Set(
+    ['me', 'de', 'teu', 'você', 'a gente'].concat(knownMistakeTiles),
+  );
+  const out: string[] = [];
+  for (const t of knownMistakeTiles) {
+    if (!t) continue;
+    // Known mistake forms are always allowed; taught tokens also allowed
+    if (known.has(t) || taughtTokens.has(t)) {
+      if (!out.includes(t)) out.push(t);
+    }
+  }
+  return out.slice(0, 2);
 }
 
 function distractPick(
@@ -309,7 +401,39 @@ function distractPick(
   excludeId: string,
   n: number,
 ): BankItem[] {
-  return taught.filter((i) => i.id !== excludeId).slice(0, n);
+  return taught
+    .filter((i) => i.id !== excludeId && i.day !== undefined)
+    .slice(0, n);
+}
+
+/** Persist a code-built step into the shared question store (idempotent). */
+export async function persistBuiltStep(
+  step: BuiltStep,
+): Promise<BuiltStep> {
+  if (step.payload.origin !== 'code') return step;
+  const { ensurePracticeQuestion } = await import(
+    '@/lib/v2/review/questions'
+  );
+  const itemIds = Array.isArray(step.payload.tests)
+    ? (step.payload.tests as string[])
+    : [step.item_id];
+  const patternIds = itemIds.filter((id) => id.startsWith('pattern.'));
+  const wordIds = itemIds.filter((id) => !id.startsWith('pattern.'));
+  const record = await ensurePracticeQuestion({
+    id: step.question_id,
+    type: step.type,
+    skill: step.skill,
+    item_ids: wordIds,
+    pattern_ids: patternIds,
+    source_id: `code:${step.skill}:${step.item_id}`,
+    lesson_day: step.lesson_day,
+    content: step.payload,
+  });
+  return {
+    ...step,
+    question_id: record.id,
+    payload: { ...step.payload, question_id: record.id },
+  };
 }
 
 /** Group find-image rounds into a block of up to 6. */

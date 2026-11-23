@@ -52,6 +52,8 @@ export type EvaluateContext = {
   user_id: string;
   localDate: string;
   now?: Date;
+  /** Client answer_id — recorded on stage moves (16 §6 / E2). */
+  answerId?: string;
   /** Existing state for the primary item, if any. */
   itemState?: ItemState | null;
   introducedDay?: number;
@@ -173,7 +175,7 @@ function evaluateCardReview(
   state = { ...state, opt_in_card: true };
 
   if (payload.rating === 'know') {
-    state = applyKnow(state, now, ctx.localDate);
+    state = applyKnow(state, now, ctx.localDate, payload.answer_id);
   } else {
     const rating =
       payload.hint && payload.rating === 'easy' ? 'hard' : payload.rating;
@@ -187,6 +189,7 @@ function evaluateCardReview(
         kind: 'miss',
         localDate: ctx.localDate,
         fromCard: true,
+        answerId: payload.answer_id,
       });
     } else if (!payload.hint && (rating === 'hard' || rating === 'easy')) {
       // Card recognition only — never a situation, never past stage 2
@@ -197,6 +200,7 @@ function evaluateCardReview(
         firstTry: true,
         fromCard: true,
         hint: false,
+        answerId: payload.answer_id,
       });
     }
   }
@@ -357,6 +361,13 @@ async function evaluateOpenAnswer(
     let state = ctx.itemState
       ? applyImplicitWrongUse(ctx.itemState, now)
       : undefined;
+    if (state) {
+      state = applyStageEvidence(state, {
+        kind: 'miss',
+        localDate: ctx.localDate,
+        answerId: ctx.answerId ?? payload.answer_id,
+      });
+    }
     if (state && weak) {
       state = {
         ...state,
@@ -410,6 +421,11 @@ async function evaluateOpenAnswer(
       });
     } else if (state && graded.verdict !== 'arabic_only') {
       state = applyImplicitWrongUse(state, now);
+      state = applyStageEvidence(state, {
+        kind: 'miss',
+        localDate: ctx.localDate,
+        answerId: ctx.answerId ?? payload.answer_id,
+      });
     }
   }
   return finish({
@@ -449,6 +465,7 @@ function applyClosedResult(opts: {
       state = applyStageEvidence(state, {
         kind: 'miss',
         localDate: ctx.localDate,
+        answerId: ctx.answerId,
       });
     } else {
       state = createItemState({
@@ -460,6 +477,7 @@ function applyClosedResult(opts: {
       state = applyStageEvidence(state, {
         kind: 'miss',
         localDate: ctx.localDate,
+        answerId: ctx.answerId,
       });
     }
   }
@@ -516,6 +534,7 @@ function updateStateCorrect(opts: {
     firstTry: true,
     situationId: kind === 'production' ? situationId(day) : null,
     fromCard: false,
+    answerId: ctx.answerId,
   });
   return state;
 }
@@ -577,6 +596,7 @@ function evaluateConvoRung(
       firstTry: true,
       situationId: kind === 'production' ? situationId(payload.day) : null,
       fromCard: false,
+      answerId: payload.answer_id,
     });
   }
 

@@ -95,25 +95,28 @@ export const MicroDrillSchema = z
   })
   .passthrough();
 
+export const MicroToolSchema = z.object({
+  tool_id: z.string(),
+  step: z.number().int().positive(),
+  of: z.number().int().positive(),
+  builds_on_eg: z.string(),
+  examples: z.array(z.string()).min(1),
+  notice: z.object({
+    question_eg: z.string(),
+    options: z.array(MicroNoticeOptionSchema).min(3).max(3),
+  }),
+  rule_eg: z.string(),
+  /** Inline drills (generation writes 2 objects; older packs may store question ids). */
+  drills: z.array(z.union([z.string(), MicroDrillSchema])).min(1),
+});
+
 export const MicroSchema = z.object({
   morning: z.object({
     phrase: z.string(),
     mission_eg: z.string(),
   }),
-  tool: z.object({
-    tool_id: z.string(),
-    step: z.number().int().positive(),
-    of: z.number().int().positive(),
-    builds_on_eg: z.string(),
-    examples: z.array(z.string()).min(1),
-    notice: z.object({
-      question_eg: z.string(),
-      options: z.array(MicroNoticeOptionSchema).min(3).max(3),
-    }),
-    rule_eg: z.string(),
-    /** Inline drills (generation writes 2 objects; older packs may store question ids). */
-    drills: z.array(z.union([z.string(), MicroDrillSchema])).min(1),
-  }),
+  /** Omitted when the day has no own micro_step (keep morning/evening only). */
+  tool: MicroToolSchema.optional(),
   evening: z.object({
     teaser_eg: z.string(),
   }),

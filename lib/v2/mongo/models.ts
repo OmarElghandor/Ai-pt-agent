@@ -337,6 +337,8 @@ const v2ItemStateSchema = new Schema(
     /** Mastery stages (16 §6): 1 اتعرّفت … 4 اتحفظت. */
     stage: { type: Number, required: false, min: 1, max: 4, default: 1 },
     stage_at: { type: String, required: false, default: null },
+    /** Answer id that caused the current stage (16 §6 / E2). */
+    stage_answer_id: { type: String, required: false, default: null },
     first_recognition_at: { type: String, required: false, default: null },
     first_recall_at: { type: String, required: false, default: null },
   },
@@ -508,6 +510,128 @@ export function V2QuestionModel(): Model<V2QuestionDoc> {
   return (
     (mongoose.models.V2Question as Model<V2QuestionDoc>) ||
     mongoose.model<V2QuestionDoc>('V2Question', v2QuestionSchema)
+  );
+}
+
+const V2_PRACTICE_QUESTION_STATUSES = ['active', 'flagged', 'retired'] as const;
+
+/** Shared code-built practice questions (16 §9.1). Not user-keyed. */
+const v2PracticeQuestionSchema = new Schema(
+  {
+    id: { type: String, required: true, unique: true, index: true },
+    builder_version: { type: String, required: true, index: true },
+    target_lang: { type: String, required: true, default: 'pt-PT', index: true },
+    type: { type: String, required: true, index: true },
+    skill: { type: String, required: true },
+    tests: {
+      item_ids: { type: [String], default: [] },
+      pattern_ids: { type: [String], default: [] },
+      problem_ids: { type: [String], default: [] },
+    },
+    lesson_day: { type: Number, required: false, index: true },
+    status: {
+      type: String,
+      required: true,
+      enum: V2_PRACTICE_QUESTION_STATUSES,
+      default: 'active',
+      index: true,
+    },
+    content: { type: Schema.Types.Mixed, required: true },
+  },
+  { timestamps: true, collection: 'v2_practice_questions' },
+);
+
+export type V2PracticeQuestionDoc = InferSchemaType<
+  typeof v2PracticeQuestionSchema
+> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2PracticeQuestionsModel(): Model<V2PracticeQuestionDoc> {
+  return (
+    (mongoose.models.V2PracticeQuestion as Model<V2PracticeQuestionDoc>) ||
+    mongoose.model<V2PracticeQuestionDoc>(
+      'V2PracticeQuestion',
+      v2PracticeQuestionSchema,
+    )
+  );
+}
+
+const V2_ANSWER_SOURCES = [
+  'review',
+  'lesson',
+  'grammar_check',
+  'micro',
+  'find_image',
+  'cards',
+  'roleplay',
+  'convo',
+] as const;
+
+/** Append-only answer log (16 §9.2). User-keyed — joins A5. */
+const v2AnswerSchema = new Schema(
+  {
+    user_id: { type: String, required: true, index: true },
+    local_date: { type: String, required: true, index: true },
+    answer_id: { type: String, required: true, unique: true, index: true },
+    question_id: { type: String, required: true, index: true },
+    question_version: { type: String, required: true },
+    source: {
+      type: String,
+      required: true,
+      enum: V2_ANSWER_SOURCES,
+      index: true,
+    },
+    session_id: { type: String, required: false, index: true },
+    round: { type: Number, required: false },
+    step_index: { type: Number, required: false },
+    attempt: { type: Number, required: true, default: 1 },
+    first_try: { type: Boolean, required: true },
+    answer: { type: Schema.Types.Mixed, required: true },
+    verdict: {
+      type: String,
+      required: true,
+      enum: ['correct', 'near_miss', 'wrong', 'unclear', 'self_rated'],
+    },
+    hint_used: { type: Boolean, required: true, default: false },
+    skill: { type: String, required: false, index: true },
+    tests: {
+      item_ids: { type: [String], default: [] },
+      pattern_ids: { type: [String], default: [] },
+    },
+    lesson_day: { type: Number, required: false, index: true },
+    window_position: { type: Number, required: false },
+    error_id: { type: String, required: false, index: true },
+    time_ms: { type: Number, required: true, default: 0 },
+    stage_moves: {
+      type: [
+        {
+          item_id: { type: String, required: true },
+          from: { type: Number, required: true },
+          to: { type: Number, required: true },
+          answer_id: { type: String, required: false },
+        },
+      ],
+      default: [],
+    },
+  },
+  { timestamps: true, collection: 'v2_answers' },
+);
+
+v2AnswerSchema.index({ user_id: 1, createdAt: -1 });
+v2AnswerSchema.index({ user_id: 1, question_id: 1 });
+v2AnswerSchema.index({ user_id: 1, skill: 1, local_date: 1 });
+v2AnswerSchema.index({ user_id: 1, lesson_day: 1 });
+v2AnswerSchema.index({ question_id: 1, first_try: 1 });
+
+export type V2AnswerDoc = InferSchemaType<typeof v2AnswerSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2AnswersModel(): Model<V2AnswerDoc> {
+  return (
+    (mongoose.models.V2Answer as Model<V2AnswerDoc>) ||
+    mongoose.model<V2AnswerDoc>('V2Answer', v2AnswerSchema)
   );
 }
 
@@ -1141,6 +1265,8 @@ const coveragePairSchema = new Schema(
       enum: ['open', 'covered', 'carried_to_weak'],
       default: 'open',
     },
+    /** Answer id that covered this pair (16 §5.1). */
+    answer_id: { type: String, required: false },
   },
   { _id: false },
 );
@@ -1191,7 +1317,12 @@ const reviewStepSchema = new Schema(
     },
     estimated_seconds: { type: Number, required: true },
     round: { type: Number, required: true },
+    question_id: { type: String, required: false },
+    question_version: { type: String, required: false },
+    /** Frozen copy of what was shown (16 §7 / §9.1). */
     question: { type: Schema.Types.Mixed, required: false },
+    /** First-try answer id once answered. */
+    answer_id: { type: String, required: false },
     result: { type: Schema.Types.Mixed, required: false },
   },
   { _id: false },
@@ -1204,15 +1335,22 @@ const v2ReviewSessionSchema = new Schema(
     window: { type: Schema.Types.Mixed, default: [] },
     budget_minutes: { type: Number, required: true },
     has_lesson_today: { type: Boolean, required: true, default: true },
+    builder_version: { type: String, required: false, default: '1' },
     steps: { type: [reviewStepSchema], default: [] },
     rounds_total: { type: Number, required: true, default: 1 },
     rounds_done: { type: Number, required: true, default: 0 },
+    resume: {
+      round: { type: Number, required: false, default: 1 },
+      step: { type: Number, required: false, default: 0 },
+    },
     status: {
       type: String,
       required: true,
       enum: ['open', 'done'],
       default: 'open',
     },
+    built_at: { type: Date, required: false },
+    done_at: { type: Date, required: false },
   },
   { timestamps: true, collection: 'v2_review_sessions' },
 );
@@ -1231,6 +1369,69 @@ export function V2ReviewSessionModel(): Model<V2ReviewSessionDoc> {
     mongoose.model<V2ReviewSessionDoc>(
       'V2ReviewSession',
       v2ReviewSessionSchema,
+    )
+  );
+}
+
+/** Per-user level view rebuilt from the answer log (16 §9.3). User-keyed — A5. */
+const v2UserLevelSchema = new Schema(
+  {
+    user_id: { type: String, required: true, unique: true, index: true },
+    rebuilt_at: { type: Date, required: true },
+    skills: { type: Schema.Types.Mixed, required: true, default: {} },
+    patterns: { type: Schema.Types.Mixed, required: true, default: {} },
+    lessons: { type: Schema.Types.Mixed, required: true, default: {} },
+    /** Weak-spot problem ids only — no copy of v2_weak_spots. */
+    problem_ids: { type: [String], default: [] },
+    /** Median time_ms per question type (user, after ≥30 of that type). */
+    time_by_type: { type: Schema.Types.Mixed, required: false, default: {} },
+    answer_count: { type: Number, required: true, default: 0 },
+  },
+  { timestamps: true, collection: 'v2_user_level' },
+);
+
+export type V2UserLevelDoc = InferSchemaType<typeof v2UserLevelSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2UserLevelModel(): Model<V2UserLevelDoc> {
+  return (
+    (mongoose.models.V2UserLevel as Model<V2UserLevelDoc>) ||
+    mongoose.model<V2UserLevelDoc>('V2UserLevel', v2UserLevelSchema)
+  );
+}
+
+/**
+ * Aggregated per-question stats across learners (16 §9.3).
+ * Not user-keyed — survives account deletion.
+ */
+const v2PracticeQuestionStatsSchema = new Schema(
+  {
+    question_id: { type: String, required: true, unique: true, index: true },
+    attempts: { type: Number, required: true, default: 0 },
+    first_try_total: { type: Number, required: true, default: 0 },
+    first_try_correct: { type: Number, required: true, default: 0 },
+    avg_time_ms: { type: Number, required: true, default: 0 },
+    /** Histogram of wrong/near_miss answer keys → count. */
+    wrong_answers: { type: Schema.Types.Mixed, required: false, default: {} },
+    auto_flagged_at: { type: Date, required: false, default: null },
+    rebuilt_at: { type: Date, required: true },
+  },
+  { timestamps: true, collection: 'v2_practice_question_stats' },
+);
+
+export type V2PracticeQuestionStatsDoc = InferSchemaType<
+  typeof v2PracticeQuestionStatsSchema
+> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2PracticeQuestionStatsModel(): Model<V2PracticeQuestionStatsDoc> {
+  return (
+    (mongoose.models.V2PracticeQuestionStats as Model<V2PracticeQuestionStatsDoc>) ||
+    mongoose.model<V2PracticeQuestionStatsDoc>(
+      'V2PracticeQuestionStats',
+      v2PracticeQuestionStatsSchema,
     )
   );
 }

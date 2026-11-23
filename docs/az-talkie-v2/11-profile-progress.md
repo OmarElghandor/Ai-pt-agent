@@ -158,7 +158,7 @@ Card SRS per item stays in `v2_item_state` (unchanged). New:
 
 ### 5.1 The daily deck
 
-**(replaced 2026-11-21 by `16-practice-engine.md` / `00` §5c.)** The home daily loop is no longer a fixed 15-card / 9·4·2 mix. **"كروت النهارده"** is a time-budgeted flashcard warm-up from a sliding window of the last 3 completed lessons; **"مراجعة النهارده"** is a separate coverage-sized review session. See `16` for builders, slots, stages, streak, and collections (`v2_card_decks` fields, `v2_review_sessions`, `v2_coverage_plans`).
+**(replaced 2026-11-21 by `16-practice-engine.md` / `00` §5c; footer tab + answer log 2026-11-22.)** The home daily loop is no longer a fixed 15-card / 9·4·2 mix. **"كروت النهارده"** is a time-budgeted flashcard warm-up from a sliding window of the last 3 completed lessons; **"مراجعة النهارده"** is a separate coverage-sized review session opened from the footer tab **مراجعة** (and the same home entry). Every attempt is logged in `v2_answers` linked to a question id; level tracking uses `v2_user_level` (counts for learners, percentages for admin only). Where this section and `16` disagree about the daily loop, **`16` and `00` §5c win**. See `16` for builders, slots, stages, streak, footer tab, answer log, and collections (`v2_card_decks` fields, `v2_review_sessions`, `v2_coverage_plans`, `v2_answers`, `v2_practice_questions`, `v2_user_level`).
 
 Legacy notes kept for history: `v2_card_decks` is one document per user × local date; built once and resumable; ratings go to `/api/v2/answers` and `/api/v2/progress/events` with the same `event_id`; custom / official themed decks never enter the daily loop (`12` §2.6).
 

@@ -69,6 +69,8 @@ export type CoreItem = {
    * When absent, code computes uses from shared content words.
    */
   uses?: string[];
+  /** Verb: surface forms the day needs (volto, volta…). */
+  forms_tl?: string[];
   /** @deprecated Prefer variant_tl — accepted on load then normalized. */
   variants?: string[];
 };

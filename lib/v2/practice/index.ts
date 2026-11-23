@@ -8,3 +8,7 @@ export * from './coverage';
 export * from './stepBuilders';
 export * from './reviewSession';
 export * from './masterySummary';
+export * from './userLevel';
+export * from './questionStats';
+export * from './stepTimeEstimates';
+export * from './levelJob';

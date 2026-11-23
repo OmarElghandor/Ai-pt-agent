@@ -69,6 +69,7 @@ export function microStepNeedsUnknown(
 function collectMicroTl(micro: Micro, items: Item[]): string[] {
   const byId = new Map(items.map((i) => [i.id, i]));
   const texts: string[] = [];
+  if (!micro.tool) return texts;
   for (const id of micro.tool.examples) {
     const it = byId.get(id);
     if (it && 'tl' in it && typeof it.tl === 'string') texts.push(it.tl);
@@ -171,6 +172,7 @@ function forceMeaningsFromLinkedItems(
   micro: Micro,
   items: Item[],
 ): Micro {
+  if (!micro.tool) return micro;
   const linkedIds = new Set<string>([
     micro.morning.phrase,
     ...micro.tool.examples,
@@ -208,19 +210,21 @@ export const MicroJobSchema = z.object({
       phrase: z.string(),
       mission_eg: z.string(),
     }),
-    tool: z.object({
-      tool_id: z.string(),
-      step: z.number().int().positive(),
-      of: z.number().int().positive(),
-      builds_on_eg: z.string(),
-      examples: z.array(z.string()).min(1),
-      notice: z.object({
-        question_eg: z.string(),
-        options: z.array(MicroNoticeOptionSchema).min(3).max(3),
-      }),
-      rule_eg: z.string(),
-      drills: z.array(MicroDrillSchema).min(2).max(2),
-    }),
+    tool: z
+      .object({
+        tool_id: z.string(),
+        step: z.number().int().positive(),
+        of: z.number().int().positive(),
+        builds_on_eg: z.string(),
+        examples: z.array(z.string()).min(1),
+        notice: z.object({
+          question_eg: z.string(),
+          options: z.array(MicroNoticeOptionSchema).min(3).max(3),
+        }),
+        rule_eg: z.string(),
+        drills: z.array(MicroDrillSchema).min(2).max(2),
+      })
+      .optional(),
     evening: z.object({
       teaser_eg: z.string(),
     }),
@@ -295,7 +299,17 @@ export async function runMicroJob(opts: {
       ? JSON.stringify(opts.prevMicroHandoff)
       : '(none)';
 
-  const user = `STAGE: MICRO ONLY
+  const omitTool = !micro;
+  const user = omitTool
+    ? `STAGE: MICRO ONLY
+Return { "micro": { morning, evening } } via submit_micro — OMIT tool (day has no micro_step).
+${microLine}
+${tomorrow}
+PHRASE_DIGEST: ${JSON.stringify(phrases)}
+SAID_PHRASE_IDS (morning.phrase MUST be one of these): ${JSON.stringify(saidIds)}
+Do NOT include micro.tool.
+`
+    : `STAGE: MICRO ONLY
 Return { "micro": {...} } via submit_micro.
 ${microLine}
 ${tomorrow}
@@ -385,21 +399,30 @@ drills must be 2 full quiz objects (prompt + options), not question ids.
       },
     };
   }
-  const correct = result.tool.notice.options.filter((o) => o.correct).length;
-  if (correct !== 1) {
-    issues.push(`notice needs exactly one correct, got ${correct}`);
+  // Days without their own micro_step: keep morning/evening only.
+  if (omitTool && result.tool) {
+    const { tool: _drop, ...rest } = result;
+    result = rest;
+    issues.push('omitted micro.tool (no micro_step on day)');
   }
 
-  // Number gate on tool TL surfaces
-  for (const text of collectMicroTl(result, opts.items)) {
-    const bad = hasForbiddenNumberToken(text, opts.brief.day);
-    if (bad) {
-      issues.push(
-        `micro tool TL has number token "${bad}" before day ${NUMBERS_INTRO_DAY}`,
-      );
+  if (result.tool) {
+    const correct = result.tool.notice.options.filter((o) => o.correct).length;
+    if (correct !== 1) {
+      issues.push(`notice needs exactly one correct, got ${correct}`);
     }
+
+    // Number gate on tool TL surfaces
+    for (const text of collectMicroTl(result, opts.items)) {
+      const bad = hasForbiddenNumberToken(text, opts.brief.day);
+      if (bad) {
+        issues.push(
+          `micro tool TL has number token "${bad}" before day ${NUMBERS_INTRO_DAY}`,
+        );
+      }
+    }
+    result = forceMeaningsFromLinkedItems(result, opts.items);
   }
-  result = forceMeaningsFromLinkedItems(result, opts.items);
 
   return {
     micro: result,

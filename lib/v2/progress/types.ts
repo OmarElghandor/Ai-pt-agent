@@ -41,10 +41,12 @@ export type ItemState = {
   weakToolIds: string[];
   /** Per-user card opt-in (real-world «+ للكروت»). */
   opt_in_card?: boolean;
-  /** Mastery stage 1–4 (16 §6). */
+  /** Mastery stage 1–4 (16 §6). Same fields for words, phrases, and patterns. */
   stage?: 1 | 2 | 3 | 4;
   /** Local date when the current stage was reached. */
   stage_at?: string | null;
+  /** Answer id that caused the current stage (16 §6 / E2). */
+  stage_answer_id?: string | null;
   first_recognition_at?: string | null;
   first_recall_at?: string | null;
 };

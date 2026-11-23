@@ -303,6 +303,8 @@ export function ReviewSession({
       return;
     }
 
+    const usedHint = hintUsed;
+    const answerDay = data?.current_day ?? dayOverride ?? 1;
     setData((cur) => {
       if (!cur) return cur;
       const cards = cur.cards.map((row) =>
@@ -321,6 +323,22 @@ export function ReviewSession({
     setHintUsed(false);
     playedOnFlip.current = null;
     setBusy(false);
+
+    // Item state + answer log via /api/v2/answers; deck progress via cards/review.
+    void fetch('/api/v2/answers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        kind: 'card_review',
+        answer_id: newAnswerId(),
+        day: answerDay,
+        item_id: itemIdRated,
+        rating,
+        hint: usedHint,
+      }),
+    }).catch(() => {
+      // Log/SRS best-effort; deck route still owns session resume.
+    });
 
     // Do not reload /today after accept — job may not have applied yet.
     void fetch(`/api/v2/cards/${encodeURIComponent(itemIdRated)}/review`, {

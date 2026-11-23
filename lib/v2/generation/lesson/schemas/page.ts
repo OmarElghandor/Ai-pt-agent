@@ -50,6 +50,18 @@ export const SectionsGenPageSchema = GenPageBase.extend({
   steps: z.array(StepSchema).optional(),
   controls: z.array(ControlSchema).optional(),
   check: z.array(z.string()).optional(),
+  /** Structured wrong→right pairs (preferred over parsing explain). */
+  common_mistakes: z
+    .array(
+      z.object({
+        wrong: z.string().min(1),
+        right: z.string().min(1),
+        why_eg: z.string().min(1),
+      }),
+    )
+    .min(1)
+    .max(2)
+    .optional(),
 });
 
 /** Explore pages must ship at least one control. */

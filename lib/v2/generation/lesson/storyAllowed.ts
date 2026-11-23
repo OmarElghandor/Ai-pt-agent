@@ -4,7 +4,7 @@ import {
   resolveForm,
 } from '@/lib/v2/content/conjugations/resolve';
 import type { CoreItem } from './coreItems';
-import { coreItemsThroughDay } from './coreItems';
+import { coreItemsThroughDay, loadCoreItemsFile } from './coreItems';
 import { normToken, tokenizeRaw } from './storyTokens';
 
 const TENSES: Tense[] = ['inf', 'pres', 'pret', 'imperf', 'fut', 'cond', 'imp'];
@@ -83,9 +83,12 @@ export function buildStoryAllowedVocab(opts: {
   for (const c of opts.coreItems) byId.set(c.id, c);
   for (const item of opts.items) byId.set(item.id, item);
 
-  // Prior days from core file (fill gaps when lessons not generated)
-  if (opts.day > 1) {
-    for (const c of coreItemsThroughDay(opts.day - 1)) {
+  // Any-day curriculum words may appear as plain text (highlights = today only).
+  // Include the full core file so future/other-day TL is not flagged as extras.
+  {
+    const file = loadCoreItemsFile();
+    const maxDay = Math.max(opts.day, ...file.days.map((d) => d.day));
+    for (const c of coreItemsThroughDay(maxDay)) {
       if (!byId.has(c.id)) byId.set(c.id, c);
     }
   }

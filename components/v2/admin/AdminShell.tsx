@@ -90,6 +90,12 @@ const MORE: NavItem[] = [
     match: (p) => p.startsWith('/v2-admin/quality'),
   },
   {
+    href: '/v2-admin/practice',
+    label: 'التمرين',
+    short: 'تم',
+    match: (p) => p.startsWith('/v2-admin/practice'),
+  },
+  {
     href: '/v2-admin/reports',
     label: 'البلاغات',
     short: 'ب',

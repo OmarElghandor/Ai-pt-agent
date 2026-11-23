@@ -15,6 +15,7 @@ export function applyKnow(
   state: ItemState,
   now: Date = new Date(),
   localDate?: string,
+  answerId?: string,
 ): ItemState {
   const withCard: ItemState = {
     ...state,
@@ -30,7 +31,11 @@ export function applyKnow(
   const day =
     localDate ??
     `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`;
-  return applyStageEvidence(withCard, { kind: 'know', localDate: day });
+  return applyStageEvidence(withCard, {
+    kind: 'know',
+    localDate: day,
+    answerId,
+  });
 }
 
 /**

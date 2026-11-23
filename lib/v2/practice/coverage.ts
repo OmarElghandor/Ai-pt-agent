@@ -18,6 +18,8 @@ export type CoveragePair = {
   /** Verb form id when skill is per form. */
   form?: string;
   status: CoveragePairStatus;
+  /** Answer id that covered this pair (16 §5.1 / E5). */
+  answer_id?: string;
 };
 
 export type CoverageItemKind =
@@ -123,6 +125,8 @@ export type CoverResultOpts = {
   /** Question type that was answered correctly. */
   questionType: string;
   item_id: string;
+  /** Answer id that covered the pair(s). */
+  answer_id?: string;
   /** Core word ids covered by a full-sentence production. */
   coreWordIds?: string[];
   /** Pattern id whose "use" check is covered by full-sentence production. */
@@ -148,6 +152,7 @@ export function applyCoverageResult(opts: CoverResultOpts): CoveragePlan {
         p.status === 'open'
       ) {
         p.status = 'covered';
+        if (opts.answer_id) p.answer_id = opts.answer_id;
       }
     }
   };
@@ -192,4 +197,84 @@ export function closeCoveragePlan(plan: CoveragePlan): CoveragePlan {
 
 export function openPairs(plan: CoveragePlan): CoveragePair[] {
   return plan.pairs.filter((p) => p.status === 'open');
+}
+
+/** Minimal answer-log shape used to seed `passedInLesson` (16 §5.1 / §9). */
+export type AnswerLogCoverageHint = {
+  first_try: boolean;
+  verdict: string;
+  lesson_day?: number;
+  source?: string;
+  tests?: { item_ids?: string[]; pattern_ids?: string[] };
+  skill?: string;
+  /** Question type when known (e.g. from frozen step / question store). */
+  question_type?: string;
+};
+
+const LESSON_SOURCES = new Set([
+  'lesson',
+  'grammar_check',
+  'micro',
+  'find_image',
+  'roleplay',
+]);
+
+/**
+ * Map first-try correct lesson answers into coverage pairs already passed.
+ * Builders pass this into `buildCoveragePlan({ passedInLesson })`.
+ */
+export function passedPairsFromAnswerLog(
+  answers: AnswerLogCoverageHint[],
+  lessonDay: number,
+): Array<{ item_id: string; skill: CoverageSkill; form?: string }> {
+  const out: Array<{ item_id: string; skill: CoverageSkill; form?: string }> =
+    [];
+  const seen = new Set<string>();
+
+  for (const a of answers) {
+    if (!a.first_try || a.verdict !== 'correct') continue;
+    if (a.lesson_day != null && a.lesson_day !== lessonDay) continue;
+    if (a.source && !LESSON_SOURCES.has(a.source)) continue;
+
+    const skill = coverageSkillFromAnswer(a);
+    if (!skill) continue;
+
+    const itemIds = [
+      ...(a.tests?.item_ids ?? []),
+      ...(a.tests?.pattern_ids ?? []),
+    ];
+    for (const item_id of itemIds) {
+      const key = `${item_id}|${skill}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push({ item_id, skill });
+    }
+  }
+  return out;
+}
+
+function coverageSkillFromAnswer(
+  a: AnswerLogCoverageHint,
+): CoverageSkill | null {
+  const t = a.question_type ?? '';
+  if (t === 'build_sentence') return 'building';
+  if (t === 'fill_blank_choice') return 'recognition';
+  if (t === 'say_it' || t === 'reply_speak') return 'speaking';
+  if (
+    t === 'translate_write' ||
+    t === 'fill_blank_write' ||
+    t === 'dictation' ||
+    t === 'reply_write'
+  ) {
+    return 'writing';
+  }
+  if (t.startsWith('listen_') || t === 'find_image' || t === 'micro_check') {
+    return 'listening';
+  }
+  if (a.skill === 'listening') return 'listening';
+  if (a.skill === 'writing') return 'writing';
+  if (a.skill === 'speaking') return 'speaking';
+  if (a.skill === 'grammar') return 'recognition';
+  if (a.skill === 'reading') return 'listening';
+  return null;
 }

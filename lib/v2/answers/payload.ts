@@ -7,6 +7,14 @@ export function isUuid(value: unknown): value is string {
   return typeof value === 'string' && UUID_RE.test(value);
 }
 
+/** Optional timing / first-try flags accepted on every answer kind (16 §9.2). */
+export type AnswerLogMeta = {
+  /** Step open → answer, capped server-side at 3 minutes. */
+  time_ms?: number;
+  /** Client may report whether this was the first try; default true. */
+  first_try?: boolean;
+};
+
 export type PageAskPayload = {
   kind: 'page_ask';
   answer_id: string;
@@ -14,7 +22,7 @@ export type PageAskPayload = {
   page_id: string;
   step_index: number;
   option_index: number;
-};
+} & AnswerLogMeta;
 
 export type PageQuizPayload = {
   kind: 'page_quiz';
@@ -23,7 +31,7 @@ export type PageQuizPayload = {
   page_id: string;
   question_id: string;
   option_index: number;
-};
+} & AnswerLogMeta;
 
 export type OpenAnswerPayload = {
   kind: 'open';
@@ -38,7 +46,7 @@ export type OpenAnswerPayload = {
   /** Grammar-breaking near forms (e.g. Chamome) with Egyptian feedback. */
   near_miss?: { tl: string; feedback_eg?: string }[];
   tool_id?: string;
-};
+} & AnswerLogMeta;
 
 export type ClosedSkillPayload = {
   kind: 'closed';
@@ -51,7 +59,7 @@ export type ClosedSkillPayload = {
   question_id?: string;
   question_type?: string;
   tool_id?: string;
-};
+} & AnswerLogMeta;
 
 /** Practice beat. Client may send attempt; server ignores it for decisions. */
 export type BeatAnswerPayload = {
@@ -67,7 +75,7 @@ export type BeatAnswerPayload = {
   option_id?: string;
   switched_to_writing?: boolean;
   session_id?: string;
-};
+} & AnswerLogMeta;
 
 /** Conversation rung mirror (09 §3 / T1.12). */
 export type ConvoAnswerPayload = {
@@ -79,7 +87,7 @@ export type ConvoAnswerPayload = {
   rung: 'heard' | 'understood' | 'said' | 'assisted';
   session_id?: string;
   question_id?: string;
-};
+} & AnswerLogMeta;
 
 /** Explicit flashcard rating from a custom/official deck session (12 §2.6). */
 export type CardReviewPayload = {
@@ -90,7 +98,7 @@ export type CardReviewPayload = {
   rating: 'again' | 'hard' | 'easy' | 'know';
   deck_id?: string;
   hint?: boolean;
-};
+} & AnswerLogMeta;
 
 /** Role-play correction / «قصدك» stop pair (batch-rp-5). */
 export type SceneMistakePayload = {
@@ -106,7 +114,7 @@ export type SceneMistakePayload = {
   wrong: string;
   right: string;
   stopped: boolean;
-};
+} & AnswerLogMeta;
 
 export type AnswerPayload =
   | PageAskPayload
@@ -131,6 +139,17 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function intField(value: unknown): number | null {
   return typeof value === 'number' && Number.isInteger(value) ? value : null;
+}
+
+function logMeta(body: Record<string, unknown>): AnswerLogMeta {
+  const meta: AnswerLogMeta = {};
+  if (typeof body.time_ms === 'number' && Number.isFinite(body.time_ms)) {
+    meta.time_ms = body.time_ms;
+  }
+  if (typeof body.first_try === 'boolean') {
+    meta.first_try = body.first_try;
+  }
+  return meta;
 }
 
 const SKILLS = new Set([
@@ -169,6 +188,7 @@ export function parseAnswerPayload(body: unknown): AnswerPayload | null {
       rating: body.rating as CardReviewPayload['rating'],
       deck_id: typeof body.deck_id === 'string' ? body.deck_id : undefined,
       hint: body.hint === true,
+      ...logMeta(body),
     };
   }
 
@@ -188,6 +208,7 @@ export function parseAnswerPayload(body: unknown): AnswerPayload | null {
       page_id: body.page_id,
       step_index: stepIndex,
       option_index: optionIndex,
+      ...logMeta(body),
     };
   }
 
@@ -203,6 +224,7 @@ export function parseAnswerPayload(body: unknown): AnswerPayload | null {
       page_id: body.page_id,
       question_id: body.question_id,
       option_index: optionIndex,
+      ...logMeta(body),
     };
   }
 
@@ -227,6 +249,7 @@ export function parseAnswerPayload(body: unknown): AnswerPayload | null {
       question_type:
         typeof body.question_type === 'string' ? body.question_type : undefined,
       tool_id: typeof body.tool_id === 'string' ? body.tool_id : undefined,
+      ...logMeta(body),
     };
   }
 
@@ -262,6 +285,7 @@ export function parseAnswerPayload(body: unknown): AnswerPayload | null {
       accepted,
       near_miss,
       tool_id: typeof body.tool_id === 'string' ? body.tool_id : undefined,
+      ...logMeta(body),
     };
   }
 
@@ -284,6 +308,7 @@ export function parseAnswerPayload(body: unknown): AnswerPayload | null {
       switched_to_writing: body.switched_to_writing === true,
       session_id:
         typeof body.session_id === 'string' ? body.session_id : undefined,
+      ...logMeta(body),
     };
   }
 
@@ -302,6 +327,7 @@ export function parseAnswerPayload(body: unknown): AnswerPayload | null {
         typeof body.session_id === 'string' ? body.session_id : undefined,
       question_id:
         typeof body.question_id === 'string' ? body.question_id : undefined,
+      ...logMeta(body),
     };
   }
 
@@ -343,6 +369,7 @@ export function parseAnswerPayload(body: unknown): AnswerPayload | null {
       wrong,
       right,
       stopped: body.stopped === true,
+      ...logMeta(body),
     };
   }
 

@@ -144,18 +144,45 @@ function matchKnownItemAr(
  * Empty-id lines that match known items (other days) get that item's full ar —
  * never word-by-word fragments.
  */
+/** True when AR looks like a truncated copy/prefix of the TL (e.g. Bem! for Bem-vindo!). */
+export function isArFragmentOfTl(ar: string, tl: string): boolean {
+  const a = ar.trim();
+  const t = tl.trim();
+  if (!a || !t) return true;
+  // Latin AR that is a prefix/substring of TL (model copied TL fragment as "translation")
+  const aLatin = a.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+  const tLatin = t.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+  const stripPunct = (s: string) =>
+    s.replace(/[!.?,;:…¡¿«»"'\s]+/g, '');
+  const aBare = stripPunct(aLatin);
+  const tBare = stripPunct(tLatin);
+  if (!aBare) return true;
+  if (/[A-Za-zÀ-ÿ]/.test(a) && tBare.startsWith(aBare) && aBare.length < tBare.length) {
+    return true;
+  }
+  if (/[A-Za-zÀ-ÿ]/.test(a) && tBare.includes(aBare) && aBare.length <= Math.max(3, tBare.length * 0.5)) {
+    return true;
+  }
+  // Very short placeholder / fragment AR for a longer TL
+  if (a.length <= 6 && !/[؟!.]/.test(a) && t.length > a.length + 2) {
+    return true;
+  }
+  return false;
+}
+
 export function buildLineArabic(
   line: StoryLine,
   items: Item[],
   knownItems?: Item[],
 ): string {
   const existing = line.ar?.trim();
-  // Reject fragmented/placeholder AR so we can rebuild from known items
+  // Reject fragmented/placeholder AR (incl. TL prefix copies) so we rebuild
   const looksFragment =
     existing &&
-    existing.length <= 6 &&
-    !/[؟!.]/.test(existing) &&
-    !(line.ids?.length);
+    (isArFragmentOfTl(existing, line.tl) ||
+      (existing.length <= 6 &&
+        !/[؟!.]/.test(existing) &&
+        !(line.ids?.length)));
   if (existing && !looksFragment) {
     return ensureTambemAr(
       line.tl,

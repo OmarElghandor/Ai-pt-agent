@@ -1,6 +1,8 @@
 import type { Item } from '@/lib/v2/content/items';
 import type { Question } from '@/lib/v2/content/lesson';
 import { findImageTargetIds } from '@/lib/v2/findImage/buildRounds';
+import type { CoreItem } from './coreItems';
+import { resolveGrammarFocusPatternIds } from './grammarFocus';
 import type { OutlinePagePlan, OutlineResult } from './stages/types';
 import {
   IMAGE_QUESTION_TYPES,
@@ -34,11 +36,10 @@ export type SlotPlanResult = {
 
 export type ImageReadyFn = (itemId: string) => boolean;
 
-/** Default day question count (00 §7, 2026-11-01). */
-const FIXED_SLOTS = 12;
-/** Only when a day still has >15 core items (legacy / pre-split). */
-const LARGE_SLOTS = 14;
-/** Core + real-world extras (00 §4 / §7, 2026-11-03). */
+/** Absolute floor / ceiling for day questions (no padding below natural coverage). */
+const MIN_SLOTS = 8;
+const MAX_SLOTS = 15;
+/** Real-world extras cap within the total. */
 const MAX_WITH_RW = 15;
 const RW_SLOT_MAX = 3;
 
@@ -70,7 +71,12 @@ function isCoreTestable(item: Item): boolean {
   if ((item as { real_world?: boolean }).real_world) return false;
   if (item.id.startsWith('phrase.rw.')) return false;
   if (item.type === 'pattern') return true;
-  if (item.type === 'word' || item.type === 'phrase' || item.type === 'sentence') {
+  if (
+    item.type === 'word' ||
+    item.type === 'verb' ||
+    item.type === 'phrase' ||
+    item.type === 'sentence'
+  ) {
     return Boolean(itemTl(item));
   }
   return false;
@@ -198,7 +204,10 @@ function buildOrderedIds(opts: {
   };
 
   const phrases = priority.filter((id) => byId.get(id)?.type === 'phrase');
-  const words = priority.filter((id) => byId.get(id)?.type === 'word');
+  const words = priority.filter((id) => {
+    const t = byId.get(id)?.type;
+    return t === 'word' || t === 'verb';
+  });
   for (const id of phrases) push(id);
   for (const id of words) push(id);
 
@@ -218,9 +227,13 @@ function buildOrderedIds(opts: {
   return out;
 }
 
-/** Exactly 12 slots; 14 only when core bank still exceeds 15 items. */
-function slotTargetFor(coreItemCount: number): number {
-  return coreItemCount > 15 ? LARGE_SLOTS : FIXED_SLOTS;
+/** clamp(core_items + real_world, 8, 15) — short lessons are fine. */
+export function slotTargetFor(
+  coreItemCount: number,
+  realWorldCount = 0,
+): number {
+  const n = Math.max(0, coreItemCount) + Math.max(0, realWorldCount);
+  return Math.min(MAX_SLOTS, Math.max(MIN_SLOTS, n));
 }
 
 function isMustTestItem(item: Item | undefined): boolean {
@@ -388,10 +401,10 @@ export function planRealWorldSlots(opts: {
   coreSlotCount: number;
   hide?: boolean;
 }): PlannedSlot[] {
-  if (opts.hide || opts.phrases.length < 3) return [];
+  if (opts.hide || opts.phrases.length < 1) return [];
   const room = Math.max(0, MAX_WITH_RW - opts.coreSlotCount);
   if (room < 1) return [];
-  // Prefer 2–3; still allow a single seat when core is 14 (room=1).
+  // Prefer 2–3; still allow a single seat when core is large (room=1).
   const count = Math.min(RW_SLOT_MAX, room, opts.phrases.length);
   if (count < 1) return [];
 
@@ -428,6 +441,13 @@ export function planQuestionSlots(opts: {
   storyItemOrder?: string[];
   /** Today's brief.core_items ids — covered before recycle. */
   priorityIds?: string[];
+  /**
+   * Day-plan grammar_focus id (e.g. polite.queria). Patterns mapped from
+   * focus count as today's grammar targets even when only in recycle.
+   */
+  grammarFocusId?: string;
+  /** Core items for resolveGrammarFocusPatternIds fallback. */
+  coreItems?: CoreItem[];
   /** Returns true when a picture for this item (or story scene) is ready. */
   imageReady?: ImageReadyFn;
   /** Prefer build_sentence for this pattern id (e.g. pattern.chamo_me). */
@@ -449,7 +469,11 @@ export function planQuestionSlots(opts: {
   const coreCount =
     priorityIds.length ||
     bank.filter((i) => isCoreTestable(i) && !isDerivedEx(i.id)).length;
-  const maxTotal = slotTargetFor(coreCount);
+  const rwCount =
+    opts.rwHide || !(opts.rwPhrases?.length)
+      ? 0
+      : Math.min(RW_SLOT_MAX, opts.rwPhrases.length);
+  const maxTotal = slotTargetFor(coreCount, rwCount);
   const orderedIds = buildOrderedIds({
     bank,
     storyItemOrder: opts.storyItemOrder,
@@ -462,22 +486,46 @@ export function planQuestionSlots(opts: {
   });
   const wordIds = orderedIds.filter((id) => {
     const item = bank.find((i) => i.id === id);
-    return item?.type === 'word';
+    return item?.type === 'word' || item?.type === 'verb';
   });
-  // 00 §7: grammar uses only today's patterns (priorityIds / core), never recycle.
+  // 00 §7: grammar uses today's core patterns + grammar_focus-mapped patterns
+  // (focus may recycle a pattern). Arbitrary recycle patterns stay out.
   const allPatterns = bank.filter(
     (i) => i.type === 'pattern' && !/\.ex\.\d+$/.test(i.id),
   );
+  const focusPatternIds = opts.grammarFocusId
+    ? resolveGrammarFocusPatternIds(
+        opts.grammarFocusId,
+        opts.coreItems ?? [],
+      ).filter((id) => allPatterns.some((p) => p.id === id))
+    : [];
+  const todayPatternIdSet = new Set<string>([
+    ...[...prioritySet].filter((id) =>
+      allPatterns.some((p) => p.id === id),
+    ),
+    ...focusPatternIds,
+  ]);
   const todayPatterns =
-    prioritySet.size > 0
-      ? allPatterns.filter((i) => prioritySet.has(i.id))
-      : allPatterns;
+    todayPatternIdSet.size > 0
+      ? allPatterns.filter((i) => todayPatternIdSet.has(i.id))
+      : prioritySet.size > 0
+        ? []
+        : allPatterns;
   const imageReady = opts.imageReady ?? (() => false);
   const preferBuild = new Set(opts.preferBuildSentenceFor ?? ['pattern.chamo_me']);
 
   const slots: PlannedSlot[] = [];
   const findImageIds = new Set(findImageTargetIds(bank));
+  // Full clamp budget — skill mins + coverage fill first; RW takes remaining seats.
   const addOpts = { maxTotal, bank, findImageIds };
+  const requireGrammar = todayPatterns.length > 0;
+  /** Scale skill mins down for short lessons (still spread skills). */
+  const skillMin = (skill: keyof typeof QUOTA): number => {
+    if (skill === 'grammar' && !requireGrammar) return 0;
+    if (skill === 'reading') return QUOTA.reading.min;
+    if (maxTotal >= 12) return QUOTA[skill].min;
+    return Math.max(1, Math.floor((QUOTA[skill].min * maxTotal) / 12));
+  };
 
   const grammarCountForPattern = (patternId: string): number =>
     slots.filter(
@@ -533,8 +581,12 @@ export function planQuestionSlots(opts: {
     }
   }
 
-  // Ensure grammar min with any remaining today-pattern .ex
-  while (countSkill(slots, 'grammar') < QUOTA.grammar.min && slots.length < maxTotal) {
+  // Ensure grammar min with any remaining today-pattern .ex (skip when no grammar page)
+  while (
+    requireGrammar &&
+    countSkill(slots, 'grammar') < skillMin('grammar') &&
+    slots.length < maxTotal
+  ) {
     const candidate = todayPatterns.find((p) => {
       const t = grammarExampleId(p.id, bank, phrasesPageIds, false);
       return canAdd(slots, 'fill_blank_choice', t, { ...addOpts, forCoverage: true });
@@ -627,7 +679,8 @@ export function planQuestionSlots(opts: {
   const fillerIds = [...mustCoverIds, ...wordIds];
 
   for (const { skill, types } of topUp) {
-    while (countSkill(slots, skill) < QUOTA[skill].min && slots.length < maxTotal) {
+    const min = skillMin(skill);
+    while (countSkill(slots, skill) < min && slots.length < maxTotal) {
       let added = false;
       for (const id of fillerIds) {
         const item = bank.find((i) => i.id === id);
@@ -653,7 +706,7 @@ export function planQuestionSlots(opts: {
     }
   }
 
-  // 4) Fill exactly to slot target (prefer words as multi-item distractor hosts)
+  // 4) Fill remaining seats up to clamp (no invented padding beyond bank items)
   while (slots.length < maxTotal) {
     let added = false;
     for (const id of [...wordIds, ...mustCoverIds]) {
@@ -732,18 +785,20 @@ export function planQuestionSlots(opts: {
     }
   }
 
-  if (slots.length !== maxTotal) {
-    warnings.push(`slot_count ${slots.length} ≠ target ${maxTotal}`);
+  if (slots.length < MIN_SLOTS) {
+    warnings.push(`slot_count ${slots.length} < min ${MIN_SLOTS}`);
   }
   for (const skill of ['listening', 'writing', 'speaking', 'grammar'] as const) {
-    if (countSkill(slots, skill) < QUOTA[skill].min) {
+    const min = skillMin(skill);
+    if (min < 1) continue;
+    if (countSkill(slots, skill) < min) {
       warnings.push(
-        `skill_quota ${skill} ${countSkill(slots, skill)} < ${QUOTA[skill].min}`,
+        `skill_quota ${skill} ${countSkill(slots, skill)} < ${min}`,
       );
     }
   }
 
-  // 6) Real-world extras (on top of core 12/14, capped at 15)
+  // 6) Real-world extras into remaining seats (within clamp total)
   const rwExtra = planRealWorldSlots({
     phrases: opts.rwPhrases ?? [],
     outlinePages,
@@ -823,17 +878,23 @@ export function validateDayQuestionQuotas(
   } else if (counts.total !== target) {
     fatals.push(`total ${counts.total} ≠ target ${target}`);
   }
-  if (counts.listening < QUOTA.listening.min) {
-    fatals.push(`listening ${counts.listening} < ${QUOTA.listening.min}`);
+  const total = counts.total;
+  const scaledMin = (base: number) =>
+    total >= 12 ? base : Math.max(1, Math.floor((base * total) / 12));
+  if (counts.listening < scaledMin(QUOTA.listening.min)) {
+    fatals.push(`listening ${counts.listening} < ${scaledMin(QUOTA.listening.min)}`);
   }
-  if (counts.writing < QUOTA.writing.min) {
-    fatals.push(`writing ${counts.writing} < ${QUOTA.writing.min}`);
+  if (counts.writing < scaledMin(QUOTA.writing.min)) {
+    fatals.push(`writing ${counts.writing} < ${scaledMin(QUOTA.writing.min)}`);
   }
-  if (counts.speaking < QUOTA.speaking.min) {
-    fatals.push(`speaking ${counts.speaking} < ${QUOTA.speaking.min}`);
+  if (counts.speaking < scaledMin(QUOTA.speaking.min)) {
+    fatals.push(`speaking ${counts.speaking} < ${scaledMin(QUOTA.speaking.min)}`);
   }
-  if (counts.grammar < QUOTA.grammar.min) {
-    fatals.push(`grammar ${counts.grammar} < ${QUOTA.grammar.min}`);
+  const hasCorePattern = coreItemIds.some(
+    (id) => id.startsWith('pattern.') && !/\.ex\.\d+$/.test(id),
+  );
+  if (hasCorePattern && counts.grammar < scaledMin(QUOTA.grammar.min)) {
+    fatals.push(`grammar ${counts.grammar} < ${scaledMin(QUOTA.grammar.min)}`);
   }
   if (counts.reading > QUOTA.reading.max) {
     warnings.push(`reading ${counts.reading} > ${QUOTA.reading.max}`);
@@ -869,7 +930,7 @@ export function validateDayQuestionQuotas(
     const item = bank.find((i) => i.id === id);
     if (isMustTestItem(item) || item?.type === 'pattern') {
       fatals.push(`untested ${item?.type ?? 'item'} ${id}`);
-    } else if (item?.type === 'word') {
+    } else if (item?.type === 'word' || item?.type === 'verb') {
       warnings.push(`untested word ${id}`);
     }
   }

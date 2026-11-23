@@ -55,6 +55,26 @@ export function maxWordsForPhase(phase: number): number {
   return 14;
 }
 
+/** Grammar page (pattern/compare) only when focus is set AND today has a new pattern. */
+export function dayEmitsGrammarPage(
+  grammarFocus: { id: string } | null | undefined,
+  coreItems: Array<{ kind: string }>,
+): boolean {
+  if (!grammarFocus) return false;
+  return coreItems.some((c) => c.kind === 'pattern');
+}
+
+const GRAMMAR_PRESETS = new Set(['pattern', 'compare']);
+
+/** Drop pattern/compare from page_plan when the day has no new grammar page. */
+export function filterPlannedPresets(
+  presets: string[],
+  emitGrammar: boolean,
+): string[] {
+  if (emitGrammar) return presets;
+  return presets.filter((p) => !GRAMMAR_PRESETS.has(p));
+}
+
 export function buildLessonBrief(
   dayPlan: DayPlan,
   opts?: { phase?: number; yesterday?: DayDigest | null },
@@ -70,7 +90,11 @@ export function buildLessonBrief(
   const core_items = [...coreDay.core_items];
   const recycle_ids = [...coreDay.recycle_ids];
   const no_new_items = isNoNewItemsDay(coreDay);
-  const planned_presets = (gen.page_plan ?? []).map((p) => p.preset);
+  const emitGrammar = dayEmitsGrammarPage(gf, core_items);
+  const planned_presets = filterPlannedPresets(
+    (gen.page_plan ?? []).map((p) => p.preset),
+    emitGrammar,
+  );
   const yesterday = opts?.yesterday ?? null;
   const yesterday_missing = dayPlan.day > 1 && yesterday == null;
   const warnings: string[] = [];
@@ -87,7 +111,7 @@ export function buildLessonBrief(
     rule_eg: dayPlan.rule_eg || '(none)',
     grammar_focus: gf
       ? `${gf.id} — ${gf.description}${gf.layout ? ` (layout: ${gf.layout})` : ''}`
-      : dayPlan.rule_eg || '(none)',
+      : 'none',
     max_words: maxWordsForPhase(ph),
     chat_character: gen.chat_character ?? 'ines',
     early_chunks_tl: [...(dayPlan.early_chunks_tl ?? [])],

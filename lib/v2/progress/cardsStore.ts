@@ -7,18 +7,12 @@ import {
   V2SessionModel,
 } from '@/lib/v2/mongo/models';
 import {
-  applyCardRating,
-  applyKnow,
-  applyStageEvidence,
   buildTodayQueue,
   createCardsSession,
   createItemState,
-  failKnowCheck,
-  isKnowCheckDue,
   localDateString,
   markCardRated,
   reopenCardsSession,
-  tryGraduate,
   type CardCandidate,
   type CardRating,
   type CardsSession,
@@ -67,6 +61,7 @@ function docToState(doc: Record<string, unknown>): ItemState {
       ? Number(doc.stage)
       : 1) as 1 | 2 | 3 | 4,
     stage_at: (doc.stage_at as string | null) ?? null,
+    stage_answer_id: (doc.stage_answer_id as string | null) ?? null,
     first_recognition_at: (doc.first_recognition_at as string | null) ?? null,
     first_recall_at: (doc.first_recall_at as string | null) ?? null,
   };
@@ -97,6 +92,7 @@ async function saveState(state: ItemState): Promise<void> {
         ...(state.opt_in_card ? { opt_in_card: true } : {}),
         stage: state.stage ?? 1,
         stage_at: state.stage_at ?? null,
+        stage_answer_id: state.stage_answer_id ?? null,
         first_recognition_at: state.first_recognition_at ?? null,
         first_recall_at: state.first_recall_at ?? null,
       },
@@ -467,10 +463,12 @@ export async function reviewCard(opts: {
     return { error: 'already_rated' };
   }
 
-  let stateDoc = await V2ItemStateModel()
+  // Item-state SRS + stages are written only by /api/v2/answers (card_review).
+  // This path updates deck/session progress and mirrors the card_rated event.
+  const stateDoc = await V2ItemStateModel()
     .findOne({ user_id: opts.user_id, item_id: opts.item_id })
     .lean();
-  let state = stateDoc
+  const state = stateDoc
     ? docToState(stateDoc as unknown as Record<string, unknown>)
     : createItemState({
         user_id: opts.user_id,
@@ -478,74 +476,6 @@ export async function reviewCard(opts: {
         introducedDay: 1,
       });
 
-  const beforeStage = state.stage;
-  if (opts.rating === 'know') {
-    state = applyKnow(state, now, local_date);
-  } else if (
-    state.card.masteryLevel === 'mastered' &&
-    isKnowCheckDue(state, now) &&
-    opts.rating === 'again'
-  ) {
-    state = failKnowCheck(state, now);
-    state = applyStageEvidence(state, {
-      kind: 'miss',
-      localDate: local_date,
-      fromCard: true,
-    });
-  } else if (
-    state.card.masteryLevel === 'mastered' &&
-    isKnowCheckDue(state, now) &&
-    (opts.rating === 'easy' || opts.rating === 'hard')
-  ) {
-    // passed know check — clear knowCheckDueAt, stay mastered
-    state = {
-      ...state,
-      card: {
-        ...applyCardRating(
-          { ...state.card, masteryLevel: 'learning' },
-          opts.rating,
-          now,
-        ),
-        masteryLevel: 'mastered',
-        knowCheckDueAt: null,
-      },
-    };
-  } else {
-    state = {
-      ...state,
-      card: applyCardRating(state.card, opts.rating, now),
-    };
-    state = tryGraduate(state);
-    if (opts.rating === 'again') {
-      state = applyStageEvidence(state, {
-        kind: 'miss',
-        localDate: local_date,
-        fromCard: true,
-      });
-    } else if (
-      !opts.hint &&
-      (opts.rating === 'hard' || opts.rating === 'easy')
-    ) {
-      state = applyStageEvidence(state, {
-        kind: 'recognition',
-        localDate: local_date,
-        correct: true,
-        firstTry: true,
-        fromCard: true,
-        hint: false,
-      });
-    }
-  }
-
-  await saveState(state);
-  if (state.stage !== beforeStage) {
-    try {
-      const { invalidateMeSummary } = await import('@/lib/v2/progress/summary');
-      invalidateMeSummary(opts.user_id);
-    } catch {
-      // best-effort
-    }
-  }
   session = markCardRated(session, opts.item_id, opts.rating, now);
 
   await V2SessionModel().updateOne(

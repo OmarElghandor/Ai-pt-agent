@@ -336,7 +336,7 @@ Full detail: `14-library.md`, content `14b-library-content.md`, design `14c-libr
 - A correct use of the item inside a lesson or practice counts as an implicit review.
 - **(changed 2026-10-28)** Buttons: **صعب** (= again: the card comes back later in this session and its interval resets) / **متوسط** (= hard) / **سهل** (= easy). The API values stay again | hard | easy | know; only the labels change. There is also a "عارفها" option that skips an item the learner already knows. After a hint, only صعب and متوسط are enabled.
 - **(new 2026-11-19) Essential items come first in review.**
-  - The daily queue fills its slots with due essential items first, then the rest (the 9 / 4 / 2 split stays, and inside each part essential items are picked first).
+  - The daily queue fills with due essential items first, then the rest. Ranking for **"كروت النهارده"** follows §5c / `16` §4 (essential first inside each share); the legacy 9 / 4 / 2 split no longer applies to the home daily loop.
   - Essential items get one extra early step on the ladder (1 → 2 → 4 → 7 → 14 → 21) and need correct use in **3** different situations to graduate (others need 2).
   - A wrong answer on an essential item puts it in "اللي بتغلط فيه" right away (others need 2 misses).
 - Graduation: for lesson / official items, interval ≥ 21 days **and** correct use in 2 different situations (`usedCorrectlyIn`). **(changed 2026-11-12)** Custom-only items (`source: custom`) graduate on interval ≥ 21 alone; the situations condition is dropped because lessons never use them. Official items keep the full rule even when reviewed from a custom deck. Graduation maps to `masteryLevel: mastered`, and graduated cards leave review.
@@ -352,7 +352,7 @@ Full detail: `14-library.md`, content `14b-library-content.md`, design `14c-libr
   - **(new 2026-11-13)** Deck detail has "ابدأ الديك من الأول": resets **this learner's** card SRS for that deck's items only (shared decks / other users untouched). Same control for situation, verb, weak, custom and official decks.
   - **(changed 2026-11-12)** Learners can create decks from a topic ("اعمل ديك"); full rules in §5b and `12-custom-decks.md`.
 
-## 5c. Practice engine (new, 2026-11-21)
+## 5c. Practice engine (new, 2026-11-21; footer tab + answer log 2026-11-22)
 
 Full detail: `16-practice-engine.md`. Where that doc disagrees with older §5 daily-deck notes or with `11` §5.1 about the home daily mix, **16 and this section win**.
 
@@ -360,9 +360,11 @@ Full detail: `16-practice-engine.md`. Where that doc disagrees with older §5 da
 - **Review first in priority and on بكرة suggestions.** Order suggested: cards warm-up → lesson → review. Review is never skipped in suggestions.
 - **Grammar and sentence building:** at least 40% of review time; `build_sentence` for every phrase; 4 checks per pattern; cumulative grammar from lessons before the window.
 - **Window:** the 3 most recent completed **core** lessons before the current day (story days skipped). Shared by cards and review; built once a day.
-- **Mastery stages** on `v2_item_state`: اتعرّفت → راجعتها → افتكرتها → اتحفظت (different local day per advance). Cards and micro checks / «لاقي الصورة» are recognition only. Only `/api/v2/answers` writes stages.
+- **Mastery stages** on `v2_item_state`: اتعرّفت → راجعتها → افتكرتها → اتحفظت (different local day per advance). Cards and micro checks / «لاقي الصورة» are recognition only. Only `/api/v2/answers` writes stages (and records the answer id on each move).
 - **Reuse-only screens:** every step uses the existing card, day-question, micro-check, or `FindImageStep` UI. No new screens.
-- **Writers unchanged:** answers → item state/stages; progress/events → card decks, review sessions, coverage plans, activity. Streak: finished cards **or** review round 1.
+- **(new 2026-11-22) Footer tab "مراجعة":** tab order **المسار · مراجعة · الكروت · اتكلّم · المكتبة**; first tap of the day builds and saves today's review session (idempotent); unfinished-review dot (no number); empty window shows the empty state and saves nothing. Home entry opens the same session.
+- **(new 2026-11-22) Answer log:** every attempt → `v2_answers` via `/api/v2/answers` only, linked to a stable question id; code-built questions live in shared `v2_practice_questions`; `v2_user_level` feeds the builder and admin (learners see counts only, never percentages).
+- **Writers:** answers → item state/stages **and** the answer log; progress/events → card decks, review sessions, coverage plans, activity. Streak: finished cards **or** review round 1.
 
 ## 5b. Custom decks (new, 2026-11-12; images 2026-11-13)
 
@@ -457,8 +459,8 @@ Full detail: `12-custom-decks.md`. Where that doc and this section disagree with
 Full detail: `11-profile-progress.md`. Where that doc and this section disagree with older progress notes, **that doc and this section win**.
 
 - **Two writers only.**
-  - `POST /api/v2/answers` writes `v2_item_state` and `v2_errors`. The classifier job (after answers) only adds a problem label on the error and updates `v2_weak_spots` / `v2_problem_requests`.
-  - `POST /api/v2/progress/events` is the only writer of lesson progress, card-deck progress and activity days (idempotent `event_id`). Conversation routes keep their own session docs and report results through these two routes.
+  - `POST /api/v2/answers` writes `v2_item_state`, `v2_errors`, and the answer log `v2_answers` (stages + linked question ids). The classifier job (after answers) only adds a problem label on the error and updates `v2_weak_spots` / `v2_problem_requests`.
+  - `POST /api/v2/progress/events` is the only writer of lesson progress, card-deck progress, review sessions, coverage plans and activity days (idempotent `event_id`). Conversation routes keep their own session docs and report results through these two routes.
 - **User id from the session only.** No progress route reads a user id from body, query or headers.
 - **One local date:** `v2_users.timezone` (browser at sign-in, default Europe/Lisbon) decides "today" for unlocks, the daily deck, activity and the streak.
 - **Lesson progress** (`v2_lesson_progress`, one doc per user × language × day): status `locked | scheduled | available | in_progress | completed`; `opens_on` for scheduled; steps, resume, scores, practice fields, minutes.
@@ -467,10 +469,10 @@ Full detail: `11-profile-progress.md`. Where that doc and this section disagree 
   - Content regeneration never breaks progress: completed stays completed; new items appear as new.
   - **Step ticks, next-step resume, and the home stations hero:** `13-step-progress.md` (where it disagrees with `11` on those points, **13 wins**).
 - **Problems and weak spots.** Words are reviewed on cards (item SRS). Problems (rules/patterns) are reviewed in "نواقصك". One mistake can feed both. Weak slots in the daily card deck come from item misses, not problems.
-- **Daily cards + review** (`16` / §5c): `v2_card_decks` (time-budgeted window mix) and `v2_review_sessions` (coverage-sized review); `v2_coverage_plans` per lesson. Ratings/answers go to answers (SRS + stages) and to progress events (sessions / coverage). No backlog.
+- **Daily cards + review** (`16` / §5c): `v2_card_decks` (time-budgeted window mix) and `v2_review_sessions` (coverage-sized review); `v2_coverage_plans` per lesson; answer log `v2_answers`; shared `v2_practice_questions`; per-user `v2_user_level`. Ratings/answers go to answers (SRS + stages + log) and to progress events (sessions / coverage). No backlog.
 - **Activity** (`v2_activity_days`) and **streak** on `v2_users`: a day counts for the streak after a real learning action (lesson step, **finished daily cards or review round 1**, نواقصك session, conversation with ≥5 learner turns, **or** a finished custom / official themed deck session with ≥10 cards rated — `12` / `11` §7.2 / `16`). **Two grace days** in any rolling 7-day window; the shown count is active days only. Calm Kit, no flame. No Langify progress import — every learner starts at day 1.
 - **Summary:** `GET /api/v2/me/summary` for home, path and settings (indexed reads only; optional 60s cache). No percentages, no backlog counts.
-- New user-keyed collections join the account-deletion list (A5): `v2_lesson_progress`, `v2_weak_spots`, `v2_card_decks`, `v2_activity_days`, `v2_problem_requests`, `v2_review_sessions`, `v2_coverage_plans`.
+- New user-keyed collections join the account-deletion list (A5): `v2_lesson_progress`, `v2_weak_spots`, `v2_card_decks`, `v2_activity_days`, `v2_problem_requests`, `v2_review_sessions`, `v2_coverage_plans`, `v2_answers`, `v2_user_level`. (`v2_practice_questions` is shared content and is not deleted with an account.)
 
 ## 9. Practice agent
 

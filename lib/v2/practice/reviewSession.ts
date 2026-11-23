@@ -38,6 +38,8 @@ export type BuildReviewSessionInput = {
   currentDay: number;
   todayCardIds?: Set<string>;
   recentQuestionIds?: Set<string>;
+  /** Flagged practice-question ids — never picked (16 §5.6). */
+  flaggedQuestionIds?: Set<string>;
   /** Open problem pattern ids → need ≥2 steps each. */
   openProblemPatternIds?: string[];
   /** Patterns taught before the window (for cumulative grammar). */
@@ -193,10 +195,14 @@ export function buildReviewSession(
       crafted: input.craftedByDay.get(c.lesson_day),
       todayCardIds: input.todayCardIds,
       recentQuestionIds: input.recentQuestionIds,
+      flaggedQuestionIds: input.flaggedQuestionIds,
       knownMistakeTiles: input.knownMistakeTiles,
     });
     if (!step) return false;
     if (step.payload.use === 'lesson') return false;
+    const qid = step.question_id ?? String(step.payload.question_id ?? step.payload.id ?? '');
+    if (qid && input.flaggedQuestionIds?.has(qid)) return false;
+    if (qid && input.recentQuestionIds?.has(qid)) return false;
     if (used + step.estimated_seconds > budgetSec && built.length > 0) {
       return false;
     }

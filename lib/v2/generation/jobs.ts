@@ -1607,7 +1607,7 @@ async function processLessonJobBody(
           await finishJobSkipped({
             ...baseFinish,
             reason: handoff.hide
-              ? 'real_world hidden (<3 phrases or story day)'
+              ? 'real_world hidden (0 phrases or story day)'
               : 'real_world skipped',
           });
         } else {
@@ -1957,6 +1957,36 @@ async function processLessonJobBody(
         console.info(
           `[v2-gen] day ${job.day} assemble done flagged=${result.flagged} jobs=${allJobs.length}`,
         );
+        // Queue missing images for items with authored prompts (never skip silently).
+        try {
+          const { enqueueLessonImages } = await import('@/lib/v2/images');
+          const { storySceneKey } = await import('@/lib/v2/images/keys');
+          const { getAuthoredItemImage, getAuthoredStoryImage } = await import(
+            '@/lib/v2/generation/lesson/coreItems'
+          );
+          const authoredKeys: string[] = [];
+          for (const it of result.pack.items ?? []) {
+            if (getAuthoredItemImage(job.day, it.id)) authoredKeys.push(it.id);
+          }
+          if (getAuthoredStoryImage(job.day)) {
+            authoredKeys.push(storySceneKey(job.day, job.target_lang));
+          }
+          if (authoredKeys.length) {
+            const imgQ = await enqueueLessonImages({
+              day: job.day,
+              targetLang: job.target_lang,
+              keys: authoredKeys,
+            });
+            console.info(
+              `[v2-gen] day ${job.day} authored-image enqueue keys=${imgQ.keys.length} missing=${imgQ.missingCount}`,
+            );
+          }
+        } catch (err) {
+          console.warn(
+            `[v2-gen] day ${job.day} authored-image enqueue failed:`,
+            err instanceof Error ? err.message : err,
+          );
+        }
         await finishJobSuccess({
           jobId: job.id,
           provider: 'anthropic',

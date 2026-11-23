@@ -226,46 +226,50 @@ export function validateMicroAndSpeak(opts: {
     });
   }
 
-  const correctCount = opts.micro.tool.notice.options.filter((o) => o.correct).length;
-  if (correctCount !== 1) {
-    issues.push({
-      path: 'micro.tool.notice.options',
-      rule: 'notice_one_correct',
-      message: `notice needs exactly one correct option, got ${correctCount}`,
-      severity: 'error',
-    });
-  }
-
-  for (const [ei, id] of opts.micro.tool.examples.entries()) {
-    if (!itemIds.has(id)) {
+  if (opts.micro.tool) {
+    const correctCount = opts.micro.tool.notice.options.filter(
+      (o) => o.correct,
+    ).length;
+    if (correctCount !== 1) {
       issues.push({
-        path: `micro.tool.examples[${ei}]`,
-        rule: 'bad_ref',
-        message: `unknown item ${id}`,
+        path: 'micro.tool.notice.options',
+        rule: 'notice_one_correct',
+        message: `notice needs exactly one correct option, got ${correctCount}`,
         severity: 'error',
       });
     }
-  }
 
-  for (const [di, drill] of opts.micro.tool.drills.entries()) {
-    if (typeof drill === 'string') {
-      if (!questionIds.has(drill)) {
+    for (const [ei, id] of opts.micro.tool.examples.entries()) {
+      if (!itemIds.has(id)) {
         issues.push({
-          path: `micro.tool.drills[${di}]`,
+          path: `micro.tool.examples[${ei}]`,
           rule: 'bad_ref',
-          message: `drill ${drill} not in questions`,
+          message: `unknown item ${id}`,
           severity: 'error',
         });
       }
-      continue;
     }
-    if (!drill || typeof drill !== 'object') {
-      issues.push({
-        path: `micro.tool.drills[${di}]`,
-        rule: 'bad_drill',
-        message: 'drill must be a quiz object or question id',
-        severity: 'error',
-      });
+
+    for (const [di, drill] of opts.micro.tool.drills.entries()) {
+      if (typeof drill === 'string') {
+        if (!questionIds.has(drill)) {
+          issues.push({
+            path: `micro.tool.drills[${di}]`,
+            rule: 'bad_ref',
+            message: `drill ${drill} not in questions`,
+            severity: 'error',
+          });
+        }
+        continue;
+      }
+      if (!drill || typeof drill !== 'object') {
+        issues.push({
+          path: `micro.tool.drills[${di}]`,
+          rule: 'bad_drill',
+          message: 'drill must be a quiz object or question id',
+          severity: 'error',
+        });
+      }
     }
   }
 

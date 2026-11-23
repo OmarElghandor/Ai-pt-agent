@@ -953,18 +953,29 @@ export async function runQuestionsJob(opts: {
   const coreItemIds =
     opts.coreItemIds ?? opts.brief.core_items.map((c) => c.id);
   const rw = opts.realWorld;
-  const rwHide = !rw || rw.hide || rw.phrases.length < 3;
+  const rwHide = !rw || rw.hide || rw.phrases.length < 1;
   const rwPhrases = rwHide ? [] : rw!.phrases.map((p) => ({ id: p.id }));
   const existingIds = new Set(opts.items.map((i) => i.id));
   const rwItems = rwHide
     ? []
     : realWorldPhrasesToItems(rw!.phrases).filter((i) => !existingIds.has(i.id));
   const bank = [...opts.items, ...rwItems];
+  const grammarFocusRaw =
+    opts.brief.grammar_focus.match(/^([^\s—]+)/)?.[1] ?? undefined;
+  const grammarFocusId =
+    !grammarFocusRaw || grammarFocusRaw === 'none'
+      ? undefined
+      : grammarFocusRaw;
   const plan = planQuestionSlots({
     outline: opts.outline,
     items: bank,
     storyItemOrder: opts.storyItemOrder,
     priorityIds: coreItemIds,
+    grammarFocusId:
+      grammarFocusId && grammarFocusId !== '(none)'
+        ? grammarFocusId
+        : undefined,
+    coreItems: opts.brief.core_items,
     preferBuildSentenceFor: ['pattern.chamo_me'],
     rwPhrases,
     rwHide,

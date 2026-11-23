@@ -33,6 +33,8 @@ type ReviewRes = {
   rounds_done: number;
   status: string;
   current_day: number;
+  empty?: boolean;
+  resume?: { round: number; step: number };
 };
 
 function stepToQuestion(step: ReviewStep, index: number): Question | null {
@@ -93,7 +95,12 @@ export function DailyReviewSession({
       .then((json) => {
         if (!cancelled) {
           setData(json);
-          setRound(Math.max(1, (json.rounds_done ?? 0) + 1));
+          setRound(
+            Math.max(
+              1,
+              json.resume?.round ?? (json.rounds_done ?? 0) + 1,
+            ),
+          );
         }
       })
       .catch((e: unknown) => {
@@ -123,7 +130,7 @@ export function DailyReviewSession({
         <p className="font-[family-name:var(--font-v2-arabic)] text-v2-ink">
           مش قادرين نحمّل المراجعة دلوقتي.
         </p>
-        <Link href="/cards" className="text-v2-primary">
+        <Link href="/path" className="text-v2-primary">
           رجوع
         </Link>
       </main>
@@ -132,6 +139,26 @@ export function DailyReviewSession({
 
   if (!data) {
     return <ScreenLoading label="بنجهّز مراجعة النهارده…" />;
+  }
+
+  if (data.empty) {
+    return (
+      <main className="flex flex-1 flex-col items-stretch justify-center gap-4 p-6">
+        <p className="font-[family-name:var(--font-v2-arabic)] text-lg text-v2-ink">
+          خلّص أول درس ونبدأ نراجع سوا
+        </p>
+        <Link
+          href={
+            data.current_day > 0
+              ? `/day/${data.current_day}`
+              : '/path'
+          }
+          className="rounded-full bg-v2-primary px-5 py-3 text-center font-[family-name:var(--font-v2-arabic)] text-v2-on-primary"
+        >
+          روح للدرس
+        </Link>
+      </main>
+    );
   }
 
   if (ended || data.status === 'done') {
@@ -156,7 +183,7 @@ export function DailyReviewSession({
         }}
         titleOverride="خلصت مراجعة النهارده"
         extraLines={lines}
-        onDoneHref="/cards"
+        onDoneHref="/path"
       />
     );
   }
@@ -167,7 +194,7 @@ export function DailyReviewSession({
         <p className="font-[family-name:var(--font-v2-arabic)]">
           مفيش جولة {toArDigits(round)} جاهزة.
         </p>
-        <Link href="/cards">رجوع للكروت</Link>
+        <Link href="/path">رجوع للمسار</Link>
       </main>
     );
   }

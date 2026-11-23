@@ -60,7 +60,7 @@ function heroCta(steps: CurrentDayStepsProp | null, bakra: boolean): {
   disabled: boolean;
 } {
   if (bakra) {
-    return { label: 'بيفتح بكرة', href: null, disabled: true };
+    return { label: 'مراجعة النهارده', href: '/review', disabled: false };
   }
   if (!steps) {
     return { label: 'يلا نبدأ', href: null, disabled: true };
@@ -109,6 +109,7 @@ export function PathRoadmap({
   deckTotal = null,
   currentDaySteps = null,
   suggestion = null,
+  masteryLine = null,
 }: {
   week: number;
   days: PathRoadDay[];
@@ -118,6 +119,7 @@ export function PathRoadmap({
   deckTotal?: number | null;
   currentDaySteps?: CurrentDayStepsProp | null;
   suggestion?: { kind: string; text: string } | null;
+  masteryLine?: string | null;
 }) {
   const nodes = useMemo(() => {
     let markedCurrent = false;
@@ -323,7 +325,28 @@ export function PathRoadmap({
               الكل
             </Link>
           </div>
+          {masteryLine ? (
+            <p className="mb-2 rounded-v2-row bg-v2-primary-tint px-3 py-2 font-[family-name:var(--font-v2-arabic)] text-xs font-semibold text-v2-primary">
+              {masteryLine}
+            </p>
+          ) : null}
           <div className="flex gap-2.5 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <Link
+              href="/review"
+              className="flex shrink-0 items-center gap-2 rounded-xl border border-v2-line/40 bg-v2-primary-tint px-3.5 py-2 transition-colors hover:bg-v2-paper-deep"
+            >
+              <span className="flex size-7 items-center justify-center rounded-lg bg-v2-card text-sm shadow-sm">
+                ↻
+              </span>
+              <div>
+                <p className="font-[family-name:var(--font-v2-arabic)] text-xs font-bold text-v2-ink">
+                  مراجعة النهارده
+                </p>
+                <p className="font-[family-name:var(--font-v2-arabic)] text-[10px] text-v2-ink-muted">
+                  أولوية النهارده
+                </p>
+              </div>
+            </Link>
             <Link
               href="/cards"
               className="flex shrink-0 items-center gap-2 rounded-xl border border-v2-line/40 bg-v2-primary-tint px-3.5 py-2 transition-colors hover:bg-v2-paper-deep"

@@ -219,6 +219,11 @@ export function autoFixStoryLines(
     coreItems?: CoreItem[];
     /** Extra ids treated as known (core ids not yet in the bank). */
     knownIds?: Set<string>;
+    /**
+     * When set, line.ids may only keep these ids (today's core + real_world).
+     * Other-day words stay as plain text (with translation via enrich).
+     */
+    highlightIds?: Set<string>;
   },
 ): { lines: StoryLine[]; fixes: TierIssue[] } {
   const fixes: TierIssue[] = [];
@@ -226,6 +231,7 @@ export function autoFixStoryLines(
   const coreItems = opts?.coreItems ?? [];
   const patternCores = coreItems.filter((c) => c.kind === 'pattern');
   const knownIds = opts?.knownIds ?? new Set<string>();
+  const highlightIds = opts?.highlightIds;
 
   const normalized: StoryLine[] = [];
   for (const [i, line] of lines.entries()) {
@@ -256,6 +262,21 @@ export function autoFixStoryLines(
 
     for (const id of line.ids ?? []) {
       const parent = parentPatternId(id);
+      const highlightId = parent ?? id;
+      if (
+        highlightIds &&
+        !highlightIds.has(highlightId) &&
+        !highlightIds.has(id)
+      ) {
+        fixes.push(
+          fix(
+            `lines[${i}].ids`,
+            'non_today_highlight',
+            `dropped non-today ${id} (plain text only)`,
+          ),
+        );
+        continue;
+      }
       if (parent) {
         if (!seen.has(parent)) {
           keptIds.push(parent);
@@ -785,7 +806,7 @@ export function checkStory(ctx: StoryCheckContext): TierIssue[] {
     }
   }
 
-  // AR: code owns it — missing / mismatch are warnings
+  // AR: code owns it — missing / mismatch / TL-fragment are warnings (enrich rebuilds)
   for (const [i, line] of lines.entries()) {
     const tlSentences = splitSentences(line.tl);
     const ar = (line.ar ?? '').trim();
@@ -798,6 +819,31 @@ export function checkStory(ctx: StoryCheckContext): TierIssue[] {
         ),
       );
       continue;
+    }
+    // Reject AR that is a Latin prefix/fragment of TL (e.g. "Bem!" for "Bem-vindo!")
+    const arNorm = ar
+      .normalize('NFD')
+      .replace(/\p{M}/gu, '')
+      .toLowerCase()
+      .replace(/[!.?,;:…¡¿«»"'\s]+/g, '');
+    const tlNorm = line.tl
+      .normalize('NFD')
+      .replace(/\p{M}/gu, '')
+      .toLowerCase()
+      .replace(/[!.?,;:…¡¿«»"'\s]+/g, '');
+    if (
+      /[A-Za-zÀ-ÿ]/.test(ar) &&
+      arNorm &&
+      tlNorm.startsWith(arNorm) &&
+      arNorm.length < tlNorm.length
+    ) {
+      issues.push(
+        warning(
+          `lines[${i}].ar`,
+          'ar_tl_fragment',
+          `line ${i}: ar "${ar}" is a fragment/prefix of tl "${line.tl}"`,
+        ),
+      );
     }
     const arSentences = splitSentences(ar);
     if (arSentences.length < tlSentences.length) {

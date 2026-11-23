@@ -174,6 +174,34 @@ const FormItemSchema = z.object({
   introduced_on_page: IntroducedOnPage,
 });
 
+/** Lemma card for core kind=verb — not a conjugated form id. */
+const VerbLemmaId = z
+  .string()
+  .min(1)
+  .refine((id) => /^verb\.[a-z_]+$/i.test(id) && !id.includes(':'), {
+    message: 'id must be verb.<lemma> (no tense:person)',
+  });
+
+const VerbItemSchema = z.object({
+  type: z.literal('verb'),
+  id: VerbLemmaId,
+  tl: z.string(),
+  lemma: z.string().optional(),
+  ar: z.string(),
+  ar_f: z.string().optional(),
+  say: z.string().optional(),
+  ipa: z.string().optional(),
+  /** Forms the day needs (from core forms_tl). */
+  forms_tl: z.array(z.string().min(1)).optional(),
+  media: MediaSchema.optional(),
+  image: ItemImageLinkSchema.optional(),
+  example: z.string().optional(),
+  example_ar: z.string().optional(),
+  extra: ExtraFlag,
+  has_card: HasCardFlag,
+  introduced_on_page: IntroducedOnPage,
+});
+
 export const PatternSlotKindSchema = z.enum([
   'word',
   'word_plural',
@@ -232,6 +260,7 @@ export const ItemSchema = z.discriminatedUnion('type', [
   SentenceItemSchema,
   FormItemSchema,
   PatternItemSchema,
+  VerbItemSchema,
 ]);
 
 export type Item = z.infer<typeof ItemSchema>;

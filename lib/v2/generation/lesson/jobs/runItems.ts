@@ -38,7 +38,6 @@ import {
   slotsForKind,
 } from '../patternTemplates';
 import { ensureHeardReplies } from '../heardReplies';
-import { applyEgSayToItems } from '../egSay';
 import { normalizeWordMeanings } from '../normalizeAr';
 import { callJobTool } from './call';
 
@@ -48,7 +47,11 @@ function applyHasCardFlags(items: Item[], recycleIds: Set<string>): Item[] {
     if (shouldForceNoCard(item, { recycleIds })) {
       return { ...item, has_card: false } as Item;
     }
-    if (item.type === 'word' || item.type === 'phrase') {
+    if (
+      item.type === 'word' ||
+      item.type === 'phrase' ||
+      item.type === 'verb'
+    ) {
       const existing = (item as { has_card?: boolean }).has_card;
       if (existing === false) return item;
       return { ...item, has_card: true } as Item;
@@ -195,17 +198,16 @@ function applyPhraseRolesFromCore(items: Item[], core: CoreItem[]): Item[] {
   });
 }
 
-/** Code-injected verb lemma card (exact core id). Never copy eg into ar. */
+/** Code-injected verb lemma card (exact core id). ar from core eg; keep forms_tl. */
 function verbLemmaStub(core: CoreItem): Item {
   const lemma = core.tl.split(/\s+/)[0] ?? core.tl;
   return {
-    type: 'word',
+    type: 'verb',
     id: core.id,
     tl: core.tl,
     lemma,
-    gender: 'n',
-    ar: '…',
-    pos: 'verb',
+    ar: (core.eg ?? '').trim() || lemma,
+    ...(core.forms_tl?.length ? { forms_tl: [...core.forms_tl] } : {}),
   };
 }
 
@@ -918,7 +920,7 @@ ${knownLines}
     });
     items = heard.items;
     items = coerceBank(applySayToItems(items) as Item[]);
-    items = applyEgSayToItems(items);
+    // Leave context_eg as generated — do not replace TL with say inside it.
     normalizeWordMeanings(items);
     items = applyHasCardFlags(items, new Set(opts.brief.recycle_ids));
     return items;

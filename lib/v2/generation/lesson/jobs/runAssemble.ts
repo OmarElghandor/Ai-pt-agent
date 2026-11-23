@@ -152,7 +152,7 @@ export function applyRealWorldToAssemble(opts: {
     (p) => p.preset === 'vocab_flow',
   );
   const hide =
-    !opts.handoff || opts.handoff.hide || opts.handoff.phrases.length < 3;
+    !opts.handoff || opts.handoff.hide || opts.handoff.phrases.length < 1;
 
   // New lessons: weave into vocab_flow (no separate real_world page).
   if (rwIdx < 0 && vocabIdx >= 0) {
@@ -160,7 +160,7 @@ export function applyRealWorldToAssemble(opts: {
       warnings.push({
         path: 'pages',
         rule: 'real_world_hidden',
-        message: 'real_world phrases skipped (<3 or job skipped)',
+        message: 'real_world phrases skipped (0 phrases or job skipped)',
         severity: 'warning',
       });
       return {
@@ -220,7 +220,7 @@ export function applyRealWorldToAssemble(opts: {
     warnings.push({
       path: 'pages',
       rule: 'real_world_hidden',
-      message: 'real_world page hidden (<3 phrases or job skipped)',
+        message: 'real_world page hidden (0 phrases or job skipped)',
       severity: 'warning',
     });
     return {
@@ -521,12 +521,23 @@ export function runAssembleJob(opts: {
       );
     }
     if (page.preset === 'vocab_flow') {
-      const vocabIds = (entry?.introduces ?? []).filter(
-        (id) =>
+      const recycleSet = new Set(opts.recycleIds ?? []);
+      const todayCoreSet = new Set(
+        (opts.coreItems ?? [])
+          .filter((c) => c.kind !== 'pattern')
+          .map((c) => c.id),
+      );
+      const isNewCard = (id: string) => {
+        if (recycleSet.has(id) || id.startsWith('pattern.')) return false;
+        if (id.startsWith('phrase.rw.')) return true;
+        if (todayCoreSet.size > 0) return todayCoreSet.has(id);
+        return (
           id.startsWith('word.') ||
           id.startsWith('phrase.') ||
-          (/^verb\.[a-z_]+$/i.test(id) && !id.includes(':')),
-      );
+          (/^verb\.[a-z_]+$/i.test(id) && !id.includes(':'))
+        );
+      };
+      const vocabIds = (entry?.introduces ?? []).filter(isNewCard);
       const rwIds = rwApplied.items
         .filter((i) => Boolean((i as { real_world?: boolean }).real_world))
         .map((i) => i.id);
@@ -535,17 +546,10 @@ export function runAssembleJob(opts: {
           ? (b.items as string[])
           : [],
       );
-      const base = vocabIds.length ? vocabIds : wordIds;
+      const base = vocabIds.length ? vocabIds : wordIds.filter(isNewCard);
       const candidateIds = [
         ...new Set([...existingCardIds, ...base, ...rwIds]),
-      ].filter((id) => {
-        if (base.includes(id) || rwIds.includes(id)) return true;
-        return Boolean(
-          (rwApplied.items.find((i) => i.id === id) as
-            | { real_world?: boolean }
-            | undefined)?.real_world,
-        );
-      });
+      ].filter(isNewCard);
       // Prefer card order from weave (already flow-resolved); else compute.
       const merged =
         opts.flow?.length || existingCardIds.some((id) => rwIds.includes(id))
@@ -564,7 +568,7 @@ export function runAssembleJob(opts: {
                     (i as { real_world?: boolean }).real_world,
                   ),
                 })),
-              })
+              }).filter(isNewCard)
           : orderFlowContent({
               candidateIds,
               items: rwApplied.items.map((i) => ({
@@ -576,11 +580,15 @@ export function runAssembleJob(opts: {
                   (i as { real_world?: boolean }).real_world,
                 ),
               })),
-            });
+            }).filter(isNewCard);
       page = forceVocabFlowCards(
         page,
         merged.length ? merged : base.length ? base : candidateIds,
       );
+      // Final filter: never leave recycle ids on cards or introduces.
+      if (entry) {
+        entry.introduces = (entry.introduces ?? []).filter(isNewCard);
+      }
     }
     if (page.preset === 'pattern') {
       const patternId = patternIdForFormula(entry?.introduces ?? []);

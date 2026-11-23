@@ -2,6 +2,7 @@ import type { Item } from '@/lib/v2/content/items';
 import type { LessonPack } from '@/lib/v2/content/lesson';
 import type { StoryDoc } from '@/lib/v2/content/story';
 import type { ImageSpec } from '@/lib/v2/generation/images/templates';
+import { getAuthoredItemImage } from '@/lib/v2/generation/lesson/coreItems';
 import type { ImageAspect } from './cloudinaryUrl';
 import { storySceneKey } from './keys';
 
@@ -46,12 +47,15 @@ export function buildImageManifest(opts: {
   };
 
   for (const item of opts.pack.items ?? []) {
-    if (item.has_card === false) continue;
-    if (item.type === 'word') {
+    const authored = getAuthoredItemImage(opts.day, item.id);
+    // Always queue items with an authored image prompt — never skip silently.
+    if (item.has_card === false && !authored) continue;
+    if (item.type === 'word' || item.type === 'verb') {
       push({
         key: item.id,
-        aspect: '1:1',
-        expectedType: wordExpectedType(item),
+        aspect: authored?.ratio === '4:3' ? '4:3' : '1:1',
+        expectedType:
+          item.type === 'verb' ? 'action' : wordExpectedType(item),
         itemId: item.id,
         itemType: item.type,
         source: 'word',
@@ -77,6 +81,15 @@ export function buildImageManifest(opts: {
           source: 'word',
         });
       }
+    } else if (authored) {
+      push({
+        key: item.id,
+        aspect: authored.ratio === '16:9' ? '16:9' : authored.ratio === '4:3' ? '4:3' : '1:1',
+        expectedType: 'scene',
+        itemId: item.id,
+        itemType: item.type,
+        source: 'phrase',
+      });
     }
   }
 

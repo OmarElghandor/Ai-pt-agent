@@ -88,7 +88,7 @@ export function formatCompactDayHeader(dayPlan: DayPlan, phase?: number): string
     (dayPlan.early_chunks_tl ?? []).join(' · ') || '(none)';
   const grammar = gf
     ? `${gf.id} — ${gf.description}${gf.layout ? ` (layout: ${gf.layout})` : ''}`
-    : dayPlan.rule_eg || '(none)';
+    : 'none';
 
   return `DAY
 day: ${dayPlan.day}
@@ -196,7 +196,7 @@ rule_eg: ${dayPlan.rule_eg || '(none)'}
 extra_units_tl: ${extraUnits}
 early_chunks_tl: ${earlyChunks}
 can_do: ${canDo}
-grammar_focus: ${gf ? `${gf.id} — ${gf.description}${gf.layout ? ` (layout: ${gf.layout})` : ''}` : dayPlan.rule_eg}
+grammar_focus: ${gf ? `${gf.id} — ${gf.description}${gf.layout ? ` (layout: ${gf.layout})` : ''}` : 'none'}
 chat_character: ${gen.chat_character ?? 'ines'}
 dictionary_category: ${gen.dictionary_category ?? 'general'}
 ${microLine}

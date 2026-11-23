@@ -39,6 +39,7 @@ export default async function PathPage() {
   let suggestion = null as Awaited<
     ReturnType<typeof buildMeSummary>
   >['suggestion'];
+  let masteryLine: string | null = null;
 
   if (user && mongoConfigured()) {
     await connectMongo();
@@ -53,6 +54,7 @@ export default async function PathPage() {
       deckTotal = summary.deck.total;
       currentDaySteps = summary.current_day_steps;
       suggestion = summary.suggestion;
+      masteryLine = summary.mastery.line_eg;
     } catch {
       /* path stays usable without deck counts */
     }
@@ -110,6 +112,7 @@ export default async function PathPage() {
         deckTotal={deckTotal}
         currentDaySteps={currentDaySteps}
         suggestion={suggestion}
+        masteryLine={masteryLine}
       />
     </main>
   );

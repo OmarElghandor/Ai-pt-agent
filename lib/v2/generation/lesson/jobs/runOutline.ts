@@ -82,6 +82,8 @@ function orderPagesByStory(
   return [...pages].sort((a, b) => score(a) - score(b));
 }
 
+const GRAMMAR_PRESETS = new Set(['pattern', 'compare']);
+
 /** Code-owned outline fixes: recycle strip, unique presets, story pointer, early_chunks. */
 function postProcessOutline(
   outline: OutlineResult,
@@ -93,10 +95,15 @@ function postProcessOutline(
     story?: StoryHandoff;
     /** Authored core-items flow (ids + rw:N); rw refs stripped for outline. */
     authoredFlow?: string[] | null;
+    /** Today's new core item ids (cards/introduces = these only, never recycle). */
+    todayCoreIds?: string[];
+    /** Emit pattern/compare only when true. */
+    emitGrammar?: boolean;
   },
 ): { outline: OutlineResult; fixes: TierIssue[] } {
   const fixes: TierIssue[] = [];
   const recycle = new Set(opts.recycleIds);
+  const todayCore = new Set(opts.todayCoreIds ?? []);
   let pages = outline.pages.map((p) => {
     const kept = (p.introduces ?? []).filter((id) => {
       if (recycle.has(id)) {
@@ -113,6 +120,23 @@ function postProcessOutline(
     });
     return { ...p, introduces: kept };
   });
+
+  // Drop grammar pages when the day has no new pattern + grammar_focus.
+  if (opts.emitGrammar === false) {
+    pages = pages.filter((p) => {
+      if (GRAMMAR_PRESETS.has(p.preset)) {
+        fixes.push(
+          fix(
+            `pages[${p.index}]`,
+            'grammar_page_skipped',
+            `dropped ${p.preset} (no new grammar_focus/pattern)`,
+          ),
+        );
+        return false;
+      }
+      return true;
+    });
+  }
 
   // Drop model-emitted story pages — code owns the intro story pointer.
   pages = pages.filter((p) => {
@@ -327,32 +351,57 @@ function postProcessOutline(
   {
     const vf = pages.find((p) => p.preset === 'vocab_flow');
     if (vf) {
+      const isTodayCard = (id: string) => {
+        if (recycle.has(id) || id.startsWith('pattern.')) return false;
+        if (todayCore.size > 0) return todayCore.has(id);
+        // Fallback: non-recycle word/phrase/verb from bank
+        return (
+          id.startsWith('word.') ||
+          id.startsWith('phrase.') ||
+          (/^verb\.[a-z_]+$/i.test(id) && !id.includes(':'))
+        );
+      };
       const wordIds = opts.items
-        .filter((it) => it.type === 'word')
+        .filter(
+          (it) =>
+            (it.type === 'word' || it.type === 'verb') && isTodayCard(it.id),
+        )
         .map((it) => it.id);
       const phraseIds = opts.items
-        .filter((it) => it.type === 'phrase' || it.type === 'sentence')
+        .filter(
+          (it) =>
+            (it.type === 'phrase' || it.type === 'sentence') &&
+            isTodayCard(it.id),
+        )
         .map((it) => it.id);
       const candidateIds = [
-        ...new Set([...wordIds, ...phraseIds, ...vf.introduces]),
-      ].filter((id) => !id.startsWith('pattern.'));
+        ...new Set([
+          ...wordIds,
+          ...phraseIds,
+          ...vf.introduces.filter(isTodayCard),
+        ]),
+      ];
       // Authored flow may reference rw:N — outline only has core items; keep
       // core ids in flow order and drop rw refs until assemble weaves them.
       const flowCore = opts.authoredFlow?.length
-        ? opts.authoredFlow.filter((e) => !/^rw:\d+$/.test(e))
+        ? opts.authoredFlow.filter(
+            (e) => !/^rw:\d+$/.test(e) && !recycle.has(e),
+          )
         : undefined;
       const ordered = orderFlowContent({
         flow: flowCore,
         candidateIds,
-        items: opts.items.map((it) => ({
-          id: it.id,
-          type: it.type,
-          tl: it.tl,
-          uses: (it as { uses?: string[] }).uses,
-          real_world: Boolean((it as { real_world?: boolean }).real_world),
-        })),
+        items: opts.items
+          .filter((it) => isTodayCard(it.id))
+          .map((it) => ({
+            id: it.id,
+            type: it.type,
+            tl: it.tl,
+            uses: (it as { uses?: string[] }).uses,
+            real_world: Boolean((it as { real_world?: boolean }).real_world),
+          })),
         itemFirstIndex: opts.story?.item_first_index,
-      });
+      }).filter(isTodayCard);
       if (
         ordered.length !== vf.introduces.length ||
         ordered.some((id, i) => id !== vf.introduces[i])
@@ -362,14 +411,48 @@ function postProcessOutline(
             `pages[${vf.index}].introduces`,
             'vocab_flow_order',
             opts.authoredFlow?.length
-              ? `set ${ordered.length} ids from authored flow`
-              : `set ${ordered.length} word+phrase ids (uses order)`,
+              ? `set ${ordered.length} ids from authored flow (new only)`
+              : `set ${ordered.length} word+phrase ids (new only)`,
           ),
         );
       }
       vf.introduces = ordered;
     }
   }
+
+  // Final recycle strip after merge (merge/order can re-add recycle ids).
+  pages = pages.map((p) => {
+    const before = p.introduces ?? [];
+    const kept = before.filter((id) => {
+      if (recycle.has(id)) {
+        fixes.push(
+          fix(
+            `pages[${p.index}].introduces`,
+            'recycle_intro_final',
+            `removed recycle ${id}`,
+          ),
+        );
+        return false;
+      }
+      if (
+        todayCore.size > 0 &&
+        p.preset === 'vocab_flow' &&
+        !todayCore.has(id) &&
+        !id.startsWith('phrase.rw.')
+      ) {
+        fixes.push(
+          fix(
+            `pages[${p.index}].introduces`,
+            'non_today_intro',
+            `removed non-today ${id}`,
+          ),
+        );
+        return false;
+      }
+      return true;
+    });
+    return { ...p, introduces: kept };
+  });
 
   // Dictionary introduces = every word.* from today's bank (never a subset) — legacy packs
   {
@@ -514,10 +597,14 @@ export async function runOutlineJob(opts: {
     opts.brief.planned_presets.length > 0
       ? opts.brief.planned_presets
       : (gen.page_plan ?? []).map((p) => p.preset);
+  // Prefer filtered planned_presets (drops pattern/compare when grammar_focus is none).
+  const allowed = new Set(presets);
+  const pagePlanFromGen = (gen.page_plan ?? [])
+    .filter((p) => allowed.has(p.preset))
+    .map((p, i) => `${i + 1}. ${p.preset}${p.focus ? ` — ${p.focus}` : ''}`)
+    .join('\n');
   const pagePlan =
-    (gen.page_plan ?? [])
-      .map((p, i) => `${i + 1}. ${p.preset}${p.focus ? ` — ${p.focus}` : ''}`)
-      .join('\n') ||
+    pagePlanFromGen ||
     presets.map((p, i) => `${i + 1}. ${p}`).join('\n') ||
     '(choose presets that fit)';
 
@@ -597,6 +684,9 @@ ${itemLines || '(none)'}
       })) as OutlineResult['items'],
       pages,
     };
+    const emitGrammar =
+      opts.brief.grammar_focus !== 'none' &&
+      opts.brief.core_items.some((c) => c.kind === 'pattern');
     const processed = postProcessOutline(rawOutline, {
       recycleIds: opts.brief.recycle_ids,
       earlyChunks: opts.brief.early_chunks_tl,
@@ -604,6 +694,10 @@ ${itemLines || '(none)'}
       items: opts.items,
       story: opts.story,
       authoredFlow: opts.brief.authored_flow,
+      todayCoreIds: opts.brief.core_items
+        .filter((c) => c.kind !== 'pattern')
+        .map((c) => c.id),
+      emitGrammar,
     });
     fixes.push(...processed.fixes);
     const outline = processed.outline;

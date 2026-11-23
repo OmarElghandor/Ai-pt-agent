@@ -1,14 +1,21 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'node:test';
+import { afterEach, describe, it } from 'node:test';
 import {
+  buildPracticeWindow,
   buildReviewSession,
   buildReviewStep,
   buildSentenceTiles,
   canBuildFindImageBlock,
   grammarTimeShare,
+  persistBuiltStep,
   type BankItem,
   type CoveragePlan,
 } from '../lib/v2/practice';
+import {
+  clearMemoryPracticeQuestions,
+  memoryPracticeQuestionStore,
+  setPracticeQuestionStore,
+} from '../lib/v2/review/questions';
 
 const items: BankItem[] = [
   {
@@ -88,6 +95,58 @@ describe('v2 practice · step builders (16 §5.6)', () => {
     assert.ok(step);
     const tiles = (step!.payload.tiles as string[]) ?? [];
     assert.ok(tiles.includes('Eu') || tiles.includes('estou'));
+    assert.ok(tiles.includes('me'));
+    // Only sentence tokens + known mistake — not arbitrary junk
+    for (const t of tiles) {
+      assert.ok(
+        ['Eu', 'estou', 'bem', 'me'].includes(t),
+        `unexpected tile ${t}`,
+      );
+    }
+  });
+
+  it('no future-day distractors', () => {
+    const future: BankItem = {
+      id: 'future.word',
+      type: 'word',
+      tl: 'amanhã',
+      ar: 'بكرة',
+      day: 99,
+      has_card: true,
+      image_url: 'https://x/future',
+    };
+    const step = buildReviewStep({
+      item: items[0]!,
+      skill: 'listening',
+      taughtItems: [...items, future],
+      currentDay: 5,
+    });
+    assert.ok(step);
+    const options = (step!.payload.options as { label?: string; id?: string }[]) ?? [];
+    assert.ok(!options.some((o) => o.label === 'بكرة' || o.id === 'future.word'));
+  });
+
+  it('building the same step for two users creates one stored question', async () => {
+    setPracticeQuestionStore(memoryPracticeQuestionStore);
+    clearMemoryPracticeQuestions();
+    const a = buildReviewStep({
+      item: items[0]!,
+      skill: 'writing',
+      taughtItems: items,
+      currentDay: 5,
+    });
+    const b = buildReviewStep({
+      item: items[0]!,
+      skill: 'writing',
+      taughtItems: items,
+      currentDay: 5,
+    });
+    assert.ok(a && b);
+    const savedA = await persistBuiltStep(a!);
+    const savedB = await persistBuiltStep(b!);
+    assert.equal(savedA.question_id, savedB.question_id);
+    assert.ok(savedA.question_id?.startsWith('pq.'));
+    setPracticeQuestionStore(null);
   });
 
   it('لاقي الصورة only with at least 4 carded items', () => {
@@ -118,6 +177,11 @@ describe('v2 practice · step builders (16 §5.6)', () => {
     });
     assert.ok(step);
     assert.notEqual(step!.payload.origin, 'crafted');
+  });
+
+  afterEach(() => {
+    setPracticeQuestionStore(null);
+    clearMemoryPracticeQuestions();
   });
 });
 
@@ -197,4 +261,84 @@ describe('v2 practice · review session (16 §5.3–5.8)', () => {
     const total = session.steps.reduce((s, x) => s + x.estimated_seconds, 0);
     assert.ok(total <= 2 * 60 + 45);
   });
+
+  it('the same question id is not picked within 3 days', () => {
+    const plans: CoveragePlan[] = [
+      {
+        user_id: 'u1',
+        lesson_day: 3,
+        pairs: [
+          { item_id: 'food.cheese', skill: 'writing', status: 'open' },
+        ],
+      },
+    ];
+    const first = buildReviewSession({
+      window: [{ day: 3, position: 2 }],
+      budgetMinutes: 5,
+      plans,
+      itemsByDay: new Map([[3, items]]),
+      craftedByDay: new Map(),
+      taughtItems: items,
+      currentDay: 5,
+    });
+    const qid = first.steps[0]?.question_id;
+    assert.ok(qid);
+    const second = buildReviewSession({
+      window: [{ day: 3, position: 2 }],
+      budgetMinutes: 5,
+      plans,
+      itemsByDay: new Map([[3, items]]),
+      craftedByDay: new Map(),
+      taughtItems: items,
+      currentDay: 5,
+      recentQuestionIds: new Set([qid!]),
+    });
+    assert.ok(!second.steps.some((s) => s.question_id === qid));
+  });
+
+  it('a flagged question is never picked', () => {
+    const craftedId = 'crafted.flagged.1';
+    const session = buildReviewSession({
+      window: [{ day: 3, position: 1 }],
+      budgetMinutes: 5,
+      plans: [
+        {
+          user_id: 'u1',
+          lesson_day: 3,
+          pairs: [
+            { item_id: 'food.cheese', skill: 'listening', status: 'open' },
+          ],
+        },
+      ],
+      itemsByDay: new Map([[3, items]]),
+      craftedByDay: new Map([
+        [
+          3,
+          [
+            {
+              id: craftedId,
+              type: 'listen_meaning',
+              tests: ['food.cheese'],
+              use: 'practice',
+            },
+          ],
+        ],
+      ]),
+      taughtItems: items,
+      currentDay: 5,
+      flaggedQuestionIds: new Set([craftedId]),
+    });
+    assert.ok(!session.steps.some((s) => s.question_id === craftedId));
+  });
 });
+
+describe('v2 practice · review empty window (16 §8)', () => {
+  it('day 1 window is empty so nothing should be saved', () => {
+    const window = buildPracticeWindow({
+      currentDay: 1,
+      completedDays: [],
+    });
+    assert.deepEqual(window, []);
+  });
+});
+

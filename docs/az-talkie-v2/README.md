@@ -38,7 +38,7 @@ This pack holds everything decided in design sessions for **A-Z Talkie** (produc
 | `docs/az-talkie-v2/14c-library-design.md` | Stitch refs, language notes decision, player UI fixes | English |
 | `docs/az-talkie-v2/14d-library-admin.md` | Admin tool to build episodes (LA0–LA9); replaces 14 tasks L1–L4b and L8 | English |
 | `docs/az-talkie-v2/15-admin-dashboard.md` | Full-screen admin: lesson runs, cards-before-lesson, themed decks, bulk images, jobs, cost (D0–D8) | English |
-| `docs/az-talkie-v2/16-practice-engine.md` | Daily practice engine: 30-min budget, review first, كروت النهارده + مراجعة النهارده, stages (E0–E7) | English |
+| `docs/az-talkie-v2/16-practice-engine.md` | Daily practice engine: 30-min budget, review first, footer tab مراجعة, كروت النهارده + مراجعة النهارده, answer log / level tracking, stages (E0–E8) | English |
 | `design/reference/library/` | Stitch screens for library home, story/podcast players, word sheet, end (see 14c) | HTML / PNG |
 | `examples/day06-example.json` | Gold ESTAR lesson (filename kept; `lesson.day` is **11** in the grammar-first order) | JSON |
 | `prototypes/ser-estar.html` | Working prototype of a guided (autoplay) page | HTML |

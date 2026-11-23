@@ -512,12 +512,17 @@ export async function handleProgressEvent(
                   | 'open'
                   | 'covered'
                   | 'carried_to_weak',
+                answer_id:
+                  typeof (p as { answer_id?: string }).answer_id === 'string'
+                    ? (p as { answer_id?: string }).answer_id
+                    : undefined,
               })),
             };
             const updated = applyCoverageResult({
               plan,
               questionType: event.question_type,
               item_id: event.item_id,
+              answer_id: event.answer_id,
             });
             await V2CoveragePlanModel().updateOne(
               { user_id: userId, lesson_day: event.lesson_day },
@@ -532,16 +537,19 @@ export async function handleProgressEvent(
         const { V2ReviewSessionModel } = await import(
           '@/lib/v2/mongo/models'
         );
+        const stepSet: Record<string, unknown> = {
+          [`steps.${event.step_index}.result`]: {
+            correct: event.correct,
+            at: now.toISOString(),
+          },
+          'resume.step': Number(event.step_index) + 1,
+        };
+        if (event.answer_id) {
+          stepSet[`steps.${event.step_index}.answer_id`] = event.answer_id;
+        }
         await V2ReviewSessionModel().updateOne(
           { user_id: userId, local_date: localDate },
-          {
-            $set: {
-              [`steps.${event.step_index}.result`]: {
-                correct: event.correct,
-                at: now.toISOString(),
-              },
-            },
-          },
+          { $set: stepSet },
         );
       } catch {
         // session update best-effort
@@ -568,6 +576,11 @@ export async function handleProgressEvent(
               $set: {
                 rounds_done: roundsDone,
                 status: done ? 'done' : 'open',
+                resume: {
+                  round: done ? roundsDone : roundsDone + 1,
+                  step: 0,
+                },
+                ...(done ? { done_at: now } : {}),
               },
             },
           );

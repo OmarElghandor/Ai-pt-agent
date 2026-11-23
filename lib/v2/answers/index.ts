@@ -8,3 +8,5 @@ export * from './evaluate';
 export * from './idempotency';
 export * from './sceneMistakeHelpers';
 export * from './sceneMistake';
+export * from './log';
+

@@ -35,6 +35,8 @@ import {
   recordSkillResult,
 } from './practiceSession';
 import { processSceneMistake } from './sceneMistake';
+import { recordAnswerLog } from './log';
+import { stageMoveFrom } from '@/lib/v2/progress/stages';
 
 export type { AnswerVerdict };
 
@@ -92,6 +94,7 @@ function docToState(doc: Record<string, unknown>): ItemState {
       ? Number(doc.stage)
       : 1) as 1 | 2 | 3 | 4,
     stage_at: (doc.stage_at as string | null) ?? null,
+    stage_answer_id: (doc.stage_answer_id as string | null) ?? null,
     first_recognition_at: (doc.first_recognition_at as string | null) ?? null,
     first_recall_at: (doc.first_recall_at as string | null) ?? null,
   };
@@ -132,6 +135,7 @@ async function saveItemState(state: ItemState): Promise<void> {
         weakToolIds: state.weakToolIds,
         stage: state.stage ?? 1,
         stage_at: state.stage_at ?? null,
+        stage_answer_id: state.stage_answer_id ?? null,
         first_recognition_at: state.first_recognition_at ?? null,
         first_recall_at: state.first_recall_at ?? null,
       },
@@ -143,8 +147,8 @@ async function saveItemState(state: ItemState): Promise<void> {
 async function appendErrors(
   errors: ProgressError[],
   opts?: { learnerDay?: number; localDate?: string },
-): Promise<void> {
-  if (!errors.length) return;
+): Promise<string[]> {
+  if (!errors.length) return [];
   const inserted = await V2ErrorModel().insertMany(
     errors.map((e) => ({
       user_id: e.user_id,
@@ -158,6 +162,7 @@ async function appendErrors(
       at: new Date(e.at),
     })),
   );
+  const ids = inserted.map((doc) => String(doc._id));
   try {
     const { enqueueClassifyError } = await import(
       '@/lib/v2/progress/classify/enqueue'
@@ -185,6 +190,7 @@ async function appendErrors(
   } catch {
     // Classification is best-effort.
   }
+  return ids;
 }
 
 async function buildContext(
@@ -198,6 +204,7 @@ async function buildContext(
     const ctx: EvaluateContext = {
       user_id: userId,
       localDate,
+      answerId: payload.answer_id,
       items: [],
       grammarFocusId: null,
     };
@@ -223,6 +230,7 @@ async function buildContext(
   const ctx: EvaluateContext = {
     user_id: userId,
     localDate,
+    answerId: payload.answer_id,
     items,
     grammarFocusId,
   };
@@ -381,10 +389,11 @@ async function handleBeat(
   for (const st of result.item_states) {
     await saveItemState(st);
   }
+  let errorIds: string[] = [];
   if (result.errors.length) {
-    await appendErrors(result.errors, {
+    errorIds = await appendErrors(result.errors, {
       learnerDay: payload.day,
-      localDate: localDateString(new Date(), tz),
+      localDate,
     });
   }
 
@@ -398,6 +407,22 @@ async function handleBeat(
     if (!result.next_beat_id) {
       await completePracticeSession(session.id);
     }
+  }
+
+  try {
+    await recordAnswerLog({
+      payload,
+      user_id: userId,
+      local_date: localDate,
+      verdict: result.correct ? 'correct' : 'wrong',
+      attempt,
+      first_try: attempt === 1,
+      error_id: errorIds[0],
+      time_ms: payload.time_ms,
+      session_id: session.id,
+    });
+  } catch {
+    // Answer log is best-effort relative to grading.
   }
 
   return {
@@ -433,6 +458,20 @@ async function handleSceneMistake(
     store: opts?.store,
     enqueue: opts?.enqueue,
   });
+  try {
+    await recordAnswerLog({
+      payload,
+      user_id: userId,
+      local_date: localDate,
+      verdict: 'wrong',
+      first_try: payload.first_try ?? true,
+      error_id: result.errorId,
+      time_ms: payload.time_ms,
+      session_id: payload.session_id,
+    });
+  } catch {
+    // Answer log is best-effort relative to grading.
+  }
   return {
     ok: true,
     error_id: result.errorId,
@@ -603,7 +642,8 @@ export async function handleAnswerRequest(
   try {
     const verdict = await withIdempotency(payload.answer_id, store, async () => {
       const ctx = await buildContext(payload, userId, tz);
-      const beforeStage = ctx.itemState?.stage;
+      const beforeState = ctx.itemState;
+      const beforeStage = beforeState?.stage;
       const result = await evaluateAnswer(payload, ctx);
       if (!result.duplicate && result.item_state) {
         await saveItemState(result.item_state);
@@ -618,11 +658,48 @@ export async function handleAnswerRequest(
           }
         }
       }
+      let errorIds: string[] = [];
       if (!result.duplicate && result.errors.length) {
-        await appendErrors(result.errors, {
+        errorIds = await appendErrors(result.errors, {
           learnerDay: payload.day,
           localDate: ctx.localDate,
         });
+      }
+      if (!result.duplicate) {
+        const move = stageMoveFrom(
+          beforeState,
+          result.item_state,
+          payload.answer_id,
+        );
+        try {
+          await recordAnswerLog({
+            payload,
+            user_id: userId,
+            local_date: ctx.localDate,
+            verdict: result.verdict,
+            first_try: payload.first_try ?? true,
+            hint_used:
+              payload.kind === 'card_review' ? payload.hint === true : false,
+            error_id: errorIds[0],
+            time_ms: payload.time_ms,
+            session_id:
+              'session_id' in payload && typeof payload.session_id === 'string'
+                ? payload.session_id
+                : undefined,
+            stage_moves: move
+              ? [
+                  {
+                    item_id: move.item_id,
+                    from: move.from,
+                    to: move.to,
+                    answer_id: payload.answer_id,
+                  },
+                ]
+              : [],
+          });
+        } catch {
+          // Answer log is best-effort relative to grading.
+        }
       }
       return result;
     });

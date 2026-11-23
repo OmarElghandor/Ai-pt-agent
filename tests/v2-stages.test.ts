@@ -4,6 +4,7 @@ import {
   applyKnow,
   applyStageEvidence,
   createItemState,
+  stageMoveFrom,
   type ItemState,
 } from '../lib/v2/progress';
 
@@ -148,13 +149,63 @@ describe('v2 stages · 16 §6', () => {
 
   it('"عارفها" stops at 3', () => {
     let s = stateAt(1, '2026-11-01');
-    s = applyKnow(s, new Date('2026-11-05T12:00:00Z'), '2026-11-05');
+    s = applyKnow(
+      s,
+      new Date('2026-11-05T12:00:00Z'),
+      '2026-11-05',
+      'ans-know-1',
+    );
     assert.equal(s.stage, 3);
     assert.equal(s.card.masteryLevel, 'mastered');
+    assert.equal(s.stage_answer_id, 'ans-know-1');
     s = applyStageEvidence(s, {
       kind: 'know',
       localDate: '2026-11-06',
     });
     assert.equal(s.stage, 3);
+  });
+
+  it('records the answer id on each stage move', () => {
+    let s = stateAt(1, '2026-11-01');
+    s = applyStageEvidence(s, {
+      kind: 'recognition',
+      localDate: '2026-11-02',
+      correct: true,
+      firstTry: true,
+      answerId: 'ans-rec-1',
+    });
+    assert.equal(s.stage, 2);
+    assert.equal(s.stage_answer_id, 'ans-rec-1');
+    const before = s;
+    s = applyStageEvidence(s, {
+      kind: 'production',
+      localDate: '2026-11-03',
+      correct: true,
+      firstTry: true,
+      situationId: 'day:3',
+      answerId: 'ans-prod-1',
+    });
+    assert.equal(s.stage, 3);
+    assert.equal(s.stage_answer_id, 'ans-prod-1');
+    const move = stageMoveFrom(before, s, 'ans-prod-1');
+    assert.deepEqual(move, {
+      item_id: 'food.cheese',
+      from: 2,
+      to: 3,
+      answer_id: 'ans-prod-1',
+    });
+  });
+
+  it('applies the same stages to pattern item ids', () => {
+    let s = stateAt(1, '2026-11-01', { item_id: 'pattern.ser.present' });
+    s = applyStageEvidence(s, {
+      kind: 'recognition',
+      localDate: '2026-11-02',
+      correct: true,
+      answerId: 'ans-pat-1',
+    });
+    assert.equal(s.stage, 2);
+    assert.equal(s.item_id, 'pattern.ser.present');
+    assert.equal(s.stage_answer_id, 'ans-pat-1');
   });
 });

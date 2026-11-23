@@ -5,6 +5,7 @@ import {
   buildCoveragePlan,
   closeCoveragePlan,
   pairsForItem,
+  passedPairsFromAnswerLog,
 } from '../lib/v2/practice';
 
 describe('v2 practice · coverage plans (16 §5.1)', () => {
@@ -101,5 +102,63 @@ describe('v2 practice · coverage plans (16 §5.1)', () => {
     });
     const closed = closeCoveragePlan(plan);
     assert.ok(closed.pairs.every((p) => p.status === 'carried_to_weak'));
+  });
+
+  it('each covered pair stores its answer id', () => {
+    let plan = buildCoveragePlan({
+      user_id: 'u1',
+      lesson_day: 3,
+      items: [{ id: 'phrase.hi', kind: 'phrase' }],
+    });
+    plan = applyCoverageResult({
+      plan,
+      questionType: 'dictation',
+      item_id: 'phrase.hi',
+      answer_id: '11111111-1111-4111-8111-111111111111',
+    });
+    const covered = plan.pairs.filter((p) => p.status === 'covered');
+    assert.equal(covered.length, 2);
+    assert.ok(
+      covered.every(
+        (p) => p.answer_id === '11111111-1111-4111-8111-111111111111',
+      ),
+    );
+  });
+
+  it('reads pairs already passed from the answer log', () => {
+    const passed = passedPairsFromAnswerLog(
+      [
+        {
+          first_try: true,
+          verdict: 'correct',
+          lesson_day: 3,
+          source: 'lesson',
+          question_type: 'listen_meaning',
+          tests: { item_ids: ['food.cheese'] },
+          skill: 'listening',
+        },
+        {
+          first_try: false,
+          verdict: 'correct',
+          lesson_day: 3,
+          source: 'lesson',
+          question_type: 'translate_write',
+          tests: { item_ids: ['food.cheese'] },
+          skill: 'writing',
+        },
+      ],
+      3,
+    );
+    assert.deepEqual(passed, [
+      { item_id: 'food.cheese', skill: 'listening' },
+    ]);
+    const plan = buildCoveragePlan({
+      user_id: 'u1',
+      lesson_day: 3,
+      items: [{ id: 'food.cheese', kind: 'word' }],
+      passedInLesson: passed,
+    });
+    assert.equal(plan.pairs.length, 1);
+    assert.equal(plan.pairs[0]?.skill, 'writing');
   });
 });
