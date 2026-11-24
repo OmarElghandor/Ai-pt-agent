@@ -1,81 +1,106 @@
-/* A-Z Talkie v2 light mode — Stitch mint tokens. Hex lives only here + globals.css @theme. */
+/* A-Z Talkie v2 light mode — Lumina White Theme v2. Hex lives only here + globals.css @theme. */
 
 .v2-shell {
   direction: rtl;
 
-  --font-v2-display-latin: var(--font-v2-newsreader), ui-serif, Georgia, serif;
-  --font-v2-display-ar: var(--font-v2-noto-ar), ui-sans-serif, system-ui, sans-serif;
-  --font-v2-target: var(--font-v2-newsreader), ui-serif, Georgia, serif;
-  --font-v2-arabic: var(--font-v2-noto-ar), ui-sans-serif, system-ui, sans-serif;
-  --font-v2-ui: var(--font-v2-manrope), var(--font-v2-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-v2-display-latin: var(--font-v2-ibm-plex), ui-sans-serif, system-ui, sans-serif;
+  --font-v2-display-ar: var(--font-v2-ibm-plex-ar), ui-sans-serif, system-ui, sans-serif;
+  --font-v2-target: var(--font-v2-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-v2-arabic: var(--font-v2-ibm-plex-ar), ui-sans-serif, system-ui, sans-serif;
+  --font-v2-ui: var(--font-v2-ibm-plex), var(--font-v2-inter), ui-sans-serif, system-ui, sans-serif;
 
-  /* Surfaces — mint paper */
-  --color-v2-paper: #f8faf9;
-  --color-v2-paper-deep: #cde8e2;
+  /* Surfaces — Lumina white canvas */
+  --color-v2-paper: #ffffff;
+  --color-v2-paper-deep: #e8edec;
+  --color-v2-panel: #f2f5f4;
   --color-v2-card: #ffffff;
-  --color-v2-line: #e2efea;
-  --color-v2-rule: #e2efea; /* alias: prefer line */
-  --color-v2-ink: #061f1c;
-  --color-v2-ink-muted: #3d4947;
-  --color-v2-sand: #bcc9c6;
+  --color-v2-input: #f7f9f8;
+  --color-v2-input-border: #c8d2cd;
+  --color-v2-nested: #e8edec;
+  --color-v2-line: #d5deda;
+  --color-v2-rule: #d5deda; /* alias: prefer line */
+  --color-v2-divider: #e1e7e4;
+  --color-v2-ink: #202927;
+  --color-v2-ink-muted: #5f6b67;
+  --color-v2-meta: #737877;
+  --color-v2-sand: #c8d2cd;
 
-  /* Brand / chrome — mint teal */
-  --color-v2-primary: #00685f;
-  --color-v2-primary-strong: #008378;
-  --color-v2-primary-tint: #d8f4ed;
-  --color-v2-primary-fixed: #89f5e7;
-  --color-v2-secondary-fixed: #7bf9ca;
-  --color-v2-chrome-muted: #4c9a93;
-  --color-v2-tab-bar: #f8fcfb;
-  --color-v2-tab-border: #e7f3f2;
-  --color-v2-hero-scrim: #1c3530;
+  /* Brand / chrome — Lumina teal */
+  --color-v2-primary: #0d9488;
+  --color-v2-primary-strong: #075e57;
+  --color-v2-primary-tint: #d8f2ee;
+  --color-v2-on-primary: #ffffff;
+  --color-v2-primary-fixed: #d8f2ee;
+  --color-v2-secondary-fixed: #ddf5eb;
+  --color-v2-chrome-muted: #737877;
+  --color-v2-tab-bar: #ffffff;
+  --color-v2-tab-border: #e1e7e4;
+  --color-v2-hero-scrim: #202927;
 
   /* Actions / progress / active */
-  --color-v2-action: #00685f;
-  --color-v2-action-strong: #008378;
-  --color-v2-action-tint: #defaf3;
+  --color-v2-action: #0d9488;
+  --color-v2-action-strong: #075e57;
+  --color-v2-action-tint: #d8f2ee;
 
   /* Tips / selection */
-  --color-v2-note: #defaf3;
-  --color-v2-note-border: #bcc9c6;
-  --color-v2-highlight-fill: #defaf3;
-  --color-v2-highlight-border: #bcc9c6;
+  --color-v2-note: #d8f2ee;
+  --color-v2-note-border: #d5deda;
+  --color-v2-highlight-fill: #d8f2ee;
+  --color-v2-highlight-border: #0d9488;
 
   /* Feedback */
-  --color-v2-success: #006c4f;
-  --color-v2-attention: #b8955a;
-  --color-v2-danger: #ba1a1a;
+  --color-v2-success: #0fa87e;
+  --color-v2-success-icon: #0b8064;
+  --color-v2-success-panel: #ddf5eb;
+  --color-v2-success-text: #075e47;
+  --color-v2-attention: #b7791f;
+  --color-v2-warning: #b7791f;
+  --color-v2-warning-panel: #f9eacb;
+  --color-v2-warning-text: #70450b;
+  --color-v2-grammar-note: #f8e2d9;
+  --color-v2-grammar-note-border: #efc5b5;
+  --color-v2-grammar-note-text: #78391f;
+  --color-v2-danger: #c62828;
+  --color-v2-waveform: #0fa87e;
+  --color-v2-waveform-track: #ddf5eb;
+  --color-v2-progress-track: #e1e7e4;
+  --color-v2-progress-fill: #0d9488;
+  --color-v2-progress-done: #0fa87e;
+  --color-v2-focus-ring: rgba(13, 148, 136, 0.16);
 
   /* Semantic group hues */
-  --color-v2-group-a: #00685f;
-  --color-v2-group-b: #8a6b5c;
-  --color-v2-group-c: #00694c;
-  --color-v2-group-m: #00685f;
-  --color-v2-group-f: #8a6b5c;
-  --color-v2-group-verb: #00685f;
-  --color-v2-group-verb-bg: #d8f4ed;
-  --color-v2-group-prep: #00694c;
+  --color-v2-group-a: #0d9488;
+  --color-v2-group-b: #c36d4b;
+  --color-v2-group-c: #0fa87e;
+  --color-v2-group-m: #0d9488;
+  --color-v2-group-f: #c36d4b;
+  --color-v2-group-verb: #0d9488;
+  --color-v2-group-verb-bg: #d8f2ee;
+  --color-v2-group-prep: #0fa87e;
   --color-v2-group-pron: #6b5b7a;
-  --color-v2-group-neg: #ba1a1a;
+  --color-v2-group-neg: #c62828;
   --color-v2-group-neg-bg: #ffdad6;
-  --color-v2-group-neutral: #061f1c;
+  --color-v2-group-neutral: #202927;
 
   /* Verb class */
-  --color-v2-verb-ar: #8a6b5c;
-  --color-v2-verb-ar-text: #6b4f42;
-  --color-v2-verb-er: #00685f;
-  --color-v2-verb-ir: #00694c;
-  --color-v2-verb-ir-text: #00513a;
+  --color-v2-verb-ar: #c36d4b;
+  --color-v2-verb-ar-text: #78391f;
+  --color-v2-verb-er: #0d9488;
+  --color-v2-verb-ir: #0fa87e;
+  --color-v2-verb-ir-text: #075e47;
   --color-v2-verb-irregular: #6b5b7a;
 
   /* Skills */
-  --color-v2-skill-listening: #00685f;
+  --color-v2-skill-listening: #0d9488;
   --color-v2-skill-reading: #6b5b7a;
-  --color-v2-skill-speaking: #006c4f;
-  --color-v2-skill-writing: #00694c;
+  --color-v2-skill-speaking: #0fa87e;
+  --color-v2-skill-writing: #075e57;
 
-  --radius-v2-card: 28px;
-  --radius-v2-row: 14px;
+  --radius-v2-control: 8px;
+  --radius-v2-card: 16px;
+  --radius-v2-bubble: 16px;
+  --radius-v2-row: 8px;
+  --radius-v2-sheet: 24px;
   --radius-v2-chip: 9999px;
 
   --space-v2-1: 4px;
@@ -85,43 +110,45 @@
   --space-v2-5: 24px;
   --space-v2-6: 32px;
 
-  --shadow-v2-soft: 0 8px 24px rgba(6, 31, 28, 0.06);
+  --shadow-v2-soft: 0 8px 24px -4px rgba(23, 31, 29, 0.05);
+  --shadow-v2-float: 0 12px 32px -8px rgba(23, 31, 29, 0.1);
 
-  /* Talk / free-talk aliases — same mint light mode */
-  --ft-ivory: #f8faf9;
+  /* Talk / free-talk aliases — Lumina */
+  --ft-ivory: #ffffff;
   --ft-surface: #ffffff;
-  --ft-sage: #00685f;
-  --ft-sage-dark: #008378;
-  --ft-moss: #6bd8cb;
-  --ft-mist: #cde8e2;
-  --ft-sand: #bcc9c6;
-  --ft-ink: #061f1c;
-  --ft-text-secondary: #3d4947;
-  --ft-border: #e2efea;
-  --ft-coach: #defaf3;
-  --ft-success-soft: #d8f4ed;
-  --ft-highlight: #defaf3;
-  --ft-correction: #b8955a;
-  --ft-correction-text: #7a5e30;
+  --ft-sage: #0d9488;
+  --ft-sage-dark: #075e57;
+  --ft-moss: #0fa87e;
+  --ft-mist: #d8f2ee;
+  --ft-sand: #c8d2cd;
+  --ft-ink: #202927;
+  --ft-text-secondary: #5f6b67;
+  --ft-border: #d5deda;
+  --ft-coach: #d8f2ee;
+  --ft-success-soft: #ddf5eb;
+  --ft-highlight: #d8f2ee;
+  --ft-correction: #b7791f;
+  --ft-correction-text: #70450b;
   --ft-error-soft: #ffdad6;
-  --ft-error: #ba1a1a;
+  --ft-error: #c62828;
   --ft-on-sage: #ffffff;
-  --ft-radius-card: 28px;
-  --ft-radius-control: 999px;
-  --ft-shadow-soft: 0 8px 24px rgba(6, 31, 28, 0.06);
-  --ft-shadow-sheet: 0 12px 40px -8px rgba(6, 31, 28, 0.12);
-  --ft-shadow-dock: 0 -8px 24px rgba(6, 31, 28, 0.06);
-  --ft-shadow-mic: 0 8px 24px rgba(0, 104, 95, 0.35);
+  --ft-radius-card: 16px;
+  --ft-radius-control: 8px;
+  --ft-shadow-soft: 0 8px 24px -4px rgba(23, 31, 29, 0.05);
+  --ft-shadow-sheet: 0 12px 32px -8px rgba(23, 31, 29, 0.1);
+  --ft-shadow-dock: 0 -8px 24px rgba(23, 31, 29, 0.05);
+  --ft-shadow-mic: 0 8px 24px rgba(13, 148, 136, 0.28);
 
-  --font-ft-ui: var(--font-v2-manrope), var(--font-v2-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-ft-pt: var(--font-v2-newsreader), ui-serif, Georgia, serif;
-  --font-ft-ar: var(--font-v2-noto-ar), ui-sans-serif, system-ui, sans-serif;
+  --font-ft-ui: var(--font-v2-ibm-plex), var(--font-v2-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-ft-pt: var(--font-v2-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-ft-ar: var(--font-v2-ibm-plex-ar), ui-sans-serif, system-ui, sans-serif;
 
   width: 100%;
   min-height: 100dvh;
   background: var(--color-v2-paper);
   color: var(--color-v2-ink);
   font-family: var(--font-v2-arabic);
+  line-height: 1.4;
 }
 
 .v2-shell .v2-app-column {
@@ -368,7 +395,7 @@
 }
 
 .azt-spinner-spark {
-  stroke: #2fc79a;
+  stroke: var(--color-v2-success);
   stroke-width: 4.5;
   stroke-linecap: round;
   opacity: 0.25;
@@ -394,4 +421,21 @@
   .azt-spinner-bubble-main {
     animation-duration: 3s;
   }
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

@@ -210,7 +210,6 @@ export async function buildMeSummary(user: V2User): Promise<MeSummary> {
         (lessonDoc.practice as { times: number }).times > 0,
     );
     const firstCounted = (shared?.steps ?? []).find((s) => s.counted);
-    const practice = (shared?.steps ?? []).find((s) => s.kind === 'practice');
     current_day_steps = {
       done: view.done,
       total: view.total,
@@ -235,7 +234,7 @@ export async function buildMeSummary(user: V2User): Promise<MeSummary> {
       practised,
       total_minutes: shared?.totalCountedMinutes ?? 0,
       first_step_href: firstCounted?.href ?? null,
-      practice_href: practice?.href ?? null,
+      practice_href: null,
       day_map_href: `/day/${currentDay}`,
       completed: progress?.status === 'completed',
     };

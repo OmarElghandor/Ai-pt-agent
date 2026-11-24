@@ -1856,6 +1856,66 @@ export function V2SituationCardBankModel(): Model<V2SituationCardBankDoc> {
   );
 }
 
+/** Frequency list rows (17 §10). Code-only; LLM never writes. */
+const v2FrequencyWordSchema = new Schema(
+  {
+    lang: { type: String, required: true, index: true },
+    word: { type: String, required: true },
+    rank: { type: Number, required: true, min: 1 },
+    pos: { type: String, required: false },
+  },
+  { timestamps: true, collection: 'v2_frequency_words' },
+);
+
+v2FrequencyWordSchema.index({ lang: 1, word: 1 }, { unique: true });
+v2FrequencyWordSchema.index({ lang: 1, rank: 1 });
+
+export type V2FrequencyWordDoc = InferSchemaType<typeof v2FrequencyWordSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2FrequencyWordModel(): Model<V2FrequencyWordDoc> {
+  return (
+    (mongoose.models.V2FrequencyWord as Model<V2FrequencyWordDoc>) ||
+    mongoose.model<V2FrequencyWordDoc>('V2FrequencyWord', v2FrequencyWordSchema)
+  );
+}
+
+/** Computed core-item weights (17 §3–§4). Code-only; never on the answer path. */
+const v2ItemWeightSchema = new Schema(
+  {
+    item_id: { type: String, required: true, index: true },
+    lang: { type: String, required: true, index: true },
+    day: { type: Number, required: true },
+    tl: { type: String, required: true },
+    kind: { type: String, required: true },
+    priority: { type: String, required: true },
+    survival: { type: Boolean, required: true, default: false },
+    freq_rank: { type: Number, required: false, default: null },
+    reuse_count: { type: Number, required: true, default: 0 },
+    weight: { type: Number, required: true, min: 0, max: 100 },
+    weight_why: { type: [String], required: true, default: [] },
+    needs_review: { type: Boolean, required: true, default: true },
+    updated_at: { type: Date, required: true },
+  },
+  { timestamps: true, collection: 'v2_item_weights' },
+);
+
+v2ItemWeightSchema.index({ item_id: 1, lang: 1 }, { unique: true });
+v2ItemWeightSchema.index({ lang: 1, weight: -1 });
+v2ItemWeightSchema.index({ lang: 1, needs_review: 1 });
+
+export type V2ItemWeightDoc = InferSchemaType<typeof v2ItemWeightSchema> & {
+  _id: mongoose.Types.ObjectId;
+};
+
+export function V2ItemWeightModel(): Model<V2ItemWeightDoc> {
+  return (
+    (mongoose.models.V2ItemWeight as Model<V2ItemWeightDoc>) ||
+    mongoose.model<V2ItemWeightDoc>('V2ItemWeight', v2ItemWeightSchema)
+  );
+}
+
 /* Library models live in ./libraryModels (Turbopack HMR-safe split). */
 export type {
   V2LibraryBriefDoc,

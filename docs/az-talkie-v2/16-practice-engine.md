@@ -27,7 +27,7 @@ Both draw from a **sliding window of the last 3 completed lessons**, newest firs
 
 - The review opens from its own **footer tab**. The first tap of the day builds the session and saves it.
 - **Every answer is saved and linked to its question**, so the learner's level can be tracked per skill, per pattern and per lesson.
-- Home shows "اتحفظت ٤٢ كلمة".
+- Home shows "اتحفظت ٤٢ كلمة" **(replaced by `17` §9.1: "بتقولها N · بتفهمها M")**.
 
 Every step renders with a screen the lessons already have (§2.1). The engine is logic plus a session wrapper.
 
@@ -48,6 +48,8 @@ Naming: "اتمرّن على الدرس" stays the conversation / role-play step
 - **Out of scope:** custom and official themed decks keep their own sessions (`12` §2.6) and are not in the home mastery count.
 
 ### 2.1 Screens: reuse only
+
+> **(changed 2026-11-24)** The daily review UI is a coach chat — see `18-review-chat-ui.md`. That doc wins over this §2.1 for the review session only. Lessons, cards, and other modules keep the reuse-only screens below.
 
 | Step | Existing component |
 |---|---|
@@ -132,12 +134,7 @@ The builders fill **time**, not a fixed count. Each step has an estimated time, 
 | Window | the rest | due or not-yet-reviewed window items, 50 / 30 / 20 |
 | تثبيت | up to 15% | due items outside the window at افتكرتها+, plus at most 1 اتحفظت check |
 
-- **Ranking** (code only):
-  1. essential first;
-  2. weak, then due, then new;
-  3. most overdue;
-  4. newest lesson;
-  5. lower stage.
+- **Ranking** (code only): **(replaced 2026-11-23 by `17` §7)** priority score (item weight × learner need), highest first; ties → most overdue, then newest lesson. Shares above stay; inside each share, pick by score. The older essential → weak → due → new → overdue → newest → lower-stage list is retired.
 - **Order:** newest lesson → oldest. Weak cards spread through the run; تثبيت cards last.
 - **Word reading:** a card rated right is the reading check for a word, so the review doesn't spend a question on it.
 - **Extras:** an optional extra round of ~3 minutes is offered once. End uses the existing deck end with the stage-up list.
@@ -237,6 +234,7 @@ Each stage needs evidence on **a different local day from the stage before it**.
 | 3 | **افتكرتها** | on a later day than stage 2, a correct first-try production: `translate_write`, `fill_blank_write`, `dictation`, `build_sentence`, graded `say_it` / `reply_*`, or a correct use in a conversation or role-play |
 | 4 | **اتحفظت ✓** | card interval ≥ 21 days **and** correct use in 2 situations (3 for essential) |
 
+- **(extended 2026-11-23 by `17` §8.3)** "Learned" depends on authored `target`: **produce** items keep stage 4 اتحفظت as above; **understand** items count as learned at stage 2 **راجعتها** held over an interval ≥ 21 days (no production). Detail: `17`.
 - **Situations:** a review question counts as the situation of its lesson. Cards never count.
 - **Going down:** a miss at 3 → 2 and the item is marked weak. A miss at 2 → it stays at 2, marked weak. A miss on an اتحفظت check → back to 3. Nothing goes below 1.
 - **"عارفها"** → stage 3, never 4.
@@ -350,8 +348,8 @@ Rules for the build:
 - Each shows ✓ when done and "جولة ٢ من ٣" while in progress. Before today's review is built, it shows the planned minutes only.
 - On a "بكرة" day the hero suggestion line is the review first.
 - **Mastery count** in an existing summary card:
-  - "اتحفظت ٤٢ كلمة · و ١٢ جملة" (summary block `mastery`: `mastered_words`, `mastered_phrases`, `recalled`, `reviewing`, `mastered_today`);
-  - before the first graduation, "افتكرت N كلمة";
+  - **(replaced 2026-11-23 by `17` §9.1)** "بتقولها N · بتفهمها M" (produce learned · understand learned, phrases included). Never a CEFR / level label from word counts. Milestone line under it (1000 / 2000 / 3000) — counts only.
+  - Legacy lines until W6: "اتحفظت ٤٢ كلمة · و ١٢ جملة" (summary block `mastery`: `mastered_words`, `mastered_phrases`, `recalled`, `reviewing`, `mastered_today`); before the first graduation, "افتكرت N كلمة";
   - the count can go down silently, and custom-deck words aren't counted.
 - **"كلماتي"** is deferred. It can later reuse the deck-detail list with a stage filter.
 

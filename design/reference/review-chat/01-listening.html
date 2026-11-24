@@ -1,0 +1,417 @@
+<!DOCTYPE html><html class="light" dir="rtl" lang="ar"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>مراجعة النهارده - az-talkie</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&amp;family=Noto+Sans+Arabic:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary": "#00685f",
+            "on-background": "#061f1c",
+            "inverse-surface": "#1c3530",
+            "inverse-primary": "#6bd8cb",
+            "secondary": "#006c4f",
+            "inverse-on-surface": "#dbf7f0",
+            "surface-container-high": "#d2eee7",
+            "on-secondary-fixed": "#002116",
+            "background": "#e5fff8",
+            "on-primary-container": "#f4fffc",
+            "error-container": "#ffdad6",
+            "on-secondary": "#ffffff",
+            "surface-container-highest": "#cde8e2",
+            "on-secondary-fixed-variant": "#00513b",
+            "on-tertiary-container": "#f5fff7",
+            "surface-tint": "#006a61",
+            "outline": "#6d7a77",
+            "tertiary-container": "#008561",
+            "outline-variant": "#bcc9c6",
+            "on-secondary-container": "#007153",
+            "secondary-container": "#78f6c7",
+            "surface-variant": "#cde8e2",
+            "tertiary": "#00694c",
+            "surface-bright": "#e5fff8",
+            "on-tertiary-fixed": "#002115",
+            "on-primary-fixed": "#00201d",
+            "on-surface": "#061f1c",
+            "error": "#ba1a1a",
+            "on-tertiary": "#ffffff",
+            "on-surface-variant": "#3d4947",
+            "secondary-fixed": "#7bf9ca",
+            "surface-dim": "#c4e0d9",
+            "on-tertiary-fixed-variant": "#00513a",
+            "tertiary-fixed": "#71fbc7",
+            "primary-fixed": "#89f5e7",
+            "surface-container-low": "#defaf3",
+            "surface-container-lowest": "#ffffff",
+            "tertiary-fixed-dim": "#50deac",
+            "on-error": "#ffffff",
+            "on-primary-fixed-variant": "#005049",
+            "secondary-fixed-dim": "#5cdcae",
+            "primary-container": "#008378",
+            "on-error-container": "#93000a",
+            "primary-fixed-dim": "#6bd8cb",
+            "on-primary": "#ffffff",
+            "surface-container": "#d8f4ed",
+            "surface": "#e5fff8"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter-mobile": "1rem",
+            "margin": "2.5rem",
+            "space-sm": "0.5rem",
+            "gutter": "1.5rem",
+            "space-xs": "0.25rem",
+            "space-md": "1rem",
+            "margin-mobile": "1.25rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2.5rem"
+          },
+          "fontFamily": {
+            "display-lg": ["IBM Plex Sans"],
+            "label-sm": ["IBM Plex Sans"],
+            "body-lg": ["Inter"],
+            "label-lg": ["IBM Plex Sans"],
+            "headline-sm": ["IBM Plex Sans"],
+            "headline-md": ["IBM Plex Sans"],
+            "body-md": ["Inter"],
+            "label-md": ["IBM Plex Sans"],
+            "headline-lg-mobile": ["IBM Plex Sans"],
+            "body-sm": ["Inter"],
+            "headline-lg": ["IBM Plex Sans"],
+            "display-lg-mobile": ["IBM Plex Sans"]
+          },
+          "fontSize": {
+            "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "label-sm": ["10px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "700" }],
+            "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "0", "fontWeight": "600" }],
+            "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "0", "fontWeight": "600" }],
+            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans Arabic', 'IBM Plex Sans', sans-serif;
+    }
+    .font-pt {
+      font-family: 'Newsreader', serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    @keyframes wavePulse {
+      0%, 100% { transform: scaleY(0.55); }
+      50% { transform: scaleY(1); }
+    }
+    .wave-bar-active {
+      animation: wavePulse 1.1s ease-in-out infinite;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface min-h-screen flex justify-center items-start bg-[#F8FAF9]" data-new-gr-c-s-check-loaded="14.1349.0" data-gr-ext-installed="" jf-observer-attached="true">
+<!-- Mobile App Shell (390px wide) -->
+<div class="relative w-full max-w-[390px] min-h-screen flex flex-col overflow-hidden shadow-xl bg-[#F8FAF9]">
+<!-- Faint Translucent Teal/Aqua Blur Orbs -->
+
+
+<!-- Sticky TopAppBar (No border-b per Shell Border Ban) -->
+<header class="sticky top-0 z-30 bg-surface-container-lowest/90 backdrop-blur-md shadow-sm px-4 pt-3 pb-3">
+<div class="flex items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<button aria-label="رجوع" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container-low transition-colors" type="button" jf-ext-button-ct="arrow_forward">
+<span class="material-symbols-outlined text-on-surface" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface leading-tight">مراجعة النهارده</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">جولة ١ من ٣ · ٤ من ١٠</p>
+</div>
+</div>
+</div>
+<!-- Thin Segmented Progress Bar (10 segments: 4 active, 6 remaining) -->
+<div aria-valuemax="100" aria-valuemin="0" aria-valuenow="40" class="mt-3 flex items-center gap-1" role="progressbar">
+<span class="h-1.5 flex-1 rounded-full bg-primary"></span>
+<span class="h-1.5 flex-1 rounded-full bg-primary"></span>
+<span class="h-1.5 flex-1 rounded-full bg-primary"></span>
+<span class="h-1.5 flex-1 rounded-full bg-primary"></span>
+<span class="h-1.5 flex-1 rounded-full bg-surface-container-highest"></span>
+<span class="h-1.5 flex-1 rounded-full bg-surface-container-highest"></span>
+<span class="h-1.5 flex-1 rounded-full bg-surface-container-highest"></span>
+<span class="h-1.5 flex-1 rounded-full bg-surface-container-highest"></span>
+<span class="h-1.5 flex-1 rounded-full bg-surface-container-highest"></span>
+<span class="h-1.5 flex-1 rounded-full bg-surface-container-highest"></span>
+</div>
+</header>
+<!-- Scrollable Chat Content Area -->
+<main class="relative z-10 flex-1 overflow-y-auto no-scrollbar px-4 pt-5 pb-64 space-y-5">
+<!-- 1. Coach Welcome Message -->
+<div class="flex items-start gap-2.5">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 font-label-md text-label-md font-bold shadow-xs">
+          AZ
+        </div>
+<div class="flex flex-col items-start max-w-[82%]">
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-[20px] rounded-tr-sm px-4 py-3 shadow-xs">
+<p class="font-body-sm text-body-sm text-on-surface leading-relaxed">
+              أهلاً يا عمر 👋 النهارده هنراجع <span class="font-pt font-medium" dir="ltr">Dia 4</span> و <span class="font-pt font-medium" dir="ltr">Dia 3</span> و <span class="font-pt font-medium" dir="ltr">Dia 2</span> · ٣ جولات صغيرين
+            </p>
+</div>
+<span class="mt-1 px-1 font-label-sm text-label-sm text-on-surface-variant">١٠:١٥ ص</span>
+</div>
+</div>
+<!-- 2. Centered Round Divider Pill -->
+<div class="flex justify-center py-1">
+<span class="bg-surface-container-low text-primary border border-outline-variant/40 px-3.5 py-1 rounded-full font-label-md text-label-md">
+          الجولة ١
+        </span>
+</div>
+<!-- 3. Question 1 (Answered Beat) -->
+<!-- Coach Question 1 -->
+<div class="flex items-start gap-2.5">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 font-label-md text-label-md font-bold shadow-xs">
+          AZ
+        </div>
+<div class="w-full max-w-[85%] bg-surface-container-lowest border border-outline-variant/50 rounded-[28px] rounded-tr-sm p-4 shadow-xs space-y-3">
+<!-- Chips Row -->
+<div class="flex flex-wrap items-center gap-2">
+<span class="inline-flex items-center gap-1.5 bg-surface-container-low text-primary px-2.5 py-1 rounded-full font-label-md text-label-md">
+<span class="material-symbols-outlined text-[15px]" data-icon="headphones">headphones</span>
+<span>استماع</span>
+</span>
+<span class="inline-flex items-center border border-outline-variant/60 text-on-surface-variant px-2.5 py-1 rounded-full font-label-md text-label-md" dir="ltr">
+              Dia 4
+            </span>
+</div>
+<!-- Audio Player (Answered) -->
+<div class="flex items-center gap-2.5 bg-surface-container-low/70 rounded-2xl p-2.5">
+<button aria-label="تشغيل الصوت" class="w-9 h-9 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 hover:bg-primary-container transition-colors" onclick="toggleAudio(this)" type="button" jf-ext-button-ct="play_arrow">
+<span class="material-symbols-outlined text-[20px]" data-icon="play_arrow" data-weight="fill" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+<div class="flex-1 flex items-center justify-between gap-1 h-6 px-1" dir="ltr">
+<span class="w-1 h-2.5 rounded-full bg-primary/40"></span>
+<span class="w-1 h-4 rounded-full bg-primary/60"></span>
+<span class="w-1 h-5 rounded-full bg-primary"></span>
+<span class="w-1 h-3 rounded-full bg-primary/50"></span>
+<span class="w-1 h-5 rounded-full bg-primary/80"></span>
+<span class="w-1 h-2 rounded-full bg-primary/40"></span>
+<span class="w-1 h-4 rounded-full bg-primary/70"></span>
+<span class="w-1 h-3 rounded-full bg-primary/50"></span>
+<span class="w-1 h-4 rounded-full bg-primary/60"></span>
+<span class="w-1 h-2 rounded-full bg-primary/40"></span>
+</div>
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-lowest border border-outline-variant/60 text-on-surface-variant font-label-sm text-label-sm hover:border-primary transition-colors" onclick="toggleSlow(this)" type="button" jf-ext-button-ct="🐢
+اسمع بالراحة">
+<span>🐢</span>
+<span>اسمع بالراحة</span>
+</button>
+</div>
+<p class="font-body-md text-body-md font-semibold text-on-surface">معناها إيه؟</p>
+</div>
+</div>
+<!-- Learner Answer Bubble (Left in RTL) -->
+<div class="flex justify-end">
+<div class="bg-primary text-on-primary rounded-[20px] rounded-tl-sm px-4 py-2.5 shadow-xs max-w-[78%]">
+<p class="font-body-sm text-body-sm">محتاج مساعدة</p>
+</div>
+</div>
+<!-- Coach Feedback Bubble (Success) -->
+<div class="flex items-start gap-2.5">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 font-label-md text-label-md font-bold shadow-xs">
+          AZ
+        </div>
+<div class="flex flex-col items-start gap-1.5 max-w-[85%]">
+<div class="bg-surface-container border border-secondary/30 text-secondary rounded-[20px] rounded-tr-sm px-4 py-3 shadow-xs flex items-center gap-2">
+<p class="font-body-sm text-body-sm leading-relaxed">
+              صح ✓ · <span class="font-pt italic font-medium" dir="ltr">Preciso de ajuda</span> = محتاج مساعدة
+            </p>
+<button aria-label="استماع للجملة" class="w-7 h-7 rounded-full bg-secondary/10 text-secondary flex items-center justify-center shrink-0 hover:bg-secondary/20 transition-colors" type="button" jf-ext-button-ct="volume_up">
+<span class="material-symbols-outlined text-[16px]" data-icon="volume_up">volume_up</span>
+</button>
+</div>
+<span class="inline-flex items-center bg-secondary/10 text-secondary font-label-md text-label-md px-2.5 py-0.5 rounded-full">
+            راجعتها ✓
+          </span>
+</div>
+</div>
+<!-- 4. Question 2 (Active Beat) -->
+<div class="flex items-start gap-2.5">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 font-label-md text-label-md font-bold shadow-xs">
+          AZ
+        </div>
+<div class="w-full max-w-[85%] bg-surface-container-lowest border border-outline-variant/50 rounded-[28px] rounded-tr-sm p-4 shadow-sm space-y-3.5">
+<!-- Chips Row -->
+<div class="flex flex-wrap items-center gap-2">
+<span class="inline-flex items-center gap-1.5 bg-surface-container-low text-primary px-2.5 py-1 rounded-full font-label-md text-label-md">
+<span class="material-symbols-outlined text-[15px]" data-icon="headphones">headphones</span>
+<span>استماع</span>
+</span>
+<span class="inline-flex items-center border border-outline-variant/60 text-on-surface-variant px-2.5 py-1 rounded-full font-label-md text-label-md" dir="ltr">
+              Dia 4
+            </span>
+</div>
+<!-- Active Audio Player with Pulse Ring -->
+<div class="flex items-center gap-3 bg-surface-container-low rounded-2xl p-3">
+<div class="relative flex items-center justify-center shrink-0">
+<span class="absolute inset-0 rounded-full bg-primary/20 animate-ping"></span>
+<button aria-label="تشغيل الصوت" class="relative w-11 h-11 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm hover:bg-primary-container transition-colors" onclick="toggleAudio(this)" type="button" jf-ext-button-ct="play_arrow">
+<span class="material-symbols-outlined text-[24px]" data-icon="play_arrow" data-weight="fill" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</div>
+<div class="flex-1 flex items-center justify-between gap-1 h-7 px-1" dir="ltr">
+<span class="w-1 h-3 rounded-full bg-primary wave-bar-active" style="animation-delay: 0.0s"></span>
+<span class="w-1 h-5 rounded-full bg-primary wave-bar-active" style="animation-delay: 0.15s"></span>
+<span class="w-1 h-6 rounded-full bg-primary wave-bar-active" style="animation-delay: 0.3s"></span>
+<span class="w-1 h-4 rounded-full bg-primary wave-bar-active" style="animation-delay: 0.45s"></span>
+<span class="w-1 h-6 rounded-full bg-primary wave-bar-active" style="animation-delay: 0.2s"></span>
+<span class="w-1 h-3 rounded-full bg-primary wave-bar-active" style="animation-delay: 0.5s"></span>
+<span class="w-1 h-5 rounded-full bg-primary wave-bar-active" style="animation-delay: 0.1s"></span>
+<span class="w-1 h-4 rounded-full bg-primary wave-bar-active" style="animation-delay: 0.35s"></span>
+<span class="w-1 h-5 rounded-full bg-primary wave-bar-active" style="animation-delay: 0.25s"></span>
+<span class="w-1 h-3 rounded-full bg-primary wave-bar-active" style="animation-delay: 0.4s"></span>
+</div>
+<button class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-surface-container-lowest border border-outline-variant/60 text-on-surface-variant font-label-sm text-label-sm hover:border-primary transition-colors" onclick="toggleSlow(this)" type="button" jf-ext-button-ct="🐢
+0.8x">
+<span>🐢</span>
+<span>0.8x</span>
+</button>
+</div>
+<p class="font-body-md text-body-md font-semibold text-on-surface">سمعت أنهي جملة؟</p>
+</div>
+</div>
+</main>
+<!-- Bottom Composer Area (Docked Choice Sheet) -->
+<section class="fixed bottom-0 z-30 w-full max-w-[390px] bg-surface-container-lowest/95 backdrop-blur-md border-t border-outline-variant/50 px-4 pt-3 pb-4 shadow-lg rounded-t-[28px]">
+<div class="space-y-2 mb-3" id="options-group">
+<!-- Option A -->
+<button class="option-row w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl border border-outline-variant/60 bg-surface-container-lowest hover:bg-surface-container-low/50 transition-all text-right" onclick="selectOption(this)" type="button" jf-ext-button-ct="pode ajudar?
+volume_up">
+<div class="flex items-center gap-2.5">
+<span class="option-radio w-5 h-5 rounded-full border-2 border-outline-variant flex items-center justify-center shrink-0"></span>
+<span class="font-pt text-body-md text-on-surface" dir="ltr">Pode ajudar?</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant" data-icon="volume_up">volume_up</span>
+</button>
+<!-- Option B (Selected by default) -->
+<button class="option-row w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl border-2 border-primary bg-surface-container-low transition-all text-right" onclick="selectOption(this)" type="button" jf-ext-button-ct="check
+preciso de ajuda.
+volume_up">
+<div class="flex items-center gap-2.5">
+<span class="option-radio w-5 h-5 rounded-full border-2 border-primary bg-primary text-on-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[14px]" data-icon="check">check</span>
+</span>
+<span class="font-pt text-body-md font-medium text-on-surface" dir="ltr">Preciso de ajuda.</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="volume_up">volume_up</span>
+</button>
+<!-- Option C -->
+<button class="option-row w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl border border-outline-variant/60 bg-surface-container-lowest hover:bg-surface-container-low/50 transition-all text-right" onclick="selectOption(this)" type="button" jf-ext-button-ct="posso sair?
+volume_up">
+<div class="flex items-center gap-2.5">
+<span class="option-radio w-5 h-5 rounded-full border-2 border-outline-variant flex items-center justify-center shrink-0"></span>
+<span class="font-pt text-body-md text-on-surface" dir="ltr">Posso sair?</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant" data-icon="volume_up">volume_up</span>
+</button>
+</div>
+<!-- Primary CTA -->
+<button class="w-full bg-primary hover:bg-primary-container active:scale-[0.99] text-on-primary font-label-lg text-label-lg py-3.5 rounded-2xl shadow-md transition-all text-center" id="confirm-btn" onclick="confirmAnswer()" type="button" jf-ext-button-ct="تأكيد">
+        تأكيد
+      </button>
+<!-- Subtle Reassurance Footnote -->
+<p class="mt-2 text-center font-label-sm text-label-sm text-on-surface-variant">
+        جاوب براحتك وبدون استعجال
+      </p>
+</section>
+</div>
+<script>
+    function selectOption(selectedBtn) {
+      const rows = document.querySelectorAll('.option-row');
+      rows.forEach(row => {
+        row.classList.remove('border-2', 'border-primary', 'bg-surface-container-low');
+        row.classList.add('border', 'border-outline-variant/60', 'bg-surface-container-lowest');
+        const radio = row.querySelector('.option-radio');
+        radio.className = 'option-radio w-5 h-5 rounded-full border-2 border-outline-variant flex items-center justify-center shrink-0';
+        radio.innerHTML = '';
+        const speaker = row.querySelector('[data-icon="volume_up"]');
+        if (speaker) {
+          speaker.classList.remove('text-primary');
+          speaker.classList.add('text-on-surface-variant');
+        }
+      });
+
+      selectedBtn.classList.remove('border', 'border-outline-variant/60', 'bg-surface-container-lowest');
+      selectedBtn.classList.add('border-2', 'border-primary', 'bg-surface-container-low');
+      const activeRadio = selectedBtn.querySelector('.option-radio');
+      activeRadio.className = 'option-radio w-5 h-5 rounded-full border-2 border-primary bg-primary text-on-primary flex items-center justify-center shrink-0';
+      activeRadio.innerHTML = '<span class="material-symbols-outlined text-[14px]" data-icon="check">check</span>';
+      const activeSpeaker = selectedBtn.querySelector('[data-icon="volume_up"]');
+      if (activeSpeaker) {
+        activeSpeaker.classList.remove('text-on-surface-variant');
+        activeSpeaker.classList.add('text-primary');
+      }
+    }
+
+    function toggleAudio(btn) {
+      const icon = btn.querySelector('.material-symbols-outlined');
+      if (icon.textContent.trim() === 'play_arrow') {
+        icon.textContent = 'pause';
+      } else {
+        icon.textContent = 'play_arrow';
+      }
+    }
+
+    function toggleSlow(btn) {
+      btn.classList.toggle('bg-surface-container-low');
+      btn.classList.toggle('border-primary');
+      btn.classList.toggle('text-primary');
+    }
+
+    function confirmAnswer() {
+      const btn = document.getElementById('confirm-btn');
+      btn.textContent = 'تم التأكيد ✓';
+      btn.classList.remove('bg-primary');
+      btn.classList.add('bg-secondary');
+      setTimeout(() => {
+        btn.textContent = 'تأكيد';
+        btn.classList.remove('bg-secondary');
+        btn.classList.add('bg-primary');
+      }, 1500);
+    }
+  </script>
+
+
+
+
+</body></html>

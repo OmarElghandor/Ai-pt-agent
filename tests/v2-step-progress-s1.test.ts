@@ -98,19 +98,18 @@ function pack(opts: {
 }
 
 describe('S1 · shared day-step list', () => {
-  it('orders story → pages → find_image → questions → practice when find_image is visible', () => {
+  it('orders story → pages → find_image → questions when find_image is visible', () => {
     const result = buildDayStepsFromPack({
       day: 3,
       pack: pack({ withFindImage: true }),
-      hasPublishedPack: true,
     });
     assert.deepEqual(
       result.displaySteps.map((s) => s.id),
-      ['story', 'vocab', 'grammar', 'find_image', 'day_questions', 'practice'],
+      ['story', 'vocab', 'grammar', 'find_image', 'day_questions'],
     );
     assert.deepEqual(
       result.displaySteps.map((s) => s.kind),
-      ['page', 'page', 'page', 'find_image', 'questions', 'practice'],
+      ['page', 'page', 'page', 'find_image', 'questions'],
     );
     assert.equal(result.questionsAfterId, 'find_image');
     assert.equal(result.unlockAfter, 'day_questions');
@@ -124,11 +123,10 @@ describe('S1 · shared day-step list', () => {
     const result = buildDayStepsFromPack({
       day: 3,
       pack: pack({ withFindImage: false }),
-      hasPublishedPack: true,
     });
     assert.deepEqual(
       result.displaySteps.map((s) => s.id),
-      ['story', 'vocab', 'grammar', 'day_questions', 'practice'],
+      ['story', 'vocab', 'grammar', 'day_questions'],
     );
     const find = result.steps.find((s) => s.id === 'find_image');
     assert.ok(find);
@@ -145,29 +143,23 @@ describe('S1 · shared day-step list', () => {
     const result = buildDayStepsFromPack({
       day: 3,
       pack: pack({ withFindImage: false, withScene: true }),
-      hasPublishedPack: false,
     });
     assert.ok(!result.steps.some((s) => s.id === 'scene_old'));
     assert.ok(!result.displaySteps.some((s) => s.kind === 'page' && s.id === 'scene_old'));
     assert.deepEqual(
       result.displaySteps.map((s) => s.id),
-      ['story', 'vocab', 'grammar', 'day_questions', 'practice'],
+      ['story', 'vocab', 'grammar', 'day_questions'],
     );
   });
 
-  it('marks practice present but not counted', () => {
+  it('does not include the conversation practice station', () => {
     const result = buildDayStepsFromPack({
       day: 3,
       pack: pack({ withFindImage: true }),
-      hasPublishedPack: true,
     });
-    const practice = result.steps.find((s) => s.id === 'practice');
-    assert.ok(practice);
-    assert.equal(practice.present, true);
-    assert.equal(practice.counted, false);
-    assert.equal(practice.href, '/practice/3');
+    assert.ok(!result.steps.some((s) => s.id === 'practice'));
+    assert.ok(!result.displaySteps.some((s) => s.kind === 'practice'));
     const counted = result.steps.filter((s) => s.counted);
-    assert.ok(counted.every((s) => s.id !== 'practice'));
     assert.equal(counted.length, 5); // story, vocab, grammar, find_image, questions
   });
 
@@ -175,7 +167,6 @@ describe('S1 · shared day-step list', () => {
     const result = buildDayStepsFromPack({
       day: 3,
       pack: pack({ withFindImage: true }),
-      hasPublishedPack: true,
     });
     assert.equal(result.displaySteps[0]?.title, 'القصة');
     assert.equal(
@@ -185,10 +176,6 @@ describe('S1 · shared day-step list', () => {
     assert.equal(
       result.displaySteps.find((s) => s.id === 'day_questions')?.title,
       'أسئلة اليوم',
-    );
-    assert.equal(
-      result.displaySteps.find((s) => s.id === 'practice')?.title,
-      'تدريب',
     );
   });
 });

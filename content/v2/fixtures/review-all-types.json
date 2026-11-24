@@ -1,0 +1,821 @@
+{
+  "local_date": "2026-11-24",
+  "budget_minutes": 14,
+  "window": [
+    {
+      "day": 4,
+      "position": 1
+    },
+    {
+      "day": 3,
+      "position": 2
+    },
+    {
+      "day": 2,
+      "position": 3
+    }
+  ],
+  "steps": [
+    {
+      "kind": "question",
+      "lesson_day": 4,
+      "pairs": [
+        {
+          "item_id": "word.preciso",
+          "skill": "listening"
+        }
+      ],
+      "round": 1,
+      "question": {
+        "id": "fx-listen_meaning",
+        "type": "listen_meaning",
+        "skill": "listening",
+        "accepted": [
+          "Preciso de ajuda."
+        ],
+        "tests": [
+          "word.preciso"
+        ],
+        "prompt_eg": "معناها إيه؟",
+        "options": [
+          {
+            "ar": "محتاج مساعدة"
+          },
+          {
+            "ar": "ممكن أساعد؟"
+          },
+          {
+            "ar": "أقدر أخرج؟"
+          }
+        ],
+        "answer": 0
+      },
+      "display": {
+        "verdict": "correct",
+        "learner_text": "محتاج مساعدة",
+        "correct_tl": "Preciso de ajuda.",
+        "meaning_eg": "محتاج مساعدة",
+        "stage_labels": [
+          "راجعتها ✓"
+        ]
+      }
+    },
+    {
+      "kind": "question",
+      "lesson_day": 3,
+      "pairs": [
+        {
+          "item_id": "word.preciso",
+          "skill": "listening"
+        }
+      ],
+      "round": 1,
+      "question": {
+        "id": "fx-listen_pick_tl",
+        "type": "listen_pick_tl",
+        "skill": "listening",
+        "accepted": [
+          "Preciso de ajuda."
+        ],
+        "tests": [
+          "word.preciso"
+        ],
+        "prompt_eg": "سمعت أنهي جملة؟",
+        "options": [
+          {
+            "tl": "Pode ajudar?"
+          },
+          {
+            "tl": "Preciso de ajuda."
+          },
+          {
+            "tl": "Posso sair?"
+          }
+        ],
+        "answer": 1
+      },
+      "display": {
+        "verdict": "near_miss",
+        "learner_text": "إجابة تجريبية",
+        "correct_tl": "Preciso de ajuda.",
+        "meaning_eg": "محتاج مساعدة",
+        "corrected_tl": "Preciso de ajuda.",
+        "why_eg": "انت قربت بس فيهم حرف ناقص.",
+        "logged_weak": true
+      }
+    },
+    {
+      "kind": "question",
+      "lesson_day": 2,
+      "pairs": [
+        {
+          "item_id": "word.preciso",
+          "skill": "listening"
+        }
+      ],
+      "round": 1,
+      "question": {
+        "id": "fx-listen_pick_image",
+        "type": "listen_pick_image",
+        "skill": "listening",
+        "accepted": [
+          "a reunião"
+        ],
+        "tests": [
+          "word.preciso"
+        ],
+        "prompt_eg": "لاقي الصورة",
+        "answer": 0,
+        "image_refs": [
+          "img.a",
+          "img.b",
+          "img.c",
+          "img.d"
+        ],
+        "options": [
+          {
+            "tl": "a reunião"
+          },
+          {
+            "tl": "o elevador"
+          },
+          {
+            "tl": "a secretária"
+          },
+          {
+            "tl": "o escritório"
+          }
+        ]
+      },
+      "display": {
+        "verdict": "wrong",
+        "learner_text": "إجابة تجريبية",
+        "correct_tl": "a reunião",
+        "meaning_eg": "محتاج مساعدة"
+      }
+    },
+    {
+      "kind": "question",
+      "lesson_day": 4,
+      "pairs": [
+        {
+          "item_id": "word.preciso",
+          "skill": "listening"
+        }
+      ],
+      "round": 1,
+      "question": {
+        "id": "fx-situation_choice",
+        "type": "situation_choice",
+        "skill": "reading",
+        "accepted": [
+          "Preciso de ajuda."
+        ],
+        "tests": [
+          "word.preciso"
+        ],
+        "situation_eg": "موظف الاستقبال سألك إزاي تقدر تتعامل مع الطلب.",
+        "options": [
+          {
+            "tl": "Posso ajudar?"
+          },
+          {
+            "tl": "Preciso de ajuda."
+          }
+        ],
+        "answer": 1
+      },
+      "display": {
+        "verdict": "unclear",
+        "learner_text": "إجابة تجريبية",
+        "correct_tl": "Preciso de ajuda.",
+        "meaning_eg": "محتاج مساعدة",
+        "model_tl": "Preciso de ajuda."
+      }
+    },
+    {
+      "kind": "question",
+      "lesson_day": 3,
+      "pairs": [
+        {
+          "item_id": "word.preciso",
+          "skill": "listening"
+        }
+      ],
+      "round": 1,
+      "question": {
+        "id": "fx-read_meaning",
+        "type": "read_meaning",
+        "skill": "reading",
+        "accepted": [
+          "Preciso de ajuda."
+        ],
+        "tests": [
+          "word.preciso"
+        ],
+        "prompt_eg": "دفعت كام؟",
+        "reading": {
+          "kind": "receipt",
+          "lines": [
+            {
+              "tl": "1 galão",
+              "price": "1,40 €"
+            },
+            {
+              "tl": "1 pastel de nata",
+              "price": "1,20 €"
+            }
+          ],
+          "total": "2,60 €"
+        },
+        "options": [
+          {
+            "ar": "١,٤٠ €"
+          },
+          {
+            "ar": "١,٢٠ €"
+          },
+          {
+            "ar": "٢,٦٠ €"
+          }
+        ],
+        "answer": 2
+      },
+      "display": {
+        "verdict": "self_rated",
+        "learner_text": "إجابة تجريبية",
+        "correct_tl": "Preciso de ajuda.",
+        "meaning_eg": "محتاج مساعدة",
+        "self_rating": "near",
+        "model_tl": "Preciso de ajuda."
+      }
+    },
+    {
+      "kind": "question",
+      "lesson_day": 2,
+      "pairs": [
+        {
+          "item_id": "word.preciso",
+          "skill": "listening"
+        }
+      ],
+      "round": 1,
+      "question": {
+        "id": "fx-pick_meaning",
+        "type": "pick_meaning",
+        "skill": "reading",
+        "accepted": [
+          "Preciso de ajuda."
+        ],
+        "tests": [
+          "word.preciso"
+        ],
+        "prompt_tl": "a avaria",
+        "prompt_eg": "معناها إيه؟",
+        "options": [
+          {
+            "ar": "عُطل"
+          },
+          {
+            "ar": "موعد"
+          },
+          {
+            "ar": "طلب"
+          }
+        ],
+        "answer": 0
+      },
+      "display": {
+        "verdict": "correct",
+        "learner_text": "عُطل",
+        "correct_tl": "Preciso de ajuda.",
+        "meaning_eg": "محتاج مساعدة",
+        "stage_labels": [
+          "راجعتها ✓"
+        ]
+      }
+    },
+    {
+      "kind": "question",
+      "lesson_day": 4,
+      "pairs": [
+        {
+          "item_id": "word.preciso",
+          "skill": "listening"
+        }
+      ],
+      "round": 1,
+      "question": {
+        "id": "fx-pick_tl",
+        "type": "pick_tl",
+        "skill": "reading",
+        "accepted": [
+          "Preciso de ajuda."
+        ],
+        "tests": [
+          "word.preciso"
+        ],
+        "prompt_ar": "محتاج مساعدة",
+        "prompt_eg": "بالبرتغالي تكون؟",
+        "options": [
+          {
+            "tl": "Preciso de ajuda."
+          },
+          {
+            "tl": "Pode ajudar?"
+          },
+          {
+            "tl": "Posso sair?"
+          }
+        ],
+        "answer": 0
+      },
+      "display": {
+        "verdict": "near_miss",
+        "learner_text": "إجابة تجريبية",
+        "correct_tl": "Preciso de ajuda.",
+        "meaning_eg": "محتاج مساعدة",
+        "corrected_tl": "Preciso de ajuda.",
+        "why_eg": "انت قربت بس فيهم حرف ناقص.",
+        "logged_weak": true
+      }
+    },
+    {
+      "kind": "question",
+      "lesson_day": 3,
+      "pairs": [
+        {
+          "item_id": "word.preciso",
+          "skill": "listening"
+        }
+      ],
+      "round": 1,
+      "question": {
+        "id": "fx-choose_article",
+        "type": "choose_article",
+        "skill": "grammar",
+        "accepted": [
+          "a reunião"
+        ],
+        "tests": [
+          "word.preciso"
+        ],
+        "prompt_tl": "___ reunião",
+        "options": [
+          {
+            "tl": "o"
+          },
+          {
+            "tl": "a"
+          },
+          {
+            "tl": "os"
+          },
+          {
+            "tl": "as"
+          }
+        ],
+        "answer": 1
+      },
+      "display": {
+        "verdict": "wrong",
+        "learner_text": "إجابة تجريبية",
+        "correct_tl": "a reunião",
+        "meaning_eg": "محتاج مساعدة"
+      }
+    },
+    {
+      "kind": "question",
+      "lesson_day": 2,
+      "pairs": [
+        {
+          "item_id": "word.preciso",
+          "skill": "listening"
+        }
+      ],
+      "round": 1,
+      "question": {
+        "id": "fx-complete_phrase",
+        "type": "complete_phrase",
+        "skill": "grammar",
+        "accepted": [
+          "Muito prazer!"
+        ],
+        "tests": [
+          "word.preciso"
+        ],
+        "prompt_tl": "Muito ___!",
+        "options": [
+          {
+            "tl": "prazer"
+          },
+          {
+            "tl": "obrigado"
+          },
+          {
+            "tl": "dia"
+          }
+        ],
+        "answer": 0
+      },
+      "display": {
+        "verdict": "correct",
+        "learner_text": "محتاج مساعدة",
+        "correct_tl": "Muito prazer!",
+        "meaning_eg": "محتاج مساعدة",
+        "stage_labels": [
+          "راجعتها ✓"
+        ]
+      }
+    },
+    {
+      "kind": "question",
+      "lesson_day": 4,
+      "pairs": [
+        {
+          "item_id": "word.preciso",
+          "skill": "listening"
+        }
+      ],
+      "round": 1,
+      "question": {
+        "id": "fx-fill_blank_choice",
+        "type": "fill_blank_choice",
+        "skill": "grammar",
+        "accepted": [
+          "A Inês está no escritório."
+        ],
+        "tests": [
+          "word.preciso"
+        ],
+        "prompt_tl": "A Inês ___ no escritório.",
+        "rule_chip": "ser ولا estar؟",
+        "options": [
+          {
+            "tl": "é"
+          },
+          {
+            "tl": "está"
+          },
+          {
+            "tl": "fica"
+          }
+        ],
+        "answer": 1,
+        "grammar_note": {
+          "rule_eg": "فعل estar للمكان الحالي أو الحالة المؤقتة.",
+          "wrong_tl": "é no escritório",
+          "right_tl": "está no escritório"
+        }
+      },
+      "display": {
+        "verdict": "near_miss",
+        "learner_text": "إجابة تجريبية",
+        "correct_tl": "A Inês está no escritório.",
+        "meaning_eg": "محتاج مساعدة",
+        "corrected_tl": "A Inês está no escritório.",
+        "why_eg": "انت قربت بس فيهم حرف ناقص.",
+        "logged_weak": true
+      }
+    },
+    {
+      "kind": "question",
+      "lesson_day": 3,
+      "pairs": [
+        {
+          "item_id": "word.preciso",
+          "skill": "listening"
+        }
+      ],
+      "round": 1,
+      "question": {
+        "id": "fx-build_sentence",
+        "type": "build_sentence",
+        "skill": "grammar",
+        "accepted": [
+          "Preciso de sair cedo"
+        ],
+        "tests": [
+          "word.preciso"
+        ],
+        "prompt_eg": "أنا محتاج أمشي بدري",
+        "tiles": [
+          "Preciso",
+          "de",
+          "sair",
+          "cedo",
+          "hoje",
+          "tarde"
+        ],
+        "answer": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "hint": "ابدأ بالفعل"
+      },
+      "display": {
+        "verdict": "wrong",
+        "learner_text": "إجابة تجريبية",
+        "correct_tl": "Preciso de sair cedo",
+        "meaning_eg": "محتاج مساعدة"
+      }
+    },
+    {
+      "kind": "question",
+      "lesson_day": 2,
+      "pairs": [
+        {
+          "item_id": "word.preciso",
+          "skill": "listening"
+        }
+      ],
+      "round": 1,
+      "question": {
+        "id": "fx-fill_blank_write",
+        "type": "fill_blank_write",
+        "skill": "writing",
+        "accepted": [
+          "vou"
+        ],
+        "tests": [
+          "word.preciso"
+        ],
+        "prompt_tl": "Eu ___ ao escritório todos os dias.",
+        "rule_chip": "تصريف الأفعال",
+        "think_eg": "فعل منتظم -AR",
+        "hint": "vou"
+      },
+      "display": {
+        "verdict": "correct",
+        "learner_text": "محتاج مساعدة",
+        "correct_tl": "vou",
+        "meaning_eg": "محتاج مساعدة",
+        "stage_labels": [
+          "راجعتها ✓"
+        ]
+      }
+    },
+    {
+      "kind": "question",
+      "lesson_day": 4,
+      "pairs": [
+        {
+          "item_id": "word.preciso",
+          "skill": "listening"
+        }
+      ],
+      "round": 1,
+      "question": {
+        "id": "fx-dictation",
+        "type": "dictation",
+        "skill": "listening",
+        "accepted": [
+          "Bom dia!"
+        ],
+        "tests": [
+          "word.preciso"
+        ],
+        "prompt_eg": "اكتب اللي سمعته",
+        "hint": "كلمة أو اتنين"
+      },
+      "display": {
+        "verdict": "near_miss",
+        "learner_text": "إجابة تجريبية",
+        "correct_tl": "Bom dia!",
+        "meaning_eg": "محتاج مساعدة",
+        "corrected_tl": "Bom dia!",
+        "why_eg": "انت قربت بس فيهم حرف ناقص.",
+        "logged_weak": true
+      }
+    },
+    {
+      "kind": "question",
+      "lesson_day": 3,
+      "pairs": [
+        {
+          "item_id": "word.preciso",
+          "skill": "listening"
+        }
+      ],
+      "round": 1,
+      "question": {
+        "id": "fx-translate_write",
+        "type": "translate_write",
+        "skill": "writing",
+        "accepted": [
+          "Preciso de sair cedo."
+        ],
+        "tests": [
+          "word.preciso"
+        ],
+        "situation_eg": "بتقول لزميلك إنك محتاج تمشي بدري.",
+        "hint": "كلمة أو اتنين"
+      },
+      "display": {
+        "verdict": "wrong",
+        "learner_text": "إجابة تجريبية",
+        "correct_tl": "Preciso de sair cedo.",
+        "meaning_eg": "محتاج مساعدة"
+      }
+    },
+    {
+      "kind": "question",
+      "lesson_day": 2,
+      "pairs": [
+        {
+          "item_id": "word.preciso",
+          "skill": "listening"
+        }
+      ],
+      "round": 1,
+      "question": {
+        "id": "fx-reply_write",
+        "type": "reply_write",
+        "skill": "writing",
+        "accepted": [
+          "Não, obrigado."
+        ],
+        "tests": [
+          "word.preciso"
+        ],
+        "character": {
+          "name": "Inês",
+          "tl": "Mais alguma coisa?"
+        }
+      },
+      "display": {
+        "verdict": "correct",
+        "learner_text": "محتاج مساعدة",
+        "correct_tl": "Não, obrigado.",
+        "meaning_eg": "محتاج مساعدة",
+        "stage_labels": [
+          "راجعتها ✓"
+        ]
+      }
+    },
+    {
+      "kind": "question",
+      "lesson_day": 4,
+      "pairs": [
+        {
+          "item_id": "word.preciso",
+          "skill": "listening"
+        }
+      ],
+      "round": 1,
+      "question": {
+        "id": "fx-describe_image_write",
+        "type": "describe_image_write",
+        "skill": "writing",
+        "accepted": [
+          "Há uma reunião na sala."
+        ],
+        "tests": [
+          "word.preciso"
+        ],
+        "prompt_eg": "اكتب جملة واحدة عن الصورة",
+        "image_url": null
+      },
+      "display": {
+        "verdict": "near_miss",
+        "learner_text": "إجابة تجريبية",
+        "correct_tl": "Há uma reunião na sala.",
+        "meaning_eg": "محتاج مساعدة",
+        "corrected_tl": "Há uma reunião na sala.",
+        "why_eg": "انت قربت بس فيهم حرف ناقص.",
+        "logged_weak": true
+      }
+    },
+    {
+      "kind": "question",
+      "lesson_day": 3,
+      "pairs": [
+        {
+          "item_id": "word.preciso",
+          "skill": "listening"
+        }
+      ],
+      "round": 1,
+      "question": {
+        "id": "fx-describe_image_speak",
+        "type": "describe_image_speak",
+        "skill": "speaking",
+        "accepted": [
+          "Há uma reunião na sala."
+        ],
+        "tests": [
+          "word.preciso"
+        ],
+        "prompt_eg": "قول جملة عن الصورة"
+      },
+      "display": {
+        "verdict": "self_rated",
+        "learner_text": "إجابة تجريبية",
+        "correct_tl": "Há uma reunião na sala.",
+        "meaning_eg": "محتاج مساعدة",
+        "self_rating": "near",
+        "model_tl": "Há uma reunião na sala."
+      }
+    },
+    {
+      "kind": "question",
+      "lesson_day": 2,
+      "pairs": [
+        {
+          "item_id": "word.preciso",
+          "skill": "listening"
+        }
+      ],
+      "round": 1,
+      "question": {
+        "id": "fx-say_it",
+        "type": "say_it",
+        "skill": "speaking",
+        "accepted": [
+          "Muito prazer!"
+        ],
+        "tests": [
+          "word.preciso"
+        ],
+        "situation_eg": "بتسلّم على زميل جديد في المكتب."
+      },
+      "display": {
+        "verdict": "correct",
+        "learner_text": "محتاج مساعدة",
+        "correct_tl": "Muito prazer!",
+        "meaning_eg": "محتاج مساعدة",
+        "stage_labels": [
+          "راجعتها ✓"
+        ]
+      }
+    },
+    {
+      "kind": "question",
+      "lesson_day": 4,
+      "pairs": [
+        {
+          "item_id": "word.preciso",
+          "skill": "listening"
+        }
+      ],
+      "round": 1,
+      "question": {
+        "id": "fx-reply_speak",
+        "type": "reply_speak",
+        "skill": "speaking",
+        "accepted": [
+          "Sim, por favor."
+        ],
+        "tests": [
+          "word.preciso"
+        ],
+        "character": {
+          "name": "João",
+          "tl": "Precisas de ajuda?"
+        }
+      },
+      "display": {
+        "verdict": "unclear",
+        "learner_text": "إجابة تجريبية",
+        "correct_tl": "Sim, por favor.",
+        "meaning_eg": "محتاج مساعدة",
+        "model_tl": "Sim, por favor."
+      }
+    },
+    {
+      "kind": "question",
+      "lesson_day": 3,
+      "pairs": [
+        {
+          "item_id": "word.preciso",
+          "skill": "listening"
+        }
+      ],
+      "round": 1,
+      "question": {
+        "id": "fx-read_aloud",
+        "type": "read_aloud",
+        "skill": "speaking",
+        "accepted": [
+          "Bom dia!"
+        ],
+        "tests": [
+          "word.preciso"
+        ],
+        "prompt_tl": "Bom dia!",
+        "say": "بوم ديا"
+      }
+    }
+  ],
+  "rounds_total": 2,
+  "rounds_done": 0,
+  "status": "open",
+  "resume": {
+    "round": 1,
+    "step": 0
+  },
+  "current_day": 5,
+  "learner_name": "عمر"
+}

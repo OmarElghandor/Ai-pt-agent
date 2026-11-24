@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getCurrentV2UserId } from '@/lib/v2/auth/session';
+import { getCurrentV2User } from '@/lib/v2/auth/session';
 import { mongoConfigured } from '@/lib/mongo';
 import { isV2Enabled } from '@/lib/v2/flags';
 import {
@@ -8,6 +8,7 @@ import {
 } from '@/lib/v2/practice/reviewStore';
 import {
   dayOverrideFromSearch,
+  DEFAULT_TARGET_LANG,
   resolveLearnerDay,
 } from '@/lib/v2/progress/learnerDay';
 
@@ -20,10 +21,12 @@ export async function GET(req: Request) {
   if (!mongoConfigured()) {
     return NextResponse.json({ error: 'MongoDB not configured' }, { status: 503 });
   }
-  const userId = await getCurrentV2UserId();
-  if (!userId) {
+  const user = await getCurrentV2User();
+  if (!user) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
+  const userId = user.id;
+  const target_lang = user.target_lang || DEFAULT_TARGET_LANG;
 
   const url = new URL(req.url);
   const currentDay = await resolveLearnerDay(
@@ -31,6 +34,7 @@ export async function GET(req: Request) {
     url.searchParams.has('day')
       ? dayOverrideFromSearch(url.searchParams.get('day'))
       : null,
+    target_lang,
   );
   const tz =
     req.headers.get('x-timezone') ??
@@ -43,6 +47,7 @@ export async function GET(req: Request) {
       user_id: userId,
       currentDay,
       timeZone: tz,
+      target_lang,
     });
     return NextResponse.json({ ...peek, current_day: currentDay });
   }
@@ -51,6 +56,7 @@ export async function GET(req: Request) {
     user_id: userId,
     currentDay,
     timeZone: tz,
+    target_lang,
   });
 
   return NextResponse.json({

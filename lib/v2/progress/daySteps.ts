@@ -4,13 +4,8 @@ import {
 } from '@/lib/v2/content/getPublishedLesson';
 import type { LessonPack } from '@/lib/v2/content/lesson';
 import { findImageStepVisible } from '@/lib/v2/findImage/buildRounds';
-import { getPublishedPack } from '@/lib/v2/generation/pack/save';
 import { rehydrateLessonImages } from '@/lib/v2/images/rehydrate';
-import {
-  FIND_IMAGE_MINUTES,
-  minutesForMode,
-  PRACTICE_MINUTES,
-} from '@/lib/v2/render/dayMinutes';
+import { FIND_IMAGE_MINUTES, minutesForMode } from '@/lib/v2/render/dayMinutes';
 import { plainRt } from '@/lib/v2/render/speechTarget';
 
 export type DayStepKind = 'page' | 'practice' | 'questions' | 'find_image';
@@ -25,7 +20,7 @@ export type DayStep = {
   href: string | null;
   /** False when the day does not show this station (e.g. hidden find_image). */
   present: boolean;
-  /** Present stations except practice — used for home / day-map counts. */
+  /** Present stations used for home / day-map counts. */
   counted: boolean;
 };
 
@@ -38,7 +33,6 @@ export type DayStepsResult = {
   displaySteps: DayStep[];
   questionsAfterId: string | null;
   unlockAfter: string;
-  hasPublishedPack: boolean;
   dayQuestionsTotal: number;
   lessonVersion: number | null;
   situation?: { tl: string; eg: string };
@@ -53,12 +47,11 @@ function withDev(href: string, dev: boolean): string {
 /**
  * Pure builder: same order and titles the day map showed before extraction.
  * Order: story → detail pages (no legacy scene) → find_image if visible →
- * day_questions → practice.
+ * day_questions.
  */
 export function buildDayStepsFromPack(opts: {
   day: number;
   pack: LessonPack;
-  hasPublishedPack: boolean;
   lessonVersion?: number | null;
   dev?: boolean;
 }): DayStepsResult {
@@ -138,23 +131,14 @@ export function buildDayStepsFromPack(opts: {
     counted: true,
   });
 
-  steps.push({
-    id: 'practice',
-    kind: 'practice',
-    title: 'تدريب',
-    subtitle: 'محادثة',
-    minutes: PRACTICE_MINUTES,
-    href: opts.hasPublishedPack
-      ? `/practice/${day}${dev ? '?dev=1' : ''}`
-      : null,
-    present: true,
-    counted: false,
-  });
-
   const openSteps = steps.map((s) => ({ id: s.id, present: s.present }));
   const displaySteps = steps.filter((s) => s.present);
+  // Match أسئلة اليوم session filter (exclude practice-only questions).
   const dayQuestionsTotal = Array.isArray(lessonPack.questions)
-    ? lessonPack.questions.length
+    ? lessonPack.questions.filter((q) => {
+        const u = (q as { use?: string }).use;
+        return u !== 'practice';
+      }).length
     : 0;
   const totalCountedMinutes = displaySteps
     .filter((s) => s.counted)
@@ -167,7 +151,6 @@ export function buildDayStepsFromPack(opts: {
     displaySteps,
     questionsAfterId,
     unlockAfter,
-    hasPublishedPack: opts.hasPublishedPack,
     dayQuestionsTotal,
     lessonVersion: opts.lessonVersion ?? null,
     situation: lessonPack.lesson.situation,
@@ -185,7 +168,6 @@ export async function buildDaySteps(opts: {
     (await getLatestLessonPack(opts.day));
   if (!published) return null;
 
-  const convoPack = await getPublishedPack(opts.day);
   const lessonPack = await rehydrateLessonImages({
     day: published.day,
     targetLang: published.target_lang,
@@ -196,7 +178,6 @@ export async function buildDaySteps(opts: {
   return buildDayStepsFromPack({
     day: published.day,
     pack: lessonPack,
-    hasPublishedPack: Boolean(convoPack),
     lessonVersion: published.version,
     dev: opts.dev,
   });

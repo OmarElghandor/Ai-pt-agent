@@ -128,6 +128,7 @@ export async function getOrCreateTodayCards(opts: {
   user_id: string;
   currentDay: number;
   timeZone?: string;
+  target_lang?: string;
   /** Item bank used to seed first-seen states / eligibility. */
   items?: Item[];
   now?: Date;
@@ -181,10 +182,12 @@ export async function getOrCreateTodayCards(opts: {
     splitDailyBudget,
   } = await import('@/lib/v2/practice');
   const mongoose = await import('mongoose');
+  const target_lang = opts.target_lang ?? 'pt-PT';
 
   const completedDocs = await V2LessonProgressModel()
     .find({
       user_id: opts.user_id,
+      target_lang,
       status: 'completed',
       day: { $lt: opts.currentDay },
     })
@@ -198,7 +201,11 @@ export async function getOrCreateTodayCards(opts: {
   });
 
   const currentProgress = await V2LessonProgressModel()
-    .findOne({ user_id: opts.user_id, day: opts.currentDay })
+    .findOne({
+      user_id: opts.user_id,
+      target_lang,
+      day: opts.currentDay,
+    })
     .select('status')
     .lean();
   const hasLessonToday =

@@ -75,7 +75,7 @@ export function SessionEnd({
           {titleOverride ?? 'خلّصت أسئلة اليوم'}
         </h1>
         <p className="mt-2 font-[family-name:var(--font-v2-arabic)] text-sm text-white/80">
-          كويس — كمّل للمحادثة عشان تثبّت اللي اتقال
+          كويس — خلّصت أسئلة اليوم
         </p>
         {extraLines?.length ? (
           <ul className="mt-3 space-y-1 text-start font-[family-name:var(--font-v2-arabic)] text-sm text-white/90">
@@ -151,15 +151,9 @@ export function SessionEnd({
       ) : null}
 
       <div className="mt-auto space-y-3 pt-8">
-        <PrimaryButton className="w-full" href={`/practice/${day}`}>
-          كمّل للمحادثة ←
-        </PrimaryButton>
-        <Link
-          href={`/day/${day}`}
-          className="flex min-h-11 w-full items-center justify-center rounded-v2-pill border border-v2-action font-[family-name:var(--font-v2-arabic)] font-semibold text-v2-action"
-        >
+        <PrimaryButton className="w-full" href={onDoneHref ?? `/day/${day}`}>
           رجوع للمسار التعليمي
-        </Link>
+        </PrimaryButton>
       </div>
     </main>
   );

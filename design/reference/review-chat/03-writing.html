@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html class="h-full" dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>مراجعة النهارده · الجولة ٢ (كتابة وقواعد)</title>
+  <!-- Google Fonts: IBM Plex Sans Arabic + IBM Plex Sans + Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <!-- Material Symbols Outlined -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            // Lumina White Theme tokens
+            'page-bg': '#FFFFFF',
+            'surface-card': '#FFFFFF',
+            'surface-neutral': '#F2F5F4',
+            'surface-input': '#F7F9F8',
+            'surface-subtle': '#E8EDEC',
+            'border-subtle': '#D5DEDA',
+            'border-input': '#C8D2CD',
+            'divider-line': '#E1E7E4',
+            // Brand & Semantic
+            'primary-teal': '#0D9488',
+            'primary-teal-dark': '#075E57',
+            'primary-teal-pale': '#D8F2EE',
+            'emerald-success': '#0FA87E',
+            'emerald-pale': '#DDF5EB',
+            'emerald-dark': '#075E47',
+            'emerald-check': '#0B8064',
+            'amber-warn': '#B7791F',
+            'amber-pale': '#F9EACB',
+            'amber-dark': '#70450B',
+            'terracotta': '#C36D4B',
+            'terracotta-pale': '#F8E2D9',
+            'terracotta-dark': '#78391F',
+            // Text
+            'text-primary': '#202927',
+            'text-secondary': '#5F6B67',
+            'text-muted': '#737877',
+          },
+          fontFamily: {
+            arabic: ['IBM Plex Sans Arabic', 'sans-serif'],
+            heading: ['IBM Plex Sans', 'sans-serif'],
+            inter: ['Inter', 'sans-serif'],
+          },
+          boxShadow: {
+            'lumina-card': '0 8px 24px -4px rgba(23, 31, 29, 0.05)',
+            'lumina-sheet': '0 12px 32px -8px rgba(23, 31, 29, 0.10)',
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      background-color: #FFFFFF;
+      color: #202927;
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-latin {
+      font-family: 'Inter', sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 20;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .icon-fill {
+      font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 20;
+    }
+    .focus-lumina {
+      border-color: #0D9488 !important;
+      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.16) !important;
+    }
+  </style>
+</head>
+<body class="bg-page-bg min-h-screen text-text-primary antialiased flex flex-col justify-between selection:bg-primary-teal-pale selection:text-primary-teal-dark">
+
+  <!-- Mobile Container (390px phone frame max width) -->
+  <div class="max-w-[420px] mx-auto w-full min-h-screen flex flex-col bg-page-bg relative shadow-sm border-x border-border-subtle/60">
+
+    <!-- 1. Sticky Header Bar -->
+    <header class="sticky top-0 z-30 bg-page-bg/95 backdrop-blur-md border-b border-border-subtle px-4 pt-3 pb-2.5">
+      <div class="flex items-center justify-between mb-2.5">
+        <!-- Back action -->
+        <button aria-label="رجوع" class="size-9 rounded-full flex items-center justify-center text-text-primary hover:bg-surface-neutral transition-colors">
+          <span class="material-symbols-outlined text-2xl">arrow_forward</span>
+        </button>
+
+        <!-- Title & Subtitle -->
+        <div class="text-center">
+          <h1 class="text-base font-bold text-text-primary tracking-tight font-arabic">مراجعة النهارده</h1>
+          <span class="text-xs text-text-secondary font-medium font-arabic">جولة ٢ من ٣ · ٦ من ١٠</span>
+        </div>
+
+        <!-- User profile avatar / pill -->
+        <div class="size-9 rounded-full bg-primary-teal text-white flex items-center justify-center font-heading font-bold text-xs shadow-xs">
+          عمر
+        </div>
+      </div>
+
+      <!-- Segmented 10-step progress bar -->
+      <div class="grid grid-cols-10 gap-1.5 px-0.5 pt-1" dir="ltr">
+        <!-- Completed (emerald / teal) -->
+        <span class="h-1.5 rounded-full bg-emerald-success"></span>
+        <span class="h-1.5 rounded-full bg-emerald-success"></span>
+        <span class="h-1.5 rounded-full bg-emerald-success"></span>
+        <span class="h-1.5 rounded-full bg-emerald-success"></span>
+        <span class="h-1.5 rounded-full bg-primary-teal"></span>
+        <!-- Current step -->
+        <span class="h-1.5 rounded-full bg-primary-teal ring-2 ring-primary-teal/20"></span>
+        <!-- Remaining -->
+        <span class="h-1.5 rounded-full bg-divider-line"></span>
+        <span class="h-1.5 rounded-full bg-divider-line"></span>
+        <span class="h-1.5 rounded-full bg-divider-line"></span>
+        <span class="h-1.5 rounded-full bg-divider-line"></span>
+      </div>
+    </header>
+
+    <!-- 2. Chat Conversation Scroll Area -->
+    <main class="flex-1 px-4 py-4 space-y-4 pb-48">
+
+      <!-- Round 2 Divider Pill -->
+      <div class="flex items-center justify-center pt-1 pb-1">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-neutral border border-border-subtle text-xs font-semibold text-text-secondary font-arabic">
+          <span class="size-1.5 rounded-full bg-primary-teal"></span>
+          الجولة ٢ · كتابة وتطبيق قواعد
+        </span>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- QUESTION A: Dictation (Answered with Near-Miss) -->
+      <!-- ============================================== -->
+      <section class="space-y-2.5">
+        <!-- Coach Card (Prompt) -->
+        <div class="flex items-start gap-2.5">
+          <div class="size-9 rounded-full bg-primary-teal text-white flex items-center justify-center font-heading font-bold text-xs shrink-0 shadow-xs">
+            AZ
+          </div>
+          <div class="flex-1 max-w-[88%] bg-surface-card border border-border-subtle rounded-2xl rounded-tr-xs p-3.5 shadow-lumina-card space-y-2.5">
+            <!-- Header chips row -->
+            <div class="flex items-center justify-between">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-neutral border border-border-subtle text-xs font-semibold text-text-secondary">
+                <span class="material-symbols-outlined text-sm text-primary-teal">edit</span>
+                كتابة
+              </span>
+              <span class="text-[11px] text-text-muted font-medium font-arabic">السؤال ٥ من ١٠</span>
+            </div>
+
+            <!-- Audio listening controls -->
+            <div class="flex items-center gap-2 p-2 rounded-xl bg-surface-neutral border border-border-subtle/80" dir="ltr">
+              <!-- Play button -->
+              <button aria-label="تشغيل الصوت" class="size-8 rounded-full bg-primary-teal text-white flex items-center justify-center hover:bg-primary-teal-dark active:scale-95 transition-all shadow-xs shrink-0">
+                <span class="material-symbols-outlined icon-fill text-base">play_arrow</span>
+              </button>
+              <!-- Waveform bars -->
+              <div class="flex-1 flex items-center gap-1 h-5 px-1 bg-emerald-pale rounded-lg">
+                <span class="w-1 bg-emerald-success h-2 rounded-full"></span>
+                <span class="w-1 bg-emerald-success h-3.5 rounded-full"></span>
+                <span class="w-1 bg-emerald-success h-4 rounded-full"></span>
+                <span class="w-1 bg-emerald-success h-2 rounded-full"></span>
+                <span class="w-1 bg-emerald-success h-3 rounded-full"></span>
+                <span class="w-1 bg-emerald-success h-4.5 rounded-full"></span>
+                <span class="w-1 bg-emerald-success h-2 rounded-full"></span>
+                <span class="w-1 bg-emerald-success h-3 rounded-full"></span>
+                <span class="w-1 bg-emerald-success h-1.5 rounded-full"></span>
+              </div>
+              <!-- Slow speed (turtle) -->
+              <button aria-label="اسمع بالراحة" class="px-2 py-1 rounded-lg bg-surface-card border border-border-subtle text-[11px] font-semibold text-text-secondary hover:text-text-primary flex items-center gap-1 shrink-0 font-arabic">
+                <span>🐢</span>
+                <span>بالراحة</span>
+              </button>
+            </div>
+
+            <!-- Arabic Prompt -->
+            <p class="text-sm font-bold text-text-primary pt-0.5 font-arabic">اكتب اللي سمعته</p>
+          </div>
+        </div>
+
+        <!-- Learner Teal Bubble (Near-miss attempt) -->
+        <div class="flex justify-end pr-11">
+          <div class="max-w-[85%] bg-primary-teal text-white rounded-2xl rounded-tl-xs px-3.5 py-2.5 shadow-xs">
+            <p class="font-latin text-sm font-semibold tracking-wide text-left" dir="ltr">Preciso sair cedo</p>
+          </div>
+        </div>
+
+        <!-- Coach Feedback Panel in Near-Miss Style -->
+        <!-- (#F9EACB background, left accent bar #B7791F, text #70450B) -->
+        <div class="pr-11">
+          <div class="rounded-xl border border-amber-warn/30 bg-amber-pale text-amber-dark p-3 shadow-xs border-l-4 border-l-amber-warn space-y-2">
+            <!-- Label with icon: قربت! -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-base text-amber-warn icon-fill">sentiment_neutral</span>
+                <span class="text-xs font-bold font-arabic">قربت!</span>
+              </div>
+              <!-- Default small chip: اتسجّلت في نواقصك -->
+              <span class="px-2 py-0.5 rounded-full bg-surface-neutral border border-border-subtle text-[11px] font-medium text-text-secondary font-arabic">
+                اتسجّلت في نواقصك
+              </span>
+            </div>
+
+            <!-- Corrected line in Inter with "de" underlined and highlighted amber -->
+            <div class="p-2 rounded-lg bg-surface-card border border-amber-warn/25" dir="ltr">
+              <p class="font-latin text-base font-semibold text-text-primary text-left">
+                Preciso <span class="bg-amber-pale text-amber-warn underline decoration-amber-warn font-bold px-1 rounded">de</span> sair cedo.
+              </p>
+            </div>
+
+            <!-- One Egyptian dialect why-line -->
+            <p class="text-xs leading-relaxed font-medium text-amber-dark font-arabic">
+              💡 بعد <span class="font-latin font-bold" dir="ltr">precisar</span> لازم <span class="font-latin font-bold" dir="ltr">de</span> قبل الفعل.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- QUESTION B: Translate (Answered Correct)       -->
+      <!-- ============================================== -->
+      <section class="space-y-2.5 pt-2">
+        <!-- Coach Card (Prompt) -->
+        <div class="flex items-start gap-2.5">
+          <div class="size-9 rounded-full bg-primary-teal text-white flex items-center justify-center font-heading font-bold text-xs shrink-0 shadow-xs">
+            AZ
+          </div>
+          <div class="flex-1 max-w-[88%] bg-surface-card border border-border-subtle rounded-2xl rounded-tr-xs p-3.5 shadow-lumina-card space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-neutral border border-border-subtle text-xs font-semibold text-text-secondary">
+                <span class="material-symbols-outlined text-sm text-primary-teal">translate</span>
+                كتابة
+              </span>
+              <span class="text-[11px] text-text-muted font-medium font-arabic">السؤال ٦ من ١٠</span>
+            </div>
+
+            <!-- Situation Prompt -->
+            <div class="p-2.5 rounded-xl bg-surface-neutral border border-border-subtle/70">
+              <p class="text-xs text-text-secondary font-medium font-arabic mb-0.5">الموقف:</p>
+              <p class="text-sm font-semibold text-text-primary leading-relaxed font-arabic">
+                زميلك سألك رايح فين، قوله إنك رايح الاجتماع
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Learner Teal Bubble (Answered correct) -->
+        <div class="flex justify-end pr-11">
+          <div class="max-w-[85%] bg-primary-teal text-white rounded-2xl rounded-tl-xs px-3.5 py-2.5 shadow-xs">
+            <p class="font-latin text-sm font-semibold tracking-wide text-left" dir="ltr">Vou à reunião.</p>
+          </div>
+        </div>
+
+        <!-- Coach Correct Feedback Panel (#DDF5EB, text #075E47, check icon) -->
+        <div class="pr-11">
+          <div class="rounded-xl border border-emerald-success/30 bg-emerald-pale text-emerald-dark px-3 py-2 flex items-center justify-between shadow-xs">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-base text-emerald-check icon-fill">check_circle</span>
+              <span class="text-xs font-bold font-arabic">صح ✓</span>
+              <span class="text-xs font-medium text-emerald-dark font-latin mr-1" dir="ltr">Vou à reunião = أنا رايح الاجتماع</span>
+            </div>
+            <button aria-label="اسمع النطق" class="size-6 rounded-full bg-surface-card text-emerald-check flex items-center justify-center border border-emerald-success/20">
+              <span class="material-symbols-outlined text-sm">volume_up</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- REPLY VARIANT: Conversational Answered         -->
+      <!-- ============================================== -->
+      <section class="space-y-2.5 pt-2">
+        <div class="flex items-start gap-2.5">
+          <div class="size-9 rounded-full bg-primary-teal text-white flex items-center justify-center font-heading font-bold text-xs shrink-0 shadow-xs">
+            AZ
+          </div>
+          <div class="flex-1 max-w-[88%] bg-surface-card border border-border-subtle rounded-2xl rounded-tr-xs p-3.5 shadow-lumina-card space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-neutral border border-border-subtle text-xs font-semibold text-text-secondary">
+                <span class="material-symbols-outlined text-sm text-primary-teal">forum</span>
+                رد سريع
+              </span>
+              <span class="text-[11px] text-text-muted font-medium font-arabic">محادثة</span>
+            </div>
+
+            <!-- Friend message bubble inside #F2F5F4 -->
+            <div class="p-3 rounded-xl bg-surface-neutral border border-border-subtle space-y-1">
+              <div class="flex items-center gap-1.5 text-[11px] text-text-muted font-medium font-arabic">
+                <span class="size-2 rounded-full bg-emerald-success"></span>
+                <span>رسالة من زميلك نونو (Nuno):</span>
+              </div>
+              <div class="p-2.5 rounded-lg bg-surface-card border border-border-subtle/80 flex items-center justify-between" dir="ltr">
+                <p class="font-latin text-base font-semibold text-text-primary">« Vens ao café? »</p>
+                <button aria-label="استمع لرسالة الصديق" class="size-6 rounded-full bg-surface-neutral text-primary-teal flex items-center justify-center">
+                  <span class="material-symbols-outlined text-sm">volume_up</span>
+                </button>
+              </div>
+              <p class="text-[11px] text-text-secondary font-arabic">معناها: جاي الكافيه؟</p>
+            </div>
+
+            <p class="text-sm font-bold text-text-primary font-arabic">رد عليه</p>
+          </div>
+        </div>
+
+        <!-- Learner Bubble: "Sim, vou já!" -->
+        <div class="flex justify-end pr-11">
+          <div class="max-w-[85%] bg-primary-teal text-white rounded-2xl rounded-tl-xs px-3.5 py-2.5 shadow-xs">
+            <p class="font-latin text-sm font-semibold tracking-wide text-left" dir="ltr">Sim, vou já!</p>
+          </div>
+        </div>
+
+        <!-- Correct panel -->
+        <div class="pr-11">
+          <div class="rounded-xl border border-emerald-success/30 bg-emerald-pale text-emerald-dark px-3 py-2 flex items-center justify-between shadow-xs">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-base text-emerald-check icon-fill">check_circle</span>
+              <span class="text-xs font-bold font-arabic">صح ✓</span>
+              <span class="text-xs text-emerald-dark font-arabic mr-1">رد برتغالي أصيل وطبيعي</span>
+            </div>
+            <span class="px-2 py-0.5 rounded-full bg-surface-card text-[11px] font-semibold text-emerald-check border border-emerald-success/20">
+              ١٠٠٪
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- QUESTION C: Fill the blank (Active Now)        -->
+      <!-- ============================================== -->
+      <section class="space-y-2.5 pt-2">
+        <div class="flex items-start gap-2.5">
+          <div class="size-9 rounded-full bg-primary-teal text-white flex items-center justify-center font-heading font-bold text-xs shrink-0 shadow-xs ring-2 ring-primary-teal/20">
+            AZ
+          </div>
+          <div class="flex-1 max-w-[88%] bg-surface-card border-2 border-primary-teal/40 rounded-2xl rounded-tr-xs p-3.5 shadow-lumina-card space-y-3 relative">
+            <!-- Active pill indicator -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary-teal-pale text-primary-teal-dark border border-primary-teal/30 text-xs font-semibold">
+                  <span class="material-symbols-outlined text-sm text-primary-teal">auto_stories</span>
+                  جرامر
+                </span>
+                <span class="px-2 py-0.5 rounded-full bg-surface-neutral border border-border-subtle text-xs font-medium text-text-secondary font-arabic">
+                  ser ولا estar؟
+                </span>
+              </div>
+              <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-primary-teal font-arabic">
+                <span class="size-1.5 rounded-full bg-primary-teal animate-ping"></span>
+                دورك دلوقتي
+              </span>
+            </div>
+
+            <!-- Sentence in Inter with dashed teal blank -->
+            <div class="p-3.5 rounded-xl bg-surface-neutral border border-border-subtle" dir="ltr">
+              <p class="font-latin text-lg sm:text-xl font-bold text-text-primary text-center tracking-wide leading-relaxed">
+                Eu <span class="inline-block px-3 py-0.5 border-b-2 border-dashed border-primary-teal bg-primary-teal-pale/60 text-primary-teal-dark rounded min-w-[70px] text-center font-bold">estou</span> cansado hoje.
+              </p>
+            </div>
+
+            <!-- Hint text -->
+            <p class="text-xs text-text-secondary leading-relaxed font-arabic">
+              فكر: هل التعب ده صفة دايمة وثابتة فيك، ولا حالة مؤقتة النهارده بس؟
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- 3. Fixed Bottom Composer Dock (White Sheet, 24px top radius) -->
+    <div class="fixed bottom-0 inset-x-0 z-40 max-w-[420px] mx-auto bg-surface-card border-t border-border-subtle shadow-lumina-sheet rounded-t-3xl px-4 pt-3 pb-4">
+      
+      <!-- Drag handle indicator -->
+      <div class="w-10 h-1 bg-border-subtle rounded-full mx-auto mb-2.5 opacity-80"></div>
+
+      <!-- Accent key chips row: á à â ã é ê í ó ô õ ú ç -->
+      <div class="flex items-center justify-between gap-1 overflow-x-auto pb-2 scrollbar-none" dir="ltr">
+        <button type="button" class="size-7 rounded-lg bg-surface-neutral border border-border-subtle text-xs font-semibold text-text-secondary hover:bg-primary-teal-pale hover:text-primary-teal-dark hover:border-primary-teal transition-colors flex items-center justify-center font-latin">á</button>
+        <button type="button" class="size-7 rounded-lg bg-surface-neutral border border-border-subtle text-xs font-semibold text-text-secondary hover:bg-primary-teal-pale hover:text-primary-teal-dark hover:border-primary-teal transition-colors flex items-center justify-center font-latin">à</button>
+        <button type="button" class="size-7 rounded-lg bg-surface-neutral border border-border-subtle text-xs font-semibold text-text-secondary hover:bg-primary-teal-pale hover:text-primary-teal-dark hover:border-primary-teal transition-colors flex items-center justify-center font-latin">â</button>
+        <button type="button" class="size-7 rounded-lg bg-surface-neutral border border-border-subtle text-xs font-semibold text-text-secondary hover:bg-primary-teal-pale hover:text-primary-teal-dark hover:border-primary-teal transition-colors flex items-center justify-center font-latin">ã</button>
+        <button type="button" class="size-7 rounded-lg bg-surface-neutral border border-border-subtle text-xs font-semibold text-text-secondary hover:bg-primary-teal-pale hover:text-primary-teal-dark hover:border-primary-teal transition-colors flex items-center justify-center font-latin">é</button>
+        <button type="button" class="size-7 rounded-lg bg-surface-neutral border border-border-subtle text-xs font-semibold text-text-secondary hover:bg-primary-teal-pale hover:text-primary-teal-dark hover:border-primary-teal transition-colors flex items-center justify-center font-latin">ê</button>
+        <button type="button" class="size-7 rounded-lg bg-surface-neutral border border-border-subtle text-xs font-semibold text-text-secondary hover:bg-primary-teal-pale hover:text-primary-teal-dark hover:border-primary-teal transition-colors flex items-center justify-center font-latin">í</button>
+        <button type="button" class="size-7 rounded-lg bg-surface-neutral border border-border-subtle text-xs font-semibold text-text-secondary hover:bg-primary-teal-pale hover:text-primary-teal-dark hover:border-primary-teal transition-colors flex items-center justify-center font-latin">ó</button>
+        <button type="button" class="size-7 rounded-lg bg-surface-neutral border border-border-subtle text-xs font-semibold text-text-secondary hover:bg-primary-teal-pale hover:text-primary-teal-dark hover:border-primary-teal transition-colors flex items-center justify-center font-latin">ô</button>
+        <button type="button" class="size-7 rounded-lg bg-surface-neutral border border-border-subtle text-xs font-semibold text-text-secondary hover:bg-primary-teal-pale hover:text-primary-teal-dark hover:border-primary-teal transition-colors flex items-center justify-center font-latin">õ</button>
+        <button type="button" class="size-7 rounded-lg bg-surface-neutral border border-border-subtle text-xs font-semibold text-text-secondary hover:bg-primary-teal-pale hover:text-primary-teal-dark hover:border-primary-teal transition-colors flex items-center justify-center font-latin">ú</button>
+        <button type="button" class="size-7 rounded-lg bg-surface-neutral border border-border-subtle text-xs font-semibold text-text-secondary hover:bg-primary-teal-pale hover:text-primary-teal-dark hover:border-primary-teal transition-colors flex items-center justify-center font-latin">ç</button>
+      </div>
+
+      <!-- Input row: Input (#F7F9F8, border #C8D2CD, focused with teal border + 3px ring) + teal send button -->
+      <form class="flex items-center gap-2 pt-1" onsubmit="return false;">
+        <!-- Input field -->
+        <div class="relative flex-1">
+          <input 
+            type="text" 
+            value="estou" 
+            placeholder="اكتب الفعل المناسب..." 
+            class="w-full h-12 px-3.5 rounded-xl bg-surface-input border border-primary-teal focus-lumina text-text-primary text-sm font-latin font-medium placeholder:text-text-muted placeholder:font-arabic transition-all focus:outline-none"
+            dir="ltr"
+          />
+          <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-primary-teal font-arabic pointer-events-none">
+            جاهز
+          </span>
+        </div>
+
+        <!-- Teal Send Button -->
+        <button 
+          type="submit" 
+          aria-label="إرسال الإجابة" 
+          class="size-12 rounded-xl bg-primary-teal text-white flex items-center justify-center hover:bg-primary-teal-dark active:scale-95 transition-all shadow-md shrink-0 focus:outline-none focus:ring-2 focus:ring-primary-teal/40"
+        >
+          <span class="material-symbols-outlined icon-fill text-xl rotate-180">send</span>
+        </button>
+      </form>
+
+      <!-- Secondary footer action: "مش عارف" (#5F6B67) -->
+      <div class="flex items-center justify-between pt-2.5 px-1">
+        <button type="button" class="text-xs font-semibold text-text-secondary hover:text-primary-teal transition-colors inline-flex items-center gap-1 font-arabic">
+          <span class="material-symbols-outlined text-sm">help_outline</span>
+          <span>مش عارف (ساعدني أحلها)</span>
+        </button>
+        <span class="text-[11px] text-text-muted font-arabic">
+          اكتب براحتك واغلط، دي مراجعة 🌱
+        </span>
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>

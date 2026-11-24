@@ -150,6 +150,28 @@ function maybeCompleteFromQuestions(
   return true;
 }
 
+/**
+ * After day N completes: mark 1..N-1 completed when their question counts
+ * are already satisfied but status stuck (gap → empty /review window).
+ */
+async function repairPriorCompletedDays(
+  store: ProgressStore,
+  opts: {
+    userId: string;
+    targetLang: string;
+    upToDay: number;
+    now: Date;
+  },
+): Promise<void> {
+  for (let day = 1; day < opts.upToDay; day++) {
+    const prior = await store.getLesson(opts.userId, opts.targetLang, day);
+    if (!prior || prior.status === 'completed') continue;
+    if (maybeCompleteFromQuestions(prior, opts.now)) {
+      await store.upsertLesson(prior);
+    }
+  }
+}
+
 async function scheduleNextDay(
   store: ProgressStore,
   lesson: LessonProgressRecord,
@@ -354,6 +376,12 @@ export async function handleProgressEvent(
       const newlyCompleted = maybeCompleteFromQuestions(lesson, now);
       lesson = await store.upsertLesson(lesson);
       if (newlyCompleted) {
+        await repairPriorCompletedDays(store, {
+          userId,
+          targetLang: event.target_lang,
+          upToDay: lesson.day,
+          now,
+        });
         nextDay = await scheduleNextDay(store, lesson, timezone, localDate);
       }
       activity = await bumpActivity(store, userId, localDate, {
@@ -370,20 +398,30 @@ export async function handleProgressEvent(
         event.target_lang,
         event.day,
       );
-      // Force-complete only if questions already satisfied, or total is 0
-      // (caller may send after last question; prefer day_question_answered).
+      // Safety net after أسئلة اليوم end CTA: complete only if counts already
+      // satisfied (prefer day_question_answered). Never fake-complete total=0.
       if (lesson.status !== 'completed') {
-        if (
-          lesson.day_questions.total > 0 &&
-          lesson.day_questions.answered >= lesson.day_questions.total
-        ) {
-          maybeCompleteFromQuestions(lesson, now);
+        const newlyCompleted = maybeCompleteFromQuestions(lesson, now);
+        if (newlyCompleted) {
           lesson = await store.upsertLesson(lesson);
+          await repairPriorCompletedDays(store, {
+            userId,
+            targetLang: event.target_lang,
+            upToDay: lesson.day,
+            now,
+          });
           nextDay = await scheduleNextDay(store, lesson, timezone, localDate);
         }
       } else {
-        // Replay finish: bump times_completed only via questions path; leave completed_at.
+        // Already complete: still repair gaps behind this day.
+        await repairPriorCompletedDays(store, {
+          userId,
+          targetLang: event.target_lang,
+          upToDay: lesson.day,
+          now,
+        });
       }
+      // Replay finish: leave completed_at; times_completed only via questions path.
       break;
     }
     case 'deck_opened': {

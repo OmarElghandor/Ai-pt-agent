@@ -16,6 +16,7 @@ import {
   buildCoveragePlan,
   buildPracticeWindow,
   buildReviewSession,
+  classifyReviewEmpty,
   normalizeUserPractice,
   passedPairsFromAnswerLog,
   resolveStepSeconds,
@@ -23,6 +24,7 @@ import {
   type BankItem,
   type CoverageItemKind,
   type CoveragePlan,
+  type ReviewEmptyReason,
 } from '@/lib/v2/practice';
 import { loadPublishedFlashcardsThrough } from '@/lib/v2/decks';
 import { getPublishedLesson } from '@/lib/v2/content/getPublishedLesson';
@@ -41,6 +43,9 @@ export type TodayReviewSession = {
   status: 'open' | 'done';
   resume: { round: number; step: number };
   empty?: boolean;
+  empty_reason?: ReviewEmptyReason;
+  completed_days?: number[];
+  current_day?: number;
   builder_version?: string;
 };
 
@@ -74,111 +79,209 @@ function mapExisting(doc: {
   };
 }
 
+async function loadCompletedDays(
+  userId: string,
+  targetLang: string,
+): Promise<number[]> {
+  const docs = await V2LessonProgressModel()
+    .find({
+      user_id: userId,
+      target_lang: targetLang,
+      status: 'completed',
+    })
+    .select('day')
+    .lean();
+  return docs.map((d) => Number(d.day)).filter((d) => d >= 1);
+}
+
+function emptySessionPayload(opts: {
+  local_date: string;
+  currentDay: number;
+  completedDaysAll: number[];
+  windowLength?: number;
+  stepsLength?: number;
+  reason?: ReviewEmptyReason;
+}): TodayReviewSession {
+  const reason =
+    opts.reason ??
+    classifyReviewEmpty({
+      currentDay: opts.currentDay,
+      completedDaysAll: opts.completedDaysAll,
+      windowLength: opts.windowLength ?? 0,
+      stepsLength: opts.stepsLength,
+    }) ??
+    'current_day_is_1';
+  return {
+    local_date: opts.local_date,
+    window: [],
+    budget_minutes: 0,
+    has_lesson_today: true,
+    steps: [],
+    rounds_total: 0,
+    rounds_done: 0,
+    status: 'open',
+    resume: { round: 1, step: 0 },
+    empty: true,
+    empty_reason: reason,
+    completed_days: opts.completedDaysAll,
+    current_day: opts.currentDay,
+  };
+}
+
 /** Peek without building — for the tab dot (16 §8.1). */
 export async function peekTodayReview(opts: {
   user_id: string;
   currentDay: number;
   timeZone?: string;
+  target_lang?: string;
   now?: Date;
 }): Promise<{
   empty: boolean;
   status: 'none' | 'open' | 'done';
   local_date: string;
+  empty_reason?: ReviewEmptyReason;
+  completed_days?: number[];
+  current_day?: number;
 }> {
   if (!mongoConfigured()) throw new Error('MongoDB not configured');
   await connectMongo();
   const now = opts.now ?? new Date();
   const tz = opts.timeZone ?? 'UTC';
+  const target_lang = opts.target_lang ?? 'pt-PT';
   const local_date = localDateString(now, tz);
+  const completedDaysAll = await loadCompletedDays(opts.user_id, target_lang);
 
   if (opts.currentDay <= 1) {
-    return { empty: true, status: 'none', local_date };
+    const reason =
+      classifyReviewEmpty({
+        currentDay: opts.currentDay,
+        completedDaysAll,
+        windowLength: 0,
+      }) ?? 'current_day_is_1';
+    return {
+      empty: true,
+      status: 'none',
+      local_date,
+      empty_reason: reason,
+      completed_days: completedDaysAll,
+      current_day: opts.currentDay,
+    };
   }
 
   const existing = await V2ReviewSessionModel()
     .findOne({ user_id: opts.user_id, local_date })
-    .select('status')
+    .select('status steps')
     .lean();
   if (existing) {
+    const stepCount = Array.isArray(existing.steps) ? existing.steps.length : 0;
+    if (stepCount === 0 && existing.status !== 'done') {
+      return {
+        empty: true,
+        status: 'none',
+        local_date,
+        empty_reason: 'empty_steps',
+        completed_days: completedDaysAll,
+        current_day: opts.currentDay,
+      };
+    }
     return {
       empty: false,
       status: existing.status === 'done' ? 'done' : 'open',
       local_date,
+      completed_days: completedDaysAll,
+      current_day: opts.currentDay,
     };
   }
 
-  const completedDocs = await V2LessonProgressModel()
-    .find({
-      user_id: opts.user_id,
-      status: 'completed',
-      day: { $lt: opts.currentDay },
-    })
-    .select('day')
-    .lean();
   const window = buildPracticeWindow({
     currentDay: opts.currentDay,
-    completedDays: completedDocs.map((d) => Number(d.day)),
+    completedDays: completedDaysAll,
     storyDays: PHASE1_STORY_DAYS,
   });
   if (window.length === 0) {
-    return { empty: true, status: 'none', local_date };
+    const reason =
+      classifyReviewEmpty({
+        currentDay: opts.currentDay,
+        completedDaysAll,
+        windowLength: 0,
+      }) ?? 'no_completed_before_current';
+    return {
+      empty: true,
+      status: 'none',
+      local_date,
+      empty_reason: reason,
+      completed_days: completedDaysAll,
+      current_day: opts.currentDay,
+    };
   }
   // Session not built yet, but window is non-empty → pending review
-  return { empty: false, status: 'open', local_date };
+  return {
+    empty: false,
+    status: 'open',
+    local_date,
+    completed_days: completedDaysAll,
+    current_day: opts.currentDay,
+  };
 }
 
 export async function getOrCreateTodayReview(opts: {
   user_id: string;
   currentDay: number;
   timeZone?: string;
+  target_lang?: string;
   now?: Date;
 }): Promise<TodayReviewSession> {
   if (!mongoConfigured()) throw new Error('MongoDB not configured');
   await connectMongo();
   const now = opts.now ?? new Date();
   const tz = opts.timeZone ?? 'UTC';
+  const target_lang = opts.target_lang ?? 'pt-PT';
   const local_date = localDateString(now, tz);
+
+  const completedDaysAll = await loadCompletedDays(opts.user_id, target_lang);
 
   const existing = await V2ReviewSessionModel()
     .findOne({ user_id: opts.user_id, local_date })
     .lean();
   if (existing) {
-    return mapExisting(existing);
+    const stepCount = Array.isArray(existing.steps) ? existing.steps.length : 0;
+    // Sticky empty-step session: delete and rebuild once
+    if (stepCount === 0 && existing.status !== 'done') {
+      await V2ReviewSessionModel().deleteOne({
+        user_id: opts.user_id,
+        local_date,
+      });
+    } else {
+      return {
+        ...mapExisting(existing),
+        completed_days: completedDaysAll,
+        current_day: opts.currentDay,
+      };
+    }
   }
 
-  const completedDocs = await V2LessonProgressModel()
-    .find({
-      user_id: opts.user_id,
-      status: 'completed',
-      day: { $lt: opts.currentDay },
-    })
-    .select('day')
-    .lean();
-  const completedDays = completedDocs.map((d) => Number(d.day));
   const window = buildPracticeWindow({
     currentDay: opts.currentDay,
-    completedDays,
+    completedDays: completedDaysAll,
     storyDays: PHASE1_STORY_DAYS,
   });
 
   // Day 1 / empty window — nothing saved (16 §8.2)
   if (window.length === 0) {
-    return {
+    return emptySessionPayload({
       local_date,
-      window: [],
-      budget_minutes: 0,
-      has_lesson_today: true,
-      steps: [],
-      rounds_total: 0,
-      rounds_done: 0,
-      status: 'open',
-      resume: { round: 1, step: 0 },
-      empty: true,
-    };
+      currentDay: opts.currentDay,
+      completedDaysAll,
+      windowLength: 0,
+    });
   }
 
   const currentProgress = await V2LessonProgressModel()
-    .findOne({ user_id: opts.user_id, day: opts.currentDay })
+    .findOne({
+      user_id: opts.user_id,
+      target_lang,
+      day: opts.currentDay,
+    })
     .select('status')
     .lean();
   const hasLessonToday =
@@ -365,6 +468,18 @@ export async function getOrCreateTodayReview(opts: {
     flaggedQuestionIds,
   });
 
+  // Never persist a zero-step session (sticky «مفيش جولة»).
+  if (built.steps.length === 0) {
+    return emptySessionPayload({
+      local_date,
+      currentDay: opts.currentDay,
+      completedDaysAll,
+      windowLength: window.length,
+      stepsLength: 0,
+      reason: 'empty_steps',
+    });
+  }
+
   const doc = {
     user_id: opts.user_id,
     local_date,
@@ -407,7 +522,24 @@ export async function getOrCreateTodayReview(opts: {
       const again = await V2ReviewSessionModel()
         .findOne({ user_id: opts.user_id, local_date })
         .lean();
-      if (again) return mapExisting(again);
+      if (again) {
+        const againSteps = Array.isArray(again.steps) ? again.steps.length : 0;
+        if (againSteps === 0) {
+          return emptySessionPayload({
+            local_date,
+            currentDay: opts.currentDay,
+            completedDaysAll,
+            windowLength: window.length,
+            stepsLength: 0,
+            reason: 'empty_steps',
+          });
+        }
+        return {
+          ...mapExisting(again),
+          completed_days: completedDaysAll,
+          current_day: opts.currentDay,
+        };
+      }
     }
     throw err;
   }
@@ -423,5 +555,7 @@ export async function getOrCreateTodayReview(opts: {
     status: 'open',
     resume: { round: 1, step: 0 },
     builder_version: REVIEW_BUILDER_VERSION,
+    completed_days: completedDaysAll,
+    current_day: opts.currentDay,
   };
 }

@@ -41,7 +41,7 @@ function phrase(id: string, tl: string): Item {
   };
 }
 
-/** Day 3 shape: story + 3 detail pages + questions + practice; find_image hidden. */
+/** Day 3 shape: story + 3 detail pages + questions; find_image hidden. */
 function day3Pack(): LessonPack {
   return {
     lesson: {
@@ -68,7 +68,6 @@ describe('S5 · summary current_day_steps', () => {
     const shared = buildDayStepsFromPack({
       day: 3,
       pack: day3Pack(),
-      hasPublishedPack: true,
     });
     assert.equal(shared.steps.find((s) => s.id === 'find_image')?.present, false);
     assert.equal(shared.steps.filter((s) => s.counted).length, 5);
@@ -83,6 +82,7 @@ describe('S5 · summary current_day_steps', () => {
           { id: 'phrases', status: 'not_started', done_at: null },
           { id: 'find_image', status: 'skipped', done_at: null },
           { id: 'day_questions', status: 'not_started', done_at: null },
+          // Legacy saved practice row — ignored when absent from shared list.
           { id: 'practice', status: 'not_started', done_at: null },
         ],
       },
@@ -96,23 +96,18 @@ describe('S5 · summary current_day_steps', () => {
     assert.equal(view.lastDoneStep?.id, 'grammar');
   });
 
-  it('a completed-and-practised day returns no next step', () => {
+  it('a completed day returns no next step', () => {
     const shared = buildDayStepsFromPack({
       day: 3,
       pack: day3Pack(),
-      hasPublishedPack: true,
     });
     const view = buildStepView(
       {
         status: 'completed',
         steps: shared.steps.map((s) => ({
           id: s.id,
-          status: s.present
-            ? s.kind === 'practice'
-              ? 'not_started'
-              : 'done'
-            : 'skipped',
-          done_at: s.present && s.kind !== 'practice' ? new Date() : null,
+          status: s.present ? 'done' : 'skipped',
+          done_at: s.present ? new Date() : null,
         })),
       },
       shared.steps,

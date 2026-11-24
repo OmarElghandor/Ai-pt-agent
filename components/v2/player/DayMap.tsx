@@ -12,7 +12,7 @@ export type DayMapStep = {
   subtitle?: string;
   minutes: number;
   href: string | null;
-  /** When false, excluded from محطات counts (practice). Default: kind !== practice. */
+  /** When false, excluded from محطات counts. Default: kind !== practice. */
   counted?: boolean;
 };
 
@@ -37,7 +37,6 @@ function stepIcon(kind: DayMapStep['kind'], status: Status): string {
   if (status === 'done') return 'check_circle';
   if (status === 'locked') return 'lock';
   if (kind === 'questions') return 'quiz';
-  if (kind === 'practice') return 'record_voice_over';
   if (kind === 'find_image') return 'image_search';
   return 'menu_book';
 }
@@ -46,9 +45,7 @@ export function DayMap({
   day,
   situation,
   steps,
-  lastPageId,
-  practiceDevUnlock = false,
-  hasPublishedPack = false,
+  devUnlock = false,
   questionsAfterId = null,
   serverDoneIds = [],
   nextStepId = null,
@@ -56,9 +53,8 @@ export function DayMap({
   day: number;
   situation?: { tl: string; eg: string };
   steps: DayMapStep[];
-  lastPageId?: string | null;
-  practiceDevUnlock?: boolean;
-  hasPublishedPack?: boolean;
+  /** When true (?dev=1), unlock all stations for testing. */
+  devUnlock?: boolean;
   /** Page that must be done before questions unlock. */
   questionsAfterId?: string | null;
   /** Done step ids from v2_lesson_progress (server truth on load). */
@@ -79,25 +75,11 @@ export function DayMap({
   }, [serverDoneIds, localDone]);
 
   const doneSet = new Set(done);
-  const gateDone = lastPageId ? doneSet.has(lastPageId) : false;
-  const practiceUnlocked =
-    hasPublishedPack && (gateDone || practiceDevUnlock);
 
   let markedCurrent = false;
   const rows = steps.map((step, i) => {
     const prev = steps[i - 1];
     const prevDone = !prev || doneSet.has(prev.id);
-
-    if (step.kind === 'practice') {
-      if (!practiceUnlocked || !step.href) {
-        return { step, status: 'locked' as Status };
-      }
-      if (nextStepId === step.id || !markedCurrent) {
-        markedCurrent = true;
-        return { step, status: 'current' as Status };
-      }
-      return { step, status: 'current' as Status };
-    }
 
     if (doneSet.has(step.id)) {
       return { step, status: 'done' as Status };
@@ -110,7 +92,7 @@ export function DayMap({
 
     if (step.kind === 'questions') {
       const unlocked =
-        practiceDevUnlock ||
+        devUnlock ||
         (questionsAfterId ? doneSet.has(questionsAfterId) : prevDone);
       if (!unlocked) return { step, status: 'locked' as Status };
     }
@@ -119,7 +101,7 @@ export function DayMap({
       (step.kind === 'page' || step.kind === 'find_image') &&
       prev &&
       !prevDone &&
-      !practiceDevUnlock
+      !devUnlock
     ) {
       if (
         prev.kind === 'page' ||
@@ -130,11 +112,11 @@ export function DayMap({
       }
     }
 
-    if (!markedCurrent && (prevDone || practiceDevUnlock || i === 0)) {
+    if (!markedCurrent && (prevDone || devUnlock || i === 0)) {
       markedCurrent = true;
       return { step, status: 'current' as Status };
     }
-    if (!prevDone && !practiceDevUnlock) {
+    if (!prevDone && !devUnlock) {
       return { step, status: 'locked' as Status };
     }
     if (!markedCurrent) {
@@ -213,7 +195,7 @@ export function DayMap({
             </div>
             <p className="font-[family-name:var(--font-v2-arabic)] text-sm leading-relaxed text-v2-ink-muted">
               {countedTotal} محطات متسلسلة بتنقلك من القصة والتفصيل لحد أسئلة
-              اليوم والتدريب.
+              اليوم.
             </p>
             <div className="mt-1 flex items-center gap-3 pt-1">
               <div className="flex h-2 flex-1 gap-0.5 overflow-hidden rounded-full">

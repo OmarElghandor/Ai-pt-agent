@@ -73,9 +73,7 @@ export default async function DayMapPage({
           href: s.href,
           counted: s.counted,
         }))}
-        lastPageId={built.unlockAfter}
-        practiceDevUnlock={dev}
-        hasPublishedPack={built.hasPublishedPack}
+        devUnlock={dev}
         questionsAfterId={built.questionsAfterId}
         serverDoneIds={serverDoneIds}
         nextStepId={nextStepId}

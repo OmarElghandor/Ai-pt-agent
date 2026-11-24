@@ -65,18 +65,11 @@ function heroCta(steps: CurrentDayStepsProp | null, bakra: boolean): {
   if (!steps) {
     return { label: 'يلا نبدأ', href: null, disabled: true };
   }
-  if (steps.completed && steps.practised) {
+  if (steps.completed) {
     return {
       label: 'راجع الدرس',
       href: steps.day_map_href,
       disabled: false,
-    };
-  }
-  if (steps.completed && !steps.practised) {
-    return {
-      label: 'اتمرّن على الدرس',
-      href: steps.practice_href ?? steps.day_map_href,
-      disabled: !steps.practice_href,
     };
   }
   if (!steps.started) {

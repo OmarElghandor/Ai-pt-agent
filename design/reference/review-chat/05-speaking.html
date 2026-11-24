@@ -1,0 +1,407 @@
+<!DOCTYPE html><html class="h-full" dir="rtl" lang="ar"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>مراجعة النهارده · الجولة ٣ (تحدث ونطق)</title>
+<!-- Google Fonts: IBM Plex Sans Arabic + IBM Plex Sans + Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        background: "#FFFFFF",
+        surface: "#F2F5F4",
+        "surface-container-low": "#F7F9F8",
+        "surface-container": "#F0F3F2",
+        "surface-container-high": "#E8EDEC",
+        "surface-container-highest": "#DFE6E3",
+        "on-surface": "#202927",
+        "on-surface-variant": "#5F6B67",
+        outline: "#89938F",
+        "outline-variant": "#D5DEDA",
+        primary: "#0D9488",
+        "on-primary": "#FFFFFF",
+        "primary-container": "#D8F2EE",
+        "on-primary-container": "#075E57",
+        secondary: "#0FA87E",
+        "on-secondary": "#FFFFFF",
+        "secondary-container": "#DDF5EB",
+        "on-secondary-container": "#075E47",
+        tertiary: "#C36D4B",
+        "tertiary-container": "#F8E2D9",
+        "on-tertiary-container": "#78391F",
+        warning: "#B7791F",
+        "warning-container": "#F9EACB",
+        "on-warning-container": "#70450B",
+        divider: "#E1E7E4",
+        muted: "#737877"
+      },
+      fontFamily: {
+        sans: ["IBM Plex Sans Arabic", "sans-serif"],
+        arabic: ["IBM Plex Sans Arabic", "sans-serif"],
+        heading: ["IBM Plex Sans", "IBM Plex Sans Arabic", "sans-serif"],
+        inter: ["Inter", "sans-serif"]
+      },
+      boxShadow: {
+        card: "0 8px 24px -4px rgba(23, 31, 29, 0.05)",
+        floating: "0 12px 32px -8px rgba(23, 31, 29, 0.10)"
+      }
+    }
+  }
+};
+</script>
+<style>
+  body {
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
+    background-color: #FFFFFF;
+    color: #202927;
+    -webkit-font-smoothing: antialiased;
+  }
+  .font-inter {
+    font-family: 'Inter', sans-serif;
+  }
+  .font-ibm {
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .mic-pulse {
+    animation: mic-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  @keyframes mic-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.28);
+    }
+    50% {
+      box-shadow: 0 0 0 16px rgba(13, 148, 136, 0);
+    }
+  }
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+  }
+</style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-[#D8F2EE] selection:text-[#075E57]" style="background-color: rgb(248, 250, 249);">
+
+<!-- Mobile Container (390px constrained) -->
+<div class="max-w-[390px] mx-auto w-full min-h-screen flex flex-col border-x border-[#D5DEDA]/40 shadow-sm relative" style="background-color: #F8FAF9;">
+
+  <!-- 1. Sticky Header Bar -->
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#D5DEDA] px-4 py-3">
+    <div class="flex items-center justify-between mb-2">
+      <div class="flex items-center gap-2">
+        <button aria-label="الرجوع" class="size-8 rounded-full flex items-center justify-center text-[#202927] hover:bg-[#F2F5F4] transition-colors" type="button">
+          <span class="material-symbols-outlined text-xl">arrow_forward</span>
+        </button>
+        <div class="flex flex-col">
+          <h1 class="text-base font-bold text-[#202927] font-arabic leading-snug">مراجعة النهارده</h1>
+          <span class="text-[11px] font-medium text-[#5F6B67] font-arabic">جولة ٣ من ٣ · ٨ من ١٠</span>
+        </div>
+      </div>
+      <!-- User / Profile Pill -->
+      <div class="size-8 rounded-full bg-[#0D9488] text-white flex items-center justify-center text-xs font-bold font-arabic shadow-sm">
+        عمر
+      </div>
+    </div>
+
+    <!-- Segmented 10-step progress bar -->
+    <div class="grid grid-cols-10 gap-1 pt-1" dir="ltr">
+      <div class="h-1.5 rounded-full bg-[#0D9488]" title="1"></div>
+      <div class="h-1.5 rounded-full bg-[#0D9488]" title="2"></div>
+      <div class="h-1.5 rounded-full bg-[#0D9488]" title="3"></div>
+      <div class="h-1.5 rounded-full bg-[#0D9488]" title="4"></div>
+      <div class="h-1.5 rounded-full bg-[#0D9488]" title="5"></div>
+      <div class="h-1.5 rounded-full bg-[#0D9488]" title="6"></div>
+      <div class="h-1.5 rounded-full bg-[#0D9488]" title="7"></div>
+      <div class="h-1.5 rounded-full bg-[#0D9488]" title="8 (نشط)"></div>
+      <div class="h-1.5 rounded-full bg-[#E1E7E4]" title="9"></div>
+      <div class="h-1.5 rounded-full bg-[#E1E7E4]" title="10"></div>
+    </div>
+  </header>
+
+  <!-- 2. Main Chat / Stream Area -->
+  <main class="flex-1 px-4 py-4 space-y-4 pb-48">
+
+    <!-- Round 3 Divider Pill -->
+    <div class="flex justify-center my-1">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F2F5F4] border border-[#D5DEDA] text-xs font-semibold text-[#5F6B67] font-arabic shadow-xs">
+        <span class="size-2 rounded-full bg-[#0D9488]"></span>
+        الجولة ٣ · تدريب التحدث والتعبير الصوتي
+      </span>
+    </div>
+
+    <!-- ===== Question A: Previous Answered State (Audio Response + Self-Rating) ===== -->
+    <section class="space-y-3 pt-1">
+
+      <!-- Character (Manuel) bubble -->
+      <div class="flex items-start gap-2.5">
+        <div class="size-8 rounded-full bg-[#E8EDEC] border border-[#D5DEDA] flex items-center justify-center shrink-0 text-xs font-bold text-[#202927] font-ibm">
+          M
+        </div>
+        <div class="flex flex-col gap-1 max-w-[85%]">
+          <div class="flex items-center gap-2 mb-0.5">
+            <span class="text-xs font-bold text-[#202927] font-arabic">مانويل (Manuel)</span>
+            <span class="text-[10px] text-[#737877] font-arabic">سؤال سابق</span>
+          </div>
+          <!-- White bordered card -->
+          <div class="p-3.5 rounded-2xl rounded-tr-xs bg-white border border-[#D5DEDA] shadow-card space-y-1.5">
+            <div class="flex items-center justify-between gap-3" dir="ltr">
+              <p class="font-inter text-[15px] font-semibold text-[#202927] tracking-tight">
+                « Mais alguma coisa? »
+              </p>
+              <button aria-label="إعادة الاستماع" class="size-7 rounded-full bg-[#F2F5F4] flex items-center justify-center text-[#0D9488] hover:bg-[#D8F2EE] transition-colors" type="button">
+                <span class="material-symbols-outlined text-base">volume_up</span>
+              </button>
+            </div>
+            <p class="text-xs text-[#5F6B67] font-arabic pt-1 border-t border-[#E1E7E4]">
+              أي حاجة تانية؟ (الكاشير مانويل)
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Learner's Voice Response (Teal bubble with waveform) -->
+      <div class="flex items-start gap-2.5 justify-end flex-row-reverse">
+        <div class="flex flex-col gap-1 items-end max-w-[85%]">
+          <div class="flex items-center gap-1.5 mb-0.5">
+            <span class="text-[10px] text-[#737877] font-arabic">تسجيل صوتك</span>
+            <span class="text-xs font-bold text-[#0D9488] font-arabic">أنت</span>
+          </div>
+          <!-- Learner Teal Bubble -->
+          <div class="p-3.5 rounded-2xl rounded-tl-xs bg-[#0D9488] text-white shadow-card space-y-2 w-full">
+            <div class="flex items-center justify-between gap-2.5 bg-black/15 rounded-xl px-3 py-1.5" dir="ltr">
+              <button aria-label="تشغيل تسجيلك" class="size-6 rounded-full bg-white text-[#0D9488] flex items-center justify-center shadow-xs" type="button">
+                <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+              </button>
+              <!-- Waveform visualization -->
+              <div class="flex-1 flex items-center gap-0.5 h-4 px-1">
+                <span class="w-1 bg-white/90 h-2 rounded-full"></span>
+                <span class="w-1 bg-white/90 h-3 rounded-full"></span>
+                <span class="w-1 bg-white/90 h-4 rounded-full"></span>
+                <span class="w-1 bg-white/90 h-2.5 rounded-full"></span>
+                <span class="w-1 bg-white/90 h-3.5 rounded-full"></span>
+                <span class="w-1 bg-white/90 h-4 rounded-full"></span>
+                <span class="w-1 bg-white/90 h-2 rounded-full"></span>
+                <span class="w-1 bg-white/70 h-1 rounded-full"></span>
+              </div>
+              <span class="text-[11px] font-inter opacity-90">0:04</span>
+            </div>
+            <p class="font-inter text-xs text-white/95 text-right" dir="ltr">
+              « Não, obrigado. A conta, se faz favor. »
+            </p>
+          </div>
+        </div>
+        <div class="size-8 rounded-full bg-[#0D9488] text-white flex items-center justify-center shrink-0 font-bold text-xs font-arabic shadow-xs">
+          ع
+        </div>
+      </div>
+
+      <!-- Coach Model Answer & Self-Rating Block -->
+      <div class="flex items-start gap-2.5">
+        <div class="size-8 rounded-full bg-[#0D9488] text-white flex items-center justify-center shrink-0 text-xs font-bold font-ibm shadow-xs">
+          AZ
+        </div>
+        <div class="flex flex-col gap-2 max-w-[88%] w-full">
+          <div class="flex items-center gap-2 mb-0.5">
+            <span class="text-xs font-bold text-[#202927] font-arabic">الكوتش</span>
+            <span class="text-[10px] text-[#0B8064] font-arabic font-semibold bg-[#DDF5EB] px-2 py-0.5 rounded-full">نموذج الرد</span>
+          </div>
+
+          <div class="p-3.5 rounded-2xl rounded-tr-xs bg-white border border-[#D5DEDA] shadow-card space-y-2.5">
+            <!-- Model sentence with speaker -->
+            <div class="flex items-start justify-between gap-2" dir="ltr">
+              <div class="space-y-0.5">
+                <span class="text-[10px] uppercase font-bold text-[#0D9488] tracking-wider font-ibm">Modelo</span>
+                <p class="font-inter text-sm font-semibold text-[#202927] leading-snug">
+                  « Não, obrigado. A conta, se faz favor. »
+                </p>
+              </div>
+              <button aria-label="استمع لنموذج النطق الصحيح" class="size-7 rounded-full bg-[#D8F2EE] text-[#075E57] flex items-center justify-center hover:bg-[#0D9488] hover:text-white transition-colors shrink-0" type="button">
+                <span class="material-symbols-outlined text-base">volume_up</span>
+              </button>
+            </div>
+
+            <!-- Self-Rating Section -->
+            <div class="pt-2 border-t border-[#E1E7E4] space-y-1.5">
+              <div class="flex items-center justify-between text-[11px] text-[#5F6B67] font-arabic">
+                <span class="font-medium">إزاي كان نطقك للجملة؟</span>
+              </div>
+              <!-- Rating Chips Row -->
+              <div class="flex items-center gap-1.5">
+                <!-- Selected Chip: قلتها صح -->
+                <button type="button" class="flex-1 py-1.5 px-2 rounded-lg bg-[#D8F2EE] border border-[#0D9488] text-[#075E57] font-bold text-xs flex items-center justify-center gap-1 transition-all shadow-xs">
+                  <span class="material-symbols-outlined text-sm text-[#0B8064]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                  <span>قلتها صح</span>
+                </button>
+                <!-- Default Chip: قربت -->
+                <button type="button" class="flex-1 py-1.5 px-2 rounded-lg bg-[#F2F5F4] border border-[#D5DEDA] text-[#5F6B67] font-semibold text-xs flex items-center justify-center gap-1 hover:bg-[#E8EDEC] transition-all">
+                  <span>قربت</span>
+                </button>
+                <!-- Default Chip: لسه -->
+                <button type="button" class="flex-1 py-1.5 px-2 rounded-lg bg-[#F2F5F4] border border-[#D5DEDA] text-[#5F6B67] font-semibold text-xs flex items-center justify-center gap-1 hover:bg-[#E8EDEC] transition-all">
+                  <span>لسه</span>
+                </button>
+              </div>
+              <!-- Muted explanatory helper line -->
+              <p class="text-[11px] text-[#5F6B67] font-arabic leading-relaxed pt-0.5">
+                لحد ما التصحيح الصوتي يشتغل، قيّم نفسك بأمانة ✨
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Question B: Read Aloud (Compact Card) ===== -->
+    <section class="space-y-2 pt-2 border-t border-[#E1E7E4]">
+      <div class="flex items-start gap-2.5">
+        <div class="size-8 rounded-full bg-[#0D9488] text-white flex items-center justify-center shrink-0 text-xs font-bold font-ibm shadow-xs">
+          AZ
+        </div>
+        <div class="flex flex-col gap-1.5 max-w-[88%] w-full">
+          <div class="flex items-center gap-2 mb-0.5">
+            <span class="text-xs font-bold text-[#202927] font-arabic">الكوتش</span>
+            <span class="px-2 py-0.5 rounded-full bg-[#F2F5F4] border border-[#D5DEDA] text-[11px] font-semibold text-[#5F6B67] font-arabic">
+              اقرأ بصوتك
+            </span>
+          </div>
+
+          <!-- Compact Read Aloud Card -->
+          <div class="p-3.5 rounded-2xl rounded-tr-xs bg-white border border-[#D5DEDA] shadow-card space-y-2">
+            <div class="flex items-center justify-between" dir="ltr">
+              <span class="font-inter text-base font-bold text-[#202927] tracking-tight">
+                Boa tarde, tudo bem?
+              </span>
+              <button aria-label="اسمع الجملة قبل ما تقراها" class="size-7 rounded-full bg-[#F2F5F4] text-[#0D9488] hover:bg-[#D8F2EE] flex items-center justify-center transition-colors shrink-0" type="button">
+                <span class="material-symbols-outlined text-base">volume_up</span>
+              </button>
+            </div>
+            <!-- Arabic-letter pronunciation line (#5F6B67) -->
+            <p class="text-xs text-[#5F6B67] font-arabic pt-1 border-t border-[#E1E7E4] leading-relaxed">
+              النطق: <span class="font-semibold text-[#202927]">"بوا تارد، تودو بين؟"</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Question A & C Active: Situation Prompt & Character Line ===== -->
+    <section class="space-y-3 pt-2 border-t border-[#E1E7E4]">
+      
+      <!-- Situation prompt C -->
+      <div class="flex items-start gap-2.5">
+        <div class="size-8 rounded-full bg-[#0D9488] text-white flex items-center justify-center shrink-0 text-xs font-bold font-ibm shadow-xs">
+          AZ
+        </div>
+        <div class="flex flex-col gap-1.5 max-w-[88%] w-full">
+          <div class="flex items-center gap-2 mb-0.5">
+            <span class="text-xs font-bold text-[#202927] font-arabic">الكوتش</span>
+            <span class="px-2 py-0.5 rounded-full bg-[#D8F2EE] border border-[#0D9488]/30 text-[11px] font-bold text-[#075E57] font-arabic">
+              موقف واقعي · لشبونة
+            </span>
+          </div>
+
+          <div class="p-3.5 rounded-2xl rounded-tr-xs bg-white border border-[#D5DEDA] shadow-card space-y-1.5">
+            <p class="text-xs font-bold text-[#0D9488] font-arabic">سياق الموقف:</p>
+            <p class="text-sm font-semibold text-[#202927] font-arabic leading-relaxed">
+              "قابلت جارتك الكبيرة في السلم الصبح، سلّم عليها بأدب"
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Character Manuel Speaks (Question A Active Target) -->
+      <div class="flex items-start gap-2.5">
+        <div class="size-8 rounded-full bg-[#E8EDEC] border border-[#D5DEDA] flex items-center justify-center shrink-0 text-xs font-bold text-[#202927] font-ibm">
+          M
+        </div>
+        <div class="flex flex-col gap-1.5 max-w-[88%] w-full">
+          <div class="flex items-center gap-2 mb-0.5">
+            <span class="text-xs font-bold text-[#202927] font-arabic">مانويل</span>
+            <span class="text-[10px] text-[#737877] font-arabic">الكاشير بيبدأ الكلام</span>
+          </div>
+
+          <!-- White bordered card with hidden line behind play button -->
+          <div class="p-3.5 rounded-2xl rounded-tr-xs bg-white border border-[#D5DEDA] shadow-card space-y-2">
+            <p class="text-xs text-[#5F6B67] font-arabic">مانويل قال جملة في الكافيه، اضغط واسمعها الأول:</p>
+            
+            <!-- Hidden speech audio trigger button -->
+            <button type="button" class="w-full py-2.5 px-3 rounded-xl bg-[#0D9488] text-white flex items-center justify-center gap-2 font-arabic font-bold text-xs shadow-xs hover:bg-[#075E57] active:scale-[0.98] transition-all">
+              <span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+              <span>اسمع مانويل</span>
+              <span class="text-[10px] text-white/80 font-normal font-ibm" dir="ltr">(Mais alguma coisa?)</span>
+            </button>
+
+            <!-- Coach instruction -->
+            <div class="pt-2 border-t border-[#E1E7E4] flex items-center gap-1.5 text-xs text-[#202927] font-arabic">
+              <span class="size-1.5 rounded-full bg-[#0D9488]"></span>
+              <span>المطلوب: </span>
+              <span class="font-bold text-[#0D9488]">"رد عليه: لأ شكراً، والحساب لو سمحت"</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- 3. Fixed Bottom Speaking Composer Dock (Floating Sheet) -->
+  <div class="fixed bottom-0 inset-x-0 z-40 max-w-[390px] mx-auto border-t border-[#D5DEDA] px-4 pt-3 pb-5 shadow-floating rounded-t-[24px]" style="background-color: #F8FAF9;">
+    
+    <!-- Drag handle indicator -->
+    <div class="w-10 h-1 bg-[#D5DEDA] rounded-full mx-auto mb-2.5"></div>
+
+    <!-- Active Target Cue -->
+    <div class="flex items-center justify-between px-1 mb-2">
+      <span class="text-[11px] font-semibold text-[#5F6B67] font-arabic flex items-center gap-1">
+        <span class="material-symbols-outlined text-sm text-[#0D9488]">record_voice_over</span>
+        <span>دورك تتكلم بالبرتغالي</span>
+      </span>
+      <span class="text-[10px] text-[#737877] font-inter" dir="ltr">pt-PT · 1.0x</span>
+    </div>
+
+    <!-- Main Voice Recording Controls -->
+    <div class="flex flex-col items-center justify-center gap-1.5">
+      
+      <!-- Mic Button Container with Pulse Ring -->
+      <div class="relative flex items-center justify-center my-1">
+        <!-- Soft Pulse Ring rgba(13,148,136,0.16) -->
+        <div class="absolute size-20 rounded-full mic-pulse pointer-events-none"></div>
+        
+        <!-- Large Round Teal Mic Button -->
+        <button aria-label="اضغط واتكلم بالبرتغالي" class="relative size-16 rounded-full bg-[#0D9488] text-white flex items-center justify-center shadow-md hover:bg-[#075E57] active:scale-95 transition-all focus:outline-none focus:ring-4 focus:ring-[#0D9488]/20" type="button">
+          <span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">mic</span>
+        </button>
+      </div>
+
+      <!-- Action Label -->
+      <p class="text-xs font-bold text-[#202927] font-arabic">
+        اضغط واتكلم
+      </p>
+
+      <!-- Secondary Switch Link -->
+      <button type="button" class="inline-flex items-center gap-1 text-[11px] font-medium text-[#5F6B67] hover:text-[#0D9488] transition-colors mt-0.5 font-arabic">
+        <span class="material-symbols-outlined text-sm">keyboard</span>
+        <span>مش قادر أتكلم دلوقتي</span>
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+
+
+</body></html>

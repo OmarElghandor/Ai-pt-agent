@@ -9,6 +9,7 @@ import { ScreenLoading } from '@/components/v2/ScreenLoading';
 import { markPageDone } from '@/components/v2/player/session';
 import type { Item } from '@/lib/v2/content/items';
 import type { Question } from '@/lib/v2/content/lesson';
+import { postProgressEvent } from '@/lib/v2/progress/clientEvent';
 
 function forDaySession(questions: Question[]): Question[] {
   return questions.filter((q) => {
@@ -109,7 +110,11 @@ export default function DayQuestionsPage() {
       day={day}
       questions={data.questions}
       items={data.items}
-      onComplete={() => markPageDone(day, 'day_questions')}
+      onComplete={() => {
+        markPageDone(day, 'day_questions');
+        // Safety net if the last day_question_answered was lost (11 §3.2).
+        postProgressEvent({ kind: 'lesson_finished', day });
+      }}
     />
   );
 }
