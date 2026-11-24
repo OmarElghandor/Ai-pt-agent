@@ -19,13 +19,56 @@ export function DailyReviewSession({
   dayOverride,
   fixture,
   learnerName,
+  canRegenerate = false,
 }: {
   dayOverride: number | null;
   fixture?: 'all-types' | null;
   learnerName?: string;
+  /** Testing: show the "ولّد من جديد" button (admins / non-production). */
+  canRegenerate?: boolean;
 }) {
   const [data, setData] = useState<ReviewRes | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [regenerating, setRegenerating] = useState(false);
+  // Remount the chat after a rebuild so no local answer state carries over.
+  const [generation, setGeneration] = useState(0);
+
+  const regenerate = async () => {
+    if (regenerating) return;
+    setRegenerating(true);
+    setError(null);
+    try {
+      const q = dayOverride != null ? `?day=${dayOverride}` : '';
+      const res = await fetch(`/api/v2/review/today/regenerate${q}`, {
+        method: 'POST',
+        headers: {
+          'x-timezone':
+            typeof Intl !== 'undefined'
+              ? Intl.DateTimeFormat().resolvedOptions().timeZone
+              : 'UTC',
+        },
+      });
+      if (!res.ok) throw new Error(`regenerate ${res.status}`);
+      setData((await res.json()) as ReviewRes);
+      setGeneration((g) => g + 1);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'error');
+    } finally {
+      setRegenerating(false);
+    }
+  };
+
+  const regenerateButton =
+    canRegenerate && !fixture ? (
+      <button
+        type="button"
+        onClick={() => void regenerate()}
+        disabled={regenerating}
+        className="rounded-full border border-v2-line px-5 py-3 text-center font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink disabled:opacity-60"
+      >
+        {regenerating ? 'بنولّد…' : 'ولّد المراجعة من جديد'}
+      </button>
+    ) : null;
 
   const fixtureSession = useMemo(() => {
     if (fixture !== 'all-types') return null;
@@ -73,11 +116,12 @@ export function DailyReviewSession({
         <Link href="/path" className="text-v2-primary">
           رجوع
         </Link>
+        {regenerateButton}
       </main>
     );
   }
 
-  if (!data) {
+  if (!data || regenerating) {
     return <ScreenLoading label="بنجهّز مراجعة النهارده…" />;
   }
 
@@ -104,6 +148,7 @@ export function DailyReviewSession({
         >
           روح للدرس
         </Link>
+        {regenerateButton}
       </main>
     );
   }
@@ -115,15 +160,18 @@ export function DailyReviewSession({
           مفيش أسئلة مراجعة جاهزة.
         </p>
         <Link href="/path">رجوع للمسار</Link>
+        {regenerateButton}
       </main>
     );
   }
 
   return (
     <ReviewChatShell
+      key={generation}
       session={data}
       learnerName={learnerName ?? data.learner_name ?? 'صديقي'}
       fixtureMode={fixture === 'all-types'}
+      onRegenerate={canRegenerate && !fixture ? () => void regenerate() : undefined}
     />
   );
 }

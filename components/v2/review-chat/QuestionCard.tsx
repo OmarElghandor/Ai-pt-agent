@@ -2,6 +2,10 @@
 
 import { AudioButton } from '@/components/v2/AudioButton';
 import { ImageSlot } from '@/components/v2/ImageSlot';
+import {
+  optionIsArabic,
+  optionLabel,
+} from '@/components/v2/questions/types';
 import { toArDigits } from '@/lib/v2/formatAr';
 import type { ReviewQuestion } from '@/lib/v2/review-chat/types';
 import { CoachMessage } from './CoachMessage';
@@ -21,14 +25,36 @@ const SKILL_AR: Record<string, string> = {
   grammar: 'قواعد',
 };
 
-function optionList(q: ReviewQuestion): Array<{ ar?: string; tl?: string }> {
+function optionList(
+  q: ReviewQuestion,
+): Array<{ label: string; ar?: boolean }> {
   const raw = q.options;
   if (!Array.isArray(raw)) return [];
-  return raw.map((o) =>
-    o && typeof o === 'object'
-      ? (o as { ar?: string; tl?: string })
-      : { ar: String(o) },
-  );
+  return raw.map((o) => ({
+    label: optionLabel(o),
+    ar: optionIsArabic(o),
+  }));
+}
+
+function buildSentenceSlots(q: ReviewQuestion): {
+  labels: string[];
+  filled?: string[];
+} {
+  const tiles = Array.isArray(q.tiles)
+    ? q.tiles.map(String)
+    : Array.isArray(q.options)
+      ? q.options.map((o) => optionLabel(o)).filter(Boolean)
+      : [];
+  let slotCount = 0;
+  if (Array.isArray(q.answer) && q.answer.length > 0) {
+    slotCount = q.answer.length;
+  } else if (Array.isArray(q.accepted) && typeof q.accepted[0] === 'string') {
+    slotCount = q.accepted[0].trim().split(/\s+/).filter(Boolean).length;
+  } else {
+    slotCount = tiles.length;
+  }
+  if (slotCount < 1) slotCount = 1;
+  return { labels: Array.from({ length: slotCount }, () => '…') };
 }
 
 type Props = {
@@ -38,6 +64,7 @@ type Props = {
   stepsInRound?: number;
   compact?: boolean;
   audioText?: string;
+  learnerText?: string;
 };
 
 export function QuestionCard({
@@ -47,6 +74,7 @@ export function QuestionCard({
   stepsInRound,
   compact,
   audioText,
+  learnerText,
 }: Props) {
   if (!question) return null;
   const type = String(question.type ?? '');
@@ -57,6 +85,13 @@ export function QuestionCard({
   const reading = question.reading as
     | { kind?: string; lines?: { tl?: string; price?: string }[]; total?: string }
     | undefined;
+  const sentenceSlots = type === 'build_sentence' ? buildSentenceSlots(question) : null;
+  const filledSlots =
+    compact && learnerText
+      ? learnerText.trim().split(/\s+/).filter(Boolean)
+      : compact && Array.isArray(question.accepted) && typeof question.accepted[0] === 'string'
+        ? question.accepted[0].trim().split(/\s+/).filter(Boolean)
+        : undefined;
 
   const body = (
     <div
@@ -86,16 +121,24 @@ export function QuestionCard({
 
       {(type === 'listen_meaning' ||
         type === 'listen_pick_tl' ||
+        type === 'listen_pick_image' ||
         type === 'dictation') &&
-      (audioText || question.accepted?.[0]) ? (
-        <AudioPrompt text={audioText ?? String(question.accepted?.[0])} />
+      (audioText ||
+        question.accepted?.[0] ||
+        (typeof question.prompt_tl === 'string' ? question.prompt_tl : '')) ? (
+        <AudioPrompt
+          text={
+            audioText ??
+            String(question.accepted?.[0] ?? question.prompt_tl ?? '')
+          }
+        />
       ) : null}
 
       {type === 'listen_pick_image' && compact ? (
         <ImageGrid
           cells={opts.map((o, i) => ({
             id: String(i),
-            label: o.tl ?? o.ar ?? '',
+            label: o.label,
           }))}
           disabled
         />
@@ -147,14 +190,14 @@ export function QuestionCard({
         </span>
       ) : null}
 
-      {type === 'build_sentence' ? (
+      {type === 'build_sentence' && sentenceSlots ? (
         <>
           {promptEg ? (
             <p className="font-[family-name:var(--font-v2-arabic)] text-base font-semibold text-v2-ink">
               {promptEg}
             </p>
           ) : null}
-          <SlotLine labels={['…', '…', '…', '…']} />
+          <SlotLine labels={sentenceSlots.labels} filled={filledSlots} />
         </>
       ) : null}
 
@@ -236,15 +279,15 @@ export function QuestionCard({
         </p>
       ) : null}
 
-      {compact && opts.length ? (
+      {compact && opts.length && type !== 'build_sentence' ? (
         <div className="flex flex-wrap gap-2">
           {opts.map((o, i) => (
             <span
               key={i}
               className="rounded-lg bg-v2-panel px-2.5 py-1 text-xs text-v2-ink-muted"
-              dir={o.tl ? 'ltr' : undefined}
+              dir={o.ar ? undefined : 'ltr'}
             >
-              {o.ar ?? o.tl}
+              {o.label}
             </span>
           ))}
         </div>

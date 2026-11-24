@@ -1,7 +1,7 @@
 import { getCurrentV2UserId } from '@/lib/v2/auth/session';
 import { connectMongo, mongoConfigured } from '@/lib/mongo';
 import type { Item } from '@/lib/v2/content/items';
-import { getPublishedLesson } from '@/lib/v2/content/getPublishedLesson';
+import { getLessonForPractice } from '@/lib/v2/content/getPublishedLesson';
 import type { Skill } from '@/lib/v2/content/lesson';
 import {
   V2AnswerIdempotencyModel,
@@ -221,7 +221,7 @@ async function buildContext(
     return ctx;
   }
 
-  const published = await getPublishedLesson(payload.day);
+  const published = await getLessonForPractice(payload.day);
   const items: Item[] = published?.pack.items ?? [];
   const grammarFocusId =
     (published?.pack.lesson as { grammar_focus?: string } | undefined)
@@ -324,7 +324,7 @@ async function handleBeat(
     throw Object.assign(new Error('beat_not_found'), { status: 400 });
   }
 
-  const lesson = await getPublishedLesson(payload.day);
+  const lesson = await getLessonForPractice(payload.day);
   const items = lesson?.pack.items ?? [];
 
   const session = await getOrCreatePracticeSession({

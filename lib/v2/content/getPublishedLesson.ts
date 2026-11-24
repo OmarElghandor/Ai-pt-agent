@@ -164,6 +164,19 @@ export async function getLatestLessonPack(
   };
 }
 
+/**
+ * Lesson for learner practice (review, daily cards, answers grading):
+ * the published version when there is one, otherwise the newest version
+ * in any status (draft / reviewed). Same rule the lesson pages use, so a
+ * lesson the learner can play is always a lesson practice can use.
+ */
+export async function getLessonForPractice(
+  day: number,
+  targetLang = 'pt-PT',
+): Promise<PublishedLesson | null> {
+  return (await getPublishedLesson(day)) ?? (await getLatestLessonPack(day, targetLang));
+}
+
 function situationFromData(data: unknown): { tl: string; eg: string } | undefined {
   const lesson = (data as { lesson?: { situation?: { tl?: string; eg?: string } } })
     ?.lesson;

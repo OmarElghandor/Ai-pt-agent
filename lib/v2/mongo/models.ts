@@ -1275,6 +1275,8 @@ const v2CoveragePlanSchema = new Schema(
   {
     user_id: { type: String, required: true, index: true },
     lesson_day: { type: Number, required: true },
+    /** Lesson version the plan was built from; a newer version rebuilds it. */
+    lesson_version: { type: Number, required: false },
     pairs: { type: [coveragePairSchema], default: [] },
   },
   { timestamps: true, collection: 'v2_coverage_plans' },

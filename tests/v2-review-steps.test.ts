@@ -342,3 +342,218 @@ describe('v2 practice · review empty window (16 §8)', () => {
   });
 });
 
+
+describe('v2 practice · chat-ready steps (review fix 2026-11-24)', () => {
+  const bank: BankItem[] = [
+    { id: 'p.ola', type: 'phrase', tl: 'Olá!', ar: 'مرحباً', day: 1 },
+    { id: 'p.boa_tarde', type: 'phrase', tl: 'Boa tarde!', ar: 'مساء الخير', day: 1 },
+    { id: 'p.boa_noite', type: 'phrase', tl: 'Boa noite!', ar: 'تصبح على خير', day: 1 },
+    { id: 'p.prazer', type: 'phrase', tl: 'Muito prazer!', ar: 'تشرفنا', day: 1 },
+    { id: 'p.chamo', type: 'phrase', tl: 'Como se chama?', ar: 'ما اسمك؟', day: 2 },
+    { id: 'p.estou', type: 'phrase', tl: 'Eu estou bem hoje', ar: 'أنا بخير النهارده', day: 2 },
+    { id: 'pattern.chamo', type: 'pattern', day: 2, examples: ['pattern.chamo.ex.1'] },
+    {
+      id: 'pattern.chamo.ex.1',
+      type: 'phrase',
+      tl: 'Chamo-me Omar.',
+      ar: 'اسمي عمر',
+      day: 2,
+      derived: true,
+    },
+  ];
+
+  it('every code step carries a chat skill and an instruction', () => {
+    for (const item of bank.filter((i) => !i.derived)) {
+      for (const skill of ['listening', 'writing', 'building', 'recognition', 'speaking', 'use'] as const) {
+        const step = buildReviewStep({ item, skill, taughtItems: bank, currentDay: 3 });
+        if (!step) continue;
+        const p = step.payload;
+        assert.ok(
+          ['listening', 'reading', 'writing', 'speaking', 'grammar'].includes(String(p.skill)),
+          `skill for ${item.id} ${skill}`,
+        );
+        assert.ok(
+          p.prompt_eg || p.prompt_tl || p.situation_eg,
+          `instruction for ${item.id} ${skill}`,
+        );
+      }
+    }
+  });
+
+  it('choice options are labelled, distinct, and the answer index points at the target', () => {
+    const step = buildReviewStep({ item: bank[1]!, skill: 'listening', taughtItems: bank, currentDay: 3 });
+    assert.ok(step);
+    const opts = step!.payload.options as { label: string; ar?: string }[];
+    assert.equal(opts.length, 3);
+    assert.ok(opts.every((o) => o.label && o.ar));
+    assert.equal(new Set(opts.map((o) => o.label)).size, 3);
+    assert.equal(opts[step!.payload.answer as number]!.label, 'مساء الخير');
+  });
+
+  it('answer index is not always 0', () => {
+    const answers = new Set(
+      bank
+        .filter((i) => i.type === 'phrase' && !i.derived)
+        .map(
+          (item) =>
+            buildReviewStep({ item, skill: 'listening', taughtItems: bank, currentDay: 3 })!.payload
+              .answer,
+        ),
+    );
+    assert.ok(answers.size > 1);
+  });
+
+  it('a 1–2 word phrase is never a tile question; it becomes reading (translation)', () => {
+    const step = buildReviewStep({ item: bank[1]!, skill: 'building', taughtItems: bank, currentDay: 3 });
+    assert.ok(step);
+    assert.equal(step!.type, 'pick_meaning');
+    assert.equal(step!.payload.skill, 'reading');
+    assert.equal(step!.payload.prompt_tl, 'Boa tarde!');
+  });
+
+  it('tile questions have the Arabic meaning and shuffled tiles', () => {
+    const step = buildReviewStep({ item: bank[5]!, skill: 'building', taughtItems: bank, currentDay: 3 });
+    assert.ok(step);
+    assert.equal(step!.type, 'build_sentence');
+    assert.match(String(step!.payload.prompt_eg), /أنا بخير النهارده/);
+    const tiles = step!.payload.tiles as string[];
+    const answer = step!.payload.answer as number[];
+    assert.equal(answer.map((i) => tiles[i]).join(' '), 'Eu estou bem hoje');
+    assert.notDeepEqual(tiles.slice(0, 4), ['Eu', 'estou', 'bem', 'hoje']);
+  });
+
+  it('a pattern is tested through its example sentence', () => {
+    const step = buildReviewStep({ item: bank[6]!, skill: 'recognition', taughtItems: bank, currentDay: 3 });
+    assert.ok(step);
+    assert.equal(step!.item_id, 'pattern.chamo');
+    assert.equal(step!.payload.prompt_tl, 'Chamo-me Omar.');
+  });
+
+  it('a lesson question with rich-text prompt and options is normalised for the chat', () => {
+    const step = buildReviewStep({
+      item: bank[4]!,
+      skill: 'recognition',
+      taughtItems: bank,
+      currentDay: 3,
+      crafted: [
+        {
+          id: 'q.read',
+          type: 'read_meaning',
+          tests: ['p.chamo'],
+          use: 'both',
+          prompt: [
+            { text: 'معناها إيه؟ ', lang: 'eg' },
+            { text: 'Como se chama?', lang: 'tl' },
+          ],
+          options: [
+            [{ text: 'ما اسمك؟', lang: 'ar' }],
+            [{ text: 'كيف حالك؟', lang: 'ar' }],
+            [{ text: 'من أين أنت؟', lang: 'ar' }],
+          ],
+          answer: 0,
+        } as never,
+      ],
+    });
+    assert.ok(step);
+    assert.equal(step!.payload.origin, 'crafted');
+    assert.equal(step!.payload.prompt_tl, 'Como se chama?');
+    assert.equal(step!.payload.skill, 'reading');
+    const opts = step!.payload.options as { ar?: string }[];
+    assert.equal(opts[0]!.ar, 'ما اسمك؟');
+  });
+
+  it('a lesson question with an empty option falls back to a code step', () => {
+    const step = buildReviewStep({
+      item: bank[4]!,
+      skill: 'recognition',
+      taughtItems: bank,
+      currentDay: 3,
+      crafted: [
+        {
+          id: 'q.bad',
+          type: 'pick_meaning',
+          tests: ['p.chamo'],
+          use: 'both',
+          prompt: 'Como se chama?',
+          options: ['ما اسمك؟', '', ''],
+          answer: 0,
+        } as never,
+      ],
+    });
+    assert.ok(step);
+    assert.equal(step!.payload.origin, 'code');
+  });
+});
+
+describe('v2 practice · mixed order + regenerate (2026-11-24)', () => {
+  const mk = (day: number, n: number): BankItem[] =>
+    Array.from({ length: n }, (_, i) => ({
+      id: `d${day}.p${i}`,
+      type: 'phrase',
+      tl: `Frase ${day} numero ${i} aqui`,
+      ar: `جملة ${day} رقم ${i}`,
+      day,
+    }));
+  const bank = [...mk(1, 5), ...mk(2, 5), ...mk(3, 5)];
+  const window = [
+    { day: 3, position: 1 as const },
+    { day: 2, position: 2 as const },
+    { day: 1, position: 3 as const },
+  ];
+  const plans: CoveragePlan[] = [1, 2, 3].map((day) => ({
+    user_id: 'u',
+    lesson_day: day,
+    pairs: bank
+      .filter((i) => i.day === day)
+      .flatMap((i) => [
+        { item_id: i.id, skill: 'listening' as const, status: 'open' as const },
+        { item_id: i.id, skill: 'writing' as const, status: 'open' as const },
+      ]),
+  }));
+  const itemsByDay = new Map([1, 2, 3].map((d) => [d, bank.filter((i) => i.day === d)]));
+  const build = (seed: string) =>
+    buildReviewSession({
+      window,
+      budgetMinutes: 14,
+      plans,
+      itemsByDay,
+      craftedByDay: new Map(),
+      taughtItems: bank,
+      currentDay: 4,
+      seed,
+    });
+
+  it('a round mixes lessons instead of walking one lesson', () => {
+    const { steps } = build('u:2026-11-24');
+    const r1 = steps.filter((s) => s.round === 1);
+    assert.ok(new Set(r1.map((s) => s.lesson_day)).size >= 2);
+    let sameInARow = 0;
+    for (let i = 1; i < steps.length; i++) {
+      if (steps[i]!.lesson_day === steps[i - 1]!.lesson_day) sameInARow += 1;
+    }
+    assert.ok(sameInARow < steps.length / 2, `too many same-lesson neighbours: ${sameInARow}`);
+  });
+
+  it('the same item never sits twice in a row', () => {
+    const { steps } = build('u:2026-11-24');
+    for (let i = 1; i < steps.length; i++) {
+      assert.notEqual(steps[i]!.item_id, steps[i - 1]!.item_id);
+    }
+  });
+
+  it('same seed → same order; a new seed (regenerate) → a new mix of the same steps', () => {
+    const a = build('u:2026-11-24').steps.map((s) => `${s.item_id}|${s.type}`);
+    const b = build('u:2026-11-24').steps.map((s) => `${s.item_id}|${s.type}`);
+    const c = build('u:2026-11-24:1732470000000').steps.map((s) => `${s.item_id}|${s.type}`);
+    assert.deepEqual(a, b);
+    assert.notDeepEqual(a, c);
+    assert.deepEqual([...a].sort(), [...c].sort());
+  });
+
+  it('regenerate is for admins, or anyone outside production', async () => {
+    const { canRegenerateReview } = await import('../lib/v2/practice/regenerate');
+    assert.equal(canRegenerateReview('admin', 'production'), true);
+    assert.equal(canRegenerateReview('learner', 'production'), false);
+    assert.equal(canRegenerateReview('learner', 'development'), true);
+  });
+});

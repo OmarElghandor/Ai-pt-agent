@@ -163,7 +163,11 @@ function docToLightState(doc: Record<string, unknown>): ItemState {
   };
 }
 
-/** Load flashcard items from published lessons with day ≤ currentDay (daily 15). */
+/**
+ * Load flashcard items for practice from lessons with day ≤ currentDay.
+ * Any status counts (draft / reviewed / published): per day, the newest
+ * published version wins, otherwise the newest version of any status.
+ */
 export async function loadPublishedFlashcardsThrough(
   currentDay: number,
   targetLang = 'pt-PT',
@@ -172,14 +176,22 @@ export async function loadPublishedFlashcardsThrough(
   const byId = new Map<string, Item>();
   if (!mongoConfigured()) return { byDay, byId };
   await connectMongo();
-  const docs = await V2LessonModel()
+  const all = await V2LessonModel()
     .find({
       target_lang: targetLang,
-      status: 'published',
       day: { $lte: currentDay },
     })
     .sort({ day: 1, version: -1 })
     .lean();
+
+  // Published first per day, then newest of any status.
+  const docs = [...all].sort((a, b) => {
+    if (a.day !== b.day) return a.day - b.day;
+    const ap = a.status === 'published' ? 0 : 1;
+    const bp = b.status === 'published' ? 0 : 1;
+    if (ap !== bp) return ap - bp;
+    return Number(b.version) - Number(a.version);
+  });
 
   const seen = new Set<number>();
   for (const doc of docs) {

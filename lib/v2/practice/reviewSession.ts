@@ -11,6 +11,7 @@ import {
 } from './stepBuilders';
 import { estimatedSecondsForType } from './stepTimes';
 import { REVIEW_ROUND_MINUTES, reviewRounds } from './budget';
+import { seededShuffle } from './chatQuestion';
 import type { WindowLesson } from './window';
 
 export type ReviewSlotReason =
@@ -46,6 +47,11 @@ export type BuildReviewSessionInput = {
   olderPatterns?: BankItem[];
   weakItemIds?: Set<string>;
   knownMistakeTiles?: string[];
+  /**
+   * Seed for the mix order (user + local date, plus a nonce on regenerate).
+   * Same seed → same session; a new seed → a new mix of the same steps.
+   */
+  seed?: string;
 };
 
 const GRAMMAR_TYPES = new Set([
@@ -279,8 +285,13 @@ export function buildReviewSession(
     }
   }
 
-  // Assign rounds (~5 min) and order inside rounds
-  const withRounds = assignRounds(built, roundMins);
+  // Priority decided WHICH steps are in today's session; the order is mixed
+  // across lessons so a round never walks one lesson item by item.
+  const seed = input.seed ?? 'review';
+  const mixed = mixAcrossLessons(built, seed);
+  // Keep the "≥2 weak in round 1" rule after mixing.
+  const weakFirst = pullForward(mixed, (s) => s.slot_reason === 'weak', 2, 4);
+  const withRounds = assignRounds(weakFirst, roundMins, seed);
   return {
     steps: withRounds,
     rounds_total: roundsTotal,
@@ -288,9 +299,86 @@ export function buildReviewSession(
   };
 }
 
+/**
+ * Interleave steps from different lessons: each lesson's steps are shuffled
+ * (seeded), then taken round-robin with the lesson order reshuffled every
+ * cycle. Two steps on the same item never sit next to each other when it
+ * can be avoided.
+ */
+export function mixAcrossLessons<T extends { lesson_day: number; item_id: string }>(
+  steps: T[],
+  seed: string,
+): T[] {
+  if (steps.length <= 2) return steps;
+  const groups = new Map<number, T[]>();
+  for (const s of steps) {
+    const g = groups.get(s.lesson_day) ?? [];
+    g.push(s);
+    groups.set(s.lesson_day, g);
+  }
+  const queues = new Map<number, T[]>();
+  for (const [day, g] of groups) {
+    queues.set(day, spreadItems(seededShuffle(g, `${seed}:lesson:${day}`)));
+  }
+  const out: T[] = [];
+  let cycle = 0;
+  while ([...queues.values()].some((q) => q.length)) {
+    const days = seededShuffle(
+      [...queues.keys()].filter((d) => queues.get(d)!.length),
+      `${seed}:cycle:${cycle++}`,
+    );
+    // Don't start a cycle with the lesson that ended the previous one.
+    const lastDay = out[out.length - 1]?.lesson_day;
+    if (days.length > 1 && days[0] === lastDay) days.push(days.shift()!);
+    for (const d of days) {
+      const q = queues.get(d)!;
+      const last = out[out.length - 1];
+      let i = q.findIndex((s) => s.item_id !== last?.item_id);
+      if (i < 0) i = 0;
+      out.push(q.splice(i, 1)[0]!);
+    }
+  }
+  return out;
+}
+
+/** Same lesson: avoid the same item twice in a row. */
+function spreadItems<T extends { item_id: string }>(steps: T[]): T[] {
+  const out: T[] = [];
+  const rest = [...steps];
+  while (rest.length) {
+    const last = out[out.length - 1];
+    let i = rest.findIndex((s) => s.item_id !== last?.item_id);
+    if (i < 0) i = 0;
+    out.push(rest.splice(i, 1)[0]!);
+  }
+  return out;
+}
+
+/** Move up to `n` matching steps into the first `within` positions. */
+function pullForward<T>(
+  steps: T[],
+  match: (s: T) => boolean,
+  n: number,
+  within: number,
+): T[] {
+  const already = steps.slice(0, within).filter(match).length;
+  if (already >= n) return steps;
+  const out = [...steps];
+  let need = n - already;
+  for (let i = within; i < out.length && need > 0; i++) {
+    if (match(out[i]!)) {
+      const [s] = out.splice(i, 1);
+      out.splice(Math.min(1 + (n - need) * 2, within - 1), 0, s!);
+      need -= 1;
+    }
+  }
+  return out;
+}
+
 function assignRounds(
   steps: ReviewSessionStep[],
   roundMins: number[],
+  seed = 'review',
 ): ReviewSessionStep[] {
   if (!steps.length) return steps;
   const caps = roundMins.map((m) => m * 60);
@@ -313,13 +401,33 @@ function assignRounds(
     usedInRound += s.estimated_seconds;
   }
 
-  for (const bucket of roundBuckets) {
-    out.push(...orderInsideRound(bucket));
+  roundBuckets.forEach((bucket, i) => {
+    out.push(...orderInsideRound(bucket, `${seed}:round:${i + 1}`));
+  });
+  // Across tier and round edges: never the same item twice in a row.
+  for (let i = 1; i < out.length; i++) {
+    if (out[i]!.item_id !== out[i - 1]!.item_id) continue;
+    const dup = out[i]!.item_id;
+    const j = out.findIndex(
+      (s, k) =>
+        k > i + 1 &&
+        s.round === out[i]!.round &&
+        // s moves to i: must differ from both new neighbours
+        s.item_id !== out[i - 1]!.item_id &&
+        s.item_id !== out[i + 1]?.item_id &&
+        // dup moves to k: must differ from k's neighbours
+        out[k - 1]!.item_id !== dup &&
+        out[k + 1]?.item_id !== dup,
+    );
+    if (j > i) [out[i], out[j]] = [out[j]!, out[i]!];
   }
   return out;
 }
 
-function orderInsideRound(steps: ReviewSessionStep[]): ReviewSessionStep[] {
+function orderInsideRound(
+  steps: ReviewSessionStep[],
+  seed = 'round',
+): ReviewSessionStep[] {
   if (steps.length <= 1) return steps;
   const easy = steps.filter(
     (s) =>
@@ -336,7 +444,12 @@ function orderInsideRound(steps: ReviewSessionStep[]): ReviewSessionStep[] {
         s.type === 'build_sentence'),
   );
   const use = steps.filter((s) => !easy.includes(s) && !mid.includes(s));
-  const ordered = [...easy, ...mid, ...use];
+  // Easy → building/writing → use, each tier mixed across lessons.
+  const ordered = [
+    ...mixAcrossLessons(easy, `${seed}:easy`),
+    ...mixAcrossLessons(mid, `${seed}:mid`),
+    ...mixAcrossLessons(use, `${seed}:use`),
+  ];
   // Ensure at least one grammar
   if (!ordered.some(isGrammarStep)) {
     const g = steps.find(isGrammarStep);
@@ -346,25 +459,39 @@ function orderInsideRound(steps: ReviewSessionStep[]): ReviewSessionStep[] {
   return spreadTypes(ordered);
 }
 
+/**
+ * Final pass, greedy: prefer the next step that changes lesson and item and
+ * doesn't make a 4th same type in a row; relax the rules one by one when no
+ * step fits. Keeps the easy → hard order as much as possible.
+ */
 function spreadTypes(steps: ReviewSessionStep[]): ReviewSessionStep[] {
   const out: ReviewSessionStep[] = [];
   const rest = [...steps];
+  const typeRunOk = (s: ReviewSessionStep) => {
+    const last3 = out.slice(-3);
+    return !(last3.length === 3 && last3.every((x) => x.type === s.type));
+  };
+  const rules: Array<(s: ReviewSessionStep) => boolean> = [
+    (s) => {
+      const last = out[out.length - 1];
+      return (
+        typeRunOk(s) &&
+        s.lesson_day !== last?.lesson_day &&
+        s.item_id !== last?.item_id
+      );
+    },
+    (s) => typeRunOk(s) && s.item_id !== out[out.length - 1]?.item_id,
+    (s) => typeRunOk(s),
+  ];
   while (rest.length) {
-    let placed = false;
-    for (let i = 0; i < rest.length; i++) {
-      const s = rest[i]!;
-      const last3 = out.slice(-3);
-      if (last3.length === 3 && last3.every((x) => x.type === s.type)) {
-        continue;
-      }
-      out.push(s);
-      rest.splice(i, 1);
-      placed = true;
-      break;
+    let i = -1;
+    for (const rule of rules) {
+      // Look a few steps ahead only, so tiers stay in order.
+      i = rest.slice(0, 4).findIndex(rule);
+      if (i >= 0) break;
     }
-    if (!placed) {
-      out.push(rest.shift()!);
-    }
+    if (i < 0) i = 0;
+    out.push(rest.splice(i, 1)[0]!);
   }
   return out;
 }

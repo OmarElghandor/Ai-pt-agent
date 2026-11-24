@@ -22,6 +22,10 @@ import type {
   ReviewSession,
   ReviewStepDisplay,
 } from '@/lib/v2/review-chat/types';
+import {
+  optionIsArabic,
+  optionLabel,
+} from '@/components/v2/questions/types';
 
 function newAnswerId(): string {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
@@ -46,17 +50,46 @@ function normalize(s: string): string {
 function optionsFromQuestion(q: ReviewQuestion): Array<{ id: string; label: string; ar?: boolean }> {
   const raw = q.options;
   if (!Array.isArray(raw)) return [];
-  return raw.map((o, i) => {
-    if (o && typeof o === 'object') {
-      const row = o as { ar?: string; tl?: string };
-      return {
-        id: String(i),
-        label: row.ar ?? row.tl ?? '',
-        ar: Boolean(row.ar),
-      };
-    }
-    return { id: String(i), label: String(o) };
-  });
+  // Always index-based ids — grading uses `answer` as an array index.
+  // Item ids on raw options (e.g. p.prazer) must not become chip ids:
+  // Number("p.prazer") is NaN and every pick grades wrong.
+  return raw.map((o, i) => ({
+    id: String(i),
+    label: optionLabel(o),
+    ar: optionIsArabic(o),
+  }));
+}
+
+/** Resolve a chip/choice id to an option index (index string or raw option id). */
+function resolveOptionIndex(q: ReviewQuestion, id: string): number {
+  const asNum = Number(id);
+  if (Number.isInteger(asNum) && asNum >= 0) return asNum;
+  const opts = optionsFromQuestion(q);
+  const byUiId = opts.findIndex((o) => o.id === id);
+  if (byUiId >= 0) return byUiId;
+  const raw = q.options;
+  if (!Array.isArray(raw)) return -1;
+  return raw.findIndex(
+    (o) =>
+      o &&
+      typeof o === 'object' &&
+      !Array.isArray(o) &&
+      String((o as { id?: unknown }).id) === id,
+  );
+}
+
+function correctOptionIndex(q: ReviewQuestion): number {
+  if (typeof q.answer === 'number') return q.answer;
+  const raw = q.options;
+  if (!Array.isArray(raw)) return 0;
+  const hit = raw.findIndex(
+    (o) =>
+      o &&
+      typeof o === 'object' &&
+      !Array.isArray(o) &&
+      (o as { correct?: unknown }).correct === true,
+  );
+  return hit >= 0 ? hit : 0;
 }
 
 function gradeClosed(q: ReviewQuestion, optionIndex: number): {
@@ -65,8 +98,7 @@ function gradeClosed(q: ReviewQuestion, optionIndex: number): {
   display: ReviewStepDisplay;
   learnerText: string;
 } {
-  const answer =
-    typeof q.answer === 'number' ? q.answer : 0;
+  const answer = correctOptionIndex(q);
   const correct = optionIndex === answer;
   const opts = optionsFromQuestion(q);
   const learnerText = opts[optionIndex]?.label ?? '';
@@ -378,6 +410,7 @@ export function useReviewChatSession({
   const submitOption = useCallback(
     async (optionIndex: number) => {
       if (!question || !step) return;
+      if (!Number.isInteger(optionIndex) || optionIndex < 0) return;
       const graded = gradeClosed(question, optionIndex);
       applyAnswer(currentStep, graded.learnerText, graded.display);
       void persistAnswer(
@@ -386,8 +419,7 @@ export function useReviewChatSession({
           day: step.lesson_day,
           skill: String(question.skill ?? 'reading'),
           option_index: optionIndex,
-          correct_index:
-            typeof question.answer === 'number' ? question.answer : 0,
+          correct_index: correctOptionIndex(question),
           question_id: String(question.id ?? ''),
           question_type: qType,
         },
@@ -430,6 +462,15 @@ export function useReviewChatSession({
     setCurrentStep(next);
   }, [currentStep, session, step, fixtureMode, onSessionChange]);
 
+  // After feedback, auto-advance (~1s). التالي still skips the wait.
+  useEffect(() => {
+    if (!awaitingNext) return;
+    const t = setTimeout(() => {
+      advance();
+    }, 1000);
+    return () => clearTimeout(t);
+  }, [awaitingNext, advance]);
+
   const continueRound = useCallback(() => {
     setShowRoundEnd(false);
     setAwaitingNext(false);
@@ -467,6 +508,16 @@ export function useReviewChatSession({
     [session.window],
   );
 
+  /** TL audio for listen / find-image prompts (accepted first, then prompt_tl). */
+  const promptAudio = useMemo(() => {
+    if (!question) return '';
+    if (Array.isArray(question.accepted) && typeof question.accepted[0] === 'string') {
+      return question.accepted[0].trim();
+    }
+    if (typeof question.prompt_tl === 'string') return question.prompt_tl.trim();
+    return '';
+  }, [question]);
+
   return {
     messages,
     headerSubtitle: headerSubtitle(
@@ -480,6 +531,8 @@ export function useReviewChatSession({
     composerKind,
     question,
     qType,
+    promptAudio,
+    currentStep,
     composerText,
     setComposerText,
     selectedOption,
@@ -549,15 +602,24 @@ export function useReviewChatSession({
     imageCells: question
       ? optionsFromQuestion(question).map((o, i) => ({
           id: o.id,
-          label: o.label,
-          url: Array.isArray(question.image_refs)
-            ? null
-            : null,
+          // No caption before answering — the Portuguese label would give it away.
+          label: '',
+          url:
+            ((question.options?.[i] as { image_url?: string | null } | undefined)
+              ?.image_url ?? null),
           state: undefined as 'idle' | 'correct' | 'wrong' | undefined,
           _i: i,
         }))
       : [],
-    tiles: Array.isArray(question?.tiles) ? question.tiles.map(String) : [],
+    tiles: (() => {
+      if (Array.isArray(question?.tiles) && question.tiles.length > 0) {
+        return question.tiles.map(String);
+      }
+      if (Array.isArray(question?.options) && question.options.length > 0) {
+        return question.options.map((o) => optionLabel(o)).filter(Boolean);
+      }
+      return [];
+    })(),
     requestHint: () => {
       if (!question) return;
       const hint =
@@ -590,10 +652,10 @@ export function useReviewChatSession({
     closedChipsImmediate: qType === 'pick_meaning' || qType === 'read_meaning',
     onChipPick: (id: string) => {
       if (!question) return;
-      const idx = Number(id);
-      if (composerKind === 'chips') {
-        void submitOption(idx);
-      }
+      if (composerKind !== 'chips') return;
+      const idx = resolveOptionIndex(question, id);
+      if (idx < 0) return;
+      void submitOption(idx);
     },
   };
 }

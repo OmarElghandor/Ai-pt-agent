@@ -47,6 +47,8 @@ export type BuildCoveragePlanInput = {
 export type CoveragePlan = {
   user_id: string;
   lesson_day: number;
+  /** Lesson version the plan was built from; a newer version rebuilds it. */
+  lesson_version?: number | null;
   pairs: CoveragePair[];
 };
 

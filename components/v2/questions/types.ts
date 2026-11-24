@@ -58,7 +58,31 @@ export function optionLabel(opt: unknown): string {
   const rt = asRt(opt);
   if (rt) return rt.map((s) => s.text).join('');
   if (typeof opt === 'string') return opt;
+  if (opt && typeof opt === 'object' && !Array.isArray(opt)) {
+    const row = opt as {
+      label?: unknown;
+      ar?: unknown;
+      tl?: unknown;
+      text?: unknown;
+    };
+    for (const key of ['label', 'ar', 'tl', 'text'] as const) {
+      const v = row[key];
+      if (typeof v === 'string' && v.trim()) return v;
+    }
+  }
   return '';
+}
+
+/** True when the option is Arabic/Egyptian (chip dir / meaning display). */
+export function optionIsArabic(opt: unknown): boolean {
+  const rt = asRt(opt);
+  if (rt) return rt.some((s) => s.lang === 'ar' || s.lang === 'eg');
+  if (opt && typeof opt === 'object' && !Array.isArray(opt)) {
+    const row = opt as { ar?: unknown; lang?: unknown };
+    if (typeof row.ar === 'string' && row.ar.trim()) return true;
+    if (row.lang === 'ar' || row.lang === 'eg') return true;
+  }
+  return false;
 }
 
 export function promptRecord(

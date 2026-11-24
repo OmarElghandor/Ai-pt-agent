@@ -31,14 +31,28 @@ export function ChatThread({
   sessionLessons,
   typingLabel,
 }: Props) {
+  const scrollerRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+    const id = requestAnimationFrame(() => {
+      try {
+        scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
+      } catch {
+        scroller.scrollTop = scroller.scrollHeight;
+      }
+      endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    });
+    return () => cancelAnimationFrame(id);
   }, [messages]);
 
   return (
-    <div className="flex-1 space-y-5 overflow-y-auto px-4 pt-4 pb-48 no-scrollbar">
+    <div
+      ref={scrollerRef}
+      className="flex-1 space-y-5 overflow-y-auto px-4 pt-4 pb-48 no-scrollbar"
+    >
       {messages.map((m) => {
         switch (m.kind) {
           case 'opening':
@@ -82,6 +96,7 @@ export function ChatThread({
                 stepsInRound={m.stepsInRound}
                 compact={m.compact}
                 audioText={m.audioText}
+                learnerText={m.learnerText}
               />
             );
           case 'learner':

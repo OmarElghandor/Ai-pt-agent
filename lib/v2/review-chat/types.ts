@@ -116,6 +116,8 @@ export type ThreadMessage = {
   characterHidden?: boolean;
   audioText?: string;
   compact?: boolean;
+  /** Learner answer text — used to fill build_sentence slots in compact cards. */
+  learnerText?: string;
 };
 
 export type ComposerKind =

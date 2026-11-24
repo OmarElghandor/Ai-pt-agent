@@ -1,6 +1,6 @@
 import type { Question } from '@/lib/v2/content/lesson';
 import { getProblem } from '@/lib/v2/progress/problems';
-import { getPublishedLesson } from '@/lib/v2/content/getPublishedLesson';
+import { getLessonForPractice } from '@/lib/v2/content/getPublishedLesson';
 
 /**
  * Build 6–8 questions testing a problem's patterns from day banks (code only).
@@ -18,7 +18,7 @@ export async function buildProblemPracticeQuestions(opts: {
   const out: Question[] = [];
 
   for (let day = 1; day <= opts.currentDay && out.length < size; day++) {
-    const published = await getPublishedLesson(day);
+    const published = await getLessonForPractice(day, opts.targetLang ?? 'pt-PT');
     const questions = published?.pack.questions ?? [];
     for (const q of questions) {
       if (out.length >= size) break;

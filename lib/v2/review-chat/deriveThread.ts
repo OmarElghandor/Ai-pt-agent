@@ -175,6 +175,13 @@ export function deriveThread(opts: {
         });
       }
 
+      const display = answered ? stepDisplay(step, local) : undefined;
+      const learnerText =
+        local?.learnerText ??
+        display?.learner_text ??
+        display?.correct_tl ??
+        undefined;
+
       if (stepIndex <= currentStep || answered) {
         messages.push({
           id: `q-${stepIndex}`,
@@ -187,6 +194,7 @@ export function deriveThread(opts: {
           stepsInRound: roundSteps.length,
           compact: answered || stepIndex < currentStep,
           audioText: audioFromQuestion(q),
+          learnerText: answered ? learnerText : undefined,
         });
       }
 
@@ -205,7 +213,6 @@ export function deriveThread(opts: {
         }
       }
 
-      const display = answered ? stepDisplay(step, local) : undefined;
       if (display) {
         if (local?.pending) {
           messages.push({
@@ -218,11 +225,7 @@ export function deriveThread(opts: {
             id: `learner-${stepIndex}`,
             kind: 'learner',
             stepIndex,
-            text:
-              local?.learnerText ??
-              display.learner_text ??
-              display.correct_tl ??
-              '',
+            text: learnerText ?? '',
           });
           messages.push({
             id: `fb-${stepIndex}`,

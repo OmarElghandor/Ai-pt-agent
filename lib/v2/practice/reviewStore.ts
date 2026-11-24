@@ -27,10 +27,11 @@ import {
   type ReviewEmptyReason,
 } from '@/lib/v2/practice';
 import { loadPublishedFlashcardsThrough } from '@/lib/v2/decks';
-import { getPublishedLesson } from '@/lib/v2/content/getPublishedLesson';
+import { getLessonForPractice } from '@/lib/v2/content/getPublishedLesson';
 import { PRACTICE_QUESTION_BUILDER_VERSION } from '@/lib/v2/review/questions';
 
-export const REVIEW_BUILDER_VERSION = '1';
+/** Bump when step building changes; untouched sessions of an older version are rebuilt. */
+export const REVIEW_BUILDER_VERSION = '2';
 
 export type TodayReviewSession = {
   local_date: string;
@@ -77,6 +78,17 @@ function mapExisting(doc: {
     },
     builder_version: doc.builder_version ?? REVIEW_BUILDER_VERSION,
   };
+}
+
+/**
+ * Items that get their own coverage pairs. Derived pattern examples
+ * (`pattern.x.ex.n`) are tested through their pattern, and items with no
+ * Portuguese text can't be asked about.
+ */
+function coverageBankItems(items: BankItem[]): BankItem[] {
+  return items.filter(
+    (i) => !i.derived && (i.type === 'pattern' || Boolean(i.tl?.trim())),
+  );
 }
 
 async function loadCompletedDays(
@@ -230,6 +242,11 @@ export async function getOrCreateTodayReview(opts: {
   timeZone?: string;
   target_lang?: string;
   now?: Date;
+  /**
+   * Testing: throw away today's session (even if answered) and the window's
+   * coverage plans, ignore the 3-day no-repeat rule, and build a new mix.
+   */
+  regenerate?: boolean;
 }): Promise<TodayReviewSession> {
   if (!mongoConfigured()) throw new Error('MongoDB not configured');
   await connectMongo();
@@ -240,13 +257,23 @@ export async function getOrCreateTodayReview(opts: {
 
   const completedDaysAll = await loadCompletedDays(opts.user_id, target_lang);
 
+  if (opts.regenerate) {
+    await V2ReviewSessionModel().deleteOne({ user_id: opts.user_id, local_date });
+  }
+
   const existing = await V2ReviewSessionModel()
     .findOne({ user_id: opts.user_id, local_date })
     .lean();
   if (existing) {
     const stepCount = Array.isArray(existing.steps) ? existing.steps.length : 0;
-    // Sticky empty-step session: delete and rebuild once
-    if (stepCount === 0 && existing.status !== 'done') {
+    // Rebuild when the session is empty, or was built by an older builder
+    // and the learner hasn't answered anything in it yet.
+    const answeredAny = (existing.steps ?? []).some(
+      (st) => Boolean((st as { answer_id?: string | null }).answer_id),
+    );
+    const outdated =
+      (existing.builder_version ?? '1') !== REVIEW_BUILDER_VERSION && !answeredAny;
+    if ((stepCount === 0 && existing.status !== 'done') || outdated) {
       await V2ReviewSessionModel().deleteOne({
         user_id: opts.user_id,
         local_date,
@@ -319,9 +346,19 @@ export async function getOrCreateTodayReview(opts: {
     .lean()
     .catch(() => []);
 
+  // Regenerate (testing) ignores the 3-day no-repeat rule.
   const recentQuestionIds = new Set(
-    recentAnswers.map((a) => String(a.question_id)).filter(Boolean),
+    opts.regenerate
+      ? []
+      : recentAnswers.map((a) => String(a.question_id)).filter(Boolean),
   );
+
+  if (opts.regenerate) {
+    await V2CoveragePlanModel().deleteMany({
+      user_id: opts.user_id,
+      lesson_day: { $in: window.map((w) => w.day) },
+    });
+  }
 
   const flaggedDocs = await V2PracticeQuestionsModel()
     .find({ status: 'flagged' })
@@ -358,10 +395,11 @@ export async function getOrCreateTodayReview(opts: {
   const taughtItems: BankItem[] = [];
 
   for (const w of window) {
-    let planDoc = await V2CoveragePlanModel()
+    const planDoc = await V2CoveragePlanModel()
       .findOne({ user_id: opts.user_id, lesson_day: w.day })
       .lean();
-    const published = await getPublishedLesson(w.day);
+    // Draft or published — any lesson that exists in the DB can be reviewed.
+    const published = await getLessonForPractice(w.day, target_lang);
     const bankItems: BankItem[] = (published?.pack.items ?? []).map((it) => {
       const image = (it as { image?: { url?: string } }).image;
       return {
@@ -372,6 +410,10 @@ export async function getOrCreateTodayReview(opts: {
         day: w.day,
         has_card: Boolean((it as { has_card?: boolean }).has_card),
         image_url: image?.url ?? null,
+        examples: Array.isArray((it as { examples?: unknown }).examples)
+          ? ((it as { examples: unknown[] }).examples.map(String))
+          : undefined,
+        derived: Boolean((it as { derived?: boolean }).derived),
       };
     });
     itemsByDay.set(w.day, bankItems);
@@ -385,7 +427,24 @@ export async function getOrCreateTodayReview(opts: {
     }>;
     craftedByDay.set(w.day, questions);
 
-    if (!planDoc) {
+    // Rebuild a plan that is empty (built before the lesson existed / parsed)
+    // or built from an older lesson version. Covered pairs carry over.
+    const lessonVersion = published?.version ?? null;
+    const expectedIds = new Set(coverageBankItems(bankItems).map((i) => i.id));
+    const planIds = new Set((planDoc?.pairs ?? []).map((p) => p.item_id));
+    const itemsChanged =
+      expectedIds.size > 0 &&
+      (expectedIds.size !== planIds.size ||
+        [...expectedIds].some((id) => !planIds.has(id)));
+    const planIsStale =
+      !!planDoc &&
+      (itemsChanged ||
+        (planDoc.pairs ?? []).length === 0 ||
+        (lessonVersion != null &&
+          planDoc.lesson_version != null &&
+          Number(planDoc.lesson_version) !== lessonVersion));
+
+    if (!planDoc || planIsStale) {
       const lessonAnswers = recentAnswers.filter(
         (a) =>
           Number(a.lesson_day) === w.day &&
@@ -404,7 +463,7 @@ export async function getOrCreateTodayReview(opts: {
         })),
         w.day,
       );
-      const coverageItems = bankItems.map((i) => ({
+      const coverageItems = coverageBankItems(bankItems).map((i) => ({
         id: i.id,
         kind: (i.type === 'pattern'
           ? 'pattern'
@@ -420,7 +479,37 @@ export async function getOrCreateTodayReview(opts: {
         items: coverageItems,
         passedInLesson,
       });
-      await V2CoveragePlanModel().create(plan);
+      // Keep pairs the learner already covered in the old plan.
+      if (planDoc) {
+        const done = new Map(
+          (planDoc.pairs ?? [])
+            .filter((p) => p.status !== 'open')
+            .map((p) => [`${p.item_id}|${p.skill}|${p.form ?? ''}`, p]),
+        );
+        plan.pairs = plan.pairs.map((p) => {
+          const prev = done.get(`${p.item_id}|${p.skill}|${p.form ?? ''}`);
+          return prev
+            ? {
+                ...p,
+                status: prev.status as CoveragePlan['pairs'][0]['status'],
+                answer_id: (prev as { answer_id?: string }).answer_id,
+              }
+            : p;
+        });
+      }
+      // Never persist a zero-pair plan: it would block this lesson forever.
+      if (plan.pairs.length > 0) {
+        await V2CoveragePlanModel().updateOne(
+          { user_id: opts.user_id, lesson_day: w.day },
+          {
+            $set: {
+              pairs: plan.pairs,
+              lesson_version: lessonVersion ?? undefined,
+            },
+          },
+          { upsert: true },
+        );
+      }
       plans.push(plan);
     } else {
       plans.push({
@@ -466,6 +555,8 @@ export async function getOrCreateTodayReview(opts: {
     olderPatterns,
     recentQuestionIds,
     flaggedQuestionIds,
+    // Same day → same mix; regenerate → a new one.
+    seed: `${opts.user_id}:${local_date}${opts.regenerate ? `:${now.getTime()}` : ''}`,
   });
 
   // Never persist a zero-step session (sticky «مفيش جولة»).

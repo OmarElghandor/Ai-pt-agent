@@ -5,6 +5,13 @@
 import { practiceQuestionId } from '@/lib/v2/review/questions';
 import { estimatedSecondsForType } from './stepTimes';
 import type { CoverageSkill } from './coverage';
+import {
+  chatOption,
+  chatSkillFor,
+  hashSeed,
+  normalizeCraftedForChat,
+  seededShuffle,
+} from './chatQuestion';
 
 export type BankItem = {
   id: string;
@@ -15,6 +22,10 @@ export type BankItem = {
   has_card?: boolean;
   image_url?: string | null;
   priority?: string;
+  /** Pattern example item ids (patterns have no sentence of their own). */
+  examples?: string[];
+  /** Derived pattern example (pattern.x.ex.n). */
+  derived?: boolean;
 };
 
 export type CraftedQuestion = {
@@ -77,7 +88,7 @@ function preferCrafted(
     writing: ['translate_write', 'fill_blank_write', 'dictation'],
     speaking: ['say_it', 'reply_speak'],
     building: ['build_sentence'],
-    recognition: ['fill_blank_choice', 'pick_meaning', 'pick_tl'],
+    recognition: ['fill_blank_choice', 'pick_meaning', 'pick_tl', 'read_meaning'],
     use: ['reply_write', 'reply_speak', 'say_it'],
   };
   const allowed = new Set(skillTypes[skill] ?? []);
@@ -91,22 +102,30 @@ function preferCrafted(
   return null;
 }
 
-/** Build tiles that rebuild the exact sentence + 1–2 distractors. */
+/**
+ * Tiles that rebuild the exact sentence + 1–2 distractors, shuffled
+ * deterministically (never left in answer order). `answer` lists the tile
+ * indices in sentence order.
+ */
 export function buildSentenceTiles(
   sentence: string,
   distractors: string[],
+  seed = sentence,
 ): { tiles: string[]; answer: number[] } {
-  const parts = sentence
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
-  const extra = distractors
-    .filter((d) => d && !parts.includes(d))
-    .slice(0, 2);
-  // Deterministic order: distractors first (sorted), then parts in order at end indices
-  // Simpler reliable approach: tiles = parts + extras; answer = 0..parts.length-1
-  const tiles = [...parts, ...extra];
-  const answer = parts.map((_, i) => i);
+  const parts = sentence.trim().split(/\s+/).filter(Boolean);
+  const extra = distractors.filter((d) => d && !parts.includes(d)).slice(0, 2);
+  const pool = [
+    ...parts.map((text, i) => ({ text, at: i })),
+    ...extra.map((text) => ({ text, at: -1 })),
+  ];
+  let order = seededShuffle(pool, `tiles:${seed}`);
+  // A shuffle that leaves the sentence in place teaches nothing — rotate it.
+  const inPlace = order
+    .filter((t) => t.at >= 0)
+    .every((t, i) => t.at === i);
+  if (inPlace && order.length > 1) order = [...order.slice(1), order[0]!];
+  const tiles = order.map((t) => t.text);
+  const answer = parts.map((_, i) => order.findIndex((t) => t.at === i));
   return { tiles, answer };
 }
 
@@ -115,13 +134,115 @@ export function canBuildFindImageBlock(items: BankItem[]): boolean {
   return carded.length >= 4;
 }
 
+/** Hint = the first word only, never the answer (role-play hint rule). */
+function firstWordHint(tl: string): string {
+  const words = tl.trim().split(/\s+/).filter(Boolean);
+  if (words.length < 2) return '';
+  return `بتبدأ بـ ${words[0]} …`;
+}
+
+/** Fewest words a sentence needs for a tile question to mean anything. */
+const MIN_TILE_WORDS = 3;
+
+function wordCount(tl: string): number {
+  return tl.trim().split(/\s+/).filter(Boolean).length;
+}
+
 /**
- * Build one step for an item × skill. Prefers crafted practice/both questions.
+ * The item a step actually tests. Patterns have no sentence of their own, so
+ * they use one of their example sentences (rotated by skill).
+ */
+function resolveTestItem(
+  item: BankItem,
+  skill: CoverageSkill,
+  taught: BankItem[],
+): BankItem | null {
+  if (item.type !== 'pattern') return item.tl ? item : null;
+  const exIds = item.examples ?? [];
+  const examples = exIds
+    .map((id) => taught.find((t) => t.id === id))
+    .filter((t): t is BankItem => Boolean(t?.tl && t.ar));
+  if (examples.length) {
+    const pick = examples[hashSeed(`${item.id}:${skill}`) % examples.length]!;
+    return { ...pick, id: item.id, day: item.day };
+  }
+  return item.tl && item.ar ? item : null;
+}
+
+/**
+ * Distractors of the same kind (phrases with phrases, words with words), with
+ * a non-empty, distinct label, from taught days only. Deterministic.
+ */
+function pickDistractors(
+  taught: BankItem[],
+  target: BankItem,
+  field: 'ar' | 'tl',
+  n: number,
+): BankItem[] {
+  const isPhraseLike = (i: BankItem) =>
+    i.type === 'phrase' || i.type === 'sentence' || wordCount(i.tl ?? '') >= 3;
+  const targetPhrase = isPhraseLike(target);
+  const seen = new Set([(target[field] ?? '').trim()]);
+  const pool = taught.filter((i) => {
+    const label = (i[field] ?? '').trim();
+    if (!label || i.id === target.id || i.type === 'pattern') return false;
+    return true;
+  });
+  const ranked = [
+    ...seededShuffle(
+      pool.filter((i) => isPhraseLike(i) === targetPhrase && i.day === target.day),
+      `d1:${target.id}:${field}`,
+    ),
+    ...seededShuffle(
+      pool.filter((i) => isPhraseLike(i) === targetPhrase && i.day !== target.day),
+      `d2:${target.id}:${field}`,
+    ),
+    ...seededShuffle(
+      pool.filter((i) => isPhraseLike(i) !== targetPhrase),
+      `d3:${target.id}:${field}`,
+    ),
+  ];
+  const out: BankItem[] = [];
+  for (const i of ranked) {
+    const label = (i[field] ?? '').trim();
+    if (seen.has(label)) continue;
+    seen.add(label);
+    out.push(i);
+    if (out.length >= n) break;
+  }
+  return out;
+}
+
+/** Shuffled options with the answer index. Null when there aren't 2 distractors. */
+function choiceOptions(
+  target: BankItem,
+  distractors: BankItem[],
+  field: 'ar' | 'tl',
+  seed: string,
+): { options: Array<{ ar?: string; tl?: string; label: string; id: string }>; answer: number } | null {
+  if (distractors.length < 2) return null;
+  const rows = [target, ...distractors].map((i) => {
+    const label = (i[field] ?? '').trim();
+    return { ...chatOption(label), id: i.id };
+  });
+  const shuffled = seededShuffle(rows, `opts:${seed}`);
+  return {
+    options: shuffled,
+    answer: shuffled.findIndex((r) => r.id === target.id),
+  };
+}
+
+/**
+ * Build one step for an item × skill. Prefers crafted practice/both questions
+ * (normalised for the chat); otherwise a code template that always has an
+ * instruction, real distractors and a shuffled answer.
  */
 export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
   const recent = input.recentQuestionIds ?? new Set();
   const flagged = input.flaggedQuestionIds ?? new Set();
   const cardIds = input.todayCardIds ?? new Set();
+  // Never pull distractors from future days
+  const taught = input.taughtItems.filter((i) => i.day <= input.currentDay);
 
   const crafted = preferCrafted(
     input.crafted,
@@ -129,12 +250,15 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
     input.skill,
     recent,
   );
-  if (crafted) {
-    if (flagged.has(crafted.id) || recent.has(crafted.id)) {
-      // skip — fall through to code template
-    } else if (cardIds.has(input.item.id) && MEANING_TYPES.has(crafted.type)) {
-      // fall through to production/building template
-    } else {
+  if (crafted && !flagged.has(crafted.id) && !recent.has(crafted.id)) {
+    const meaningOnCardItem =
+      cardIds.has(input.item.id) && MEANING_TYPES.has(crafted.type);
+    const chat = meaningOnCardItem
+      ? null
+      : normalizeCraftedForChat(crafted as Record<string, unknown>, (id) =>
+          taught.find((t) => t.id === id),
+        );
+    if (chat) {
       return {
         kind: 'question',
         type: crafted.type,
@@ -143,92 +267,89 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
         skill: input.skill,
         estimated_seconds: estimatedSecondsForType(crafted.type),
         question_id: crafted.id,
-        payload: { ...crafted, origin: 'crafted', question_id: crafted.id },
+        payload: { ...chat, origin: 'crafted', question_id: crafted.id },
       };
     }
+    // Unrenderable or meaning-on-card → fall through to a code template.
   }
 
-  // Never pull distractors from future days
-  const taught = input.taughtItems.filter((i) => i.day <= input.currentDay);
+  const target = resolveTestItem(input.item, input.skill, taught);
+  if (!target?.tl) return null;
+  const tl = target.tl.trim();
+  const ar = (target.ar ?? '').trim();
 
-  if (input.skill === 'building' || input.skill === 'writing') {
-    const tl = input.item.tl ?? '';
-    if (!tl) return null;
-    if (input.skill === 'building') {
-      const mistakeTiles = allowedDistractorTiles(
-        input.knownMistakeTiles ?? [],
-        taught,
-        input.currentDay,
-      );
-      const { tiles, answer } = buildSentenceTiles(tl, mistakeTiles);
-      const question_id = codeQuestionId({
-        type: 'build_sentence',
-        item: input.item,
-        skill: 'building',
-      });
-      // Ensure tiles rebuild the sentence
-      const rebuilt = answer.map((i) => tiles[i]).join(' ');
-      if (rebuilt.replace(/\s+/g, ' ') !== tl.replace(/\s+/g, ' ')) {
-        // fallback: no shuffle
-        const parts = tl.split(/\s+/);
-        return {
-          kind: 'question',
-          type: 'build_sentence',
-          item_id: input.item.id,
-          lesson_day: input.item.day,
-          skill: 'building',
-          estimated_seconds: estimatedSecondsForType('build_sentence'),
-          question_id,
-          payload: {
-            type: 'build_sentence',
-            tests: [input.item.id],
-            tiles: [...parts, ...(mistakeTiles.slice(0, 2))],
-            answer: parts.map((_, i) => i),
-            origin: 'code',
-            question_id,
-          },
-        };
-      }
-      return {
-        kind: 'question',
-        type: 'build_sentence',
-        item_id: input.item.id,
-        lesson_day: input.item.day,
-        skill: 'building',
-        estimated_seconds: estimatedSecondsForType('build_sentence'),
-        question_id,
-        payload: {
-          type: 'build_sentence',
-          tests: [input.item.id],
-          tiles,
-          answer,
-          origin: 'code',
-          question_id,
-        },
-      };
-    }
-    const question_id = codeQuestionId({
-      type: 'translate_write',
-      item: input.item,
-      skill: 'writing',
-    });
+  const make = (
+    type: string,
+    kind: BuiltStep['kind'],
+    payload: Record<string, unknown>,
+  ): BuiltStep => {
+    const question_id = codeQuestionId({ type, item: target, skill: input.skill });
     return {
-      kind: 'question',
-      type: 'translate_write',
+      kind,
+      type,
       item_id: input.item.id,
       lesson_day: input.item.day,
-      skill: 'writing',
-      estimated_seconds: estimatedSecondsForType('translate_write'),
+      skill: input.skill,
+      estimated_seconds: estimatedSecondsForType(type),
       question_id,
       payload: {
-        type: 'translate_write',
+        type,
+        skill: chatSkillFor(type, input.skill),
         tests: [input.item.id],
-        prompt_eg: input.item.ar ?? '',
-        accepted: [tl],
         origin: 'code',
         question_id,
+        ...payload,
       },
     };
+  };
+
+  /** Reading = translation: read the Portuguese, pick the Arabic meaning. */
+  const reading = (): BuiltStep | null => {
+    if (!ar) return null;
+    const opts = choiceOptions(target, pickDistractors(taught, target, 'ar', 2), 'ar', `read:${target.id}`);
+    if (!opts) return null;
+    return make('pick_meaning', 'micro_check', {
+      prompt_tl: tl,
+      options: opts.options,
+      answer: opts.answer,
+      accepted: [tl],
+    });
+  };
+
+  /** Writing = translation: Arabic meaning → type the Portuguese. */
+  const writing = (): BuiltStep | null => {
+    if (!ar) return null;
+    return make('translate_write', 'question', {
+      situation_eg: `اكتب بالبرتغالي: «${ar}»`,
+      accepted: [tl],
+      hint: firstWordHint(tl),
+    });
+  };
+
+  if (input.skill === 'building') {
+    // Tiles only for real sentences; a 1–2 word phrase becomes a reading step.
+    if (wordCount(tl) < MIN_TILE_WORDS || !ar) return reading() ?? writing();
+    const mistakeTiles = allowedDistractorTiles(
+      input.knownMistakeTiles ?? [],
+      taught,
+      input.currentDay,
+    );
+    const { tiles, answer } = buildSentenceTiles(tl, mistakeTiles, target.id);
+    return make('build_sentence', 'question', {
+      prompt_eg: `رتّب الجملة: «${ar}»`,
+      tiles,
+      answer,
+      accepted: [tl],
+      hint: firstWordHint(tl),
+    });
+  }
+
+  if (input.skill === 'writing') return writing();
+
+  if (input.skill === 'recognition') {
+    // Items already in today's cards: production instead of meaning.
+    if (cardIds.has(input.item.id)) return writing();
+    return reading() ?? writing();
   }
 
   if (input.skill === 'listening') {
@@ -237,120 +358,50 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
       input.item.has_card &&
       input.item.image_url
     ) {
-      const question_id = codeQuestionId({
-        type: 'listen_pick_image',
-        item: input.item,
-        skill: 'listening',
-      });
-      return {
-        kind: 'find_image',
-        type: 'listen_pick_image',
-        item_id: input.item.id,
-        lesson_day: input.item.day,
-        skill: 'listening',
-        estimated_seconds: estimatedSecondsForType('listen_pick_image'),
-        question_id,
-        payload: {
-          type: 'listen_pick_image',
-          tests: [input.item.id],
-          options: [
-            input.item,
-            ...distractPick(taught, input.item.id, 3),
-          ].map((i) => ({
+      const others = seededShuffle(
+        taught.filter(
+          (i) => i.id !== input.item.id && i.has_card && i.image_url,
+        ),
+        `img:${input.item.id}`,
+      ).slice(0, 3);
+      if (others.length === 3) {
+        const rows = seededShuffle(
+          [input.item, ...others].map((i) => ({
             id: i.id,
             image_url: i.image_url,
+            tl: i.tl,
+            ar: i.ar,
+            label: i.tl ?? '',
             correct: i.id === input.item.id,
           })),
-          origin: 'code',
-          question_id,
-        },
-      };
+          `imgopts:${input.item.id}`,
+        );
+        return make('listen_pick_image', 'find_image', {
+          prompt_eg: 'اسمع واختار الصورة',
+          options: rows,
+          answer: rows.findIndex((r) => r.correct),
+          accepted: [tl],
+        });
+      }
     }
-    const question_id = codeQuestionId({
-      type: 'listen_meaning',
-      item: input.item,
-      skill: 'listening',
+    if (!ar) return null;
+    const opts = choiceOptions(target, pickDistractors(taught, target, 'ar', 2), 'ar', `listen:${target.id}`);
+    if (!opts) return writing();
+    return make('listen_meaning', 'question', {
+      prompt_eg: 'اسمع… معناها إيه؟',
+      options: opts.options,
+      answer: opts.answer,
+      accepted: [tl],
     });
-    return {
-      kind: 'question',
-      type: 'listen_meaning',
-      item_id: input.item.id,
-      lesson_day: input.item.day,
-      skill: 'listening',
-      estimated_seconds: estimatedSecondsForType('listen_meaning'),
-      question_id,
-      payload: {
-        type: 'listen_meaning',
-        tests: [input.item.id],
-        options: [
-          { id: 'a', label: input.item.ar ?? '', correct: true },
-          ...distractPick(taught, input.item.id, 2).map((d, i) => ({
-            id: `d${i}`,
-            label: d.ar ?? d.tl ?? '',
-            correct: false,
-          })),
-        ],
-        origin: 'code',
-        question_id,
-      },
-    };
-  }
-
-  if (input.skill === 'recognition') {
-    const question_id = codeQuestionId({
-      type: 'pick_meaning',
-      item: input.item,
-      skill: 'recognition',
-    });
-    return {
-      kind: 'micro_check',
-      type: 'pick_meaning',
-      item_id: input.item.id,
-      lesson_day: input.item.day,
-      skill: 'recognition',
-      estimated_seconds: estimatedSecondsForType('pick_meaning'),
-      question_id,
-      payload: {
-        type: 'pick_meaning',
-        tests: [input.item.id],
-        prompt_tl: input.item.tl,
-        options: [
-          { id: 'a', label: input.item.ar ?? '', correct: true },
-          ...distractPick(taught, input.item.id, 2).map((d, i) => ({
-            id: `d${i}`,
-            label: d.ar ?? '',
-            correct: false,
-          })),
-        ],
-        origin: 'code',
-        question_id,
-      },
-    };
   }
 
   if (input.skill === 'speaking' || input.skill === 'use') {
-    const question_id = codeQuestionId({
-      type: 'say_it',
-      item: input.item,
-      skill: input.skill,
+    if (!ar) return null;
+    return make('say_it', 'question', {
+      situation_eg: `قول بالبرتغالي: «${ar}»`,
+      accepted: [tl],
+      hint: firstWordHint(tl),
     });
-    return {
-      kind: 'question',
-      type: 'say_it',
-      item_id: input.item.id,
-      lesson_day: input.item.day,
-      skill: input.skill,
-      estimated_seconds: estimatedSecondsForType('say_it'),
-      question_id,
-      payload: {
-        type: 'say_it',
-        tests: [input.item.id],
-        prompt_eg: input.item.ar ?? '',
-        accepted: input.item.tl ? [input.item.tl] : [],
-        origin: 'code',
-        question_id,
-      },
-    };
   }
 
   return null;
@@ -394,16 +445,6 @@ export function allowedDistractorTiles(
     }
   }
   return out.slice(0, 2);
-}
-
-function distractPick(
-  taught: BankItem[],
-  excludeId: string,
-  n: number,
-): BankItem[] {
-  return taught
-    .filter((i) => i.id !== excludeId && i.day !== undefined)
-    .slice(0, n);
 }
 
 /** Persist a code-built step into the shared question store (idempotent). */
