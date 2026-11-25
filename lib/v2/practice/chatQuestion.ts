@@ -165,6 +165,15 @@ export function normalizeCraftedForChat(
   if (Array.isArray(q.options)) {
     const labels = q.options.map((o) => plainText(o));
     if (labels.some((l) => !l)) return null; // never show empty chips
+    // Never show the same answer twice («اسمي عمر» / «اسمي عُمر.»).
+    const norm = labels.map((l) =>
+      l
+        .normalize('NFKD')
+        .replace(/[\u0300-\u036f\u064B-\u065F\u0670]/g, '')
+        .replace(/[^\p{L}\p{N}]+/gu, '')
+        .toLowerCase(),
+    );
+    if (new Set(norm).size !== norm.length) return null;
     out.options = labels.map(chatOption);
   }
 

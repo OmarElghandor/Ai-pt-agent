@@ -123,7 +123,7 @@ export function AdminHome() {
           href="/v2-admin/cards"
           lines={[
             { label: 'أيام جاهزة', value: s.cards.days_ready },
-            { label: 'ديك مواضيع', value: s.cards.themed_decks },
+            { label: 'مجموعات مواضيع', value: s.cards.themed_decks },
             { label: 'من المتعلمين', value: s.cards.learner_waiting },
           ]}
         />

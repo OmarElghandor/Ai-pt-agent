@@ -264,7 +264,7 @@ export function CardsHome({ dayOverride }: { dayOverride: number | null }) {
         className="flex min-h-11 items-center justify-between gap-3 rounded-v2-row bg-v2-card px-4 py-3 shadow-[var(--shadow-v2-soft)]"
       >
         <p className="font-[family-name:var(--font-v2-arabic)] text-base font-semibold text-v2-primary">
-          اعمل ديك
+          اعمل مجموعة
         </p>
         <Icon name="arrow_back" size={20} className="text-v2-primary" />
       </Link>
@@ -339,7 +339,7 @@ export function CardsHome({ dayOverride }: { dayOverride: number | null }) {
             ))}
             {learnerDecks.length === 0 ? (
               <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-                لسه مفيش ديكات من المتعلمين.
+                لسه مفيش مجموعات من المتعلمين.
               </p>
             ) : null}
           </ul>

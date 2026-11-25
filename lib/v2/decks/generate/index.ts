@@ -171,7 +171,7 @@ export async function generateCustomDeck(opts: {
     return {
       ok: false,
       reason: 'parse_failed',
-      message_eg: 'مش قدرنا نجهّز الديك دلوقتي، جرّب تاني بعد شوية',
+      message_eg: 'مش قدرنا نجهّز المجموعة دلوقتي، جرّب تاني بعد شوية',
       counts_for_quota: false,
       model_calls,
     };
@@ -181,7 +181,7 @@ export async function generateCustomDeck(opts: {
     return {
       ok: false,
       reason: 'parse_failed',
-      message_eg: 'مش قدرنا نجهّز الديك دلوقتي، جرّب تاني بعد شوية',
+      message_eg: 'مش قدرنا نجهّز المجموعة دلوقتي، جرّب تاني بعد شوية',
       counts_for_quota: false,
       model_calls,
     };

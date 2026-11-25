@@ -4,7 +4,8 @@
 
 import type { CoveragePair, CoveragePlan } from './coverage';
 import {
-  buildReviewStep,
+  buildReviewStepVariants,
+  normLabel,
   type BankItem,
   type BuiltStep,
   type CraftedQuestion,
@@ -24,6 +25,8 @@ export type ReviewSlotReason =
   | 'maint';
 
 export type ReviewSessionStep = BuiltStep & {
+  /** Item family used for caps and spacing (build-time only). */
+  family?: string;
   slot_reason: ReviewSlotReason;
   round: number;
   pairs: Array<{ item_id: string; skill: string }>;
@@ -62,6 +65,41 @@ const GRAMMAR_TYPES = new Set([
   'reply_write',
   'reply_speak',
 ]);
+
+/** An item (or a pattern and all its example sentences) at most twice a session; patterns 3×. */
+const MAX_STEPS_PER_FAMILY = 2;
+/** Steps on the same family are at least this many steps apart. */
+const FAMILY_GAP = 6;
+/** Sentences that start the same way (Chamo-me …, Boa …) are this far apart. */
+const STEM_GAP = 2;
+
+/**
+ * Items that test the same thing: a pattern and its example sentences
+ * (`pattern.x.ex.n` → `pattern.x`) are one family.
+ */
+export function familyKey(itemId: string, tl?: string): string {
+  const m = /^(.*)\.ex\.\d+$/.exec(itemId);
+  if (m) return m[1]!;
+  // Short sentences built on the same frame (Chamo-me Rita / Omar / Inês,
+  // Boa tarde / Boa noite) test the same thing: one family.
+  const words = (tl ?? '').trim().split(/\s+/).filter(Boolean);
+  if (words.length >= 2 && words.length <= 3) {
+    return `frame:${normLabel(words[0]!)}`;
+  }
+  return itemId;
+}
+
+/** Family of a built step (uses its sentence for the frame rule). */
+function familyOfStep(step: { item_id: string; family?: string }): string {
+  return step.family ?? familyKey(step.item_id);
+}
+
+/** First word of the step's sentence (only for 2+ word sentences). */
+function stemKey(step: ReviewSessionStep): string {
+  const acc = Array.isArray(step.payload.accepted) ? String(step.payload.accepted[0] ?? '') : '';
+  const words = acc.trim().split(/\s+/).filter(Boolean);
+  return words.length >= 2 ? `stem:${normLabel(words[0]!)}` : `fam:${familyKey(step.item_id)}`;
+}
 
 function skillsForPosition(pos: 1 | 2 | 3): CoveragePair['skill'][] {
   if (pos === 1) return ['listening', 'recognition'];
@@ -181,19 +219,36 @@ export function buildReviewSession(
   const built: ReviewSessionStep[] = [];
   let used = 0;
   let grammarSec = 0;
+  // Variety: how often each form is used, and what each item family got.
+  const typeCount = new Map<string, number>();
+  const familySteps = new Map<string, Array<{ type: string; skill: string }>>();
+  const itemStepCount = new Map<string, number>();
 
   const tryAdd = (
     c: (typeof candidates)[0],
     forceReason?: ReviewSlotReason,
   ): boolean => {
-    const key = `${c.pair.item_id}|${c.pair.skill}|${c.reason}`;
+    // One step per item × skill, whatever the reason it was picked for.
+    const key = `${c.pair.item_id}|${c.pair.skill}`;
     if (seen.has(key)) return false;
+
     const items = input.itemsByDay.get(c.lesson_day) ?? input.taughtItems;
     const item =
       items.find((i) => i.id === c.pair.item_id) ??
       input.taughtItems.find((i) => i.id === c.pair.item_id);
     if (!item) return false;
-    const step = buildReviewStep({
+    const family = familyKey(c.pair.item_id, item.tl);
+    const famPrev = familySteps.get(family) ?? [];
+    // Patterns and frames (several items) get one more step.
+    const cap = family.startsWith('pattern.') || family.startsWith('frame:')
+      ? MAX_STEPS_PER_FAMILY + 1
+      : MAX_STEPS_PER_FAMILY;
+    if (famPrev.length >= cap) return false;
+    // And any single item at most twice (patterns 3×), even inside a frame.
+    const itemPrev = itemStepCount.get(c.pair.item_id) ?? 0;
+    const itemCap = item.type === 'pattern' ? MAX_STEPS_PER_FAMILY + 1 : MAX_STEPS_PER_FAMILY;
+    if (itemPrev >= itemCap) return false;
+    const variants = buildReviewStepVariants({
       item: { ...item, day: c.lesson_day },
       skill: c.pair.skill,
       taughtItems: input.taughtItems,
@@ -203,20 +258,39 @@ export function buildReviewSession(
       recentQuestionIds: input.recentQuestionIds,
       flaggedQuestionIds: input.flaggedQuestionIds,
       knownMistakeTiles: input.knownMistakeTiles,
+    }).filter((v) => {
+      if (v.payload.use === 'lesson') return false;
+      const qid = v.question_id ?? String(v.payload.question_id ?? v.payload.id ?? '');
+      if (qid && input.flaggedQuestionIds?.has(qid)) return false;
+      if (qid && input.recentQuestionIds?.has(qid)) return false;
+      // The item's next step must be a different form and a different skill
+      // (a grammar pattern may repeat the grammar skill, never the form).
+      return !famPrev.some(
+        (p) =>
+          p.type === v.type ||
+          (p.skill === String(v.payload.skill ?? '') && p.skill !== 'grammar'),
+      );
     });
+    // Least-used form first (keeps the session varied), builder order on ties.
+    const step = variants
+      .map((v, i) => ({ v, i, n: typeCount.get(v.type) ?? 0 }))
+      .sort((a, b) => a.n - b.n || a.i - b.i)[0]?.v;
     if (!step) return false;
-    if (step.payload.use === 'lesson') return false;
-    const qid = step.question_id ?? String(step.payload.question_id ?? step.payload.id ?? '');
-    if (qid && input.flaggedQuestionIds?.has(qid)) return false;
-    if (qid && input.recentQuestionIds?.has(qid)) return false;
     if (used + step.estimated_seconds > budgetSec && built.length > 0) {
       return false;
     }
     seen.add(key);
+    typeCount.set(step.type, (typeCount.get(step.type) ?? 0) + 1);
+    itemStepCount.set(c.pair.item_id, itemPrev + 1);
+    familySteps.set(family, [
+      ...famPrev,
+      { type: step.type, skill: String(step.payload.skill ?? '') },
+    ]);
     used += step.estimated_seconds;
     if (isGrammarStep(step)) grammarSec += step.estimated_seconds;
     built.push({
       ...step,
+      family,
       slot_reason: forceReason ?? c.reason,
       round: 1,
       pairs: [{ item_id: c.pair.item_id, skill: c.pair.skill }],
@@ -404,22 +478,87 @@ function assignRounds(
   roundBuckets.forEach((bucket, i) => {
     out.push(...orderInsideRound(bucket, `${seed}:round:${i + 1}`));
   });
-  // Across tier and round edges: never the same item twice in a row.
-  for (let i = 1; i < out.length; i++) {
-    if (out[i]!.item_id !== out[i - 1]!.item_id) continue;
-    const dup = out[i]!.item_id;
-    const j = out.findIndex(
-      (s, k) =>
-        k > i + 1 &&
-        s.round === out[i]!.round &&
-        // s moves to i: must differ from both new neighbours
-        s.item_id !== out[i - 1]!.item_id &&
-        s.item_id !== out[i + 1]?.item_id &&
-        // dup moves to k: must differ from k's neighbours
-        out[k - 1]!.item_id !== dup &&
-        out[k + 1]?.item_id !== dup,
-    );
-    if (j > i) [out[i], out[j]] = [out[j]!, out[i]!];
+  // Spacing beats round edges: space the whole session, then cut rounds
+  // again by time, so a step may slide into the next round to keep its gap.
+  return recutRounds(spaceOut(out), caps);
+}
+
+/** Re-number rounds by time caps after reordering (order unchanged). */
+function recutRounds(
+  steps: ReviewSessionStep[],
+  caps: number[],
+): ReviewSessionStep[] {
+  let ri = 0;
+  let used = 0;
+  let inRound = 0;
+  return steps.map((s) => {
+    if (ri < caps.length - 1 && used + s.estimated_seconds > caps[ri]! && inRound > 0) {
+      ri += 1;
+      used = 0;
+      inRound = 0;
+    }
+    used += s.estimated_seconds;
+    inRound += 1;
+    return { ...s, round: ri + 1 };
+  });
+}
+
+/**
+ * Final pass over the whole session, round by round. At each position take
+ * the earliest remaining step of the round that keeps the rules, relaxing
+ * them only when nothing fits:
+ *   1. same family not in the last FAMILY_GAP steps, same sentence start not
+ *      in the last STEM_GAP, a different form and a different lesson than
+ *      the step before;
+ *   2. family gap + different form;
+ *   3. family not in the last 3;
+ *   4. anything.
+ * So a question never shows up again in another form while its answer is
+ * still on screen.
+ */
+export function spaceOut(steps: ReviewSessionStep[]): ReviewSessionStep[] {
+  const out: ReviewSessionStep[] = [];
+  const rest = [...steps];
+  const lastAt = new Map<string, number>(); // family → last position
+  const stemAt = new Map<string, number>();
+  while (rest.length) {
+    const pos = out.length;
+    const last = out[pos - 1];
+    const typeRun3 = (t: string) => {
+      const l3 = out.slice(-3);
+      return l3.length === 3 && l3.every((x) => x.type === t);
+    };
+    const typeLeft = new Map<string, number>();
+    for (const r of rest) typeLeft.set(r.type, (typeLeft.get(r.type) ?? 0) + 1);
+    let best = 0;
+    let bestScore = -Infinity;
+    rest.forEach((s, i) => {
+      const f = familyOfStep(s);
+      const famDist = lastAt.has(f) ? pos - lastAt.get(f)! : Infinity;
+      const stemDist = stemAt.has(stemKey(s)) ? pos - stemAt.get(stemKey(s))! : Infinity;
+      let score = 0;
+      // The gap matters most: a family inside the gap is heavily penalised,
+      // and the closer it is the worse.
+      score += famDist > FAMILY_GAP ? 100 : famDist * 12;
+      if (stemDist > STEM_GAP) score += 6;
+      if (s.type !== last?.type) score += 20;
+      if (typeRun3(s.type)) score -= 40;
+      if (s.lesson_day !== last?.lesson_day) score += 4;
+      // Spread the most common forms out instead of leaving them for the end.
+      score += 3 * (typeLeft.get(s.type) ?? 0);
+      // Families with a second step still waiting go early, so their gap fits.
+      if (rest.some((o, k) => k !== i && familyOfStep(o) === f)) score += 3;
+      // Keep the planned order (rounds, easy → hard) when scores tie.
+      score -= i * 0.4;
+      if (score > bestScore) {
+        bestScore = score;
+        best = i;
+      }
+    });
+    const [s] = rest.splice(best, 1);
+    lastAt.set(familyOfStep(s!), pos);
+    stemAt.set(stemKey(s!), pos);
+    out.push(s!);
   }
   return out;
 }

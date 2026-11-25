@@ -1,6 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { gradeAcceptedOpen } from '@/lib/v2/answers/match';
+import { normalizeForCompare } from '@/lib/v2/answers/normalize';
 import { postProgressEvent } from '@/lib/v2/progress/clientEvent';
 import {
   isClosedQuestionType,
@@ -36,15 +38,6 @@ function newAnswerId(): string {
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
-}
-
-function normalize(s: string): string {
-  return s
-    .normalize('NFD')
-    .replace(/\p{M}/gu, '')
-    .replace(/[?!.,]/g, '')
-    .trim()
-    .toLowerCase();
 }
 
 function optionsFromQuestion(q: ReviewQuestion): Array<{ id: string; label: string; ar?: boolean }> {
@@ -127,10 +120,24 @@ function gradeOpenLocal(
   text: string,
 ): { correct: boolean; verdict: FeedbackVerdict; display: ReviewStepDisplay } {
   const accepted = Array.isArray(q.accepted) ? q.accepted.map(String) : [];
-  const ok = accepted.some((a) => normalize(a) === normalize(text));
-  const model = accepted[0] ?? '';
+  const graded = gradeAcceptedOpen(text, accepted);
+  const model = graded.canonical || accepted[0] || '';
   const nm = Array.isArray(q.near_miss) ? q.near_miss[0] : undefined;
-  if (ok) {
+  if (graded.correct && graded.accent_only) {
+    return {
+      correct: true,
+      verdict: 'accent_ok',
+      display: {
+        verdict: 'accent_ok',
+        learner_text: text,
+        correct_tl: model,
+        corrected_tl: model,
+        why_eg: 'الفرق في التشكيل بس',
+        logged_weak: false,
+      },
+    };
+  }
+  if (graded.correct) {
     return {
       correct: true,
       verdict: 'correct',
@@ -141,7 +148,7 @@ function gradeOpenLocal(
       },
     };
   }
-  if (nm && normalize(nm.tl) === normalize(text)) {
+  if (nm && normalizeForCompare(nm.tl) === normalizeForCompare(text)) {
     return {
       correct: false,
       verdict: 'near_miss',

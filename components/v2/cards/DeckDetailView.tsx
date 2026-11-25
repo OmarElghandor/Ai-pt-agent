@@ -201,7 +201,7 @@ export function DeckDetailView({
       : detail.kind === 'weak'
         ? 'راجعهم'
         : isUgC
-          ? 'راجع الديك ده'
+          ? 'راجع المجموعة دي'
           : 'راجع الموقف ده بس';
 
   async function addDeck() {
@@ -220,9 +220,9 @@ export function DeckDetailView({
       );
       if (!res.ok) throw new Error('add');
       setDeck({ ...detail, added: true });
-      setMsg('اتضاف لديك ديكاتي');
+      setMsg('اتضاف لمجموعاتي');
     } catch {
-      setMsg('ما قدرناش نضيف الديك');
+      setMsg('ما قدرناش نضيف المجموعة');
     } finally {
       setBusy(false);
     }
@@ -241,7 +241,7 @@ export function DeckDetailView({
         },
       );
       if (!res.ok) throw new Error('report');
-      setMsg('شكراً، بلّغنا عن الديك');
+      setMsg('شكراً، بلّغنا عن المجموعة');
     } catch {
       setMsg('ما قدرناش نبلّغ دلوقتي');
     } finally {
@@ -252,7 +252,7 @@ export function DeckDetailView({
   async function resetDeckProgress() {
     if (busy) return;
     const ok = window.confirm(
-      'هترجع كل كروت الديك ده جديد عندك من الأول. لو كلمة موجودة في ديك تاني عندك، هتتصفر هناك كمان. الديك نفسه مش هيتغيّر، ومش هيتأثر حد تاني.',
+      'هترجع كل كروت المجموعة دي جديد عندك من الأول. لو كلمة موجودة في مجموعة تانية عندك، هتتصفر هناك كمان. المجموعة نفسها مش هتتغيّر، ومش هيتأثر حد تاني.',
     );
     if (!ok) return;
     setBusy(true);
@@ -269,9 +269,9 @@ export function DeckDetailView({
       if (!refreshed.ok) throw new Error('refresh');
       const data = (await refreshed.json()) as DeckDetail;
       setDeck(data);
-      setMsg('اتصفّر الديك · تقدّر تبدأ من الأول');
+      setMsg('اتصفّرت المجموعة · تقدّر تبدأ من الأول');
     } catch {
-      setMsg('ما قدرناش نصفر الديك دلوقتي');
+      setMsg('ما قدرناش نصفر المجموعة دلوقتي');
     } finally {
       setBusy(false);
     }
@@ -348,7 +348,7 @@ export function DeckDetailView({
         onClick={() => void resetDeckProgress()}
         className="min-h-11 font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted underline"
       >
-        ابدأ الديك من الأول
+        ابدأ المجموعة من الأول
       </button>
 
       {msg ? (
@@ -364,7 +364,7 @@ export function DeckDetailView({
           onClick={() => void reportDeck()}
           className="min-h-11 font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted underline"
         >
-          بلّغ عن الديك ده
+          بلّغ عن المجموعة دي
         </button>
       ) : null}
 

@@ -253,7 +253,7 @@ function ShellChrome({ children }: { children: ReactNode }) {
                 type="search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="يوم، عنوان، آيتم، ديك…  (/)"
+                placeholder="يوم، عنوان، آيتم، مجموعة…  (/)"
                 className="min-w-0 flex-1 rounded-v2-row border border-v2-rule bg-v2-card px-3 py-2 text-sm text-v2-ink placeholder:text-v2-ink-muted"
               />
               <select

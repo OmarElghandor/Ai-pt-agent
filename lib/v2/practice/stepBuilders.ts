@@ -182,7 +182,8 @@ function pickDistractors(
   const isPhraseLike = (i: BankItem) =>
     i.type === 'phrase' || i.type === 'sentence' || wordCount(i.tl ?? '') >= 3;
   const targetPhrase = isPhraseLike(target);
-  const seen = new Set([(target[field] ?? '').trim()]);
+  // Compare normalised labels: «اسمي عمر» and «اسمي عُمر.» are the same option.
+  const seen = new Set([normLabel(target[field] ?? '')]);
   const pool = taught.filter((i) => {
     const label = (i[field] ?? '').trim();
     if (!label || i.id === target.id || i.type === 'pattern') return false;
@@ -204,8 +205,8 @@ function pickDistractors(
   ];
   const out: BankItem[] = [];
   for (const i of ranked) {
-    const label = (i[field] ?? '').trim();
-    if (seen.has(label)) continue;
+    const label = normLabel(i[field] ?? '');
+    if (!label || seen.has(label)) continue;
     seen.add(label);
     out.push(i);
     if (out.length >= n) break;
@@ -238,11 +239,31 @@ function choiceOptions(
  * instruction, real distractors and a shuffled answer.
  */
 export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
+  return buildReviewStepVariants(input)[0] ?? null;
+}
+
+/** Labels compared without accents, harakat, punctuation and case. */
+export function normLabel(s: string): string {
+  return s
+    .normalize('NFKD')
+    .replace(/[̀-ًͯ-ٰٟ]/g, '')
+    .replace(/[^\p{L}\p{N}]+/gu, '')
+    .toLowerCase();
+}
+
+/**
+ * Every question form that can test this item × skill, best first: the
+ * lesson's own question (if any), then code templates. The session builder
+ * picks the form that keeps the session varied (fewest of its type so far,
+ * never the same form as the item's other step).
+ */
+export function buildReviewStepVariants(input: BuildStepInput): BuiltStep[] {
   const recent = input.recentQuestionIds ?? new Set();
   const flagged = input.flaggedQuestionIds ?? new Set();
   const cardIds = input.todayCardIds ?? new Set();
   // Never pull distractors from future days
   const taught = input.taughtItems.filter((i) => i.day <= input.currentDay);
+  const out: BuiltStep[] = [];
 
   const crafted = preferCrafted(
     input.crafted,
@@ -259,7 +280,7 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
           taught.find((t) => t.id === id),
         );
     if (chat) {
-      return {
+      out.push({
         kind: 'question',
         type: crafted.type,
         item_id: input.item.id,
@@ -268,15 +289,16 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
         estimated_seconds: estimatedSecondsForType(crafted.type),
         question_id: crafted.id,
         payload: { ...chat, origin: 'crafted', question_id: crafted.id },
-      };
+      });
     }
-    // Unrenderable or meaning-on-card → fall through to a code template.
+    // Unrenderable or meaning-on-card → code templates only.
   }
 
   const target = resolveTestItem(input.item, input.skill, taught);
-  if (!target?.tl) return null;
+  if (!target?.tl) return out;
   const tl = target.tl.trim();
   const ar = (target.ar ?? '').trim();
+  const words = tl.split(/\s+/).filter(Boolean);
 
   const make = (
     type: string,
@@ -302,9 +324,13 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
       },
     };
   };
+  const add = (s: BuiltStep | null) => {
+    if (s && !out.some((o) => o.type === s.type)) out.push(s);
+  };
 
+  // ── Forms ──────────────────────────────────────────────────────────────
   /** Reading = translation: read the Portuguese, pick the Arabic meaning. */
-  const reading = (): BuiltStep | null => {
+  const pickMeaning = (): BuiltStep | null => {
     if (!ar) return null;
     const opts = choiceOptions(target, pickDistractors(taught, target, 'ar', 2), 'ar', `read:${target.id}`);
     if (!opts) return null;
@@ -315,9 +341,20 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
       accepted: [tl],
     });
   };
-
+  /** Reading the other way: Arabic meaning → pick the Portuguese. */
+  const pickTl = (): BuiltStep | null => {
+    if (!ar) return null;
+    const opts = choiceOptions(target, pickDistractors(taught, target, 'tl', 2), 'tl', `picktl:${target.id}`);
+    if (!opts) return null;
+    return make('pick_tl', 'micro_check', {
+      prompt_ar: ar,
+      options: opts.options,
+      answer: opts.answer,
+      accepted: [tl],
+    });
+  };
   /** Writing = translation: Arabic meaning → type the Portuguese. */
-  const writing = (): BuiltStep | null => {
+  const translate = (): BuiltStep | null => {
     if (!ar) return null;
     return make('translate_write', 'question', {
       situation_eg: `اكتب بالبرتغالي: «${ar}»`,
@@ -325,10 +362,66 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
       hint: firstWordHint(tl),
     });
   };
-
-  if (input.skill === 'building') {
-    // Tiles only for real sentences; a 1–2 word phrase becomes a reading step.
-    if (wordCount(tl) < MIN_TILE_WORDS || !ar) return reading() ?? writing();
+  /** One word missing from the sentence, meaning as the cue. */
+  const blankIndex = (): number => {
+    let best = -1;
+    words.forEach((w, i) => {
+      const len = normLabel(w).length;
+      if (len >= 3 && (best < 0 || len > normLabel(words[best]!).length)) best = i;
+    });
+    return best;
+  };
+  const fillBlankWrite = (): BuiltStep | null => {
+    if (words.length < 3 || !ar) return null;
+    const bi = blankIndex();
+    if (bi < 0) return null;
+    const missing = words[bi]!.replace(/[.,!?;:]+$/, '');
+    const trail = words[bi]!.slice(missing.length);
+    const template = words.map((w, i) => (i === bi ? `___${trail}` : w)).join(' ');
+    return make('fill_blank_write', 'question', {
+      prompt_eg: 'كمّل الكلمة الناقصة',
+      prompt_tl: template,
+      think_eg: `«${ar}»`,
+      accepted: [missing],
+    });
+  };
+  const fillBlankChoice = (): BuiltStep | null => {
+    if (words.length < 3 || !ar) return null;
+    const bi = blankIndex();
+    if (bi < 0) return null;
+    const missing = words[bi]!.replace(/[.,!?;:]+$/, '');
+    const trail = words[bi]!.slice(missing.length);
+    const seen = new Set([normLabel(missing)]);
+    const pool = seededShuffle(
+      taught
+        .filter((t) => t.id !== target.id && t.tl)
+        .flatMap((t) => t.tl!.split(/\s+/))
+        .map((w) => w.replace(/[.,!?;:¿¡]+/g, ''))
+        .filter((w) => normLabel(w).length >= 3),
+      `blank:${target.id}`,
+    );
+    const wrong: string[] = [];
+    for (const w of pool) {
+      if (seen.has(normLabel(w))) continue;
+      seen.add(normLabel(w));
+      wrong.push(w);
+      if (wrong.length === 2) break;
+    }
+    if (wrong.length < 2) return null;
+    const rows = seededShuffle(
+      [missing, ...wrong].map((label, i) => ({ ...chatOption(label), id: String(i) })),
+      `blankopts:${target.id}`,
+    );
+    return make('fill_blank_choice', 'question', {
+      prompt_tl: words.map((w, i) => (i === bi ? `___${trail}` : w)).join(' '),
+      rule_chip: `«${ar}»`,
+      options: rows,
+      answer: rows.findIndex((r) => r.id === '0'),
+      accepted: [tl],
+    });
+  };
+  const buildSentence = (): BuiltStep | null => {
+    if (words.length < MIN_TILE_WORDS || !ar) return null;
     const mistakeTiles = allowedDistractorTiles(
       input.knownMistakeTiles ?? [],
       taught,
@@ -342,69 +435,95 @@ export function buildReviewStep(input: BuildStepInput): BuiltStep | null {
       accepted: [tl],
       hint: firstWordHint(tl),
     });
-  }
-
-  if (input.skill === 'writing') return writing();
-
-  if (input.skill === 'recognition') {
-    // Items already in today's cards: production instead of meaning.
-    if (cardIds.has(input.item.id)) return writing();
-    return reading() ?? writing();
-  }
-
-  if (input.skill === 'listening') {
-    if (
-      canBuildFindImageBlock(taught.filter((i) => i.day === input.item.day)) &&
-      input.item.has_card &&
-      input.item.image_url
-    ) {
-      const others = seededShuffle(
-        taught.filter(
-          (i) => i.id !== input.item.id && i.has_card && i.image_url,
-        ),
-        `img:${input.item.id}`,
-      ).slice(0, 3);
-      if (others.length === 3) {
-        const rows = seededShuffle(
-          [input.item, ...others].map((i) => ({
-            id: i.id,
-            image_url: i.image_url,
-            tl: i.tl,
-            ar: i.ar,
-            label: i.tl ?? '',
-            correct: i.id === input.item.id,
-          })),
-          `imgopts:${input.item.id}`,
-        );
-        return make('listen_pick_image', 'find_image', {
-          prompt_eg: 'اسمع واختار الصورة',
-          options: rows,
-          answer: rows.findIndex((r) => r.correct),
-          accepted: [tl],
-        });
-      }
-    }
+  };
+  const listenMeaning = (): BuiltStep | null => {
     if (!ar) return null;
     const opts = choiceOptions(target, pickDistractors(taught, target, 'ar', 2), 'ar', `listen:${target.id}`);
-    if (!opts) return writing();
+    if (!opts) return null;
     return make('listen_meaning', 'question', {
       prompt_eg: 'اسمع… معناها إيه؟',
       options: opts.options,
       answer: opts.answer,
       accepted: [tl],
     });
-  }
-
-  if (input.skill === 'speaking' || input.skill === 'use') {
+  };
+  const listenPickTl = (): BuiltStep | null => {
+    const opts = choiceOptions(target, pickDistractors(taught, target, 'tl', 2), 'tl', `listentl:${target.id}`);
+    if (!opts) return null;
+    return make('listen_pick_tl', 'question', {
+      prompt_eg: 'سمعت أنهي جملة؟',
+      options: opts.options,
+      answer: opts.answer,
+      accepted: [tl],
+    });
+  };
+  const dictation = (): BuiltStep | null => {
+    if (words.length < 2 || words.length > 7) return null;
+    return make('dictation', 'question', {
+      prompt_eg: 'اكتب اللي سمعته',
+      accepted: [tl],
+    });
+  };
+  const findImage = (): BuiltStep | null => {
+    if (
+      !canBuildFindImageBlock(taught.filter((i) => i.day === input.item.day)) ||
+      !input.item.has_card ||
+      !input.item.image_url
+    ) {
+      return null;
+    }
+    const others = seededShuffle(
+      taught.filter((i) => i.id !== input.item.id && i.has_card && i.image_url),
+      `img:${input.item.id}`,
+    ).slice(0, 3);
+    if (others.length !== 3) return null;
+    const rows = seededShuffle(
+      [input.item, ...others].map((i) => ({
+        id: i.id,
+        image_url: i.image_url,
+        tl: i.tl,
+        ar: i.ar,
+        label: i.tl ?? '',
+        correct: i.id === input.item.id,
+      })),
+      `imgopts:${input.item.id}`,
+    );
+    return make('listen_pick_image', 'find_image', {
+      prompt_eg: 'اسمع واختار الصورة',
+      options: rows,
+      answer: rows.findIndex((r) => r.correct),
+      accepted: [tl],
+    });
+  };
+  const sayIt = (): BuiltStep | null => {
     if (!ar) return null;
     return make('say_it', 'question', {
       situation_eg: `قول بالبرتغالي: «${ar}»`,
       accepted: [tl],
       hint: firstWordHint(tl),
     });
-  }
+  };
 
-  return null;
+  // ── Forms per coverage skill (best first) ──────────────────────────────
+  const inCards = cardIds.has(input.item.id);
+  const forms: Array<() => BuiltStep | null> =
+    input.skill === 'listening'
+      ? [findImage, listenMeaning, listenPickTl, dictation]
+      : input.skill === 'writing'
+        ? [translate, fillBlankWrite, dictation]
+        : input.skill === 'building'
+          ? words.length >= MIN_TILE_WORDS
+            ? [buildSentence, fillBlankChoice, fillBlankWrite]
+            : [pickMeaning, pickTl, translate] // 1–2 words: reading instead
+          : input.skill === 'recognition'
+            ? inCards
+              ? [translate, pickTl] // already in today's cards: no meaning question
+              : [pickMeaning, pickTl, fillBlankChoice]
+            : input.skill === 'speaking' || input.skill === 'use'
+              ? [sayIt, translate]
+              : [];
+  for (const f of forms) add(f());
+  return out;
 }
 
 function codeQuestionId(opts: {

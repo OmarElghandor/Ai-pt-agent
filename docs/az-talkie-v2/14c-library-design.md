@@ -57,7 +57,7 @@ Images in the export are placeholders; real images come from the pipeline.
 **L-word**
 - Keep the layout: word, lemma arrow, `say` pill, meaning, tense chip, sound button, the episode sentence card with play, the add button and the "في كروتك ✓" state.
 - Remove "فعل مجوف" (an Arabic grammar term that doesn't apply) and the level chip; keep "المصدر الأصلي: doer".
-- The after-adding line says "هتلاقيها في ديك «من المكتبة»", not "مراجعة كروت اليوم" (library cards are never in the daily deck, `14` §2.10).
+- The after-adding line says "هتلاقيها في مجموعة «من المكتبة»", not "مراجعة كروت اليوم" (library cards are never in the daily deck, `14` §2.10).
 
 **L-end**
 - As designed: title, saved-word count, "جمل هتحتاجها" with play and "ضيفها", the optional collapsed "فهمت إيه؟ · ٣ أسئلة" with "تخطي", "الحلقة الجاية" and "اسمعها تاني". No scores.

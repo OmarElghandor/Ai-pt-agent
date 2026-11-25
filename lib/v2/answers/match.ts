@@ -1,10 +1,20 @@
-import { normalizeAnswer, normalizeForCompare } from './normalize';
+import {
+  normalizeAnswer,
+  normalizeForCompare,
+  stripAccents,
+} from './normalize';
 
 export type MatchResult =
   | { kind: 'exact' }
   | { kind: 'accent' }
   | { kind: 'spelling' }
   | { kind: 'miss' };
+
+export type GradeAcceptedOpen = {
+  correct: boolean;
+  accent_only: boolean;
+  canonical: string;
+};
 
 /** Classic Levenshtein edit distance. */
 export function levenshtein(a: string, b: string): number {
@@ -52,20 +62,57 @@ export function contentWordForCompare(tl: string): string {
 }
 
 /**
+ * Prefer the first accepted form that still carries accents; else the first entry.
+ * Used so accent-stripped variants in `accepted[]` do not hide accent-only misses.
+ */
+export function pickCanonical(accepted: string[]): string {
+  for (const a of accepted) {
+    if (!a) continue;
+    if (stripAccents(a) !== a) return a;
+  }
+  return accepted[0] ?? '';
+}
+
+/**
  * Exact / accepted alternatives / accent-only / close spelling (M5).
  * Accent-only = correct for SRS (caller treats as correct) + accent error row.
  * Spelling = near_miss (counts correct for rung).
+ *
+ * When `accepted` includes both accented and stripped forms (e.g. `Até já` +
+ * `ate ja`), a learner answer that only matches the stripped form is still
+ * `accent` if it differs from the canonical accented form.
  */
 export function matchAnswer(
   answer: string,
   accepted: string[],
 ): MatchResult {
+  if (!accepted.length) return { kind: 'miss' };
+
   const norm = normalizeAnswer(answer);
   const stripped = normalizeForCompare(answer);
+  const canonical = pickCanonical(accepted);
+  const canonNorm = normalizeAnswer(canonical);
+  const canonStripped = normalizeForCompare(canonical);
 
+  let matchedAccepted = false;
   for (const a of accepted) {
-    if (normalizeAnswer(a) === norm) return { kind: 'exact' };
+    if (normalizeAnswer(a) === norm) {
+      matchedAccepted = true;
+      break;
+    }
   }
+
+  if (matchedAccepted) {
+    if (
+      canonical &&
+      canonStripped === stripped &&
+      canonNorm !== norm
+    ) {
+      return { kind: 'accent' };
+    }
+    return { kind: 'exact' };
+  }
+
   for (const a of accepted) {
     if (normalizeForCompare(a) === stripped) return { kind: 'accent' };
   }
@@ -83,4 +130,26 @@ export function matchAnswer(
   }
 
   return { kind: 'miss' };
+}
+
+/**
+ * Client/server helper for open writing: correct for progress when exact or
+ * accent-only; `accent_only` when the learner missed diacritics vs canonical.
+ */
+export function gradeAcceptedOpen(
+  text: string,
+  accepted: string[],
+): GradeAcceptedOpen {
+  const canonical = pickCanonical(accepted);
+  if (!accepted.length) {
+    return { correct: false, accent_only: false, canonical: '' };
+  }
+  const m = matchAnswer(text, accepted);
+  if (m.kind === 'exact') {
+    return { correct: true, accent_only: false, canonical };
+  }
+  if (m.kind === 'accent') {
+    return { correct: true, accent_only: true, canonical };
+  }
+  return { correct: false, accent_only: false, canonical };
 }

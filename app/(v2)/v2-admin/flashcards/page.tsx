@@ -362,7 +362,7 @@ function AdminFlashcardsInner() {
         estimate_usd: number;
       };
       const ok = window.confirm(
-        `ولّد الصور للمحددين؟\nناقص ${preview.missing_count} · تقدير ~$${preview.estimate_usd.toFixed(2)}\n(${deck_ids.length} ديك)`,
+        `ولّد الصور للمحددين؟\nناقص ${preview.missing_count} · تقدير ~$${preview.estimate_usd.toFixed(2)}\n(${deck_ids.length} مجموعة)`,
       );
       if (!ok) return;
 
@@ -423,7 +423,7 @@ function AdminFlashcardsInner() {
           estimate_usd: number;
         };
         if (preview.missing_count === 0) {
-          setMessage('مفيش صور ناقصة في الديك ده');
+          setMessage('مفيش صور ناقصة في المجموعة دي');
           return;
         }
         const ok = window.confirm(
@@ -457,7 +457,7 @@ function AdminFlashcardsInner() {
           reused?: number;
         };
         setMessage(
-          `ديك ${deckId}: enqueue ${json.enqueued ?? 0} · reused ${json.reused ?? 0}`,
+          `مجموعة ${deckId}: enqueue ${json.enqueued ?? 0} · reused ${json.reused ?? 0}`,
         );
         await loadCustom();
         return;
@@ -479,7 +479,7 @@ function AdminFlashcardsInner() {
         estimate_usd: number;
       };
       if (preview.missing_count === 0) {
-        setMessage('مفيش صور ناقصة في الديك ده');
+        setMessage('مفيش صور ناقصة في المجموعة دي');
         return;
       }
       const ok = window.confirm(
@@ -504,7 +504,7 @@ function AdminFlashcardsInner() {
         reused?: number;
       };
       setMessage(
-        `ديك رسمي: enqueue ${json.enqueued ?? 0} · reused ${json.reused ?? 0}`,
+        `مجموعة رسمية: enqueue ${json.enqueued ?? 0} · reused ${json.reused ?? 0}`,
       );
       await loadOfficial();
     } finally {

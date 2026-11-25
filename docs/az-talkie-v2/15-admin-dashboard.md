@@ -127,15 +127,15 @@ Tabs: **كروت الدروس** (standard) · **مواضيع** (official themed 
 
 ### 4.3 Themed decks (مواضيع) from a topic
 
-- **"ديك جديد"**: a topic box, the target language, phase (A1 / A2), and a word count (20–30). It runs the **same generator and checks as `12` §2.3–§2.4** with two admin differences: no quota, and the result is saved as a **draft official deck** (`v2_official_decks`, `status: draft`), not as a public learner deck.
-- The existing-deck search (`12` §2.5 step 2) runs first and shows matches from both official and learner decks ("فيه ديك متعلمين عن الطقس · ضافوه ٢٢ · حوّله لرسمي بدل ما تولّد جديد").
+- **"مجموعة جديدة"**: a topic box, the target language, phase (A1 / A2), and a word count (20–30). It runs the **same generator and checks as `12` §2.3–§2.4** with two admin differences: no quota, and the result is saved as a **draft official deck** (`v2_official_decks`, `status: draft`), not as a public learner deck.
+- The existing-deck search (`12` §2.5 step 2) runs first and shows matches from both official and learner decks ("فيه مجموعة متعلمين عن الطقس · ضافوه ٢٢ · حوّله لرسمي بدل ما تولّد جديد").
 - Draft editor = the promotion draft of `12` §6: remove, reorder, add from lesson banks or the custom pool, edit a custom item's text (marks it `reviewed`), rename, then publish to "مواضيع".
 - Words reuse official items when they exist (`12` §2.1), so a themed deck about the kitchen never duplicates lesson items.
 - Bulk: paste a list of topics (one per line) → one draft per topic, queued; each finishes as "مسودة جاهزة" for review.
 
 ### 4.4 Learner decks (من المتعلمين)
 
-The `12` C7 moderation list (popular, reported, image status, not promoted) with hide / delete / remove word / "حوّله لديك رسمي", now inside this tab. No new rules.
+The `12` C7 moderation list (popular, reported, image status, not promoted) with hide / delete / remove word / "حوّله لمجموعة رسمية", now inside this tab. No new rules.
 
 ---
 
@@ -240,7 +240,7 @@ One task per session, in order, tests included, stop at "Done when". Prompt:
 - Done when: Omar makes the cards for days 9–12 before their lessons and reviews them on his phone.
 
 **D6 · Themed decks from a topic**
-- Do: "ديك جديد" and the bulk topic list (§4.3) on the `12` generator with no quota, saved as draft official decks; existing-deck search first; the draft editor reused from `12` C9; the من المتعلمين tab (§4.4).
+- Do: "مجموعة جديدة" and the bulk topic list (§4.3) on the `12` generator with no quota, saved as draft official decks; existing-deck search first; the draft editor reused from `12` C9; the من المتعلمين tab (§4.4).
 - Tests: admin generation doesn't touch learner quotas; a word that exists in a lesson bank reuses the official id; a draft never shows to learners until published.
 - Done when: Omar creates and publishes "المطبخ" and "عند الدكتور" from topics.
 

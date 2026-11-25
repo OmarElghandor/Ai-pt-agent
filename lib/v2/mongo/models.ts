@@ -415,7 +415,7 @@ const v2SessionQueueItemSchema = new Schema(
     bucket: {
       type: String,
       required: false,
-      enum: ['recent', 'weak', 'older'],
+      enum: ['recent', 'weak', 'older', 'window', 'maint'],
     },
     rating: {
       type: String,

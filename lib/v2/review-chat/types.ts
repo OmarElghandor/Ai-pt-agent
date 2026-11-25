@@ -2,6 +2,7 @@ import type { Skill } from '@/lib/v2/content/lesson';
 
 export type FeedbackVerdict =
   | 'correct'
+  | 'accent_ok'
   | 'near_miss'
   | 'wrong'
   | 'unclear'

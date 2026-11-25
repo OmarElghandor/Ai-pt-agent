@@ -38,7 +38,7 @@ In the flashcards module, a learner types a topic in a text box ("كلمات ا�
 - **Model:** a cheap Claude model (Haiku), chosen by env (`CUSTOM_DECK_MODEL`), one non-streamed JSON call, server only. Timeout 20 s, one retry on a parse failure.
 - **Input:** the learner's topic (trimmed, max 60 characters), the target language, the learner's phase (A1 / A2), and the instruction: the most useful everyday words for someone living in Portugal, mostly nouns with their article, some verbs and adjectives, at most 3 short fixed phrases.
 - **Output:** `topic_ok` (true | false, with a short reason), `title_tl`, `title_ar`, `tags` (2–4 short English slugs, e.g. `weather`, `home`), and 20–30 words in the shape of §2.2.
-- **The model also judges the topic.** `topic_ok: false` for sexual content, insults, hate, violence, drugs, politics or a topic about a real person. The learner sees one calm Egyptian line ("مش هنقدر نعمل ديك للموضوع ده، جرّب موضوع تاني") and nothing is saved. A short code blocklist runs on the topic before the call, so obvious cases cost nothing.
+- **The model also judges the topic.** `topic_ok: false` for sexual content, insults, hate, violence, drugs, politics or a topic about a real person. The learner sees one calm Egyptian line ("مش هنقدر نعمل مجموعة للموضوع ده، جرّب موضوع تاني") and nothing is saved. A short code blocklist runs on the topic before the call, so obvious cases cost nothing.
 
 ### 2.4 Checks (code, on the output)
 
@@ -61,16 +61,16 @@ After the checks:
 
 ### 2.5 The learner flow
 
-1. **Flashcards → "اعمل ديك".** A text box with a placeholder ("مثلاً: الطقس، المطبخ، عند الدكتور") and 4–6 suggestion chips.
-2. **Look for an existing deck first (code, no model).** The topic is matched against the titles and tags of public decks. If one matches: "فيه ديك جاهز: الطقس · ٢٤ كلمة", with "ضيفه" and "اعمل واحد جديد برضه". This saves cost and keeps the public list from filling with ten weather decks.
+1. **Flashcards → "اعمل مجموعة".** A text box with a placeholder ("مثلاً: الطقس، المطبخ، عند الدكتور") and 4–6 suggestion chips.
+2. **Look for an existing deck first (code, no model).** The topic is matched against the titles and tags of public decks. If one matches: "فيه مجموعة جاهزة: الطقس · ٢٤ كلمة", with "ضيفه" and "اعمل واحد جديد برضه". This saves cost and keeps the public list from filling with ten weather decks.
 3. **Generating screen** with a calm progress state (a few seconds).
 4. **Preview:** the words as a list (tl, say, meaning, play button). The learner can **remove** words, but can't edit their text (edited text would skip the checks). At least 15 must remain to save.
-5. **Save → the deck is in "ديكاتي"** and published to "من المتعلمين" (§2.7).
+5. **Save → the deck is in "مجموعاتي"** and published to "من المتعلمين" (§2.7).
 
 ### 2.6 Reviewing custom decks
 
 - **Not mixed into the daily deck.** The daily 15 (`00` §5, `11` §5) stays curriculum-only, so the core path never gets diluted.
-- Each custom deck has its own session: "راجع الديك ده". It shows due cards from that deck first, then **at most 10 new cards a day per deck**, so a new deck of 30 isn't dumped on the learner at once.
+- Each custom deck has its own session: "راجع المجموعة دي". It shows due cards from that deck first, then **at most 10 new cards a day per deck**, so a new deck of 30 isn't dumped on the learner at once.
 - Same card screen, same buttons (صعب / متوسط / سهل / عارفها), same retrieval-first front (`00` §5). Ratings go through `POST /api/v2/answers`, like every other card.
 - **Graduation for custom-only items:** interval ≥ 21 days. The "used correctly in 2 situations" condition (`00` §5) is dropped for them, because the lessons never use them. Official items keep the full rule even when reviewed from a custom deck.
 - **Streak (`11` §7.2):** finishing a custom deck session (at least 10 cards rated) counts as a real piece of learning for the day.
@@ -84,8 +84,8 @@ After the checks:
 - Deck listing tabs become: **المواقف** (situation decks from lessons) · **الأفعال** · **مواضيع** (official themed decks, §6) · **من المتعلمين**.
 - "من المتعلمين" sorts by popularity (how many learners added it), with a "الجديد" filter and a search box over titles and tags.
 - A deck tile shows `title_ar`, `title_tl`, the word count and "ضافوه N". **The creator's name is not shown** (privacy, and it avoids one more thing to moderate).
-- **"ضيفه"** adds the deck to the learner's "ديكاتي"; its cards enter their SRS through the same per-deck session. A learner can remove a deck they added; their item states stay (they're per item, not per deck).
-- **Report:** each public deck has "بلّغ عن الديك ده" (wrong word, Brazilian, offensive, wrong picture). A deck with 3 reports from different learners is hidden from the public list automatically until an admin looks at it. Learners who already added it keep it.
+- **"ضيفه"** adds the deck to the learner's "مجموعاتي"; its cards enter their SRS through the same per-deck session. A learner can remove a deck they added; their item states stay (they're per item, not per deck).
+- **Report:** each public deck has "بلّغ عن المجموعة دي" (wrong word, Brazilian, offensive, wrong picture). A deck with 3 reports from different learners is hidden from the public list automatically until an admin looks at it. Learners who already added it keep it.
 - **Admin can hide or delete** any public deck, and remove single words from it.
 
 ### 2.8 Limits
@@ -98,7 +98,7 @@ After the checks:
 
 ### 2.9 Account deletion (A5)
 
-A public deck is shared content, not personal data. When its creator deletes their account, the deck **stays** and its `created_by` is cleared. Their "ديكاتي" list, their added-deck links and their item states are deleted like every other user-keyed document. The A5 deletion list gets the user-keyed collections from §3, and `v2_custom_decks` gets a "clear creator" step instead of a delete. Images are shared content and are never deleted with an account.
+A public deck is shared content, not personal data. When its creator deletes their account, the deck **stays** and its `created_by` is cleared. Their "مجموعاتي" list, their added-deck links and their item states are deleted like every other user-keyed document. The A5 deletion list gets the user-keyed collections from §3, and `v2_custom_decks` gets a "clear creator" step instead of a delete. Images are shared content and are never deleted with an account.
 
 ### 2.10 Images (decided 2026-11-13)
 
@@ -140,9 +140,9 @@ All need a signed-in user; the user id comes from the session helper only.
 
 - Find existing decks for a topic (no model).
 - Generate a deck (quota check, topic blocklist, model call, checks) → returns the preview with a draft id.
-- Save a draft (with the removed words) → creates the deck and adds it to "ديكاتي".
+- Save a draft (with the removed words) → creates the deck and adds it to "مجموعاتي".
 - List public decks (sort, filter, search, paging).
-- Add / remove a deck to "ديكاتي" (adding may cross the image threshold and queue images).
+- Add / remove a deck to "مجموعاتي" (adding may cross the image threshold and queue images).
 - Start a deck review session (due first, then up to 10 new).
 - Report a deck or one of its pictures.
 - Admin: list reported and popular decks, hide / delete a deck, remove a word, generate or regenerate images (deck or single word), promote (§6).
@@ -151,11 +151,11 @@ All need a signed-in user; the user id comes from the session helper only.
 
 ## 5. UI (Calm Kit, RTL, 390px)
 
-- "اعمل ديك" entry on the deck listing, under the "مراجعة النهارده" hero (the daily deck stays the first thing).
+- "اعمل مجموعة" entry on the deck listing, under the "مراجعة النهارده" hero (the daily deck stays the first thing).
 - The text box screen with suggestion chips and the quiet quota line.
 - Generating state, preview list with remove buttons, save.
 - "من المتعلمين" tab with search, sorting and deck tiles.
-- Deck detail: the words with no Arabic meanings (same self-test rule as `00` §5), "ضيفه" or "راجع الديك ده", and the report link.
+- Deck detail: the words with no Arabic meanings (same self-test rule as `00` §5), "ضيفه" or "راجع المجموعة دي", and the report link.
 - Cards show the picture when `url` is ready, the ImageSlot placeholder otherwise. Nothing tells the learner images are "coming".
 - No percentages, no backlog counts (`00` §5).
 
@@ -163,14 +163,14 @@ All need a signed-in user; the user id comes from the session helper only.
 
 ## 6. Admin promotion to an official deck
 
-- **Admin → "ديكات المتعلمين":** the public decks sorted by `added_count`, with reports, image status, and a filter for decks not yet promoted.
-- **"حوّله لديك رسمي"** creates a `v2_official_decks` document in `draft`, pointing at the **same item ids**, so learners who added the custom deck keep all their progress.
+- **Admin → "مجموعات المتعلمين":** the public decks sorted by `added_count`, with reports, image status, and a filter for decks not yet promoted.
+- **"حوّله لمجموعة رسمية"** creates a `v2_official_decks` document in `draft`, pointing at the **same item ids**, so learners who added the custom deck keep all their progress.
 - In the draft, the admin can:
   - remove or reorder words, and add words from the official item banks or the custom pool;
   - edit a custom item's text (this is the one place a human edits generated text; it marks the item `reviewed`);
   - rename the deck;
   - regenerate the deck's images with the lesson pipeline's model and quality (§2.10).
-- **Publish** makes the deck appear in "مواضيع" and marks its custom items `status: official` (their ids don't change). The source custom deck gets `status: promoted` and a small "بقى ديك رسمي" mark, and leaves the "من المتعلمين" list so the same deck isn't listed twice.
+- **Publish** makes the deck appear in "مواضيع" and marks its custom items `status: official` (their ids don't change). The source custom deck gets `status: promoted` and a small "بقى مجموعة رسمية" mark, and leaves the "من المتعلمين" list so the same deck isn't listed twice.
 - Official decks follow the same review rules as custom decks (§2.6), not the curriculum's `introducedDay`.
 
 ---
@@ -210,9 +210,9 @@ Same rules as `09a`, `10` and `11`: one task per session, in order, tests includ
 - Tests: the 4th generation in a day is refused with the quota error; "ضيفه" on an existing deck doesn't use quota; saving with fewer than 15 words is refused.
 - Done when: tests pass.
 
-**C4 · "اعمل ديك" screens**
+**C4 · "اعمل مجموعة" screens**
 - Do: text box with suggestion chips and the quota line, existing-deck suggestion, generating state, preview with remove, save (§2.5, §5).
-- Done when: Omar types "الطقس" on his phone and ends with a saved deck in "ديكاتي".
+- Done when: Omar types "الطقس" on his phone and ends with a saved deck in "مجموعاتي".
 
 **C5 · Deck review session**
 - Do: per-deck session (due first, then up to 10 new a day per deck), the same card component (picture or placeholder), ratings through `/api/v2/answers`, the graduation rule for custom-only items, the streak count for a finished session.
@@ -235,6 +235,6 @@ Same rules as `09a`, `10` and `11`: one task per session, in order, tests includ
 - Done when: Omar presses "ولّد الصور" on his weather deck, sees the count and cost, and the cards show their pictures in the Warm Storybook style next to lesson cards.
 
 **C9 · Promotion to official decks**
-- Do: "حوّله لديك رسمي" → draft official deck on the same item ids; draft editing (remove, reorder, add from banks or pool, edit a custom item's text, rename, regenerate images with the lesson model); publish to "مواضيع"; mark items official and the source deck promoted.
+- Do: "حوّله لمجموعة رسمية" → draft official deck on the same item ids; draft editing (remove, reorder, add from banks or pool, edit a custom item's text, rename, regenerate images with the lesson model); publish to "مواضيع"; mark items official and the source deck promoted.
 - Tests: a learner who reviewed the custom deck keeps every item state after promotion; the promoted deck no longer appears in "من المتعلمين".
 - Done when: Omar promotes the weather deck, publishes it, and it shows in "مواضيع" with his old progress intact.

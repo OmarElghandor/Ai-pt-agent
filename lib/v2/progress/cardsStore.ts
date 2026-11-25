@@ -13,6 +13,7 @@ import {
   localDateString,
   markCardRated,
   reopenCardsSession,
+  type CardBucket,
   type CardCandidate,
   type CardRating,
   type CardsSession,
@@ -157,7 +158,7 @@ export async function getOrCreateTodayCards(opts: {
       status: existing.status === 'done' ? 'done' : 'open',
       queue: (existing.queue ?? []).map((q) => ({
         item_id: q.item_id,
-        bucket: (q.bucket as 'recent' | 'weak' | 'older') ?? 'recent',
+        bucket: (q.bucket as CardBucket) ?? 'recent',
         rating: q.rating as CardsSession['queue'][0]['rating'],
         rated_at: q.rated_at
           ? new Date(q.rated_at).toISOString()
@@ -254,14 +255,50 @@ export async function getOrCreateTodayCards(opts: {
     budget_minutes: split.cards_minutes,
   });
 
-  await V2SessionModel().create({
-    user_id: session.user_id,
-    kind: 'cards',
-    local_date: session.local_date,
-    status: session.status,
-    queue: session.queue,
-    tz,
-  });
+  try {
+    await V2SessionModel().create({
+      user_id: session.user_id,
+      kind: 'cards',
+      local_date: session.local_date,
+      status: session.status,
+      queue: session.queue,
+      tz,
+    });
+  } catch (err) {
+    // Concurrent taps: unique user×kind×date — return the winner (16 / reviewStore).
+    if (
+      err &&
+      typeof err === 'object' &&
+      'code' in err &&
+      (err as { code: number }).code === 11000
+    ) {
+      const again = await V2SessionModel()
+        .findOne({
+          user_id: opts.user_id,
+          kind: 'cards',
+          local_date,
+        })
+        .lean();
+      if (again) {
+        return reopenCardsSession({
+          user_id: opts.user_id,
+          kind: 'cards',
+          local_date,
+          status: again.status === 'done' ? 'done' : 'open',
+          queue: (again.queue ?? []).map((q) => ({
+            item_id: q.item_id,
+            bucket: (q.bucket as CardBucket) ?? 'recent',
+            rating: q.rating as CardsSession['queue'][0]['rating'],
+            rated_at: q.rated_at
+              ? new Date(q.rated_at).toISOString()
+              : undefined,
+          })),
+          tz,
+        });
+      }
+    }
+    throw err;
+  }
 
   // Mirror into v2_card_decks (doc 11 / 16) — build once per local date.
   try {
@@ -455,7 +492,7 @@ export async function reviewCard(opts: {
     status: 'open',
     queue: (sessionDoc.queue ?? []).map((q) => ({
       item_id: q.item_id,
-      bucket: (q.bucket as 'recent' | 'weak' | 'older') ?? 'recent',
+      bucket: (q.bucket as CardBucket) ?? 'recent',
       rating: q.rating as CardsSession['queue'][0]['rating'],
       rated_at: q.rated_at ? new Date(q.rated_at).toISOString() : undefined,
     })),

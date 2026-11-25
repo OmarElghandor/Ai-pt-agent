@@ -6,6 +6,8 @@ import {
   buildReviewStep,
   buildSentenceTiles,
   canBuildFindImageBlock,
+  familyKey,
+  normLabel,
   grammarTimeShare,
   persistBuiltStep,
   type BankItem,
@@ -231,7 +233,11 @@ describe('v2 practice · review session (16 §5.3–5.8)', () => {
               s.slot_reason === 'grammar' ||
               s.slot_reason === 'cumulative_grammar' ||
               s.type === 'build_sentence' ||
-              s.type === 'fill_blank_choice',
+              s.type === 'fill_blank_choice' ||
+              // a grammar pair (pattern / building / use) in any form
+              s.skill === 'building' ||
+              s.skill === 'recognition' ||
+              s.skill === 'use',
           ),
           `round ${r} needs a grammar step`,
         );
@@ -555,5 +561,184 @@ describe('v2 practice · mixed order + regenerate (2026-11-24)', () => {
     assert.equal(canRegenerateReview('admin', 'production'), true);
     assert.equal(canRegenerateReview('learner', 'production'), false);
     assert.equal(canRegenerateReview('learner', 'development'), true);
+  });
+});
+
+describe('v2 practice · variety and spacing (2026-11-25)', () => {
+  const ph = (id: string, tl: string, ar: string, day: number, extra: Partial<BankItem> = {}): BankItem => ({
+    id, type: 'phrase', tl, ar, day, ...extra,
+  });
+  const bank: BankItem[] = [
+    ph('p.prazer', 'Muito prazer!', 'تشرفنا', 1),
+    ph('p.ola', 'Olá!', 'مرحباً', 1),
+    ph('p.bom_dia', 'Bom dia!', 'صباح الخير', 1),
+    ph('p.boa_noite', 'Boa noite!', 'تصبح على خير', 1),
+    ph('p.tudo', 'Tudo bem, obrigado.', 'كله تمام، شكراً', 2),
+    ph('p.como', 'Como está?', 'إزيك؟', 2),
+    ph('p.ate', 'Até já!', 'أشوفك كمان شوية', 2),
+    ph('p.estou', 'Eu estou muito bem hoje', 'أنا كويس جداً النهارده', 2),
+    { id: 'pattern.chamo', type: 'pattern', day: 2, examples: ['pattern.chamo.ex.1', 'pattern.chamo.ex.2', 'pattern.chamo.ex.3'] },
+    ph('pattern.chamo.ex.1', 'Chamo-me Omar.', 'اسمي عمر', 2, { derived: true }),
+    ph('pattern.chamo.ex.2', 'Chamo-me Rita.', 'اسمي ريتا', 2, { derived: true }),
+    ph('pattern.chamo.ex.3', 'Chamo-me Inês.', 'اسمي إينيس', 2, { derived: true }),
+    ph('p.onde', 'Onde fica a estação de metro?', 'فين محطة المترو؟', 3),
+    ph('p.queria', 'Queria um café com leite', 'عايز قهوة بلبن', 3),
+    ph('p.conta', 'A conta, se faz favor.', 'الحساب لو سمحت', 3),
+    ph('p.obrigado', 'Obrigado!', 'شكراً', 3),
+  ];
+  const window = [
+    { day: 3, position: 1 as const },
+    { day: 2, position: 2 as const },
+    { day: 1, position: 3 as const },
+  ];
+  const pairsFor = (day: number) =>
+    bank
+      .filter((i) => i.day === day && !i.derived)
+      .flatMap((i) =>
+        i.type === 'pattern'
+          ? (['recognition', 'building', 'writing', 'use'] as const).map((skill) => ({ item_id: i.id, skill, status: 'open' as const }))
+          : (['listening', 'building', 'writing', 'speaking'] as const).map((skill) => ({ item_id: i.id, skill, status: 'open' as const })),
+      );
+  const plans: CoveragePlan[] = [1, 2, 3].map((d) => ({ user_id: 'u', lesson_day: d, pairs: pairsFor(d) }));
+  const session = buildReviewSession({
+    window,
+    budgetMinutes: 21,
+    plans,
+    itemsByDay: new Map([1, 2, 3].map((d) => [d, bank.filter((i) => i.day === d)])),
+    craftedByDay: new Map(),
+    taughtItems: bank,
+    currentDay: 4,
+    seed: 'u:2026-11-25',
+  });
+  const steps = session.steps;
+  const fam = (id: string) => familyKey(id);
+
+  it('an item (or a pattern with its examples) appears at most twice (patterns 3×)', () => {
+    const counts = new Map<string, number>();
+    for (const s of steps) counts.set(fam(s.item_id), (counts.get(fam(s.item_id)) ?? 0) + 1);
+    for (const [f, n] of counts) assert.ok(n <= (f.startsWith('pattern.') ? 3 : 2), `${f} × ${n}`);
+  });
+
+  it('an item never gets the same form twice', () => {
+    const seen = new Set<string>();
+    for (const s of steps) {
+      const k = `${fam(s.item_id)}|${s.type}`;
+      assert.ok(!seen.has(k), `repeat form ${k}`);
+      seen.add(k);
+    }
+  });
+
+  it('the same item comes back only after a gap (no re-asking while it is on screen)', () => {
+    for (let i = 0; i < steps.length; i++) {
+      for (let j = Math.max(0, i - 5); j < i; j++) {
+        if (fam(steps[j]!.item_id) === fam(steps[i]!.item_id)) {
+          assert.fail(`${fam(steps[i]!.item_id)} at ${j} and ${i}`);
+        }
+      }
+    }
+  });
+
+  it('the session uses many forms, and no form takes over', () => {
+    const types = new Map<string, number>();
+    for (const s of steps) types.set(s.type, (types.get(s.type) ?? 0) + 1);
+    assert.ok(types.size >= 5, `forms: ${[...types.keys()].join(', ')}`);
+    const max = Math.max(...types.values());
+    assert.ok(max <= Math.ceil(steps.length * 0.35), `one form ${max}/${steps.length}`);
+  });
+
+  it('never the same form twice in a row when avoidable', () => {
+    let same = 0;
+    for (let i = 1; i < steps.length; i++) if (steps[i]!.type === steps[i - 1]!.type) same += 1;
+    assert.ok(same <= 1, `same form in a row: ${same}`);
+  });
+
+  it('options never repeat the same label', () => {
+    for (const s of steps) {
+      const opts = s.payload.options as { label?: string }[] | undefined;
+      if (!opts) continue;
+      const labels = opts.map((o) => normLabel(String(o.label ?? '')));
+      assert.equal(new Set(labels).size, labels.length, `${s.item_id} ${s.type}`);
+    }
+  });
+});
+
+describe('v2 practice · frame families + crafted dedupe (2026-11-25b)', () => {
+  const ph = (id: string, tl: string, ar: string, day: number): BankItem => ({ id, type: 'phrase', tl, ar, day });
+  // Separate items (not pattern examples) built on the same frame.
+  const bank: BankItem[] = [
+    ph('p.rita', 'Chamo-me Rita.', 'اسمي ريتا', 1),
+    ph('p.omar', 'Chamo-me Omar.', 'اسمي عمر', 1),
+    ph('p.ines', 'Chamo-me Inês.', 'اسمي إينيس', 2),
+    ph('p.ola', 'Olá!', 'مرحباً', 1),
+    ph('p.prazer', 'Muito prazer!', 'تشرفنا', 1),
+    ph('p.tudo', 'Tudo bem, obrigado.', 'كله تمام، شكراً', 2),
+    ph('p.ate', 'Até já!', 'أشوفك كمان شوية', 2),
+    ph('p.estou', 'Eu estou muito bem hoje', 'أنا كويس جداً النهارده', 2),
+    ph('p.onde', 'Onde fica a estação de metro?', 'فين محطة المترو؟', 3),
+    ph('p.queria', 'Queria um café com leite', 'عايز قهوة بلبن', 3),
+    ph('p.conta', 'A conta, se faz favor.', 'الحساب لو سمحت', 3),
+    ph('p.obrigado', 'Obrigado!', 'شكراً', 3),
+  ];
+  const plans: CoveragePlan[] = [1, 2, 3].map((d) => ({
+    user_id: 'u',
+    lesson_day: d,
+    pairs: bank
+      .filter((i) => i.day === d)
+      .flatMap((i) =>
+        (['listening', 'building', 'writing', 'speaking'] as const).map((skill) => ({
+          item_id: i.id,
+          skill,
+          status: 'open' as const,
+        })),
+      ),
+  }));
+  const steps = buildReviewSession({
+    window: [
+      { day: 3, position: 1 },
+      { day: 2, position: 2 },
+      { day: 1, position: 3 },
+    ],
+    budgetMinutes: 21,
+    plans,
+    itemsByDay: new Map([1, 2, 3].map((d) => [d, bank.filter((i) => i.day === d)])),
+    craftedByDay: new Map(),
+    taughtItems: bank,
+    currentDay: 4,
+    seed: 'u:frame',
+  }).steps;
+  const chamo = steps
+    .map((s, i) => ({ s, i }))
+    .filter(({ s }) => ['p.rita', 'p.omar', 'p.ines'].includes(s.item_id));
+
+  it('Chamo-me Rita / Omar / Inês count as one family (at most 3 steps)', () => {
+    assert.ok(chamo.length >= 1 && chamo.length <= 3, `chamo steps: ${chamo.length}`);
+  });
+
+  it('…and are spaced like one item', () => {
+    for (let k = 1; k < chamo.length; k++) {
+      assert.ok(chamo[k]!.i - chamo[k - 1]!.i > 5, `gap ${chamo[k]!.i - chamo[k - 1]!.i}`);
+    }
+  });
+
+  it('a lesson question with two equal options is not used', () => {
+    const step = buildReviewStep({
+      item: bank[1]!,
+      skill: 'listening',
+      taughtItems: bank,
+      currentDay: 4,
+      crafted: [
+        {
+          id: 'q.dup',
+          type: 'listen_meaning',
+          tests: ['p.omar'],
+          use: 'both',
+          prompt: { audio_ref: 'p.omar' },
+          options: ['اسمي مانويل', 'اسمي عمر', 'اسمي عُمر.'],
+          answer: 1,
+        } as never,
+      ],
+    });
+    assert.ok(step);
+    assert.equal(step!.payload.origin, 'code');
   });
 });

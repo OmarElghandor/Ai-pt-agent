@@ -111,11 +111,13 @@ export function deriveThread(opts: {
     stepsInRound = roundSteps.length || 1;
     const firstGlobal = globalIndex;
     const lastGlobal = globalIndex + roundSteps.length - 1;
-    const roundFullyBefore =
-      lastGlobal < 0 || currentStep > lastGlobal + (opts.showRoundEnd ? 0 : -1);
     const roundActive = currentStep >= firstGlobal && currentStep <= lastGlobal;
-    const roundPartiallyDone =
-      currentStep > firstGlobal && currentStep <= lastGlobal + 1;
+
+    // Future rounds: don't preview their divider until continueRound advances.
+    if (firstGlobal > currentStep) {
+      globalIndex += roundSteps.length;
+      continue;
+    }
 
     if (
       round < getCurrentRound(session, currentStep) &&
@@ -239,11 +241,12 @@ export function deriveThread(opts: {
       globalIndex += 1;
     });
 
+    // advance() parks on the last step and sets showRoundEnd — don't require past-the-round.
     const roundDone =
       roundSteps.length > 0 &&
-      currentStep >= firstGlobal + roundSteps.length &&
-      opts.showRoundEnd;
-    if (roundDone && currentStep >= firstGlobal + roundSteps.length) {
+      Boolean(opts.showRoundEnd) &&
+      currentStep === lastGlobal;
+    if (roundDone) {
       messages.push({
         id: `round-end-${round}`,
         kind: 'round_end',

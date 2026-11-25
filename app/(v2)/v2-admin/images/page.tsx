@@ -8,7 +8,7 @@ export default function V2AdminImagesPage() {
       </h1>
       <p className="mt-2 text-sm text-v2-ink-muted">
         شاشة التوليد بالجملة هتيجي في المهمة D7. دلوقتي تقدر تدير صور الدرس من
-        صفحة اليوم، وصور الديكات من الكروت.
+        صفحة اليوم، وصور المجموعات من الكروت.
       </p>
       <ul className="mt-4 list-disc space-y-2 pe-5 text-sm">
         <li>

@@ -14,6 +14,7 @@ type Props = {
 export function FeedbackPanel({ display, stepIndex }: Props) {
   const label = coachFeedbackLabel(display.verdict, stepIndex);
   const isCorrect = display.verdict === 'correct';
+  const isAccentOk = display.verdict === 'accent_ok';
   const isNear = display.verdict === 'near_miss';
   const isWrong = display.verdict === 'wrong';
   const isUnclear = display.verdict === 'unclear';
@@ -21,9 +22,11 @@ export function FeedbackPanel({ display, stepIndex }: Props) {
 
   const panel = isCorrect
     ? 'border-v2-success/30 bg-v2-success-panel text-v2-success-text'
-    : isNear || isWrong
+    : isAccentOk || isNear || isWrong
       ? 'border-v2-warning/40 bg-v2-warning-panel text-v2-warning-text'
       : 'border-v2-line bg-v2-panel text-v2-ink';
+
+  const playTl = display.correct_tl ?? display.corrected_tl;
 
   return (
     <div className="flex flex-col items-start gap-1.5">
@@ -48,8 +51,8 @@ export function FeedbackPanel({ display, stepIndex }: Props) {
               <span> = {display.meaning_eg}</span>
             ) : null}
           </p>
-          {display.correct_tl && isCorrect ? (
-            <AudioButton text={display.correct_tl} label="استماع للجملة" size="chip" />
+          {playTl && (isCorrect || isAccentOk) ? (
+            <AudioButton text={playTl} label="استماع للجملة" size="chip" />
           ) : null}
         </div>
         {display.corrected_tl ? (

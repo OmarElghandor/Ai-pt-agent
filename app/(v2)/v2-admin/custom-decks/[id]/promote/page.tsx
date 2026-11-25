@@ -91,7 +91,7 @@ export default function PromoteCustomDeckPage() {
           ← Flashcards
         </Link>
       </p>
-      <h1 className="text-2xl font-semibold">حوّله لديك رسمي</h1>
+      <h1 className="text-2xl font-semibold">حوّله لمجموعة رسمية</h1>
       {error && <p style={{ color: '#dc2626' }}>{error}</p>}
       {officialId ? (
         <>

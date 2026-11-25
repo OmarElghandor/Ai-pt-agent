@@ -51,7 +51,7 @@ export function ChatThread({
   return (
     <div
       ref={scrollerRef}
-      className="flex-1 space-y-5 overflow-y-auto px-4 pt-4 pb-48 no-scrollbar"
+      className="min-h-0 flex-1 space-y-5 overflow-y-auto px-4 pt-4 pb-4 no-scrollbar"
     >
       {messages.map((m) => {
         switch (m.kind) {

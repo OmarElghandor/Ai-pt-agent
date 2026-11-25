@@ -4,6 +4,7 @@ type CoachFile = {
   opening: string[];
   round_names: string[];
   feedback_correct: string[];
+  feedback_accent: string[];
   feedback_near_miss: string[];
   feedback_wrong: string[];
   feedback_unclear: string[];
@@ -57,6 +58,8 @@ export function coachFeedbackLabel(
   switch (verdict) {
     case 'correct':
       return pickVariant('feedback_correct', stepIndex);
+    case 'accent_ok':
+      return pickVariant('feedback_accent', stepIndex);
     case 'near_miss':
       return pickVariant('feedback_near_miss', stepIndex);
     case 'wrong':

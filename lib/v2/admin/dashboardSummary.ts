@@ -312,7 +312,7 @@ export async function loadDashboardSummary(
     needs_you.push({
       id: `deck-${deck.id}`,
       kind: 'reported_deck',
-      label: `ديك متعلمين · ${deck.title_ar || deck.title_tl}`,
+      label: `مجموعة متعلمين · ${deck.title_ar || deck.title_tl}`,
       href: `/v2-admin/custom-decks`,
       action_label: 'راجع',
     });

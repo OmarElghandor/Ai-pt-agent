@@ -53,4 +53,4 @@ export function checkTopicBlocklist(raw: string): TopicBlockResult {
 }
 
 export const TOPIC_REJECT_EG =
-  'مش هنقدر نعمل ديك للموضوع ده، جرّب موضوع تاني';
+  'مش هنقدر نعمل مجموعة للموضوع ده، جرّب موضوع تاني';

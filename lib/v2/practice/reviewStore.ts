@@ -41,7 +41,7 @@ async function getLessonForPractice(day: number, targetLang = 'pt-PT') {
 import { PRACTICE_QUESTION_BUILDER_VERSION } from '@/lib/v2/review/questions';
 
 /** Bump when step building changes; untouched sessions of an older version are rebuilt. */
-export const REVIEW_BUILDER_VERSION = '2';
+export const REVIEW_BUILDER_VERSION = '4';
 
 export type TodayReviewSession = {
   local_date: string;

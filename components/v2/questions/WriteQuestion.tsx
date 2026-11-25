@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { AudioButton } from '@/components/v2/AudioButton';
 import { RichText } from '@/components/v2/RichText';
+import { gradeAcceptedOpen } from '@/lib/v2/answers/match';
 import { itemTargetText } from '@/lib/v2/render/speechTarget';
 import {
   asRt,
@@ -12,15 +13,6 @@ import {
 } from './types';
 
 const ACCENTS = ['á', 'à', 'â', 'ã', 'é', 'ê', 'í', 'ó', 'ô', 'õ', 'ú', 'ç'];
-
-function normalize(s: string): string {
-  return s
-    .normalize('NFD')
-    .replace(/\p{M}/gu, '')
-    .replace(/[?!.,]/g, '')
-    .trim()
-    .toLowerCase();
-}
 
 /** Dictation / translate / describe image — 12c-q04 / q05. */
 export function WriteQuestion({
@@ -49,7 +41,8 @@ export function WriteQuestion({
   const accepted = Array.isArray(question.accepted)
     ? (question.accepted as string[])
     : [];
-  const model = accepted[0] ?? '';
+  const writeGrade = gradeAcceptedOpen(draftText, accepted);
+  const model = writeGrade.canonical || accepted[0] || '';
 
   const wordBank = useMemo(() => {
     if (!isDescribe) return [] as string[];
@@ -80,10 +73,10 @@ export function WriteQuestion({
 
   function submit() {
     if (graded || !onGrade || !draftText.trim()) return;
-    const ok = accepted.some((a) => normalize(a) === normalize(draftText));
+    const result = gradeAcceptedOpen(draftText, accepted);
     onGrade({
       optionIndex: -1,
-      correct: ok,
+      correct: result.correct,
       meta: { text: draftText.trim() },
     });
   }
@@ -205,7 +198,15 @@ export function WriteQuestion({
         </button>
       ) : (
         <div className="rounded-v2-row bg-v2-paper-deep px-3 py-3 font-[family-name:var(--font-v2-arabic)] text-sm">
-          {accepted.some((a) => normalize(a) === normalize(draftText)) ? (
+          {writeGrade.correct && writeGrade.accent_only ? (
+            <div className="space-y-1 rounded-v2-row border border-v2-warning/40 bg-v2-warning-panel px-3 py-2 text-v2-warning-text">
+              <p>تمام — خلّي بالك من التشكيل</p>
+              <p className="font-[family-name:var(--font-v2-target)]" dir="ltr">
+                {model}
+              </p>
+              <p className="text-xs">الفرق في التشكيل بس</p>
+            </div>
+          ) : writeGrade.correct ? (
             <p className="text-v2-success">صح!</p>
           ) : (
             <p className="text-v2-attention" dir="ltr">

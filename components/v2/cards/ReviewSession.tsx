@@ -455,7 +455,7 @@ export function ReviewSession({
   const headerTitle = customMode
     ? customSession?.title_tl?.trim() ||
       customSession?.title_ar?.trim() ||
-      'راجع الديك ده'
+      'راجع المجموعة دي'
     : reviewHeaderTitle(deckId, deckMeta);
   const closeHref = customMode && deckId
     ? cardsHref(`/cards/deck/${encodeURIComponent(deckId)}`, dayOverride)

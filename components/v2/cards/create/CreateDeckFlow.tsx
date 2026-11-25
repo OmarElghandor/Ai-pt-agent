@@ -140,7 +140,7 @@ export function CreateDeckFlow({ dayOverride }: { dayOverride: number | null }) 
     if (!draftId) return;
     const remaining = words.filter((w) => !removed.has(w.key));
     if (remaining.length < 15) {
-      setErrorEg('لازم يبقى ١٥ كلمة على الأقل عشان نحفظ الديك');
+      setErrorEg('لازم يبقى ١٥ كلمة على الأقل عشان نحفظ المجموعة');
       return;
     }
     startTransition(async () => {
@@ -159,14 +159,14 @@ export function CreateDeckFlow({ dayOverride }: { dayOverride: number | null }) 
           message_eg?: string;
         };
         if (!res.ok || !data.ok || !data.deck_id) {
-          setErrorEg(data.message_eg ?? 'ما قدرناش نحفظ الديك');
+          setErrorEg(data.message_eg ?? 'ما قدرناش نحفظ المجموعة');
           return;
         }
         router.push(
           cardsHref(`/cards/deck/custom:${data.deck_id}`, dayOverride),
         );
       } catch {
-        setErrorEg('ما قدرناش نحفظ الديك');
+        setErrorEg('ما قدرناش نحفظ المجموعة');
       }
     });
   }
@@ -185,14 +185,14 @@ export function CreateDeckFlow({ dayOverride }: { dayOverride: number | null }) 
           <Icon name="arrow_forward" size={24} />
         </button>
         <h1 className="font-[family-name:var(--font-v2-display-ar)] text-xl font-bold text-v2-ink">
-          اعمل ديك
+          اعمل مجموعة
         </h1>
       </header>
 
       {step === 'topic' || step === 'error' ? (
         <section className="flex flex-col gap-4">
           <label className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-            موضوع الديك
+            موضوع المجموعة
             <input
               value={topic}
               onChange={(e) => setTopic(e.target.value.slice(0, 60))}
@@ -237,7 +237,7 @@ export function CreateDeckFlow({ dayOverride }: { dayOverride: number | null }) 
       {step === 'found' && found[0] ? (
         <section className="flex flex-col gap-4">
           <p className="font-[family-name:var(--font-v2-arabic)] text-base text-v2-ink">
-            فيه ديك جاهز: {found[0].title_ar} ·{' '}
+            فيه مجموعة جاهزة: {found[0].title_ar} ·{' '}
             {toArDigits(found[0].word_count)} كلمة
           </p>
           <PrimaryButton
@@ -321,7 +321,7 @@ export function CreateDeckFlow({ dayOverride }: { dayOverride: number | null }) 
             disabled={pending || remainingCount < 15}
             onClick={() => void onSave()}
           >
-            احفظ الديك
+            احفظ المجموعة
           </PrimaryButton>
           <Link
             href={cardsHref('/cards', dayOverride)}

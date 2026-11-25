@@ -88,7 +88,7 @@ export async function saveCustomDeckDraft(
     return {
       ok: false,
       reason: 'too_few',
-      message_eg: 'لازم يبقى ١٥ كلمة على الأقل عشان نحفظ الديك',
+      message_eg: 'لازم يبقى ١٥ كلمة على الأقل عشان نحفظ المجموعة',
     };
   }
 
