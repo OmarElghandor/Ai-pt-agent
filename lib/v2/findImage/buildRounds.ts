@@ -16,7 +16,6 @@ export type FindImageCard = {
 export type FindImageRound = {
   targetId: string;
   tl: string;
-  say?: string;
   ar: string;
   gender?: 'm' | 'f' | 'n';
   /** اسم مذكر | اسم مؤنث | جملة */
@@ -51,12 +50,6 @@ function itemTl(item: Item): string {
 
 function itemAr(item: Item): string {
   return 'ar' in item && typeof item.ar === 'string' ? item.ar : '';
-}
-
-function itemSay(item: Item): string | undefined {
-  return 'say' in item && typeof item.say === 'string' && item.say
-    ? item.say
-    : undefined;
 }
 
 function itemGender(item: Item): 'm' | 'f' | 'n' | undefined {
@@ -220,7 +213,6 @@ export function buildFindImageRounds(
     rounds.push({
       targetId: target.id,
       tl: itemTl(target),
-      say: itemSay(target),
       ar: itemAr(target),
       gender: itemGender(target),
       tag: tagFor(target),

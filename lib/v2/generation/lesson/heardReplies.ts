@@ -1,5 +1,4 @@
 import type { Item } from '@/lib/v2/content/items';
-import { transliteratePtToSay } from '@/lib/v2/content/translit';
 
 type PhraseItem = Extract<Item, { type: 'phrase' }>;
 
@@ -107,7 +106,6 @@ export function ensureHeardReplies(
       id: nextGeneric.id,
       tl: nextGeneric.tl,
       ar: nextGeneric.ar,
-      say: transliteratePtToSay(nextGeneric.tl),
       context_eg: nextGeneric.context_eg,
       cloze: nextGeneric.cloze,
       role: 'said',

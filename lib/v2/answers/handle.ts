@@ -1,7 +1,18 @@
 import { getCurrentV2UserId } from '@/lib/v2/auth/session';
 import { connectMongo, mongoConfigured } from '@/lib/mongo';
 import type { Item } from '@/lib/v2/content/items';
-import { getLessonForPractice } from '@/lib/v2/content/getPublishedLesson';
+import {
+  getLatestLessonPack,
+  getPublishedLesson,
+} from '@/lib/v2/content/getPublishedLesson';
+
+/** Published pack when present, else newest draft — same rule as lesson pages. */
+async function getLessonForPractice(day: number, targetLang = 'pt-PT') {
+  return (
+    (await getPublishedLesson(day)) ??
+    (await getLatestLessonPack(day, targetLang))
+  );
+}
 import type { Skill } from '@/lib/v2/content/lesson';
 import {
   V2AnswerIdempotencyModel,

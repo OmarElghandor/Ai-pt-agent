@@ -475,7 +475,7 @@ export type CardFacePayload = {
   kind: 'word' | 'phrase' | 'verb';
   tl: string;
   ar: string;
-  /** Arabic-letter pronunciation; kept on payload for data but not shown on card back. */
+  /** @deprecated Retired — optional legacy field; not shown on cards. */
   say?: string;
   gender?: 'm' | 'f' | 'n';
   plural?: string;

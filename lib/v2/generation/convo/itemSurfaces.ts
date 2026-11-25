@@ -16,20 +16,28 @@ export function surfacesForDay(
       byId.set(item.id, {
         id: item.id,
         tl: item.tl,
-        say: 'say' in item && typeof item.say === 'string' ? item.say : undefined,
+        ar: 'ar' in item && typeof item.ar === 'string' ? item.ar : undefined,
       });
     }
   }
   // Prior days supply recycle tls; today's core fills gaps.
   for (const c of coreItemsThroughDay(day)) {
     if (!byId.has(c.id) && c.tl) {
-      byId.set(c.id, { id: c.id, tl: c.tl });
+      byId.set(c.id, {
+        id: c.id,
+        tl: c.tl,
+        ar: 'ar' in c && typeof c.ar === 'string' ? c.ar : undefined,
+      });
     }
   }
   const core = getCoreItemsDay(day);
   for (const c of core.core_items) {
     if (!byId.has(c.id) && c.tl) {
-      byId.set(c.id, { id: c.id, tl: c.tl });
+      byId.set(c.id, {
+        id: c.id,
+        tl: c.tl,
+        ar: 'ar' in c && typeof c.ar === 'string' ? c.ar : undefined,
+      });
     }
   }
   return [...byId.values()];

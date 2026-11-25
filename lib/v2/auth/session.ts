@@ -3,11 +3,17 @@ import { NextResponse } from 'next/server';
 import { auth } from './index';
 import { isAdminEmail } from './env';
 import {
+  normalizeCoachDialect,
   normalizeGender,
+  normalizeMotivations,
   normalizeNativeLang,
+  normalizePractice,
+  normalizeProficiency,
+  normalizeReminders,
   normalizeRole,
   normalizeStreak,
   normalizeTargetLang,
+  normalizeUsername,
   type V2User,
   type V2UserGender,
   type V2UserRole,
@@ -23,8 +29,14 @@ function toV2User(raw: Record<string, unknown>): V2User {
     image: (raw.image ?? raw.picture ?? null) as string | null,
     role: normalizeRole(raw.role),
     gender: normalizeGender(raw.gender),
+    username: normalizeUsername(raw.username),
     native_lang: normalizeNativeLang(raw.native_lang),
     target_lang: normalizeTargetLang(raw.target_lang),
+    coach_dialect: normalizeCoachDialect(raw.coach_dialect),
+    motivations: normalizeMotivations(raw.motivations),
+    proficiency: normalizeProficiency(raw.proficiency),
+    reminders: normalizeReminders(raw.reminders),
+    practice: normalizePractice(raw.practice),
     onboarded_at: (raw.onboarded_at as Date | string | null) ?? null,
     langify_user_id: (raw.langify_user_id as string | null) ?? null,
     timezone:
@@ -74,6 +86,12 @@ export async function getCurrentV2User(): Promise<V2User | null> {
       user.emailVerified = Boolean(doc.email_verified ?? user.emailVerified);
       user.native_lang = normalizeNativeLang(doc.native_lang);
       user.target_lang = normalizeTargetLang(doc.target_lang);
+      user.username = normalizeUsername(doc.username);
+      user.coach_dialect = normalizeCoachDialect(doc.coach_dialect);
+      user.motivations = normalizeMotivations(doc.motivations);
+      user.proficiency = normalizeProficiency(doc.proficiency);
+      user.reminders = normalizeReminders(doc.reminders);
+      user.practice = normalizePractice(doc.practice);
       user.timezone =
         typeof doc.timezone === 'string' && doc.timezone.trim()
           ? String(doc.timezone)

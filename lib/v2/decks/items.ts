@@ -84,7 +84,7 @@ export type ResolveCustomItemInput = {
   eg_note?: string;
   example_tl: string;
   example_ar: string;
-  say: string;
+  say?: string;
   concept_en?: string;
   deck_id?: string;
   /** Inject known map (tests). */

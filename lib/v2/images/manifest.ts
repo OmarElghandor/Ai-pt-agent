@@ -26,9 +26,27 @@ function wordExpectedType(item: Item): ImageSpec['type'] {
   return 'object';
 }
 
+/** Real-world phrases stay has_card:false for SRS, but still get vocab heroes. */
+export function isRealWorldImageItem(item: {
+  id: string;
+  real_world?: boolean;
+}): boolean {
+  return item.real_world === true || item.id.startsWith('phrase.rw.');
+}
+
+function isManifestImageItem(
+  item: Item,
+  authored: unknown,
+): boolean {
+  if (authored) return true;
+  if (isRealWorldImageItem(item)) return true;
+  return item.has_card !== false;
+}
+
 /**
  * Build the lesson image manifest from pack + story (00 §10).
  * Phrases with cards → 4:3 scene; words with cards → 1:1; story cover → 16:9.
+ * Real-world phrases (phrase.rw.*) are included even when has_card is false.
  */
 export function buildImageManifest(opts: {
   pack: LessonPack;
@@ -49,7 +67,8 @@ export function buildImageManifest(opts: {
   for (const item of opts.pack.items ?? []) {
     const authored = getAuthoredItemImage(opts.day, item.id);
     // Always queue items with an authored image prompt — never skip silently.
-    if (item.has_card === false && !authored) continue;
+    // RW phrases are imageable without a flashcard.
+    if (!isManifestImageItem(item, authored)) continue;
     if (item.type === 'word' || item.type === 'verb') {
       push({
         key: item.id,

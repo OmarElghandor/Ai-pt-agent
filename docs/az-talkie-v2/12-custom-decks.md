@@ -29,7 +29,7 @@ In the flashcards module, a learner types a topic in a text box ("كلمات ا�
 - `ar` (simple MSA, same rule as `00` §2) and an optional one-line `eg_note` in Egyptian (e.g. "في البرازيل بيقولوا geladeira، هنا frigorífico").
 - One short `example_tl` (at most 8 words, pt-PT) with its `example_ar`.
 - `concept_en`: a short English slug for the concept (`rain`, `fridge`, `to_cook`). It's used only for the global image key (§2.10), never shown.
-- Code adds `say` (the fixed letter table from `00` §2). Audio is lazy through `/api/tts`, like story lines.
+- Do not fill `say` (`00` §2). Audio is lazy through `/api/tts`, like story lines.
 - `image = { key, url }`, filled when the image is ready (§2.10). A missing `url` shows the calm ImageSlot placeholder.
 - **Verbs:** conjugated forms are never written by the model (`00` §2). A custom verb card shows the infinitive only. The conjugation poster on the back appears only if the verb exists in the verified conjugation table.
 

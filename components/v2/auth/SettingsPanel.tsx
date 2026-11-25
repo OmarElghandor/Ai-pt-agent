@@ -11,9 +11,22 @@ import {
   PROFILE_LANG_OPTIONS,
   type ProfileLangCode,
 } from '@/lib/v2/auth/languages';
+import {
+  COACH_DIALECTS,
+  DAILY_MINUTES_OPTIONS,
+  type CoachDialect,
+  type DailyMinutesOption,
+} from '@/lib/v2/auth/onboardingProfile';
 
 type Props = {
   user: V2User;
+};
+
+const DIALECT_LABELS: Record<CoachDialect, string> = {
+  eg: 'اللهجة المصرية',
+  msa: 'العربية الفصحى المبسطة',
+  levantine: 'اللهجة الشامية',
+  gulf: 'اللهجة الخليجية',
 };
 
 export function SettingsPanel({ user }: Props) {
@@ -26,6 +39,16 @@ export function SettingsPanel({ user }: Props) {
   );
   const [targetLang, setTargetLang] = useState<ProfileLangCode>(
     user.target_lang,
+  );
+  const [coachDialect, setCoachDialect] = useState<CoachDialect>(
+    user.coach_dialect ?? 'eg',
+  );
+  const [dailyMinutes, setDailyMinutes] = useState<DailyMinutesOption>(
+    user.practice?.daily_minutes === 5 ||
+      user.practice?.daily_minutes === 15 ||
+      user.practice?.daily_minutes === 20
+      ? user.practice.daily_minutes
+      : 15,
   );
   const [image, setImage] = useState<string | null>(user.image);
   const [busy, setBusy] = useState(false);
@@ -47,6 +70,8 @@ export function SettingsPanel({ user }: Props) {
           gender: gender === '' ? null : gender,
           native_lang: nativeLang,
           target_lang: targetLang,
+          coach_dialect: coachDialect,
+          practice: { daily_minutes: dailyMinutes },
         }),
       });
       if (!res.ok) throw new Error('failed');
@@ -211,6 +236,44 @@ export function SettingsPanel({ user }: Props) {
           ))}
         </div>
       </fieldset>
+
+      <label className="font-[family-name:var(--font-v2-arabic)] text-v2-ink">
+        لهجة الشرح
+        <select
+          className="mt-2 w-full rounded-xl border border-v2-mist bg-white px-3 py-3 outline-none focus:border-v2-sage"
+          value={coachDialect}
+          onChange={(e) => setCoachDialect(e.target.value as CoachDialect)}
+        >
+          {COACH_DIALECTS.map((code) => (
+            <option key={code} value={code}>
+              {DIALECT_LABELS[code]}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label className="font-[family-name:var(--font-v2-arabic)] text-v2-ink">
+        الدقائق اليومية
+        <select
+          className="mt-2 w-full rounded-xl border border-v2-mist bg-white px-3 py-3 outline-none focus:border-v2-sage"
+          value={dailyMinutes}
+          onChange={(e) =>
+            setDailyMinutes(Number(e.target.value) as DailyMinutesOption)
+          }
+        >
+          {DAILY_MINUTES_OPTIONS.map((n) => (
+            <option key={n} value={n}>
+              {n} دقيقة
+            </option>
+          ))}
+        </select>
+      </label>
+
+      {user.username ? (
+        <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
+          اسم المستخدم: @{user.username}
+        </p>
+      ) : null}
 
       <PrimaryButton disabled={busy} onClick={() => void save()}>
         حفظ

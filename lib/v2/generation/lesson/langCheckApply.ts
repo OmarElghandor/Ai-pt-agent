@@ -1,6 +1,5 @@
 import type { Item } from '@/lib/v2/content/items';
 import type { Page } from '@/lib/v2/content/page';
-import { transliteratePtToSay } from '@/lib/v2/content/translit';
 import { checkDialoguePage } from './dialogueChecks';
 import type { LangCheckPatch } from './jobs/runLangCheck';
 
@@ -76,8 +75,7 @@ function setItemTl(
 ): Item[] {
   return items.map((it) => {
     if (it.id !== id) return it;
-    const say = transliteratePtToSay(next.tl);
-    const base = { ...it, tl: next.tl, say } as Item;
+    const base = { ...it, tl: next.tl } as Item;
     if (next.ar != null && 'ar' in base) {
       return { ...base, ar: next.ar } as Item;
     }
@@ -125,10 +123,6 @@ function itemNodeOk(items: Item[], id: string): boolean {
   const it = items.find((i) => i.id === id);
   if (!it || !('tl' in it) || typeof it.tl !== 'string') return false;
   if (!it.tl.trim()) return false;
-  if ('say' in it && typeof (it as { say?: string }).say === 'string') {
-    const say = (it as { say: string }).say;
-    if (!say.trim()) return false;
-  }
   return true;
 }
 

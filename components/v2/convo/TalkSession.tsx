@@ -1097,14 +1097,16 @@ export function TalkSession({ packId }: Props) {
                     onClick={() => submitChoice(opt.tl)}
                     className="rounded-2xl border border-[color:var(--ft-border,#E5DED5)] bg-white px-3 py-3 text-center shadow-sm active:scale-[0.98] disabled:opacity-50"
                   >
+                    {s?.ar ? (
+                      <span
+                        className="block font-[family-name:var(--font-ft-ar,var(--font-v2-arabic))] text-[11px] text-[color:var(--ft-text-secondary,#666963)]"
+                        dir="rtl"
+                      >
+                        {s.ar}
+                      </span>
+                    ) : null}
                     <span
-                      className="block font-[family-name:var(--font-ft-ar,var(--font-v2-arabic))] text-[11px] text-[color:var(--ft-text-secondary,#666963)]"
-                      dir="rtl"
-                    >
-                      {s?.say ? s.say : 'اختيار'}
-                    </span>
-                    <span
-                      className="mt-0.5 block font-[family-name:var(--font-ft-pt,var(--font-v2-target))] text-[15px] font-semibold text-[color:var(--ft-ink,#202A25)]"
+                      className={`block font-[family-name:var(--font-ft-pt,var(--font-v2-target))] text-[15px] font-semibold text-[color:var(--ft-ink,#202A25)] ${s?.ar ? 'mt-0.5' : ''}`}
                       dir="ltr"
                     >
                       {opt.tl}

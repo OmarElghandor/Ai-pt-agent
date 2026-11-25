@@ -1,6 +1,16 @@
 import type { Question } from '@/lib/v2/content/lesson';
 import { getProblem } from '@/lib/v2/progress/problems';
-import { getLessonForPractice } from '@/lib/v2/content/getPublishedLesson';
+import {
+  getLatestLessonPack,
+  getPublishedLesson,
+} from '@/lib/v2/content/getPublishedLesson';
+
+async function getLessonForPractice(day: number, targetLang = 'pt-PT') {
+  return (
+    (await getPublishedLesson(day)) ??
+    (await getLatestLessonPack(day, targetLang))
+  );
+}
 
 /**
  * Build 6–8 questions testing a problem's patterns from day banks (code only).

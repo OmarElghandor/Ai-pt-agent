@@ -1,6 +1,7 @@
 'use client';
 
 import { createAuthClient } from 'better-auth/react';
+import { usernameClient } from 'better-auth/client/plugins';
 
 /**
  * Relative `/api/auth` base so the client always talks to the same origin the
@@ -9,6 +10,7 @@ import { createAuthClient } from 'better-auth/react';
  */
 export const authClient = createAuthClient({
   basePath: '/api/auth',
+  plugins: [usernameClient()],
 });
 
-export const { signIn, signOut, useSession } = authClient;
+export const { signIn, signOut, signUp, useSession } = authClient;

@@ -12,6 +12,10 @@ import {
 } from '@/lib/v2/content/getPublishedLesson';
 import { findImageStepVisible } from '@/lib/v2/findImage/buildRounds';
 import { getStoryById } from '@/lib/v2/generation/lesson/storySave';
+import {
+  rehydrateLessonImages,
+  rehydrateStoryImages,
+} from '@/lib/v2/images/rehydrate';
 import { buildPlayerLesson } from '@/lib/v2/render/forms';
 
 export default async function LessonPlayerPage({
@@ -40,7 +44,13 @@ export default async function LessonPlayerPage({
     );
   }
 
-  const view = buildPlayerLesson(published.pack);
+  const pack = await rehydrateLessonImages({
+    day: published.day,
+    targetLang: published.target_lang,
+    version: published.version,
+    pack: published.pack,
+  });
+  const view = buildPlayerLesson(pack);
   const pageIndex = view.pages.findIndex((entry) => entry.id === pageId);
   if (pageIndex < 0) notFound();
   const page = view.pages[pageIndex]!;
@@ -75,10 +85,13 @@ export default async function LessonPlayerPage({
   const storyPage = storyIntro ?? view.pages.find((p) => p.preset === 'story');
   const storyId =
     page.story_id ??
-    published.pack.lesson.story_id ??
+    pack.lesson.story_id ??
     storyPage?.story_id ??
     null;
-  const storyDoc = storyId ? await getStoryById(storyId) : null;
+  const rawStoryDoc = storyId ? await getStoryById(storyId) : null;
+  const storyDoc = rawStoryDoc
+    ? await rehydrateStoryImages(rawStoryDoc)
+    : null;
   const isStory =
     page.preset === 'story' &&
     (Boolean(storyId) || page.blocks.some((b) => b.type === 'dialogue'));
@@ -98,8 +111,8 @@ export default async function LessonPlayerPage({
     nextHref = withDev(`/day/${day}/questions`);
   }
 
-  const situationEg = published.pack.lesson.situation?.eg;
-  const titleTl = published.pack.lesson.situation?.tl;
+  const situationEg = pack.lesson.situation?.eg;
+  const titleTl = pack.lesson.situation?.tl;
 
   if (isStory) {
     return (

@@ -36,10 +36,6 @@ export function SpeakQuestion({
     ? String(question.tests[0] ?? '')
     : '';
   const tested = testedId ? items.get(testedId) : undefined;
-  const say =
-    tested && 'say' in tested && typeof tested.say === 'string'
-      ? tested.say
-      : null;
   const prompt = promptRecord(question.prompt);
   const promptRt = asRt(question.prompt);
   const audioRef =
@@ -195,11 +191,6 @@ export function SpeakQuestion({
               <p className="font-[family-name:var(--font-v2-display)] text-2xl text-v2-primary">
                 {model || itemTargetText(tested)}
               </p>
-              {say ? (
-                <p className="mt-2 font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted" dir="rtl">
-                  النطق المكتوب: {say}
-                </p>
-              ) : null}
               {model ? (
                 <div className="mt-3 flex justify-center">
                   <AudioButton text={model} lang="pt" label="اسمعها الأول" />

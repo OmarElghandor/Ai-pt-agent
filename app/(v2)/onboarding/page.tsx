@@ -7,5 +7,13 @@ export default async function OnboardingPage() {
   if (!user) redirect('/sign-in?next=/onboarding');
   if (user.onboarded_at) redirect('/path');
 
-  return <OnboardingForm initialName={user.name} />;
+  return (
+    <OnboardingForm
+      initialName={user.name}
+      initialDialect={user.coach_dialect}
+      initialMotivations={user.motivations}
+      initialProficiency={user.proficiency}
+      initialDailyMinutes={user.practice?.daily_minutes ?? null}
+    />
+  );
 }

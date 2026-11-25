@@ -6,7 +6,7 @@ export function buildItemsSystemPrompt(): string {
 
 JOB: ITEMS
 Write the day's item bank only: words, phrases, sentences, patterns as needed. Do NOT write pages or questions.
-Do NOT write say — code fills pronunciation.
+Do NOT write say — Arabic-letter pronunciation is retired.
 Do NOT invent conjugated verb forms. Do NOT create verb.* lemma cards — code injects those.
 
 REQUIRED OUTPUT: { "items": [...] }. Phrases require context_eg + cloze. Words require gender (m|f|n). Never write say or form.

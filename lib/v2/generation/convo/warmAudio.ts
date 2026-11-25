@@ -27,11 +27,8 @@ export function collectConvoSegments(pack: ConvoPackData): Segment[] {
   };
 
   add('pt', pack.opening.tl);
-  add('ar', pack.opening.say);
   add('pt', pack.closing.tl);
-  add('ar', pack.closing.say);
   add('pt', pack.bridge.tl);
-  add('ar', pack.bridge.say);
 
   for (const q of pack.recap.questions) {
     add('pt', q.tl);

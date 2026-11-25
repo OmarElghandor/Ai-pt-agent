@@ -261,7 +261,7 @@ Every chat starts with: "Read `AGENTS.md`, then `docs/az-talkie-v2/00-decisions.
 **Read:** 00 §4 "بيقولوها كده", 06 S3, and the reference `17-real-world-phrases`.
 
 **Tasks**
-1. **`real_world` job:** one call per lesson, after items and in parallel with the pages. It is non-fatal, and a day with an authored `real_world` in core-items skips it. Code adds `say`, the audio keys and the categories.
+1. **`real_world` job:** one call per lesson, after items and in parallel with the pages. It is non-fatal, and a day with an authored `real_world` in core-items skips it. Code adds the audio keys and the categories (no `say`; retired in `00` §2).
 2. **Checks as in 00:** a failing phrase is dropped, and the page is hidden when fewer than 3 phrases remain.
 3. **Outline:** the page is inserted right after the dictionary page, or after the phrases page when there is no dictionary (preset `real_world`, mode static).
 4. **Player:** the page as in 06, with the cover toggle, the chips and "+ للكروت" (it creates a card for that phrase for this user only).

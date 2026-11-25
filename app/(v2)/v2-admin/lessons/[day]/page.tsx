@@ -4,7 +4,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { ReportErrorButton } from '@/components/v2';
-import { LessonImagesAdmin } from '@/components/v2/admin/LessonImagesAdmin';
+import {
+  LessonImagesAdmin,
+  type LessonImagesAdminHandle,
+} from '@/components/v2/admin/LessonImagesAdmin';
 import { isRolePlayDay } from '@/lib/v2/convo/topics/rolePlay';
 
 type JobRow = {
@@ -201,10 +204,11 @@ export default function V2AdminLessonPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>('input');
   const [editItemId, setEditItemId] = useState('');
-  const [editField, setEditField] = useState<'tl' | 'ar' | 'say'>('ar');
+  const [editField, setEditField] = useState<'tl' | 'ar'>('ar');
   const [editValue, setEditValue] = useState('');
   const [staleIds, setStaleIds] = useState<string[]>([]);
   const failedExtraPollDone = useRef(false);
+  const imagesAdminRef = useRef<LessonImagesAdminHandle | null>(null);
 
   const load = useCallback(async () => {
     const res = await fetch(`/api/v2/admin/lessons/${day}/generation`);
@@ -420,21 +424,16 @@ export default function V2AdminLessonPage() {
   }
 
   async function generateMissingImages(force = false) {
-    setBusy(true);
     setMessage(null);
     setError(null);
+    const handle = imagesAdminRef.current;
+    if (!handle) {
+      setError('Images panel not ready');
+      return;
+    }
+    setBusy(true);
     try {
-      const res = await fetch('/api/v2/admin/images/generate-missing', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ day, force }),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error ?? res.statusText);
-      setMessage(
-        json.message ??
-          `Images: enqueued ${json.enqueued ?? json.queued ?? 0}`,
-      );
+      await handle.generateMissing(force);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -753,7 +752,15 @@ export default function V2AdminLessonPage() {
         </section>
       ) : null}
 
-      {Number.isFinite(day) && day > 0 ? <LessonImagesAdmin day={day} /> : null}
+      {Number.isFinite(day) && day > 0 ? (
+        <LessonImagesAdmin
+          ref={imagesAdminRef}
+          day={day}
+          onBusyChange={setBusy}
+          onMessage={setMessage}
+          onError={setError}
+        />
+      ) : null}
 
       {/* Job graph */}
       <section style={{ marginBottom: 20 }}>
@@ -1117,11 +1124,10 @@ export default function V2AdminLessonPage() {
           />
           <select
             value={editField}
-            onChange={(e) => setEditField(e.target.value as 'tl' | 'ar' | 'say')}
+            onChange={(e) => setEditField(e.target.value as 'tl' | 'ar')}
           >
             <option value="tl">tl</option>
             <option value="ar">ar</option>
-            <option value="say">say</option>
           </select>
           <input
             value={editValue}

@@ -333,13 +333,17 @@ export async function processImageJob(job: JobView): Promise<void> {
     }
 
     if (result.skipped) {
+      const reason = result.reason ?? result.doc.reason ?? 'lock skip';
+      console.info(
+        `[v2-gen:image] skip key=${key} status=${result.doc.status} reason=${reason}`,
+      );
       await finishJobSkipped({
         jobId: job.id,
         reason: result.reason ?? 'lock skip',
         output: {
           key,
           status: result.doc.status,
-          reason: result.reason ?? result.doc.reason,
+          reason,
           skipped: true,
         },
       });
@@ -348,19 +352,28 @@ export async function processImageJob(job: JobView): Promise<void> {
 
     const status = result.doc.status;
     if (status === 'blocked' || status === 'failed') {
+      const reason = result.reason ?? result.doc.reason ?? status;
+      console.info(
+        `[v2-gen:image] skip key=${key} status=${status} reason=${reason}`,
+      );
       await finishJobSkipped({
         jobId: job.id,
-        reason: result.reason ?? status,
+        reason,
         output: {
           key,
           status,
-          reason: result.reason ?? result.doc.reason,
+          reason,
           skipped: false,
         },
       });
       return;
     }
 
+    console.info(
+      `[v2-gen:image] done key=${key} status=${status} url=${result.doc.url ? 'yes' : 'no'}${
+        result.reason ? ` reason=${result.reason}` : ''
+      }`,
+    );
     await finishJobSuccess({
       jobId: job.id,
       output: {
@@ -374,6 +387,7 @@ export async function processImageJob(job: JobView): Promise<void> {
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
+    console.error(`[v2-gen:image] failed key=${(job.input as ImageJobInput | null)?.key ?? '?'} err=${message}`);
     await finishJobFailed(job.id, message);
   }
 }

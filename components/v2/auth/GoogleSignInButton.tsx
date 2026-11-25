@@ -5,14 +5,18 @@ import { authClient } from '@/lib/v2/auth/client';
 type Props = {
   /** Path or absolute URL to return to after OAuth. */
   callbackURL: string;
+  label?: string;
 };
 
 /**
  * Google-branded sign-in button (logo + colours per Google branding guidelines).
  * Full-page redirect via Better Auth client — never a popup (PWAs).
- * Starts from the browser so Set-Cookie for `better-auth.state` reaches the jar.
+ * Kept for reuse; main auth pages use SocialAuthButtons.
  */
-export function GoogleSignInButton({ callbackURL }: Props) {
+export function GoogleSignInButton({
+  callbackURL,
+  label = 'ادخل بحساب Google',
+}: Props) {
   return (
     <button
       type="button"
@@ -28,7 +32,7 @@ export function GoogleSignInButton({ callbackURL }: Props) {
       className="flex w-full items-center justify-center gap-3 rounded-xl border border-[#dadce0] bg-white px-4 py-3 text-[15px] font-medium text-[#3c4043] shadow-sm transition hover:bg-[#f8f9fa] active:bg-[#f1f3f4]"
     >
       <GoogleLogo />
-      <span>ادخل بحساب Google</span>
+      <span>{label}</span>
     </button>
   );
 }

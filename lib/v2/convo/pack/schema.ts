@@ -210,7 +210,9 @@ export type ConvoItemSurface = {
   id: string;
   /** Target-language form used in containment checks (e.g. "à direita"). */
   tl: string;
-  /** Arabic-letter pronunciation for the card. */
+  /** MSA meaning for choice chips (optional). */
+  ar?: string;
+  /** @deprecated Retired — not shown in UI; may remain on old packs. */
   say?: string;
   /** Card visual: arrow or place placeholder. */
   glyph?: ConvoItemGlyph;

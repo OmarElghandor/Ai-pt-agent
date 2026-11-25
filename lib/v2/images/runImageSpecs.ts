@@ -305,7 +305,8 @@ function enforceSpec(opts: {
     opts.allowed,
     fallback.characters ?? opts.cast,
   );
-  if (type === 'object' && !opts.raw.characters?.length) characters = [];
+  // Objects/words never get people — style-anchor path only (§10).
+  if (type === 'object') characters = [];
   else if (type === 'scene' && characters.length < 2) {
     characters = normalizeCharacters(opts.cast, opts.allowed, ['yassin', 'ines']);
   }
@@ -786,6 +787,8 @@ export async function runImageSpecs(opts: {
   });
   specs = specs.map((s) => {
     if (authoredByKey.has(s.key)) return s;
+    // Word/object images use the style anchor — never inject cast pairs.
+    if (s.type === 'object') return { ...s, characters: [] };
     const chars = rotated.byKey.get(s.key);
     if (!chars?.length) return s;
     return { ...s, characters: chars };

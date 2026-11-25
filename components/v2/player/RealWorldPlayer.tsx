@@ -197,7 +197,6 @@ export function RealWorldPlayer({
         <div className="flex flex-col gap-2">
           {filtered.map((row) => {
             const tl = phraseTl(row.item, false);
-            const say = row.item.say ?? '';
             const meaningHidden = coverOn && peekId !== row.id;
             return (
               <article
@@ -230,11 +229,6 @@ export function RealWorldPlayer({
                   <p className="font-[family-name:var(--font-v2-target)] text-lg font-semibold text-v2-primary">
                     {tl}
                   </p>
-                  {say ? (
-                    <p className="mt-0.5 font-[family-name:var(--font-v2-arabic)] text-xs text-v2-muted">
-                      {say}
-                    </p>
-                  ) : null}
                 </div>
                 <button
                   type="button"

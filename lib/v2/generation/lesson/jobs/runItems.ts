@@ -26,7 +26,6 @@ import {
   type JobOutcomeExtras,
   type TierIssue,
 } from '../tiers';
-import { applySayToItems } from '../../say';
 import { splitPlainToRt } from '../coerceRt';
 import {
   ensurePatternSkeleton,
@@ -651,7 +650,7 @@ export async function runItemsJob(opts: {
 
   const user = `STAGE: ITEMS ONLY
 Return { "items": [...] } via submit_items.
-Do not write say.
+Do not write say (retired).
 no_new_items: ${opts.brief.no_new_items ? 'yes — return [] or only items you must not invent; code merges recycle' : 'no'}
 At most 2 extras with "extra": true (0 when no_new_items).
 
@@ -719,9 +718,7 @@ ${knownLines}
   // Story / is_test days: skip LLM — bank is recycle + nothing new.
   if (opts.brief.no_new_items) {
     const items = coerceBank(
-      applySayToItems(
-        mergeRecycleAndVerbs([], opts.brief, knownFull),
-      ) as Item[],
+      mergeRecycleAndVerbs([], opts.brief, knownFull) as Item[],
     );
     const tiered = validateItemsRules(items, opts.known, presets, opts.brief);
     return finish(
@@ -808,14 +805,12 @@ ${knownLines}
       return rest;
     });
     let items = coerceBank(
-      applySayToItems(
-        mergeRecycleAndVerbs(
-          normalizeOutlineItems(
-            cleaned as { type: string; id: string }[],
-          ) as Item[],
-          opts.brief,
-          knownFull,
-        ),
+      mergeRecycleAndVerbs(
+        normalizeOutlineItems(
+          cleaned as { type: string; id: string }[],
+        ) as Item[],
+        opts.brief,
+        knownFull,
       ) as Item[],
     );
     const coreOpts = { coreItems: opts.brief.core_items };
@@ -919,8 +914,7 @@ ${knownLines}
       maxExtras: 2,
     });
     items = heard.items;
-    items = coerceBank(applySayToItems(items) as Item[]);
-    // Leave context_eg as generated — do not replace TL with say inside it.
+    items = coerceBank(items);
     normalizeWordMeanings(items);
     items = applyHasCardFlags(items, new Set(opts.brief.recycle_ids));
     return items;

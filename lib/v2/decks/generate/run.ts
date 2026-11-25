@@ -17,7 +17,7 @@ export type RunGenerateResult =
       words: Array<{
         key: string;
         tl: string;
-        say: string;
+        say?: string;
         ar: string;
         pos: string;
         gender?: string;

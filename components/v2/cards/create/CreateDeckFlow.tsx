@@ -29,7 +29,7 @@ type FoundDeck = {
 type PreviewWord = {
   key: string;
   tl: string;
-  say: string;
+  say?: string;
   ar: string;
   pos: string;
 };

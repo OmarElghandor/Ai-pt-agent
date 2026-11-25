@@ -9,7 +9,7 @@ PORTUGUESE: pt-PT only (comboio, autocarro, telemóvel, estar a + infinitive). N
 ARABIC: Meanings (ar / ar_f) = simple MSA. Explanations (eg, tips, feedback, context_eg) = Egyptian colloquial (عايز، النهارده، دلوقتي، كده). Never mix registers.
 
 FIELDS: tl / tl_f (never pt), ar / ar_f, eg for Egyptian. lesson.target_lang = "pt-PT".
-Never write say — code fills pronunciation (Arabic letters: پ ڤ چ غ required).
+Never write say — Arabic-letter pronunciation is retired; learners hear TTS of tl.
 
 REQUIRED OUTPUT: only the job tool's top-level keys — no prose outside the tool call.
 

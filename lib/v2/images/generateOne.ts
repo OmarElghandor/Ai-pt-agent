@@ -200,10 +200,11 @@ async function getReadyCharacterSheet(
   characterId: string,
 ): Promise<LeanImage | null> {
   await connectMongo();
+  // Flagged sheets still have a usable URL (same idea as getUsableStyleAnchor).
   const doc = await V2ImageModel()
     .findOne({
       key: characterImageKey(characterId),
-      status: 'ready',
+      status: { $in: ['ready', 'flagged'] },
       url: { $exists: true, $ne: '' },
     })
     .lean();
@@ -474,6 +475,8 @@ export async function generateCharacterSheet(
           },
         },
       );
+      // Flagged sheets are usable refs — unlock content waiting on this id.
+      await requeueBlockedWaitingOnSheet(key);
       return { doc: { ...doc, url: uploaded.url }, skipped: false };
     }
 

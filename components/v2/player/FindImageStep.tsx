@@ -259,14 +259,6 @@ export function FindImageStep({
           <div className="relative z-10 mt-3 flex flex-col items-center">
             <TargetWord tl={round.tl} gender={round.gender} size="xl" />
             <div className="mt-1.5 flex items-center gap-2">
-              {round.say ? (
-                <span className="font-[family-name:var(--font-v2-arabic)] text-lg font-semibold text-v2-ink">
-                  {round.say}
-                </span>
-              ) : null}
-              {round.say ? (
-                <span className="h-1.5 w-1.5 rounded-full bg-v2-primary/30" />
-              ) : null}
               <span className="font-[family-name:var(--font-v2-arabic)] text-[13px] font-medium text-v2-action">
                 {round.tag}
               </span>

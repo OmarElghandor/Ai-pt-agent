@@ -62,14 +62,6 @@ export function GroupCoachCard({
                   <AudioButton text={s.tl} size="chip" label={`اسمع ${s.tl}`} />
                 ) : null}
               </div>
-              {s?.say ? (
-                <p
-                  className="mt-1 font-[family-name:var(--font-ft-ar,var(--font-v2-arabic))] text-[12px] text-[color:var(--ft-text-secondary,#666963)]"
-                  dir="rtl"
-                >
-                  {s.say}
-                </p>
-              ) : null}
               {tip ? (
                 <button
                   type="button"

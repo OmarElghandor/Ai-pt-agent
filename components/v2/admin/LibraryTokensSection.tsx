@@ -256,7 +256,6 @@ export default function LibraryTokensSection({
           <p className="text-xs text-v2-ink-muted">
             {selTok.pos}
             {selTok.tense ? ` · ${selTok.tense}/${selTok.person}` : ''}
-            {selTok.say ? ` · ${selTok.say}` : ''}
             {selTok.flagged ? ' · معلّم' : ''}
             {selTok.chunk_id ? ` · chunk ${selTok.chunk_id}` : ''}
           </p>

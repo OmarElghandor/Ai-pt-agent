@@ -772,7 +772,7 @@ describe('wrong strike + lang_check schema', () => {
       (i) => i.id === 'pattern.queria_um_uma.ex.1',
     ) as { tl: string; say?: string };
     assert.match(derived.tl, /Queria/);
-    assert.ok(derived.say && derived.say.length > 0);
+    assert.equal(derived.say, undefined);
   });
 });
 

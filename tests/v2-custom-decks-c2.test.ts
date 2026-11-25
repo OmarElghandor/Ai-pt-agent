@@ -128,7 +128,7 @@ describe('C2 · checks drop bad words', () => {
       },
     ]);
     assert.equal(kept.length, 1);
-    assert.ok(kept[0]!.say.length > 0);
+    assert.equal(kept[0]!.say, undefined);
     assert.equal(kept[0]!.conjugations, undefined);
   });
 });

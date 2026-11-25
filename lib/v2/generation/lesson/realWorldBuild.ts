@@ -1,7 +1,6 @@
 import type { Item } from '@/lib/v2/content/items';
 import type { Page } from '@/lib/v2/content/page';
 import { modeForPreset } from '@/lib/v2/content/page';
-import { transliteratePtToSay } from '@/lib/v2/content/translit/ptPt';
 import type { Rt } from '@/lib/v2/content/rt';
 import {
   contentTokensFromTl,
@@ -35,7 +34,6 @@ export type RealWorldPhraseBuilt = {
   eg_note: string;
   tag: string;
   category: string;
-  say: string;
   cloze: string;
   audio?: string;
   /** Today's item ids this phrase builds on (≥1). */
@@ -370,7 +368,6 @@ export function processRealWorldPhrases(opts: {
         eg_note: eg_note || tag || 'عبارة من الشارع',
         tag: tag || 'أخرى',
         category,
-        say: transliteratePtToSay(tl),
         cloze: pickCloze(tl),
         audio: `audio:${id}`,
         uses,
@@ -466,7 +463,6 @@ export function processRealWorldPhrases(opts: {
       eg_note,
       tag,
       category,
-      say: transliteratePtToSay(tl),
       cloze: pickCloze(tl),
       audio: `audio:${id}`,
       uses,
@@ -542,7 +538,6 @@ export function realWorldPhrasesToItems(
     tl: p.tl,
     ...(p.tl_f ? { tl_f: p.tl_f } : {}),
     ar: p.ar,
-    say: p.say,
     context_eg: p.eg_note,
     cloze: p.cloze,
     tag: p.tag,

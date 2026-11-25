@@ -32,7 +32,11 @@ export {
   listCharacterImages,
   claimImageLock,
 } from './generateOne';
-export { buildImageManifest, type ManifestEntry } from './manifest';
+export {
+  buildImageManifest,
+  isRealWorldImageItem,
+  type ManifestEntry,
+} from './manifest';
 export {
   runImageSpecs,
   specWithoutKey,

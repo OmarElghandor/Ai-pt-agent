@@ -14,7 +14,8 @@ export type CustomItemFields = {
   eg_note?: string;
   example_tl: string;
   example_ar: string;
-  say: string;
+  /** @deprecated Retired — not filled for new decks. */
+  say?: string;
   /** English slug for image key; never shown to learners. */
   concept_en?: string;
   image?: { key: string; url: string };

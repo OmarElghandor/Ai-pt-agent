@@ -192,7 +192,7 @@ Image generation uses the same ratios: 1024×1024 for 1:1, 1536×1152 for 4:3, 1
     - a floating context card at the bottom of the hero: for phrases, "امتى تقولها" + `context_eg`; for words, the category and the article rule ("اسم مذكر · بتقول o قبلها"), with a coral play button.
   - **Bottom sheet** (white, rounded top, overlapping the hero by 16px, with a grab handle):
     - the target text in big serif, article colored, with a slow-audio button;
-    - the code `say` line plus the gender word;
+    - the gender word (no Arabic transliteration / `say` line);
     - the "المعنى" card with إخفاء/إظهار, and a veil "المس عشان تشوف المعنى" when hidden;
     - the example card. It prefers the **story line** that uses the item ("من القصة" + the speaker), then a bank phrase that contains it. Its translation hides in memory mode;
     - dots;
@@ -222,7 +222,7 @@ Image generation uses the same ratios: 1024×1024 for 1:1, 1536×1152 for 4:3, 1
   - **Controller** (bottom, cream, rounded top):
     - **Speaker row:** "ريتا بتتكلم" / "إنت بتقول" and "إعادة الجملة".
     - **Focus sentence:** big serif. The word being spoken is highlighted in coral (karaoke from TTS word timings, or an even split when there are none), and the item words are underlined.
-    - **Under the sentence:** the code `say` line, the meaning, and the step's tip as a NoteCard ("coach").
+    - **Under the sentence:** the meaning and the step's tip as a NoteCard ("coach"). No Arabic transliteration / `say` line.
     - **Progress:** "جملة n من N" with a teal→coral bar.
     - **Controls:** speed (0.75 / 1 / 1.25), previous, a big coral play/pause, next, repeat-one, and the transcript sheet.
   - **Interaction (changed 2026-10-31; test mode removed 2026-11-01):** the story **never stops to ask anything**.

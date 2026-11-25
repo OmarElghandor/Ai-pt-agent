@@ -64,7 +64,7 @@ Per-job `{provider, model}` from env (`V2_MODEL_ITEMS`, `V2_MODEL_PAGE`, …) as
 ### Code-owned structure (pipeline fixes)
 
 - **Mode** is derived by `modeForPreset(preset)` — the model never chooses mode (phrases/dictionary/scene/free → static; compare/pattern/story → guided; conjugation → explore).
-- **`say`** is filled by `transliteratePtToSay` after the items job; the model must not write `say`.
+- **`say` is retired** (`00` §2): the model must not write `say`; code does not fill it. Pronunciation is TTS audio of `tl`.
 - **Steps** are a discriminated union: reveal requires `tip`; ask requires `ask`.
 - **Targets** are block addresses only; `bN/item:i` indexes formula `examples[]` and panel/dialogue `lines[]`.
 - **practice.questions** are filled at assemble from questions with matching `page_index` (page jobs leave them empty).

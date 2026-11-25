@@ -17,16 +17,16 @@ If any other doc disagrees with this file, this file wins. Each line is a decisi
 
 Full detail: `10-auth.md`. Tasks: `10-auth-tasks.md`.
 
-- **Sign-in:** Google only (openid email profile). No passwords. Better Auth + MongoDB adapter in this repo; Auth.js / NextAuth not used for new work. Next.js 16 uses `proxy` (not `middleware`) for the early redirect.
-- **Collections:** `v2_users`, `v2_auth_sessions`, `v2_auth_accounts`, `v2_auth_verifications`. `v2_users` holds name, email, email_verified, picture, `role` (learner | admin), `gender` (m | f | null), `onboarded_at`, `langify_user_id`, created and last-seen.
+- **Sign-in (changed 2026-11-24):** email/password + username (Better Auth username plugin), and social: Google (required), Apple and Facebook when env is set. Google scopes stay `openid email profile`. Better Auth + MongoDB adapter in this repo; Auth.js / NextAuth not used for new work. Next.js 16 uses `proxy` (not `middleware`) for the early redirect. Email verification is enabled but does not block the first session.
+- **Collections:** `v2_users`, `v2_auth_sessions`, `v2_auth_accounts`, `v2_auth_verifications`. `v2_users` holds name, email, email_verified, picture, optional `username`, `role` (learner | admin), `gender` (m | f | null), `coach_dialect`, `motivations`, `proficiency`, `reminders`, `practice`, `onboarded_at`, `langify_user_id`, created and last-seen.
 - **Every learner document is keyed by the v2 user id.** A migration rekeys any docs still keyed by a Langify id (dry run, then idempotent real run).
-- **Langify link (once):** on first Google sign-in, if the email is verified and matches a Langify `users` email, store `langify_user_id` via `lib/langifyRead`. Never write Langify. A failed read never blocks sign-in.
+- **Langify link (once):** on first Google (or verified email) sign-in, if the email is verified and matches a Langify `users` email, store `langify_user_id` via `lib/langifyRead`. Never write Langify. A failed read never blocks sign-in.
 - **Who is the user:** one server helper from the session. The user id never comes from the request body, query or headers.
-- **Protection:** `/api/v2/*` (except auth + public health) and `(v2)` pages (except landing + sign-in) require a signed-in user. `proxy` only redirects early; the helper is the real guard. Admin pages/APIs need `role: admin` from `ADMIN_EMAILS` applied on sign-in.
-- **Sessions:** DB-backed, httpOnly Secure SameSite=Lax, 60 days rolling. Full-page Google redirect (no popup). Sign-out deletes the session.
-- **UI:** Calm Kit sign-in (RTL, Google branding on the button, privacy link). One-time onboarding: name, then gender (Egyptian reason line), then day 1. No guest mode for v1. Settings: name, gender, sign out, delete account.
+- **Protection:** `/api/v2/*` (except auth + public health + `GET /api/v2/auth/providers`) and `(v2)` pages (except landing + sign-in + sign-up + privacy) require a signed-in user. `proxy` only redirects early; the helper is the real guard. Admin pages/APIs need `role: admin` from `ADMIN_EMAILS` applied on sign-in.
+- **Sessions:** DB-backed, httpOnly Secure SameSite=Lax, 60 days rolling. Full-page social redirect (no popup). Sign-out deletes the session.
+- **UI (Lumina):** `/sign-in` and `/sign-up` (RTL Stitch layout, Lumina tokens). One-time onboarding (6 steps): name → gender → dialect → motivation → proficiency → daily minutes, then day 1. No guest mode for v1. Settings: name, gender, dialect, daily minutes, sign out, delete account.
 - **Deletion:** "امسح حسابي" deletes the v2 user, sessions, accounts, and every v2 document keyed by their id. Langify and shared content are untouched.
-- **Env (server only):** `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ADMIN_EMAILS`. Dev-only test sign-in route; must not be reachable in production.
+- **Env (server only):** `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ADMIN_EMAILS`; optional `APPLE_CLIENT_ID` / `APPLE_CLIENT_SECRET` / `APPLE_APP_BUNDLE_IDENTIFIER`, `FACEBOOK_CLIENT_ID` / `FACEBOOK_CLIENT_SECRET`. Dev-only test sign-in route; must not be reachable in production.
 
 ## 0c. Admin dashboard (new, 2026-11-21)
 
@@ -79,7 +79,7 @@ Full detail: `14-library.md`, content `14b-library-content.md`, design `14c-libr
 - Two Arabic registers:
   - Meanings (`ar`, `ar_f`) are in simple Modern Standard Arabic (فصحى بسيطة).
   - Explanations, tips, coach lines, captions (`eg`) are in Egyptian Arabic.
-- Pronunciation (`say`) is written in Arabic letters with these fixed mappings: g=ج, j=چ, s/ch (sh sound)=ش, initial r=غ, v=ڤ, p=پ, lh=لي, nh=ني, nasal sounds with a light ن. IPA (`ipa`) is optional and hidden by default.
+- **(changed) Pronunciation `say` is retired.** Do not show Arabic-letter transliteration in the UI, and do not fill `say` in generation. Learners hear pronunciation from TTS audio of `tl`. Optional legacy `say` / `ipa` fields on old packs may remain in storage unused; the model must never write them.
 - Any text that mixes Arabic and the target language is **rich text** (`rt`): a list of segments, each `{text, lang: eg|ar|tl, bold?, group?}`. The app sets direction per segment. Never build mixed strings by concatenation.
 - Conjugated verb forms are **never written by an LLM**. They come from a verified conjugation table and are referenced by id `verb.<lemma>:<tense>:<person>`. Tenses: `inf, pres, pret, imperf, fut, cond, imp`. Persons: `eu, tu, ele, nos, eles` (always 5 rows; no vós). `ele` displays as "ele / ela / você"; o senhor uses the `ele` form.
 
@@ -260,7 +260,7 @@ Full detail: `14-library.md`, content `14b-library-content.md`, design `14c-libr
   - **Generated by a small `real_world` job** (one call, non-fatal):
     - Input: the situation, the core items, the known items and the phase.
     - Output, for each phrase: `tl` (and `tl_f` when it changes by gender), `ar`, `eg_note` (when and why to say it, in one Egyptian line) and a short `tag` (أسلوب مهذب، نصيحة لشبونية، الحساب…). The page also gets one tip that compares a common mistake with the local habit (for example Quero → Queria).
-    - Code adds `say`, the audio keys, the image (only if the item asks) and the category chips. The chips appear only when there are 2 or more categories.
+    - Code adds the audio keys, the image (only if the item asks) and the category chips. The chips appear only when there are 2 or more categories.
   - **Checks:**
     - pt-PT only, with no "/" in `tl` (use `tl_f`);
     - at most phase max_words + 4;
@@ -321,7 +321,7 @@ Full detail: `14-library.md`, content `14b-library-content.md`, design `14c-libr
     - the empty "اختيار" labels (unanswered cards show no label);
     - the duplicated "لاقي الصورة" header;
     - "سؤال معجمي".
-    The transliteration comes from code `say` (queijo is كَيجو, not كايچو).
+    - Arabic-letter transliteration under the word (`say` is retired).
 
 - **(new 2026-11-19) Essential items: high-frequency words get their own place everywhere.** Every core item has `priority`: `essential` (high-frequency verbs, function words with meaning, and conversation chunks used in almost every conversation: precisar, ficar, esperar, dizer, chegar, sair, voltar, pedir, então, pronto, claro, não me lembro…), `useful`, or `situational` (tied to one place: o galão, a avaria).
   - **In the lesson:** an essential item is never only part of a sentence. It always gets **its own item card** in the vocab flow (a verb card shows the infinitive plus the 1–2 forms the day needs, for example precisar → preciso de / precisa de), then appears in the sentence that uses it. It is always the target of at least one micro check.
@@ -372,7 +372,7 @@ Full detail: `16-practice-engine.md`. Where that doc disagrees with older §5 da
 Full detail: `12-custom-decks.md`. Where that doc and this section disagree with older §5 deck notes or with §10 about custom-deck images, **12 and this section win**.
 
 - **Shared items, not copies.** Generated words live in `v2_custom_items` (one doc per language × normalised lemma × POS, id like `ugc.pt-PT.chuva.noun`). The same word in two decks is one item. Before creating a custom item, code checks official lesson banks; if the word already exists (`food.cheese`, `weather.rain`), the deck references that id. Card SRS stays in `v2_item_state` (`source: custom` for UGC). Promotion never migrates progress — official decks keep the same item ids.
-- **Item shape:** `tl` (nouns with article), optional `tl_f`, `pos`, `gender`, `ar` (simple MSA), optional `eg_note` (Egyptian), short `example_tl` / `example_ar`, `concept_en` (English slug for the image key only, never shown), and `image = { key, url }` when ready. Code adds `say` (`00` §2). Verbs show the infinitive only; conjugation poster only if the lemma is in the verified table.
+- **Item shape:** `tl` (nouns with article), optional `tl_f`, `pos`, `gender`, `ar` (simple MSA), optional `eg_note` (Egyptian), short `example_tl` / `example_ar`, `concept_en` (English slug for the image key only, never shown), and `image = { key, url }` when ready. Do not fill `say` (`00` §2). Verbs show the infinitive only; conjugation poster only if the lemma is in the verified table.
 - **Generation:** Haiku via env (`CUSTOM_DECK_MODEL`), one non-streamed JSON call, 20 s timeout, one parse retry. Topic blocklist in code first; model may set `topic_ok: false` (sexual, insults, hate, violence, drugs, politics, real person). Checks drop bad words (Brazilian forms, `/` in `tl`, noun article/gender, Arabic `ar`, example rules, `concept_en` slug, duplicates); top-up once if under 15; fail under 15 after top-up without counting quota. Quotas via `customDeckQuota(user)` (env caps now; plans later). Failed / rejected / "ضيفه" don't count.
 - **Learner flow:** find existing public deck by title/tags first (no model) → generate → preview (remove only, ≥15 to save) → save to "ديكاتي" and publish to "من المتعلمين". Public by default; **no private switch in v1** for topic-generated decks.
 - **(new 2026-11-14) Private library deck:** each learner gets one automatic private deck **"من المكتبة"** (`kind: saved`, `visibility: private`) for words saved from library episodes (`14` §2.10). It never appears in "من المتعلمين", has no report button, and can't be promoted. Detail in `12`.
@@ -626,6 +626,6 @@ Full detail: `11-profile-progress.md`. Where that doc and this section disagree 
 - Native review of weeks 1–2 before release.
 - Pilot: generate days 1–3 end to end before the rest.
 - Test Google sign-in in an installed iPhone PWA and Android before the pilot (`10-auth.md`).
-- Apple sign-in and email magic link: decide after the pilot.
+- Apple / Facebook OAuth consoles + env before pilot if those buttons should work in production; email magic link: decide after the pilot.
 - Guest mode (try day 1 before signing in): decide after the pilot.
 - Langify users who signed up with an email that isn't a Google account: how they reach their old progress, if at all.

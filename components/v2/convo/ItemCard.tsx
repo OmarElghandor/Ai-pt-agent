@@ -6,7 +6,6 @@ import type { ConvoItemGlyph } from '@/lib/v2/convo/pack';
 
 type Props = {
   tl: string;
-  say?: string;
   glyph?: ConvoItemGlyph;
   /** Side-channel highlight (T3.2). */
   highlighted?: boolean;
@@ -29,10 +28,9 @@ function GlyphArrow({ glyph }: { glyph: 'left' | 'right' | 'straight' }) {
   );
 }
 
-/** Inline item card when a group starts (09 §10): image/arrow, say, audio. */
+/** Inline item card when a group starts (09 §10): image/arrow, audio. */
 export function ItemCard({
   tl,
-  say,
   glyph = 'place',
   highlighted = false,
 }: Props) {
@@ -58,14 +56,6 @@ export function ItemCard({
         >
           {tl}
         </p>
-        {say ? (
-          <p
-            dir="rtl"
-            className="mt-0.5 font-[family-name:var(--font-v2-arabic)] text-[12px] text-v2-ink-muted"
-          >
-            {say}
-          </p>
-        ) : null}
       </div>
       <AudioButton text={tl} lang="pt" size="chip" label="اسمع" />
     </div>

@@ -114,7 +114,7 @@ export default function V2AdminPage() {
   const [jobGraphDay, setJobGraphDay] = useState<number | null>(null);
   const [jobGraph, setJobGraph] = useState<JobRow[]>([]);
   const [editItemId, setEditItemId] = useState<string>('');
-  const [editField, setEditField] = useState<'tl' | 'ar' | 'say'>('ar');
+  const [editField, setEditField] = useState<'tl' | 'ar'>('ar');
   const [editValue, setEditValue] = useState('');
   const [mounted, setMounted] = useState(false);
   const [loadingList, setLoadingList] = useState(true);
@@ -1080,11 +1080,10 @@ export default function V2AdminPage() {
               </select>
               <select
                 value={editField}
-                onChange={(e) => setEditField(e.target.value as 'tl' | 'ar' | 'say')}
+                onChange={(e) => setEditField(e.target.value as 'tl' | 'ar')}
                 className="rounded border border-v2-rule bg-white px-2 py-1"
               >
                 <option value="ar">ar</option>
-                <option value="say">say</option>
                 <option value="tl">tl</option>
               </select>
               <input

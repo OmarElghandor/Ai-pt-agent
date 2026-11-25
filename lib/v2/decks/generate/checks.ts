@@ -1,5 +1,4 @@
 import { findBrazilianLeak } from '@/lib/v2/convo/output/checks';
-import { transliteratePtToSay } from '@/lib/v2/content/translit';
 import { leadingArticle, normaliseLemma } from '../keys';
 import type { GeneratedWord } from './schema';
 
@@ -25,7 +24,7 @@ function hasBrazilianForm(text: string): boolean {
 }
 
 export type CheckedWord = GeneratedWord & {
-  say: string;
+  say?: string;
   lemma: string;
 };
 
@@ -160,7 +159,6 @@ export function checkGeneratedWords(words: GeneratedWord[]): CheckResult {
       ...word,
       concept_en: concept,
       lemma,
-      say: transliteratePtToSay(word.tl),
       // Never persist conjugations
       conjugations: undefined,
     });

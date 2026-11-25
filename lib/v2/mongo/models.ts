@@ -1548,7 +1548,7 @@ const v2CustomItemSchema = new Schema(
     eg_note: { type: String, required: false },
     example_tl: { type: String, required: true },
     example_ar: { type: String, required: true },
-    say: { type: String, required: true },
+    say: { type: String, required: false },
     /** English slug for global image key word.<concept_en> (12 §2.10). */
     concept_en: { type: String, required: false, index: true },
     image: { type: Schema.Types.Mixed, required: false },

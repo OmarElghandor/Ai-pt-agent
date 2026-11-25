@@ -32,9 +32,8 @@ For high issues set path to a block address (blocks[i]… or bN) so code can reg
 
 REQUIRED OUTPUT: { "issues": [...] }.
 
-PRONUNCIATION (code-owned say) — NOT errors:
+PRONUNCIATION: say is retired — do not require or invent Arabic-letter transliteration. Never flag missing say. If legacy say appears with پ ڤ چ غ, those letters are not Arabic errors.
 ${PRONUNCIATION_TABLE}
-Letters پ ڤ چ غ are REQUIRED spellings. Never flag them as wrong Arabic or "should be ف/ج/ب".
 
 ${TARGET_GRAMMAR}
 

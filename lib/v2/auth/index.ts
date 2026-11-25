@@ -1,6 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { mongodbAdapter } from '@better-auth/mongo-adapter';
 import { nextCookies } from 'better-auth/next-js';
+import { username } from 'better-auth/plugins';
 import { MongoClient } from 'mongodb';
 import { assertAuthEnv, isAdminEmail } from './env';
 import { tryLinkLangifyUser } from './link';
@@ -32,6 +33,37 @@ function createAuth() {
   }
   const db = client.db();
 
+  const socialProviders: {
+    google: { clientId: string; clientSecret: string; scopes: string[] };
+    apple?: {
+      clientId: string;
+      clientSecret: string;
+      appBundleIdentifier?: string;
+    };
+    facebook?: { clientId: string; clientSecret: string };
+  } = {
+    google: {
+      clientId: env.googleClientId,
+      clientSecret: env.googleClientSecret,
+      scopes: ['openid', 'email', 'profile'],
+    },
+  };
+  if (env.apple) {
+    socialProviders.apple = {
+      clientId: env.apple.clientId,
+      clientSecret: env.apple.clientSecret,
+      ...(env.apple.appBundleIdentifier
+        ? { appBundleIdentifier: env.apple.appBundleIdentifier }
+        : {}),
+    };
+  }
+  if (env.facebook) {
+    socialProviders.facebook = {
+      clientId: env.facebook.clientId,
+      clientSecret: env.facebook.clientSecret,
+    };
+  }
+
   return betterAuth({
     appName: 'A-Z Talkie',
     /**
@@ -50,13 +82,13 @@ function createAuth() {
       client,
       transaction: true,
     }),
-    socialProviders: {
-      google: {
-        clientId: env.googleClientId,
-        clientSecret: env.googleClientSecret,
-        scopes: ['openid', 'email', 'profile'],
-      },
+    emailAndPassword: {
+      enabled: true,
+      // Verify later — do not block the first session (plan default).
+      requireEmailVerification: false,
+      minPasswordLength: 8,
     },
+    socialProviders,
     user: {
       modelName: 'v2_users',
       fields: {
@@ -101,6 +133,26 @@ function createAuth() {
           type: 'string',
           required: false,
           defaultValue: 'pt-PT',
+          input: true,
+        },
+        coach_dialect: {
+          type: 'string',
+          required: false,
+          input: true,
+        },
+        motivations: {
+          type: 'json',
+          required: false,
+          input: true,
+        },
+        proficiency: {
+          type: 'string',
+          required: false,
+          input: true,
+        },
+        reminders: {
+          type: 'json',
+          required: false,
           input: true,
         },
         practice: {
@@ -167,7 +219,14 @@ function createAuth() {
       },
     },
     // Must be last so Set-Cookie from the handler is forwarded through next/headers.
-    plugins: [nextCookies()],
+    plugins: [
+      username({
+        minUsernameLength: 3,
+        maxUsernameLength: 30,
+        displayUsername: false,
+      }),
+      nextCookies(),
+    ],
   });
 }
 

@@ -27,7 +27,17 @@ import {
   type ReviewEmptyReason,
 } from '@/lib/v2/practice';
 import { loadPublishedFlashcardsThrough } from '@/lib/v2/decks';
-import { getLessonForPractice } from '@/lib/v2/content/getPublishedLesson';
+import {
+  getLatestLessonPack,
+  getPublishedLesson,
+} from '@/lib/v2/content/getPublishedLesson';
+
+async function getLessonForPractice(day: number, targetLang = 'pt-PT') {
+  return (
+    (await getPublishedLesson(day)) ??
+    (await getLatestLessonPack(day, targetLang))
+  );
+}
 import { PRACTICE_QUESTION_BUILDER_VERSION } from '@/lib/v2/review/questions';
 
 /** Bump when step building changes; untouched sessions of an older version are rebuilt. */

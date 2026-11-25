@@ -1,5 +1,4 @@
 import type { Item, PatternSlot } from '@/lib/v2/content/items';
-import { transliteratePtToSay } from '@/lib/v2/content/translit';
 import type { CoreItem } from './coreItems';
 import {
   CHAMO_ME_NAMES,
@@ -292,7 +291,6 @@ export function fillPatternsInBank(
           id,
           tl,
           ar,
-          say: transliteratePtToSay(tl),
           context_eg: 'مثال على التركيبة',
           cloze: 'Chamo-me',
           derived: true,
@@ -383,7 +381,6 @@ export function fillPatternsInBank(
         id,
         tl,
         ar,
-        say: transliteratePtToSay(tl),
         context_eg: 'مثال على التركيبة',
         cloze,
         derived: true,
@@ -477,7 +474,6 @@ export function ensurePluralPairItems(bank: Item[]): {
         id: pluralId,
         tl: pluralTl,
         ar: word.ar,
-        say: transliteratePtToSay(pluralTl),
         context_eg: 'صيغة الجمع',
         cloze: art,
         derived: true,

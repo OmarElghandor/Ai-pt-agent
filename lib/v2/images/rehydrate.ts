@@ -3,6 +3,7 @@ import type { LessonPack } from '@/lib/v2/content/lesson';
 import type { StoryDoc } from '@/lib/v2/content/story';
 import { V2ImageModel } from '@/lib/v2/mongo/models';
 import { storySceneKey } from './keys';
+import { isRealWorldImageItem } from './manifest';
 import type { ImageLink } from './types';
 
 function lessonUsedById(day: number, targetLang: string, version: number): string {
@@ -17,15 +18,70 @@ async function readyMap(keys: string[]): Promise<Map<string, ImageLink>> {
   const unique = [...new Set(keys.filter(Boolean))];
   if (!unique.length) return new Map();
   await connectMongo();
+  // Flagged still has a usable URL (generateOne denormalizes it); include both.
   const docs = await V2ImageModel()
-    .find({ key: { $in: unique }, status: 'ready', url: { $exists: true, $ne: '' } })
-    .select({ key: 1, url: 1 })
+    .find({
+      key: { $in: unique },
+      status: { $in: ['ready', 'flagged'] },
+      url: { $exists: true, $ne: '' },
+    })
+    .select({ key: 1, url: 1, status: 1 })
     .lean();
   const map = new Map<string, ImageLink>();
   for (const d of docs) {
     if (d.key && d.url) map.set(d.key, { key: d.key, url: String(d.url) });
   }
   return map;
+}
+
+function itemMatchesImageKey(
+  item: { id: string; image?: ImageLink; media?: { image?: string } },
+  key: string,
+): boolean {
+  return (
+    item.image?.key === key ||
+    item.media?.image === key ||
+    item.id === key
+  );
+}
+
+async function patchLessonItemsWithImage(opts: {
+  day: number;
+  target_lang: string;
+  version: number;
+  key: string;
+  link: ImageLink;
+}): Promise<void> {
+  const { V2LessonModel } = await import('@/lib/v2/mongo/models');
+  const lesson = await V2LessonModel()
+    .findOne({
+      day: opts.day,
+      target_lang: opts.target_lang,
+      version: opts.version,
+    })
+    .lean();
+  if (!lesson?.data) return;
+  const data = lesson.data as LessonPack;
+  let changed = false;
+  const items = (data.items ?? []).map((item) => {
+    const any = item as {
+      id: string;
+      image?: ImageLink;
+      media?: { image?: string };
+    };
+    if (!itemMatchesImageKey(any, opts.key)) return item;
+    changed = true;
+    return { ...item, image: opts.link };
+  });
+  if (!changed) return;
+  await V2LessonModel().updateOne(
+    {
+      day: opts.day,
+      target_lang: opts.target_lang,
+      version: opts.version,
+    },
+    { $set: { data: { ...data, items } } },
+  );
 }
 
 async function addUsedBy(keys: string[], usedBy: string): Promise<void> {
@@ -59,6 +115,7 @@ export async function rehydrateLessonImages(opts: {
       id: string;
       type?: string;
       has_card?: boolean;
+      real_world?: boolean;
       image?: { key?: string };
       media?: { image?: string };
     };
@@ -66,9 +123,12 @@ export async function rehydrateLessonImages(opts: {
     if (typeof any.media?.image === 'string' && any.media.image) {
       keys.push(any.media.image);
     }
-    // Manifest keys words/phrases (and carded forms) by item.id
+    // Manifest keys words/phrases (and carded forms) by item.id;
+    // RW phrases are included even with has_card:false.
+    const cardedOrRw =
+      any.has_card !== false || isRealWorldImageItem(any);
     if (
-      any.has_card !== false &&
+      cardedOrRw &&
       (any.type === 'word' || any.type === 'phrase' || any.type === 'form')
     ) {
       keys.push(any.id);
@@ -83,11 +143,14 @@ export async function rehydrateLessonImages(opts: {
       id: string;
       type?: string;
       has_card?: boolean;
+      real_world?: boolean;
       image?: ImageLink;
       media?: { image?: string };
     };
+    const cardedOrRw =
+      any.has_card !== false || isRealWorldImageItem(any);
     const idKey =
-      any.has_card !== false &&
+      cardedOrRw &&
       (any.type === 'word' || any.type === 'phrase' || any.type === 'form')
         ? any.id
         : undefined;
@@ -143,35 +206,59 @@ export async function denormalizeReadyImage(opts: {
   const { V2LessonModel, V2StoryModel } = await import('@/lib/v2/mongo/models');
   const link: ImageLink = { key: opts.key, url: opts.url };
 
+  const patchedLessonVersions = new Set<string>();
+
   for (const ref of usedBy) {
     if (ref.startsWith('lesson:')) {
       // lesson:pt-PT.day-01.v3
       const m = /^lesson:([^.]+)\.day-(\d+)\.v(\d+)$/.exec(ref);
       if (!m) continue;
-      const target_lang = m[1];
+      const target_lang = m[1]!;
       const day = Number(m[2]);
       const version = Number(m[3]);
-      const lesson = await V2LessonModel()
-        .findOne({ day, target_lang, version })
+      const versionKey = `${target_lang}:${day}:${version}`;
+      if (!patchedLessonVersions.has(versionKey)) {
+        await patchLessonItemsWithImage({
+          day,
+          target_lang,
+          version,
+          key: opts.key,
+          link,
+        });
+        patchedLessonVersions.add(versionKey);
+      }
+
+      // Also patch other versions of the same day (esp. published) that
+      // still need this item's image URL.
+      const siblings = await V2LessonModel()
+        .find({ day, target_lang, version: { $ne: version } })
+        .select({ version: 1, status: 1, data: 1 })
         .lean();
-      if (!lesson?.data) continue;
-      const data = lesson.data as LessonPack;
-      const items = (data.items ?? []).map((item) => {
-        const any = item as {
-          id: string;
-          image?: ImageLink;
-          media?: { image?: string };
-        };
-        const matches =
-          any.image?.key === opts.key ||
-          any.media?.image === opts.key ||
-          any.id === opts.key;
-        return matches ? { ...item, image: link } : item;
-      });
-      await V2LessonModel().updateOne(
-        { day, target_lang, version },
-        { $set: { data: { ...data, items } } },
-      );
+      for (const sibling of siblings) {
+        const sibVersion = Number(sibling.version);
+        const sibKey = `${target_lang}:${day}:${sibVersion}`;
+        if (patchedLessonVersions.has(sibKey)) continue;
+        const data = sibling.data as LessonPack | undefined;
+        const hasMatch = (data?.items ?? []).some((item) =>
+          itemMatchesImageKey(
+            item as {
+              id: string;
+              image?: ImageLink;
+              media?: { image?: string };
+            },
+            opts.key,
+          ),
+        );
+        if (!hasMatch) continue;
+        await patchLessonItemsWithImage({
+          day,
+          target_lang,
+          version: sibVersion,
+          key: opts.key,
+          link,
+        });
+        patchedLessonVersions.add(sibKey);
+      }
     } else if (ref.startsWith('story:')) {
       // story:pt-PT.day-01.v3
       const m = /^story:(.+)\.v(\d+)$/.exec(ref);

@@ -26,6 +26,8 @@ export function proxy(request: NextRequest) {
   const isPublicV2 =
     pathname === '/sign-in' ||
     pathname.startsWith('/sign-in/') ||
+    pathname === '/sign-up' ||
+    pathname.startsWith('/sign-up/') ||
     pathname === '/privacy' ||
     pathname.startsWith('/privacy/');
 

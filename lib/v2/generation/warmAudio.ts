@@ -28,13 +28,10 @@ function collectSegments(pack: LessonPack): Segment[] {
     const rec = item as {
       tl?: string;
       tl_f?: string;
-      say?: string;
       type?: string;
     };
     add('pt', rec.tl);
     add('pt', rec.tl_f);
-    // Pronunciation in Arabic letters — use AR TTS path
-    add('ar', rec.say);
   }
 
   return out;

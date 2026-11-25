@@ -83,12 +83,6 @@ function itemPlural(item: Item | null | undefined): string | null {
   return p?.trim() ? p : null;
 }
 
-function itemSay(item: Item | null | undefined): string | null {
-  if (!item || !('say' in item)) return null;
-  const s = (item as { say?: string }).say;
-  return s?.trim() ? s : null;
-}
-
 function itemTag(item: Item | null | undefined): string | null {
   if (!item) return null;
   const tag = (item as { tag?: string }).tag?.trim();
@@ -615,12 +609,6 @@ export function VocabFlowPlayer({
                 label="اسمع"
               />
             </div>
-
-            {itemSay(item) ? (
-              <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-                {itemSay(item)}
-              </p>
-            ) : null}
 
             {!isRw && item?.type === 'word' ? (
               <div className="flex flex-wrap gap-2">

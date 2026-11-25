@@ -15,6 +15,15 @@ export type AuthEnv = {
   betterAuthUrl: string;
   adminEmails: string[];
   mongodbUri: string;
+  apple: {
+    clientId: string;
+    clientSecret: string;
+    appBundleIdentifier: string | null;
+  } | null;
+  facebook: {
+    clientId: string;
+    clientSecret: string;
+  } | null;
 };
 
 function read(name: string): string {
@@ -51,6 +60,24 @@ export function assertAuthEnv(): AuthEnv {
     );
   }
 
+  const appleId = read('APPLE_CLIENT_ID');
+  const appleSecret = read('APPLE_CLIENT_SECRET');
+  const apple =
+    appleId && appleSecret
+      ? {
+          clientId: appleId,
+          clientSecret: appleSecret,
+          appBundleIdentifier: read('APPLE_APP_BUNDLE_IDENTIFIER') || null,
+        }
+      : null;
+
+  const facebookId = read('FACEBOOK_CLIENT_ID');
+  const facebookSecret = read('FACEBOOK_CLIENT_SECRET');
+  const facebook =
+    facebookId && facebookSecret
+      ? { clientId: facebookId, clientSecret: facebookSecret }
+      : null;
+
   return {
     googleClientId: read('GOOGLE_CLIENT_ID'),
     googleClientSecret: read('GOOGLE_CLIENT_SECRET'),
@@ -58,5 +85,24 @@ export function assertAuthEnv(): AuthEnv {
     betterAuthUrl: read('BETTER_AUTH_URL').replace(/\/$/, ''),
     adminEmails: parseAdminEmails(process.env.ADMIN_EMAILS),
     mongodbUri,
+    apple,
+    facebook,
+  };
+}
+
+/** Which optional social providers are configured (safe to expose to the client). */
+export function configuredSocialProviders(): {
+  google: true;
+  apple: boolean;
+  facebook: boolean;
+} {
+  const appleId = read('APPLE_CLIENT_ID');
+  const appleSecret = read('APPLE_CLIENT_SECRET');
+  const facebookId = read('FACEBOOK_CLIENT_ID');
+  const facebookSecret = read('FACEBOOK_CLIENT_SECRET');
+  return {
+    google: true,
+    apple: Boolean(appleId && appleSecret),
+    facebook: Boolean(facebookId && facebookSecret),
   };
 }

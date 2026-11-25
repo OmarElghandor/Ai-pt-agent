@@ -260,9 +260,6 @@ export function QuestionCard({
       {type === 'read_aloud' && question.prompt_tl ? (
         <div className="space-y-2">
           <AudioButton text={String(question.prompt_tl)} showSlow />
-          <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted" dir="rtl">
-            {question.say ? String(question.say) : null}
-          </p>
         </div>
       ) : null}
 
