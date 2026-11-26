@@ -252,7 +252,7 @@ Full detail: `14-library.md`, content `14b-library-content.md`, design `14c-libr
     - They don't count toward the 14 core items.
     - They're not in the story's MUST_COVER.
     - They don't get cards by default; each has "ضيفها للكروت".
-    - **(changed 2026-11-03) They're in the day's questions:** 2–3 extra slots, on top of the 12 core slots (so a day has up to 15). Types:
+    - **(changed 2026-11-03) They're in the day's questions:** 2–3 extra slots, on top of the core slots (one per core item; see §7). Types:
       - `listen_meaning`;
       - `situation_choice`, a new type: a short Egyptian situation, for example "الجرسون سألك عايز حاجة تانية، ترد إزاي؟", answered by picking one of 3 TL lines;
       - at most one `say_it`.
@@ -304,7 +304,7 @@ Full detail: `14-library.md`, content `14b-library-content.md`, design `14c-libr
     - **Every real-world phrase must have `uses`** (at least one of today's items). The `real_world` job must return it. A phrase without a valid `uses` is dropped, so no sentence ever sits in the flow without context.
     - Real-world phrases are never grouped at the end of the flow.
   - **"من القصة" on item cards (2026-11-13):** an item card shows the story line only when it adds something, meaning the normalized line is longer than the item itself (for example "Muito prazer, Omar!" for Muito prazer). If the line is just the item ("Boa noite!" on the Boa noite card), the "من القصة" block is hidden. The same item never appears twice in the flow.
-  - Micro checks don't count toward the day's 12–15 questions, and the day question planner may still test the same items in other types.
+  - Micro checks don't count toward the day's questions, and the day question planner may still test the same items in other types.
 
 - **(new 2026-11-03) "لاقي الصورة" step.** A short listening game after the grammar page and before the story replay. The day order becomes: story → detail pages (vocab_flow, real-world phrases, grammar) → **لاقي الصورة** → the story again (test) → أسئلة اليوم.
   - **It never generates images.** It reuses lesson image links (`items[].image.url`, filled from ready `v2_images` on read), and never requests or queues generation.
@@ -397,10 +397,10 @@ Full detail: `12-custom-decks.md`. Where that doc and this section disagree with
 ## 7. Question bank and SRS
 
 - SRS is scheduled per **item × skill**, not per question. Skills: listening, reading, speaking, writing.
-- Code generates mechanical questions from the item bank. Claude writes 10–15 crafted questions per day.
+- Code generates mechanical questions from the item bank. Claude writes the crafted questions per day (one per core item at least, see §7).
 - Session mix: 40% due, 30% weak, 20% today, 10% stretch. A session is 10–12 questions.
 - Validation is layered: code first (exact match, normalisation, accents, known alternatives), and an LLM only for what code can't decide.
-- **(new 2026-11-01) The day's question set.** Each lesson has **10–15 questions**, built by one day-level `questions` job, not one job per page. The same set is reused later by the practice agent and by review sessions. Each question carries `use: lesson | practice | both`.
+- **(new 2026-11-01) The day's question set.** Each lesson has **one question per core item at least, plus 2–3 real-world** (8–18 in all, changed 2026-11-26), built by one day-level `questions` job, not one job per page. The same set is reused later by the practice agent and by review sessions. Each question carries `use: lesson | practice | both`.
   - **Code plans the slots first:** type, skill and the item each question tests. The model only writes the Egyptian scenario line, and the rubric for open answers. Code builds everything mechanical: options, blanks, tiles, answers, near misses and image refs.
   - **Skill quotas (planner targets, not runtime checks):** the planner is plain code and always produces them. Unit tests check the planner; a generated lesson is never failed for quotas.
 
@@ -413,11 +413,16 @@ Full detail: `12-custom-decks.md`. Where that doc and this section disagree with
     | Reading | 0–2 | `read_meaning` (only if the skills above leave room) |
 
     Grammar questions use only today's patterns and grammar focus. Every pattern gets at least 2 questions, and they are the pool for the grammar page's `check` (2–3).
-  - **Real-world phrases (2026-11-03):** 2–3 slots on top of the 12 core slots, as in §4 "بيقولوها كده". If the `real_world` job failed or the page is hidden, these slots are simply not added.
-  - **Size and coverage (changed 2026-11-01):**
-    - The planner makes **exactly 12 slots** (and 14 on days with more than 15 core items). It never makes one slot per item.
-    - Must be tested: every phrase and every pattern.
-    - Words are tested only in the remaining slots, and preferably several at once: `listen_pick_image` and `listen_pick_tl` take one word as the answer and other words as distractors. Words with no slot are covered by the dictionary page and the cards, so an untested word is never an error.
+  - **Real-world phrases (2026-11-03, changed 2026-11-26):** 2–3 slots **on top of** the core slots, as in §4 "بيقولوها كده". They never take a core seat. They point at the page that shows them (the `vocab_flow` in new lessons), never at a page id the lesson doesn't have. If the `real_world` job failed or the page is hidden, these slots are simply not added.
+  - **Size and coverage (changed 2026-11-26): today's lesson first, for every lesson.**
+    - **Every core item of today is tested at least once as the answer**: phrases, patterns **and words** (o sumo, o copo…). Being a distractor doesn't count. An untested core item is a **fatal** coverage issue.
+    - **Recycle items never get a question of their own** on a lesson day. They appear only inside today's questions (a pattern frame such as "Queria um ___", or the situation line). Only days with no core items (weekly story / test days) test the recycle bank.
+    - **Seats:** core seats = clamp(core items, 8, 16), raised to fit today's pattern pairs. Real-world extras (2–3) come on top. Hard cap 18.
+    - **Order of filling:** (1) grammar pairs for today's patterns, (2) one question per core item, the type chosen to keep listening / writing / speaking balanced (reading ≤ 2), (3) only if seats are left: a second question for today's items, essential items first, then the least-tested. No item gets a second question before every item has its first.
+    - **Distractors** come from today's items first (same type), and only then from earlier days.
+    - `reply_*` is planned only when the item has a real line to answer (`replies_to` as an id or the TL of a bank item). The stimulus is never the answer itself; without one, the item gets `say_it` / `translate_write` instead.
+    - A question on an item outside today's lesson is a warning (`off_lesson`) in the review report.
+    - A pattern's word hole never takes an adverb or filler (então, pronto…).
     - Grammar slots (`fill_blank_choice`, `build_sentence`) always test the **pattern**, using its examples, never a plain phrase.
     - Open types fit the item: `reply_*` and `say_it` test phrases; `read_aloud`, `dictation` and `listen_pick_*` can test words.
     - No two questions share the same (type, tests).

@@ -39,6 +39,7 @@ import {
 import { resolveGrammarFocusPatternIds } from '../grammarFocus';
 import {
   planQuestionSlots,
+  resolveReplyStimulusId,
   validateDayQuestionQuotas,
   validatePlannedGrammarCoverage,
   type PlannedSlot,
@@ -155,6 +156,8 @@ export function buildMcqOptions(
   bank: Item[],
   kind: 'meaning' | 'tl',
   egFrame: string,
+  /** Today's core ids: distractors come from these first (2026-11-26). */
+  preferIds?: Set<string>,
 ): {
   options: ReturnType<typeof coerceToRt>[];
   answer: number;
@@ -167,8 +170,13 @@ export function buildMcqOptions(
   const allowVariantPeers =
     Boolean(testedGroup) && promptHasVariantContext(egFrame);
 
+  const rank = (i: Item) => (preferIds?.has(i.id) ? 0 : 1);
   const collectPeers = (strictVariant: boolean) =>
-    bank.filter((i) => {
+    bank
+      .map((i, order) => ({ i, order }))
+      .sort((a, b) => rank(a.i) - rank(b.i) || a.order - b.order)
+      .map(({ i }) => i)
+      .filter((i) => {
       if (i.id === tested.id) return false;
       if (strictVariant && i.type !== tested.type) return false;
       const g = itemVariantGroup(i);
@@ -402,12 +410,9 @@ export function fillBlankWriteHint(cloze: string, tested: Item): string {
 
 /** Heard prompt id for reply_* : replies_to on the tested item, else itself. */
 function replyStimulusId(tested: Item, bank: Item[]): string {
-  const rt =
-    'replies_to' in tested && typeof tested.replies_to === 'string'
-      ? tested.replies_to
-      : '';
-  if (rt && bank.some((i) => i.id === rt)) return rt;
-  return tested.id;
+  // replies_to may be an id or the TL text of a bank item. The planner never
+  // plans reply_* without a real stimulus, so the fallback is legacy only.
+  return resolveReplyStimulusId(tested, bank) ?? tested.id;
 }
 
 /** Accent-fold keeping hyphens — never put Chamome in accepted[]. */
@@ -456,6 +461,8 @@ export function assembleSlotQuestion(
     index: number;
     /** Optional common_mistakes wrong forms for build_sentence distractors. */
     commonMistakeTls?: string[];
+    /** Today's core ids — preferred as MCQ distractors. */
+    preferIds?: Set<string>;
   },
 ): { question: Question | null; fixes: TierIssue[]; warnings: TierIssue[] } {
   const fixes: TierIssue[] = [];
@@ -542,7 +549,7 @@ export function assembleSlotQuestion(
             eg: egFrame || 'مين بيقول إيه؟',
           }
         : { audio_ref: testsId };
-    const mcq = buildMcqOptions(tested, opts.bank, 'meaning', egFrame);
+    const mcq = buildMcqOptions(tested, opts.bank, 'meaning', egFrame, opts.preferIds);
     base.options = mcq.options;
     base.answer = mcq.answer;
     for (const w of mcq.warnings) {
@@ -551,7 +558,7 @@ export function assembleSlotQuestion(
     fixes.push(fix('listen', 'audio_ref', `set from tests ${testsId}`));
   } else if (qType === 'listen_pick_tl') {
     base.prompt = { audio_ref: testsId };
-    const mcq = buildMcqOptions(tested, opts.bank, 'tl', egFrame);
+    const mcq = buildMcqOptions(tested, opts.bank, 'tl', egFrame, opts.preferIds);
     base.options = mcq.options;
     base.answer = mcq.answer;
     for (const w of mcq.warnings) {
@@ -564,7 +571,7 @@ export function assembleSlotQuestion(
       { text: ' ', lang: 'eg' as const },
       { text: itemTl(tested), lang: 'tl' as const },
     ];
-    const mcq = buildMcqOptions(tested, opts.bank, 'meaning', egFrame);
+    const mcq = buildMcqOptions(tested, opts.bank, 'meaning', egFrame, opts.preferIds);
     base.options = mcq.options;
     base.answer = mcq.answer;
     for (const w of mcq.warnings) {
@@ -596,7 +603,7 @@ export function assembleSlotQuestion(
       }
     }
     base.prompt = coerceToRt(frame, 'eg');
-    const mcq = buildMcqOptions(tested, opts.bank, 'tl', egFrame);
+    const mcq = buildMcqOptions(tested, opts.bank, 'tl', egFrame, opts.preferIds);
     // Exactly 3 TL options (correct + 2 distractors)
     let options = mcq.options;
     let answer = mcq.answer;
@@ -1197,6 +1204,7 @@ ${JSON.stringify(
     const built = assembleSlotQuestion(slot, fillById.get(slot.slot_id), {
       bank,
       index: i,
+      preferIds: new Set(coreItemIds),
     });
     fixes.push(...built.fixes);
     for (const w of built.warnings) {

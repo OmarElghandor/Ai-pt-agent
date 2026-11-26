@@ -36,12 +36,25 @@ export type SlotPlanResult = {
 
 export type ImageReadyFn = (itemId: string) => boolean;
 
-/** Absolute floor / ceiling for day questions (no padding below natural coverage). */
+/**
+ * Floor / ceiling for the CORE day plan (2026-11-26): one seat per core item
+ * at least, so every item of today's lesson is tested. Real-world extras
+ * (2–3) come on top, never instead of core coverage.
+ */
 const MIN_SLOTS = 8;
-const MAX_SLOTS = 15;
-/** Real-world extras cap within the total. */
-const MAX_WITH_RW = 15;
+const MAX_SLOTS = 16;
+/** Hard cap: core plan + real-world extras. */
+const MAX_WITH_RW = 18;
 const RW_SLOT_MAX = 3;
+
+/** Relative weight per skill when picking a coverage type (balance). */
+const SKILL_WEIGHT = {
+  listening: 4,
+  writing: 4,
+  speaking: 4,
+  reading: 1.5,
+  grammar: 3,
+} as const;
 
 const QUOTA = {
   listening: { min: 3, max: 4 },
@@ -227,13 +240,97 @@ function buildOrderedIds(opts: {
   return out;
 }
 
-/** clamp(core_items + real_world, 8, 15) — short lessons are fine. */
+/**
+ * clamp(core_items, 8, 16) + min(real_world, 3), capped at 18.
+ * Core coverage never shares its seats with real-world extras.
+ */
 export function slotTargetFor(
   coreItemCount: number,
   realWorldCount = 0,
 ): number {
-  const n = Math.max(0, coreItemCount) + Math.max(0, realWorldCount);
-  return Math.min(MAX_SLOTS, Math.max(MIN_SLOTS, n));
+  const core = Math.min(MAX_SLOTS, Math.max(MIN_SLOTS, Math.max(0, coreItemCount)));
+  const rw = Math.min(RW_SLOT_MAX, Math.max(0, realWorldCount));
+  return Math.min(MAX_WITH_RW, core + rw);
+}
+
+/** Core-only seat target (no real-world extras). */
+function coreSlotTarget(coreItemCount: number): number {
+  return slotTargetFor(coreItemCount, 0);
+}
+
+/**
+ * The heard line a reply_* question plays. `replies_to` may be an item id
+ * or the TL text of a bank item. Null when nothing real can be played —
+ * then reply_* is never planned (never play the answer as the stimulus).
+ */
+export function resolveReplyStimulusId(tested: Item, bank: Item[]): string | null {
+  const rt =
+    'replies_to' in tested && typeof tested.replies_to === 'string'
+      ? tested.replies_to.trim()
+      : '';
+  if (!rt) return null;
+  const byId = bank.find((i) => i.id === rt);
+  if (byId && byId.id !== tested.id) return byId.id;
+  const norm = normalizeTl(rt);
+  const byTl = bank.find(
+    (i) => i.id !== tested.id && normalizeTl(itemTl(i)) === norm,
+  );
+  if (byTl) return byTl.id;
+  // Same text as the tested item (e.g. Olá! → Olá!) is a valid echo.
+  if (normalizeTl(itemTl(tested)) === norm) return tested.id;
+  return null;
+}
+
+const REPLY_TYPES = new Set<QuestionType>(['reply_speak', 'reply_write']);
+const PRODUCE_TYPES = new Set<QuestionType>([
+  'say_it',
+  'reply_speak',
+  'translate_write',
+  'reply_write',
+  'describe_image_speak',
+  'describe_image_write',
+]);
+
+/** Type is usable for this item (role, reply stimulus, cloze). */
+function typeFitsItem(type: QuestionType, item: Item, bank: Item[]): boolean {
+  const role =
+    item.type === 'phrase' && 'role' in item
+      ? (item as { role?: string }).role
+      : undefined;
+  if (role === 'heard' && PRODUCE_TYPES.has(type)) return false;
+  if (REPLY_TYPES.has(type) && !resolveReplyStimulusId(item, bank)) return false;
+  if (type === 'fill_blank_write' && item.type !== 'phrase' && item.type !== 'sentence') {
+    return false;
+  }
+  return true;
+}
+
+/** Candidate types per item kind, in preference order. */
+function coverTypesFor(item: Item): QuestionType[] {
+  if (item.type === 'word' || item.type === 'verb') {
+    return [
+      'read_meaning',
+      'listen_meaning',
+      'listen_pick_tl',
+      'translate_write',
+      'listen_pick_image',
+      'dictation',
+      'say_it',
+      'read_aloud',
+    ];
+  }
+  return [
+    'listen_meaning',
+    'translate_write',
+    'say_it',
+    'reply_speak',
+    'listen_pick_tl',
+    'fill_blank_write',
+    'dictation',
+    'reply_write',
+    'read_aloud',
+    'read_meaning',
+  ];
 }
 
 function isMustTestItem(item: Item | undefined): boolean {
@@ -408,9 +505,16 @@ export function planRealWorldSlots(opts: {
   const count = Math.min(RW_SLOT_MAX, room, opts.phrases.length);
   if (count < 1) return [];
 
-  const rwPage = opts.outlinePages.find((p) => p.preset === 'real_world');
-  const page_index = rwPage?.index ?? opts.outlinePages.at(-1)?.index ?? 0;
-  const page_id = rwPage?.page_id ?? 'p_real_world';
+  // Real-world phrases live inside the vocab_flow in new lessons (00 §4);
+  // a separate real_world page only exists in legacy packs. Never point at
+  // a page id that isn't in the lesson.
+  const rwPage =
+    opts.outlinePages.find((p) => p.preset === 'real_world') ??
+    opts.outlinePages.find((p) => p.preset === 'vocab_flow') ??
+    opts.outlinePages.filter((p) => p.role !== 'intro' && p.role !== 'test').at(-1) ??
+    opts.outlinePages.at(-1);
+  const page_index = rwPage?.index ?? 0;
+  const page_id = rwPage?.page_id ?? 'p0_story';
 
   const types: QuestionType[] = [];
   if (count >= 1) types.push('listen_meaning');
@@ -473,21 +577,43 @@ export function planQuestionSlots(opts: {
     opts.rwHide || !(opts.rwPhrases?.length)
       ? 0
       : Math.min(RW_SLOT_MAX, opts.rwPhrases.length);
-  let maxTotal = slotTargetFor(coreCount, rwCount);
+  // Core plan seats only; real-world extras are appended after (never shared).
+  let maxTotal = coreSlotTarget(coreCount);
+  void rwCount;
   const orderedIds = buildOrderedIds({
     bank,
     storyItemOrder: opts.storyItemOrder,
     priorityIds,
   });
-  // Phrases/sentences first (must-test), then words for fillers.
+  // 2026-11-26: today's lesson first. When the brief names core items, only
+  // those get questions of their own — recycle items never take a seat
+  // (they appear as pattern frames / context inside today's questions).
+  // Story / test days (no core ids) keep testing the recycle bank.
+  const todayOnly = prioritySet.size > 0;
+  const inScope = (id: string) => !todayOnly || prioritySet.has(id);
   const mustCoverIds = orderedIds.filter((id) => {
+    if (!inScope(id)) return false;
     const item = bank.find((i) => i.id === id);
     return item != null && isMustTestItem(item) && item.type !== 'pattern';
   });
   const wordIds = orderedIds.filter((id) => {
+    if (!inScope(id)) return false;
     const item = bank.find((i) => i.id === id);
     return item?.type === 'word' || item?.type === 'verb';
   });
+  /** Every non-pattern core item, phrases and words alike, in day order. */
+  const coverIds = orderedIds.filter(
+    (id) => mustCoverIds.includes(id) || wordIds.includes(id),
+  );
+  // Seats for coverage: never fewer than today's testable items.
+  if (todayOnly) {
+    maxTotal = Math.min(MAX_SLOTS, Math.max(maxTotal, coverIds.length));
+  }
+  const essentialIds = new Set(
+    (opts.coreItems ?? [])
+      .filter((c) => (c as { priority?: string }).priority === 'essential')
+      .map((c) => c.id),
+  );
   // 00 §7: grammar uses today's core patterns + grammar_focus-mapped patterns
   // (focus may recycle a pattern). Arbitrary recycle patterns stay out.
   const allPatterns = bank.filter(
@@ -529,7 +655,10 @@ export function planQuestionSlots(opts: {
   // Room for today's pattern pairs + the other skill mins (else the quota
   // check fails, e.g. 2 patterns × 2 + 9 = 13 > 12).
   if (!recyclePatternsOnly && todayPatterns.length > 0) {
-    const need = 2 * todayPatterns.length + otherSkillMins(12);
+    const need = Math.max(
+      2 * todayPatterns.length + otherSkillMins(12),
+      2 * todayPatterns.length + coverIds.length,
+    );
     maxTotal = Math.min(MAX_SLOTS, Math.max(maxTotal, need));
   }
   /** Grammar seats left after the other skills' minimums. */
@@ -641,49 +770,34 @@ export function planQuestionSlots(opts: {
     });
   }
 
-  // 2) Cover every must-test phrase/sentence at least once (whole-lesson rotation)
-  const coverTypes: QuestionType[] = [
-    'listen_meaning',
-    'translate_write',
-    'say_it',
-    'listen_pick_tl',
-    'fill_blank_write',
-    'reply_speak',
-    'dictation',
-    'reply_write',
-    'read_aloud',
-    'read_meaning',
-  ];
+  // 2) Coverage first (2026-11-26): every one of today's items — phrases AND
+  // words — gets one question where it is the answer. Coverage seats ignore
+  // skill max; the type is chosen to keep the skills balanced.
+  const skillScore = (skill: PlannedSlot['skill']): number =>
+    countSkill(slots, skill) / SKILL_WEIGHT[skill];
+  const typeUse = (type: QuestionType): number =>
+    slots.filter((s) => s.type === type).length;
 
-  let coverIdx = 0;
-  for (const id of mustCoverIds) {
-    if (slots.length >= maxTotal) break;
+  const placeFor = (
+    id: string,
+    forCoverage: boolean,
+  ): boolean => {
     const item = bank.find((i) => i.id === id);
-    if (!item || !isCoreTestable(item)) continue;
-    if (coveredCountFor(slots, id, bank) >= 1) continue;
-
-    const isPriority = prioritySet.size === 0 || prioritySet.has(id);
-    let placed = false;
-    for (let attempt = 0; attempt < coverTypes.length && !placed; attempt++) {
-      const type = coverTypes[(coverIdx + attempt) % coverTypes.length]!;
-      if (!canAdd(slots, type, id, { ...addOpts, forCoverage: isPriority })) {
-        continue;
-      }
-      const role =
-        item.type === 'phrase' && 'role' in item
-          ? (item as { role?: string }).role
-          : undefined;
-      if (
-        (type === 'say_it' ||
-          type === 'reply_speak' ||
-          type === 'translate_write' ||
-          type === 'reply_write' ||
-          type === 'describe_image_speak' ||
-          type === 'describe_image_write') &&
-        role === 'heard'
-      ) {
-        continue;
-      }
+    if (!item || item.type === 'pattern') return false;
+    const candidates = coverTypesFor(item)
+      .filter((t) => typeFitsItem(t, item, bank))
+      .map((t, order) => ({ t, order }))
+      .sort((a, b) => {
+        const sa = skillScore(skillForQuestionType(a.t));
+        const sb = skillScore(skillForQuestionType(b.t));
+        if (sa !== sb) return sa - sb;
+        const ua = typeUse(a.t);
+        const ub = typeUse(b.t);
+        if (ua !== ub) return ua - ub;
+        return a.order - b.order;
+      });
+    for (const { t: type } of candidates) {
+      if (!canAdd(slots, type, id, { ...addOpts, forCoverage })) continue;
       const page = introducedPage(id, outlinePages);
       pushSlot(slots, {
         type,
@@ -693,130 +807,48 @@ export function planQuestionSlots(opts: {
         use: 'both',
         ...imageMeta(type, id),
       });
-      coverIdx += 1;
-      placed = true;
+      return true;
+    }
+    return false;
+  };
+
+  for (const id of coverIds) {
+    if (coveredCountFor(slots, id, bank) >= 1) continue;
+    if (slots.length >= maxTotal) {
+      if (todayOnly) warnings.push(`uncovered_core ${id}: no seat left`);
+      continue;
+    }
+    if (!placeFor(id, true) && todayOnly) {
+      warnings.push(`uncovered_core ${id}: no fitting type`);
     }
   }
 
-  // 3) Top up skill quotas to mins (words + leftover phrases)
-  const topUp: { skill: keyof typeof QUOTA; types: QuestionType[] }[] = [
-    { skill: 'listening', types: ['listen_meaning', 'listen_pick_tl', 'dictation'] },
-    { skill: 'writing', types: ['translate_write', 'fill_blank_write', 'reply_write'] },
-    { skill: 'speaking', types: ['say_it', 'reply_speak', 'read_aloud'] },
-    { skill: 'reading', types: ['read_meaning'] },
-  ];
-  // Test days recycle patterns only (day 56): with no phrases / words, the
-  // pattern example sentences are the only material for L / W / S.
-  const fillerIds =
-    mustCoverIds.length + wordIds.length > 0
-      ? [...mustCoverIds, ...wordIds]
+  // 3) Second questions for today's items only, until the seat target:
+  // essential items first, then the least-tested, in day order. Never a
+  // recycle item standalone on a lesson day.
+  const secondPool = todayOnly
+    ? coverIds
+    : coverIds.length > 0
+      ? coverIds
       : bank.filter((i) => isDerivedEx(i.id) && Boolean(itemTl(i))).map((i) => i.id);
-
-  for (const { skill, types } of topUp) {
-    const min = skillMin(skill);
-    while (countSkill(slots, skill) < min && slots.length < maxTotal) {
-      let added = false;
-      for (const id of fillerIds) {
-        const item = bank.find((i) => i.id === id);
-        if (!item || item.type === 'pattern') continue;
-        for (const type of types) {
-          if (skillForQuestionType(type) !== skill) continue;
-          if (!canAdd(slots, type, id, addOpts)) continue;
-          const page = introducedPage(id, outlinePages);
-          pushSlot(slots, {
-            type,
-            tests: id,
-            page_index: page.page_index,
-            page_id: page.page_id,
-            use: 'both',
-            ...imageMeta(type, id),
-          });
-          added = true;
-          break;
-        }
-        if (added) break;
-      }
-      if (!added) break;
-    }
-  }
-
-  // 4) Fill remaining seats up to clamp (no invented padding beyond bank items)
   while (slots.length < maxTotal) {
+    const ranked = [...secondPool]
+      .map((id, order) => ({
+        id,
+        order,
+        n: coveredCountFor(slots, id, bank),
+        ess: essentialIds.has(id) ? 0 : 1,
+      }))
+      .filter((x) => x.n < 2)
+      .sort((a, b) => a.n - b.n || a.ess - b.ess || a.order - b.order);
     let added = false;
-    for (const id of [...wordIds, ...mustCoverIds]) {
-      if (slots.length >= maxTotal) break;
-      const item = bank.find((i) => i.id === id);
-      if (!item || item.type === 'pattern') continue;
-      for (const type of [
-        'listen_pick_tl',
-        'listen_meaning',
-        'dictation',
-        'read_aloud',
-        'translate_write',
-        'say_it',
-        'read_meaning',
-      ] as QuestionType[]) {
-        if (!canAdd(slots, type, id, addOpts)) continue;
-        const page = introducedPage(id, outlinePages);
-        pushSlot(slots, {
-          type,
-          tests: id,
-          page_index: page.page_index,
-          page_id: page.page_id,
-          use: 'both',
-          ...imageMeta(type, id),
-        });
+    for (const { id } of ranked) {
+      if (placeFor(id, false) || placeFor(id, true)) {
         added = true;
         break;
       }
-      if (added) break;
     }
     if (!added) break;
-  }
-
-  // 5) Cover any still-untested must-test phrases (skill-max bypass)
-  {
-    for (const id of mustCoverIds) {
-      if (slots.length >= maxTotal) break;
-      const item = bank.find((i) => i.id === id);
-      if (!item) continue;
-      if (prioritySet.size > 0 && !prioritySet.has(id)) continue;
-      if (coveredCountFor(slots, id, bank) >= 1) continue;
-      for (const type of [
-        'listen_meaning',
-        'translate_write',
-        'say_it',
-        'dictation',
-        'fill_blank_write',
-        'reply_speak',
-        'read_aloud',
-      ] as QuestionType[]) {
-        const role =
-          item.type === 'phrase' && 'role' in item
-            ? (item as { role?: string }).role
-            : undefined;
-        if (
-          (type === 'say_it' ||
-            type === 'reply_speak' ||
-            type === 'translate_write' ||
-            type === 'reply_write') &&
-          role === 'heard'
-        ) {
-          continue;
-        }
-        if (!canAdd(slots, type, id, { ...addOpts, forCoverage: true })) continue;
-        const page = introducedPage(id, outlinePages);
-        pushSlot(slots, {
-          type,
-          tests: id,
-          page_index: page.page_index,
-          page_id: page.page_id,
-          use: 'both',
-          ...imageMeta(type, id),
-        });
-        break;
-      }
-    }
   }
 
   if (slots.length < MIN_SLOTS) {
@@ -919,8 +951,9 @@ export function validatePlannedGrammarCoverage(
 
 /**
  * Coverage checks for the day question set.
- * Fatals: count ≠ planned target, skill mins unmet, untested phrases/patterns.
- * Warnings: untested words, reading over max.
+ * Fatals: count ≠ planned target, skill mins unmet, any untested core item
+ * (phrases, patterns and words — 2026-11-26).
+ * Warnings: reading over max, questions on items outside today's lesson.
  */
 export function validateDayQuestionQuotas(
   questions: Question[],
@@ -995,10 +1028,34 @@ export function validateDayQuestionQuotas(
   for (const id of coreItemIds) {
     if (tested.has(id)) continue;
     const item = bank.find((i) => i.id === id);
+    // 2026-11-26: every core item must be tested — words included.
     if (isMustTestItem(item) || item?.type === 'pattern') {
       fatals.push(`untested ${item?.type ?? 'item'} ${id}`);
     } else if (item?.type === 'word' || item?.type === 'verb') {
-      warnings.push(`untested word ${id}`);
+      fatals.push(`untested word ${id}`);
+    }
+  }
+
+  // A lesson-day question should test today's items, not an older lesson's.
+  if (coreItemIds.length > 0) {
+    const coreSet = new Set<string>();
+    for (const id of coreItemIds) {
+      for (const a of coverageAliases(id, bank)) coreSet.add(a);
+    }
+    for (const q of questions) {
+      const tests = Array.isArray(q.tests) ? q.tests.map(String) : [];
+      for (const t of tests) {
+        const isRw =
+          t.startsWith('phrase.rw.') ||
+          bank.some((i) => i.id === t && (i as { real_world?: boolean }).real_world);
+        const root = t.replace(/\.ex\.\d+$/, '');
+        const onLesson =
+          isRw ||
+          coreSet.has(t) ||
+          coreSet.has(root) ||
+          [...coverageAliases(t, bank)].some((a) => coreSet.has(a));
+        if (!onLesson) warnings.push(`off_lesson ${q.id ?? '?'} tests ${t}`);
+      }
     }
   }
 

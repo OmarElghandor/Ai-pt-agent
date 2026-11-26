@@ -416,11 +416,8 @@ describe('day question set planner', () => {
       'word.milk',
       'word.tea',
       'word.pastel_de_nata',
-      'word.toast',
-      'word.sugar',
-      'word.juice',
-      'word.cake',
-      'word.glass',
+      // (2026-11-26) toast/sugar/juice/cake/glass moved to day 4 — a lesson
+      // is ≤14 core items, and every one of them now gets a question.
       'phrase.order_coffee',
       'phrase.with_milk',
       'phrase.anything_else',
@@ -717,14 +714,24 @@ describe('day question set planner', () => {
     }
     const result = validateDayQuestionQuotas(questions, day2CoreIds, {
       items: day2Items,
+      plannedCount: slots.length,
     });
     assert.equal(result.ok, true, result.fatals.join('; '));
-    // clamp(core, 8, 15); untested words are warnings only.
-    assert.equal(questions.length, slotTargetFor(day2CoreIds.length));
-    assert.ok(
-      (result.warnings ?? []).some((w) => w.startsWith('untested word')),
-      'words without a slot should warn, not fail',
-    );
+    // 2026-11-26: every core item is tested — words included — and no
+    // recycle item (hello / good_morning / fine_thanks) gets its own seat.
+    assert.equal(questions.length, slots.length);
+    for (const id of day2CoreIds) {
+      if (id.startsWith('pattern.')) continue;
+      assert.ok(
+        testedIds.has(id) ||
+          (id === 'phrase.order_coffee' &&
+            testedIds.has('pattern.queria_um_uma.ex.1')),
+        `core ${id} untested`,
+      );
+    }
+    for (const recycle of ['phrase.hello', 'phrase.good_morning', 'phrase.fine_thanks']) {
+      assert.ok(!testedIds.has(recycle), `recycle ${recycle} got a seat`);
+    }
   });
 
   it('grammar slots prefer today’s core pattern over recycle (day-33 style)', () => {

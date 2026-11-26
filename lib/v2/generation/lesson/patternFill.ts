@@ -8,6 +8,13 @@ import {
 } from './patternTemplates';
 
 type WordItem = Extract<Item, { type: 'word' }>;
+
+/** Adverbs / fillers (então, pronto, aqui…) never fill a pattern's word hole. */
+const NON_FILL_POS = new Set(['adverb', 'conjunction', 'interjection', 'filler']);
+function isNounLike(w: Item): boolean {
+  const pos = (w as { pos?: string }).pos;
+  return !pos || !NON_FILL_POS.has(pos);
+}
 type PatternItem = Extract<Item, { type: 'pattern' }> & {
   kind?: PatternKind;
 };
@@ -192,7 +199,11 @@ export function fillPatternsInBank(
   bank: Item[],
   opts?: { coreItems?: CoreItem[] },
 ): Item[] {
-  const words = bank.filter((i): i is WordItem => i.type === 'word');
+  // A pattern's word hole ("Queria um ___") never takes an adverb / filler
+  // like então (2026-11-26).
+  const words = bank.filter(
+    (i): i is WordItem => i.type === 'word' && isNounLike(i),
+  );
   const wordById = new Map(words.map((w) => [w.id, w]));
   const coreFills = new Map<string, string[]>();
   const kinds = coreKindMap(opts?.coreItems);
