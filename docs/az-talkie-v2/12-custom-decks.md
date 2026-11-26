@@ -172,6 +172,7 @@ All need a signed-in user; the user id comes from the session helper only.
   - regenerate the deck's images with the lesson pipeline's model and quality (§2.10).
 - **Publish** makes the deck appear in "مواضيع" and marks its custom items `status: official` (their ids don't change). The source custom deck gets `status: promoted` and a small "بقى مجموعة رسمية" mark, and leaves the "من المتعلمين" list so the same deck isn't listed twice.
 - Official decks follow the same review rules as custom decks (§2.6), not the curriculum's `introducedDay`.
+- **(changed 2026-11-26) Official themed decks also come from لقطات micro series** (`19-micro-clips.md`): publishing a series creates or updates a `v2_official_decks` doc with `source: micro` on the same shared item ids. Where `19` disagrees with this section about themed-deck origin, **19 wins**.
 
 ---
 

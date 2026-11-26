@@ -5,11 +5,12 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Icon } from '@/components/v2/Icon';
 
-/** Tab order (16 §8): المسار · مراجعة · الكروت · اتكلّم · المكتبة */
+/** Tab order: المسار · مراجعة · الكروت · لقطات · اتكلّم · المكتبة */
 const TABS = [
   { href: '/path', label: 'المسار', icon: 'signpost', reviewDot: false },
   { href: '/review', label: 'مراجعة', icon: 'autorenew', reviewDot: true },
   { href: '/cards', label: 'الكروت', icon: 'layers', reviewDot: false },
+  { href: '/micro', label: 'لقطات', icon: 'movie', reviewDot: false },
   { href: '/talk', label: 'اتكلّم', icon: 'chat', reviewDot: false },
   { href: '/library', label: 'المكتبة', icon: 'local_library', reviewDot: false },
 ] as const;
@@ -57,8 +58,11 @@ export function TabBar() {
     >
       <ul className="pointer-events-auto mx-auto flex max-w-[480px] gap-1 border-t border-v2-tab-border bg-v2-tab-bar px-2 pb-3 pt-2 shadow-[0_-4px_16px_rgba(0,0,0,0.04)]">
         {TABS.map((tab) => {
+          // /micro list tab only — player lives under same prefix in flow; keep list exact.
           const active =
-            pathname === tab.href || pathname.startsWith(`${tab.href}/`);
+            tab.href === '/micro'
+              ? pathname === '/micro'
+              : pathname === tab.href || pathname.startsWith(`${tab.href}/`);
           const showDot = tab.reviewDot && reviewPending && !active;
           return (
             <li key={tab.href} className="relative flex flex-1">

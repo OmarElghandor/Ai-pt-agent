@@ -130,6 +130,8 @@ export function VocabFlowPlayer({
   day,
   page,
   items,
+  situationEg,
+  titleTl,
   nextHref = null,
   story = null,
 }: Props) {
@@ -394,6 +396,40 @@ export function VocabFlowPlayer({
   const isPhrase = item?.type === 'phrase';
   const isRw = slide?.kind === 'item' && Boolean(slide.realWorldTag);
   const meaningHidden = coverMeaning;
+  const isBreather = slide?.kind === 'breather';
+
+  const breatherWords =
+    isBreather && slide.kind === 'breather'
+      ? slide.chipIds.flatMap((id) => {
+          const it = byId.get(id);
+          if (!it || (it.type !== 'word' && it.type !== 'verb')) return [];
+          if (!('tl' in it)) return [];
+          return [
+            {
+              id,
+              tl: String(it.tl),
+              ar: 'ar' in it && it.ar ? String(it.ar) : '',
+              gender: itemGender(it),
+              imageUrl: itemImageUrl(it),
+            },
+          ];
+        })
+      : [];
+
+  const breatherPhrases =
+    isBreather && slide.kind === 'breather'
+      ? slide.chipIds.flatMap((id) => {
+          const it = byId.get(id);
+          if (!it || it.type !== 'phrase' || !('tl' in it)) return [];
+          return [
+            {
+              id,
+              tl: String(it.tl),
+              ar: 'ar' in it && it.ar ? String(it.ar) : '',
+            },
+          ];
+        })
+      : [];
 
   return (
     <main
@@ -443,43 +479,45 @@ export function VocabFlowPlayer({
         </div>
       </div>
 
-      <div className="relative mx-4 mt-1 h-[36vh] min-h-[180px] overflow-hidden rounded-v2-card bg-v2-paper-deep shadow-[var(--shadow-v2-soft)]">
-        {showingHeroImage ? (
-          <ImageSlot
-            variant={isPhrase ? 'flashcard' : 'thumb'}
-            src={coverSrc}
-            fill
-            fit="cover"
-          />
-        ) : (
-          <div className="h-full w-full bg-v2-paper-deep" />
-        )}
-        {isPhrase && showingHeroImage ? (
-          <>
-            <div
-              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[color:var(--color-v2-hero-scrim)]/70 via-transparent to-transparent"
-              aria-hidden
+      {!isBreather ? (
+        <div className="relative mx-4 mt-1 h-[36vh] min-h-[180px] overflow-hidden rounded-v2-card bg-v2-paper-deep shadow-[var(--shadow-v2-soft)]">
+          {showingHeroImage ? (
+            <ImageSlot
+              variant={isPhrase ? 'flashcard' : 'thumb'}
+              src={coverSrc}
+              fill
+              fit="cover"
             />
-            <span className="absolute bottom-3 right-3 rounded-full bg-[color:var(--color-v2-hero-scrim)]/80 px-2.5 py-0.5 font-[family-name:var(--font-v2-arabic)] text-[10px] text-white">
-              جملة
-            </span>
-          </>
-        ) : null}
-        {slide?.kind === 'item' && itemId ? (
-          <DemoImageGenerate
-            body={{ kind: 'item', day, item_id: itemId }}
-            label={coverSrc ? 'Regenerate' : 'Generate'}
-            onReady={(url) =>
-              setCoverSrc(
-                cloudinaryDisplayUrl(url, {
-                  aspect: itemAspect(item),
-                  width: 900,
-                }),
-              )
-            }
-          />
-        ) : null}
-      </div>
+          ) : (
+            <div className="h-full w-full bg-v2-paper-deep" />
+          )}
+          {isPhrase && showingHeroImage ? (
+            <>
+              <div
+                className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[color:var(--color-v2-hero-scrim)]/70 via-transparent to-transparent"
+                aria-hidden
+              />
+              <span className="absolute bottom-3 right-3 rounded-full bg-[color:var(--color-v2-hero-scrim)]/80 px-2.5 py-0.5 font-[family-name:var(--font-v2-arabic)] text-[10px] text-white">
+                جملة
+              </span>
+            </>
+          ) : null}
+          {slide?.kind === 'item' && itemId ? (
+            <DemoImageGenerate
+              body={{ kind: 'item', day, item_id: itemId }}
+              label={coverSrc ? 'Regenerate' : 'Generate'}
+              onReady={(url) =>
+                setCoverSrc(
+                  cloudinaryDisplayUrl(url, {
+                    aspect: itemAspect(item),
+                    width: 900,
+                  }),
+                )
+              }
+            />
+          ) : null}
+        </div>
+      ) : null}
 
       <section className="relative z-10 flex flex-1 flex-col px-4 pb-28 pt-4">
         {slide?.kind === 'tip' && tipBlock && tipBlock.type === 'tip' ? (
@@ -512,37 +550,128 @@ export function VocabFlowPlayer({
           </div>
         ) : null}
 
-        {slide?.kind === 'breather' ? (
-          <div className="flex flex-col items-center gap-5 pt-4">
-            <div className="flex h-28 w-28 items-center justify-center rounded-full border-4 border-v2-action/30 bg-v2-action-tint">
-              <p className="text-center font-[family-name:var(--font-v2-arabic)] text-lg font-semibold text-v2-primary">
-                {eastern(slide.seen)}
-                <span className="mx-1 text-v2-ink-muted">من</span>
-                {eastern(slide.total)}
-              </p>
+        {isBreather && slide?.kind === 'breather' ? (
+          <div className="flex flex-col gap-5">
+            {breatherWords.length > 0 ? (
+              <div>
+                <div className="mb-2.5 flex items-center justify-between gap-2 px-0.5">
+                  <div className="flex min-w-0 items-center gap-1.5">
+                    {titleTl ? (
+                      <>
+                        <span
+                          dir="ltr"
+                          className="truncate font-[family-name:var(--font-v2-target)] text-xs font-semibold text-v2-primary"
+                        >
+                          {titleTl}
+                        </span>
+                        <span className="text-v2-line" aria-hidden>
+                          |
+                        </span>
+                      </>
+                    ) : null}
+                    <span className="font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
+                      قاموس مصوّر
+                    </span>
+                  </div>
+                  <span className="shrink-0 rounded-full border border-v2-primary/20 bg-v2-primary-tint px-2 py-0.5 font-[family-name:var(--font-v2-arabic)] text-[11px] font-medium text-v2-primary">
+                    {eastern(breatherWords.length)} مفردات
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2.5">
+                  {breatherWords.map((w) => (
+                    <div
+                      key={w.id}
+                      className="flex flex-col justify-between rounded-v2-card border border-v2-line bg-white p-2.5 shadow-[var(--shadow-v2-soft)]"
+                    >
+                      <div className="relative mb-2 aspect-[4/3] w-full overflow-hidden rounded-[12px] bg-v2-paper-deep">
+                        <ImageSlot
+                          variant="thumb"
+                          src={w.imageUrl}
+                          alt={w.tl}
+                          fill
+                          fit="contain"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between gap-1">
+                        <div className="min-w-0 text-right">
+                          <TargetWord
+                            tl={w.tl}
+                            gender={w.gender}
+                            size="sm"
+                            nounTone="ink"
+                          />
+                          {w.ar ? (
+                            <p className="mt-0.5 font-[family-name:var(--font-v2-arabic)] text-[11px] leading-normal text-v2-ink-muted">
+                              {w.ar}
+                            </p>
+                          ) : null}
+                        </div>
+                        <AudioButton
+                          text={w.tl}
+                          lang="pt"
+                          size="chip"
+                          label={`استمع إلى ${w.tl}`}
+                          className="shrink-0"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            <div className="flex flex-col items-center pt-1 text-center">
+              <div className="mb-2.5 flex h-16 w-16 items-center justify-center rounded-full border-2 border-v2-action bg-v2-action-tint shadow-[var(--shadow-v2-soft)]">
+                <p className="flex flex-col items-center leading-tight font-[family-name:var(--font-v2-arabic)]">
+                  <span className="text-base font-bold text-v2-primary">
+                    {eastern(slide.seen)}
+                  </span>
+                  <span className="text-[10px] font-medium text-v2-primary">
+                    من {eastern(slide.total)}
+                  </span>
+                </p>
+              </div>
+              <h2 className="font-[family-name:var(--font-v2-arabic)] text-base font-bold text-v2-ink">
+                شفت دول · كمّل
+              </h2>
+              {situationEg ? (
+                <p className="mt-0.5 max-w-[260px] font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
+                  {situationEg}
+                </p>
+              ) : null}
             </div>
-            <p className="font-[family-name:var(--font-v2-arabic)] text-base text-v2-ink-muted">
-              شفت دول · كمّل
-            </p>
-            <div className="flex flex-wrap justify-center gap-2">
-              {slide.chipIds.map((id) => {
-                const it = byId.get(id);
-                const tl = it && 'tl' in it ? String(it.tl) : id;
-                return (
+
+            {breatherPhrases.length > 0 ? (
+              <div className="flex flex-wrap items-center justify-center gap-2.5">
+                {breatherPhrases.map((p) => (
                   <button
-                    key={id}
+                    key={p.id}
                     type="button"
-                    dir="ltr"
-                    className="rounded-v2-pill border border-v2-line bg-white px-3 py-2 font-[family-name:var(--font-v2-target)] text-sm shadow-[var(--shadow-v2-soft)]"
+                    className="flex items-center gap-2 rounded-v2-card border border-v2-line bg-white px-3.5 py-2.5 text-right shadow-[var(--shadow-v2-soft)] transition-colors hover:border-v2-primary/40 hover:bg-v2-primary-tint/40 active:scale-[0.98]"
                     onClick={() =>
-                      void playSpeech(tl, 'pt', new AbortController().signal)
+                      void playSpeech(p.tl, 'pt', new AbortController().signal)
                     }
                   >
-                    {tl}
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-v2-action-tint text-v2-primary">
+                      <Icon name="volume_up" size={20} />
+                    </span>
+                    <span className="flex min-w-0 flex-col text-right">
+                      <span
+                        dir="ltr"
+                        className="font-[family-name:var(--font-v2-target)] text-xs font-semibold text-v2-primary"
+                      >
+                        {p.tl}
+                      </span>
+                      {p.ar ? (
+                        <span className="font-[family-name:var(--font-v2-arabic)] text-[10px] text-v2-ink-muted">
+                          {p.ar}
+                        </span>
+                      ) : null}
+                    </span>
                   </button>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            ) : null}
           </div>
         ) : null}
 

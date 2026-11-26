@@ -69,6 +69,12 @@ const RAIL: NavItem[] = [
     match: (p) => p.startsWith('/v2-admin/library') && !p.startsWith('/v2-admin/library/cost'),
   },
   {
+    href: '/v2-admin/micro',
+    label: 'لقطات',
+    short: 'ل',
+    match: (p) => p.startsWith('/v2-admin/micro'),
+  },
+  {
     href: '/v2-admin/characters',
     label: 'الشخصيات',
     short: 'شخ',

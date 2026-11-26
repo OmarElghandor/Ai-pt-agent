@@ -1805,6 +1805,14 @@ const v2OfficialDeckSchema = new Schema(
       default: 'draft',
     },
     source_deck: { type: String, required: false },
+    /** How this official deck was created: promoted learner deck, admin topic, or micro series (19). */
+    source: {
+      type: String,
+      required: false,
+      enum: ['promoted', 'admin_topic', 'micro'],
+      index: true,
+    },
+    micro_series_id: { type: String, required: false },
   },
   { timestamps: true, collection: 'v2_official_decks' },
 );
@@ -1941,6 +1949,20 @@ export {
   V2LibraryTtsUsageModel,
   V2LibraryProgressModel,
 } from './libraryModels';
+
+/* Micro clips models live in ./microModels (19-micro-clips.md). */
+export type {
+  V2MicroSeriesDoc,
+  V2MicroClipDoc,
+  V2MicroProgressDoc,
+  V2MicroDailyDoc,
+} from './microModels';
+export {
+  V2MicroSeriesModel,
+  V2MicroClipModel,
+  V2MicroProgressModel,
+  V2MicroDailyModel,
+} from './microModels';
 
 void overrideFormSchema;
 void skillSrsSchema;

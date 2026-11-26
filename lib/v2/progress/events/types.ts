@@ -106,6 +106,15 @@ export const ProgressEventSchema = z.discriminatedUnion('kind', [
     local_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
     round: z.number().int().positive(),
   }),
+  base.extend({
+    kind: z.literal('micro_clip_started'),
+    clip_id: z.string().min(1),
+  }),
+  base.extend({
+    kind: z.literal('micro_clip_finished'),
+    clip_id: z.string().min(1),
+    line_count: z.number().int().nonnegative().optional(),
+  }),
 ]);
 
 export type ProgressEvent = z.infer<typeof ProgressEventSchema>;

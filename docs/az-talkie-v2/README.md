@@ -41,6 +41,7 @@ This pack holds everything decided in design sessions for **A-Z Talkie** (produc
 | `docs/az-talkie-v2/16-practice-engine.md` | Daily practice engine: 30-min budget, review first, footer tab مراجعة, كروت النهارده + مراجعة النهارده, answer log / level tracking, stages (E0–E8) | English |
 | `docs/az-talkie-v2/17-item-weights.md` | Item weights: target / survival / computed weight, priority score for cards + review, home produce·understand counts (W0–W6) | English |
 | `docs/az-talkie-v2/18-review-chat-ui.md` | Review chat UI: مراجعة النهارده as a Lumina coach chat, tokens, every question type, components, tasks R0–R8 | English |
+| `docs/az-talkie-v2/19-micro-clips.md` | لقطات / Micro clips: themed series of connected sheets (list · pairs · scene · rule), admin generate, home daily clip, مواضيع decks, reel export (M0–M8) | English |
 | `design/reference/library/` | Stitch screens for library home, story/podcast players, word sheet, end (see 14c) | HTML / PNG |
 | `examples/day06-example.json` | Gold ESTAR lesson (filename kept; `lesson.day` is **11** in the grammar-first order) | JSON |
 | `prototypes/ser-estar.html` | Working prototype of a guided (autoplay) page | HTML |

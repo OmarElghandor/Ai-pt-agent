@@ -156,6 +156,13 @@ export async function evaluateAnswer(
     throw new Error('scene_mistake answers use processSceneMistake');
   }
 
+  if (
+    payload.kind === 'micro_clip_finish' ||
+    payload.kind === 'micro_clip_save_line'
+  ) {
+    throw new Error('micro clip answers use handleMicroClip* in answers/handle');
+  }
+
   // open (narrowed: remaining AnswerPayload member)
   return evaluateOpenAnswer(payload, ctx, now, errors, finish);
 }

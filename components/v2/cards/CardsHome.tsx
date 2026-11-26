@@ -54,6 +54,19 @@ export function CardsHome({ dayOverride }: { dayOverride: number | null }) {
   const [error, setError] = useState<string | null>(null);
   const [learnerDecks, setLearnerDecks] = useState<PublicTile[]>([]);
   const [themeDecks, setThemeDecks] = useState<PublicTile[]>([]);
+  const [microSeries, setMicroSeries] = useState<
+    Array<{
+      id: string;
+      slug: string;
+      title_ar: string;
+      title_tl: string;
+      clip_count: number;
+      finished_count: number;
+      in_progress: boolean;
+      official_deck_id: string | null;
+      levels: number[];
+    }>
+  >([]);
   const [reviewMinutes, setReviewMinutes] = useState(14);
   const [reviewRounds, setReviewRounds] = useState(3);
   const [reviewRound, setReviewRound] = useState(1);
@@ -123,10 +136,22 @@ export function CardsHome({ dayOverride }: { dayOverride: number | null }) {
           const data = (await res.json()) as { decks?: PublicTile[] };
           if (!cancelled) setLearnerDecks(data.decks ?? []);
         } else {
-          const res = await fetch('/api/v2/custom-decks/official');
-          if (!res.ok) return;
-          const data = (await res.json()) as { decks?: PublicTile[] };
-          if (!cancelled) setThemeDecks(data.decks ?? []);
+          const [res, microRes] = await Promise.all([
+            fetch('/api/v2/custom-decks/official'),
+            fetch('/api/v2/micro/series'),
+          ]);
+          if (res.ok) {
+            const data = (await res.json()) as { decks?: PublicTile[] };
+            if (!cancelled) setThemeDecks(data.decks ?? []);
+          }
+          if (microRes.ok) {
+            const data = (await microRes.json()) as {
+              continuing?: typeof microSeries;
+              series?: typeof microSeries;
+              all?: typeof microSeries;
+            };
+            if (!cancelled) setMicroSeries(data.all ?? []);
+          }
         }
       } catch {
         /* quiet */
@@ -347,21 +372,57 @@ export function CardsHome({ dayOverride }: { dayOverride: number | null }) {
       ) : null}
 
       {tab === 'themes' ? (
-        <ul className="flex flex-col gap-3">
-          {themeDecks.map((d) => (
-            <PublicDeckRow
-              key={d.id}
-              deck={d}
-              href={cardsHref(`/cards/deck/official:${d.id}`, dayOverride)}
-              hideAdded
-            />
-          ))}
-          {themeDecks.length === 0 ? (
-            <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
-              مفيش مواضيع رسمية لسه.
-            </p>
+        <div className="flex flex-col gap-4">
+          {microSeries.some((s) => s.in_progress) ? (
+            <div>
+              <h3 className="mb-2 font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-v2-ink">
+                مكمّل فيها
+              </h3>
+              <ul className="flex flex-col gap-3">
+                {microSeries
+                  .filter((s) => s.in_progress)
+                  .map((s) => (
+                    <MicroSeriesRow
+                      key={s.id}
+                      series={s}
+                      dayOverride={dayOverride}
+                    />
+                  ))}
+              </ul>
+            </div>
           ) : null}
-        </ul>
+          <ul className="flex flex-col gap-3">
+            {microSeries
+              .filter((s) => !s.in_progress)
+              .map((s) => (
+                <MicroSeriesRow
+                  key={s.id}
+                  series={s}
+                  dayOverride={dayOverride}
+                />
+              ))}
+            {themeDecks
+              .filter(
+                (d) =>
+                  !microSeries.some(
+                    (s) => s.official_deck_id === d.id,
+                  ),
+              )
+              .map((d) => (
+                <PublicDeckRow
+                  key={d.id}
+                  deck={d}
+                  href={cardsHref(`/cards/deck/official:${d.id}`, dayOverride)}
+                  hideAdded
+                />
+              ))}
+            {microSeries.length === 0 && themeDecks.length === 0 ? (
+              <p className="font-[family-name:var(--font-v2-arabic)] text-sm text-v2-ink-muted">
+                مفيش مواضيع رسمية لسه.
+              </p>
+            ) : null}
+          </ul>
+        </div>
       ) : null}
 
       {tab === 'situations' ? (
@@ -539,5 +600,66 @@ function PublicDeckRow({
           : ` · ضافوه ${toArDigits(deck.added_count)}`}
       </p>
     </Link>
+  );
+}
+
+function MicroSeriesRow({
+  series,
+  dayOverride,
+}: {
+  series: {
+    slug: string;
+    title_ar: string;
+    title_tl: string;
+    clip_count: number;
+    finished_count: number;
+    official_deck_id: string | null;
+    levels: number[];
+  };
+  dayOverride: number | null;
+}) {
+  const LEVEL = ['', 'سهل جداً', 'سهل', 'متوسط', 'أصعب شوية', 'صعب'];
+  const levelLabel = series.levels
+    .map((l) => LEVEL[l] ?? `L${l}`)
+    .join(' · ');
+  return (
+    <li className="rounded-v2-card bg-v2-card p-4 shadow-[var(--shadow-v2-soft)]">
+      <p className="font-[family-name:var(--font-v2-arabic)] text-base font-semibold text-v2-ink">
+        {series.title_ar}
+      </p>
+      <p
+        dir="ltr"
+        className="font-[family-name:var(--font-v2-target)] text-sm text-v2-ink-muted"
+      >
+        {series.title_tl}
+      </p>
+      <p className="mt-1 font-[family-name:var(--font-v2-arabic)] text-xs text-v2-ink-muted">
+        {toArDigits(series.finished_count)}/{toArDigits(series.clip_count)} لقطة
+        {levelLabel ? ` · ${levelLabel}` : ''}
+      </p>
+      <div className="mt-3 flex gap-2">
+        <Link
+          href={`/micro/${series.slug}`}
+          className="flex-1 rounded-xl bg-v2-primary py-2 text-center text-sm text-white"
+        >
+          اتفرج
+        </Link>
+        {series.official_deck_id ? (
+          <Link
+            href={cardsHref(
+              `/cards/deck/official:${series.official_deck_id}`,
+              dayOverride,
+            )}
+            className="flex-1 rounded-xl bg-v2-paper-deep py-2 text-center text-sm text-v2-ink"
+          >
+            راجع
+          </Link>
+        ) : (
+          <span className="flex-1 rounded-xl bg-v2-paper-deep/50 py-2 text-center text-sm text-v2-ink-muted">
+            راجع
+          </span>
+        )}
+      </div>
+    </li>
   );
 }

@@ -100,6 +100,9 @@ export function mapAnswerSource(payload: AnswerPayload): AnswerLogSource {
       return payload.kind === 'page_quiz' && payload.page_id.includes('grammar')
         ? 'grammar_check'
         : 'lesson';
+    case 'micro_clip_finish':
+    case 'micro_clip_save_line':
+      return 'micro';
     default:
       return 'lesson';
   }
@@ -183,10 +186,15 @@ function answerGiven(payload: AnswerPayload): unknown {
         right: payload.right,
         stopped: payload.stopped,
       };
+    case 'micro_clip_finish':
+      return { clip_id: payload.clip_id, item_ids: payload.item_ids };
+    case 'micro_clip_save_line':
+      return { clip_id: payload.clip_id, item_id: payload.item_id };
   }
 }
 
 function itemIds(payload: AnswerPayload): string[] {
+  if (payload.kind === 'micro_clip_finish') return payload.item_ids;
   if ('item_id' in payload && typeof payload.item_id === 'string' && payload.item_id) {
     return [payload.item_id];
   }

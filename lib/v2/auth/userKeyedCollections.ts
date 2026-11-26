@@ -27,6 +27,8 @@ export const USER_KEYED_V2_COLLECTIONS = [
   'v2_card_review_jobs',
   'v2_library_progress',
   'v2_roleplay_sessions',
+  'v2_micro_progress',
+  'v2_micro_daily',
 ] as const;
 
 export type UserKeyedV2Collection = (typeof USER_KEYED_V2_COLLECTIONS)[number];

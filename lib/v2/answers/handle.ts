@@ -26,6 +26,7 @@ import {
   type ItemState,
   type ProgressError,
 } from '@/lib/v2/progress';
+import { applyStageEvidence } from '@/lib/v2/progress/stages';
 import {
   evaluateAnswer,
   type AnswerVerdict,
@@ -37,6 +38,8 @@ import {
   parseAnswerPayload,
   type AnswerPayload,
   type BeatAnswerPayload,
+  type MicroClipFinishPayload,
+  type MicroClipSaveLinePayload,
   type SceneMistakePayload,
 } from './payload';
 import {
@@ -48,6 +51,7 @@ import {
 import { processSceneMistake } from './sceneMistake';
 import { recordAnswerLog } from './log';
 import { stageMoveFrom } from '@/lib/v2/progress/stages';
+import { V2UserDeckModel } from '@/lib/v2/mongo/models';
 
 export type { AnswerVerdict };
 
@@ -149,6 +153,7 @@ async function saveItemState(state: ItemState): Promise<void> {
         stage_answer_id: state.stage_answer_id ?? null,
         first_recognition_at: state.first_recognition_at ?? null,
         first_recall_at: state.first_recall_at ?? null,
+        ...(state.opt_in_card ? { opt_in_card: true } : {}),
       },
     },
     { upsert: true },
@@ -443,11 +448,25 @@ async function handleBeat(
   };
 }
 
+export type MicroClipAnswerBody = {
+  ok: true;
+  kind: 'micro_clip_finish' | 'micro_clip_save_line';
+  clip_id: string;
+  marked_seen?: string[];
+  item_count?: number;
+  item_id?: string;
+  duplicate?: boolean;
+};
+
 export type HandleAnswerResult =
   | { status: 400 | 401 | 403 | 404 | 503; error: string }
   | {
       status: 200;
-      body: AnswerVerdict | BeatAnswerBody | SceneMistakeBody;
+      body:
+        | AnswerVerdict
+        | BeatAnswerBody
+        | SceneMistakeBody
+        | MicroClipAnswerBody;
     };
 
 async function handleSceneMistake(
@@ -488,6 +507,119 @@ async function handleSceneMistake(
     error_id: result.errorId,
     count: result.count,
     classified: result.classifiedIds.length,
+  };
+}
+
+async function ensureDeckMembership(
+  userId: string,
+  deckId: string,
+  itemIds: string[],
+): Promise<void> {
+  if (!deckId || itemIds.length === 0) return;
+  await V2UserDeckModel().updateOne(
+    { user_id: userId, deck_id: deckId },
+    {
+      $setOnInsert: {
+        user_id: userId,
+        deck_id: deckId,
+        deck_kind: 'official',
+        added_at: new Date(),
+        new_cards_by_day: {},
+      },
+    },
+    { upsert: true },
+  );
+}
+
+async function markItemsSeenOnce(
+  userId: string,
+  itemIds: string[],
+  localDate: string,
+  answerId: string,
+  introducedDay: number,
+): Promise<string[]> {
+  const marked: string[] = [];
+  for (const itemId of itemIds) {
+    let state = await loadItemState(userId, itemId);
+    if (!state) {
+      state = createItemState({
+        user_id: userId,
+        item_id: itemId,
+        introducedDay,
+      });
+      state.opt_in_card = true;
+    }
+    const before = state.stage ?? 1;
+    state = applyStageEvidence(state, {
+      kind: 'seen',
+      localDate,
+      answerId,
+    });
+    await saveItemState(state);
+    if ((state.stage ?? 1) >= 1 && before <= 1) {
+      marked.push(itemId);
+    }
+  }
+  return marked;
+}
+
+async function handleMicroClipFinish(
+  payload: MicroClipFinishPayload,
+  userId: string,
+  tz: string,
+): Promise<MicroClipAnswerBody> {
+  const localDate = localDateString(new Date(), tz);
+  const marked = await markItemsSeenOnce(
+    userId,
+    payload.item_ids,
+    localDate,
+    payload.answer_id,
+    payload.day || 1,
+  );
+  if (payload.deck_id) {
+    await ensureDeckMembership(userId, payload.deck_id, payload.item_ids);
+  }
+  try {
+    await recordAnswerLog({
+      payload,
+      user_id: userId,
+      local_date: localDate,
+      verdict: 'correct',
+      first_try: true,
+    });
+  } catch {
+    /* best-effort */
+  }
+  return {
+    ok: true,
+    kind: 'micro_clip_finish',
+    clip_id: payload.clip_id,
+    marked_seen: marked,
+    item_count: payload.item_ids.length,
+  };
+}
+
+async function handleMicroClipSaveLine(
+  payload: MicroClipSaveLinePayload,
+  userId: string,
+  tz: string,
+): Promise<MicroClipAnswerBody> {
+  const localDate = localDateString(new Date(), tz);
+  await markItemsSeenOnce(
+    userId,
+    [payload.item_id],
+    localDate,
+    payload.answer_id,
+    payload.day || 1,
+  );
+  if (payload.deck_id) {
+    await ensureDeckMembership(userId, payload.deck_id, [payload.item_id]);
+  }
+  return {
+    ok: true,
+    kind: 'micro_clip_save_line',
+    clip_id: payload.clip_id,
+    item_id: payload.item_id,
   };
 }
 
@@ -582,6 +714,35 @@ export async function handleAnswerRequest(
       }
       throw err;
     }
+  }
+
+  if (
+    payload.kind === 'micro_clip_finish' ||
+    payload.kind === 'micro_clip_save_line'
+  ) {
+    const store = {
+      async get(id: string) {
+        const doc = await V2AnswerIdempotencyModel()
+          .findOne({ answer_id: id, user_id: userId })
+          .lean();
+        if (!doc) return undefined;
+        return doc.verdict as MicroClipAnswerBody;
+      },
+      async set(id: string, verdict: MicroClipAnswerBody) {
+        await V2AnswerIdempotencyModel().create({
+          answer_id: id,
+          user_id: userId,
+          verdict,
+        });
+      },
+    };
+    const verdict = await withIdempotency(payload.answer_id, store, async () => {
+      if (payload.kind === 'micro_clip_finish') {
+        return handleMicroClipFinish(payload, userId, tz);
+      }
+      return handleMicroClipSaveLine(payload, userId, tz);
+    });
+    return { status: 200, body: verdict };
   }
 
   if (payload.kind === 'beat') {

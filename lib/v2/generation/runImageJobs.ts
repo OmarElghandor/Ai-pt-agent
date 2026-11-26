@@ -116,14 +116,19 @@ export async function processImageJob(job: JobView): Promise<void> {
     }
     const force = Boolean(input.force);
 
-    // Custom-deck path: no lesson manifest; style-anchor only; cheap quality.
-    if (input.source === 'custom_deck') {
+    // Custom-deck / micro paths: no lesson manifest; use stored spec.
+    if (
+      input.source === 'custom_deck' ||
+      input.source === 'micro' ||
+      input.source === 'micro_icon'
+    ) {
+      const source = input.source;
       const existing = await getImageByKey(key);
       let spec = (existing?.spec as ImageSpec | undefined) ?? undefined;
       if (!spec) {
         spec = {
           type: 'object',
-          subject: key.replace(/^word\./, ''),
+          subject: key.replace(/^(word\.|icon\.)/, ''),
           characters: [],
           must_avoid: ['text', 'letters', 'numbers'],
         };
@@ -131,14 +136,21 @@ export async function processImageJob(job: JobView): Promise<void> {
       spec = { ...spec, characters: [] };
       const usedBy = [
         ...(input.deck_id ? [`deck:${input.deck_id}`] : []),
+        ...(source === 'micro' || source === 'micro_icon'
+          ? [`micro:${job.lesson_id?.replace(/^micro\./, '') ?? 'series'}`]
+          : []),
       ];
+      const ratio: '1:1' | '4:3' =
+        source === 'micro' ? '4:3' : '1:1';
+      const quality =
+        input.quality ?? (source === 'micro' ? 'medium' : 'low');
       let result = await generateContentImage({
         key,
         spec,
         usedBy,
         force,
-        quality: input.quality ?? 'low',
-        ratio: '1:1',
+        quality,
+        ratio,
       });
       if (result.skipped) {
         await V2ImageModel().updateOne(
@@ -153,8 +165,8 @@ export async function processImageJob(job: JobView): Promise<void> {
           spec,
           usedBy,
           force: true,
-          quality: input.quality ?? 'low',
-          ratio: '1:1',
+          quality,
+          ratio,
         });
       }
       if (result.skipped) {
@@ -166,7 +178,7 @@ export async function processImageJob(job: JobView): Promise<void> {
             status: result.doc.status,
             reason: result.reason ?? result.doc.reason,
             skipped: true,
-            source: 'custom_deck',
+            source,
           },
         });
         return;
@@ -181,7 +193,7 @@ export async function processImageJob(job: JobView): Promise<void> {
             status,
             reason: result.reason ?? result.doc.reason,
             skipped: false,
-            source: 'custom_deck',
+            source,
           },
         });
         return;
@@ -205,7 +217,7 @@ export async function processImageJob(job: JobView): Promise<void> {
           cost_usd: result.doc.cost_usd ?? null,
           skipped: false,
           reason: result.reason ?? null,
-          source: 'custom_deck',
+          source,
         },
       });
       return;

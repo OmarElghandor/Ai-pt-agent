@@ -116,6 +116,26 @@ export type SceneMistakePayload = {
   stopped: boolean;
 } & AnswerLogMeta;
 
+/** Finish a micro clip: mark lines seen once and attach to series deck (19 M5). */
+export type MicroClipFinishPayload = {
+  kind: 'micro_clip_finish';
+  answer_id: string;
+  day: number;
+  clip_id: string;
+  item_ids: string[];
+  deck_id?: string;
+} & AnswerLogMeta;
+
+/** Save one micro line to the learner's private / series deck. */
+export type MicroClipSaveLinePayload = {
+  kind: 'micro_clip_save_line';
+  answer_id: string;
+  day: number;
+  clip_id: string;
+  item_id: string;
+  deck_id?: string;
+} & AnswerLogMeta;
+
 export type AnswerPayload =
   | PageAskPayload
   | PageQuizPayload
@@ -124,7 +144,9 @@ export type AnswerPayload =
   | BeatAnswerPayload
   | ConvoAnswerPayload
   | CardReviewPayload
-  | SceneMistakePayload;
+  | SceneMistakePayload
+  | MicroClipFinishPayload
+  | MicroClipSaveLinePayload;
 
 const CONVO_RUNGS = new Set([
   'heard',
@@ -327,6 +349,38 @@ export function parseAnswerPayload(body: unknown): AnswerPayload | null {
         typeof body.session_id === 'string' ? body.session_id : undefined,
       question_id:
         typeof body.question_id === 'string' ? body.question_id : undefined,
+      ...logMeta(body),
+    };
+  }
+
+  if (body.kind === 'micro_clip_finish') {
+    if (typeof body.clip_id !== 'string' || !body.clip_id) return null;
+    if (!Array.isArray(body.item_ids)) return null;
+    const item_ids = body.item_ids.filter(
+      (id): id is string => typeof id === 'string' && id.length > 0,
+    );
+    if (item_ids.length === 0) return null;
+    return {
+      kind: 'micro_clip_finish',
+      answer_id,
+      day,
+      clip_id: body.clip_id,
+      item_ids,
+      deck_id: typeof body.deck_id === 'string' ? body.deck_id : undefined,
+      ...logMeta(body),
+    };
+  }
+
+  if (body.kind === 'micro_clip_save_line') {
+    if (typeof body.clip_id !== 'string' || !body.clip_id) return null;
+    if (typeof body.item_id !== 'string' || !body.item_id) return null;
+    return {
+      kind: 'micro_clip_save_line',
+      answer_id,
+      day,
+      clip_id: body.clip_id,
+      item_id: body.item_id,
+      deck_id: typeof body.deck_id === 'string' ? body.deck_id : undefined,
       ...logMeta(body),
     };
   }

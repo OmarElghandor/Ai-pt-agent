@@ -1,0 +1,958 @@
+{
+  "target_lang": "pt-PT",
+  "series": [
+    {
+      "slug": "demonstratives",
+      "order": 1,
+      "title_ar": "أدوات الإشارة",
+      "title_tl": "este, esse, aquele",
+      "clips": [
+        {
+          "slug": "este-esta",
+          "order": 1,
+          "layout": "scene",
+          "level": 1,
+          "title_ar": "este / esta",
+          "title_tl": "este · esta",
+          "prompt_guidance": "Teach este/esta at a pastry counter; near the speaker.",
+          "ready": false
+        },
+        {
+          "slug": "esse-essa",
+          "order": 2,
+          "layout": "scene",
+          "level": 1,
+          "title_ar": "esse / essa",
+          "title_tl": "esse · essa",
+          "prompt_guidance": "Teach esse/essa near the listener.",
+          "ready": false
+        },
+        {
+          "slug": "aquele-aquela",
+          "order": 3,
+          "layout": "scene",
+          "level": 1,
+          "title_ar": "aquele / aquela",
+          "title_tl": "aquele · aquela",
+          "prompt_guidance": "Teach aquele/aquela for things far from both.",
+          "ready": false
+        },
+        {
+          "slug": "isto-isso-aquilo",
+          "order": 4,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "isto / isso / aquilo",
+          "title_tl": "isto · isso · aquilo",
+          "prompt_guidance": "Neuter demonstratives isto isso aquilo.",
+          "ready": false
+        },
+        {
+          "slug": "aqui-ai-ali-la",
+          "order": 5,
+          "layout": "scene",
+          "level": 1,
+          "title_ar": "هنا وهناك",
+          "title_tl": "aqui · aí · ali · lá",
+          "prompt_guidance": "Location adverbs aqui aí ali lá.",
+          "ready": false
+        }
+      ]
+    },
+    {
+      "slug": "daily-verbs",
+      "order": 2,
+      "title_ar": "الأفعال اليومية",
+      "title_tl": "verbos do dia a dia",
+      "clips": [
+        {
+          "slug": "ser",
+          "order": 1,
+          "layout": "pairs",
+          "level": 2,
+          "title_ar": "ser",
+          "title_tl": "ser",
+          "legacy_ref": "TC_PT_003",
+          "prompt_guidance": "Everyday uses of ser. Forms from verified table only.",
+          "ready": false
+        },
+        {
+          "slug": "estar",
+          "order": 2,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "estar",
+          "title_tl": "estar",
+          "legacy_ref": "TC_PT_004",
+          "prompt_guidance": "Everyday uses of estar. Forms from verified table only.",
+          "ready": false
+        },
+        {
+          "slug": "ter",
+          "order": 3,
+          "layout": "pairs",
+          "level": 2,
+          "title_ar": "ter",
+          "title_tl": "ter",
+          "legacy_ref": "TC_PT_011",
+          "prompt_guidance": "Everyday uses of ter. Forms from verified table only.",
+          "ready": false
+        },
+        {
+          "slug": "ir",
+          "order": 4,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "ir",
+          "title_tl": "ir",
+          "legacy_ref": "TC_PT_017",
+          "prompt_guidance": "Everyday uses of ir. Forms from verified table only.",
+          "ready": false
+        },
+        {
+          "slug": "fazer",
+          "order": 5,
+          "layout": "pairs",
+          "level": 2,
+          "title_ar": "fazer",
+          "title_tl": "fazer",
+          "legacy_ref": "TC_PT_030",
+          "prompt_guidance": "Everyday uses of fazer. Forms from verified table only.",
+          "ready": false
+        },
+        {
+          "slug": "querer",
+          "order": 6,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "querer",
+          "title_tl": "querer",
+          "legacy_ref": "TC_PT_020",
+          "prompt_guidance": "Everyday uses of querer and queria. Forms from verified table only.",
+          "ready": false
+        },
+        {
+          "slug": "poder",
+          "order": 7,
+          "layout": "pairs",
+          "level": 2,
+          "title_ar": "poder",
+          "title_tl": "poder",
+          "legacy_ref": "TC_PT_034",
+          "prompt_guidance": "Everyday uses of poder. Forms from verified table only.",
+          "ready": false
+        },
+        {
+          "slug": "precisar-de",
+          "order": 8,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "precisar de",
+          "title_tl": "precisar de",
+          "legacy_ref": "TC_PT_035",
+          "prompt_guidance": "Everyday uses of precisar de. Forms from verified table only.",
+          "ready": false
+        },
+        {
+          "slug": "gostar-de",
+          "order": 9,
+          "layout": "pairs",
+          "level": 2,
+          "title_ar": "gostar de",
+          "title_tl": "gostar de",
+          "prompt_guidance": "Everyday uses of gostar de. Forms from verified table only.",
+          "ready": false
+        },
+        {
+          "slug": "saber",
+          "order": 10,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "saber",
+          "title_tl": "saber",
+          "prompt_guidance": "Everyday uses of saber. Forms from verified table only.",
+          "ready": false
+        },
+        {
+          "slug": "ver",
+          "order": 11,
+          "layout": "pairs",
+          "level": 2,
+          "title_ar": "ver",
+          "title_tl": "ver",
+          "prompt_guidance": "Everyday uses of ver. Forms from verified table only.",
+          "ready": false
+        },
+        {
+          "slug": "dar",
+          "order": 12,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "dar",
+          "title_tl": "dar",
+          "prompt_guidance": "Everyday uses of dar. Forms from verified table only.",
+          "ready": false
+        }
+      ]
+    },
+    {
+      "slug": "question-words",
+      "order": 3,
+      "title_ar": "أدوات السؤال",
+      "title_tl": "palavras interrogativas",
+      "clips": [
+        {
+          "slug": "onde",
+          "order": 1,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "onde",
+          "title_tl": "onde",
+          "legacy_ref": "TC_PT_005",
+          "prompt_guidance": "Question word onde.",
+          "ready": false
+        },
+        {
+          "slug": "o-que-quem",
+          "order": 2,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "o que / quem",
+          "title_tl": "o que · quem",
+          "legacy_ref": "TC_PT_005",
+          "prompt_guidance": "o que and quem.",
+          "ready": false
+        },
+        {
+          "slug": "quando-horas",
+          "order": 3,
+          "layout": "list",
+          "level": 1,
+          "title_ar": "quando / a que horas",
+          "title_tl": "quando · a que horas",
+          "legacy_ref": "TC_PT_006",
+          "prompt_guidance": "quando and a que horas.",
+          "ready": false
+        },
+        {
+          "slug": "quanto-qual",
+          "order": 4,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "quanto / qual",
+          "title_tl": "quanto · qual",
+          "legacy_ref": "TC_PT_006",
+          "prompt_guidance": "quanto and qual.",
+          "ready": false
+        }
+      ]
+    },
+    {
+      "slug": "didnt-understand",
+      "order": 4,
+      "title_ar": "لما متفهمش",
+      "title_tl": "não percebi",
+      "clips": [
+        {
+          "slug": "nao-percebi",
+          "order": 1,
+          "layout": "list",
+          "level": 1,
+          "title_ar": "مافهمتش",
+          "title_tl": "Não percebi",
+          "legacy_ref": "TC_PT_072",
+          "prompt_guidance": "Phrases when you did not understand.",
+          "ready": false
+        },
+        {
+          "slug": "pode-repetir",
+          "order": 2,
+          "layout": "list",
+          "level": 1,
+          "title_ar": "قول تاني",
+          "title_tl": "Pode repetir?",
+          "legacy_ref": "TC_PT_093",
+          "prompt_guidance": "Pode repetir, mais devagar, Como se diz.",
+          "ready": false
+        }
+      ]
+    },
+    {
+      "slug": "quick-replies",
+      "order": 5,
+      "title_ar": "ردود سريعة",
+      "title_tl": "respostas rápidas",
+      "clips": [
+        {
+          "slug": "pois-claro",
+          "order": 1,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "pois / claro",
+          "title_tl": "pois · claro · exato",
+          "legacy_ref": "TC_PT_054",
+          "prompt_guidance": "Agreement fillers.",
+          "ready": false
+        },
+        {
+          "slug": "esta-bem",
+          "order": 2,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "تمام",
+          "title_tl": "está bem · combinado",
+          "legacy_ref": "TC_PT_092",
+          "prompt_guidance": "está bem and combinado.",
+          "ready": false
+        },
+        {
+          "slug": "obrigado",
+          "order": 3,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "شكراً",
+          "title_tl": "obrigado · de nada · desculpe",
+          "legacy_ref": "TC_PT_092",
+          "prompt_guidance": "Thanks and sorry.",
+          "ready": false
+        }
+      ]
+    },
+    {
+      "slug": "time",
+      "order": 6,
+      "title_ar": "الوقت والمواعيد",
+      "title_tl": "tempo e horários",
+      "clips": [
+        {
+          "slug": "a-hora",
+          "order": 1,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "الساعة",
+          "title_tl": "a hora",
+          "legacy_ref": "TC_PT_007",
+          "prompt_guidance": "Telling the time.",
+          "ready": false
+        },
+        {
+          "slug": "hoje-amanha",
+          "order": 2,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "النهاردة وبكرة",
+          "title_tl": "hoje · amanhã · ontem",
+          "legacy_ref": "TC_PT_008",
+          "prompt_guidance": "hoje amanhã ontem.",
+          "ready": false
+        },
+        {
+          "slug": "os-dias",
+          "order": 3,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "أيام الأسبوع",
+          "title_tl": "os dias",
+          "legacy_ref": "TC_PT_063",
+          "prompt_guidance": "Days of the week.",
+          "ready": false
+        },
+        {
+          "slug": "partes-do-dia",
+          "order": 4,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "أوقات اليوم",
+          "title_tl": "de manhã · à tarde · à noite",
+          "legacy_ref": "TC_PT_067",
+          "prompt_guidance": "Parts of the day.",
+          "ready": false
+        }
+      ]
+    },
+    {
+      "slug": "numbers-money",
+      "order": 7,
+      "title_ar": "الأرقام والفلوس",
+      "title_tl": "números e dinheiro",
+      "clips": [
+        {
+          "slug": "1-20",
+          "order": 1,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "من 1 لـ 20",
+          "title_tl": "1–20",
+          "legacy_ref": "TC_PT_042",
+          "prompt_guidance": "Numbers 1 to 20.",
+          "ready": false
+        },
+        {
+          "slug": "prices",
+          "order": 2,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "الأسعار",
+          "title_tl": "preços",
+          "legacy_ref": "TC_PT_056",
+          "prompt_guidance": "Talking about prices.",
+          "ready": false
+        },
+        {
+          "slug": "quanto-e",
+          "order": 3,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "بكام؟",
+          "title_tl": "Quanto é?",
+          "legacy_ref": "TC_PT_056",
+          "prompt_guidance": "Quanto é and quantities.",
+          "ready": false
+        }
+      ]
+    },
+    {
+      "slug": "where-is-it",
+      "order": 8,
+      "title_ar": "فين الحاجة",
+      "title_tl": "onde está",
+      "clips": [
+        {
+          "slug": "a-room",
+          "order": 1,
+          "layout": "scene",
+          "level": 1,
+          "title_ar": "الأوضة",
+          "title_tl": "o quarto",
+          "legacy_ref": "TC_PT_021",
+          "prompt_guidance": "Things in a room.",
+          "ready": false
+        },
+        {
+          "slug": "table-shelf",
+          "order": 2,
+          "layout": "scene",
+          "level": 1,
+          "title_ar": "الترابيزة والرف",
+          "title_tl": "a mesa e a prateleira",
+          "legacy_ref": "TC_PT_022",
+          "prompt_guidance": "On the table and shelf.",
+          "ready": false
+        },
+        {
+          "slug": "on-the-street",
+          "order": 3,
+          "layout": "scene",
+          "level": 2,
+          "title_ar": "في الشارع",
+          "title_tl": "na rua",
+          "legacy_ref": "TC_PT_053",
+          "prompt_guidance": "Places on the street.",
+          "ready": false
+        }
+      ]
+    },
+    {
+      "slug": "your-day",
+      "order": 9,
+      "title_ar": "يومك",
+      "title_tl": "o teu dia",
+      "clips": [
+        {
+          "slug": "de-manha",
+          "order": 1,
+          "layout": "list",
+          "level": 1,
+          "title_ar": "الصبح",
+          "title_tl": "de manhã",
+          "legacy_ref": "TC_PT_024",
+          "prompt_guidance": "Morning routine sequence.",
+          "ready": false
+        },
+        {
+          "slug": "no-trabalho",
+          "order": 2,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "في الشغل",
+          "title_tl": "no trabalho",
+          "legacy_ref": "TC_PT_027",
+          "prompt_guidance": "At work sequence.",
+          "ready": false
+        },
+        {
+          "slug": "em-casa-noite",
+          "order": 3,
+          "layout": "list",
+          "level": 1,
+          "title_ar": "بالليل في البيت",
+          "title_tl": "em casa à noite",
+          "legacy_ref": "TC_PT_024",
+          "prompt_guidance": "Evening at home.",
+          "ready": false
+        },
+        {
+          "slug": "cozinhar",
+          "order": 4,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "الطبخ",
+          "title_tl": "cozinhar",
+          "legacy_ref": "TC_PT_027",
+          "prompt_guidance": "Cooking sequence like KOCHEN.",
+          "ready": false
+        }
+      ]
+    },
+    {
+      "slug": "how-you-feel",
+      "order": 10,
+      "title_ar": "حالك وإحساسك",
+      "title_tl": "como estás",
+      "clips": [
+        {
+          "slug": "estou",
+          "order": 1,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "أنا…",
+          "title_tl": "estou cansado / feliz",
+          "legacy_ref": "TC_PT_023",
+          "prompt_guidance": "Feelings with estar.",
+          "ready": false
+        },
+        {
+          "slug": "tenho-doi-me",
+          "order": 2,
+          "layout": "scene",
+          "level": 2,
+          "title_ar": "جعان ودواني",
+          "title_tl": "tenho fome · dói-me",
+          "legacy_ref": "TC_PT_065",
+          "prompt_guidance": "Hunger thirst cold and body pain.",
+          "ready": false
+        }
+      ]
+    },
+    {
+      "slug": "linking",
+      "order": 11,
+      "title_ar": "اربط الكلام",
+      "title_tl": "ligar as frases",
+      "clips": [
+        {
+          "slug": "e-mas-ou",
+          "order": 1,
+          "layout": "list",
+          "level": 1,
+          "title_ar": "و / بس / أو",
+          "title_tl": "e · mas · ou",
+          "legacy_ref": "TC_PT_041",
+          "prompt_guidance": "Basic connectors.",
+          "ready": false
+        },
+        {
+          "slug": "porque-por-isso",
+          "order": 2,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "عشان وكده",
+          "title_tl": "porque · por isso",
+          "legacy_ref": "TC_PT_057",
+          "prompt_guidance": "Cause and result.",
+          "ready": false
+        },
+        {
+          "slug": "primeiro-depois",
+          "order": 3,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "الأول وبعدين",
+          "title_tl": "primeiro · depois · no fim",
+          "legacy_ref": "TC_PT_070",
+          "prompt_guidance": "Sequence markers. Also TC_PT_099.",
+          "ready": false
+        }
+      ]
+    },
+    {
+      "slug": "polite-requests",
+      "order": 12,
+      "title_ar": "اطلب بأدب",
+      "title_tl": "pedir com educação",
+      "clips": [
+        {
+          "slug": "queria",
+          "order": 1,
+          "layout": "list",
+          "level": 1,
+          "title_ar": "كنت عايز",
+          "title_tl": "Queria…",
+          "legacy_ref": "TC_PT_020",
+          "prompt_guidance": "Polite Queria + noun/verb.",
+          "ready": false
+        },
+        {
+          "slug": "pode-podia",
+          "order": 2,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "ممكن؟",
+          "title_tl": "Pode…? · Podia…?",
+          "legacy_ref": "TC_PT_040",
+          "prompt_guidance": "Pode, Podia, Se faz favor.",
+          "ready": false
+        }
+      ]
+    },
+    {
+      "slug": "possessives",
+      "order": 13,
+      "title_ar": "بتاعي وبتاعك",
+      "title_tl": "meu / teu / seu",
+      "clips": [
+        {
+          "slug": "pronouns",
+          "order": 1,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "الضمائر",
+          "title_tl": "eu · tu · ele",
+          "prompt_guidance": "Subject pronouns eu tu ele ela nós eles.",
+          "ready": false
+        },
+        {
+          "slug": "o-meu",
+          "order": 2,
+          "layout": "scene",
+          "level": 1,
+          "title_ar": "بتاعي",
+          "title_tl": "o meu / a minha",
+          "prompt_guidance": "Possessives o meu a minha on a desk scene.",
+          "ready": false
+        },
+        {
+          "slug": "o-teu-seu",
+          "order": 3,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "بتاعك وبتاعه",
+          "title_tl": "o teu · o seu · o nosso",
+          "prompt_guidance": "o teu o seu o nosso in sentences.",
+          "ready": false
+        }
+      ]
+    },
+    {
+      "slug": "adjectives-colours",
+      "order": 14,
+      "title_ar": "الصفات والألوان",
+      "title_tl": "adjetivos e cores",
+      "clips": [
+        {
+          "slug": "cores",
+          "order": 1,
+          "layout": "scene",
+          "level": 1,
+          "title_ar": "الألوان",
+          "title_tl": "cores",
+          "legacy_ref": "TC_PT_010",
+          "prompt_guidance": "Colours with gender agreement.",
+          "ready": false
+        },
+        {
+          "slug": "grande-pequeno",
+          "order": 2,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "كبير وصغير",
+          "title_tl": "grande · pequeno",
+          "legacy_ref": "TC_PT_018",
+          "prompt_guidance": "Common opposite adjectives.",
+          "ready": false
+        },
+        {
+          "slug": "agreement",
+          "order": 3,
+          "layout": "rule",
+          "level": 2,
+          "title_ar": "المطابقة",
+          "title_tl": "O carro é… / A casa é…",
+          "legacy_ref": "TC_PT_077",
+          "prompt_guidance": "Adjective agreement in sentences.",
+          "ready": false,
+          "rule_card": {
+            "pattern_tl": "adjetivo: o / a → masculino / feminino",
+            "pattern_ar": "الصفة بتتبع النوع",
+            "ending_table": [
+              {
+                "label": "m",
+                "from": "vermelho",
+                "to": "vermelho"
+              },
+              {
+                "label": "f",
+                "from": "vermelho",
+                "to": "vermelha"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "slug": "negation",
+      "order": 15,
+      "title_ar": "النفي",
+      "title_tl": "a negação",
+      "clips": [
+        {
+          "slug": "nao-before-verb",
+          "order": 1,
+          "layout": "list",
+          "level": 1,
+          "title_ar": "مش قبل الفعل",
+          "title_tl": "Não sei",
+          "prompt_guidance": "não before the verb: Não sei / Não percebo / Não tenho.",
+          "ready": false
+        },
+        {
+          "slug": "nunca-nada",
+          "order": 2,
+          "layout": "pairs",
+          "level": 2,
+          "title_ar": "أبداً ومفيش",
+          "title_tl": "nunca · nada · ninguém",
+          "prompt_guidance": "nunca nada ninguém and double negative Não tenho nada.",
+          "ready": false
+        }
+      ]
+    },
+    {
+      "slug": "conjugation-induction",
+      "order": 16,
+      "title_ar": "التصريف بالاستنتاج",
+      "title_tl": "conjugação por indução",
+      "clips": [
+        {
+          "slug": "pres-eu-ar",
+          "order": 1,
+          "layout": "rule",
+          "level": 1,
+          "title_ar": "eu ‎-ar → ‎-o",
+          "title_tl": "eu: -ar → -o",
+          "prompt_guidance": "Present eu regular -ar → -o. Regular verbs only.",
+          "ready": false,
+          "rule_card": {
+            "pattern_tl": "-ar → eu -o",
+            "ending_table": [
+              {
+                "label": "eu",
+                "from": "-ar",
+                "to": "-o"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "pres-ele-ar",
+          "order": 2,
+          "layout": "rule",
+          "level": 1,
+          "title_ar": "ele ‎-ar → ‎-a",
+          "title_tl": "ele/ela/você: -ar → -a",
+          "prompt_guidance": "Present ele regular -ar → -a.",
+          "ready": false,
+          "rule_card": {
+            "pattern_tl": "-ar → ele -a",
+            "ending_table": [
+              {
+                "label": "ele",
+                "from": "-ar",
+                "to": "-a"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "pres-er-ir",
+          "order": 3,
+          "layout": "rule",
+          "level": 2,
+          "title_ar": "eu/ele ‎-er / ‎-ir",
+          "title_tl": "como / come · parto / parte",
+          "prompt_guidance": "Present eu and ele for regular -er and -ir.",
+          "ready": false,
+          "rule_card": {
+            "pattern_tl": "-er/-ir → eu -o · ele -e",
+            "ending_table": [
+              {
+                "label": "eu -er",
+                "from": "-er",
+                "to": "-o"
+              },
+              {
+                "label": "ele -er",
+                "from": "-er",
+                "to": "-e"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "pres-nos",
+          "order": 4,
+          "layout": "rule",
+          "level": 2,
+          "title_ar": "nós",
+          "title_tl": "nós: -amos / -emos / -imos",
+          "prompt_guidance": "Present nós endings.",
+          "ready": false,
+          "rule_card": {
+            "pattern_tl": "nós -amos / -emos / -imos",
+            "ending_table": [
+              {
+                "label": "-ar",
+                "from": "-ar",
+                "to": "-amos"
+              },
+              {
+                "label": "-er",
+                "from": "-er",
+                "to": "-emos"
+              },
+              {
+                "label": "-ir",
+                "from": "-ir",
+                "to": "-imos"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "pres-eles",
+          "order": 5,
+          "layout": "rule",
+          "level": 2,
+          "title_ar": "eles",
+          "title_tl": "eles: -am / -em",
+          "prompt_guidance": "Present eles endings.",
+          "ready": false,
+          "rule_card": {
+            "pattern_tl": "eles -am / -em",
+            "ending_table": [
+              {
+                "label": "-ar",
+                "from": "-ar",
+                "to": "-am"
+              },
+              {
+                "label": "-er/-ir",
+                "from": "-er",
+                "to": "-em"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "past-eu-ar",
+          "order": 6,
+          "layout": "rule",
+          "level": 3,
+          "title_ar": "الماضي eu ‎-ar",
+          "title_tl": "eu: -ar → -ei",
+          "prompt_guidance": "Pretériito eu regular -ar → -ei.",
+          "ready": false,
+          "rule_card": {
+            "pattern_tl": "pretérito eu -ar → -ei",
+            "ending_table": [
+              {
+                "label": "eu",
+                "from": "-ar",
+                "to": "-ei"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "past-eu-er-ir",
+          "order": 7,
+          "layout": "rule",
+          "level": 3,
+          "title_ar": "الماضي eu ‎-er/‎-ir",
+          "title_tl": "eu: -er/-ir → -i",
+          "prompt_guidance": "Pretérito eu regular -er/-ir → -i.",
+          "ready": false,
+          "rule_card": {
+            "pattern_tl": "pretérito eu -er/-ir → -i",
+            "ending_table": [
+              {
+                "label": "eu",
+                "from": "-er",
+                "to": "-i"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "past-ele",
+          "order": 8,
+          "layout": "rule",
+          "level": 3,
+          "title_ar": "الماضي ele",
+          "title_tl": "ele: -ou / -eu / -iu",
+          "prompt_guidance": "Pretérito ele endings.",
+          "ready": false,
+          "rule_card": {
+            "pattern_tl": "pretérito ele -ou / -eu / -iu",
+            "ending_table": [
+              {
+                "label": "-ar",
+                "from": "-ar",
+                "to": "-ou"
+              },
+              {
+                "label": "-er",
+                "from": "-er",
+                "to": "-eu"
+              },
+              {
+                "label": "-ir",
+                "from": "-ir",
+                "to": "-iu"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "future-ir",
+          "order": 9,
+          "layout": "rule",
+          "level": 2,
+          "title_ar": "هعمل",
+          "title_tl": "vou + infinitivo",
+          "prompt_guidance": "Near future vou/vais/vai + infinitive with different regular verbs.",
+          "ready": false,
+          "rule_card": {
+            "pattern_tl": "vou / vais / vai + infinitivo",
+            "ending_table": []
+          }
+        },
+        {
+          "slug": "estar-a",
+          "order": 10,
+          "layout": "rule",
+          "level": 2,
+          "title_ar": "بعمل دلوقتي",
+          "title_tl": "estou a + infinitivo",
+          "prompt_guidance": "estou a + infinitive for ongoing action.",
+          "ready": false,
+          "rule_card": {
+            "pattern_tl": "estou a + infinitivo",
+            "ending_table": []
+          }
+        }
+      ]
+    }
+  ]
+}

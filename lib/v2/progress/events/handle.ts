@@ -634,6 +634,12 @@ export async function handleProgressEvent(
       }
       break;
     }
+    case 'micro_clip_started':
+    case 'micro_clip_finished': {
+      // Progress docs live in v2_micro_progress; events are audit-only (no streak).
+      activity = await bumpActivity(store, userId, localDate, {});
+      break;
+    }
     default: {
       const _exhaustive: never = event;
       void _exhaustive;

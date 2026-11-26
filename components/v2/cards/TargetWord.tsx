@@ -10,7 +10,7 @@ export function TargetWord({
   tl: string;
   gender?: 'm' | 'f' | 'n';
   className?: string;
-  size?: 'md' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   nounTone?: 'primary' | 'ink';
 }) {
   const sizeClass =
@@ -18,7 +18,9 @@ export function TargetWord({
       ? 'text-[40px] leading-tight'
       : size === 'lg'
         ? 'text-2xl'
-        : 'text-lg';
+        : size === 'sm'
+          ? 'text-xs leading-tight'
+          : 'text-lg';
   const nounClass =
     nounTone === 'ink' ? 'text-v2-ink' : 'text-v2-primary';
   const m = tl.match(/^(o|a|os|as|um|uma)\s+(.+)$/i);

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useMemo } from 'react';
 import { Icon } from '@/components/v2/Icon';
+import { DailyMicroCard } from '@/components/v2/micro/DailyMicroCard';
 import type { PathDayRow } from '@/lib/v2/path';
 import type { LearnerPathDay } from '@/lib/v2/progress/learnerPath';
 
@@ -305,6 +306,8 @@ export function PathRoadmap({
             </div>
           </section>
         ) : null}
+
+        <DailyMicroCard />
 
         <section className="-mx-4 px-4 py-2">
           <div className="mb-2 flex items-center justify-between">
