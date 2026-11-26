@@ -1,7 +1,7 @@
 import type { LessonPack } from './lesson';
 import { loadConjugationSeed, resolveForm, type ResolvedForm } from './conjugations/resolve';
 
-const FORM_REF = /verb\.[a-zçãõáéíóúâêô]+:[a-z]+:[a-z]+/gi;
+const FORM_REF = /verb\.[a-z_çãõáéíóúâêô]+:[a-z]+:[a-z]+/gi;
 
 /** Deep-walk pack JSON and replace form-id string fields named `ref` / list entries with resolved objects. */
 export function resolvePackForms(pack: LessonPack): unknown {

@@ -466,7 +466,6 @@
             "word.water",
             "word.tea",
             "word.pastel_de_nata",
-            "word.toast",
             "word.milk"
           ],
           "priority": "useful"
@@ -2338,14 +2337,14 @@
         {
           "id": "word.good_bad",
           "kind": "word",
-          "tl": "bom / boa · mau / má",
+          "tl": "bom · mau",
           "eg": "كويس · وحش",
           "priority": "situational"
         },
         {
           "id": "word.new_old",
           "kind": "word",
-          "tl": "novo / nova · velho / velha",
+          "tl": "novo · velho",
           "eg": "جديد · قديم",
           "priority": "situational"
         },
@@ -3478,7 +3477,7 @@
         {
           "id": "phrase.whats_the_date",
           "kind": "phrase",
-          "tl": "Que dia é hoje? — É dia cinco de março.",
+          "tl": "A quantos estamos hoje?",
           "eg": "النهارده كام في الشهر؟",
           "priority": "useful"
         },
@@ -4312,7 +4311,7 @@
         {
           "id": "word.pretty_ugly",
           "kind": "word",
-          "tl": "bonito / bonita · feio / feia",
+          "tl": "bonito · feio",
           "eg": "حلو · وحش (شكلاً)",
           "priority": "situational"
         },
@@ -5122,7 +5121,7 @@
         {
           "id": "word.some_none",
           "kind": "word",
-          "tl": "algum / alguma · nenhum / nenhuma",
+          "tl": "algum · nenhum",
           "eg": "أي · ولا واحد",
           "priority": "situational"
         },

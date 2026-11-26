@@ -11,7 +11,6 @@ import {
   type GenerationMeta,
   type SavedLesson,
 } from '@/lib/v2/generation/lesson/save';
-import { generateLessonDraft } from '@/lib/v2/generation/lesson/run';
 import { warmLessonPackAudio } from '@/lib/v2/generation/warmAudio';
 import { dayPackId, needsReviewForAutoPublish } from './readiness';
 import { releasePrepareLock } from './lock';
@@ -49,10 +48,24 @@ const CONVO_POLL_MS = 2_500;
 export type PrepareDayDeps = {
   getPublished: (day: number) => Promise<{ version: number; pack: LessonPack } | null>;
   getLatest: (day: number, targetLang: string) => Promise<SavedLesson | null>;
+  /**
+   * New draft via the lesson job graph. `complete: false` = a stage failed or
+   * the graph didn't finish in time → the day goes to needs_review, never
+   * auto-published half-built.
+   */
   generateDraft: (opts: {
     day: number;
     skipImages: boolean;
-  }) => Promise<{ saved: SavedLesson; pack: LessonPack }>;
+  }) => Promise<{ saved: SavedLesson; pack: LessonPack; complete?: boolean }>;
+  /**
+   * Existing draft: resume / check its job graph. Legacy drafts with no jobs
+   * return true. Optional so test deps keep working.
+   */
+  ensureDraftComplete?: (opts: {
+    day: number;
+    targetLang: string;
+    version: number;
+  }) => Promise<boolean>;
   publish: (opts: {
     day: number;
     targetLang: string;
@@ -131,9 +144,19 @@ export function createDefaultPrepareDeps(): PrepareDayDeps {
       return pub ? { version: pub.version, pack: pub.pack } : null;
     },
     getLatest: getLatestLesson,
-    generateDraft: async ({ day, skipImages }) => {
-      const result = await generateLessonDraft({ day, skipImages });
-      return { saved: result.saved, pack: result.pack };
+    generateDraft: async ({ day }) => {
+      // Same staged job graph as the admin "ولّد" button (not lesson/run.ts).
+      const { generateLessonViaDag } = await import('./lessonDag');
+      const result = await generateLessonViaDag({ day });
+      return {
+        saved: result.saved,
+        pack: result.saved.data as LessonPack,
+        complete: result.complete,
+      };
+    },
+    ensureDraftComplete: async ({ day, targetLang, version }) => {
+      const { ensureLessonDraftComplete } = await import('./lessonDag');
+      return ensureLessonDraftComplete({ day, targetLang, version });
     },
     publish: async ({ day, targetLang, version, force }) => {
       const out = await publishLesson({ day, targetLang, version, force });
@@ -205,6 +228,19 @@ export async function runPrepareDayChain(opts: {
     // Reuse any existing draft — do not regenerate just because text_ready
     // is missing. Gate + publish below decide if it's shippable.
     const existingDraft = Boolean(latest && latest.status !== 'published');
+    let draftComplete = true;
+
+    if (existingDraft && deps.ensureDraftComplete) {
+      try {
+        draftComplete = await deps.ensureDraftComplete({
+          day: opts.day,
+          targetLang,
+          version: latest!.version,
+        });
+      } catch {
+        draftComplete = false;
+      }
+    }
 
     if (!existingDraft) {
       try {
@@ -212,6 +248,7 @@ export async function runPrepareDayChain(opts: {
           deps.generateDraft({ day: opts.day, skipImages: true }),
         );
         latest = generated.saved;
+        draftComplete = generated.complete !== false;
       } catch (err) {
         const error_eg = STEP_FAIL_EG;
         await report({
@@ -245,7 +282,8 @@ export async function runPrepareDayChain(opts: {
 
     latest = (await deps.getLatest(opts.day, targetLang)) ?? latest!;
     const allowForce = (deps.isDevAllowed ?? isV2DevAllowed)();
-    if (needsReviewForAutoPublish(latest.meta) && !allowForce) {
+    // A half-built graph draft is never published, not even with dev force.
+    if (!draftComplete || (needsReviewForAutoPublish(latest.meta) && !allowForce)) {
       try {
         await deps.updateMeta({
           day: opts.day,

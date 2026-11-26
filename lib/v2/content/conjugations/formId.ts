@@ -1,6 +1,6 @@
 import type { Person, Tense } from '../items';
 
-const FORM_ID_RE = /^verb\.([a-zçãõáéíóúâêô]+):([a-z]+):([a-z]+)$/i;
+const FORM_ID_RE = /^verb\.([a-z_çãõáéíóúâêô]+):([a-z]+):([a-z]+)$/i;
 
 /** `verb.<lemma>:<tense>:<person>`. No filesystem access — safe in the client bundle. */
 export function parseFormId(

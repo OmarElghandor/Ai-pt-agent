@@ -1,8 +1,9 @@
 import type { Item } from '@/lib/v2/content/items';
 import type { LessonPack } from '@/lib/v2/content/lesson';
-import { hasErrors, validateLessonPack } from '@/lib/v2/content/validate';
+import { validateLessonPack } from '@/lib/v2/content/validate';
 import { connectMongo, mongoConfigured } from '@/lib/mongo';
 import { V2LessonModel } from '@/lib/v2/mongo/models';
+import { isHardPackIssue } from './hardRules';
 import { isBlockedForPublish } from './issueResolve';
 import { publishItemsToRegistry } from './registry';
 import {
@@ -77,9 +78,12 @@ export async function publishLesson(opts: {
     const validation = validateLessonPack(lesson.data as LessonPack, {
       mode: 'strict',
     });
-    if (hasErrors(validation)) {
+    // Same gate as assemble: only hard structure rules block publish.
+    // Everything else assemble already recorded as a warning.
+    const hard = validation.issues.filter(isHardPackIssue);
+    if (hard.length > 0) {
       throw new PublishLessonError('Strict validation failed', 'validation', {
-        issues: validation.issues.filter((i) => i.severity === 'error'),
+        issues: hard,
       });
     }
   }

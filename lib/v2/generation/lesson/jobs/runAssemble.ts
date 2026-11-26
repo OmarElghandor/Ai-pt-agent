@@ -2,6 +2,7 @@ import type { Item } from '@/lib/v2/content/items';
 import type { LessonPack, Micro, Question, SpeakPrompt } from '@/lib/v2/content/lesson';
 import type { Page } from '@/lib/v2/content/page';
 import { validateLessonPack, type Issue } from '@/lib/v2/content/validate';
+import { DROP_QUESTION_RULES, HARD_PACK_RULES } from '../hardRules';
 import { assembleLessonPack, pagesMapFromSparse } from '../stages/assemble';
 import type { OutlineResult } from '../stages/types';
 import {
@@ -265,11 +266,6 @@ export function applyRealWorldToAssemble(opts: {
  * Option-shape issues are rebuilt in place — never drop a planned slot for them.
  */
 /** Hard drops only — never for duplicate answer_tl (planned slots must ship). */
-const DROP_QUESTION_RULES = new Set([
-  'question_stimulus',
-  'pattern_not_testable',
-  'question_accepted',
-]);
 
 /** Option issues that should trigger a rebuild warning instead of a drop. */
 const REBUILD_OPTION_RULES = new Set([
@@ -285,10 +281,6 @@ const REBUILD_OPTION_RULES = new Set([
  * Pack rules that stay hard errors (never softened).
  * Content pedagogy → warnings unless 00 marks them fatal (skill quotas live on questions job).
  */
-const HARD_PACK_RULES = new Set([
-  'core_id_missing',
-  'sections_explain_missing',
-]);
 
 function questionIndexFromPath(path: string): number | null {
   const m = path.match(/^questions\[(\d+)\]/);

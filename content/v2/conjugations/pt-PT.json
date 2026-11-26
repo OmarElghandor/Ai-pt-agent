@@ -1003,6 +1003,139 @@
       "meaning_ar": "يلاقي",
       "verified": true,
       "overrides": {}
+    },
+    {
+      "lemma": "trabalhar",
+      "class": "ar",
+      "meaning_ar": "يعمل",
+      "verified": false,
+      "overrides": {}
+    },
+    {
+      "lemma": "estudar",
+      "class": "ar",
+      "meaning_ar": "يدرس",
+      "verified": false,
+      "overrides": {}
+    },
+    {
+      "lemma": "aprender",
+      "class": "er",
+      "meaning_ar": "يتعلّم",
+      "verified": false,
+      "overrides": {}
+    },
+    {
+      "lemma": "acordar",
+      "class": "ar",
+      "meaning_ar": "يستيقظ",
+      "verified": false,
+      "overrides": {}
+    },
+    {
+      "lemma": "visitar",
+      "class": "ar",
+      "meaning_ar": "يزور",
+      "verified": false,
+      "overrides": {}
+    },
+    {
+      "lemma": "precisar",
+      "class": "ar",
+      "meaning_ar": "يحتاج",
+      "verified": false,
+      "overrides": {}
+    },
+    {
+      "lemma": "comprar",
+      "class": "ar",
+      "meaning_ar": "يشتري",
+      "verified": false,
+      "overrides": {}
+    },
+    {
+      "lemma": "por",
+      "class": "irregular",
+      "meaning_ar": "يضع",
+      "verified": false,
+      "overrides": {
+        "pres": {
+          "eu": {
+            "tl": "ponho"
+          },
+          "tu": {
+            "tl": "pões"
+          },
+          "ele": {
+            "tl": "põe"
+          },
+          "nos": {
+            "tl": "pomos"
+          },
+          "eles": {
+            "tl": "põem"
+          }
+        },
+        "pret": {
+          "eu": {
+            "tl": "pus"
+          },
+          "tu": {
+            "tl": "puseste"
+          },
+          "ele": {
+            "tl": "pôs"
+          },
+          "nos": {
+            "tl": "pusemos"
+          },
+          "eles": {
+            "tl": "puseram"
+          }
+        }
+      }
+    },
+    {
+      "lemma": "vestir_se",
+      "class": "irregular",
+      "meaning_ar": "يرتدي ملابسه",
+      "verified": false,
+      "overrides": {
+        "pres": {
+          "eu": {
+            "tl": "visto-me"
+          },
+          "tu": {
+            "tl": "vestes-te"
+          },
+          "ele": {
+            "tl": "veste-se"
+          },
+          "nos": {
+            "tl": "vestimo-nos"
+          },
+          "eles": {
+            "tl": "vestem-se"
+          }
+        },
+        "pret": {
+          "eu": {
+            "tl": "vesti-me"
+          },
+          "tu": {
+            "tl": "vestiste-te"
+          },
+          "ele": {
+            "tl": "vestiu-se"
+          },
+          "nos": {
+            "tl": "vestimo-nos"
+          },
+          "eles": {
+            "tl": "vestiram-se"
+          }
+        }
+      }
     }
   ]
 }

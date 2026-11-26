@@ -216,7 +216,7 @@
           ]
         },
         "recycle": [
-          "phrase.greet_morning",
+          "phrase.good_morning",
           "phrase.hello"
         ],
         "page_plan": [
@@ -293,7 +293,7 @@
           ]
         },
         "recycle": [
-          "phrase.greet_morning",
+          "phrase.good_morning",
           "phrase.hello"
         ],
         "page_plan": [
@@ -379,8 +379,7 @@
         },
         "recycle": [
           "phrase.order_coffee",
-          "phrase.thanks",
-          "phrase.greet_morning"
+          "phrase.good_morning"
         ],
         "page_plan": [
           {
@@ -451,8 +450,7 @@
         },
         "recycle": [
           "phrase.order_coffee",
-          "phrase.thanks",
-          "phrase.greet_morning"
+          "phrase.good_morning"
         ],
         "page_plan": [
           {
@@ -561,7 +559,12 @@
           "تفهم السعر لما يتقال بالأرقام",
           "تقول رقم لحد 100",
           "ترفض بأدب: Não, obrigado"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "day08.grammar",
+          "description": "الأرقام 0–100 (استثناء مستعجل)",
+          "layout": "formula"
+        }
       }
     },
     {
@@ -619,7 +622,12 @@
           "تسأل ينفع كارت ولا كاش",
           "ترد على سؤال الرقم الضريبي (Quer contribuinte?)",
           "تقول سنك وتسأل عن السن"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.tenho_x_anos",
+          "description": "Tenho + رقم + anos (السن بـ ter)",
+          "layout": "formula"
+        }
       }
     },
     {
@@ -692,7 +700,12 @@
           "تقول إنك مش فاهم",
           "تطلب يعيد أو يتكلم أبطأ",
           "تقول إنك بتتكلم برتغالي شوية"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.nao_verb",
+          "description": "يعني إيه فعل ومصدر، وtu / você / o senhor (Tu e Você)، والنفي não / nunca (Advérbios 1)",
+          "layout": "two_columns"
+        }
       }
     },
     {
@@ -755,7 +768,12 @@
           "تسلّم على جارك وترحّب بحد جديد",
           "تختار tu أو o senhor حسب الشخص",
           "تعتذر وترد على الاعتذار بـ Não faz mal"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.infinitive",
+          "description": "tu / você / o senhor + المصدر",
+          "layout": "two_columns"
+        }
       }
     },
     {
@@ -820,7 +838,12 @@
           "تقول بتشتغل فين",
           "تسأل حد بيشتغل فين",
           "تصرّف فعل -ar مع eu / ele / nós"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.ar_endings",
+          "description": "نهايات -ar في المضارع مع الضماير الخمسة (Verbos Comuns 1)",
+          "layout": "table"
+        }
       }
     },
     {
@@ -981,7 +1004,12 @@
           "تطلب ترابيزة لعدد الناس",
           "تطلب طبق اليوم أو حاجة من المنيو",
           "تقول بتاكل وبتشرب إيه بأفعال -er"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.er_endings",
+          "description": "نهايات -er في المضارع (Comidas e Bebidas)",
+          "layout": "table"
+        }
       }
     },
     {
@@ -1102,7 +1130,12 @@
           "تقول بتعمل إيه في البيت (تفتح، تنام)",
           "تقول بتنام قد إيه",
           "تصرّف فعل -ir"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.ir_endings",
+          "description": "نهايات -ir في المضارع + durmo",
+          "layout": "table"
+        }
       }
     },
     {
@@ -1222,7 +1255,12 @@
           "تقول إنت منين وجنسيتك",
           "تسأل حد هو منين",
           "تستخدم ser للهوية والأصل"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.ser_conj",
+          "description": "SER كامل مع الضماير الخمسة، وo senhor بفعل «هو»",
+          "layout": "table"
+        }
       }
     },
     {
@@ -1278,7 +1316,12 @@
           "تقول شغلتك",
           "تسأل حد بيشتغل إيه بأدب (O senhor é…?)",
           "تفرّق المذكر والمؤنث في الشغلانة"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.o_senhor_e",
+          "description": "O senhor é… (الفعل بتاع هو)",
+          "layout": "table"
+        }
       }
     },
     {
@@ -1377,7 +1420,12 @@
           "تقول إنك تعبان أو جعان أو عطشان",
           "تستخدم estar للحالة اللي إنت فيها دلوقتي",
           "تسأل حد حاسس بإيه"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.estar_conj",
+          "description": "ESTAR كامل + الفرق عن SER",
+          "layout": "two_columns"
+        }
       }
     },
     {
@@ -1439,7 +1487,12 @@
           "توصف حاجة بـ ser (O português é difícil)",
           "تقول حاجة بتوجعك (Dói-me a cabeça)",
           "تختار ser أو estar في جمل شائعة"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.ser_vs_estar",
+          "description": "ser = مين/إيه الحاجة (هوية، أصل، شغلانة، وصف عام) · estar = فين وعامل إزاي دلوقتي (مكان، حالة)",
+          "layout": "two_columns"
+        }
       }
     },
     {
@@ -1503,7 +1556,12 @@
           "ترد على التليفون وتطلب حد",
           "تقول إنك مشغول دلوقتي بـ estar a",
           "تطلب يتهجّى اسم أو تقول هتكلمه بعدين"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.estar_a_inf",
+          "description": "estar a + فعل (المستمر في البرتغال)",
+          "layout": "formula"
+        }
       }
     },
     {
@@ -1563,7 +1621,12 @@
           "تقول بتحب وبتكره إيه",
           "تسأل صاحبك بيحب إيه",
           "ترد بـ Eu também / Eu também não"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.gostar_de",
+          "description": "gostar de",
+          "layout": "formula"
+        }
       }
     },
     {
@@ -1680,7 +1743,12 @@
           "تقترح خروجة (Vamos ao…?)",
           "تقول عندك وقت ولا لأ",
           "توافق بحماس (Fixe!)"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.irregular_core",
+          "description": "المضارع لـ ter وir وfazer وquerer وpoder",
+          "layout": "table"
+        }
       }
     },
     {
@@ -1844,7 +1912,12 @@
           "تكوّن سؤال بـ Onde / Quando / Quem / Qual",
           "تطلب مساعدة بأدب",
           "تفرّق Porquê? (ليه؟) عن porque (علشان)"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.question_word",
+          "description": "أدوات الاستفهام + Qual?",
+          "layout": "formula"
+        }
       }
     },
     {
@@ -1900,7 +1973,12 @@
           "تقول رايح فين (ao centro, à estação)",
           "تقول هتروح بإيه (de metro, a pé)",
           "تدمج حرف الجر مع الأداة (do, na, ao)"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.contractions",
+          "description": "دمج حروف الجر كامل: do/da · no/na · ao/à",
+          "layout": "two_columns"
+        }
       }
     },
     {
@@ -1961,7 +2039,12 @@
           "تشتري تذكرة لمكان",
           "تقول إنت فين (Estou na paragem)",
           "تسأل على تاكسي أو المطار"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.de_transport",
+          "description": "de + وسيلة (de metro) · a pé",
+          "layout": "two_columns"
+        }
       }
     },
     {
@@ -2022,7 +2105,12 @@
           "تسأل مكان فين",
           "تفهم قريب ولا بعيد",
           "تفهم يمين وشمال"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.onde_fica",
+          "description": "Onde fica? = ficar للأماكن",
+          "layout": "formula"
+        }
       }
     },
     {
@@ -2139,7 +2227,12 @@
           "تقول النهارده إيه",
           "تقول هتعمل حاجة يوم كذا",
           "تقول الصبح / بعد الضهر / بالليل"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.days_periods",
+          "description": "أيام الأسبوع + de manhã / à tarde / à noite (Períodos de Tempo)",
+          "layout": "formula"
+        }
       }
     },
     {
@@ -2197,7 +2290,12 @@
           "تطلب تحجز ميعاد",
           "تقترح يوم (Pode ser na terça?)",
           "تقول وتفهم التاريخ"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.date",
+          "description": "dia + رقم + de + شهر",
+          "layout": "formula"
+        }
       }
     },
     {
@@ -2359,7 +2457,12 @@
           "تسأل الساعة كام وتفهم الرد",
           "تسأل المحل بيفتح إمتى",
           "تفهم إن المكان مقفول"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.horas",
+          "description": "الساعة + الأرقام فوق 100 (Números 2)",
+          "layout": "formula"
+        }
       }
     },
     {
@@ -2419,7 +2522,12 @@
           "تقول هتعمل إيه بـ ir + مصدر",
           "تسأل صاحبك هيعمل إيه",
           "تقول هتقعد في البيت أو تزور حد"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.ir_inf",
+          "description": "ir + فعل = المستقبل القريب",
+          "layout": "formula"
+        }
       }
     },
     {
@@ -2479,7 +2587,12 @@
           "تطلب دوا لعرض (para a tosse)",
           "تفهم محتاج روشتة ولا لأ",
           "تفهم الجرعة (três vezes por dia)"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "day41.grammar",
+          "description": "poder / querer / precisar de + مصدر، وpara (عشان)",
+          "layout": "formula"
+        }
       }
     },
     {
@@ -2540,7 +2653,12 @@
           "تتكلم عن عيلتك",
           "تسأل حد عنده ولاد ولا لأ",
           "تستخدم o meu / a minha"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "day42.grammar",
+          "description": "الملكية (o meu, a minha)",
+          "layout": "two_columns"
+        }
       }
     },
     {
@@ -2601,7 +2719,12 @@
           "توصف هدوم باللون والمقاس",
           "تحط الصفة بعد الاسم وتطابقها",
           "تقول الحاجة كبيرة أو صغيرة"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.adj_agreement",
+          "description": "الصفة بعد الاسم وبتتغير مع المذكر والمؤنث والجمع (+ جمع -ão و-l)، والألوان (Cores · Roupa e Acessórios)",
+          "layout": "formula"
+        }
       }
     },
     {
@@ -2663,7 +2786,12 @@
           "تطلب مقاس أو لون تاني",
           "تطلب حاجة أرخص أو أكبر",
           "تفهم الجمع في -ões و-is"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.plural_ao_l",
+          "description": "-ão→-ões · -l→-is",
+          "layout": "formula"
+        }
       }
     },
     {
@@ -2726,7 +2854,12 @@
           "توصف شقتك والحي",
           "تقول حاجة كتير أو شوية (demasiado, um bocado)",
           "تقارن بحاجة تعرفها (como no Cairo)"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.degree_adj",
+          "description": "muito / bastante / demasiado / um bocado + صفة، وassim (كده) وcomo (زي) وigual a / diferente de / parecido com",
+          "layout": "two_columns"
+        }
       }
     },
     {
@@ -2826,7 +2959,12 @@
           "تشاور على حاجة قريبة أو بعيدة",
           "تطلب تقيس حاجة",
           "تقول هاخد دي"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.demonstratives",
+          "description": "isto / isso / aquilo + este / esse / aquele (Qual?)",
+          "layout": "two_columns"
+        }
       }
     },
     {
@@ -2887,7 +3025,12 @@
           "تسأل حاجة فين في البيت",
           "تقول الحاجة فوق / تحت / جوه / ورا حاجة",
           "تفرّق aqui / aí / ali"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "day48.grammar",
+          "description": "aqui · aí · ali · lá بنفس مسافة este · esse · aquele، وحروف المكان + de (em cima da mesa)، وestá للحاجة اللي بتتحرك وfica للمكان الثابت",
+          "layout": "two_columns"
+        }
       }
     },
     {
@@ -2949,7 +3092,12 @@
           "تقارن حاجتين (mais / menos … do que)",
           "تسأل أنهي أحسن أو أرخص",
           "تتكلم عن الإيجار (a renda)"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.comparative",
+          "description": "mais / menos … do que، tão … como، والشواذ melhor · pior · maior، وo mais …",
+          "layout": "two_columns"
+        }
       }
     },
     {
@@ -3072,7 +3220,12 @@
           "تقول تعرف معلومة ولا لأ (sei / não sei)",
           "تقول تعرف شخص أو مكان (conheço)",
           "تسأل لو مكان مفتوح (Sabe se…)"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "day51.grammar",
+          "description": "saber (معلومة أو تعرف تعمل حاجة) ولا conhecer (شخص أو مكان)، وsei الشاذة، وse = لو",
+          "layout": "two_columns"
+        }
       }
     },
     {
@@ -3137,7 +3290,12 @@
           "توصف روتين الصبح",
           "تقول بتلبس إمتى (visto-me)",
           "تسأل حاجتك راحت فين (Onde pus…?)"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "day52.grammar",
+          "description": "pôr في المضارع + vestir-se (أول فعل انعكاسي)",
+          "layout": "formula"
+        }
       }
     },
     {
@@ -3199,7 +3357,12 @@
           "تقول مفيش حد / مفيش حاجة",
           "تسأل فيه حد؟",
           "تقول الكل بيعمل حاجة"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.double_negative",
+          "description": "todos / tudo / cada، alguém / ninguém، alguma coisa / nada، algum / nenhum، والنفي المزدوج: Não está ninguém",
+          "layout": "two_columns"
+        }
       }
     },
     {
@@ -3255,7 +3418,12 @@
           "تسأل حد عمل إيه امبارح",
           "تقول ٣–٤ حاجات عملتها امبارح",
           "تقول معملتش حاجة"
-        ]
+        ],
+        "grammar_focus": {
+          "id": "pattern.past_five",
+          "description": "الماضي التام لـ 5 أفعال (fui, fiz, estive, comprei, comi)",
+          "layout": "table"
+        }
       }
     },
     {

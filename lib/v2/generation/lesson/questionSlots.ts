@@ -126,10 +126,7 @@ export function preferCorePhraseForTests(
   return match?.id ?? testsId;
 }
 
-/**
- * Prefer a derived pattern.ex.N when testing a pattern.
- * Grammar types never fall back to the bare root (no TL / not tileable).
- */
+/** Prefer a derived pattern.ex.N for non-grammar types; keep root for grammar. */
 export function testableIdForSlot(
   itemId: string,
   type: QuestionType,
@@ -138,16 +135,21 @@ export function testableIdForSlot(
   if (!itemId.startsWith('pattern.') || isDerivedEx(itemId)) {
     return itemId;
   }
+  if (type === 'fill_blank_choice' || type === 'build_sentence') {
+    const derived = bank.find(
+      (i) =>
+        i.type === 'phrase' &&
+        i.id.startsWith(`${itemId}.ex.`) &&
+        isDerivedEx(i.id),
+    );
+    return derived?.id ?? itemId;
+  }
   const derived = bank.find(
     (i) =>
       i.type === 'phrase' &&
       i.id.startsWith(`${itemId}.ex.`) &&
-      isDerivedEx(i.id) &&
-      Boolean(itemTl(i).trim()),
+      isDerivedEx(i.id),
   );
-  if (type === 'fill_blank_choice' || type === 'build_sentence') {
-    return derived?.id ?? '';
-  }
   return derived?.id ?? itemId;
 }
 
@@ -333,36 +335,22 @@ function phrasesPageCoreIds(outlinePages: OutlinePagePlan[]): Set<string> {
   return out;
 }
 
-/** Rough tile count matching buildSentenceTiles (clitic split, no punctuation). */
-function tileableTokenCount(tl: string): number {
-  const stripped = tl.replace(/[?!.,;:]+/g, ' ').replace(/\s+/g, ' ').trim();
-  if (!stripped) return 0;
-  let n = 0;
-  for (const tok of stripped.split(/\s+/).filter(Boolean)) {
-    const m = tok.match(/^(.+)-((?:me|te|se|nos|vos|lhe|lhes))$/i);
-    n += m ? 2 : 1;
-  }
-  return n;
-}
-
 /**
- * Resolve a grammar slot's tests id to an in-bank derived example with TL.
- * Never returns the bare pattern root for build_sentence (no sentence to tile).
+ * Prefer a pattern.ex.N that is not the phrases-page copied item
+ * (e.g. Chamo-me Rita, not phrase.my_name_is / Omar).
  */
-export function resolveGrammarTestsId(
+function grammarExampleId(
   patternId: string,
-  type: QuestionType,
   bank: Item[],
   phrasesPageIds: Set<string>,
   preferLater = false,
-): string | null {
+): string {
   const derived = bank
     .filter(
       (i) =>
         i.type === 'phrase' &&
         i.id.startsWith(`${patternId}.ex.`) &&
-        isDerivedEx(i.id) &&
-        Boolean(itemTl(i).trim()),
+        isDerivedEx(i.id),
     )
     .sort((a, b) => a.id.localeCompare(b.id));
   const pattern = bank.find((i) => i.id === patternId && i.type === 'pattern');
@@ -373,6 +361,7 @@ export function resolveGrammarTestsId(
 
   const notOnPhrases = (id: string) => {
     if (phrasesPageIds.has(id)) return false;
+    // Same TL as a phrases-page core phrase → skip for build_sentence preferLater
     const item = bank.find((i) => i.id === id);
     if (!item) return true;
     const tl = normalizeTl(itemTl(item));
@@ -384,53 +373,16 @@ export function resolveGrammarTestsId(
     return true;
   };
 
-  const inBankWithTl = (id: string) => {
-    const item = bank.find((i) => i.id === id);
-    return item != null && Boolean(itemTl(item).trim());
-  };
-
-  let pool = exampleIds.filter(inBankWithTl);
-  if (!pool.length) pool = derived.map((d) => d.id);
-
-  if (type === 'build_sentence') {
-    pool = pool.filter((id) => {
-      const item = bank.find((i) => i.id === id);
-      return item != null && tileableTokenCount(itemTl(item)) >= 2;
-    });
-  }
-
+  const pool = exampleIds.filter((id) => bank.some((i) => i.id === id));
   if (preferLater) {
     const alt = pool.find(notOnPhrases);
     if (alt) return alt;
   }
-  if (pool[0]) return pool[0]!;
-  // build_sentence must never fall back to the pattern root (no tl to tile).
-  if (type === 'build_sentence') return null;
-  return derived[0]?.id ?? null;
-}
-
-/**
- * Prefer a pattern.ex.N that is not the phrases-page copied item
- * (e.g. Chamo-me Rita, not phrase.my_name_is / Omar).
- * Never returns the bare pattern root.
- * @deprecated Prefer resolveGrammarTestsId — kept for call sites that need a string.
- */
-function grammarExampleId(
-  patternId: string,
-  bank: Item[],
-  phrasesPageIds: Set<string>,
-  preferLater = false,
-): string | null {
   return (
-    resolveGrammarTestsId(
-      patternId,
-      'fill_blank_choice',
-      bank,
-      phrasesPageIds,
-      preferLater,
-    ) ||
+    pool[0] ||
+    derived[0]?.id ||
     testableIdForSlot(patternId, 'fill_blank_choice', bank) ||
-    null
+    patternId
   );
 }
 
@@ -521,7 +473,7 @@ export function planQuestionSlots(opts: {
     opts.rwHide || !(opts.rwPhrases?.length)
       ? 0
       : Math.min(RW_SLOT_MAX, opts.rwPhrases.length);
-  const maxTotal = slotTargetFor(coreCount, rwCount);
+  let maxTotal = slotTargetFor(coreCount, rwCount);
   const orderedIds = buildOrderedIds({
     bank,
     storyItemOrder: opts.storyItemOrder,
@@ -559,6 +511,31 @@ export function planQuestionSlots(opts: {
       : prioritySet.size > 0
         ? []
         : allPatterns;
+  // Story / test days (no core ids): patterns are recycle only — 1 question
+  // each, never the ≥2 pair that today's new patterns need.
+  const recyclePatternsOnly =
+    todayPatternIdSet.size === 0 && prioritySet.size === 0;
+  const perPatternTarget = recyclePatternsOnly ? 1 : 2;
+  /** Seats listening + writing + speaking need at their minimum. */
+  const otherSkillMins = (total: number): number =>
+    (['listening', 'writing', 'speaking'] as const).reduce(
+      (n, k) =>
+        n +
+        (total >= 12
+          ? QUOTA[k].min
+          : Math.max(1, Math.floor((QUOTA[k].min * total) / 12))),
+      0,
+    );
+  // Room for today's pattern pairs + the other skill mins (else the quota
+  // check fails, e.g. 2 patterns × 2 + 9 = 13 > 12).
+  if (!recyclePatternsOnly && todayPatterns.length > 0) {
+    const need = 2 * todayPatterns.length + otherSkillMins(12);
+    maxTotal = Math.min(MAX_SLOTS, Math.max(maxTotal, need));
+  }
+  /** Grammar seats left after the other skills' minimums. */
+  const grammarBudget = recyclePatternsOnly
+    ? Math.max(0, maxTotal - otherSkillMins(maxTotal))
+    : Number.POSITIVE_INFINITY;
   const imageReady = opts.imageReady ?? (() => false);
   const preferBuild = new Set(opts.preferBuildSentenceFor ?? ['pattern.chamo_me']);
 
@@ -570,6 +547,9 @@ export function planQuestionSlots(opts: {
   /** Scale skill mins down for short lessons (still spread skills). */
   const skillMin = (skill: keyof typeof QUOTA): number => {
     if (skill === 'grammar' && !requireGrammar) return 0;
+    if (skill === 'grammar' && recyclePatternsOnly) {
+      return Math.min(QUOTA.grammar.min, grammarBudget);
+    }
     if (skill === 'reading') return QUOTA.reading.min;
     if (maxTotal >= 12) return QUOTA[skill].min;
     return Math.max(1, Math.floor((QUOTA[skill].min * maxTotal) / 12));
@@ -603,7 +583,7 @@ export function planQuestionSlots(opts: {
   };
 
   // 1) Grammar: ≥2 per today's pattern (fatal coverage later).
-  // Always test pattern via .ex items — never bare root, never phrase.my_name_is.
+  // Always test pattern via .ex items — never remap to phrase.my_name_is.
   // Required pair ignores QUOTA.grammar.max so recycle cannot starve coverage.
   for (const pattern of todayPatterns) {
     const page = introducedPage(pattern.id, outlinePages);
@@ -611,80 +591,22 @@ export function planQuestionSlots(opts: {
       ? ['build_sentence', 'fill_blank_choice']
       : ['fill_blank_choice', 'build_sentence'];
     for (const type of types) {
-      if (grammarCountForPattern(pattern.id) >= 2) break;
-      let chosenType: QuestionType = type;
-      let tests = resolveGrammarTestsId(
+      if (grammarCountForPattern(pattern.id) >= perPatternTarget) break;
+      if (countSkill(slots, 'grammar') >= grammarBudget) break;
+      const tests = grammarExampleId(
         pattern.id,
-        chosenType,
         bank,
         phrasesPageIds,
-        chosenType === 'build_sentence',
+        type === 'build_sentence',
       );
-      // Untileable build_sentence → second fill_blank_choice on another .ex.
-      if (!tests && chosenType === 'build_sentence') {
-        chosenType = 'fill_blank_choice';
-        tests = resolveGrammarTestsId(
-          pattern.id,
-          chosenType,
-          bank,
-          phrasesPageIds,
-          true,
-        );
-      }
-      if (!tests) {
-        tests = grammarExampleId(
-          pattern.id,
-          bank,
-          phrasesPageIds,
-          chosenType === 'build_sentence',
-        );
-      }
-      // Never schedule grammar on the bare pattern root.
-      if (!tests || tests === pattern.id || !isDerivedEx(tests)) {
-        continue;
-      }
-      if (!canAdd(slots, chosenType, tests, { ...addOpts, forCoverage: true })) {
-        // Same .ex already used with this type — try another .ex as fill_blank.
-        if (chosenType === 'fill_blank_choice') continue;
-        const alt = resolveGrammarTestsId(
-          pattern.id,
-          'fill_blank_choice',
-          bank,
-          phrasesPageIds,
-          true,
-        );
-        if (
-          !alt ||
-          alt === pattern.id ||
-          !isDerivedEx(alt) ||
-          !canAdd(slots, 'fill_blank_choice', alt, {
-            ...addOpts,
-            forCoverage: true,
-          })
-        ) {
-          continue;
-        }
-        pushSlot(slots, {
-          type: 'fill_blank_choice',
-          tests: alt,
-          page_index: page.page_index,
-          page_id: page.page_id,
-          use: 'lesson',
-        });
-        continue;
-      }
+      if (!canAdd(slots, type, tests, { ...addOpts, forCoverage: true })) continue;
       pushSlot(slots, {
-        type: chosenType,
+        type,
         tests,
         page_index: page.page_index,
         page_id: page.page_id,
         use: 'lesson',
       });
-    }
-    if (grammarCountForPattern(pattern.id) < 2) {
-      warnings.push(
-        `grammar_coverage_shortfall ${pattern.id} ${grammarCountForPattern(pattern.id)} < 2`,
-      );
     }
   }
 
@@ -695,40 +617,19 @@ export function planQuestionSlots(opts: {
     slots.length < maxTotal
   ) {
     const candidate = todayPatterns.find((p) => {
-      const t = resolveGrammarTestsId(
-        p.id,
-        'fill_blank_choice',
-        bank,
-        phrasesPageIds,
-        false,
-      );
-      return (
-        t != null &&
-        canAdd(slots, 'fill_blank_choice', t, { ...addOpts, forCoverage: true })
-      );
+      const t = grammarExampleId(p.id, bank, phrasesPageIds, false);
+      return canAdd(slots, 'fill_blank_choice', t, { ...addOpts, forCoverage: true });
     });
     if (!candidate) break;
-    let type: QuestionType = preferBuild.has(candidate.id)
+    const type: QuestionType = preferBuild.has(candidate.id)
       ? 'build_sentence'
       : 'fill_blank_choice';
-    let tests = resolveGrammarTestsId(
+    const tests = grammarExampleId(
       candidate.id,
-      type,
       bank,
       phrasesPageIds,
       type === 'build_sentence',
     );
-    if (!tests && type === 'build_sentence') {
-      type = 'fill_blank_choice';
-      tests = resolveGrammarTestsId(
-        candidate.id,
-        type,
-        bank,
-        phrasesPageIds,
-        true,
-      );
-    }
-    if (!tests || tests === candidate.id || !isDerivedEx(tests)) break;
     const page = introducedPage(candidate.id, outlinePages);
     if (!canAdd(slots, type, tests, { ...addOpts, forCoverage: true })) break;
     pushSlot(slots, {
@@ -804,7 +705,12 @@ export function planQuestionSlots(opts: {
     { skill: 'speaking', types: ['say_it', 'reply_speak', 'read_aloud'] },
     { skill: 'reading', types: ['read_meaning'] },
   ];
-  const fillerIds = [...mustCoverIds, ...wordIds];
+  // Test days recycle patterns only (day 56): with no phrases / words, the
+  // pattern example sentences are the only material for L / W / S.
+  const fillerIds =
+    mustCoverIds.length + wordIds.length > 0
+      ? [...mustCoverIds, ...wordIds]
+      : bank.filter((i) => isDerivedEx(i.id) && Boolean(itemTl(i))).map((i) => i.id);
 
   for (const { skill, types } of topUp) {
     const min = skillMin(skill);
@@ -980,7 +886,7 @@ export function countQuestionSkills(
 
 /**
  * Pre-LLM check: today's patterns must have ≥2 grammar slots on derived .ex ids.
- * Returns fatal messages (empty when ok).
+ * Returns fatal messages (empty when ok). Story/recycle days pass [] and skip.
  */
 export function validatePlannedGrammarCoverage(
   slots: PlannedSlot[],

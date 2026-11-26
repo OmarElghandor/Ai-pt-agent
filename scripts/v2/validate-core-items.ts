@@ -9,6 +9,9 @@ import {
   validateCoreItemsFile,
   MAX_CORE_ITEMS_PER_DAY,
 } from '@/lib/v2/generation/lesson/coreItems';
+import { loadPlan } from '@/lib/v2/generation/lesson/plan';
+import { validatePlanCrossRefs } from '@/lib/v2/generation/lesson/planChecks';
+import { loadConjugationSeed } from '@/lib/v2/content/conjugations/resolve';
 
 async function main() {
   const filePath =
@@ -21,7 +24,11 @@ async function main() {
       fs.readFileSync(filePath, 'utf8'),
     ),
   );
-  const issues = validateCoreItemsFile(file);
+  const issues = [
+    ...validateCoreItemsFile(file),
+    // core-items × days.json × conjugations (grammar page, verb forms, fills…)
+    ...validatePlanCrossRefs(file, loadPlan(), loadConjugationSeed()),
+  ];
   const byRule = new Map<string, number>();
   for (const i of issues) {
     byRule.set(i.rule, (byRule.get(i.rule) ?? 0) + 1);
