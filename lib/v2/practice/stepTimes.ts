@@ -29,10 +29,13 @@ export function estimatedSecondsForType(type: string): number {
     type === 'choose_article' ||
     type === 'complete_phrase' ||
     type === 'situation_choice' ||
-    type === 'read_meaning'
+    type === 'read_meaning' ||
+    type === 'image_pick_tl'
   ) {
     return STEP_SECONDS.choice;
   }
+  if (type === 'image_write') return STEP_SECONDS.fill_blank_write;
+  if (type === 'image_say') return STEP_SECONDS.say_it;
   if (type === 'listen_pick_image' || type === 'find_image') {
     return STEP_SECONDS.find_image_round;
   }

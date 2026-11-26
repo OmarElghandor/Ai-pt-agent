@@ -308,20 +308,52 @@ export function fillPatternsInBank(
     }
 
     const needsPlural = kind === 'plural_def';
-    const candidateIds =
-      coreFills.get(pattern.id)?.filter((id) => wordById.has(id)) ??
-      words.map((w) => w.id);
-    const fillIds = needsPlural
-      ? candidateIds.filter((id) => {
-          const w = wordById.get(id);
-          return w != null && wordPluralTl(w) != null;
-        })
-      : candidateIds;
+    // Listed fills that exist in bank; empty list must fall back to today's words
+    // (?? does not treat [] as missing — that left plural_def with zero examples).
+    // Also fall back when listed fills exist but none have plural_tl (stale inject).
+    const listedInBank = coreFills
+      .get(pattern.id)
+      ?.filter((id) => wordById.has(id));
+    const withPlural = (ids: string[]) =>
+      ids.filter((id) => {
+        const w = wordById.get(id);
+        return w != null && wordPluralTl(w) != null;
+      });
+    let candidateIds =
+      listedInBank && listedInBank.length > 0
+        ? listedInBank
+        : words.map((w) => w.id);
+    let fillIds = needsPlural ? withPlural(candidateIds) : candidateIds;
+    if (needsPlural && !fillIds.length && listedInBank && listedInBank.length > 0) {
+      candidateIds = words.map((w) => w.id);
+      fillIds = withPlural(candidateIds);
+    }
 
     if (!fillIds.length) {
+      // Keep prior live .ex (recycle/story) instead of wiping when no fill nouns.
+      const liveEx = bank.filter(
+        (i) =>
+          i.type === 'phrase' &&
+          i.id.startsWith(`${pattern.id}.ex.`) &&
+          /^pattern\..+\.ex\.\d+$/.test(i.id) &&
+          typeof (i as { tl?: string }).tl === 'string' &&
+          Boolean((i as { tl: string }).tl.trim()),
+      );
+      if (liveEx.length) {
+        const exampleIds = liveEx.map((i) => i.id).sort();
+        for (const row of liveEx) {
+          derived.push({ ...row } as Item);
+        }
+        return kind != null
+          ? ({ ...pattern, kind, slots, examples: exampleIds } as Item)
+          : ({ ...pattern, slots, examples: exampleIds } as Item);
+      }
+      const { examples: _dropEx, ...rest } = pattern as PatternItem & {
+        examples?: string[];
+      };
       return kind != null
-        ? ({ ...pattern, kind, slots } as Item)
-        : ({ ...pattern, slots } as Item);
+        ? ({ ...rest, kind, slots, examples: [] } as Item)
+        : ({ ...rest, slots, examples: [] } as Item);
     }
 
     slots = slots.map((slot) => {
@@ -370,10 +402,10 @@ export function fillPatternsInBank(
     for (const [i, word] of chosen.entries()) {
       const n = i + 1;
       const id = exampleId(pattern.id, n);
-      exampleIds.push(id);
       const tl = composeExampleTl(slots, word);
       const ar = composeExampleAr(slots, word);
       if (!tl.trim()) continue;
+      exampleIds.push(id);
       const cloze =
         tl.replace(/[…!.?,]+$/g, '').trim().split(/\s+/)[0] ?? word.tl;
       derived.push({
@@ -388,9 +420,29 @@ export function fillPatternsInBank(
     }
 
     if (!exampleIds.length) {
+      const liveEx = bank.filter(
+        (i) =>
+          i.type === 'phrase' &&
+          i.id.startsWith(`${pattern.id}.ex.`) &&
+          /^pattern\..+\.ex\.\d+$/.test(i.id) &&
+          typeof (i as { tl?: string }).tl === 'string' &&
+          Boolean((i as { tl: string }).tl.trim()),
+      );
+      if (liveEx.length) {
+        const kept = liveEx.map((i) => i.id).sort();
+        for (const row of liveEx) {
+          derived.push({ ...row } as Item);
+        }
+        return kind != null
+          ? ({ ...pattern, kind, slots, examples: kept } as Item)
+          : ({ ...pattern, slots, examples: kept } as Item);
+      }
+      const { examples: _dropEx, ...rest } = pattern as PatternItem & {
+        examples?: string[];
+      };
       return kind != null
-        ? ({ ...pattern, kind, slots } as Item)
-        : ({ ...pattern, slots } as Item);
+        ? ({ ...rest, kind, slots, examples: [] } as Item)
+        : ({ ...rest, slots, examples: [] } as Item);
     }
 
     return {

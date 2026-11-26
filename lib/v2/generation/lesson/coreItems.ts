@@ -493,6 +493,8 @@ export function coreItemAsKnownStub(c: CoreItem): {
   id: string;
   type: string;
   tl: string;
+  plural_tl?: string;
+  gender?: 'm' | 'f' | 'n';
 } {
   const type =
     c.kind === 'verb'
@@ -502,5 +504,20 @@ export function coreItemAsKnownStub(c: CoreItem): {
         : c.kind === 'word'
           ? 'word'
           : 'phrase';
-  return { id: c.id, type, tl: c.tl };
+  const stub: {
+    id: string;
+    type: string;
+    tl: string;
+    plural_tl?: string;
+    gender?: 'm' | 'f' | 'n';
+  } = { id: c.id, type, tl: c.tl };
+  if (c.kind === 'word') {
+    if (/^(a|as|uma|umas)\s+/i.test(c.tl.trim())) stub.gender = 'f';
+    else if (/^(o|os|um|uns)\s+/i.test(c.tl.trim())) stub.gender = 'm';
+    else stub.gender = 'n';
+    if (typeof c.plural_tl === 'string' && c.plural_tl.trim()) {
+      stub.plural_tl = c.plural_tl;
+    }
+  }
+  return stub;
 }

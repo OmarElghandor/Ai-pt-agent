@@ -1350,6 +1350,10 @@ async function processLessonJobBody(
           | RealWorldHandoff
           | null
           | undefined;
+        const knownFull = await loadKnownItemMap({
+          day: job.day,
+          targetLang: job.target_lang,
+        });
         const result = await runQuestionsJob({
           brief,
           outline: { ...outline, items },
@@ -1359,6 +1363,7 @@ async function processLessonJobBody(
           storyItemOrder,
           coreItemIds,
           realWorld: realWorldHandoff ?? null,
+          knownFull,
         });
         if (result.fatals?.length) {
           throw new Error(
@@ -1366,11 +1371,17 @@ async function processLessonJobBody(
           );
         }
         const qDigest = buildQuestionDigest(result.questions);
+        // Persist hydrated pattern examples so later stages see the same bank.
+        const draftItemIds = new Set(items.map((i) => i.id));
+        const bankGrew = result.items.some((i) => !draftItemIds.has(i.id));
         await updateDraftFields({
           day: job.day,
           targetLang: job.target_lang,
           version: job.version,
-          fields: { questions: result.questions },
+          fields: {
+            questions: result.questions,
+            ...(bankGrew ? { items: result.items } : {}),
+          },
         });
         await setDraftHandoff({
           day: job.day,

@@ -41,7 +41,7 @@ async function getLessonForPractice(day: number, targetLang = 'pt-PT') {
 import { PRACTICE_QUESTION_BUILDER_VERSION } from '@/lib/v2/review/questions';
 
 /** Bump when step building changes; untouched sessions of an older version are rebuilt. */
-export const REVIEW_BUILDER_VERSION = '4';
+export const REVIEW_BUILDER_VERSION = '5';
 
 export type TodayReviewSession = {
   local_date: string;
@@ -442,10 +442,24 @@ export async function getOrCreateTodayReview(opts: {
     const lessonVersion = published?.version ?? null;
     const expectedIds = new Set(coverageBankItems(bankItems).map((i) => i.id));
     const planIds = new Set((planDoc?.pairs ?? []).map((p) => p.item_id));
+    // A word that got its picture since the plan was built gains picture
+    // pairs: a plan missing any of them is rebuilt (covered pairs kept).
+    const planPairKeys = new Set(
+      (planDoc?.pairs ?? []).map((p) => `${p.item_id}|${p.skill}`),
+    );
+    const missingImagePair = coverageBankItems(bankItems).some(
+      (i) =>
+        i.type !== 'pattern' &&
+        i.type !== 'phrase' &&
+        i.type !== 'form' &&
+        Boolean(i.has_card && i.image_url) &&
+        !planPairKeys.has(`${i.id}|recognition`),
+    );
     const itemsChanged =
       expectedIds.size > 0 &&
       (expectedIds.size !== planIds.size ||
-        [...expectedIds].some((id) => !planIds.has(id)));
+        [...expectedIds].some((id) => !planIds.has(id)) ||
+        (planDoc != null && missingImagePair));
     const planIsStale =
       !!planDoc &&
       (itemsChanged ||
@@ -482,6 +496,7 @@ export async function getOrCreateTodayReview(opts: {
             : i.type === 'form'
               ? 'verb'
               : 'word') as CoverageItemKind,
+        has_image: Boolean(i.has_card && i.image_url),
       }));
       const plan = buildCoveragePlan({
         user_id: opts.user_id,

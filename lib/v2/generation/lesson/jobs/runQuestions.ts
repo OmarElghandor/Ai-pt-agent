@@ -9,7 +9,7 @@ import {
   stripAccentsPunct,
 } from '../coerceRt';
 import { transliteratePtToSay } from '@/lib/v2/content/translit';
-import { stripPoliteTail } from '../patternFill';
+import { fillPatternsInBank, stripPoliteTail } from '../patternFill';
 import { buildQuestionsSystemPrompt } from '../prompts';
 import type { OutlineResult } from '../stages/types';
 import { minimalPairDistractors } from '../minimalPairs';
@@ -22,6 +22,12 @@ import {
 } from '../tiers';
 import { callJobTool } from './call';
 import {
+  applyCorePluralTl,
+  attachKnownPatternExamples,
+  injectPatternFillWords,
+  seedRecyclePatternFillWords,
+} from '../patternBankHydrate';
+import {
   arabicOptionsAreNearDupes,
   imageFallbackType,
   IMAGE_QUESTION_TYPES,
@@ -30,9 +36,11 @@ import {
   skillForQuestionType,
   type QuestionType,
 } from '../questionTypes';
+import { resolveGrammarFocusPatternIds } from '../grammarFocus';
 import {
   planQuestionSlots,
   validateDayQuestionQuotas,
+  validatePlannedGrammarCoverage,
   type PlannedSlot,
   type QuestionUse,
 } from '../questionSlots';
@@ -40,6 +48,22 @@ import {
   realWorldPhrasesToItems,
   type RealWorldHandoff,
 } from '../realWorldBuild';
+
+/**
+ * Re-run pattern fill on a (possibly stale) draft bank so questions can tile
+ * pattern examples even when the items stage predated fill injection.
+ */
+export function hydratePatternBankForQuestions(
+  items: Item[],
+  brief: LessonBrief,
+  knownFull: Map<string, Item> = new Map(),
+): Item[] {
+  let bank = attachKnownPatternExamples(items, knownFull);
+  bank = injectPatternFillWords(bank, brief.core_items, knownFull);
+  bank = seedRecyclePatternFillWords(bank, knownFull, brief.day);
+  bank = applyCorePluralTl(bank, brief.core_items);
+  return fillPatternsInBank(bank, { coreItems: brief.core_items });
+}
 
 const SlotFillSchema = z.object({
   slot_id: z.string().min(1),
@@ -447,7 +471,15 @@ export function assembleSlotQuestion(
       fixes.push(fix(id, 'pattern_remap', `${testsId} → ${remapped}`));
       testsId = remapped;
     } else if (qType === 'build_sentence') {
-      // keep root; we'll use pattern.tl / first example
+      // Pattern roots have no sentence tl — remap is required for tiling.
+      warnings.push(
+        fatal(
+          id,
+          'build_sentence',
+          `no tileable example for ${testsId} (missing pattern.*.ex with tl)`,
+        ),
+      );
+      return { question: null, fixes, warnings };
     } else {
       warnings.push(
         warning(id, 'pattern_not_testable', `cannot test pattern root ${testsId}`),
@@ -597,9 +629,36 @@ export function assembleSlotQuestion(
     base.answer = options.answer;
     (base as { cloze?: string }).cloze = cloze;
   } else if (qType === 'build_sentence') {
-    const line = answerTl || itemTl(tested);
-    if (!line) {
-      warnings.push(fatal(id, 'build_sentence', 'no tl to tile'));
+    let line = answerTl || itemTl(tested);
+    // Safety net: if still on a pattern root / empty tl, remap to first .ex.
+    if (!line.trim() || (tested.type === 'pattern' && isPatternRootId(testsId))) {
+      const remapped =
+        remapPatternTestId(
+          isPatternRootId(slot.tests) ? slot.tests : testsId,
+          opts.bank,
+        ) ?? remapPatternTestId(slot.tests, opts.bank);
+      const exItem = remapped
+        ? opts.bank.find((i) => i.id === remapped)
+        : undefined;
+      const exTl = exItem ? itemTl(exItem) : '';
+      if (exTl.trim()) {
+        fixes.push(
+          fix(id, 'pattern_remap', `${testsId} → ${remapped} (tile line)`),
+        );
+        testsId = remapped!;
+        tested = exItem!;
+        line = exTl;
+        base.tests = [testsId];
+      }
+    }
+    if (!line.trim()) {
+      warnings.push(
+        fatal(
+          id,
+          'build_sentence',
+          `no tl to tile (tests=${slot.tests}; need pattern.*.ex with tl)`,
+        ),
+      );
       return { question: null, fixes, warnings };
     }
     const built = buildSentenceTiles(line, opts.commonMistakeTls);
@@ -933,8 +992,12 @@ export async function runQuestionsJob(opts: {
   coreItemIds?: string[];
   /** Soft real_world handoff — source of truth for extra quiz slots. */
   realWorld?: RealWorldHandoff | null;
+  /** Prior-day / registry items for pattern fill injection. */
+  knownFull?: Map<string, Item>;
 }): Promise<{
   questions: Question[];
+  /** Bank after pattern hydrate (may include new .ex phrases) — persist when grown. */
+  items: Item[];
   issues: string[];
   fatals: TierIssue[];
   fixes: TierIssue[];
@@ -959,27 +1022,88 @@ export async function runQuestionsJob(opts: {
   const rwItems = rwHide
     ? []
     : realWorldPhrasesToItems(rw!.phrases).filter((i) => !existingIds.has(i.id));
-  const bank = [...opts.items, ...rwItems];
+  // Stale drafts often lack pattern.*.ex — hydrate before plan/assemble.
+  const bank = hydratePatternBankForQuestions(
+    [...opts.items, ...rwItems],
+    opts.brief,
+    opts.knownFull ?? new Map(),
+  );
   const grammarFocusRaw =
     opts.brief.grammar_focus.match(/^([^\s—]+)/)?.[1] ?? undefined;
   const grammarFocusId =
     !grammarFocusRaw || grammarFocusRaw === 'none'
       ? undefined
       : grammarFocusRaw;
+  const focusForPlan =
+    grammarFocusId && grammarFocusId !== '(none)' ? grammarFocusId : undefined;
   const plan = planQuestionSlots({
-    outline: opts.outline,
+    outline: { ...opts.outline, items: bank },
     items: bank,
     storyItemOrder: opts.storyItemOrder,
     priorityIds: coreItemIds,
-    grammarFocusId:
-      grammarFocusId && grammarFocusId !== '(none)'
-        ? grammarFocusId
-        : undefined,
+    grammarFocusId: focusForPlan,
     coreItems: opts.brief.core_items,
     preferBuildSentenceFor: ['pattern.chamo_me'],
     rwPhrases,
     rwHide,
   });
+
+  const bankPatternIds = new Set(
+    bank
+      .filter((i) => i.type === 'pattern' && !/\.ex\.\d+$/.test(i.id))
+      .map((i) => i.id),
+  );
+  const todayPatternIds = [
+    ...new Set([
+      ...coreItemIds.filter((id) => bankPatternIds.has(id)),
+      ...(focusForPlan
+        ? resolveGrammarFocusPatternIds(
+            focusForPlan,
+            opts.brief.core_items,
+          ).filter((id) => bankPatternIds.has(id))
+        : []),
+    ]),
+  ];
+  const planGrammarFatals = validatePlannedGrammarCoverage(
+    plan.slots,
+    todayPatternIds,
+  );
+  const systemModules = [
+    { name: 'core', version: '1' },
+    { name: 'questions', version: '2' },
+  ];
+  const emptyTiming = {
+    label: 'questions:day',
+    duration_ms: 0,
+    input_tokens: 0,
+    output_tokens: 0,
+    usd_estimate: 0,
+  };
+  if (planGrammarFatals.length) {
+    const fatals = planGrammarFatals.map((msg) =>
+      fatal('questions', 'coverage', msg),
+    );
+    return {
+      questions: [],
+      items: bank,
+      issues: planGrammarFatals.map((m) => `coverage: ${m}`),
+      fatals,
+      fixes: plan.warnings.map((w) => warning('slots', 'image_fallback', w)),
+      warnings: [],
+      flagged: true,
+      retries: 0,
+      auto_fix_count: 0,
+      timing: emptyTiming as Awaited<ReturnType<typeof callJobTool>>['timing'],
+      tokens: { system: 0, input: 0, output: 0 },
+      over_budget: false,
+      model: 'code',
+      provider: 'anthropic' as Awaited<
+        ReturnType<typeof callJobTool>
+      >['provider'],
+      userBody: '',
+      systemModules,
+    };
+  }
 
   const slotsJson = plan.slots.map((s) => ({
     slot_id: s.slot_id,
@@ -1017,11 +1141,6 @@ ${JSON.stringify(
   ].slice(0, 80),
 )}
 `;
-
-  const systemModules = [
-    { name: 'core', version: '1' },
-    { name: 'questions', version: '2' },
-  ];
 
   let call = await callJobTool({
     kind: 'questions',
@@ -1117,6 +1236,7 @@ ${JSON.stringify(
 
   return {
     questions,
+    items: bank,
     issues: [
       ...warnings.map((w) => `${w.rule}: ${w.path}: ${w.message}`),
       ...quota.fatals.map((m) => `coverage: ${m}`),

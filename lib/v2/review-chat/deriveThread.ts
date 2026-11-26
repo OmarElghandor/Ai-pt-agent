@@ -295,6 +295,7 @@ export function composerForType(type: string): import('./types').ComposerKind {
     case 'listen_pick_tl':
     case 'situation_choice':
     case 'pick_tl':
+    case 'image_pick_tl':
       return 'choice';
     case 'pick_meaning':
     case 'read_meaning':
@@ -310,11 +311,13 @@ export function composerForType(type: string): import('./types').ComposerKind {
     case 'translate_write':
     case 'fill_blank_write':
     case 'describe_image_write':
+    case 'image_write':
     case 'reply_write':
       return 'text';
     case 'say_it':
     case 'reply_speak':
     case 'describe_image_speak':
+    case 'image_say':
     case 'read_aloud':
       return 'mic';
     default:

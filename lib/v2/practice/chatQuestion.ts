@@ -52,13 +52,16 @@ export function chatSkillFor(type: string, coverage?: CoverageSkill | string): C
     case 'read_meaning':
     case 'pick_meaning':
     case 'pick_tl':
+    case 'image_pick_tl':
       return 'reading';
     case 'translate_write':
+    case 'image_write':
     case 'fill_blank_write':
     case 'reply_write':
     case 'describe_image_write':
       return 'writing';
     case 'say_it':
+    case 'image_say':
     case 'reply_speak':
     case 'read_aloud':
     case 'describe_image_speak':

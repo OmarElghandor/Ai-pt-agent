@@ -242,6 +242,14 @@ export function QuestionCard({
         </>
       ) : null}
 
+      {/* One picture, answer from it: pick / write / say the word. The word
+          is never shown until the answer — the picture is the whole cue. */}
+      {type === 'image_pick_tl' || type === 'image_write' || type === 'image_say' ? (
+        <div className="mx-auto w-full max-w-[220px]">
+          <ImageSlot variant="flashcard" src={question.image_url as string | undefined} alt="" />
+        </div>
+      ) : null}
+
       {type === 'say_it' && question.situation_eg ? (
         <>
           <p className="font-[family-name:var(--font-v2-ui)] text-[10px] font-bold text-v2-meta">

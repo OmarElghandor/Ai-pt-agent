@@ -296,6 +296,7 @@ export function evidenceKindForQuestionType(
     'listen_pick_image',
     'pick_meaning',
     'pick_tl',
+    'image_pick_tl',
     'choose_article',
     'complete_phrase',
     'fill_blank_choice',
@@ -314,6 +315,8 @@ export function evidenceKindForQuestionType(
     'reply_speak',
     'describe_image_write',
     'describe_image_speak',
+    'image_write',
+    'image_say',
     'convo',
     'roleplay',
   ]);

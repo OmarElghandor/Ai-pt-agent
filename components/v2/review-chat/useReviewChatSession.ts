@@ -656,7 +656,6 @@ export function useReviewChatSession({
     isSpeaking: isSpeakingType(qType),
     awaitingNext,
     showRoundEnd,
-    closedChipsImmediate: qType === 'pick_meaning' || qType === 'read_meaning',
     onChipPick: (id: string) => {
       if (!question) return;
       if (composerKind !== 'chips') return;

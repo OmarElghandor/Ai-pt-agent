@@ -177,6 +177,9 @@ Token source: Omar's **"Lumina Arabic Interface — White Theme v2"** (`design/l
 | `reply_write` | quoted friend message (name, TL line, play, hidden meaning) + "رد عليه" | text composer | 03 |
 | `describe_image_write` | 4:3 image + "اكتب جملة واحدة عن الصورة" | text composer | 02 |
 | `describe_image_speak` | 4:3 image + "قول جملة عن الصورة" | mic composer | 02 |
+| `image_pick_tl` | one picture; answer by choice; word hidden until answered | choice sheet | 02 |
+| `image_write` | one picture; answer by text; word hidden until answered | text composer | 02 |
+| `image_say` | one picture; answer by mic; word hidden until answered | mic composer | 02 |
 | `say_it` | "سياق الموقف:" situation | mic composer | 05 |
 | `reply_speak` | character bubble first (avatar + name, play "اسمع {name}", text hidden until answered), then the coach card "رد عليه" | mic composer | 05 |
 | `read_aloud` | TL sentence + play + Arabic-letter pronunciation | mic composer | 05 |

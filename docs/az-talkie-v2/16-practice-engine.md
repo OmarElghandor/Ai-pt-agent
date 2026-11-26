@@ -150,7 +150,7 @@ Built once when a lesson enters the window:
 
 | Item kind | Pairs to cover |
 |---|---|
-| word | listening, writing (reading comes from its card) |
+| word | listening, writing; plus recognition + speaking when it has its own ready picture (image_pick_tl / image_write / image_say) |
 | verb | listening, writing of **each form the day taught** |
 | phrase | listening, **sentence building** (`build_sentence`), writing, speaking |
 | grammar pattern | **4 checks** across the 3 days: recognition (`fill_blank_choice`), building (`build_sentence`), writing (`fill_blank_write` or a full-sentence `translate_write`), use (`reply_write` or `reply_speak` that needs the pattern) |

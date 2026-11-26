@@ -33,12 +33,25 @@ import {
   fillPatternsInBank,
 } from '../patternFill';
 import {
+  applyCorePluralTl,
+  attachKnownPatternExamples,
+  injectPatternFillWords,
+  seedRecyclePatternFillWords,
+} from '../patternBankHydrate';
+import {
   resolvePatternKind,
   slotsForKind,
 } from '../patternTemplates';
 import { ensureHeardReplies } from '../heardReplies';
 import { normalizeWordMeanings } from '../normalizeAr';
 import { callJobTool } from './call';
+
+export {
+  applyCorePluralTl,
+  attachKnownPatternExamples,
+  injectPatternFillWords,
+  seedRecyclePatternFillWords,
+} from '../patternBankHydrate';
 
 /** Set has_card explicitly: false for pattern/derived/recycle/set items. */
 function applyHasCardFlags(items: Item[], recycleIds: Set<string>): Item[] {
@@ -210,17 +223,28 @@ function verbLemmaStub(core: CoreItem): Item {
   };
 }
 
+/** Infer m/f from a leading Portuguese article on core tl. */
+function genderFromArticleTl(tl: string): 'm' | 'f' | 'n' {
+  if (/^(a|as|uma|umas)\s+/i.test(tl.trim())) return 'f';
+  if (/^(o|os|um|uns)\s+/i.test(tl.trim())) return 'm';
+  return 'n';
+}
+
 /** Minimal stub so required core ids are always present if the model omits them. */
 function coreItemStub(core: CoreItem, _bank: Item[]): Item | null {
   if (core.kind === 'verb') return verbLemmaStub(core);
   if (core.kind === 'word') {
-    return {
+    const row: Extract<Item, { type: 'word' }> = {
       type: 'word',
       id: core.id,
       tl: core.tl,
-      gender: 'n',
+      gender: genderFromArticleTl(core.tl),
       ar: '…',
     };
+    if (typeof core.plural_tl === 'string' && core.plural_tl.trim()) {
+      return { ...row, plural_tl: core.plural_tl };
+    }
+    return row;
   }
   if (core.kind === 'phrase') {
     const token =
@@ -450,7 +474,14 @@ export function mergeRecycleAndVerbs(
       byId.set(id, completePatternItem(item, [...byId.values()]));
     }
   }
-  return fillPatternsInBank([...byId.values()], {
+  // Bring prior-day pattern.*.ex into the bank (story/recycle roots alone are thin).
+  let merged = attachKnownPatternExamples([...byId.values()], knownFull);
+  // Pattern fills + plurals before first fillPatternsInBank pass.
+  merged = injectPatternFillWords(merged, brief.core_items, knownFull);
+  // Story days: core_items empty — seed nouns for recycled article/plural templates.
+  merged = seedRecyclePatternFillWords(merged, knownFull, brief.day);
+  merged = applyCorePluralTl(merged, brief.core_items);
+  return fillPatternsInBank(merged, {
     coreItems: brief.core_items,
   });
 }
@@ -485,6 +516,12 @@ export function validateItemsRules(
   const coreSet = new Set(brief.core_items.map((c) => c.id));
   const recycleSet = new Set(brief.recycle_ids);
   const knownSet = new Set(known.map((k) => k.id));
+  const patternFillIds = new Set<string>();
+  for (const c of brief.core_items) {
+    if (c.kind === 'pattern' && c.fills?.length) {
+      for (const id of c.fills) patternFillIds.add(id);
+    }
+  }
   for (const id of brief.recycle_ids) {
     const row = items.find((i) => i.id === id);
     if (!row) {
@@ -523,6 +560,7 @@ export function validateItemsRules(
   for (const item of items) {
     if (recycleSet.has(item.id) || knownSet.has(item.id)) continue;
     if (coreSet.has(item.id)) continue;
+    if (patternFillIds.has(item.id)) continue;
     if ((item as { extra?: boolean }).extra) continue;
     if ((item as { derived?: boolean }).derived) continue;
     if (/^pattern\..+\.ex\.\d+$/.test(item.id)) continue;
@@ -554,6 +592,51 @@ export function validateItemsRules(
       warnings.push(
         warning('items', 'pattern_missing', 'pattern page planned but no pattern item'),
       );
+    }
+  }
+  // Template patterns need derived .ex phrases for grammar / build_sentence.
+  // Fatal only for today's core patterns; recycle-only → warning (story days).
+  const corePatternIds = new Set(
+    brief.core_items.filter((c) => c.kind === 'pattern').map((c) => c.id),
+  );
+  const bankIdSet = new Set(items.map((i) => i.id));
+  for (const it of items) {
+    if (it.type !== 'pattern') continue;
+    const kind = resolvePatternKind(
+      it.id,
+      'kind' in it ? (it.kind as string | undefined) : undefined,
+    );
+    if (
+      kind !== 'plural_def' &&
+      kind !== 'article_def' &&
+      kind !== 'article_indef' &&
+      kind !== 'polite_request' &&
+      kind !== 'chamo_me'
+    ) {
+      continue;
+    }
+    const exIds =
+      Array.isArray(it.examples) && it.examples.length
+        ? it.examples.filter((id): id is string => typeof id === 'string')
+        : [];
+    const live = exIds.filter((id) => bankIdSet.has(id));
+    const scanned = items.some(
+      (row) =>
+        row.type === 'phrase' &&
+        row.id.startsWith(`${it.id}.ex.`) &&
+        /^pattern\..+\.ex\.\d+$/.test(row.id),
+    );
+    if (!live.length && !scanned) {
+      const issue = {
+        path: it.id,
+        rule: 'pattern_examples_missing',
+        message: `${kind} pattern has no in-bank derived examples`,
+      };
+      if (corePatternIds.has(it.id)) {
+        fatals.push(fatal(issue.path, issue.rule, issue.message));
+      } else {
+        warnings.push(warning(issue.path, issue.rule, issue.message));
+      }
     }
   }
   for (const item of items) {
@@ -818,6 +901,13 @@ ${knownLines}
     if (presets.includes('pattern')) {
       items = ensurePatternSkeleton(items, coreOpts);
     }
+    // Fill words + plurals must land before pattern examples are composed.
+    items = injectPatternFillWords(
+      items,
+      opts.brief.core_items,
+      knownFull,
+    );
+    items = applyCorePluralTl(items, opts.brief.core_items);
     items = fillPatternsInBank(items, coreOpts);
     items = ensurePluralPairItems(items).bank;
     items = applyPhraseRolesFromCore(items, opts.brief.core_items);
@@ -890,25 +980,8 @@ ${knownLines}
       }
       return next;
     });
-    // plural_tl from core wins (including explicit null = no plural examples)
-    const pluralById = new Map(
-      opts.brief.core_items
-        .filter((c) => c.kind === 'word' && 'plural_tl' in c)
-        .map((c) => [c.id, c.plural_tl] as const),
-    );
-    items = items.map((it) => {
-      if (it.type !== 'word') return it;
-      if (!pluralById.has(it.id)) return it;
-      const plural_tl = pluralById.get(it.id);
-      if (plural_tl === null) {
-        const { plural_tl: _drop, plural: _drop2, ...rest } = it as Item & {
-          plural_tl?: string;
-          plural?: string;
-        };
-        return rest as Item;
-      }
-      return { ...it, plural_tl: plural_tl as string } as Item;
-    });
+    // Idempotent: keep core plural_tl authoritative after later merges.
+    items = applyCorePluralTl(items, opts.brief.core_items);
     const heard = ensureHeardReplies(items, {
       known: [...knownFull.values()],
       maxExtras: 2,

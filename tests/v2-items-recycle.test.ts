@@ -121,7 +121,7 @@ describe('mergeRecycleAndVerbs recycle guarantee', () => {
     );
     const row = bank.find((i) => i.id === 'verb.ir');
     assert.ok(row);
-    assert.equal(row!.type, 'word');
+    assert.equal(row!.type, 'verb');
     const tiered = validateItemsRules(
       bank,
       [],
@@ -192,6 +192,201 @@ describe('mergeRecycleAndVerbs recycle guarantee', () => {
       tiered.fatals.filter(
         (f) => f.rule === 'recycle_missing' || f.rule === 'recycle_ar',
       ).length,
+      0,
+    );
+  });
+
+  it('day-7 shape: recycle article_gender gets .ex; no pattern_examples_missing fatal', () => {
+    // Story day: no core items, recycle chamo_me + article_gender + phrases only.
+    const knownFull = new Map<string, Item>([
+      [
+        'pattern.article_gender',
+        {
+          type: 'pattern',
+          id: 'pattern.article_gender',
+          kind: 'article_def',
+          slots: [
+            { name_eg: 'أداة', kind: 'article_o_a' },
+            { name_eg: 'الاسم', kind: 'word' },
+          ],
+          examples: ['pattern.article_gender.ex.1'],
+        } as Item,
+      ],
+      [
+        'pattern.article_gender.ex.1',
+        {
+          type: 'phrase',
+          id: 'pattern.article_gender.ex.1',
+          tl: 'o leite',
+          ar: 'الحليب',
+          context_eg: 'مثال على التركيبة',
+          cloze: 'o',
+          derived: true,
+        } as Item,
+      ],
+      [
+        'pattern.chamo_me',
+        {
+          type: 'pattern',
+          id: 'pattern.chamo_me',
+          kind: 'chamo_me',
+          slots: [
+            { tl: 'Chamo-me' },
+            { name_eg: 'اسم', kind: 'name' },
+          ],
+          examples: ['pattern.chamo_me.ex.1'],
+        } as Item,
+      ],
+      [
+        'phrase.hello',
+        {
+          type: 'phrase',
+          id: 'phrase.hello',
+          tl: 'Olá!',
+          ar: 'مرحبا',
+          context_eg: 'تحية',
+          cloze: 'Olá',
+        } as Item,
+      ],
+      [
+        'word.milk',
+        {
+          type: 'word',
+          id: 'word.milk',
+          tl: 'o leite',
+          ar: 'الحليب',
+          gender: 'm',
+        } as Item,
+      ],
+      [
+        'word.water',
+        {
+          type: 'word',
+          id: 'word.water',
+          tl: 'a água',
+          ar: 'الماء',
+          gender: 'f',
+        } as Item,
+      ],
+      [
+        'word.bread',
+        {
+          type: 'word',
+          id: 'word.bread',
+          tl: 'o pão',
+          ar: 'الخبز',
+          gender: 'm',
+          plural_tl: 'pães',
+        } as Item,
+      ],
+    ]);
+    const b = brief({
+      day: 7,
+      no_new_items: true,
+      core_items: [],
+      recycle_ids: [
+        'phrase.hello',
+        'pattern.chamo_me',
+        'pattern.article_gender',
+      ],
+    });
+    const bank = mergeRecycleAndVerbs([], b, knownFull);
+    const articleEx = bank.filter(
+      (i) =>
+        i.type === 'phrase' &&
+        i.id.startsWith('pattern.article_gender.ex.') &&
+        'tl' in i &&
+        String(i.tl).trim(),
+    );
+    assert.ok(
+      articleEx.length >= 1,
+      `expected article_gender .ex, got ${bank.map((i) => i.id).join(',')}`,
+    );
+    const chamoEx = bank.filter((i) =>
+      i.id.startsWith('pattern.chamo_me.ex.'),
+    );
+    assert.ok(chamoEx.length >= 1, 'expected chamo_me .ex');
+
+    const tiered = validateItemsRules(bank, [], [], b);
+    assert.equal(
+      tiered.fatals.filter((f) => f.rule === 'pattern_examples_missing').length,
+      0,
+      tiered.fatals.map((f) => `${f.rule}:${f.message}`).join('; '),
+    );
+  });
+
+  it('day-7 shape without known .ex: seeds nouns and builds article_def examples', () => {
+    const knownFull = new Map<string, Item>([
+      [
+        'pattern.article_gender',
+        {
+          type: 'pattern',
+          id: 'pattern.article_gender',
+          kind: 'article_def',
+          slots: [
+            { name_eg: 'أداة', kind: 'article_o_a' },
+            { name_eg: 'الاسم', kind: 'word' },
+          ],
+          examples: [],
+        } as Item,
+      ],
+      [
+        'pattern.chamo_me',
+        {
+          type: 'pattern',
+          id: 'pattern.chamo_me',
+          kind: 'chamo_me',
+          slots: [
+            { tl: 'Chamo-me' },
+            { name_eg: 'اسم', kind: 'name' },
+          ],
+          examples: [],
+        } as Item,
+      ],
+      [
+        'word.milk',
+        {
+          type: 'word',
+          id: 'word.milk',
+          tl: 'o leite',
+          ar: 'الحليب',
+          gender: 'm',
+        } as Item,
+      ],
+      [
+        'word.water',
+        {
+          type: 'word',
+          id: 'word.water',
+          tl: 'a água',
+          ar: 'الماء',
+          gender: 'f',
+        } as Item,
+      ],
+      [
+        'word.bread',
+        {
+          type: 'word',
+          id: 'word.bread',
+          tl: 'o pão',
+          ar: 'الخبز',
+          gender: 'm',
+        } as Item,
+      ],
+    ]);
+    const b = brief({
+      day: 7,
+      no_new_items: true,
+      core_items: [],
+      recycle_ids: ['pattern.chamo_me', 'pattern.article_gender'],
+    });
+    const bank = mergeRecycleAndVerbs([], b, knownFull);
+    const articleEx = bank.find((i) => i.id === 'pattern.article_gender.ex.1');
+    assert.ok(articleEx && 'tl' in articleEx && String(articleEx.tl).trim());
+    assert.match(String(articleEx.tl), /^(o|a)\s+/);
+    const tiered = validateItemsRules(bank, [], [], b);
+    assert.equal(
+      tiered.fatals.filter((f) => f.rule === 'pattern_examples_missing').length,
       0,
     );
   });

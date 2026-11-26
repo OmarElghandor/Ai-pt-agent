@@ -504,23 +504,72 @@ export function buildReviewStepVariants(input: BuildStepInput): BuiltStep[] {
     });
   };
 
+  // ── One picture → the word (pick / write / say) ─────────────────────────
+  // Only for single words with a ready picture of their own: a phrase's
+  // picture is a scene, so it can't name one answer.
+  const hasOwnPicture =
+    Boolean(input.item.has_card && input.item.image_url) &&
+    input.item.type !== 'phrase' &&
+    input.item.type !== 'sentence' &&
+    input.item.type !== 'pattern' &&
+    words.length <= 3;
+  const imageUrl = input.item.image_url ?? null;
+  /** Nouns are taught with their article; also accept the bare noun. */
+  const imageAccepted = (): string[] => {
+    const bare = tl.replace(/^(o|a|os|as|um|uma)\s+/i, '');
+    return bare !== tl ? [tl, bare] : [tl];
+  };
+  const imagePick = (): BuiltStep | null => {
+    if (!hasOwnPicture) return null;
+    const opts = choiceOptions(target, pickDistractors(taught, target, 'tl', 2), 'tl', `imgpick:${target.id}`);
+    if (!opts) return null;
+    return make('image_pick_tl', 'question', {
+      image_url: imageUrl,
+      prompt_eg: 'إيه اللي في الصورة؟',
+      options: opts.options,
+      answer: opts.answer,
+      accepted: [tl],
+    });
+  };
+  const imageWrite = (): BuiltStep | null => {
+    if (!hasOwnPicture) return null;
+    return make('image_write', 'question', {
+      image_url: imageUrl,
+      prompt_eg: 'اكتب بالبرتغالي اللي في الصورة',
+      accepted: imageAccepted(),
+      hint: firstWordHint(tl),
+    });
+  };
+  const imageSay = (): BuiltStep | null => {
+    if (!hasOwnPicture) return null;
+    return make('image_say', 'question', {
+      image_url: imageUrl,
+      prompt_eg: 'قول بالبرتغالي اللي في الصورة',
+      accepted: imageAccepted(),
+    });
+  };
+
   // ── Forms per coverage skill (best first) ──────────────────────────────
   const inCards = cardIds.has(input.item.id);
   const forms: Array<() => BuiltStep | null> =
     input.skill === 'listening'
       ? [findImage, listenMeaning, listenPickTl, dictation]
       : input.skill === 'writing'
-        ? [translate, fillBlankWrite, dictation]
+        ? [translate, imageWrite, fillBlankWrite, dictation]
         : input.skill === 'building'
           ? words.length >= MIN_TILE_WORDS
             ? [buildSentence, fillBlankChoice, fillBlankWrite]
             : [pickMeaning, pickTl, translate] // 1–2 words: reading instead
           : input.skill === 'recognition'
             ? inCards
-              ? [translate, pickTl] // already in today's cards: no meaning question
-              : [pickMeaning, pickTl, fillBlankChoice]
+              ? [imageWrite, translate, pickTl] // already in today's cards: no meaning question
+              : hasOwnPicture
+                ? [imagePick, pickMeaning, pickTl]
+                : [pickMeaning, pickTl, fillBlankChoice]
             : input.skill === 'speaking' || input.skill === 'use'
-              ? [sayIt, translate]
+              ? hasOwnPicture
+                ? [imageSay, sayIt, translate]
+                : [sayIt, translate]
               : [];
   for (const f of forms) add(f());
   return out;

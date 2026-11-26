@@ -6,6 +6,8 @@ import {
   buildReviewStep,
   buildSentenceTiles,
   canBuildFindImageBlock,
+  buildReviewStepVariants,
+  pairsForItem,
   familyKey,
   normLabel,
   grammarTimeShare,
@@ -740,5 +742,63 @@ describe('v2 practice · frame families + crafted dedupe (2026-11-25b)', () => {
     });
     assert.ok(step);
     assert.equal(step!.payload.origin, 'code');
+  });
+});
+
+describe('v2 practice · one picture → pick / write / say (2026-11-25c)', () => {
+  const w = (id: string, tl: string, ar: string, img = true): BankItem => ({
+    id, type: 'word', tl, ar, day: 1, has_card: true, image_url: img ? `https://img/${id}.png` : null,
+  });
+  const bank: BankItem[] = [
+    w('food.coffee', 'o café', 'القهوة'),
+    w('food.cheese', 'o queijo', 'الجبن'),
+    w('food.bread', 'o pão', 'الخبز'),
+    w('food.milk', 'o leite', 'اللبن'),
+    w('food.water', 'a água', 'المياه', false),
+    { id: 'p.queria', type: 'phrase', tl: 'Queria um café', ar: 'عايز قهوة', day: 1, has_card: true, image_url: 'https://img/scene.png' },
+  ];
+  const step = (item: BankItem, skill: 'recognition' | 'writing' | 'speaking') =>
+    buildReviewStepVariants({ item, skill, taughtItems: bank, currentDay: 2 });
+
+  it('pick: the picture alone, options in Portuguese, the answer hidden', () => {
+    const s = step(bank[0]!, 'recognition')[0]!;
+    assert.equal(s.type, 'image_pick_tl');
+    assert.equal(s.payload.image_url, 'https://img/food.coffee.png');
+    assert.equal(s.payload.skill, 'reading');
+    assert.ok(!s.payload.prompt_tl, 'the word must not be shown');
+    const opts = s.payload.options as { tl?: string }[];
+    assert.equal(opts[s.payload.answer as number]!.tl, 'o café');
+  });
+
+  it('write: accepts the word with or without its article', () => {
+    const s = step(bank[1]!, 'writing').find((v) => v.type === 'image_write')!;
+    assert.ok(s);
+    assert.deepEqual(s.payload.accepted, ['o queijo', 'queijo']);
+    assert.equal(s.payload.skill, 'writing');
+  });
+
+  it('say: speaking from the picture', () => {
+    const s = step(bank[2]!, 'speaking')[0]!;
+    assert.equal(s.type, 'image_say');
+    assert.equal(s.payload.skill, 'speaking');
+  });
+
+  it('no picture forms for a word without its own picture, or for a phrase (its picture is a scene)', () => {
+    for (const item of [bank[4]!, bank[5]!]) {
+      for (const skill of ['recognition', 'writing', 'speaking'] as const) {
+        assert.ok(!step(item, skill).some((v) => v.type.startsWith('image_')), `${item.id} ${skill}`);
+      }
+    }
+  });
+
+  it('a word with a picture gets picture pairs in its coverage plan', () => {
+    assert.deepEqual(
+      pairsForItem({ id: 'food.coffee', kind: 'word', has_image: true }).map((p) => p.skill),
+      ['listening', 'writing', 'recognition', 'speaking'],
+    );
+    assert.deepEqual(
+      pairsForItem({ id: 'food.water', kind: 'word' }).map((p) => p.skill),
+      ['listening', 'writing'],
+    );
   });
 });

@@ -21,13 +21,22 @@ export async function loadKnownItemMap(opts: {
   // Core file first (lowest priority — overwritten by drafts/registry)
   for (const c of coreItemsThroughDay(opts.day)) {
     const stub = coreItemAsKnownStub(c);
-    map.set(c.id, {
+    const row: Item = {
       type: stub.type as Item['type'],
       id: stub.id,
       tl: stub.tl,
       // Never copy eg (Egyptian hint) into ar (MSA meaning).
       ar: '',
-    } as Item);
+    } as Item;
+    if (stub.type === 'word') {
+      const word = row as Extract<Item, { type: 'word' }> & {
+        gender?: 'm' | 'f' | 'n';
+        plural_tl?: string;
+      };
+      if (stub.gender) word.gender = stub.gender;
+      if (stub.plural_tl) word.plural_tl = stub.plural_tl;
+    }
+    map.set(c.id, row);
   }
 
   if (!mongoConfigured()) return map;

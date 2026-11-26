@@ -112,7 +112,6 @@ export function ReviewChatShell({
         chips={s.chips}
         selectedOption={s.selectedOption}
         setSelectedOption={s.setSelectedOption}
-        closedChipsImmediate={s.closedChipsImmediate}
         onChipPick={s.onChipPick}
         composerText={s.composerText}
         setComposerText={s.setComposerText}

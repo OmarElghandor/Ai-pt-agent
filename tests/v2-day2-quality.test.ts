@@ -232,6 +232,183 @@ describe('pattern templates by kind', () => {
     assert.ok(plEx && 'tl' in plEx);
     assert.match(String(plEx.tl), /^(os|as)\s+/);
   });
+
+  it('falls back to today’s plural words when listed fills are absent from the bank', () => {
+    // Day-6 shape: fills point at prior-day nouns that are not in the bank;
+    // today’s fruit words still have plural_tl and must produce examples.
+    const todayWords: Item[] = [
+      {
+        type: 'word',
+        id: 'word.banana',
+        tl: 'a banana',
+        ar: 'الموز',
+        gender: 'f',
+        plural_tl: 'bananas',
+      },
+      {
+        type: 'word',
+        id: 'word.tomato',
+        tl: 'o tomate',
+        ar: 'الطماطم',
+        gender: 'm',
+        plural_tl: 'tomates',
+      },
+      {
+        type: 'word',
+        id: 'word.orange',
+        tl: 'a laranja',
+        ar: 'البرتقالة',
+        gender: 'f',
+        plural_tl: 'laranjas',
+      },
+    ];
+    const bank = fillPatternsInBank(
+      [
+        ...todayWords,
+        {
+          type: 'pattern',
+          id: 'pattern.plural_s',
+          kind: 'plural_def',
+          slots: slotsForKind('plural_def'),
+          examples: ['pattern.plural_s.ex.1'],
+        } as Item,
+      ],
+      {
+        coreItems: [
+          {
+            id: 'pattern.plural_s',
+            kind: 'pattern',
+            tl: 'os/as + اسم + s',
+            eg: 'الجمع',
+            pattern_kind: 'plural_def',
+            fills: ['word.apple', 'word.egg', 'word.bag', 'word.bread'],
+          },
+        ],
+      },
+    );
+    const plEx = bank.find((i) => i.id === 'pattern.plural_s.ex.1');
+    assert.ok(plEx && 'tl' in plEx, 'expected fallback plural example');
+    assert.match(String(plEx.tl), /^(os|as)\s+/);
+    const pattern = bank.find((i) => i.id === 'pattern.plural_s');
+    assert.ok(pattern && pattern.type === 'pattern');
+    assert.ok(
+      Array.isArray(pattern.examples) && pattern.examples.length >= 1,
+      'pattern.examples must list live derived ids',
+    );
+    for (const exId of pattern.examples ?? []) {
+      const row = bank.find((i) => i.id === exId);
+      assert.ok(row && 'tl' in row && String(row.tl).trim(), `missing ${exId}`);
+    }
+  });
+
+  it('prefers listed fills when those words are in the bank', () => {
+    const bank = fillPatternsInBank(
+      [
+        {
+          type: 'word',
+          id: 'word.egg',
+          tl: 'o ovo',
+          ar: 'البيضة',
+          gender: 'm',
+          plural_tl: 'ovos',
+        },
+        {
+          type: 'word',
+          id: 'word.banana',
+          tl: 'a banana',
+          ar: 'الموز',
+          gender: 'f',
+          plural_tl: 'bananas',
+        },
+        {
+          type: 'pattern',
+          id: 'pattern.plural_s',
+          kind: 'plural_def',
+          slots: slotsForKind('plural_def'),
+          examples: [],
+        } as Item,
+      ],
+      {
+        coreItems: [
+          {
+            id: 'pattern.plural_s',
+            kind: 'pattern',
+            tl: 'os/as',
+            eg: 'جمع',
+            pattern_kind: 'plural_def',
+            fills: ['word.egg'],
+          },
+        ],
+      },
+    );
+    const plEx = bank.find((i) => i.id === 'pattern.plural_s.ex.1');
+    assert.ok(plEx && 'tl' in plEx);
+    assert.equal(String(plEx.tl), 'os ovos');
+  });
+
+  it('falls back to today’s plural words when listed fills lack plural_tl', () => {
+    // Day-6 failure shape: prior-day fills are in the bank but without plural_tl
+    // (stale known stub). Today’s fruit words still have plural_tl.
+    const bank = fillPatternsInBank(
+      [
+        {
+          type: 'word',
+          id: 'word.apple',
+          tl: 'a maçã',
+          ar: 'التفاحة',
+          gender: 'f',
+          // no plural_tl — unusable for plural_def
+        },
+        {
+          type: 'word',
+          id: 'word.egg',
+          tl: 'o ovo',
+          ar: 'البيضة',
+          gender: 'm',
+        },
+        {
+          type: 'word',
+          id: 'word.banana',
+          tl: 'a banana',
+          ar: 'الموز',
+          gender: 'f',
+          plural_tl: 'bananas',
+        },
+        {
+          type: 'word',
+          id: 'word.tomato',
+          tl: 'o tomate',
+          ar: 'الطماطم',
+          gender: 'm',
+          plural_tl: 'tomates',
+        },
+        {
+          type: 'pattern',
+          id: 'pattern.plural_s',
+          kind: 'plural_def',
+          slots: slotsForKind('plural_def'),
+          examples: [],
+        } as Item,
+      ],
+      {
+        coreItems: [
+          {
+            id: 'pattern.plural_s',
+            kind: 'pattern',
+            tl: 'os/as + اسم + s',
+            eg: 'الجمع',
+            pattern_kind: 'plural_def',
+            fills: ['word.apple', 'word.egg'],
+            priority: 'useful',
+          },
+        ],
+      },
+    );
+    const plEx = bank.find((i) => i.id === 'pattern.plural_s.ex.1');
+    assert.ok(plEx && 'tl' in plEx, 'expected fallback to today’s plural words');
+    assert.match(String(plEx.tl), /^(os|as)\s+/);
+    assert.match(String(plEx.tl), /(bananas|tomates)/);
+  });
 });
 
 describe('dropInvalidQuestions', () => {

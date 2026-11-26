@@ -34,6 +34,8 @@ export type CoverageItemInput = {
   kind: CoverageItemKind;
   /** Verb forms taught that day, e.g. ['preciso', 'precisa']. */
   forms?: string[];
+  /** Word with a ready picture: also tested by picture questions (see one image → pick / write / say). */
+  has_image?: boolean;
 };
 
 export type BuildCoveragePlanInput = {
@@ -58,6 +60,14 @@ export function pairsForItem(item: CoverageItemInput): CoveragePair[] {
       return [
         { item_id: item.id, skill: 'listening', status: 'open' },
         { item_id: item.id, skill: 'writing', status: 'open' },
+        // A word with a picture is also asked from the picture alone:
+        // pick the word (recognition) and say it (speaking).
+        ...(item.has_image
+          ? ([
+              { item_id: item.id, skill: 'recognition', status: 'open' },
+              { item_id: item.id, skill: 'speaking', status: 'open' },
+            ] as CoveragePair[])
+          : []),
       ];
     case 'verb': {
       const forms = item.forms?.length ? item.forms : ['_'];

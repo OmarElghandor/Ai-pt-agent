@@ -28,7 +28,6 @@ type Props = {
   chips: Option[];
   selectedOption: string | null;
   setSelectedOption: (id: string | null) => void;
-  closedChipsImmediate: boolean;
   onChipPick: (id: string) => void;
   composerText: string;
   setComposerText: (text: string) => void;
@@ -56,7 +55,6 @@ export function ComposerTray({
   chips,
   selectedOption,
   setSelectedOption,
-  closedChipsImmediate,
   onChipPick,
   composerText,
   setComposerText,
@@ -115,7 +113,7 @@ export function ComposerTray({
           selected={selectedOption}
           onSelect={(id) => {
             setSelectedOption(id);
-            if (closedChipsImmediate) onChipPick(id);
+            onChipPick(id);
           }}
         />
       ) : null}

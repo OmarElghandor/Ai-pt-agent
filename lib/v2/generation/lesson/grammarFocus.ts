@@ -6,6 +6,8 @@ import type { CoreItem } from './coreItems';
  */
 const FOCUS_TO_PATTERNS: Record<string, string[]> = {
   'articles.definite': ['pattern.article_gender', 'pattern.plural_s'],
+  /** Day 6 plurals-only follow-on (day 5 already taught gender). */
+  'articles.definite.2': ['pattern.plural_s'],
   'polite.queria': ['pattern.queria_um_uma'],
   'pronouns.clitic_after': ['pattern.chamo_me'],
 };
