@@ -10,6 +10,25 @@ export function microMainImageKey(
   return `micro.${targetLang}.${seriesSlug}.${clipSlug}.main`;
 }
 
+/** Fallback English subject when the model omits image_spec. */
+export function synthesizeMicroImageSpec(opts: {
+  title_tl: string;
+  layout: string;
+  prompt_guidance?: string;
+}): string {
+  const guidance = opts.prompt_guidance?.trim();
+  const layoutHint =
+    opts.layout === 'scene'
+      ? 'wide scene with clear separate spots for each line object'
+      : opts.layout === 'pairs'
+        ? 'compact cafe or street vignette'
+        : 'everyday Lisbon interior or street';
+  if (guidance) {
+    return `Lisbon watercolour illustrating "${opts.title_tl}": ${guidance}. ${layoutHint}, no text in image.`;
+  }
+  return `Lisbon everyday watercolour scene illustrating "${opts.title_tl}", ${layoutHint}, soft ink, no text in image.`;
+}
+
 /**
  * Build a lesson-pipeline-compatible image spec for a clip main picture.
  * Scenes are authored at 4:3; list/pairs/rule use the same aspect for RN parity.
@@ -24,7 +43,10 @@ export function buildMicroMainImageSpec(opts: {
   const objects = opts.region_objects?.filter(Boolean) ?? [];
   const subject =
     opts.image_spec?.trim() ||
-    `Lisbon everyday scene illustrating "${opts.title_tl}"`;
+    synthesizeMicroImageSpec({
+      title_tl: opts.title_tl,
+      layout: opts.layout,
+    });
   return {
     type: 'scene',
     subject,

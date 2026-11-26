@@ -5,6 +5,7 @@ import { generateMicroClip } from '@/lib/v2/micro/generate';
 import { loadMicroOutline, findOutlineClip } from '@/lib/v2/micro/outline';
 import { ensureMicroSeries, persistGeneratedClip } from '@/lib/v2/micro/persist';
 import { enqueueMicroSeriesImages } from '@/lib/v2/micro/images/enqueue';
+import { generateMicroSeriesMainImages } from '@/lib/v2/micro/images/generateMains';
 import { publishMicroClip } from '@/lib/v2/micro/publish';
 
 export const runtime = 'nodejs';
@@ -56,14 +57,21 @@ export async function POST(req: Request) {
     }
     let images: Awaited<ReturnType<typeof enqueueMicroSeriesImages>> | null =
       null;
+    let mains: Awaited<ReturnType<typeof generateMicroSeriesMainImages>> | null =
+      null;
     if (enqueueImages && results.some((r) => r.ok)) {
       images = await enqueueMicroSeriesImages({
         seriesId,
         seriesSlug: series.slug,
         targetLang: outline.target_lang,
       });
+      mains = await generateMicroSeriesMainImages({
+        seriesId,
+        seriesSlug: series.slug,
+        targetLang: outline.target_lang,
+      });
     }
-    return NextResponse.json({ series_id: seriesId, results, images });
+    return NextResponse.json({ series_id: seriesId, results, images, mains });
   }
 
   if (!body.series_slug || !body.clip_slug) {
@@ -102,12 +110,19 @@ export async function POST(req: Request) {
   await publishMicroClip(id);
   let images: Awaited<ReturnType<typeof enqueueMicroSeriesImages>> | null =
     null;
+  let mains: Awaited<ReturnType<typeof generateMicroSeriesMainImages>> | null =
+    null;
   if (enqueueImages) {
     images = await enqueueMicroSeriesImages({
       seriesId,
       seriesSlug: found.series.slug,
       targetLang: outline.target_lang,
     });
+    mains = await generateMicroSeriesMainImages({
+      seriesId,
+      seriesSlug: found.series.slug,
+      targetLang: outline.target_lang,
+    });
   }
-  return NextResponse.json({ ok: true, clip_id: id, result, images });
+  return NextResponse.json({ ok: true, clip_id: id, result, images, mains });
 }

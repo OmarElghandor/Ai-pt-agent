@@ -10,6 +10,7 @@ import {
 } from '@/lib/v2/decks/items';
 import type { CustomItemPos } from '@/lib/v2/decks/keys';
 import type { OutlineClip, OutlineSeries } from '@/lib/v2/micro/outline';
+import { synthesizeMicroImageSpec } from '@/lib/v2/micro/images/main';
 import { checkMicroLines, type CheckedMicroLine } from './checks';
 import {
   MICRO_GENERATE_SYSTEM,
@@ -45,7 +46,7 @@ export type GenerateClipOk = {
   title_tl: string;
   title_ar: string;
   note?: string;
-  image_spec?: string;
+  image_spec: string;
   rule_card?: GenerateClipOutput['rule_card'];
   lines: ResolvedMicroLine[];
   dropped_count: number;
@@ -154,6 +155,11 @@ function authoredToGenerated(clip: OutlineClip): GenerateClipOutput {
     title_tl: clip.title_tl,
     title_ar: clip.title_ar,
     note: clip.note,
+    image_spec: synthesizeMicroImageSpec({
+      title_tl: clip.title_tl,
+      layout: clip.layout,
+      prompt_guidance: clip.prompt_guidance,
+    }),
     rule_card: clip.rule_card,
     lines: (clip.authored_lines ?? []).map((l) => ({
       tl: l.tl,
@@ -165,6 +171,19 @@ function authoredToGenerated(clip: OutlineClip): GenerateClipOutput {
       verb_lemma: l.verb_lemma,
     })),
   };
+}
+
+function resolveImageSpec(
+  raw: GenerateClipOutput,
+  clip: OutlineClip,
+): string {
+  const fromModel = raw.image_spec?.trim();
+  if (fromModel) return fromModel;
+  return synthesizeMicroImageSpec({
+    title_tl: raw.title_tl || clip.title_tl,
+    layout: clip.layout,
+    prompt_guidance: clip.prompt_guidance,
+  });
 }
 
 /**
@@ -210,20 +229,31 @@ export async function generateMicroClip(opts: {
     costTokens += tokensOf(res.usage);
     const parsed = GenerateClipOutputSchema.safeParse(res.data);
     if (!parsed.success) {
-      return {
-        ok: false,
-        reason: 'parse_failed',
-        message: parsed.error.message,
-        lines: [],
-        dropped_count: 0,
-        top_up_called: false,
-        model_calls: modelCalls,
-        latency_ms: latency,
-        cost_tokens: costTokens,
-        authored: false,
+      // Soft-accept missing image_spec; synthesize below.
+      const soft = GenerateClipOutputSchema.omit({
+        image_spec: true,
+      }).extend({ image_spec: z.string().optional() }).safeParse(res.data);
+      if (!soft.success) {
+        return {
+          ok: false,
+          reason: 'parse_failed',
+          message: parsed.error.message,
+          lines: [],
+          dropped_count: 0,
+          top_up_called: false,
+          model_calls: modelCalls,
+          latency_ms: latency,
+          cost_tokens: costTokens,
+          authored: false,
+        };
+      }
+      raw = {
+        ...soft.data,
+        image_spec: soft.data.image_spec?.trim() || '',
       };
+    } else {
+      raw = parsed.data;
     }
-    raw = parsed.data;
   }
 
   const requireLemma =
@@ -295,7 +325,7 @@ export async function generateMicroClip(opts: {
     title_tl: raw.title_tl,
     title_ar: raw.title_ar,
     note: raw.note ?? opts.clip.note,
-    image_spec: raw.image_spec,
+    image_spec: resolveImageSpec(raw, opts.clip),
     rule_card: raw.rule_card ?? opts.clip.rule_card,
     lines: resolved,
     dropped_count: dropped.length,

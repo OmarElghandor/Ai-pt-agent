@@ -46,6 +46,12 @@ export async function generateMicroSeriesMainImages(opts: {
     const key =
       clip.main_image_key ||
       microMainImageKey(targetLang, opts.seriesSlug, clip.slug);
+    if (!clip.main_image_key) {
+      await V2MicroClipModel().updateOne(
+        { _id: clip._id },
+        { $set: { main_image_key: key } },
+      );
+    }
     keys.push(key);
 
     const existing = await V2ImageModel()
@@ -54,9 +60,9 @@ export async function generateMicroSeriesMainImages(opts: {
       .lean();
     if (
       !opts.force &&
-      existing?.status === 'ready' &&
-      typeof existing.url === 'string' &&
-      existing.url
+      typeof existing?.url === 'string' &&
+      existing.url &&
+      (existing.status === 'ready' || existing.status === 'flagged')
     ) {
       reused += 1;
       continue;

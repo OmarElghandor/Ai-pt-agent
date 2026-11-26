@@ -6,6 +6,7 @@ import {
   isSeriesEnsuring,
   mergeSeriesListing,
 } from '@/lib/v2/micro/ensure';
+import { microMainImageKey } from '@/lib/v2/micro/images/main';
 import { loadMicroOutline } from '@/lib/v2/micro/outline';
 import {
   V2MicroClipModel,
@@ -80,21 +81,26 @@ export async function GET() {
     if (c) startedSeries.add(c.series_id);
   }
 
-  const thumbKeys = series
-    .map((s) => {
-      const first = clips
-        .filter((c) => c.series_id === String(s._id))
-        .sort((a, b) => a.order - b.order)[0];
-      return first?.main_image_key ?? null;
-    })
-    .filter(Boolean) as string[];
+  // Candidate keys: each clip's main_image_key or computed micro key (by order).
+  const thumbCandidates = series.flatMap((s) => {
+    const sc = clips
+      .filter((c) => c.series_id === String(s._id))
+      .slice()
+      .sort((a, b) => a.order - b.order);
+    return sc.map(
+      (c) =>
+        c.main_image_key ||
+        microMainImageKey(outline.target_lang, s.slug, c.slug),
+    );
+  });
   let thumbByKey = new Map<string, string>();
-  if (thumbKeys.length) {
+  if (thumbCandidates.length) {
     const { V2ImageModel } = await import('@/lib/v2/mongo/models');
+    // Player shows ready + flagged-with-url; listing must match.
     const imgs = await V2ImageModel()
       .find({
-        key: { $in: thumbKeys },
-        status: 'ready',
+        key: { $in: [...new Set(thumbCandidates)] },
+        status: { $in: ['ready', 'flagged'] },
         url: { $exists: true, $ne: '' },
       })
       .select({ key: 1, url: 1 })
@@ -115,10 +121,18 @@ export async function GET() {
       finished.has(String(c._id)),
     ).length;
     const levels = [...new Set(sc.map((c) => c.level))].sort();
-    const first = sc.slice().sort((a, b) => a.order - b.order)[0];
-    const thumb_url = first?.main_image_key
-      ? (thumbByKey.get(first.main_image_key) ?? null)
-      : null;
+    // First ready main by clip order (not only order=1 if that image is missing).
+    let thumb_url: string | null = null;
+    for (const c of sc.slice().sort((a, b) => a.order - b.order)) {
+      const key =
+        c.main_image_key ||
+        microMainImageKey(outline.target_lang, s.slug, c.slug);
+      const url = thumbByKey.get(key);
+      if (url) {
+        thumb_url = url;
+        break;
+      }
+    }
     return {
       id: String(s._id),
       slug: s.slug,

@@ -16,7 +16,8 @@ export const GenerateClipOutputSchema = z.object({
   title_tl: z.string().min(1),
   title_ar: z.string().min(1),
   note: z.string().optional(),
-  image_spec: z.string().optional(),
+  /** English subject for the Lisbon watercolour main picture. */
+  image_spec: z.string().min(1),
   rule_card: z
     .object({
       pattern_tl: z.string(),

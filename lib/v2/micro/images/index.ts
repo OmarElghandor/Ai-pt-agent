@@ -6,6 +6,7 @@ export {
 export {
   microMainImageKey,
   buildMicroMainImageSpec,
+  synthesizeMicroImageSpec,
 } from './main';
 export {
   type RegionBox,

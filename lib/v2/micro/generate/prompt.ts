@@ -37,7 +37,7 @@ export function buildMicroGenerateUser(opts: {
     reuseItemHints?.length
       ? `Prefer reusing these lesson items when they fit:\n${reuseItemHints.join('\n')}`
       : null,
-    `Return title_tl, title_ar, optional note (Egyptian), optional image_spec, and 6–10 lines.`,
+    `Return title_tl, title_ar, optional note (Egyptian), required image_spec (1–2 English sentences: Lisbon watercolour main-picture subject for this clip), and 6–10 lines.`,
   ];
   return parts.filter(Boolean).join('\n\n');
 }

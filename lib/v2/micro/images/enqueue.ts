@@ -56,11 +56,21 @@ export async function enqueueMicroSeriesImages(opts: {
     const mainKey =
       clip.main_image_key ||
       microMainImageKey(targetLang, opts.seriesSlug, clip.slug);
+    if (!clip.main_image_key) {
+      await V2MicroClipModel().updateOne(
+        { _id: clip._id },
+        { $set: { main_image_key: mainKey } },
+      );
+    }
     const existing = await V2ImageModel()
       .findOne({ key: mainKey })
       .select({ status: 1, url: 1 })
       .lean();
-    if (existing?.status === 'ready' && existing.url && !opts.force) {
+    if (
+      !opts.force &&
+      existing?.url &&
+      (existing.status === 'ready' || existing.status === 'flagged')
+    ) {
       reused += 1;
     } else {
       const regionObjects = (clip.lines ?? [])
