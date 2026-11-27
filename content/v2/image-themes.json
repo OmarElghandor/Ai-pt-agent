@@ -7,84 +7,144 @@
       "name_ar": "صباح أوكر وسما",
       "colours": "warm ochre, clear sky blue and cream",
       "light": "crisp clear morning sun with long soft shadows",
-      "times": ["morning"]
+      "times": [
+        "morning"
+      ]
     },
     {
       "id": "terracotta_espresso",
       "name_ar": "تراكوتا وقهوة",
       "colours": "terracotta, cream and espresso brown",
       "light": "warm indoor lamp light with a cosy glow",
-      "times": ["morning", "day", "evening", "night"]
+      "times": [
+        "morning",
+        "day",
+        "evening",
+        "night"
+      ]
     },
     {
       "id": "leaf_tomato",
       "name_ar": "ورق شجر وطماطم",
       "colours": "fresh leaf green, tomato red and straw yellow",
       "light": "bright daylight softened by shade",
-      "times": ["morning", "day"]
+      "times": [
+        "morning",
+        "day"
+      ]
     },
     {
       "id": "rain_slate",
       "name_ar": "مطر رمادي",
       "colours": "slate blue and wet grey, with one yellow accent (a raincoat, an umbrella or a scarf)",
       "light": "soft overcast light, wet reflections on the floor or street",
-      "times": ["morning", "day", "evening"]
+      "times": [
+        "morning",
+        "day",
+        "evening"
+      ]
     },
     {
       "id": "coral_lilac",
       "name_ar": "كورال وليلكي",
       "colours": "coral, lilac and peach",
       "light": "low golden-hour sun with warm rim light",
-      "times": ["day", "evening"]
+      "times": [
+        "day",
+        "evening"
+      ]
     },
     {
       "id": "indigo_lampgold",
       "name_ar": "نيلي ودهبي",
       "colours": "deep indigo and blue-grey with warm lamp gold",
       "light": "night, warm lamps and lit windows against blue darkness",
-      "times": ["evening", "night"]
+      "times": [
+        "evening",
+        "night"
+      ]
     },
     {
       "id": "teal_sand",
       "name_ar": "تيل ورملي",
       "colours": "teal, sand and white",
       "light": "breezy bright daylight, airy and clean",
-      "times": ["morning", "day"]
+      "times": [
+        "morning",
+        "day"
+      ]
     },
     {
       "id": "sage_woolred",
       "name_ar": "شتوي أخضر رمادي",
       "colours": "sage grey-green and oatmeal, with one wool-red accent",
       "light": "soft cool winter daylight",
-      "times": ["morning", "day", "evening"]
+      "times": [
+        "morning",
+        "day",
+        "evening"
+      ]
     },
     {
       "id": "mint_blossom",
       "name_ar": "نعناعي وورد",
       "colours": "mint green, blossom pink and butter yellow",
       "light": "fresh soft spring daylight",
-      "times": ["morning", "day"]
+      "times": [
+        "morning",
+        "day"
+      ]
     },
     {
       "id": "rust_mustard",
       "name_ar": "خريفي",
       "colours": "rust orange, mustard and olive",
       "light": "low warm autumn sun",
-      "times": ["day", "evening"]
+      "times": [
+        "day",
+        "evening"
+      ]
     },
     {
       "id": "plum_ivory",
       "name_ar": "برقوقي وعاجي",
       "colours": "plum, muted teal and ivory",
       "light": "calm diffused indoor light",
-      "times": ["morning", "day", "evening", "night"]
+      "times": [
+        "morning",
+        "day",
+        "evening",
+        "night"
+      ]
     },
     {
       "id": "cobalt_lemon",
       "name_ar": "أزرق وليموني",
       "colours": "cobalt blue, lemon yellow and white",
       "light": "strong midday sun with crisp shadows",
-      "times": ["day"]
+      "times": [
+        "day"
+      ]
+    },
+    {
+      "id": "denim_apricot",
+      "name_ar": "جينز ومشمشي",
+      "colours": "soft denim blue, apricot and off-white",
+      "light": "bright soft overcast daylight, no hard shadows",
+      "times": [
+        "morning",
+        "day"
+      ]
+    },
+    {
+      "id": "olive_lavender",
+      "name_ar": "زيتوني ولافندر",
+      "colours": "olive green, lavender and warm stone",
+      "light": "gentle late-morning light",
+      "times": [
+        "morning",
+        "day"
+      ]
     }
   ]
 }

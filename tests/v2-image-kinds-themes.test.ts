@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { describe, it } from 'node:test';
 import {
   getAuthoredItemImage,
@@ -119,11 +121,22 @@ describe('I2 · style split and object template', () => {
 });
 
 describe('I3 · colour themes', () => {
-  it('loads twelve themes', () => {
+  it('loads themes from image-themes.json', () => {
     resetImageThemesCache();
+    const expected = (
+      JSON.parse(
+        readFileSync(
+          path.join(process.cwd(), 'content/v2/image-themes.json'),
+          'utf8',
+        ),
+      ) as { themes: unknown[] }
+    ).themes;
     const themes = loadImageThemes();
-    assert.equal(themes.length, 12);
+    assert.equal(themes.length, expected.length);
+    assert.ok(themes.length > 0);
     assert.ok(themes.some((t) => t.id === 'plum_ivory'));
+    assert.ok(themes.some((t) => t.id === 'denim_apricot'));
+    assert.ok(themes.some((t) => t.id === 'olive_lavender'));
   });
 
   it('night moment never gets a day-only theme', () => {

@@ -18,7 +18,7 @@ Lesson word images all came out as the same café scene (a man and a barista at 
 
 The design references (`design/reference/` and the juice, sugar, glass and toast pictures from Stitch export 22) show the look we want for words: the thing alone, large, on white watercolour paper, with one sensory detail.
 
-The second problem: one palette per lesson made every image in a lesson look the same. People scenes now rotate between twelve colour themes, image by image.
+The second problem: one palette per lesson made every image in a lesson look the same. People scenes now rotate between the colour themes in `image-themes.json` (fourteen, including two extra daytime themes), image by image.
 
 ## 2. Image kinds
 
@@ -46,7 +46,7 @@ The template used when no authored prompt exists follows the same rules: the obj
 
 ## 4. Colour themes
 
-`content/v2/image-themes.json` holds twelve themes, each with colours, light and the times of day it fits. For `scene` and `action` the final prompt adds one line built from the theme: "Colour theme: <colours>. Light: <light>."
+`content/v2/image-themes.json` holds the theme list (fourteen: twelve originals plus `denim_apricot` and `olive_lavender` for long daytime lessons), each with colours, light and the times of day it fits. For `scene` and `action` the final prompt adds one line built from the theme: "Colour theme: <colours>. Light: <light>."
 
 Rules:
 - No theme appears twice in the same lesson.
@@ -68,6 +68,13 @@ Rules:
 ## 7. Content status
 
 Days 1–6 have authored images for every word, verb and phrase. Days 1–2 kept their prompts and got `kind` and `theme`. Days 3–6 are new. The remaining days get prompts in batches after the pilot looks right.
+
+**(2026-11-27) All of phase 1 (days 1–56) is authored:** every word, verb and phrase has an image (157 object, 44 action, 287 scene), and no lesson repeats a theme. Two daytime themes were added (`denim_apricot`, `olive_lavender`), so long daytime lessons don't run out of themes. How the hard items were handled:
+- **No numbers or letters, even for numbers and time:** counting is shown with fingers, eggs and counters; clocks have tick marks only, with the hands at the right position; banknotes and coins are blank.
+- **Days of the week:** a blank weekly planner with the day's column highlighted (Monday = first column), plus one small prop per day.
+- **Pronouns, demonstratives, here/there:** pointing scenes where the distance or the person pointed at carries the meaning.
+- **Opposites and comparatives** (caro · barato, novo · velho, mais · menos): two objects side by side.
+- **Countries and nationalities:** a map with no names or flags, and people in an everyday moment. No landmarks.
 
 ## 8. Tasks
 
