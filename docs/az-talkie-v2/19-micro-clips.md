@@ -134,7 +134,18 @@ The same player will be rebuilt in React Native, so the web version uses **only 
 ### 3.5 Not locked, but ordered
 
 - Every series and clip is open to everyone; level labels only.
-- Inside a series, clips keep Omar's order. The series list has a "مكمّل فيها" section on top.
+- **Fixed order only** — no sorting by progress or recency, and no «مكمّل فيها» section.
+- Series are ordered by their **lowest clip level**, then outline `order`. Clips are ordered by **level**, then outline `order`.
+- Level headers label groups: سهل جداً · سهل · متوسط · أصعب شوية · صعب.
+- Progress shows **inside each tile only** (e.g. «٢ من ٥»), never by reordering the list.
+
+### 3.6 Tabs and review mode
+
+- The micro page has two tabs at the top: **«كل اللقطات»** (the fixed-order series list of §3.5) and **«اللي خلصتها»** (finished clips as plain rows, same fixed order). Empty state for the second tab: «لسه مخلصتش لقطات · ابدأ من كل اللقطات».
+- Use a **plain two-segment control** and **plain lists** (RN-safe, §3.3b) — no web-only tab primitives.
+- **Review mode** opens only from the second tab (`mode=review`): header chip «مراجعة», listening mode forced on, **no finish event**, **no card adding**. Completing the sheet sends a `micro_clip_reviewed` progress event that sets `last_reviewed_at` and increments `review_count` on `v2_micro_progress`.
+- End sheet: «راجعت N جمل ✓», with **«راجع كروت اللقطة دي»** (series deck session limited to this clip's item ids, due first) and **«اللقطة اللي بعدها في المراجعة»**.
+- Opening a finished clip from the first tab (or from a series in normal mode) stays **normal mode**, not review.
 
 ---
 
@@ -205,7 +216,7 @@ New collections (prefix `v2_`):
 
 - `v2_micro_series`: language, slug, `title_ar`, `title_tl`, order, `status` (draft | published), the linked official deck id.
 - `v2_micro_clips`: series id, order, layout (list | pairs | scene | rule), the rule card for `rule` clips (pattern line, ending table), level 1–5, `title_ar`, `title_tl`, note, main image key, ordered lines (item id, icon key, for scenes a box as fractions and `region_label`), for scenes `scene_key` (shared picture), the scene plan (objects, zones) and `pointer_from`, `legacy_ref`, status (draft | ready | published), generation cost, timestamps.
-- `v2_micro_progress`: one per user × clip: started_at, finished_at, replays, revealed count (to resume). **User-keyed** (A5 list).
+- `v2_micro_progress`: one per user × clip: started_at, finished_at, replays, revealed count (to resume), `last_reviewed_at`, `review_count`. **User-keyed** (A5 list).
 - Main pictures are stored with their aspect ratio (4:3 for scenes); scene boxes are fractions of that image (§3.3b).
 - `v2_micro_daily`: one per user × local date: the chosen clip id. **User-keyed** (A5 list).
 - Reused: `v2_custom_items`, `v2_official_decks` (one per series, `source: micro`), `v2_item_state`, `v2_images` (main pictures and `icon.*` keys), TTS cache.

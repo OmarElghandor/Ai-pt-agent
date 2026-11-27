@@ -222,7 +222,10 @@ export async function ensureMicroSeriesContent(
             reason: result.reason,
             message: result.message,
           });
-          if (result.lines.length > 0) {
+          if (
+            result.lines.length > 0 ||
+            result.reason === 'not_enough_regular_verbs'
+          ) {
             await persistDraftClip({
               seriesId,
               seriesSlug: seriesOutline.slug,

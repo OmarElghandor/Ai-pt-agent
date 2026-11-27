@@ -7,7 +7,12 @@ import {
 } from '@/lib/v2/progress/learnerDay';
 
 type Props = {
-  searchParams: Promise<{ day?: string; deck?: string; item?: string }>;
+  searchParams: Promise<{
+    day?: string;
+    deck?: string;
+    item?: string;
+    items?: string;
+  }>;
 };
 
 function isCustomOrOfficialDeck(deckId: string | undefined): boolean {
@@ -24,6 +29,12 @@ export default async function CardsReviewPage({ searchParams }: Props) {
   const dayOverride = sp.day != null ? dayOverrideFromSearch(sp.day) : null;
   const itemId = sp.item ? decodeURIComponent(sp.item) : undefined;
   const deckId = sp.deck ? decodeURIComponent(sp.deck) : undefined;
+  const itemIds = sp.items
+    ? decodeURIComponent(sp.items)
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean)
+    : undefined;
 
   let previewFace = null;
   const userId = await getCurrentV2UserId();
@@ -39,6 +50,7 @@ export default async function CardsReviewPage({ searchParams }: Props) {
       deckId={deckId}
       itemId={itemId}
       previewFace={previewFace}
+      itemIds={itemIds}
     />
   );
 }

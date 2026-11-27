@@ -1,10 +1,15 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Icon } from '@/components/v2/Icon';
 import { ScreenLoading } from '@/components/v2/ScreenLoading';
 import { toArDigits } from '@/lib/v2/formatAr';
+import {
+  LEVEL_LABELS,
+  groupByLevel,
+  minLevel,
+} from '@/lib/v2/micro/order';
 
 type SeriesRow = {
   slug: string;
@@ -23,7 +28,21 @@ type SeriesRow = {
   sample_tls?: string[];
 };
 
-const LEVEL = ['', 'سهل جداً', 'سهل', 'متوسط', 'أصعب شوية', 'صعب'];
+type FinishedClipRow = {
+  id: string;
+  slug: string;
+  series_slug: string;
+  series_order: number;
+  series_title_ar: string;
+  title_ar: string;
+  title_tl: string;
+  level: number;
+  order: number;
+  line_count: number;
+  official_deck_id: string | null;
+};
+
+type Tab = 'all' | 'done';
 
 function formatEnsureError(json: {
   error?: string;
@@ -39,7 +58,12 @@ function formatEnsureError(json: {
 
 export function MicroTopicsHome() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialTab: Tab =
+    searchParams.get('tab') === 'done' ? 'done' : 'all';
+  const [tab, setTab] = useState<Tab>(initialTab);
   const [rows, setRows] = useState<SeriesRow[] | null>(null);
+  const [finishedClips, setFinishedClips] = useState<FinishedClipRow[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [ensuring, setEnsuring] = useState<string | null>(null);
 
@@ -48,6 +72,7 @@ export function MicroTopicsHome() {
       const res = await fetch('/api/v2/micro/series');
       const json = (await res.json()) as {
         all?: SeriesRow[];
+        finished_clips?: FinishedClipRow[];
         error?: string;
       };
       if (!res.ok) {
@@ -55,6 +80,7 @@ export function MicroTopicsHome() {
         return;
       }
       setRows(json.all ?? []);
+      setFinishedClips(json.finished_clips ?? []);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -64,6 +90,20 @@ export function MicroTopicsHome() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  const seriesGroups = useMemo(() => {
+    if (!rows) return [];
+    const withLevel = rows.map((r) => ({
+      ...r,
+      level: minLevel(r.levels),
+    }));
+    return groupByLevel(withLevel);
+  }, [rows]);
+
+  const finishedGroups = useMemo(
+    () => groupByLevel(finishedClips),
+    [finishedClips],
+  );
 
   async function openSeries(row: SeriesRow) {
     if (ensuring) return;
@@ -119,6 +159,12 @@ export function MicroTopicsHome() {
     }
   }
 
+  function selectTab(next: Tab) {
+    setTab(next);
+    const url = next === 'done' ? '/micro?tab=done' : '/micro';
+    router.replace(url);
+  }
+
   if (ensuring) {
     return <ScreenLoading label="بنجهّز اللقطات…" />;
   }
@@ -135,10 +181,8 @@ export function MicroTopicsHome() {
     return <ScreenLoading label="بنحمّل…" />;
   }
 
-  const continuing = rows.filter((r) => r.in_progress);
-  const rest = rows.filter((r) => !r.in_progress);
   const readyCount = rows.filter((r) => r.status === 'ready').length;
-  const finishedClips = rows.reduce((n, r) => n + r.finished_count, 0);
+  const finishedCount = finishedClips.length;
   const totalClips = rows.reduce((n, r) => n + r.clip_count, 0);
 
   return (
@@ -152,7 +196,6 @@ export function MicroTopicsHome() {
         </p>
       </header>
 
-      {/* Compact summary — real counts only */}
       <section className="flex flex-col gap-2 rounded-xl bg-surface-container-lowest p-3 shadow-[0_4px_16px_-2px_rgba(23,31,29,0.04)]">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-container text-primary">
@@ -163,11 +206,36 @@ export function MicroTopicsHome() {
               {toArDigits(readyCount)} بوستر جاهز · {toArDigits(rows.length)} موضوع
             </span>
             <span className="font-[family-name:var(--font-v2-arabic)] text-xs text-on-surface-variant">
-              {toArDigits(finishedClips)} من {toArDigits(totalClips)} لقطة اتخلّصت
+              {toArDigits(finishedCount)} من {toArDigits(totalClips)} لقطة اتخلّصت
             </span>
           </div>
         </div>
       </section>
+
+      <div className="grid grid-cols-2 gap-1 rounded-xl bg-surface-container p-1">
+        <button
+          type="button"
+          onClick={() => selectTab('all')}
+          className={`rounded-lg py-2.5 font-[family-name:var(--font-v2-arabic)] text-sm font-semibold ${
+            tab === 'all'
+              ? 'bg-surface-container-lowest text-on-surface shadow-sm'
+              : 'text-on-surface-variant'
+          }`}
+        >
+          كل اللقطات
+        </button>
+        <button
+          type="button"
+          onClick={() => selectTab('done')}
+          className={`rounded-lg py-2.5 font-[family-name:var(--font-v2-arabic)] text-sm font-semibold ${
+            tab === 'done'
+              ? 'bg-surface-container-lowest text-on-surface shadow-sm'
+              : 'text-on-surface-variant'
+          }`}
+        >
+          اللي خلصتها
+        </button>
+      </div>
 
       {error ? (
         <p className="rounded-xl bg-error-container/40 px-3 py-2 font-[family-name:var(--font-v2-arabic)] text-sm text-on-error-container">
@@ -175,39 +243,73 @@ export function MicroTopicsHome() {
         </p>
       ) : null}
 
-      {continuing.length ? (
-        <section>
-          <h2 className="mb-2 font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-v2-ink">
-            مكمّل فيها
-          </h2>
-          <ul className="flex flex-col gap-4">
-            {continuing.map((row) => (
-              <PosterCard
-                key={row.slug}
-                row={row}
-                onOpen={() => void openSeries(row)}
-              />
-            ))}
-          </ul>
-        </section>
-      ) : null}
-
-      <section>
-        {continuing.length ? (
-          <h2 className="mb-2 font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-v2-ink">
-            كل المواضيع
-          </h2>
-        ) : null}
-        <ul className="flex flex-col gap-4">
-          {rest.map((row) => (
-            <PosterCard
-              key={row.slug}
-              row={row}
-              onOpen={() => void openSeries(row)}
-            />
+      {tab === 'all' ? (
+        <div className="flex flex-col gap-5">
+          {seriesGroups.map((group) => (
+            <section key={group.level}>
+              <h2 className="mb-2 font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-v2-ink">
+                {group.label}
+              </h2>
+              <ul className="flex flex-col gap-4">
+                {group.items.map((row) => (
+                  <PosterCard
+                    key={row.slug}
+                    row={row}
+                    onOpen={() => void openSeries(row)}
+                  />
+                ))}
+              </ul>
+            </section>
           ))}
-        </ul>
-      </section>
+        </div>
+      ) : finishedClips.length === 0 ? (
+        <p className="rounded-xl bg-surface-container-low px-4 py-6 text-center font-[family-name:var(--font-v2-arabic)] text-sm text-on-surface-variant">
+          لسه مخلصتش لقطات · ابدأ من كل اللقطات
+        </p>
+      ) : (
+        <div className="flex flex-col gap-5">
+          {finishedGroups.map((group) => (
+            <section key={group.level}>
+              <h2 className="mb-2 font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-v2-ink">
+                {group.label}
+              </h2>
+              <ul className="flex flex-col gap-2">
+                {group.items.map((clip) => (
+                  <li key={clip.id}>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        router.push(
+                          `/micro/${clip.series_slug}?clip=${encodeURIComponent(clip.slug)}&mode=review`,
+                        )
+                      }
+                      className="flex w-full items-center justify-between gap-3 rounded-xl bg-surface-container-lowest px-3 py-3 text-right shadow-[0_4px_16px_-2px_rgba(23,31,29,0.04)]"
+                    >
+                      <div className="min-w-0">
+                        <div className="truncate font-[family-name:var(--font-v2-arabic)] text-sm font-semibold text-on-surface">
+                          {clip.title_ar}
+                        </div>
+                        <div className="mt-0.5 truncate font-[family-name:var(--font-v2-arabic)] text-xs text-on-surface-variant">
+                          {clip.series_title_ar}
+                          {LEVEL_LABELS[clip.level]
+                            ? ` · ${LEVEL_LABELS[clip.level]}`
+                            : ''}
+                        </div>
+                      </div>
+                      <span
+                        dir="ltr"
+                        className="shrink-0 font-[family-name:var(--font-v2-target)] text-xs font-semibold text-on-surface-variant"
+                      >
+                        {clip.title_tl}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -221,7 +323,7 @@ function PosterCard({
 }) {
   const level =
     row.levels.length > 0
-      ? (LEVEL[row.levels[0]!] ?? `L${row.levels[0]}`)
+      ? (LEVEL_LABELS[minLevel(row.levels)] ?? `L${minLevel(row.levels)}`)
       : '';
   const progress =
     row.status === 'ready'
@@ -229,16 +331,9 @@ function PosterCard({
       : row.status === 'generating'
         ? 'بيتجّهز…'
         : `${toArDigits(row.clip_count)} لقطة`;
-  const cta =
-    row.status === 'ready'
-      ? row.in_progress
-        ? 'كمّل'
-        : 'اتفرج'
-      : 'افتح';
+  const cta = row.status === 'ready' ? 'اتفرج' : 'افتح';
   const samples =
-    row.sample_tls && row.sample_tls.length > 0
-      ? row.sample_tls
-      : null;
+    row.sample_tls && row.sample_tls.length > 0 ? row.sample_tls : null;
 
   return (
     <li className="overflow-hidden rounded-xl bg-surface-container-lowest shadow-[0_6px_20px_-4px_rgba(23,31,29,0.05)]">

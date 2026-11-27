@@ -97,6 +97,8 @@ export async function buildCustomDeckSession(opts: {
   deckRef: string;
   local_date: string;
   now?: Date;
+  /** When set, only these item ids (intersected with the deck) are queued. */
+  itemIds?: string[];
 }): Promise<CustomDeckSession | null> {
   const parsed = parseDeckRef(opts.deckRef);
   if (!parsed) return null;
@@ -119,6 +121,11 @@ export async function buildCustomDeckSession(opts: {
     title_tl = deck.title_tl;
     title_ar = deck.title_ar;
     item_ids = deck.item_ids ?? [];
+  }
+
+  if (opts.itemIds?.length) {
+    const allow = new Set(opts.itemIds);
+    item_ids = item_ids.filter((id) => allow.has(id));
   }
 
   const states = await V2ItemStateModel()

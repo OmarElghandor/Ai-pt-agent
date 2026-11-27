@@ -78,11 +78,14 @@ export function ReviewSession({
   deckId,
   itemId,
   previewFace,
+  itemIds,
 }: {
   dayOverride: number | null;
   deckId?: string;
   itemId?: string;
   previewFace?: CardFacePayload | null;
+  /** Limit a deck session to these item ids (micro clip review). */
+  itemIds?: string[];
 }) {
   const deckSessionMode = isDeckSessionMode(deckId);
   const customMode = deckSessionMode;
@@ -113,13 +116,17 @@ export function ReviewSession({
 
   const loadDeckSession = useCallback(async () => {
     if (!deckId) throw new Error('missing_deck');
-    const path = deckId.startsWith('day:')
+    const base = deckId.startsWith('day:')
       ? `/api/v2/decks/${encodeURIComponent(deckId)}/session`
       : `/api/v2/custom-decks/${encodeURIComponent(deckId)}/session`;
-    const res = await fetch(path);
+    const qs =
+      itemIds && itemIds.length > 0
+        ? `?items=${encodeURIComponent(itemIds.join(','))}`
+        : '';
+    const res = await fetch(`${base}${qs}`);
     if (!res.ok) throw new Error(String(res.status));
     return (await res.json()) as CustomSessionPayload;
-  }, [deckId]);
+  }, [deckId, itemIds]);
 
   useEffect(() => {
     if (customMode) return;

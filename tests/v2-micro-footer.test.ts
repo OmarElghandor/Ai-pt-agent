@@ -34,11 +34,16 @@ describe('footer tab لقطات', () => {
   });
 
   it('player lives under (flow)/micro/[seriesSlug]', () => {
-    const src = readFileSync(
+    const pageSrc = readFileSync(
       join(root, 'app/(v2)/(flow)/micro/[seriesSlug]/page.tsx'),
       'utf8',
     );
-    assert.match(src, /ClipSheet/);
+    assert.match(pageSrc, /MicroSeriesPlayer/);
+    const playerSrc = readFileSync(
+      join(root, 'components/v2/micro/MicroSeriesPlayer.tsx'),
+      'utf8',
+    );
+    assert.match(playerSrc, /ClipSheet/);
   });
 });
 
@@ -159,12 +164,15 @@ describe('ensureMicroSeriesContent idempotent (stub model)', () => {
     assert.equal(calls, 0);
   });
 
-  it('missing series triggers exactly one generate path per clip', async () => {
+  it('missing series triggers exactly one generate path per non-authored clip', async () => {
     clearEnsureLocks();
     const outline = loadMicroOutline();
     const series = outline.series.find((s) => s.slug === 'demonstratives');
     assert.ok(series);
     const n = series!.clips.length;
+    const needModel = series!.clips.filter(
+      (c) => !c.authored_lines?.length,
+    ).length;
     let calls = 0;
     const callModel: ModelCaller = async () => {
       calls += 1;
@@ -178,7 +186,7 @@ describe('ensureMicroSeriesContent idempotent (stub model)', () => {
       skipImages: true,
       alreadyReadySlugs: new Set(),
     });
-    assert.equal(calls, n);
+    assert.equal(calls, needModel);
     assert.equal(result.clip_count, n);
   });
 

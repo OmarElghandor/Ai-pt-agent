@@ -39,11 +39,11 @@ describe('M1 · A5 user-keyed collections', () => {
 });
 
 describe('M1 · outline loader', () => {
-  it('loads 16 series and 65 clips for pt-PT', () => {
+  it('loads 63 series and 146 clips for pt-PT', () => {
     const outline = loadMicroOutline();
     assert.equal(outline.target_lang, 'pt-PT');
-    assert.equal(outline.series.length, 16);
-    assert.equal(countOutlineClips(outline), 65);
+    assert.equal(outline.series.length, 63);
+    assert.equal(countOutlineClips(outline), 146);
     assert.ok(outline.series.every((s) => s.clips.every((c) => c.layout)));
     assert.ok(outline.series.every((s) => s.clips.every((c) => c.level >= 1)));
     const layouts = new Set(

@@ -1,7 +1,9 @@
 import { findBrazilianLeak } from '@/lib/v2/convo/output/checks';
 import type { MicroLayout } from '@/lib/v2/micro/outline';
+import type { Person } from '@/lib/v2/content/items';
 import {
   highlightFormInLine,
+  highlightTokensInLine,
   isRegularVerifiedLemma,
   lemmaInVerifiedTable,
   type HighlightSpan,
@@ -38,6 +40,10 @@ export type MicroCheckResult = {
   dropped: { line: GeneratedLine; reason: MicroDropReason }[];
 };
 
+export type RuleTense = 'pres' | 'pret' | 'imperf' | 'fut' | 'inf';
+export type RulePerson = Person;
+export type RuleKind = 'verb_ending' | 'pattern';
+
 function wordCount(text: string): number {
   return text
     .trim()
@@ -49,10 +55,18 @@ function hasBrazilian(text: string): boolean {
   return Boolean(findBrazilianLeak(text));
 }
 
+export function normalizeRulePersons(
+  rulePerson?: RulePerson | RulePerson[],
+): RulePerson[] {
+  if (!rulePerson) return ['eu'];
+  return Array.isArray(rulePerson) ? rulePerson : [rulePerson];
+}
+
 /**
  * Drop failing lines (19 §5). Never rewrite Portuguese/Arabic by hand.
  * For rule clips: irregular / repeated / missing-from-table verbs are dropped;
  * ending highlight is computed from the verified table.
+ * Pattern rule clips skip verb checks and highlight rule_highlight tokens.
  */
 export function checkMicroLines(
   lines: GeneratedLine[],
@@ -60,9 +74,11 @@ export function checkMicroLines(
     layout: MicroLayout;
     /** When set, every verb_lemma must be this (daily-verb clips). */
     requireLemma?: string;
+    ruleKind?: RuleKind;
     /** Rule clip: tense/person used to resolve forms for highlight. */
-    ruleTense?: 'pres' | 'pret' | 'fut' | 'inf';
-    rulePerson?: 'eu' | 'tu' | 'ele' | 'nos' | 'eles';
+    ruleTense?: RuleTense;
+    rulePerson?: RulePerson | RulePerson[];
+    ruleHighlight?: string[];
   },
 ): MicroCheckResult {
   const kept: CheckedMicroLine[] = [];
@@ -70,6 +86,8 @@ export function checkMicroLines(
   const seenTl = new Set<string>();
   const seenLemmas = new Set<string>();
   const maxWords = opts.layout === 'pairs' ? 4 : 8;
+  const ruleKind = opts.ruleKind ?? 'verb_ending';
+  const persons = normalizeRulePersons(opts.rulePerson);
 
   for (const raw of lines) {
     const { conjugations: _c, ...rest } = raw;
@@ -113,6 +131,24 @@ export function checkMicroLines(
       continue;
     }
 
+    if (opts.layout === 'rule' && ruleKind === 'pattern') {
+      const highlight = highlightTokensInLine(
+        line.tl,
+        opts.ruleHighlight ?? [],
+      );
+      if (!highlight) {
+        dropped.push({ line, reason: 'rule_breaks' });
+        continue;
+      }
+      seenTl.add(tlKey);
+      kept.push({
+        ...line,
+        highlight,
+        drop_conjugations: true,
+      });
+      continue;
+    }
+
     if (opts.layout === 'rule') {
       const lemma = line.verb_lemma?.trim().toLowerCase();
       if (!lemma || !lemmaInVerifiedTable(lemma)) {
@@ -128,9 +164,16 @@ export function checkMicroLines(
         continue;
       }
       const tense = opts.ruleTense ?? 'pres';
-      const person = opts.rulePerson ?? 'eu';
-      const form = resolveForm(`verb.${lemma}:${tense}:${person}`);
-      if (!form || !line.tl.toLowerCase().includes(form.tl.toLowerCase())) {
+      const lowerTl = line.tl.toLowerCase();
+      let matchedForm = null as ReturnType<typeof resolveForm>;
+      for (const person of persons) {
+        const form = resolveForm(`verb.${lemma}:${tense}:${person}`);
+        if (form && lowerTl.includes(form.tl.toLowerCase())) {
+          matchedForm = form;
+          break;
+        }
+      }
+      if (!matchedForm) {
         // Future / estar-a clips may only need the infinitive present
         if (tense !== 'inf' && tense !== 'fut') {
           dropped.push({ line, reason: 'rule_breaks' });
@@ -138,8 +181,8 @@ export function checkMicroLines(
         }
       }
       seenLemmas.add(lemma);
-      const highlight = form
-        ? highlightFormInLine(line.tl, form)
+      const highlight = matchedForm
+        ? highlightFormInLine(line.tl, matchedForm)
         : undefined;
       seenTl.add(tlKey);
       kept.push({

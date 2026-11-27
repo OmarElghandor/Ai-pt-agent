@@ -47,7 +47,7 @@ export async function POST(
   }
   const { id } = await ctx.params;
   const body = (await req.json()) as {
-    action: 'start' | 'reveal' | 'finish' | 'save_line';
+    action: 'start' | 'reveal' | 'finish' | 'save_line' | 'review';
     revealed_count?: number;
     item_id?: string;
   };
@@ -163,6 +163,36 @@ export async function POST(
       { userId },
     );
     return NextResponse.json({ ok: true, answer });
+  }
+
+  if (body.action === 'review') {
+    const lineCount = (clip.lines ?? []).length;
+    await Progress.updateOne(
+      { user_id: userId, clip_id: id },
+      {
+        $set: { last_reviewed_at: new Date() },
+        $inc: { review_count: 1 },
+        $setOnInsert: {
+          user_id: userId,
+          clip_id: id,
+          started_at: new Date(),
+          revealed_count: lineCount,
+          replays: 0,
+        },
+      },
+      { upsert: true },
+    );
+    await handleProgressEvent(
+      {
+        event_id: randomUUID(),
+        kind: 'micro_clip_reviewed',
+        clip_id: id,
+        line_count: lineCount,
+        target_lang: clip.target_lang,
+      },
+      { userId, store: createMongoProgressStore() },
+    );
+    return NextResponse.json({ ok: true });
   }
 
   return NextResponse.json({ error: 'bad action' }, { status: 400 });

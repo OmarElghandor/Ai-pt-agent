@@ -12,6 +12,7 @@ import type { CustomItemPos } from '@/lib/v2/decks/keys';
 import type { OutlineClip, OutlineSeries } from '@/lib/v2/micro/outline';
 import { synthesizeMicroImageSpec } from '@/lib/v2/micro/images/main';
 import { checkMicroLines, type CheckedMicroLine } from './checks';
+import { listRegularVerifiedLemmas } from './highlight';
 import {
   MICRO_GENERATE_SYSTEM,
   buildMicroGenerateUser,
@@ -59,7 +60,7 @@ export type GenerateClipOk = {
 
 export type GenerateClipFail = {
   ok: false;
-  reason: 'too_few_lines' | 'parse_failed';
+  reason: 'too_few_lines' | 'parse_failed' | 'not_enough_regular_verbs';
   message: string;
   lines: ResolvedMicroLine[];
   dropped_count: number;
@@ -210,6 +211,40 @@ export async function generateMicroClip(opts: {
 
   let raw: GenerateClipOutput;
   const authored = Boolean(opts.clip.authored_lines?.length);
+  const ruleKind = opts.clip.rule_kind ?? 'verb_ending';
+  const isVerbEndingRule =
+    opts.clip.layout === 'rule' && ruleKind === 'verb_ending';
+  const regularLemmas = isVerbEndingRule ? listRegularVerifiedLemmas() : [];
+
+  if (isVerbEndingRule) {
+    console.log(
+      `[micro-clip:${opts.clip.slug}] regular verified lemmas: ${regularLemmas.length}`,
+    );
+  }
+
+  if (isVerbEndingRule && !authored && regularLemmas.length < 6) {
+    return {
+      ok: false,
+      reason: 'not_enough_regular_verbs',
+      message: 'not enough regular verbs in the table',
+      lines: [],
+      dropped_count: 0,
+      top_up_called: false,
+      model_calls: 0,
+      latency_ms: 0,
+      cost_tokens: 0,
+      authored: false,
+    };
+  }
+
+  const checkOpts = {
+    layout: opts.clip.layout,
+    requireLemma: undefined as string | undefined,
+    ruleKind: opts.clip.layout === 'rule' ? ruleKind : undefined,
+    ruleTense: opts.clip.rule_tense,
+    rulePerson: opts.clip.rule_person,
+    ruleHighlight: opts.clip.rule_highlight,
+  };
 
   if (authored) {
     raw = authoredToGenerated(opts.clip);
@@ -221,6 +256,7 @@ export async function generateMicroClip(opts: {
         seriesTitleAr: opts.series.title_ar,
         seriesTitleTl: opts.series.title_tl,
         reuseItemHints: opts.reuseItemHints,
+        regularLemmas: isVerbEndingRule ? regularLemmas : undefined,
       }),
       schema: GenerateClipOutputSchema,
       toolName: 'submit_micro_clip',
@@ -260,12 +296,10 @@ export async function generateMicroClip(opts: {
 
   const requireLemma =
     opts.series.slug === 'daily-verbs' ? opts.clip.slug.replace(/-/g, ' ') : undefined;
+  checkOpts.requireLemma =
+    requireLemma && lemmaLooksLikeVerb(requireLemma) ? requireLemma : undefined;
 
-  let { kept, dropped } = checkMicroLines(raw.lines, {
-    layout: opts.clip.layout,
-    requireLemma:
-      requireLemma && lemmaLooksLikeVerb(requireLemma) ? requireLemma : undefined,
-  });
+  let { kept, dropped } = checkMicroLines(raw.lines, checkOpts);
 
   if (kept.length < 6 && !authored) {
     topUp = true;
@@ -276,6 +310,7 @@ export async function generateMicroClip(opts: {
         clip: opts.clip,
         keptTls: kept.map((l) => l.tl),
         need,
+        regularLemmas: isVerbEndingRule ? regularLemmas : undefined,
       }),
       schema: TopUpClipOutputSchema,
       toolName: 'submit_micro_clip_topup',
@@ -286,9 +321,7 @@ export async function generateMicroClip(opts: {
     costTokens += tokensOf(res.usage);
     const parsed = TopUpClipOutputSchema.safeParse(res.data);
     if (parsed.success) {
-      const more = checkMicroLines(parsed.data.lines as GeneratedLine[], {
-        layout: opts.clip.layout,
-      });
+      const more = checkMicroLines(parsed.data.lines as GeneratedLine[], checkOpts);
       // Dedupe against already kept
       const have = new Set(kept.map((l) => l.tl.toLowerCase()));
       for (const line of more.kept) {
@@ -347,4 +380,10 @@ function lemmaLooksLikeVerb(s: string): boolean {
 }
 
 export { checkMicroLines } from './checks';
-export { findEndingHighlight, highlightFormInLine, isRegularVerifiedLemma } from './highlight';
+export {
+  findEndingHighlight,
+  highlightFormInLine,
+  highlightTokensInLine,
+  isRegularVerifiedLemma,
+  listRegularVerifiedLemmas,
+} from './highlight';

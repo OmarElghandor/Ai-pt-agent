@@ -79,6 +79,84 @@ describe('M2 · checkMicroLines', () => {
     assert.deepEqual(falar?.highlight, hl);
   });
 
+  it('pret / ele rule clip keeps Ele falou with ending highlight', () => {
+    const form = resolveForm('verb.falar:pret:ele');
+    assert.ok(form);
+    const tl = 'Ele falou comigo.';
+    const r = checkMicroLines(
+      [line(tl, 'هو كلمني.', { verb_lemma: 'falar' })],
+      { layout: 'rule', ruleKind: 'verb_ending', ruleTense: 'pret', rulePerson: 'ele' },
+    );
+    assert.equal(r.kept.length, 1);
+    assert.deepEqual(r.kept[0]?.highlight, highlightFormInLine(tl, form!));
+  });
+
+  it('pattern rule clip highlights no in Estou no café', () => {
+    const tl = 'Estou no café';
+    const r = checkMicroLines([line(tl, 'أنا في المقهى.')], {
+      layout: 'rule',
+      ruleKind: 'pattern',
+      ruleHighlight: ['no', 'na', 'nos', 'nas', 'do', 'da', 'dos', 'das'],
+    });
+    assert.equal(r.kept.length, 1);
+    const idx = tl.toLowerCase().indexOf('no');
+    assert.deepEqual(r.kept[0]?.highlight, { start: idx, end: idx + 2 });
+  });
+
+  it('pattern rule clip drops a line with no highlight token', () => {
+    const r = checkMicroLines([line('Estou aqui.', 'أنا هنا.')], {
+      layout: 'rule',
+      ruleKind: 'pattern',
+      ruleHighlight: ['no', 'na', 'do', 'da'],
+    });
+    assert.equal(r.kept.length, 0);
+    assert.equal(r.dropped[0]?.reason, 'rule_breaks');
+  });
+
+  it('imperf rule clip drops irregular verbs and keeps verified regulars', () => {
+    const form = resolveForm('verb.falar:imperf:eu');
+    assert.ok(form);
+    const r = checkMicroLines(
+      [
+        line('Eu era professor.', 'كنت مدرسا.', { verb_lemma: 'ser' }),
+        line('Eu falava árabe.', 'كنت أتكلم عربي.', { verb_lemma: 'falar' }),
+      ],
+      {
+        layout: 'rule',
+        ruleKind: 'verb_ending',
+        ruleTense: 'imperf',
+        rulePerson: 'eu',
+      },
+    );
+    assert.ok(r.dropped.some((d) => d.reason === 'rule_irregular'));
+    const falar = r.kept.find((l) => l.verb_lemma === 'falar');
+    assert.ok(falar);
+    assert.deepEqual(
+      falar?.highlight,
+      highlightFormInLine('Eu falava árabe.', form!),
+    );
+  });
+
+  it('rule_person list accepts any listed person form', () => {
+    const r = checkMicroLines(
+      [
+        line('Ele come pão.', 'هو بيأكل خبز.', { verb_lemma: 'ficar' }),
+        line('Eu falo bem.', 'بتكلم كويس.', { verb_lemma: 'falar' }),
+        line('Ele chega cedo.', 'بيوصل بدري.', { verb_lemma: 'chegar' }),
+      ],
+      {
+        layout: 'rule',
+        ruleKind: 'verb_ending',
+        ruleTense: 'pres',
+        rulePerson: ['eu', 'ele'],
+      },
+    );
+    // ficar line has no ficar form → rule_breaks; falar (eu) + chegar (ele) kept
+    assert.ok(r.dropped.some((d) => d.reason === 'rule_breaks'));
+    assert.ok(r.kept.some((l) => l.verb_lemma === 'falar'));
+    assert.ok(r.kept.some((l) => l.verb_lemma === 'chegar'));
+  });
+
   it('never keeps model conjugations blob on kept lines', () => {
     const r = checkMicroLines(
       [

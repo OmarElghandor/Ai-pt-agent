@@ -195,6 +195,8 @@ const v2MicroProgressSchema = new Schema(
     finished_at: { type: Date, required: false },
     replays: { type: Number, required: true, default: 0 },
     revealed_count: { type: Number, required: true, default: 0 },
+    last_reviewed_at: { type: Date, required: false },
+    review_count: { type: Number, required: true, default: 0 },
   },
   { timestamps: true, collection: 'v2_micro_progress' },
 );

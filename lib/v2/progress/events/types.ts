@@ -115,6 +115,11 @@ export const ProgressEventSchema = z.discriminatedUnion('kind', [
     clip_id: z.string().min(1),
     line_count: z.number().int().nonnegative().optional(),
   }),
+  base.extend({
+    kind: z.literal('micro_clip_reviewed'),
+    clip_id: z.string().min(1),
+    line_count: z.number().int().nonnegative().optional(),
+  }),
 ]);
 
 export type ProgressEvent = z.infer<typeof ProgressEventSchema>;

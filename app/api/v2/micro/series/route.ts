@@ -9,6 +9,11 @@ import {
 import { microMainImageKey } from '@/lib/v2/micro/images/main';
 import { loadMicroOutline } from '@/lib/v2/micro/outline';
 import {
+  compareClipsByLevelThenOrder,
+  compareSeriesByLevelThenOrder,
+  minLevel,
+} from '@/lib/v2/micro/order';
+import {
   V2MicroClipModel,
   V2MicroProgressModel,
   V2MicroSeriesModel,
@@ -30,6 +35,12 @@ export async function GET() {
       s.clips.slice(0, 3).map((c) => c.title_tl),
     ]),
   );
+  const outlineLevelsBySlug = new Map(
+    outline.series.map((s) => [
+      s.slug,
+      [...new Set(s.clips.map((c) => c.level))].sort((a, b) => a - b),
+    ]),
+  );
   const outlineRows = outline.series.map((s) => ({
     slug: s.slug,
     order: s.order,
@@ -39,16 +50,25 @@ export async function GET() {
   }));
 
   if (!mongoConfigured()) {
-    const all = mergeSeriesListing({ outline: outlineRows, db: [] }).map(
-      (row) => ({
-        ...row,
-        sample_tls: sampleBySlug.get(row.slug) ?? [],
-      }),
-    );
+    const all = mergeSeriesListing({ outline: outlineRows, db: [] })
+      .map((row) => {
+        const levels = outlineLevelsBySlug.get(row.slug) ?? row.levels ?? [];
+        return {
+          ...row,
+          levels,
+          sample_tls: sampleBySlug.get(row.slug) ?? [],
+        };
+      })
+      .sort((a, b) =>
+        compareSeriesByLevelThenOrder(
+          { min_level: minLevel(a.levels), order: a.order },
+          { min_level: minLevel(b.levels), order: b.order },
+        ),
+      );
     return NextResponse.json({
-      continuing: [],
       series: all,
       all,
+      finished_clips: [],
     });
   }
 
@@ -67,6 +87,8 @@ export async function GET() {
       status: 1,
       lines: 1,
       main_image_key: 1,
+      title_ar: 1,
+      title_tl: 1,
     })
     .lean();
   const progress = await V2MicroProgressModel()
@@ -81,7 +103,6 @@ export async function GET() {
     if (c) startedSeries.add(c.series_id);
   }
 
-  // Candidate keys: each clip's main_image_key or computed micro key (by order).
   const thumbCandidates = series.flatMap((s) => {
     const sc = clips
       .filter((c) => c.series_id === String(s._id))
@@ -96,7 +117,6 @@ export async function GET() {
   let thumbByKey = new Map<string, string>();
   if (thumbCandidates.length) {
     const { V2ImageModel } = await import('@/lib/v2/mongo/models');
-    // Player shows ready + flagged-with-url; listing must match.
     const imgs = await V2ImageModel()
       .find({
         key: { $in: [...new Set(thumbCandidates)] },
@@ -120,8 +140,13 @@ export async function GET() {
     const finishedCount = readyClips.filter((c) =>
       finished.has(String(c._id)),
     ).length;
-    const levels = [...new Set(sc.map((c) => c.level))].sort();
-    // First ready main by clip order (not only order=1 if that image is missing).
+    const levelsFromDb = [...new Set(sc.map((c) => c.level))].sort(
+      (a, b) => a - b,
+    );
+    const levels =
+      levelsFromDb.length > 0
+        ? levelsFromDb
+        : (outlineLevelsBySlug.get(s.slug) ?? []);
     let thumb_url: string | null = null;
     for (const c of sc.slice().sort((a, b) => a.order - b.order)) {
       const key =
@@ -139,7 +164,10 @@ export async function GET() {
       title_ar: s.title_ar,
       title_tl: s.title_tl,
       order: s.order,
-      clip_count: Math.max(sc.length, outlineRows.find((o) => o.slug === s.slug)?.clip_count ?? 0),
+      clip_count: Math.max(
+        sc.length,
+        outlineRows.find((o) => o.slug === s.slug)?.clip_count ?? 0,
+      ),
       finished_count: finishedCount,
       in_progress:
         startedSeries.has(String(s._id)) && finishedCount < readyClips.length,
@@ -157,18 +185,67 @@ export async function GET() {
       .map((o) => o.slug),
   );
 
-  const all = mergeSeriesListing({ outline: outlineRows, db, ensuringSlugs }).map(
-    (row) => ({
-      ...row,
-      sample_tls: sampleBySlug.get(row.slug) ?? [],
-    }),
-  );
-  const continuing = all.filter((r) => r.in_progress);
-  const rest = all.filter((r) => !r.in_progress);
+  const all = mergeSeriesListing({ outline: outlineRows, db, ensuringSlugs })
+    .map((row) => {
+      const levels =
+        row.levels?.length > 0
+          ? row.levels
+          : (outlineLevelsBySlug.get(row.slug) ?? []);
+      return {
+        ...row,
+        levels,
+        sample_tls: sampleBySlug.get(row.slug) ?? [],
+      };
+    })
+    .sort((a, b) =>
+      compareSeriesByLevelThenOrder(
+        { min_level: minLevel(a.levels), order: a.order },
+        { min_level: minLevel(b.levels), order: b.order },
+      ),
+    );
+
+  const seriesById = new Map(series.map((s) => [String(s._id), s]));
+  const finished_clips = clips
+    .filter(
+      (c) =>
+        c.status === 'published' &&
+        finished.has(String(c._id)) &&
+        (c.lines?.length ?? 0) >= 1,
+    )
+    .map((c) => {
+      const s = seriesById.get(c.series_id);
+      return {
+        id: String(c._id),
+        slug: c.slug,
+        series_slug: s?.slug ?? '',
+        series_order: s?.order ?? 0,
+        series_title_ar: s?.title_ar ?? '',
+        title_ar: c.title_ar,
+        title_tl: c.title_tl,
+        level: c.level,
+        order: c.order,
+        line_count: c.lines?.length ?? 0,
+        official_deck_id: s?.official_deck_id ?? null,
+      };
+    })
+    .sort((a, b) =>
+      compareClipsByLevelThenOrder(
+        {
+          level: a.level,
+          series_order: a.series_order,
+          order: a.order,
+        },
+        {
+          level: b.level,
+          series_order: b.series_order,
+          order: b.order,
+        },
+      ),
+    );
 
   return NextResponse.json({
-    continuing,
-    series: rest,
+    series: all,
     all,
+    finished_clips,
   });
 }

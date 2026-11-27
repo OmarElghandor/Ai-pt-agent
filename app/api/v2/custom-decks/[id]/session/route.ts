@@ -26,11 +26,19 @@ export async function GET(
   const deckRef = decodeURIComponent(id);
   const tz = req.headers.get('x-timezone') ?? user.timezone ?? 'Europe/Lisbon';
   const local_date = userLocalDate(tz);
+  const itemsParam = new URL(req.url).searchParams.get('items');
+  const itemIds = itemsParam
+    ? itemsParam
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean)
+    : undefined;
 
   const session = await buildCustomDeckSession({
     user_id: user.id,
     deckRef,
     local_date,
+    itemIds,
   });
   if (!session) {
     return NextResponse.json({ error: 'not found' }, { status: 404 });

@@ -22,6 +22,13 @@ const PRET: Record<VerbClass, Record<Person, string>> = {
   ir: { eu: 'i', tu: 'iste', ele: 'iu', nos: 'imos', eles: 'iram' },
 };
 
+/** Regular imperfeito (derived when the seed has no override). */
+const IMPERF: Record<VerbClass, Record<Person, string>> = {
+  ar: { eu: 'ava', tu: 'avas', ele: 'ava', nos: 'ávamos', eles: 'avam' },
+  er: { eu: 'ia', tu: 'ias', ele: 'ia', nos: 'íamos', eles: 'iam' },
+  ir: { eu: 'ia', tu: 'ias', ele: 'ia', nos: 'íamos', eles: 'iam' },
+};
+
 export function verbClass(lemma: string): VerbClass | null {
   if (lemma.endsWith('ar')) return 'ar';
   if (lemma.endsWith('er')) return 'er';
@@ -78,10 +85,12 @@ export function conjugateRegular(
 ): RegularForm | null {
   const cls = verbClass(lemma);
   if (!cls) return null;
-  if (tense !== 'pres' && tense !== 'pret') return null;
+  if (tense !== 'pres' && tense !== 'pret' && tense !== 'imperf') return null;
 
   const stem = lemma.slice(0, -2);
-  const ending = (tense === 'pres' ? PRES : PRET)[cls][person];
+  const endingTable =
+    tense === 'pres' ? PRES : tense === 'pret' ? PRET : IMPERF;
+  const ending = endingTable[cls][person];
   const spelled = applySpellingChange(lemma, tense, person, stem, ending);
   return {
     tl: spelled.tl,

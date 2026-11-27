@@ -31,13 +31,17 @@ export async function GET(
   if (!series) {
     return NextResponse.json({ error: 'not found' }, { status: 404 });
   }
-  const clips = await V2MicroClipModel()
-    .find({
-      series_id: String(series._id),
-      status: { $in: ['ready', 'published'] },
-    })
-    .sort({ order: 1 })
-    .lean();
+  const clips = (
+    await V2MicroClipModel()
+      .find({
+        series_id: String(series._id),
+        status: { $in: ['ready', 'published'] },
+      })
+      .lean()
+  ).slice()
+    .sort((a, b) =>
+      a.level !== b.level ? a.level - b.level : a.order - b.order,
+    );
   if (!clips.length) {
     return NextResponse.json({ error: 'not ready' }, { status: 404 });
   }
@@ -73,6 +77,7 @@ export async function GET(
     out.push({
       id: String(c._id),
       slug: c.slug,
+      order: c.order,
       layout: c.layout,
       level: c.level,
       title_tl: c.title_tl,

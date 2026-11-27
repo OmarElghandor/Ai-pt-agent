@@ -48,6 +48,22 @@ export const ScenePlanSchema = z.object({
   objects: z.array(ScenePlanObjectSchema).min(1),
 });
 
+export const OutlineRuleKindSchema = z.enum(['verb_ending', 'pattern']);
+export const OutlineRuleTenseSchema = z.enum([
+  'pres',
+  'pret',
+  'imperf',
+  'fut',
+  'inf',
+]);
+export const OutlineRulePersonSchema = z.enum([
+  'eu',
+  'tu',
+  'ele',
+  'nos',
+  'eles',
+]);
+
 export const OutlineClipSchema = z.object({
   slug: z.string().min(1),
   order: z.number().int().positive(),
@@ -60,6 +76,17 @@ export const OutlineClipSchema = z.object({
   extra_brief: z.string().optional(),
   note: z.string().optional(),
   rule_card: OutlineRuleCardSchema.optional(),
+  /** verb_ending = conjugation induction; pattern = fixed tokens to highlight. */
+  rule_kind: OutlineRuleKindSchema.optional(),
+  rule_tense: OutlineRuleTenseSchema.optional(),
+  /** One person or several; a line may match any listed person. */
+  rule_person: z
+    .union([
+      OutlineRulePersonSchema,
+      z.array(OutlineRulePersonSchema).min(1),
+    ])
+    .optional(),
+  rule_highlight: z.array(z.string().min(1)).optional(),
   /** Shared scene identity across clips (§3.2b). */
   scene_key: z.string().optional(),
   scene_plan: ScenePlanSchema.optional(),

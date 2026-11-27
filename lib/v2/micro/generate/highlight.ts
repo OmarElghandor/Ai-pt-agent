@@ -50,6 +50,81 @@ export function highlightFormInLine(
   return null;
 }
 
+const LETTER_RE = /[A-Za-zÀ-ÿ]/;
+
+function isLetterAt(text: string, index: number): boolean {
+  if (index < 0 || index >= text.length) return false;
+  return LETTER_RE.test(text[index]!);
+}
+
+/**
+ * Mark the first matching rule_highlight token in a line.
+ * Longer tokens win (`nos` before `no`). Hyphen clitics (`-me`, `-o`)
+ * must sit after a hyphen attached to a verb word («Compro-o», «ajudar-me»).
+ */
+export function highlightTokensInLine(
+  tl: string,
+  tokens: string[],
+): HighlightSpan | null {
+  if (!tokens.length) return null;
+  const lower = tl.toLowerCase();
+  const ordered = [...tokens].sort((a, b) => b.length - a.length);
+  let best: HighlightSpan | null = null;
+
+  for (const raw of ordered) {
+    const token = raw.trim();
+    if (!token) continue;
+    const needle = token.toLowerCase();
+
+    if (needle.startsWith('-')) {
+      // Clitic: require a letter immediately before the hyphen, then the clitic.
+      const clitic = needle.slice(1);
+      if (!clitic) continue;
+      let from = 0;
+      while (from < lower.length) {
+        const hy = lower.indexOf(`-${clitic}`, from);
+        if (hy < 0) break;
+        const end = hy + 1 + clitic.length;
+        const beforeOk = isLetterAt(lower, hy - 1);
+        const afterOk = !isLetterAt(lower, end);
+        if (beforeOk && afterOk) {
+          const span = { start: hy, end };
+          if (!best || span.start < best.start) best = span;
+          break;
+        }
+        from = hy + 1;
+      }
+      continue;
+    }
+
+    let from = 0;
+    while (from < lower.length) {
+      const idx = lower.indexOf(needle, from);
+      if (idx < 0) break;
+      const end = idx + needle.length;
+      const beforeOk = !isLetterAt(lower, idx - 1);
+      const afterOk = !isLetterAt(lower, end);
+      if (beforeOk && afterOk) {
+        const span = { start: idx, end };
+        if (!best || span.start < best.start) best = span;
+        break;
+      }
+      from = idx + 1;
+    }
+  }
+
+  return best;
+}
+
+/** Regular verified lemmas from the conjugation seed (for rule clip prompts). */
+export function listRegularVerifiedLemmas(): string[] {
+  const seed = loadConjugationSeed();
+  return seed.verbs
+    .map((v) => v.lemma)
+    .filter((lemma) => isRegularVerifiedLemma(lemma))
+    .sort();
+}
+
 export function isRegularVerifiedLemma(lemma: string): boolean {
   const seed = loadConjugationSeed();
   const verb = seed.verbs.find((v) => v.lemma === lemma);

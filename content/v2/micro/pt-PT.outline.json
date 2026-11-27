@@ -2,8 +2,330 @@
   "target_lang": "pt-PT",
   "series": [
     {
-      "slug": "demonstratives",
+      "slug": "greetings",
       "order": 1,
+      "title_ar": "سلامات",
+      "title_tl": "olá · bom dia",
+      "clips": [
+        {
+          "slug": "ola-adeus",
+          "order": 1,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "أهلاً ومع السلامة",
+          "title_tl": "olá · adeus",
+          "prompt_guidance": "Greetings and goodbyes: olá · bom dia · boa tarde · boa noite · adeus · até logo · até amanhã · até já.",
+          "ready": true
+        },
+        {
+          "slug": "tudo-bem",
+          "order": 2,
+          "layout": "list",
+          "level": 1,
+          "title_ar": "إزيك؟",
+          "title_tl": "Tudo bem?",
+          "prompt_guidance": "How are you and answers, pt-PT: Tudo bem? · Tudo bem, e tu? · Como está? · Bem, obrigado · Mais ou menos · Estou ótimo. Note the formal (o senhor / a senhora) vs tu.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "about-you",
+      "order": 2,
+      "title_ar": "عن نفسك",
+      "title_tl": "Chamo-me…",
+      "clips": [
+        {
+          "slug": "chamo-me",
+          "order": 1,
+          "layout": "list",
+          "level": 1,
+          "title_ar": "اسمي…",
+          "title_tl": "Chamo-me…",
+          "prompt_guidance": "Personal info: Chamo-me Omar · Sou do Egito · Sou egípcio / egípcia · Moro em Lisboa · Tenho trinta anos · Falo árabe e inglês.",
+          "ready": true
+        },
+        {
+          "slug": "trabalho",
+          "order": 2,
+          "layout": "list",
+          "level": 1,
+          "title_ar": "بشتغل…",
+          "title_tl": "Sou engenheiro",
+          "prompt_guidance": "Work and study: Sou engenheiro · Trabalho num escritório · Trabalho em casa · Estou à procura de trabalho · Estudo português · Sou estudante.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "didnt-understand",
+      "order": 3,
+      "title_ar": "لما متفهمش",
+      "title_tl": "não percebi",
+      "clips": [
+        {
+          "slug": "nao-percebi",
+          "order": 1,
+          "layout": "list",
+          "level": 1,
+          "title_ar": "مافهمتش",
+          "title_tl": "Não percebi",
+          "legacy_ref": "TC_PT_072",
+          "prompt_guidance": "Saying you did not understand, A1: Não percebi · Desculpe, não percebi · Não percebo bem · Não sei o que quer dizer · Não falo bem português · Fala inglês?",
+          "ready": true
+        },
+        {
+          "slug": "pode-repetir",
+          "order": 2,
+          "layout": "list",
+          "level": 1,
+          "title_ar": "قول تاني",
+          "title_tl": "Pode repetir?",
+          "legacy_ref": "TC_PT_093",
+          "prompt_guidance": "Asking to repeat or slow down: Pode repetir, se faz favor? · Mais devagar, por favor · Desculpe? · Pode falar mais devagar? · Como? · O que disse?",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "quick-replies",
+      "order": 4,
+      "title_ar": "ردود سريعة",
+      "title_tl": "respostas rápidas",
+      "clips": [
+        {
+          "slug": "pois-claro",
+          "order": 1,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "pois / claro",
+          "title_tl": "pois · claro · exato",
+          "legacy_ref": "TC_PT_054",
+          "prompt_guidance": "Quick agreeing replies: pois · claro · exato · sim, sim · pois é · com certeza.",
+          "ready": true
+        },
+        {
+          "slug": "esta-bem",
+          "order": 2,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "تمام",
+          "title_tl": "está bem · combinado",
+          "legacy_ref": "TC_PT_092",
+          "prompt_guidance": "OK replies: está bem · combinado · ótimo · pode ser · perfeito · tudo certo.",
+          "ready": true
+        },
+        {
+          "slug": "obrigado",
+          "order": 3,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "شكراً",
+          "title_tl": "obrigado · de nada · desculpe",
+          "legacy_ref": "TC_PT_092",
+          "prompt_guidance": "Thanks and apologies: obrigado / obrigada · muito obrigado · de nada · desculpe · com licença · não faz mal.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "polite-requests",
+      "order": 5,
+      "title_ar": "اطلب بأدب",
+      "title_tl": "pedir com educação",
+      "clips": [
+        {
+          "slug": "queria",
+          "order": 1,
+          "layout": "list",
+          "level": 1,
+          "title_ar": "كنت عايز",
+          "title_tl": "Queria…",
+          "legacy_ref": "TC_PT_020",
+          "prompt_guidance": "Polite ordering with Queria…: Queria um café · Queria uma água, se faz favor · Queria pagar · Queria isto · Queria a conta.",
+          "ready": true
+        },
+        {
+          "slug": "pode-podia",
+          "order": 2,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "ممكن؟",
+          "title_tl": "Pode…? · Podia…?",
+          "legacy_ref": "TC_PT_040",
+          "prompt_guidance": "Polite requests: Pode…? · Podia…? · Se faz favor · Pode ajudar-me? · Podia trazer a conta? · Pode repetir?",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "question-words",
+      "order": 6,
+      "title_ar": "أدوات السؤال",
+      "title_tl": "palavras interrogativas",
+      "clips": [
+        {
+          "slug": "onde",
+          "order": 1,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "onde",
+          "title_tl": "onde",
+          "legacy_ref": "TC_PT_005",
+          "prompt_guidance": "onde questions: Onde é…? · Onde fica…? · Onde mora? · Onde está…? · De onde é? · Para onde vai?",
+          "ready": true
+        },
+        {
+          "slug": "o-que-quem",
+          "order": 2,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "o que / quem",
+          "title_tl": "o que · quem",
+          "legacy_ref": "TC_PT_005",
+          "prompt_guidance": "o que / quem: O que é isto? · O que quer? · Quem é? · Quem fala? · O que faz? · De quem é?",
+          "ready": true
+        },
+        {
+          "slug": "quando-horas",
+          "order": 3,
+          "layout": "list",
+          "level": 1,
+          "title_ar": "quando / a que horas",
+          "title_tl": "quando · a que horas",
+          "legacy_ref": "TC_PT_006",
+          "prompt_guidance": "Time questions: Quando? · A que horas abre? · A que horas fecha? · Quando chega? · Até quando? · Desde quando?",
+          "ready": true
+        },
+        {
+          "slug": "quanto-qual",
+          "order": 4,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "quanto / qual",
+          "title_tl": "quanto · qual",
+          "legacy_ref": "TC_PT_006",
+          "prompt_guidance": "quanto / qual: Quanto custa? · Quanto é? · Quantos anos tem? · Qual é o seu nome? · Qual prefere? · Qual é a morada?",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "numbers-money",
+      "order": 7,
+      "title_ar": "الأرقام والفلوس",
+      "title_tl": "números e dinheiro",
+      "clips": [
+        {
+          "slug": "1-20",
+          "order": 1,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "من 1 لـ 20",
+          "title_tl": "1–20",
+          "legacy_ref": "TC_PT_042",
+          "prompt_guidance": "Numbers 1 to 20 as words (um/uma, dois/duas …vinte).",
+          "ready": true
+        },
+        {
+          "slug": "21-100",
+          "order": 2,
+          "layout": "pairs",
+          "level": 2,
+          "title_ar": "من 21 لـ 100",
+          "title_tl": "21–100",
+          "prompt_guidance": "Numbers 21–100 as words: vinte e um · trinta · quarenta e cinco · cinquenta · setenta · noventa e nove · cem.",
+          "ready": true
+        },
+        {
+          "slug": "prices",
+          "order": 3,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "الأسعار",
+          "title_tl": "preços",
+          "legacy_ref": "TC_PT_056",
+          "prompt_guidance": "Saying prices: custa cinco euros · são dez euros · é caro · é barato · está em promoção · cinquenta cêntimos.",
+          "ready": true
+        },
+        {
+          "slug": "quanto-e",
+          "order": 4,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "بكام؟",
+          "title_tl": "Quanto é?",
+          "legacy_ref": "TC_PT_056",
+          "prompt_guidance": "Asking and understanding totals: Quanto é? · São quinze euros · Aceita cartão? · Posso pagar com MB Way? · Tem troco? · Fica com o troco.",
+          "ready": true
+        },
+        {
+          "slug": "euros-cents",
+          "order": 5,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "يورو وسنت",
+          "title_tl": "euros e cêntimos",
+          "prompt_guidance": "Saying amounts: três euros e cinquenta · dez cêntimos · São doze e vinte · Um euro e meio · Cento e vinte euros · Dois euros cada.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "time",
+      "order": 8,
+      "title_ar": "الوقت والمواعيد",
+      "title_tl": "tempo e horários",
+      "clips": [
+        {
+          "slug": "a-hora",
+          "order": 1,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "الساعة",
+          "title_tl": "a hora",
+          "legacy_ref": "TC_PT_007",
+          "prompt_guidance": "Telling the time: É uma hora · São duas horas · São três e meia · É meio-dia · É meia-noite · São quatro e um quarto.",
+          "ready": true
+        },
+        {
+          "slug": "hoje-amanha",
+          "order": 2,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "النهاردة وبكرة",
+          "title_tl": "hoje · amanhã · ontem",
+          "legacy_ref": "TC_PT_008",
+          "prompt_guidance": "hoje · amanhã · ontem · depois de amanhã · esta semana · agora.",
+          "ready": true
+        },
+        {
+          "slug": "os-dias",
+          "order": 3,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "أيام الأسبوع",
+          "title_tl": "os dias",
+          "legacy_ref": "TC_PT_063",
+          "prompt_guidance": "Days of the week in pt-PT: segunda-feira … domingo, o fim de semana.",
+          "ready": true
+        },
+        {
+          "slug": "partes-do-dia",
+          "order": 4,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "أوقات اليوم",
+          "title_tl": "de manhã · à tarde · à noite",
+          "legacy_ref": "TC_PT_067",
+          "prompt_guidance": "de manhã · à tarde · à noite · ao almoço · ao jantar · de madrugada.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "demonstratives",
+      "order": 9,
       "title_ar": "أدوات الإشارة",
       "title_tl": "este, esse, aquele",
       "clips": [
@@ -15,7 +337,6 @@
           "title_ar": "este / esta",
           "title_tl": "este · esta",
           "prompt_guidance": "Near band (speaker POV): este/esta for cake and water bottle under the learner's hand.",
-          "ready": true,
           "note": "este للي جنبي (عندي) · esse للي جنبك إنت · aquele للي بعيد عننا إحنا الاتنين",
           "scene_key": "demonstratives.pastelaria-pov",
           "scene_plan": {
@@ -150,7 +471,8 @@
                 "h": 0.26
               }
             }
-          ]
+          ],
+          "ready": true
         },
         {
           "slug": "esse-essa",
@@ -160,7 +482,6 @@
           "title_ar": "esse / essa",
           "title_tl": "esse · essa",
           "prompt_guidance": "Middle band next to the shop assistant: esse/essa for bread and coffee cup.",
-          "ready": true,
           "note": "este للي جنبي (عندي) · esse للي جنبك إنت · aquele للي بعيد عننا إحنا الاتنين",
           "scene_key": "demonstratives.pastelaria-pov",
           "scene_plan": {
@@ -281,7 +602,8 @@
                 "h": 0.14
               }
             }
-          ]
+          ],
+          "ready": true
         },
         {
           "slug": "aquele-aquela",
@@ -291,7 +613,6 @@
           "title_ar": "aquele / aquela",
           "title_tl": "aquele · aquela",
           "prompt_guidance": "Far shelf: aquele/aquela for the tart box and biscuit jar.",
-          "ready": true,
           "note": "este للي جنبي (عندي) · esse للي جنبك إنت · aquele للي بعيد عننا إحنا الاتنين",
           "scene_key": "demonstratives.pastelaria-pov",
           "scene_plan": {
@@ -412,7 +733,8 @@
                 "h": 0.22
               }
             }
-          ]
+          ],
+          "ready": true
         },
         {
           "slug": "isto-isso-aquilo",
@@ -422,7 +744,7 @@
           "title_ar": "isto / isso / aquilo",
           "title_tl": "isto · isso · aquilo",
           "prompt_guidance": "Neuter demonstratives isto isso aquilo.",
-          "ready": false
+          "ready": true
         },
         {
           "slug": "aqui-ai-ali-la",
@@ -431,560 +753,226 @@
           "level": 1,
           "title_ar": "هنا وهناك",
           "title_tl": "aqui · aí · ali · lá",
-          "prompt_guidance": "Location adverbs aqui aí ali lá.",
-          "ready": false
+          "prompt_guidance": "aqui (near me) · aí (near you) · ali / lá (far from both), using the shared pastry-shop scene: O bolo está aqui · O pão está aí · A caixa está ali · Lá em cima.",
+          "scene_key": "demonstratives.pastelaria-pov",
+          "scene_plan": {
+            "objects": [
+              {
+                "id": "bolo",
+                "label_en": "whole chocolate cake on a white plate",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.1,
+                  "y": 0.66,
+                  "w": 0.24,
+                  "h": 0.24
+                }
+              },
+              {
+                "id": "garrafa",
+                "label_en": "plastic bottle of water",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.38,
+                  "y": 0.66,
+                  "w": 0.14,
+                  "h": 0.26
+                }
+              },
+              {
+                "id": "pao",
+                "label_en": "round loaf of bread",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.22,
+                  "y": 0.4,
+                  "w": 0.18,
+                  "h": 0.16
+                }
+              },
+              {
+                "id": "chavena",
+                "label_en": "white coffee cup on a saucer",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.48,
+                  "y": 0.4,
+                  "w": 0.14,
+                  "h": 0.14
+                }
+              },
+              {
+                "id": "caixa",
+                "label_en": "big closed cardboard box of custard tarts",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.16,
+                  "y": 0.06,
+                  "w": 0.24,
+                  "h": 0.18
+                }
+              },
+              {
+                "id": "frasco",
+                "label_en": "tall glass jar of biscuits",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.58,
+                  "y": 0.05,
+                  "w": 0.16,
+                  "h": 0.22
+                }
+              }
+            ]
+          },
+          "pointer_from": {
+            "x": 0.82,
+            "y": 0.78
+          },
+          "image_spec": "Hand-drawn ink and soft watercolour editorial illustration, warm natural light, 4:3 landscape. First-person point of view: we are a customer standing at the counter of a small traditional Lisbon pastry shop (azulejo tiles on the back wall). In the bottom-right foreground, the viewer's own right hand and forearm reach forward, index finger pointing at the counter.\n\nThree clear depth zones, each object large, simple, clearly separated, with plain space around it:\n- NEAR (bottom of the picture, on the counter right under the viewer's hand): one whole chocolate cake on a white plate (left of the hand), and one plastic bottle of water (right of the cake, a hand's width apart).\n- MIDDLE (centre of the picture): a friendly middle-aged shop assistant behind the counter, smiling at the viewer; right beside her hands on the counter, one round loaf of bread (to her left) and one white coffee cup on a saucer (to her right).\n- FAR (top of the picture, on a wooden shelf on the back wall, clearly behind and above the assistant): one big closed cardboard box of custard tarts, and one tall glass jar of biscuits, well apart from each other.\n\nKeep the rest of the counter and shelves almost empty. No other cakes, pastries or bottles anywhere, no display case full of sweets, no other customers. No text, no letters, no signs, no logos.",
+          "ready": true
         }
       ]
     },
     {
-      "slug": "daily-verbs",
-      "order": 2,
-      "title_ar": "الأفعال اليومية",
-      "title_tl": "verbos do dia a dia",
-      "clips": [
-        {
-          "slug": "ser",
-          "order": 1,
-          "layout": "pairs",
-          "level": 2,
-          "title_ar": "ser",
-          "title_tl": "ser",
-          "legacy_ref": "TC_PT_003",
-          "prompt_guidance": "Everyday uses of ser. Forms from verified table only.",
-          "ready": false
-        },
-        {
-          "slug": "estar",
-          "order": 2,
-          "layout": "list",
-          "level": 2,
-          "title_ar": "estar",
-          "title_tl": "estar",
-          "legacy_ref": "TC_PT_004",
-          "prompt_guidance": "Everyday uses of estar. Forms from verified table only.",
-          "ready": false
-        },
-        {
-          "slug": "ter",
-          "order": 3,
-          "layout": "pairs",
-          "level": 2,
-          "title_ar": "ter",
-          "title_tl": "ter",
-          "legacy_ref": "TC_PT_011",
-          "prompt_guidance": "Everyday uses of ter. Forms from verified table only.",
-          "ready": false
-        },
-        {
-          "slug": "ir",
-          "order": 4,
-          "layout": "list",
-          "level": 2,
-          "title_ar": "ir",
-          "title_tl": "ir",
-          "legacy_ref": "TC_PT_017",
-          "prompt_guidance": "Everyday uses of ir. Forms from verified table only.",
-          "ready": false
-        },
-        {
-          "slug": "fazer",
-          "order": 5,
-          "layout": "pairs",
-          "level": 2,
-          "title_ar": "fazer",
-          "title_tl": "fazer",
-          "legacy_ref": "TC_PT_030",
-          "prompt_guidance": "Everyday uses of fazer. Forms from verified table only.",
-          "ready": false
-        },
-        {
-          "slug": "querer",
-          "order": 6,
-          "layout": "list",
-          "level": 2,
-          "title_ar": "querer",
-          "title_tl": "querer",
-          "legacy_ref": "TC_PT_020",
-          "prompt_guidance": "Everyday uses of querer and queria. Forms from verified table only.",
-          "ready": false
-        },
-        {
-          "slug": "poder",
-          "order": 7,
-          "layout": "pairs",
-          "level": 2,
-          "title_ar": "poder",
-          "title_tl": "poder",
-          "legacy_ref": "TC_PT_034",
-          "prompt_guidance": "Everyday uses of poder. Forms from verified table only.",
-          "ready": false
-        },
-        {
-          "slug": "precisar-de",
-          "order": 8,
-          "layout": "list",
-          "level": 2,
-          "title_ar": "precisar de",
-          "title_tl": "precisar de",
-          "legacy_ref": "TC_PT_035",
-          "prompt_guidance": "Everyday uses of precisar de. Forms from verified table only.",
-          "ready": false
-        },
-        {
-          "slug": "gostar-de",
-          "order": 9,
-          "layout": "pairs",
-          "level": 2,
-          "title_ar": "gostar de",
-          "title_tl": "gostar de",
-          "prompt_guidance": "Everyday uses of gostar de. Forms from verified table only.",
-          "ready": false
-        },
-        {
-          "slug": "saber",
-          "order": 10,
-          "layout": "list",
-          "level": 2,
-          "title_ar": "saber",
-          "title_tl": "saber",
-          "prompt_guidance": "Everyday uses of saber. Forms from verified table only.",
-          "ready": false
-        },
-        {
-          "slug": "ver",
-          "order": 11,
-          "layout": "pairs",
-          "level": 2,
-          "title_ar": "ver",
-          "title_tl": "ver",
-          "prompt_guidance": "Everyday uses of ver. Forms from verified table only.",
-          "ready": false
-        },
-        {
-          "slug": "dar",
-          "order": 12,
-          "layout": "list",
-          "level": 2,
-          "title_ar": "dar",
-          "title_tl": "dar",
-          "prompt_guidance": "Everyday uses of dar. Forms from verified table only.",
-          "ready": false
-        }
-      ]
-    },
-    {
-      "slug": "question-words",
-      "order": 3,
-      "title_ar": "أدوات السؤال",
-      "title_tl": "palavras interrogativas",
-      "clips": [
-        {
-          "slug": "onde",
-          "order": 1,
-          "layout": "pairs",
-          "level": 1,
-          "title_ar": "onde",
-          "title_tl": "onde",
-          "legacy_ref": "TC_PT_005",
-          "prompt_guidance": "Question word onde.",
-          "ready": false
-        },
-        {
-          "slug": "o-que-quem",
-          "order": 2,
-          "layout": "pairs",
-          "level": 1,
-          "title_ar": "o que / quem",
-          "title_tl": "o que · quem",
-          "legacy_ref": "TC_PT_005",
-          "prompt_guidance": "o que and quem.",
-          "ready": false
-        },
-        {
-          "slug": "quando-horas",
-          "order": 3,
-          "layout": "list",
-          "level": 1,
-          "title_ar": "quando / a que horas",
-          "title_tl": "quando · a que horas",
-          "legacy_ref": "TC_PT_006",
-          "prompt_guidance": "quando and a que horas.",
-          "ready": false
-        },
-        {
-          "slug": "quanto-qual",
-          "order": 4,
-          "layout": "pairs",
-          "level": 1,
-          "title_ar": "quanto / qual",
-          "title_tl": "quanto · qual",
-          "legacy_ref": "TC_PT_006",
-          "prompt_guidance": "quanto and qual.",
-          "ready": false
-        }
-      ]
-    },
-    {
-      "slug": "didnt-understand",
-      "order": 4,
-      "title_ar": "لما متفهمش",
-      "title_tl": "não percebi",
-      "clips": [
-        {
-          "slug": "nao-percebi",
-          "order": 1,
-          "layout": "list",
-          "level": 1,
-          "title_ar": "مافهمتش",
-          "title_tl": "Não percebi",
-          "legacy_ref": "TC_PT_072",
-          "prompt_guidance": "Phrases when you did not understand.",
-          "ready": false
-        },
-        {
-          "slug": "pode-repetir",
-          "order": 2,
-          "layout": "list",
-          "level": 1,
-          "title_ar": "قول تاني",
-          "title_tl": "Pode repetir?",
-          "legacy_ref": "TC_PT_093",
-          "prompt_guidance": "Pode repetir, mais devagar, Como se diz.",
-          "ready": false
-        }
-      ]
-    },
-    {
-      "slug": "quick-replies",
-      "order": 5,
-      "title_ar": "ردود سريعة",
-      "title_tl": "respostas rápidas",
-      "clips": [
-        {
-          "slug": "pois-claro",
-          "order": 1,
-          "layout": "pairs",
-          "level": 1,
-          "title_ar": "pois / claro",
-          "title_tl": "pois · claro · exato",
-          "legacy_ref": "TC_PT_054",
-          "prompt_guidance": "Agreement fillers.",
-          "ready": false
-        },
-        {
-          "slug": "esta-bem",
-          "order": 2,
-          "layout": "pairs",
-          "level": 1,
-          "title_ar": "تمام",
-          "title_tl": "está bem · combinado",
-          "legacy_ref": "TC_PT_092",
-          "prompt_guidance": "está bem and combinado.",
-          "ready": false
-        },
-        {
-          "slug": "obrigado",
-          "order": 3,
-          "layout": "pairs",
-          "level": 1,
-          "title_ar": "شكراً",
-          "title_tl": "obrigado · de nada · desculpe",
-          "legacy_ref": "TC_PT_092",
-          "prompt_guidance": "Thanks and sorry.",
-          "ready": false
-        }
-      ]
-    },
-    {
-      "slug": "time",
-      "order": 6,
-      "title_ar": "الوقت والمواعيد",
-      "title_tl": "tempo e horários",
-      "clips": [
-        {
-          "slug": "a-hora",
-          "order": 1,
-          "layout": "pairs",
-          "level": 1,
-          "title_ar": "الساعة",
-          "title_tl": "a hora",
-          "legacy_ref": "TC_PT_007",
-          "prompt_guidance": "Telling the time.",
-          "ready": false
-        },
-        {
-          "slug": "hoje-amanha",
-          "order": 2,
-          "layout": "pairs",
-          "level": 1,
-          "title_ar": "النهاردة وبكرة",
-          "title_tl": "hoje · amanhã · ontem",
-          "legacy_ref": "TC_PT_008",
-          "prompt_guidance": "hoje amanhã ontem.",
-          "ready": false
-        },
-        {
-          "slug": "os-dias",
-          "order": 3,
-          "layout": "pairs",
-          "level": 1,
-          "title_ar": "أيام الأسبوع",
-          "title_tl": "os dias",
-          "legacy_ref": "TC_PT_063",
-          "prompt_guidance": "Days of the week.",
-          "ready": false
-        },
-        {
-          "slug": "partes-do-dia",
-          "order": 4,
-          "layout": "pairs",
-          "level": 1,
-          "title_ar": "أوقات اليوم",
-          "title_tl": "de manhã · à tarde · à noite",
-          "legacy_ref": "TC_PT_067",
-          "prompt_guidance": "Parts of the day.",
-          "ready": false
-        }
-      ]
-    },
-    {
-      "slug": "numbers-money",
-      "order": 7,
-      "title_ar": "الأرقام والفلوس",
-      "title_tl": "números e dinheiro",
-      "clips": [
-        {
-          "slug": "1-20",
-          "order": 1,
-          "layout": "pairs",
-          "level": 1,
-          "title_ar": "من 1 لـ 20",
-          "title_tl": "1–20",
-          "legacy_ref": "TC_PT_042",
-          "prompt_guidance": "Numbers 1 to 20.",
-          "ready": false
-        },
-        {
-          "slug": "prices",
-          "order": 2,
-          "layout": "list",
-          "level": 2,
-          "title_ar": "الأسعار",
-          "title_tl": "preços",
-          "legacy_ref": "TC_PT_056",
-          "prompt_guidance": "Talking about prices.",
-          "ready": false
-        },
-        {
-          "slug": "quanto-e",
-          "order": 3,
-          "layout": "list",
-          "level": 2,
-          "title_ar": "بكام؟",
-          "title_tl": "Quanto é?",
-          "legacy_ref": "TC_PT_056",
-          "prompt_guidance": "Quanto é and quantities.",
-          "ready": false
-        }
-      ]
-    },
-    {
-      "slug": "where-is-it",
-      "order": 8,
-      "title_ar": "فين الحاجة",
-      "title_tl": "onde está",
-      "clips": [
-        {
-          "slug": "a-room",
-          "order": 1,
-          "layout": "scene",
-          "level": 1,
-          "title_ar": "الأوضة",
-          "title_tl": "o quarto",
-          "legacy_ref": "TC_PT_021",
-          "prompt_guidance": "Things in a room.",
-          "ready": false
-        },
-        {
-          "slug": "table-shelf",
-          "order": 2,
-          "layout": "scene",
-          "level": 1,
-          "title_ar": "الترابيزة والرف",
-          "title_tl": "a mesa e a prateleira",
-          "legacy_ref": "TC_PT_022",
-          "prompt_guidance": "On the table and shelf.",
-          "ready": false
-        },
-        {
-          "slug": "on-the-street",
-          "order": 3,
-          "layout": "scene",
-          "level": 2,
-          "title_ar": "في الشارع",
-          "title_tl": "na rua",
-          "legacy_ref": "TC_PT_053",
-          "prompt_guidance": "Places on the street.",
-          "ready": false
-        }
-      ]
-    },
-    {
-      "slug": "your-day",
-      "order": 9,
-      "title_ar": "يومك",
-      "title_tl": "o teu dia",
-      "clips": [
-        {
-          "slug": "de-manha",
-          "order": 1,
-          "layout": "list",
-          "level": 1,
-          "title_ar": "الصبح",
-          "title_tl": "de manhã",
-          "legacy_ref": "TC_PT_024",
-          "prompt_guidance": "Morning routine sequence.",
-          "ready": false
-        },
-        {
-          "slug": "no-trabalho",
-          "order": 2,
-          "layout": "list",
-          "level": 2,
-          "title_ar": "في الشغل",
-          "title_tl": "no trabalho",
-          "legacy_ref": "TC_PT_027",
-          "prompt_guidance": "At work sequence.",
-          "ready": false
-        },
-        {
-          "slug": "em-casa-noite",
-          "order": 3,
-          "layout": "list",
-          "level": 1,
-          "title_ar": "بالليل في البيت",
-          "title_tl": "em casa à noite",
-          "legacy_ref": "TC_PT_024",
-          "prompt_guidance": "Evening at home.",
-          "ready": false
-        },
-        {
-          "slug": "cozinhar",
-          "order": 4,
-          "layout": "list",
-          "level": 2,
-          "title_ar": "الطبخ",
-          "title_tl": "cozinhar",
-          "legacy_ref": "TC_PT_027",
-          "prompt_guidance": "Cooking sequence like KOCHEN.",
-          "ready": false
-        }
-      ]
-    },
-    {
-      "slug": "how-you-feel",
+      "slug": "articles",
       "order": 10,
-      "title_ar": "حالك وإحساسك",
-      "title_tl": "como estás",
+      "title_ar": "o · a · um · uma",
+      "title_tl": "o · a · um · uma",
       "clips": [
         {
-          "slug": "estou",
+          "slug": "o-a-um-uma",
           "order": 1,
-          "layout": "pairs",
-          "level": 1,
-          "title_ar": "أنا…",
-          "title_tl": "estou cansado / feliz",
-          "legacy_ref": "TC_PT_023",
-          "prompt_guidance": "Feelings with estar.",
-          "ready": false
-        },
-        {
-          "slug": "tenho-doi-me",
-          "order": 2,
           "layout": "scene",
-          "level": 2,
-          "title_ar": "جعان ودواني",
-          "title_tl": "tenho fome · dói-me",
-          "legacy_ref": "TC_PT_065",
-          "prompt_guidance": "Hunger thirst cold and body pain.",
-          "ready": false
-        }
-      ]
-    },
-    {
-      "slug": "linking",
-      "order": 11,
-      "title_ar": "اربط الكلام",
-      "title_tl": "ligar as frases",
-      "clips": [
-        {
-          "slug": "e-mas-ou",
-          "order": 1,
-          "layout": "list",
           "level": 1,
-          "title_ar": "و / بس / أو",
-          "title_tl": "e · mas · ou",
-          "legacy_ref": "TC_PT_041",
-          "prompt_guidance": "Basic connectors.",
-          "ready": false
+          "title_ar": "أل التعريف والنكرة",
+          "title_tl": "o · a · um · uma",
+          "prompt_guidance": "Articles with fruit at a market stall: uma maçã · um melão · as laranjas · os tomates · uma alface · o ananás. Mix o/a/os/as and um/uma; each line names one object.",
+          "scene_plan": {
+            "objects": [
+              {
+                "id": "maca",
+                "label_en": "one red apple",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.1,
+                  "y": 0.64,
+                  "w": 0.14,
+                  "h": 0.16
+                }
+              },
+              {
+                "id": "melao",
+                "label_en": "one whole melon",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.4,
+                  "y": 0.62,
+                  "w": 0.22,
+                  "h": 0.22
+                }
+              },
+              {
+                "id": "laranjas",
+                "label_en": "pile of oranges in a crate",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.06,
+                  "y": 0.34,
+                  "w": 0.26,
+                  "h": 0.2
+                }
+              },
+              {
+                "id": "tomates",
+                "label_en": "pile of tomatoes in a crate",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.38,
+                  "y": 0.34,
+                  "w": 0.24,
+                  "h": 0.2
+                }
+              },
+              {
+                "id": "alface",
+                "label_en": "one lettuce",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.68,
+                  "y": 0.36,
+                  "w": 0.16,
+                  "h": 0.18
+                }
+              },
+              {
+                "id": "ananas",
+                "label_en": "one pineapple",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.7,
+                  "y": 0.08,
+                  "w": 0.14,
+                  "h": 0.26
+                }
+              }
+            ]
+          },
+          "image_spec": "Hand-drawn ink and soft watercolour editorial illustration, warm natural light, 4:3 landscape, everyday Lisbon setting. A tidy fruit-and-vegetable stall at a Lisbon market seen from the front: one red apple and one whole melon on the counter in front, a crate of oranges, a crate of tomatoes and one lettuce in the middle row, and one pineapple standing on the top shelf at the back right. Each listed object is large, simple, clearly separated from the others, with plain space around it. Keep the rest of the picture calm and almost empty; no other similar objects. No text, no letters, no readable signs, no logos.",
+          "ready": true
         },
         {
-          "slug": "porque-por-isso",
+          "slug": "no-na-do-da",
           "order": 2,
-          "layout": "list",
-          "level": 2,
-          "title_ar": "عشان وكده",
-          "title_tl": "porque · por isso",
-          "legacy_ref": "TC_PT_057",
-          "prompt_guidance": "Cause and result.",
-          "ready": false
-        },
-        {
-          "slug": "primeiro-depois",
-          "order": 3,
-          "layout": "list",
-          "level": 2,
-          "title_ar": "الأول وبعدين",
-          "title_tl": "primeiro · depois · no fim",
-          "legacy_ref": "TC_PT_070",
-          "prompt_guidance": "Sequence markers. Also TC_PT_099.",
-          "ready": false
-        }
-      ]
-    },
-    {
-      "slug": "polite-requests",
-      "order": 12,
-      "title_ar": "اطلب بأدب",
-      "title_tl": "pedir com educação",
-      "clips": [
-        {
-          "slug": "queria",
-          "order": 1,
-          "layout": "list",
+          "layout": "rule",
           "level": 1,
-          "title_ar": "كنت عايز",
-          "title_tl": "Queria…",
-          "legacy_ref": "TC_PT_020",
-          "prompt_guidance": "Polite Queria + noun/verb.",
-          "ready": false
-        },
-        {
-          "slug": "pode-podia",
-          "order": 2,
-          "layout": "list",
-          "level": 2,
-          "title_ar": "ممكن؟",
-          "title_tl": "Pode…? · Podia…?",
-          "legacy_ref": "TC_PT_040",
-          "prompt_guidance": "Pode, Podia, Se faz favor.",
-          "ready": false
+          "title_ar": "في الـ / من الـ",
+          "title_tl": "no · na · do · da",
+          "prompt_guidance": "em + o = no, em + a = na, de + o = do, de + a = da, in real sentences: Estou no café · Moro na Rua Augusta · Sou do Cairo · Venho da praia · Está na mesa · O livro do Omar.",
+          "rule_card": {
+            "pattern_tl": "em + o → no · de + a → da",
+            "pattern_ar": "حرف الجر بيندمج مع أل",
+            "ending_table": [
+              {
+                "label": "em",
+                "from": "em + o",
+                "to": "no"
+              },
+              {
+                "label": "em",
+                "from": "em + a",
+                "to": "na"
+              },
+              {
+                "label": "de",
+                "from": "de + o",
+                "to": "do"
+              },
+              {
+                "label": "de",
+                "from": "de + a",
+                "to": "da"
+              }
+            ]
+          },
+          "rule_kind": "pattern",
+          "rule_highlight": [
+            "no",
+            "na",
+            "nos",
+            "nas",
+            "do",
+            "da",
+            "dos",
+            "das"
+          ],
+          "ready": true
         }
       ]
     },
     {
       "slug": "possessives",
-      "order": 13,
+      "order": 11,
       "title_ar": "بتاعي وبتاعك",
       "title_tl": "meu / teu / seu",
       "clips": [
@@ -995,8 +983,8 @@
           "level": 1,
           "title_ar": "الضمائر",
           "title_tl": "eu · tu · ele",
-          "prompt_guidance": "Subject pronouns eu tu ele ela nós eles.",
-          "ready": false
+          "prompt_guidance": "Subject pronouns: eu · tu · ele · ela · você · nós · eles · elas (pt-PT: tu informal, o senhor/a senhora formal).",
+          "ready": true
         },
         {
           "slug": "o-meu",
@@ -1005,8 +993,83 @@
           "level": 1,
           "title_ar": "بتاعي",
           "title_tl": "o meu / a minha",
-          "prompt_guidance": "Possessives o meu a minha on a desk scene.",
-          "ready": false
+          "prompt_guidance": "o meu / a minha / os meus / as minhas for things on my desk: o meu telemóvel · a minha chave · os meus óculos · as minhas canetas.",
+          "scene_plan": {
+            "objects": [
+              {
+                "id": "telemovel",
+                "label_en": "smartphone",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.1,
+                  "y": 0.62,
+                  "w": 0.16,
+                  "h": 0.2
+                }
+              },
+              {
+                "id": "chave",
+                "label_en": "set of keys",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.4,
+                  "y": 0.7,
+                  "w": 0.14,
+                  "h": 0.14
+                }
+              },
+              {
+                "id": "oculos",
+                "label_en": "pair of glasses",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.3,
+                  "y": 0.42,
+                  "w": 0.18,
+                  "h": 0.12
+                }
+              },
+              {
+                "id": "canetas",
+                "label_en": "three pens in a cup",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.6,
+                  "y": 0.32,
+                  "w": 0.12,
+                  "h": 0.24
+                }
+              },
+              {
+                "id": "caderno",
+                "label_en": "closed notebook",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.08,
+                  "y": 0.36,
+                  "w": 0.18,
+                  "h": 0.16
+                }
+              },
+              {
+                "id": "caneca",
+                "label_en": "mug",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.46,
+                  "y": 0.14,
+                  "w": 0.12,
+                  "h": 0.16
+                }
+              }
+            ]
+          },
+          "pointer_from": {
+            "x": 0.84,
+            "y": 0.86
+          },
+          "image_spec": "Hand-drawn ink and soft watercolour editorial illustration, warm natural light, 4:3 landscape, everyday Lisbon setting. First-person view looking down at my own wooden desk, my right hand in the bottom-right foreground pointing: a smartphone and a set of keys near the bottom, a pair of glasses, a closed notebook and a cup with three pens in the middle, and a mug further back. Each listed object is large, simple, clearly separated from the others, with plain space around it. Keep the rest of the picture calm and almost empty; no other similar objects. No text, no letters, no readable signs, no logos.",
+          "ready": true
         },
         {
           "slug": "o-teu-seu",
@@ -1015,14 +1078,103 @@
           "level": 2,
           "title_ar": "بتاعك وبتاعه",
           "title_tl": "o teu · o seu · o nosso",
-          "prompt_guidance": "o teu o seu o nosso in sentences.",
-          "ready": false
+          "prompt_guidance": "o teu (tu) · o seu (você / o senhor) · o nosso: É o teu? · É o seu casaco? · A nossa casa · O vosso? (rare, skip).",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "family",
+      "order": 12,
+      "title_ar": "العيلة",
+      "title_tl": "a família",
+      "clips": [
+        {
+          "slug": "familia",
+          "order": 1,
+          "layout": "scene",
+          "level": 1,
+          "title_ar": "العيلة",
+          "title_tl": "a família",
+          "prompt_guidance": "Family words, each line names one person in the picture: o avô · a avó · o pai · a mãe · o filho · a filha · o irmão · a irmã. Short lines like «Esta é a minha mãe».",
+          "scene_plan": {
+            "objects": [
+              {
+                "id": "avo_m",
+                "label_en": "grandfather",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.02,
+                  "y": 0.24,
+                  "w": 0.16,
+                  "h": 0.56
+                }
+              },
+              {
+                "id": "avo_f",
+                "label_en": "grandmother",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.18,
+                  "y": 0.26,
+                  "w": 0.16,
+                  "h": 0.54
+                }
+              },
+              {
+                "id": "pai",
+                "label_en": "father",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.34,
+                  "y": 0.18,
+                  "w": 0.16,
+                  "h": 0.62
+                }
+              },
+              {
+                "id": "mae",
+                "label_en": "mother",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.5,
+                  "y": 0.2,
+                  "w": 0.16,
+                  "h": 0.6
+                }
+              },
+              {
+                "id": "filho",
+                "label_en": "teenage son",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.66,
+                  "y": 0.28,
+                  "w": 0.14,
+                  "h": 0.52
+                }
+              },
+              {
+                "id": "filha",
+                "label_en": "young daughter",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.82,
+                  "y": 0.44,
+                  "w": 0.14,
+                  "h": 0.4
+                }
+              }
+            ]
+          },
+          "image_spec": "Hand-drawn ink and soft watercolour editorial illustration, warm natural light, 4:3 landscape, everyday Lisbon setting. A family of six standing side by side in a row for a photo in a sunny Lisbon living room, clearly spaced apart and all facing the viewer, from left to right: grandfather, grandmother, father, mother, teenage son, young daughter. Each listed object is large, simple, clearly separated from the others, with plain space around it. Keep the rest of the picture calm and almost empty; no other similar objects. No text, no letters, no readable signs, no logos.",
+          "ready": true
         }
       ]
     },
     {
       "slug": "adjectives-colours",
-      "order": 14,
+      "order": 13,
       "title_ar": "الصفات والألوان",
       "title_tl": "adjetivos e cores",
       "clips": [
@@ -1034,8 +1186,79 @@
           "title_ar": "الألوان",
           "title_tl": "cores",
           "legacy_ref": "TC_PT_010",
-          "prompt_guidance": "Colours with gender agreement.",
-          "ready": false
+          "prompt_guidance": "Colours with agreement: um carro vermelho · uma casa amarela · um guarda-chuva verde · uma mala preta · um gato branco · uma bicicleta azul.",
+          "scene_plan": {
+            "objects": [
+              {
+                "id": "carro",
+                "label_en": "red car",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.04,
+                  "y": 0.56,
+                  "w": 0.34,
+                  "h": 0.28
+                }
+              },
+              {
+                "id": "bicicleta",
+                "label_en": "blue bicycle",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.64,
+                  "y": 0.6,
+                  "w": 0.28,
+                  "h": 0.26
+                }
+              },
+              {
+                "id": "casa",
+                "label_en": "yellow house",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.3,
+                  "y": 0.06,
+                  "w": 0.3,
+                  "h": 0.4
+                }
+              },
+              {
+                "id": "guarda-chuva",
+                "label_en": "green open umbrella held by a passer-by",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.06,
+                  "y": 0.2,
+                  "w": 0.18,
+                  "h": 0.24
+                }
+              },
+              {
+                "id": "mala",
+                "label_en": "black handbag on a bench",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.7,
+                  "y": 0.38,
+                  "w": 0.12,
+                  "h": 0.12
+                }
+              },
+              {
+                "id": "gato",
+                "label_en": "white cat on the doorstep",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.42,
+                  "y": 0.46,
+                  "w": 0.12,
+                  "h": 0.12
+                }
+              }
+            ]
+          },
+          "image_spec": "Hand-drawn ink and soft watercolour editorial illustration, warm natural light, 4:3 landscape, everyday Lisbon setting. A sunny Lisbon street with strong clear colours: a yellow house at the back, a white cat on its doorstep, a passer-by on the left holding an open green umbrella, a black handbag on a bench on the right, a red car parked in the bottom left, and a blue bicycle leaning in the bottom right. Each listed object is large, simple, clearly separated from the others, with plain space around it. Keep the rest of the picture calm and almost empty; no other similar objects. No text, no letters, no readable signs, no logos.",
+          "ready": true
         },
         {
           "slug": "grande-pequeno",
@@ -1045,8 +1268,8 @@
           "title_ar": "كبير وصغير",
           "title_tl": "grande · pequeno",
           "legacy_ref": "TC_PT_018",
-          "prompt_guidance": "Common opposite adjectives.",
-          "ready": false
+          "prompt_guidance": "Opposite adjectives: grande / pequeno · caro / barato · novo / velho · quente / frio · bom / mau · cheio / vazio.",
+          "ready": true
         },
         {
           "slug": "agreement",
@@ -1056,8 +1279,7 @@
           "title_ar": "المطابقة",
           "title_tl": "O carro é… / A casa é…",
           "legacy_ref": "TC_PT_077",
-          "prompt_guidance": "Adjective agreement in sentences.",
-          "ready": false,
+          "prompt_guidance": "Adjective agreement in sentences: O carro é novo / A casa é nova · O café está frio / A sopa está fria.",
           "rule_card": {
             "pattern_tl": "adjetivo: o / a → masculino / feminino",
             "pattern_ar": "الصفة بتتبع النوع",
@@ -1073,13 +1295,369 @@
                 "to": "vermelha"
               }
             ]
-          }
+          },
+          "rule_kind": "pattern",
+          "rule_highlight": [
+            "o",
+            "a",
+            "os",
+            "as",
+            "novo",
+            "nova",
+            "frio",
+            "fria"
+          ],
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "where-is-it",
+      "order": 14,
+      "title_ar": "فين الحاجة",
+      "title_tl": "onde está",
+      "clips": [
+        {
+          "slug": "a-room",
+          "order": 1,
+          "layout": "scene",
+          "level": 1,
+          "title_ar": "الأوضة",
+          "title_tl": "o quarto",
+          "legacy_ref": "TC_PT_021",
+          "prompt_guidance": "Things in a bedroom with o/a: a cama · o armário · a janela · a cadeira · o tapete · o candeeiro.",
+          "scene_plan": {
+            "objects": [
+              {
+                "id": "cama",
+                "label_en": "bed with a blanket",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.3,
+                  "y": 0.4,
+                  "w": 0.36,
+                  "h": 0.26
+                }
+              },
+              {
+                "id": "armario",
+                "label_en": "tall wooden wardrobe",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.04,
+                  "y": 0.08,
+                  "w": 0.2,
+                  "h": 0.56
+                }
+              },
+              {
+                "id": "janela",
+                "label_en": "window with curtains",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.58,
+                  "y": 0.06,
+                  "w": 0.22,
+                  "h": 0.3
+                }
+              },
+              {
+                "id": "cadeira",
+                "label_en": "wooden chair",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.74,
+                  "y": 0.58,
+                  "w": 0.16,
+                  "h": 0.3
+                }
+              },
+              {
+                "id": "tapete",
+                "label_en": "round rug on the floor",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.32,
+                  "y": 0.74,
+                  "w": 0.3,
+                  "h": 0.18
+                }
+              },
+              {
+                "id": "candeeiro",
+                "label_en": "lamp on a bedside table",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.7,
+                  "y": 0.3,
+                  "w": 0.12,
+                  "h": 0.24
+                }
+              }
+            ]
+          },
+          "image_spec": "Hand-drawn ink and soft watercolour editorial illustration, warm natural light, 4:3 landscape, everyday Lisbon setting. A simple tidy bedroom in a Lisbon flat seen from the doorway: a wardrobe on the far left wall, a window with curtains on the back wall, a bed in the middle, a small bedside table with a lamp to the right of the bed, a round rug on the floor in front of the bed, and a wooden chair in the bottom-right foreground. Each listed object is large, simple, clearly separated from the others, with plain space around it. Keep the rest of the picture calm and almost empty; no other similar objects. No text, no letters, no readable signs, no logos.",
+          "ready": true
+        },
+        {
+          "slug": "table-shelf",
+          "order": 2,
+          "layout": "scene",
+          "level": 1,
+          "title_ar": "الترابيزة والرف",
+          "title_tl": "a mesa e a prateleira",
+          "legacy_ref": "TC_PT_022",
+          "prompt_guidance": "Where things are: em cima da mesa · debaixo da mesa · ao lado do livro · na prateleira · dentro da caixa.",
+          "scene_plan": {
+            "objects": [
+              {
+                "id": "mesa",
+                "label_en": "wooden table",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.24,
+                  "y": 0.42,
+                  "w": 0.44,
+                  "h": 0.3
+                }
+              },
+              {
+                "id": "livro",
+                "label_en": "book on top of the table",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.3,
+                  "y": 0.36,
+                  "w": 0.14,
+                  "h": 0.1
+                }
+              },
+              {
+                "id": "caneca",
+                "label_en": "mug next to the book",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.5,
+                  "y": 0.34,
+                  "w": 0.1,
+                  "h": 0.12
+                }
+              },
+              {
+                "id": "gato",
+                "label_en": "cat sitting under the table",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.36,
+                  "y": 0.66,
+                  "w": 0.18,
+                  "h": 0.2
+                }
+              },
+              {
+                "id": "prateleira",
+                "label_en": "wall shelf with a plant",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.58,
+                  "y": 0.06,
+                  "w": 0.3,
+                  "h": 0.18
+                }
+              },
+              {
+                "id": "mochila",
+                "label_en": "backpack on the floor beside the table",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.74,
+                  "y": 0.6,
+                  "w": 0.16,
+                  "h": 0.26
+                }
+              }
+            ]
+          },
+          "image_spec": "Hand-drawn ink and soft watercolour editorial illustration, warm natural light, 4:3 landscape, everyday Lisbon setting. A plain living-room corner: a wooden table in the middle with one book and one mug standing next to it on top, a cat sitting under the table, a backpack on the floor to the right of the table, and a single wall shelf above on the right holding one potted plant. Each listed object is large, simple, clearly separated from the others, with plain space around it. Keep the rest of the picture calm and almost empty; no other similar objects. No text, no letters, no readable signs, no logos.",
+          "ready": true
+        },
+        {
+          "slug": "on-the-street",
+          "order": 3,
+          "layout": "scene",
+          "level": 2,
+          "title_ar": "في الشارع",
+          "title_tl": "na rua",
+          "legacy_ref": "TC_PT_053",
+          "prompt_guidance": "Places on a street with location words: A farmácia é ali · A paragem é em frente · O café fica ao lado · A passadeira é aqui.",
+          "scene_plan": {
+            "objects": [
+              {
+                "id": "farmacia",
+                "label_en": "small pharmacy shopfront with a green cross",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.04,
+                  "y": 0.12,
+                  "w": 0.26,
+                  "h": 0.36
+                }
+              },
+              {
+                "id": "cafe",
+                "label_en": "café with two outdoor tables",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.66,
+                  "y": 0.14,
+                  "w": 0.3,
+                  "h": 0.34
+                }
+              },
+              {
+                "id": "paragem",
+                "label_en": "bus stop shelter",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.62,
+                  "y": 0.44,
+                  "w": 0.2,
+                  "h": 0.26
+                }
+              },
+              {
+                "id": "semaforo",
+                "label_en": "pedestrian traffic light",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.3,
+                  "y": 0.36,
+                  "w": 0.08,
+                  "h": 0.3
+                }
+              },
+              {
+                "id": "passadeira",
+                "label_en": "zebra crossing",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.3,
+                  "y": 0.74,
+                  "w": 0.4,
+                  "h": 0.16
+                }
+              }
+            ]
+          },
+          "image_spec": "Hand-drawn ink and soft watercolour editorial illustration, warm natural light, 4:3 landscape, everyday Lisbon setting. A quiet Lisbon street seen from the pavement: a small pharmacy with a green cross on the far left, a café with two outdoor tables on the far right, a bus stop shelter in the middle right, a pedestrian traffic light in the middle left, and a zebra crossing in the foreground. Each listed object is large, simple, clearly separated from the others, with plain space around it. Keep the rest of the picture calm and almost empty; no other similar objects. No text, no letters, no readable signs, no logos.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "how-you-feel",
+      "order": 15,
+      "title_ar": "حالك وإحساسك",
+      "title_tl": "como estás",
+      "clips": [
+        {
+          "slug": "estou",
+          "order": 1,
+          "layout": "pairs",
+          "level": 1,
+          "title_ar": "أنا…",
+          "title_tl": "estou cansado / feliz",
+          "legacy_ref": "TC_PT_023",
+          "prompt_guidance": "States with estar: estou cansado · estou feliz · estou ocupado · estou doente · estou bem · estou nervoso.",
+          "ready": true
+        },
+        {
+          "slug": "tenho-doi-me",
+          "order": 2,
+          "layout": "scene",
+          "level": 2,
+          "title_ar": "جعان ودواني",
+          "title_tl": "tenho fome · dói-me",
+          "legacy_ref": "TC_PT_065",
+          "prompt_guidance": "Hunger, thirst and pain: Tenho fome · Tenho sede · Tenho frio · Dói-me a cabeça · Dói-me a barriga · Dói-me a perna.",
+          "scene_plan": {
+            "objects": [
+              {
+                "id": "cabeca",
+                "label_en": "his head, hand on forehead",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.4,
+                  "y": 0.04,
+                  "w": 0.2,
+                  "h": 0.2
+                }
+              },
+              {
+                "id": "garganta",
+                "label_en": "his throat",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.44,
+                  "y": 0.24,
+                  "w": 0.12,
+                  "h": 0.08
+                }
+              },
+              {
+                "id": "barriga",
+                "label_en": "his stomach, other hand on it",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.4,
+                  "y": 0.4,
+                  "w": 0.2,
+                  "h": 0.16
+                }
+              },
+              {
+                "id": "braco",
+                "label_en": "his left arm",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.62,
+                  "y": 0.3,
+                  "w": 0.12,
+                  "h": 0.26
+                }
+              },
+              {
+                "id": "perna",
+                "label_en": "his leg",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.4,
+                  "y": 0.62,
+                  "w": 0.12,
+                  "h": 0.26
+                }
+              },
+              {
+                "id": "pe",
+                "label_en": "his foot",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.36,
+                  "y": 0.88,
+                  "w": 0.14,
+                  "h": 0.1
+                }
+              }
+            ]
+          },
+          "image_spec": "Hand-drawn ink and soft watercolour editorial illustration, warm natural light, 4:3 landscape, everyday Lisbon setting. One adult man standing facing the viewer in a plain health-centre waiting room, full body visible from head to feet, one hand on his forehead and the other on his stomach, tired expression; plain wall behind him. Each listed object is large, simple, clearly separated from the others, with plain space around it. Keep the rest of the picture calm and almost empty; no other similar objects. No text, no letters, no readable signs, no logos.",
+          "ready": true
         }
       ]
     },
     {
       "slug": "negation",
-      "order": 15,
+      "order": 16,
       "title_ar": "النفي",
       "title_tl": "a negação",
       "clips": [
@@ -1090,8 +1668,8 @@
           "level": 1,
           "title_ar": "مش قبل الفعل",
           "title_tl": "Não sei",
-          "prompt_guidance": "não before the verb: Não sei / Não percebo / Não tenho.",
-          "ready": false
+          "prompt_guidance": "não before the verb: Não sei · Não percebo · Não tenho · Não posso · Não quero · Não gosto.",
+          "ready": true
         },
         {
           "slug": "nunca-nada",
@@ -1100,14 +1678,107 @@
           "level": 2,
           "title_ar": "أبداً ومفيش",
           "title_tl": "nunca · nada · ninguém",
-          "prompt_guidance": "nunca nada ninguém and double negative Não tenho nada.",
-          "ready": false
+          "prompt_guidance": "Negative words with double negative: Não tenho nada · Nunca vou · Não vem ninguém · Também não · Ainda não · Nada mal.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "linking",
+      "order": 17,
+      "title_ar": "اربط الكلام",
+      "title_tl": "ligar as frases",
+      "clips": [
+        {
+          "slug": "e-mas-ou",
+          "order": 1,
+          "layout": "list",
+          "level": 1,
+          "title_ar": "و / بس / أو",
+          "title_tl": "e · mas · ou",
+          "legacy_ref": "TC_PT_041",
+          "prompt_guidance": "e / mas / ou in short sentences: café e pão · Gosto, mas é caro · Chá ou café? · Quero ir, mas não posso.",
+          "ready": true
+        },
+        {
+          "slug": "porque-por-isso",
+          "order": 2,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "عشان وكده",
+          "title_tl": "porque · por isso",
+          "legacy_ref": "TC_PT_057",
+          "prompt_guidance": "porque / por isso: Não vou porque estou cansado · Está a chover, por isso fico em casa · Porquê? Porque…",
+          "ready": true
+        },
+        {
+          "slug": "primeiro-depois",
+          "order": 3,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "الأول وبعدين",
+          "title_tl": "primeiro · depois · no fim",
+          "legacy_ref": "TC_PT_070",
+          "prompt_guidance": "Sequencing: primeiro · depois · a seguir · no fim · antes de · depois de.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "your-day",
+      "order": 18,
+      "title_ar": "يومك",
+      "title_tl": "o teu dia",
+      "clips": [
+        {
+          "slug": "de-manha",
+          "order": 1,
+          "layout": "list",
+          "level": 1,
+          "title_ar": "الصبح",
+          "title_tl": "de manhã",
+          "legacy_ref": "TC_PT_024",
+          "prompt_guidance": "Morning routine, present eu: Acordo às sete · Tomo banho · Tomo o pequeno-almoço · Saio de casa · Apanho o metro.",
+          "ready": true
+        },
+        {
+          "slug": "em-casa-noite",
+          "order": 2,
+          "layout": "list",
+          "level": 1,
+          "title_ar": "بالليل في البيت",
+          "title_tl": "em casa à noite",
+          "legacy_ref": "TC_PT_024",
+          "prompt_guidance": "Evening at home: Janto às oito · Vejo televisão · Lavo a loiça · Leio um livro · Deito-me cedo.",
+          "ready": true
+        },
+        {
+          "slug": "no-trabalho",
+          "order": 3,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "في الشغل",
+          "title_tl": "no trabalho",
+          "legacy_ref": "TC_PT_027",
+          "prompt_guidance": "At work: Chego às nove · Trabalho no escritório · Tenho uma reunião · Almoço com colegas · Saio às seis.",
+          "ready": true
+        },
+        {
+          "slug": "cozinhar",
+          "order": 4,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "الطبخ",
+          "title_tl": "cozinhar",
+          "legacy_ref": "TC_PT_027",
+          "prompt_guidance": "Cooking sequence: Vou para a cozinha · Lavo as mãos · Corto tomate e cebola · Ponho azeite · Cozo o arroz · Ponho a mesa.",
+          "ready": true
         }
       ]
     },
     {
       "slug": "conjugation-induction",
-      "order": 16,
+      "order": 19,
       "title_ar": "التصريف بالاستنتاج",
       "title_tl": "conjugação por indução",
       "clips": [
@@ -1119,7 +1790,6 @@
           "title_ar": "eu ‎-ar → ‎-o",
           "title_tl": "eu: -ar → -o",
           "prompt_guidance": "Present eu regular -ar → -o. Regular verbs only.",
-          "ready": false,
           "rule_card": {
             "pattern_tl": "-ar → eu -o",
             "ending_table": [
@@ -1129,7 +1799,11 @@
                 "to": "-o"
               }
             ]
-          }
+          },
+          "rule_kind": "verb_ending",
+          "rule_tense": "pres",
+          "rule_person": "eu",
+          "ready": true
         },
         {
           "slug": "pres-ele-ar",
@@ -1139,7 +1813,6 @@
           "title_ar": "ele ‎-ar → ‎-a",
           "title_tl": "ele/ela/você: -ar → -a",
           "prompt_guidance": "Present ele regular -ar → -a.",
-          "ready": false,
           "rule_card": {
             "pattern_tl": "-ar → ele -a",
             "ending_table": [
@@ -1149,7 +1822,11 @@
                 "to": "-a"
               }
             ]
-          }
+          },
+          "rule_kind": "verb_ending",
+          "rule_tense": "pres",
+          "rule_person": "ele",
+          "ready": true
         },
         {
           "slug": "pres-er-ir",
@@ -1159,7 +1836,6 @@
           "title_ar": "eu/ele ‎-er / ‎-ir",
           "title_tl": "como / come · parto / parte",
           "prompt_guidance": "Present eu and ele for regular -er and -ir.",
-          "ready": false,
           "rule_card": {
             "pattern_tl": "-er/-ir → eu -o · ele -e",
             "ending_table": [
@@ -1174,7 +1850,14 @@
                 "to": "-e"
               }
             ]
-          }
+          },
+          "rule_kind": "verb_ending",
+          "rule_tense": "pres",
+          "rule_person": [
+            "eu",
+            "ele"
+          ],
+          "ready": true
         },
         {
           "slug": "pres-nos",
@@ -1184,7 +1867,6 @@
           "title_ar": "nós",
           "title_tl": "nós: -amos / -emos / -imos",
           "prompt_guidance": "Present nós endings.",
-          "ready": false,
           "rule_card": {
             "pattern_tl": "nós -amos / -emos / -imos",
             "ending_table": [
@@ -1204,7 +1886,11 @@
                 "to": "-imos"
               }
             ]
-          }
+          },
+          "rule_kind": "verb_ending",
+          "rule_tense": "pres",
+          "rule_person": "nos",
+          "ready": true
         },
         {
           "slug": "pres-eles",
@@ -1214,7 +1900,6 @@
           "title_ar": "eles",
           "title_tl": "eles: -am / -em",
           "prompt_guidance": "Present eles endings.",
-          "ready": false,
           "rule_card": {
             "pattern_tl": "eles -am / -em",
             "ending_table": [
@@ -1229,17 +1914,52 @@
                 "to": "-em"
               }
             ]
-          }
+          },
+          "rule_kind": "verb_ending",
+          "rule_tense": "pres",
+          "rule_person": "eles",
+          "ready": true
+        },
+        {
+          "slug": "estar-a",
+          "order": 6,
+          "layout": "rule",
+          "level": 2,
+          "title_ar": "بعمل دلوقتي",
+          "title_tl": "estou a + infinitivo",
+          "prompt_guidance": "estou a + infinitive for ongoing action.",
+          "rule_card": {
+            "pattern_tl": "estou a + infinitivo",
+            "ending_table": []
+          },
+          "rule_kind": "verb_ending",
+          "rule_tense": "inf",
+          "ready": true
+        },
+        {
+          "slug": "future-ir",
+          "order": 7,
+          "layout": "rule",
+          "level": 2,
+          "title_ar": "هعمل",
+          "title_tl": "vou + infinitivo",
+          "prompt_guidance": "Near future vou/vais/vai + infinitive with different regular verbs.",
+          "rule_card": {
+            "pattern_tl": "vou / vais / vai + infinitivo",
+            "ending_table": []
+          },
+          "rule_kind": "verb_ending",
+          "rule_tense": "inf",
+          "ready": true
         },
         {
           "slug": "past-eu-ar",
-          "order": 6,
+          "order": 8,
           "layout": "rule",
-          "level": 3,
+          "level": 2,
           "title_ar": "الماضي eu ‎-ar",
           "title_tl": "eu: -ar → -ei",
           "prompt_guidance": "Pretériito eu regular -ar → -ei.",
-          "ready": false,
           "rule_card": {
             "pattern_tl": "pretérito eu -ar → -ei",
             "ending_table": [
@@ -1249,17 +1969,20 @@
                 "to": "-ei"
               }
             ]
-          }
+          },
+          "rule_kind": "verb_ending",
+          "rule_tense": "pret",
+          "rule_person": "eu",
+          "ready": true
         },
         {
           "slug": "past-eu-er-ir",
-          "order": 7,
+          "order": 9,
           "layout": "rule",
-          "level": 3,
+          "level": 2,
           "title_ar": "الماضي eu ‎-er/‎-ir",
           "title_tl": "eu: -er/-ir → -i",
           "prompt_guidance": "Pretérito eu regular -er/-ir → -i.",
-          "ready": false,
           "rule_card": {
             "pattern_tl": "pretérito eu -er/-ir → -i",
             "ending_table": [
@@ -1269,17 +1992,20 @@
                 "to": "-i"
               }
             ]
-          }
+          },
+          "rule_kind": "verb_ending",
+          "rule_tense": "pret",
+          "rule_person": "eu",
+          "ready": true
         },
         {
           "slug": "past-ele",
-          "order": 8,
+          "order": 10,
           "layout": "rule",
-          "level": 3,
+          "level": 2,
           "title_ar": "الماضي ele",
           "title_tl": "ele: -ou / -eu / -iu",
           "prompt_guidance": "Pretérito ele endings.",
-          "ready": false,
           "rule_card": {
             "pattern_tl": "pretérito ele -ou / -eu / -iu",
             "ending_table": [
@@ -1299,35 +2025,1597 @@
                 "to": "-iu"
               }
             ]
-          }
+          },
+          "rule_kind": "verb_ending",
+          "rule_tense": "pret",
+          "rule_person": "ele",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "spelling-phone",
+      "order": 20,
+      "title_ar": "التهجئة والتليفون",
+      "title_tl": "Como se escreve?",
+      "clips": [
+        {
+          "slug": "soletrar",
+          "order": 1,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "بتتكتب إزاي؟",
+          "title_tl": "Como se escreve?",
+          "prompt_guidance": "Spelling: Como se escreve? · Pode soletrar? · O meu nome escreve-se O-M-A-R · com dois «s» · com «h» no início · Com acento?",
+          "ready": true
         },
         {
-          "slug": "future-ir",
+          "slug": "numero-email",
+          "order": 2,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "رقمي…",
+          "title_tl": "O meu número é…",
+          "prompt_guidance": "Giving a phone number and e-mail: O meu número é… · nove, um, dois… · O meu e-mail é… · arroba · ponto · tudo junto · em minúsculas.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "ser-estar",
+      "order": 21,
+      "title_ar": "ser ولا estar؟",
+      "title_tl": "ser ou estar?",
+      "clips": [
+        {
+          "slug": "ser-quem",
+          "order": 1,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "ser: مين وإيه",
+          "title_tl": "ser",
+          "prompt_guidance": "ser = who / what / from where / permanent: Sou egípcio · Ela é médica · É de Lisboa · O carro é novo · É muito simpático · São irmãos.",
+          "note": "ser للي الحاجة هي هي: الأصل والشغلانة والصفة الثابتة",
+          "ready": true
+        },
+        {
+          "slug": "estar-agora",
+          "order": 2,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "estar: حالك ومكانك",
+          "title_tl": "estar",
+          "prompt_guidance": "estar = how / where right now: Estou cansado · Estou em casa · O café está frio · Está a chover · Está fechado · Estamos atrasados.",
+          "note": "estar للي بيتغيّر: الحالة دلوقتي والمكان دلوقتي",
+          "ready": true
+        },
+        {
+          "slug": "e-ou-esta",
+          "order": 3,
+          "layout": "pairs",
+          "level": 2,
+          "title_ar": "é ولا está؟",
+          "title_tl": "é ou está?",
+          "prompt_guidance": "Contrast pairs: É bonito / Está bonito · É frio / Está frio · É longe · Está bem · A farmácia é ali (fixed places use ser) · Ele está ali.",
+          "note": "الأماكن الثابتة بـ ser: A farmácia é ali · الناس والحاجات اللي بتتحرك بـ estar",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "ha-tenho",
+      "order": 22,
+      "title_ar": "فيه / عندي",
+      "title_tl": "há · tenho",
+      "clips": [
+        {
+          "slug": "ha-tenho",
+          "order": 1,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "فيه وعندي",
+          "title_tl": "há · tenho",
+          "prompt_guidance": "há = there is, tenho = I have: Há uma farmácia aqui perto? · Não há pão · Há lugar? · Tenho tempo · Não tenho troco · Tem multibanco?",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "daily-verbs",
+      "order": 23,
+      "title_ar": "الأفعال اليومية",
+      "title_tl": "verbos do dia a dia",
+      "clips": [
+        {
+          "slug": "ser",
+          "order": 1,
+          "layout": "pairs",
+          "level": 2,
+          "title_ar": "ser",
+          "title_tl": "ser",
+          "legacy_ref": "TC_PT_003",
+          "prompt_guidance": "Everyday uses of ser. Forms from verified table only.",
+          "ready": true
+        },
+        {
+          "slug": "estar",
+          "order": 2,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "estar",
+          "title_tl": "estar",
+          "legacy_ref": "TC_PT_004",
+          "prompt_guidance": "Everyday uses of estar. Forms from verified table only.",
+          "ready": true
+        },
+        {
+          "slug": "ter",
+          "order": 3,
+          "layout": "pairs",
+          "level": 2,
+          "title_ar": "ter",
+          "title_tl": "ter",
+          "legacy_ref": "TC_PT_011",
+          "prompt_guidance": "Everyday uses of ter. Forms from verified table only.",
+          "ready": true
+        },
+        {
+          "slug": "ir",
+          "order": 4,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "ir",
+          "title_tl": "ir",
+          "legacy_ref": "TC_PT_017",
+          "prompt_guidance": "Everyday uses of ir. Forms from verified table only.",
+          "ready": true
+        },
+        {
+          "slug": "fazer",
+          "order": 5,
+          "layout": "pairs",
+          "level": 2,
+          "title_ar": "fazer",
+          "title_tl": "fazer",
+          "legacy_ref": "TC_PT_030",
+          "prompt_guidance": "Everyday uses of fazer. Forms from verified table only.",
+          "ready": true
+        },
+        {
+          "slug": "querer",
+          "order": 6,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "querer",
+          "title_tl": "querer",
+          "legacy_ref": "TC_PT_020",
+          "prompt_guidance": "Everyday uses of querer and queria. Forms from verified table only.",
+          "ready": true
+        },
+        {
+          "slug": "poder",
+          "order": 7,
+          "layout": "pairs",
+          "level": 2,
+          "title_ar": "poder",
+          "title_tl": "poder",
+          "legacy_ref": "TC_PT_034",
+          "prompt_guidance": "Everyday uses of poder. Forms from verified table only.",
+          "ready": true
+        },
+        {
+          "slug": "precisar-de",
+          "order": 8,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "precisar de",
+          "title_tl": "precisar de",
+          "legacy_ref": "TC_PT_035",
+          "prompt_guidance": "Everyday uses of precisar de. Forms from verified table only.",
+          "ready": true
+        },
+        {
+          "slug": "gostar-de",
           "order": 9,
-          "layout": "rule",
+          "layout": "pairs",
           "level": 2,
-          "title_ar": "هعمل",
-          "title_tl": "vou + infinitivo",
-          "prompt_guidance": "Near future vou/vais/vai + infinitive with different regular verbs.",
-          "ready": false,
-          "rule_card": {
-            "pattern_tl": "vou / vais / vai + infinitivo",
-            "ending_table": []
-          }
+          "title_ar": "gostar de",
+          "title_tl": "gostar de",
+          "prompt_guidance": "Everyday uses of gostar de. Forms from verified table only.",
+          "ready": true
         },
         {
-          "slug": "estar-a",
+          "slug": "saber",
           "order": 10,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "saber",
+          "title_tl": "saber",
+          "prompt_guidance": "Everyday uses of saber. Forms from verified table only.",
+          "ready": true
+        },
+        {
+          "slug": "ver",
+          "order": 11,
+          "layout": "pairs",
+          "level": 2,
+          "title_ar": "ver",
+          "title_tl": "ver",
+          "prompt_guidance": "Everyday uses of ver. Forms from verified table only.",
+          "ready": true
+        },
+        {
+          "slug": "dar",
+          "order": 12,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "dar",
+          "title_tl": "dar",
+          "prompt_guidance": "Everyday uses of dar. Forms from verified table only.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "likes",
+      "order": 24,
+      "title_ar": "بحب ومبحبش",
+      "title_tl": "gosto · prefiro",
+      "clips": [
+        {
+          "slug": "gosto",
+          "order": 1,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "بحب…",
+          "title_tl": "Gosto de…",
+          "prompt_guidance": "Likes and dislikes: Gosto de café · Não gosto de chuva · Adoro Lisboa · Detesto esperar · Gostas de futebol? · Gosto muito.",
+          "ready": true
+        },
+        {
+          "slug": "prefiro",
+          "order": 2,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "بفضّل…",
+          "title_tl": "Prefiro…",
+          "prompt_guidance": "Preferences: Prefiro chá · Prefiro chá a café · Tanto faz · Para mim, um café · Qual preferes? · Prefiro ficar em casa.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "prepositions",
+      "order": 25,
+      "title_ar": "حروف الجر",
+      "title_tl": "em · de · com · para",
+      "clips": [
+        {
+          "slug": "em-de-com",
+          "order": 1,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "حروف الجر",
+          "title_tl": "em · de · com · para",
+          "prompt_guidance": "Basic prepositions in chunks: em casa · de comboio · de metro · com leite · sem açúcar · para mim · para Lisboa.",
+          "ready": true
+        },
+        {
+          "slug": "ao-a",
+          "order": 2,
           "layout": "rule",
           "level": 2,
-          "title_ar": "بعمل دلوقتي",
-          "title_tl": "estou a + infinitivo",
-          "prompt_guidance": "estou a + infinitive for ongoing action.",
-          "ready": false,
+          "title_ar": "لـ الـ",
+          "title_tl": "ao · à · às",
+          "prompt_guidance": "a + o = ao, a + a = à, a + as = às: Vou ao médico · Vou à praia · Vou ao supermercado · Chego às três · Vou à farmácia · Às segundas.",
           "rule_card": {
-            "pattern_tl": "estou a + infinitivo",
-            "ending_table": []
-          }
+            "pattern_tl": "a + o → ao · a + a → à",
+            "pattern_ar": "a بتندمج مع أل",
+            "ending_table": [
+              {
+                "label": "a",
+                "from": "a + o",
+                "to": "ao"
+              },
+              {
+                "label": "a",
+                "from": "a + a",
+                "to": "à"
+              },
+              {
+                "label": "a",
+                "from": "a + as",
+                "to": "às"
+              }
+            ]
+          },
+          "rule_kind": "pattern",
+          "rule_highlight": [
+            "ao",
+            "à",
+            "aos",
+            "às"
+          ],
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "directions",
+      "order": 26,
+      "title_ar": "الاتجاهات",
+      "title_tl": "à direita · à esquerda",
+      "clips": [
+        {
+          "slug": "vire-siga",
+          "order": 1,
+          "layout": "scene",
+          "level": 2,
+          "title_ar": "لف وامشي",
+          "title_tl": "vire · siga",
+          "prompt_guidance": "Directions on a street junction: Vire à direita · Vire à esquerda · Siga em frente · Na esquina · Ao fundo da rua · Atravesse a rua.",
+          "scene_plan": {
+            "objects": [
+              {
+                "id": "frente",
+                "label_en": "the road going straight ahead",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.42,
+                  "y": 0.08,
+                  "w": 0.16,
+                  "h": 0.3
+                }
+              },
+              {
+                "id": "esquerda",
+                "label_en": "the side street turning left",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.04,
+                  "y": 0.34,
+                  "w": 0.24,
+                  "h": 0.22
+                }
+              },
+              {
+                "id": "direita",
+                "label_en": "the side street turning right",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.72,
+                  "y": 0.34,
+                  "w": 0.24,
+                  "h": 0.22
+                }
+              },
+              {
+                "id": "esquina",
+                "label_en": "the corner building on the right",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.72,
+                  "y": 0.56,
+                  "w": 0.24,
+                  "h": 0.34
+                }
+              },
+              {
+                "id": "fundo",
+                "label_en": "the end of the street with a small square",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.38,
+                  "y": 0.02,
+                  "w": 0.24,
+                  "h": 0.12
+                }
+              },
+              {
+                "id": "passadeira",
+                "label_en": "zebra crossing in front",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.3,
+                  "y": 0.76,
+                  "w": 0.4,
+                  "h": 0.16
+                }
+              }
+            ]
+          },
+          "image_spec": "Hand-drawn ink and soft watercolour editorial illustration, warm natural light, 4:3 landscape, everyday Lisbon setting. First-person view of a pedestrian standing at a Lisbon crossroads: a street going straight ahead to a small square at the far end, a side street turning left, a side street turning right, a corner building on the right in the foreground, and a zebra crossing right in front. Each listed object is large, simple, clearly separated from the others, with plain space around it. Keep the rest of the picture calm and almost empty; no other similar objects. No text, no letters, no readable signs, no logos.",
+          "ready": true
+        },
+        {
+          "slug": "fica-perto",
+          "order": 2,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "قريب؟",
+          "title_tl": "Fica perto?",
+          "prompt_guidance": "Asking how far and understanding the answer: Fica perto? · É longe? · É a segunda rua à direita · A dez minutos a pé · Do outro lado da rua · Ao lado do banco.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "weather",
+      "order": 27,
+      "title_ar": "الجو",
+      "title_tl": "o tempo",
+      "clips": [
+        {
+          "slug": "o-tempo",
+          "order": 1,
+          "layout": "pairs",
+          "level": 2,
+          "title_ar": "الجو",
+          "title_tl": "o tempo",
+          "prompt_guidance": "Weather with estar (pt-PT): Está calor · Está frio · Está a chover · Está sol · Está vento · Que calor! · Vai chover amanhã.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "invitations",
+      "order": 28,
+      "title_ar": "الدعوات",
+      "title_tl": "Queres vir?",
+      "clips": [
+        {
+          "slug": "queres-vir",
+          "order": 1,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "تيجي؟",
+          "title_tl": "Queres vir?",
+          "prompt_guidance": "Inviting and accepting: Queres vir? · Vamos tomar um café? · Queres jantar connosco? · Sim, claro! · Boa ideia! · Combinado!",
+          "ready": true
+        },
+        {
+          "slug": "hoje-nao-da",
+          "order": 2,
+          "layout": "list",
+          "level": 2,
+          "title_ar": "النهارده مش هينفع",
+          "title_tl": "Hoje não dá",
+          "prompt_guidance": "Declining and arranging: Hoje não dá · Desculpa, não posso · Fica para a próxima · Que tal sábado? · Pode ser às oito? · Então, até sábado.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "reactions",
+      "order": 29,
+      "title_ar": "ردود فعل",
+      "title_tl": "Que bom!",
+      "clips": [
+        {
+          "slug": "que-bom",
+          "order": 1,
+          "layout": "pairs",
+          "level": 2,
+          "title_ar": "ردود فعل",
+          "title_tl": "Que bom!",
+          "prompt_guidance": "Reactions: Que bom! · Que pena! · A sério? · Não acredito! · Ainda bem · Não faz mal · Coitado!",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "irregular-past",
+      "order": 30,
+      "title_ar": "الماضي الشاذ",
+      "title_tl": "fui · estive · tive",
+      "clips": [
+        {
+          "slug": "fui-estive-tive",
+          "order": 1,
+          "layout": "list",
+          "level": 3,
+          "title_ar": "رحت وكنت وكان عندي",
+          "title_tl": "fui · estive · tive",
+          "prompt_guidance": "Irregular past in everyday sentences (forms from the verified table only): Fui ao médico · Estive em casa · Tive um problema · Foi ótimo · Fomos à praia · Estiveste lá?",
+          "ready": true
+        },
+        {
+          "slug": "fiz-disse-vi",
+          "order": 2,
+          "layout": "list",
+          "level": 3,
+          "title_ar": "عملت وقلت وشفت",
+          "title_tl": "fiz · disse · vi",
+          "prompt_guidance": "Irregular past: Fiz o jantar · Disse que sim · Vi um filme · Dei-lhe o livro · O que fizeste? · Viste a mensagem?",
+          "ready": true
+        },
+        {
+          "slug": "pude-quis-pus",
+          "order": 3,
+          "layout": "list",
+          "level": 3,
+          "title_ar": "قدرت وكنت عايز وحطيت",
+          "title_tl": "pude · quis · pus",
+          "prompt_guidance": "Irregular past: Não pude ir · Quis ligar · Pus na mesa · Trouxe o talão · Soube ontem · Vieste de metro?",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "past-time",
+      "order": 31,
+      "title_ar": "إمتى في الماضي",
+      "title_tl": "já · ainda não",
+      "clips": [
+        {
+          "slug": "ha-dois-dias",
+          "order": 1,
+          "layout": "pairs",
+          "level": 3,
+          "title_ar": "من يومين",
+          "title_tl": "há dois dias",
+          "prompt_guidance": "Past time markers: ontem · anteontem · na semana passada · há dois dias · no ano passado · há pouco.",
+          "ready": true
+        },
+        {
+          "slug": "ja-ainda",
+          "order": 2,
+          "layout": "list",
+          "level": 3,
+          "title_ar": "خلاص ولسه",
+          "title_tl": "já · ainda não",
+          "prompt_guidance": "já / ainda: Já comi · Ainda não · Já não moro lá · Ainda estás aí? · Já está! · Ainda bem.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "object-pronouns",
+      "order": 32,
+      "title_ar": "ضمائر المفعول",
+      "title_tl": "ajudar-me · compro-o",
+      "clips": [
+        {
+          "slug": "ajudar-me",
+          "order": 1,
+          "layout": "rule",
+          "level": 3,
+          "title_ar": "ساعدني",
+          "title_tl": "Pode ajudar-me?",
+          "prompt_guidance": "pt-PT: me / te go after the verb with a hyphen: Pode ajudar-me? · Ligo-te amanhã · Dá-me isso · Diga-me · Espera-me aqui · Mostra-me.",
+          "rule_card": {
+            "pattern_tl": "verbo + -me / -te",
+            "pattern_ar": "الضمير بييجي بعد الفعل بشرطة",
+            "ending_table": [
+              {
+                "label": "me",
+                "from": "ajuda",
+                "to": "ajuda-me"
+              },
+              {
+                "label": "te",
+                "from": "ligo",
+                "to": "ligo-te"
+              }
+            ]
+          },
+          "rule_kind": "pattern",
+          "rule_highlight": [
+            "-me",
+            "-te"
+          ],
+          "ready": true
+        },
+        {
+          "slug": "compro-o",
+          "order": 2,
+          "layout": "rule",
+          "level": 3,
+          "title_ar": "بشتريه",
+          "title_tl": "Compro-o",
+          "prompt_guidance": "pt-PT object pronouns o / a / os / as after the verb: Compro-o · Vejo-a amanhã · Conheço-os · Leio-o à noite · Ponho-a na mesa · Faço-o já.",
+          "rule_card": {
+            "pattern_tl": "verbo + -o / -a / -os / -as",
+            "pattern_ar": "هو / هي بعد الفعل",
+            "ending_table": [
+              {
+                "label": "o",
+                "from": "compro",
+                "to": "compro-o"
+              },
+              {
+                "label": "a",
+                "from": "vejo",
+                "to": "vejo-a"
+              },
+              {
+                "label": "os",
+                "from": "conheço",
+                "to": "conheço-os"
+              }
+            ]
+          },
+          "rule_kind": "pattern",
+          "rule_highlight": [
+            "-o",
+            "-a",
+            "-os",
+            "-as"
+          ],
+          "ready": true
+        },
+        {
+          "slug": "nao-me",
+          "order": 3,
+          "layout": "rule",
+          "level": 3,
+          "title_ar": "مش فاكر",
+          "title_tl": "Não me lembro",
+          "prompt_guidance": "não / já / também / nunca pull the pronoun before the verb: Não me lembro · Já o vi · Também te ligo · Nunca a vejo · Não te preocupes · Já me disseram.",
+          "rule_card": {
+            "pattern_tl": "não + me + verbo",
+            "pattern_ar": "بعد não الضمير بيتنقل قبل الفعل",
+            "ending_table": [
+              {
+                "label": "me",
+                "from": "lembro-me",
+                "to": "não me lembro"
+              },
+              {
+                "label": "o",
+                "from": "vi-o",
+                "to": "já o vi"
+              }
+            ]
+          },
+          "rule_kind": "pattern",
+          "rule_highlight": [
+            "me",
+            "te",
+            "o",
+            "a"
+          ],
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "reflexive",
+      "order": 33,
+      "title_ar": "أفعال بـ -me",
+      "title_tl": "levanto-me",
+      "clips": [
+        {
+          "slug": "levanto-me",
+          "order": 1,
+          "layout": "rule",
+          "level": 3,
+          "title_ar": "بصحى",
+          "title_tl": "Levanto-me",
+          "prompt_guidance": "Reflexive verbs in the daily routine: Levanto-me às sete · Deito-me tarde · Chamo-me Omar · Sento-me aqui · Visto-me · Lavo-me.",
+          "rule_card": {
+            "pattern_tl": "verbo + -me",
+            "pattern_ar": "الفعل بيرجع على نفسك",
+            "ending_table": [
+              {
+                "label": "eu",
+                "from": "levantar-se",
+                "to": "levanto-me"
+              },
+              {
+                "label": "eu",
+                "from": "sentar-se",
+                "to": "sento-me"
+              }
+            ]
+          },
+          "rule_kind": "pattern",
+          "rule_highlight": [
+            "-me"
+          ],
+          "ready": true
+        },
+        {
+          "slug": "esqueci-me",
+          "order": 2,
+          "layout": "list",
+          "level": 3,
+          "title_ar": "نسيت",
+          "title_tl": "Esqueci-me",
+          "prompt_guidance": "Common reflexive chunks: Esqueci-me do código · Enganei-me · Não me sinto bem · Lembras-te? · Perdi-me · Atrasei-me.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "instructions",
+      "order": 34,
+      "title_ar": "الأوامر والتعليمات",
+      "title_tl": "Tome · Espere",
+      "clips": [
+        {
+          "slug": "tome-espere",
+          "order": 1,
+          "layout": "list",
+          "level": 3,
+          "title_ar": "خد واستنى",
+          "title_tl": "Tome · Espere",
+          "prompt_guidance": "Formal instructions you hear: Tome um comprimido · Espere um momento · Assine aqui · Preencha este impresso · Tire uma senha · Siga as setas.",
+          "ready": true
+        },
+        {
+          "slug": "vira-espera",
+          "order": 2,
+          "layout": "pairs",
+          "level": 3,
+          "title_ar": "tu و você",
+          "title_tl": "espera · espere",
+          "prompt_guidance": "Instructions tu vs você: Espera / Espere · Vira / Vire · Olha / Olhe · Diz / Diga · Anda / Ande · Vê / Veja.",
+          "note": "مع صاحبك: Espera · مع حد مش عارفه: Espere",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "must-can",
+      "order": 35,
+      "title_ar": "لازم وممكن",
+      "title_tl": "tenho de · pode-se",
+      "clips": [
+        {
+          "slug": "tenho-de",
+          "order": 1,
+          "layout": "list",
+          "level": 3,
+          "title_ar": "لازم",
+          "title_tl": "Tenho de…",
+          "prompt_guidance": "Obligation in pt-PT: Tenho de ir · É preciso marcar · Deve trazer o passaporte · Não é preciso · Tens de esperar · Temos de pagar.",
+          "ready": true
+        },
+        {
+          "slug": "pode-se",
+          "order": 2,
+          "layout": "list",
+          "level": 3,
+          "title_ar": "ينفع؟",
+          "title_tl": "Pode-se…?",
+          "prompt_guidance": "Permission and rules: Pode-se pagar com cartão? · Não se pode fumar · Posso sentar-me aqui? · É proibido estacionar · Posso entrar?",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "problems",
+      "order": 36,
+      "title_ar": "في مشكلة",
+      "title_tl": "Não funciona",
+      "clips": [
+        {
+          "slug": "nao-funciona",
+          "order": 1,
+          "layout": "list",
+          "level": 3,
+          "title_ar": "مش شغال",
+          "title_tl": "Não funciona",
+          "prompt_guidance": "Saying something is wrong: Tenho um problema com… · Não funciona · Está avariado · Está partido · Falta uma peça · Não liga.",
+          "ready": true
+        },
+        {
+          "slug": "cobraram",
+          "order": 2,
+          "layout": "list",
+          "level": 3,
+          "title_ar": "فيه غلط",
+          "title_tl": "Está errado",
+          "prompt_guidance": "Wrong bill or order: Está errado · Cobraram-me a mais · Ainda não chegou · Já paguei · Não é isto que pedi · Pode verificar?",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "appointments",
+      "order": 37,
+      "title_ar": "المواعيد",
+      "title_tl": "marcar · desmarcar",
+      "clips": [
+        {
+          "slug": "marcar",
+          "order": 1,
+          "layout": "list",
+          "level": 3,
+          "title_ar": "عايز أحجز",
+          "title_tl": "Queria marcar…",
+          "prompt_guidance": "Booking: Queria marcar uma consulta · Tem vaga? · Pode ser às dez? · Para quando? · Para amanhã de manhã · Fica marcado.",
+          "ready": true
+        },
+        {
+          "slug": "desmarcar",
+          "order": 2,
+          "layout": "list",
+          "level": 3,
+          "title_ar": "عايز ألغي",
+          "title_tl": "Preciso de desmarcar",
+          "prompt_guidance": "Changing an appointment: Preciso de desmarcar · Posso mudar a hora? · Vou chegar atrasado · Peço desculpa · Pode ser outro dia? · Não vou poder ir.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "asking-help",
+      "order": 38,
+      "title_ar": "اطلب مساعدة",
+      "title_tl": "Pode ajudar-me?",
+      "clips": [
+        {
+          "slug": "pode-ajudar",
+          "order": 1,
+          "layout": "list",
+          "level": 3,
+          "title_ar": "ممكن تساعدني؟",
+          "title_tl": "Pode ajudar-me?",
+          "prompt_guidance": "Asking for help: Pode ajudar-me? · Não sei como… · Onde posso…? · Com quem devo falar? · Pode explicar? · Preciso de ajuda.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "phone",
+      "order": 39,
+      "title_ar": "التليفون",
+      "title_tl": "Estou?",
+      "clips": [
+        {
+          "slug": "estou-telefone",
+          "order": 1,
+          "layout": "list",
+          "level": 3,
+          "title_ar": "ألو؟",
+          "title_tl": "Estou?",
+          "prompt_guidance": "pt-PT phone calls: Estou? · Quem fala? · Pode passar-me ao… · Ligo mais tarde · Posso deixar recado? · Desculpe, enganei-me no número.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "spoken-pt-1",
+      "order": 40,
+      "title_ar": "الكلام البرتغالي الحقيقي ١",
+      "title_tl": "então · pronto",
+      "clips": [
+        {
+          "slug": "entao-pronto",
+          "order": 1,
+          "layout": "list",
+          "level": 3,
+          "title_ar": "الكلام الحقيقي",
+          "title_tl": "então · pronto",
+          "prompt_guidance": "Discourse markers used in Portugal: Então… · Pronto · Olha / Olhe · Quer dizer… · Pois é · É assim…",
+          "ready": true
+        },
+        {
+          "slug": "ta-bem",
+          "order": 2,
+          "layout": "list",
+          "level": 3,
+          "title_ar": "زي ما بيقولوها",
+          "title_tl": "'Tá bem",
+          "prompt_guidance": "How it is really said (listening mode by default): 'Tá bem (Está bem) · 'Tás bom? · 'Pera aí · Bora! · Ya · Não 'tá cá.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "keep-talking",
+      "order": 41,
+      "title_ar": "كمّل الكلام",
+      "title_tl": "E tu?",
+      "clips": [
+        {
+          "slug": "e-tu",
+          "order": 1,
+          "layout": "list",
+          "level": 3,
+          "title_ar": "وإنت؟",
+          "title_tl": "E tu?",
+          "prompt_guidance": "Keeping a conversation going: E tu? · E você? · Há quanto tempo…? · Então e o trabalho? · A sério? Conta lá! · E depois?",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "comparing",
+      "order": 42,
+      "title_ar": "المقارنة",
+      "title_tl": "mais … do que",
+      "clips": [
+        {
+          "slug": "mais-que",
+          "order": 1,
+          "layout": "rule",
+          "level": 3,
+          "title_ar": "أكتر من",
+          "title_tl": "mais … do que",
+          "prompt_guidance": "Comparatives: Lisboa é maior do que Sintra · O metro é mais rápido do que o autocarro · É menos caro · É tão bom como…",
+          "rule_card": {
+            "pattern_tl": "mais + adj + do que",
+            "pattern_ar": "أكتر … من",
+            "ending_table": [
+              {
+                "label": "+",
+                "from": "caro",
+                "to": "mais caro do que"
+              },
+              {
+                "label": "-",
+                "from": "caro",
+                "to": "menos caro do que"
+              },
+              {
+                "label": "=",
+                "from": "bom",
+                "to": "tão bom como"
+              }
+            ]
+          },
+          "rule_kind": "pattern",
+          "rule_highlight": [
+            "mais",
+            "menos",
+            "do que",
+            "tão",
+            "como"
+          ],
+          "ready": true
+        },
+        {
+          "slug": "melhor-pior",
+          "order": 2,
+          "layout": "pairs",
+          "level": 3,
+          "title_ar": "أحسن وأوحش",
+          "title_tl": "melhor · pior",
+          "prompt_guidance": "Irregular comparatives: melhor · pior · maior · menor · o mais barato · o melhor.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "health",
+      "order": 43,
+      "title_ar": "صحتك",
+      "title_tl": "febre · tosse",
+      "clips": [
+        {
+          "slug": "febre-tosse",
+          "order": 1,
+          "layout": "scene",
+          "level": 3,
+          "title_ar": "سخونية وكحة",
+          "title_tl": "febre · tosse",
+          "prompt_guidance": "Symptoms at the doctor: Estou com febre · Tenho tosse · Dói-me a garganta · Estou constipado · Desde ontem · Sou alérgico a…",
+          "scene_plan": {
+            "objects": [
+              {
+                "id": "termometro",
+                "label_en": "thermometer in his mouth",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.44,
+                  "y": 0.14,
+                  "w": 0.12,
+                  "h": 0.1
+                }
+              },
+              {
+                "id": "garganta",
+                "label_en": "his throat with a scarf",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.42,
+                  "y": 0.26,
+                  "w": 0.16,
+                  "h": 0.1
+                }
+              },
+              {
+                "id": "lenco",
+                "label_en": "box of tissues on the desk",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.7,
+                  "y": 0.62,
+                  "w": 0.16,
+                  "h": 0.16
+                }
+              },
+              {
+                "id": "comprimidos",
+                "label_en": "packet of pills on the desk",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.48,
+                  "y": 0.66,
+                  "w": 0.14,
+                  "h": 0.12
+                }
+              },
+              {
+                "id": "medica",
+                "label_en": "the doctor writing",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.72,
+                  "y": 0.14,
+                  "w": 0.24,
+                  "h": 0.44
+                }
+              }
+            ]
+          },
+          "image_spec": "Hand-drawn ink and soft watercolour editorial illustration, warm natural light, 4:3 landscape, everyday Lisbon setting. A patient sitting at a doctor's desk in a Lisbon health centre, a thermometer in his mouth and a scarf around his throat; on the desk in front, a box of tissues and a packet of pills; the doctor sitting on the right, writing. Each listed object is large, simple, clearly separated from the others, with plain space around it. Keep the rest of the picture calm and almost empty; no other similar objects. No text, no letters, no readable signs, no logos.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "imperfect",
+      "order": 44,
+      "title_ar": "زمان (الإمبرفيكتو)",
+      "title_tl": "era · morava",
+      "clips": [
+        {
+          "slug": "ava",
+          "order": 1,
+          "layout": "rule",
+          "level": 4,
+          "title_ar": "كنت بـ",
+          "title_tl": "-ar → -ava",
+          "prompt_guidance": "Imperfeito of -ar verbs for past habits: Morava no Cairo · Trabalhava muito · Falava árabe · Jogava futebol · Estudava à noite · Andava a pé.",
+          "rule_card": {
+            "pattern_tl": "-ar → -ava",
+            "pattern_ar": "كنت بعمل زمان",
+            "ending_table": [
+              {
+                "label": "eu",
+                "from": "falar",
+                "to": "falava"
+              },
+              {
+                "label": "eu",
+                "from": "morar",
+                "to": "morava"
+              }
+            ]
+          },
+          "rule_kind": "verb_ending",
+          "rule_tense": "imperf",
+          "rule_person": "eu",
+          "ready": true
+        },
+        {
+          "slug": "ia",
+          "order": 2,
+          "layout": "rule",
+          "level": 4,
+          "title_ar": "كنت بـ",
+          "title_tl": "-er / -ir → -ia",
+          "prompt_guidance": "Imperfeito of -er / -ir verbs: Comia em casa · Vivia perto · Saía cedo · Bebia chá · Escrevia cartas · Abria a loja.",
+          "rule_card": {
+            "pattern_tl": "-er / -ir → -ia",
+            "pattern_ar": "كنت بعمل زمان",
+            "ending_table": [
+              {
+                "label": "eu",
+                "from": "comer",
+                "to": "comia"
+              },
+              {
+                "label": "eu",
+                "from": "viver",
+                "to": "vivia"
+              }
+            ]
+          },
+          "rule_kind": "verb_ending",
+          "rule_tense": "imperf",
+          "rule_person": "eu",
+          "ready": true
+        },
+        {
+          "slug": "quando-era",
+          "order": 3,
+          "layout": "list",
+          "level": 4,
+          "title_ar": "لما كنت صغير",
+          "title_tl": "Quando era pequeno…",
+          "prompt_guidance": "Describing the past: Quando era pequeno… · Antes havia… · Era diferente · Tinha um gato · Estava sempre calor · Íamos à praia.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "past-continuous",
+      "order": 45,
+      "title_ar": "كنت بعمل لما…",
+      "title_tl": "estava a… quando",
+      "clips": [
+        {
+          "slug": "estava-a",
+          "order": 1,
+          "layout": "rule",
+          "level": 4,
+          "title_ar": "كنت بعمل لما",
+          "title_tl": "estava a … quando",
+          "prompt_guidance": "Past continuous interrupted: Estava a cozinhar quando ligaste · Estava a dormir quando tocou · Estávamos a jantar quando chegou.",
+          "rule_card": {
+            "pattern_tl": "estava a + infinitivo … quando",
+            "pattern_ar": "كنت بعمل حاجة وحصلت حاجة",
+            "ending_table": [
+              {
+                "label": "eu",
+                "from": "cozinhar",
+                "to": "estava a cozinhar"
+              }
+            ]
+          },
+          "rule_kind": "pattern",
+          "rule_highlight": [
+            "estava a",
+            "estávamos a",
+            "quando"
+          ],
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "por-para",
+      "order": 46,
+      "title_ar": "por ولا para؟",
+      "title_tl": "por · para",
+      "clips": [
+        {
+          "slug": "por-para",
+          "order": 1,
+          "layout": "pairs",
+          "level": 4,
+          "title_ar": "por ولا para",
+          "title_tl": "por · para",
+          "prompt_guidance": "Contrast: para Lisboa / pelo parque · para mim / obrigado pelo café · por dia / para amanhã · por isso / para quê?",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "quantifiers",
+      "order": 47,
+      "title_ar": "شوية وكله ومحدش",
+      "title_tl": "algum · nenhum",
+      "clips": [
+        {
+          "slug": "algum-nenhum",
+          "order": 1,
+          "layout": "pairs",
+          "level": 4,
+          "title_ar": "أي حد ومحدش",
+          "title_tl": "algum · nenhum",
+          "prompt_guidance": "Quantifiers: algum · nenhum · outro · todos · ninguém · tudo · nada · cada.",
+          "ready": true
+        },
+        {
+          "slug": "o-mais",
+          "order": 2,
+          "layout": "rule",
+          "level": 4,
+          "title_ar": "الأكتر",
+          "title_tl": "o mais …",
+          "prompt_guidance": "Superlatives: o mais caro · a mais perto · o melhor café · a pior hora · o mais rápido.",
+          "rule_card": {
+            "pattern_tl": "o / a + mais + adj",
+            "pattern_ar": "الأكتر",
+            "ending_table": [
+              {
+                "label": "o",
+                "from": "caro",
+                "to": "o mais caro"
+              },
+              {
+                "label": "a",
+                "from": "perto",
+                "to": "a mais perto"
+              }
+            ]
+          },
+          "rule_kind": "pattern",
+          "rule_highlight": [
+            "o mais",
+            "a mais",
+            "o melhor",
+            "a pior"
+          ],
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "reported",
+      "order": 48,
+      "title_ar": "قال إن…",
+      "title_tl": "disse que…",
+      "clips": [
+        {
+          "slug": "disse-que",
+          "order": 1,
+          "layout": "list",
+          "level": 4,
+          "title_ar": "قال إن",
+          "title_tl": "Ele disse que…",
+          "prompt_guidance": "Passing on a message: Ele disse que… · Ela perguntou se… · Diz-lhe que… · Pediu para ligar · Disseram-me que… · Perguntei se…",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "opinions",
+      "order": 49,
+      "title_ar": "رأيك",
+      "title_tl": "Acho que…",
+      "clips": [
+        {
+          "slug": "acho-que",
+          "order": 1,
+          "layout": "list",
+          "level": 4,
+          "title_ar": "في رأيي",
+          "title_tl": "Acho que…",
+          "prompt_guidance": "Giving an opinion: Acho que… · Na minha opinião… · Para mim… · Depende · Acho que não · Parece-me bem.",
+          "ready": true
+        },
+        {
+          "slug": "concordo",
+          "order": 2,
+          "layout": "list",
+          "level": 4,
+          "title_ar": "موافق",
+          "title_tl": "Concordo",
+          "prompt_guidance": "Agreeing and disagreeing: Concordo · Não concordo · Tens razão · Nem por isso · Pois, mas… · Exatamente.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "certainty",
+      "order": 50,
+      "title_ar": "متأكد ولا لأ",
+      "title_tl": "se calhar",
+      "clips": [
+        {
+          "slug": "se-calhar",
+          "order": 1,
+          "layout": "pairs",
+          "level": 4,
+          "title_ar": "يمكن",
+          "title_tl": "se calhar",
+          "prompt_guidance": "Certainty: Se calhar · Talvez · De certeza · Acho que sim · Não tenho a certeza · Pelos vistos.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "check-understanding",
+      "order": 51,
+      "title_ar": "اتأكد إنك فهمت",
+      "title_tl": "se percebi bem",
+      "clips": [
+        {
+          "slug": "se-percebi",
+          "order": 1,
+          "layout": "list",
+          "level": 4,
+          "title_ar": "لو فهمت صح",
+          "title_tl": "Se percebi bem…",
+          "prompt_guidance": "Checking understanding: Então, se percebi bem… · Quer dizer que…? · Ou seja… · Está a dizer que…? · É isso? · Percebi bem?",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "change-topic",
+      "order": 52,
+      "title_ar": "ارجع وغيّر الموضوع",
+      "title_tl": "já agora",
+      "clips": [
+        {
+          "slug": "ja-agora",
+          "order": 1,
+          "layout": "list",
+          "level": 4,
+          "title_ar": "على فكرة",
+          "title_tl": "Já agora…",
+          "prompt_guidance": "Managing the conversation: Já agora… · Por falar nisso… · Desculpe interromper · Mas voltando ao… · Já agora, uma pergunta · Onde é que eu ia?",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "services-papers",
+      "order": 53,
+      "title_ar": "الخدمات والورق",
+      "title_tl": "documentos · trocar",
+      "clips": [
+        {
+          "slug": "documentos",
+          "order": 1,
+          "layout": "list",
+          "level": 4,
+          "title_ar": "ورق إيه؟",
+          "title_tl": "Que documentos?",
+          "prompt_guidance": "Documents for services in Portugal: Que documentos preciso? · o NIF · o cartão de residência · o comprovativo de morada · Tenho de trazer…? · Tem de ser original?",
+          "ready": true
+        },
+        {
+          "slug": "trocar",
+          "order": 2,
+          "layout": "list",
+          "level": 4,
+          "title_ar": "عايز أبدّل",
+          "title_tl": "Queria trocar",
+          "prompt_guidance": "Exchange and refund: Queria trocar isto · Queria devolver · Tem o talão? · Pode devolver-me o dinheiro? · Está dentro do prazo? · Não serve.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "spoken-pt-2",
+      "order": 54,
+      "title_ar": "الكلام البرتغالي الحقيقي ٢",
+      "title_tl": "pá · tipo",
+      "clips": [
+        {
+          "slug": "pa-tipo",
+          "order": 1,
+          "layout": "list",
+          "level": 4,
+          "title_ar": "كلام الشارع",
+          "title_tl": "pá · tipo",
+          "prompt_guidance": "Informal spoken pt-PT (listening mode by default): pá · tipo · é assim · não é? · sei lá · tanto faz.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "storytelling",
+      "order": 55,
+      "title_ar": "احكي حكاية",
+      "title_tl": "de repente",
+      "clips": [
+        {
+          "slug": "de-repente",
+          "order": 1,
+          "layout": "list",
+          "level": 4,
+          "title_ar": "فجأة",
+          "title_tl": "de repente",
+          "prompt_guidance": "Telling what happened: Primeiro… · Entretanto… · De repente… · No fim… · Afinal… · Resumindo…",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "polite-conditional",
+      "order": 56,
+      "title_ar": "الأدب البرتغالي",
+      "title_tl": "gostava de…",
+      "clips": [
+        {
+          "slug": "gostava",
+          "order": 1,
+          "layout": "rule",
+          "level": 5,
+          "title_ar": "كنت أحب",
+          "title_tl": "Gostava de…",
+          "prompt_guidance": "pt-PT politeness with the imperfeito: Gostava de… · Podia…? · Queria… · Era capaz de… · Preferia… · Dava-me jeito.",
+          "rule_card": {
+            "pattern_tl": "gostar → gostava",
+            "pattern_ar": "البرتغاليين بيستخدموا الماضي للأدب",
+            "ending_table": [
+              {
+                "label": "eu",
+                "from": "gostar",
+                "to": "gostava"
+              },
+              {
+                "label": "eu",
+                "from": "poder",
+                "to": "podia"
+              }
+            ]
+          },
+          "rule_kind": "pattern",
+          "rule_highlight": [
+            "gostava",
+            "podia",
+            "queria",
+            "preferia",
+            "era"
+          ],
+          "ready": true
+        },
+        {
+          "slug": "seria",
+          "order": 2,
+          "layout": "list",
+          "level": 5,
+          "title_ar": "ينفع؟",
+          "title_tl": "Seria possível…?",
+          "prompt_guidance": "Very polite requests: Seria possível…? · Importa-se de…? · Não se importa? · Se não for incómodo · Agradecia que…",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "subjunctive-chunks",
+      "order": 57,
+      "title_ar": "جمل جاهزة",
+      "title_tl": "espero que…",
+      "clips": [
+        {
+          "slug": "espero-que",
+          "order": 1,
+          "layout": "list",
+          "level": 5,
+          "title_ar": "أتمنى",
+          "title_tl": "Espero que…",
+          "prompt_guidance": "Fixed subjunctive chunks: Espero que corra bem · Espero que sim · Oxalá · Ainda bem que vieste · Que pena que não…",
+          "ready": true
+        },
+        {
+          "slug": "quando-puder",
+          "order": 2,
+          "layout": "list",
+          "level": 5,
+          "title_ar": "لما تقدر",
+          "title_tl": "Quando puder",
+          "prompt_guidance": "Future subjunctive chunks, very common in Portugal: Quando puder · Se quiseres · Logo que possa · Como quiser · Quando chegares, liga-me.",
+          "ready": true
+        },
+        {
+          "slug": "talvez-seja",
+          "order": 3,
+          "layout": "list",
+          "level": 5,
+          "title_ar": "يمكن يكون",
+          "title_tl": "Talvez seja…",
+          "prompt_guidance": "Subjunctive after talvez / é melhor: Talvez seja melhor · É melhor que vás · Não acho que seja · Antes que chova.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "if",
+      "order": 58,
+      "title_ar": "لو",
+      "title_tl": "se fosse a ti",
+      "clips": [
+        {
+          "slug": "se-fosse",
+          "order": 1,
+          "layout": "list",
+          "level": 5,
+          "title_ar": "لو كنت مكانك",
+          "title_tl": "Se fosse a ti…",
+          "prompt_guidance": "Hypotheticals as chunks: Se fosse a ti… · Se tivesse tempo… · Se pudesse… · Se eu soubesse… · Se calhasse…",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "linking-2",
+      "order": 59,
+      "title_ar": "اربط الكلام ٢",
+      "title_tl": "embora · portanto",
+      "clips": [
+        {
+          "slug": "embora",
+          "order": 1,
+          "layout": "list",
+          "level": 5,
+          "title_ar": "رغم إن",
+          "title_tl": "embora · no entanto",
+          "prompt_guidance": "Contrast connectors: embora · mesmo assim · no entanto · aliás · apesar de.",
+          "ready": true
+        },
+        {
+          "slug": "portanto",
+          "order": 2,
+          "layout": "list",
+          "level": 5,
+          "title_ar": "يعني",
+          "title_tl": "portanto · ou seja",
+          "prompt_guidance": "Result connectors: portanto · por isso · ou seja · afinal · pelo contrário · de qualquer forma.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "advice",
+      "order": 60,
+      "title_ar": "نصيحة",
+      "title_tl": "devias…",
+      "clips": [
+        {
+          "slug": "devias",
+          "order": 1,
+          "layout": "list",
+          "level": 5,
+          "title_ar": "المفروض",
+          "title_tl": "Devias…",
+          "prompt_guidance": "Advice: Devias… · O melhor é… · Experimenta… · Não vale a pena… · Se calhar era melhor… · Tens de ver isso.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "disagree",
+      "order": 61,
+      "title_ar": "اختلف بأدب",
+      "title_tl": "percebo, mas…",
+      "clips": [
+        {
+          "slug": "percebo-mas",
+          "order": 1,
+          "layout": "list",
+          "level": 5,
+          "title_ar": "فاهم، بس",
+          "title_tl": "Percebo, mas…",
+          "prompt_guidance": "Polite disagreement: Percebo, mas… · Por um lado… por outro… · Não é bem assim · Tens alguma razão · Vejo isso de outra forma.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "formal-complaint",
+      "order": 62,
+      "title_ar": "الشكوى الرسمية",
+      "title_tl": "reclamação",
+      "clips": [
+        {
+          "slug": "reclamacao",
+          "order": 1,
+          "layout": "list",
+          "level": 5,
+          "title_ar": "شكوى",
+          "title_tl": "Uma reclamação",
+          "prompt_guidance": "Formal complaints: Queria apresentar uma reclamação · O livro de reclamações, por favor · Já liguei três vezes · Exijo uma solução · Quero falar com o responsável.",
+          "ready": true
+        }
+      ]
+    },
+    {
+      "slug": "expressions",
+      "order": 63,
+      "title_ar": "تعبيرات برتغالية",
+      "title_tl": "não há crise",
+      "clips": [
+        {
+          "slug": "nao-ha-crise",
+          "order": 1,
+          "layout": "list",
+          "level": 5,
+          "title_ar": "مفيش مشكلة",
+          "title_tl": "Não há crise",
+          "prompt_guidance": "Everyday Portuguese expressions (listening mode by default): Não há crise · Vamos lá · Pois claro · Está-se bem · Calma · É para já.",
+          "ready": true
+        },
+        {
+          "slug": "ir-dar-uma-volta",
+          "order": 2,
+          "layout": "list",
+          "level": 5,
+          "title_ar": "أتمشى",
+          "title_tl": "Dar uma volta",
+          "prompt_guidance": "Common phrases: Ir dar uma volta · Fazer uma pausa · Ficar sem bateria · Estar farto · Dar jeito · Fazer falta.",
+          "ready": true
         }
       ]
     }

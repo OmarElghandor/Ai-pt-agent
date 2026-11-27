@@ -11,6 +11,13 @@ export {
 } from './generate';
 export * from './images';
 export { rankDailyClip, getOrPickDailyClip } from './daily';
+export {
+  LEVEL_LABELS,
+  compareSeriesByLevelThenOrder,
+  compareClipsByLevelThenOrder,
+  groupByLevel,
+  minLevel,
+} from './order';
 export { publishMicroClip, publishMicroSeries } from './publish';
 export {
   ensureMicroSeries,

@@ -46,11 +46,14 @@ export function ClipSheet({
   clipTotal,
   initialRevealed = 0,
   initialListening = false,
+  reviewMode = false,
   onClose,
   onReveal,
   onFinished,
   onSaveLine,
   onNext,
+  onReviewCards,
+  onNextReview,
 }: {
   clip: ClipView;
   seriesTitle?: string;
@@ -58,20 +61,32 @@ export function ClipSheet({
   clipTotal?: number;
   initialRevealed?: number;
   initialListening?: boolean;
+  /** Review from «اللي خلصتها»: listening forced, no finish/save. */
+  reviewMode?: boolean;
   onClose?: () => void;
   onReveal?: (count: number) => void;
   onFinished?: () => void;
   onSaveLine?: (itemId: string) => void;
   onNext?: () => void;
+  onReviewCards?: () => void;
+  onNextReview?: () => void;
 }) {
-  const [revealed, setRevealed] = useState(initialRevealed);
-  const [active, setActive] = useState(
-    Math.min(initialRevealed, Math.max(0, clip.lines.length - 1)),
+  const [revealed, setRevealed] = useState(
+    reviewMode ? 0 : initialRevealed,
   );
-  const [listening, setListening] = useState(initialListening);
+  const [active, setActive] = useState(
+    reviewMode
+      ? 0
+      : Math.min(initialRevealed, Math.max(0, clip.lines.length - 1)),
+  );
+  const [listening, setListening] = useState(
+    reviewMode ? true : initialListening,
+  );
   const [autoplay, setAutoplay] = useState(false);
   const [done, setDone] = useState(
-    initialRevealed >= clip.lines.length && clip.lines.length > 0,
+    !reviewMode &&
+      initialRevealed >= clip.lines.length &&
+      clip.lines.length > 0,
   );
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const audioAbort = useRef<AbortController | null>(null);
@@ -113,7 +128,7 @@ export function ClipSheet({
     if (done) return;
     const nextCount = Math.max(revealed, active + 1);
     setRevealed(nextCount);
-    onReveal?.(nextCount);
+    if (!reviewMode) onReveal?.(nextCount);
     clearAdvance();
     if (nextCount >= clip.lines.length) {
       setDone(true);
@@ -206,29 +221,43 @@ export function ClipSheet({
               <Icon name="close" size={20} />
             </button>
           ) : null}
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-primary-fixed/40 px-3 py-1 text-on-primary-fixed-variant">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
-            <span className="truncate font-[family-name:var(--font-v2-arabic)] text-[10px] font-bold">
-              {seriesLabel}
-            </span>
+          <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+            {reviewMode ? (
+              <span className="inline-flex items-center rounded-full bg-secondary-container px-2.5 py-1 font-[family-name:var(--font-v2-arabic)] text-[10px] font-bold text-on-secondary-container">
+                مراجعة
+              </span>
+            ) : null}
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-primary-fixed/40 px-3 py-1 text-on-primary-fixed-variant">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
+              <span className="truncate font-[family-name:var(--font-v2-arabic)] text-[10px] font-bold">
+                {seriesLabel}
+              </span>
+            </div>
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
-          <button
-            type="button"
-            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[10px] font-bold shadow-sm ${
-              listening
-                ? 'bg-primary text-on-primary'
-                : 'bg-surface-container text-on-surface-variant'
-            }`}
-            onClick={(e) => {
-              e.stopPropagation();
-              setListening((v) => !v);
-            }}
-          >
-            <Icon name="hearing" size={20} className="!text-[16px]" />
-            وضع السمع
-          </button>
+          {reviewMode ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-1.5 text-[10px] font-bold text-on-primary shadow-sm">
+              <Icon name="hearing" size={20} className="!text-[16px]" />
+              وضع السمع
+            </span>
+          ) : (
+            <button
+              type="button"
+              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[10px] font-bold shadow-sm ${
+                listening
+                  ? 'bg-primary text-on-primary'
+                  : 'bg-surface-container text-on-surface-variant'
+              }`}
+              onClick={(e) => {
+                e.stopPropagation();
+                setListening((v) => !v);
+              }}
+            >
+              <Icon name="hearing" size={20} className="!text-[16px]" />
+              وضع السمع
+            </button>
+          )}
           <button
             type="button"
             aria-label={autoplay ? 'إيقاف' : 'تشغيل تلقائي'}
@@ -401,7 +430,10 @@ export function ClipSheet({
       {/* Connected lines card overlapping hero */}
       <div className="relative z-10 -mt-2 flex flex-1 flex-col gap-2 px-4 pb-28">
         {done ? (
-          <FinishedRows clip={clip} onSaveLine={onSaveLine} />
+          <FinishedRows
+            clip={clip}
+            onSaveLine={reviewMode ? undefined : onSaveLine}
+          />
         ) : (
           <div
             className={`flex flex-col overflow-hidden rounded-xl bg-surface-container-lowest shadow-md ${
@@ -650,29 +682,52 @@ export function ClipSheet({
           <div className="mb-2 flex items-center justify-center gap-2">
             <Icon name="check_circle" size={20} fill className="text-secondary" />
             <p className="text-center font-[family-name:var(--font-v2-arabic)] text-base font-semibold text-on-surface">
-              اتضافوا لكروتك · {toArDigits(clip.lines.length)} جمل
+              {reviewMode
+                ? `راجعت ${toArDigits(clip.lines.length)} جمل ✓`
+                : `اتضافوا لكروتك · ${toArDigits(clip.lines.length)} جمل`}
             </p>
           </div>
           <div className="mt-3 flex gap-2">
-            <button
-              type="button"
-              className="flex-1 rounded-xl bg-primary py-3 font-[family-name:var(--font-v2-arabic)] font-semibold text-on-primary"
-              onClick={() => onNext?.()}
-            >
-              اللقطة اللي بعدها
-            </button>
-            <button
-              type="button"
-              className="flex-1 rounded-xl bg-surface-container py-3 font-[family-name:var(--font-v2-arabic)] font-semibold"
-              onClick={() => {
-                setListening(true);
-                setRevealed(0);
-                setActive(0);
-                setDone(false);
-              }}
-            >
-              تاني بوضع السمع
-            </button>
+            {reviewMode ? (
+              <>
+                <button
+                  type="button"
+                  className="flex-1 rounded-xl bg-primary py-3 font-[family-name:var(--font-v2-arabic)] font-semibold text-on-primary"
+                  onClick={() => onReviewCards?.()}
+                >
+                  راجع كروت اللقطة دي
+                </button>
+                <button
+                  type="button"
+                  className="flex-1 rounded-xl bg-surface-container py-3 font-[family-name:var(--font-v2-arabic)] font-semibold"
+                  onClick={() => onNextReview?.()}
+                >
+                  اللقطة اللي بعدها في المراجعة
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="flex-1 rounded-xl bg-primary py-3 font-[family-name:var(--font-v2-arabic)] font-semibold text-on-primary"
+                  onClick={() => onNext?.()}
+                >
+                  اللقطة اللي بعدها
+                </button>
+                <button
+                  type="button"
+                  className="flex-1 rounded-xl bg-surface-container py-3 font-[family-name:var(--font-v2-arabic)] font-semibold"
+                  onClick={() => {
+                    setListening(true);
+                    setRevealed(0);
+                    setActive(0);
+                    setDone(false);
+                  }}
+                >
+                  تاني بوضع السمع
+                </button>
+              </>
+            )}
           </div>
         </div>
       ) : null}
