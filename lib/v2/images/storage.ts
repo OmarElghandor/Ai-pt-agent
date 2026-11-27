@@ -1,7 +1,12 @@
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { v2 as cloudinary } from 'cloudinary';
-import { isCharacterKey, safeImageFilename, STYLE_ANCHOR_KEY } from './keys';
+import {
+  isCharacterKey,
+  safeImageFilename,
+  STYLE_ANCHOR_KEY,
+  STYLE_ANCHOR_OBJECT_KEY,
+} from './keys';
 
 export type UploadResult = {
   url: string;
@@ -29,7 +34,11 @@ function folderForKey(key: string): string {
   if (key.startsWith('avatar.')) {
     return 'az-talkie/v2/avatars';
   }
-  if (isCharacterKey(key) || key === STYLE_ANCHOR_KEY) {
+  if (
+    isCharacterKey(key) ||
+    key === STYLE_ANCHOR_KEY ||
+    key === STYLE_ANCHOR_OBJECT_KEY
+  ) {
     return 'az-talkie/v2/characters';
   }
   return 'az-talkie/v2/images';
@@ -108,9 +117,12 @@ export async function uploadImage(opts: {
   const filename = safeImageFilename(opts.key);
   const out = path.join(LOCAL_DIR, filename);
   writeFileSync(out, opts.buffer);
+  // Bust browser/CDN-less caches after overwrite (same path every time).
+  const version = Date.now();
   return {
-    url: localPublicUrl(filename),
+    url: `${localPublicUrl(filename)}?v=${version}`,
     public_id: opts.key,
+    version,
   };
 }
 
@@ -120,7 +132,11 @@ export function isLocalImageUrl(url: string): boolean {
 
 export function resolveLocalPathFromUrl(url: string): string | null {
   if (!isLocalImageUrl(url)) return null;
-  const filename = url.replace('/api/v2/dev/local-images/', '');
+  const pathPart = url
+    .replace('/api/v2/dev/local-images/', '')
+    .split('?')[0]!
+    .split('#')[0]!;
+  const filename = pathPart;
   if (!filename || filename.includes('..') || filename.includes('/')) return null;
   const full = path.join(LOCAL_DIR, filename);
   return existsSync(full) ? full : null;

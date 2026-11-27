@@ -106,6 +106,7 @@ async function main() {
       key: entry.key,
       itemId: entry.itemId,
       targetLang: story.target_lang,
+      force: true,
     });
     for (const c of resolved.characters) neededChars.add(c);
   }
@@ -130,6 +131,7 @@ async function main() {
       key: entry.key,
       itemId: entry.itemId,
       targetLang: story.target_lang,
+      force: true,
     });
     resolvedByKey.set(entry.key, resolved);
     if (!resolved.skipSpecs) needSpecsKeys.push(entry.key);
@@ -170,6 +172,8 @@ async function main() {
           scenePrompt: resolved.scenePrompt,
           characters: resolved.characters,
           ratio: resolved.ratio,
+          kind: resolved.kind,
+          theme: resolved.theme,
         })
       : null;
     if (!spec) {

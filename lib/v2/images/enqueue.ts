@@ -46,15 +46,28 @@ function estimateForAspect(aspect: ImageAspect): number {
   return estimateImageCostUsd({ size, quality: 'medium' });
 }
 
-async function markQueued(keys: string[]): Promise<void> {
+async function markQueued(
+  keys: string[],
+  opts?: { clearUrl?: boolean },
+): Promise<void> {
   if (!keys.length) return;
   const Model = V2ImageModel();
+  const clearUrl = Boolean(opts?.clearUrl);
   await Promise.all(
     keys.map((key) =>
       Model.findOneAndUpdate(
         { key },
         {
           $set: { status: 'queued' as const, reason: null },
+          ...(clearUrl
+            ? {
+                $unset: {
+                  url: 1,
+                  public_id: 1,
+                  cloudinary_version: 1,
+                },
+              }
+            : {}),
           $setOnInsert: {
             key,
             kind: 'content',
@@ -231,7 +244,8 @@ export async function enqueueLessonImages(opts: {
     });
   }
 
-  await markQueued(keys);
+  // Force regen: drop the old url so poll cannot treat the prior ready asset as done.
+  await markQueued(keys, { clearUrl: force });
 
   const specsJob = await Job.create({
     kind: 'image_specs',

@@ -5,6 +5,8 @@ export {
 } from './icons';
 export {
   microMainImageKey,
+  microSceneImageKey,
+  resolveMicroMainImageKey,
   buildMicroMainImageSpec,
   synthesizeMicroImageSpec,
 } from './main';

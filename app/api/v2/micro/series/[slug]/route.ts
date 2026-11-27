@@ -65,6 +65,7 @@ export async function GET(
         box: line.box
           ? { x: line.box.x, y: line.box.y, w: line.box.w, h: line.box.h }
           : null,
+        region_label: line.region_label ?? null,
         highlight: line.highlight ?? null,
       });
     }
@@ -79,6 +80,10 @@ export async function GET(
       note: c.note ?? null,
       rule_card: c.rule_card ?? null,
       main_image_url: main?.url ?? null,
+      scene_key: c.scene_key ?? null,
+      pointer_from: c.pointer_from
+        ? { x: c.pointer_from.x, y: c.pointer_from.y }
+        : null,
       lines,
       revealed_count: p?.revealed_count ?? 0,
       finished: Boolean(p?.finished_at),

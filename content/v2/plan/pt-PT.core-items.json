@@ -1,7 +1,7 @@
 {
   "version": 1,
   "lang": "pt-PT",
-  "note": "core_items_tl per day. id namespaced; verb.* ids match v2_conjugations lemma. eg = hint for the generator, not final copy. plural_tl: os/as plural for countable nouns (null = mass/uncountable, no plural examples). singular_tl on plural-only entries. variant_group: alternatives of each other (story needs one; rest on phrases page). variant_tl: accepted alternatives, never shown with slashes. Max 14 core items per lesson (split 2026-11-01). is_test marks the phase test day. image: hand-authored image prompt per item {ratio, characters, prompt} — scene description only; code adds the style block and character reference sheets. story_image on a day = the story scene prompt. 2026-11-11: everyday words added; new days 44, 47, 48, 49, 51; phase 1 = 1–56 (new days 37 Documentos e Marcações, 50 Problemas em Casa; old 37–54 → 38–56). priority: essential | useful | situational on every non-pattern item (2026-11-19). forms_tl on verb items = the forms the day needs.",
+  "note": "core_items_tl per day. id namespaced; verb.* ids match v2_conjugations lemma. eg = hint for the generator, not final copy. plural_tl: os/as plural for countable nouns (null = mass/uncountable, no plural examples). singular_tl on plural-only entries. variant_group: alternatives of each other (story needs one; rest on phrases page). variant_tl: accepted alternatives, never shown with slashes. Max 14 core items per lesson (split 2026-11-01). is_test marks the phase test day. image: hand-authored image prompt per item {ratio, characters, prompt} — scene description only; code adds the style block and character reference sheets. story_image on a day = the story scene prompt. 2026-11-11: everyday words added; new days 44, 47, 48, 49, 51; phase 1 = 1–56 (new days 37 Documentos e Marcações, 50 Problemas em Casa; old 37–54 → 38–56). priority: essential | useful | situational on every non-pattern item (2026-11-19). forms_tl on verb items = the forms the day needs. 2026-11-26: image.kind = object | action | scene. object = the thing alone on white paper, no people, no theme, characters []; action = one person or hands doing the verb; scene = two cast members talking. image.theme (scene/action only) = an id from content/v2/image-themes.json; no theme twice in a lesson.",
   "days": [
     {
       "day": 1,
@@ -14,11 +14,13 @@
           "tl": "Olá!",
           "eg": "أهلاً",
           "image": {
+            "kind": "scene",
             "ratio": "4:3",
             "characters": [
               "tiago",
               "ines"
             ],
+            "theme": "cobalt_lemon",
             "prompt": "Midday on a sunny café terrace. Inês, sitting at a small round table with a galão, looks up with happy surprise as Tiago arrives with his earbuds around his neck; both raise a hand in a quick, casual 'hi'. Medium shot, eye-level, bright warm daylight, relaxed young-friends mood."
           },
           "priority": "essential"
@@ -30,11 +32,13 @@
           "eg": "صباح الخير",
           "variant_group": "greeting.time_of_day",
           "image": {
+            "kind": "scene",
             "ratio": "4:3",
             "characters": [
               "yassin",
               "ines"
             ],
+            "theme": "ochre_sky",
             "prompt": "Early morning, 8:30, at the office coffee machine. Inês holds two paper cups and offers one to Yassin, who has just arrived with his backpack still on his shoulder, a bit sleepy but grateful. Soft low golden sunlight through the window, long shadows. Close two-shot, waist-up, faces large, warm start of the day."
           },
           "priority": "essential"
@@ -46,11 +50,13 @@
           "eg": "مساء الخير (بعد الضهر)",
           "variant_group": "greeting.time_of_day",
           "image": {
+            "kind": "scene",
             "ratio": "4:3",
             "characters": [
               "yassin",
               "carlos"
             ],
+            "theme": "plum_ivory",
             "prompt": "About 3 pm, lift doors opening: Carlos, the manager, steps out holding a folder and a coffee; Yassin waits inside, holding the door with one hand and greeting him with a respectful nod and smile. Bright neutral afternoon light. Over-the-shoulder shot from behind Yassin toward Carlos, polite workplace mood."
           },
           "priority": "essential"
@@ -63,11 +69,13 @@
           "context_eg": "بتحية بالليل وبرضو لما تودّع بالليل",
           "variant_group": "greeting.time_of_day",
           "image": {
+            "kind": "scene",
             "ratio": "4:3",
             "characters": [
               "yassin",
               "graca"
             ],
+            "theme": "indigo_lampgold",
             "prompt": "Night, about 9 pm, at the entrance of Yassin's old apartment building and a warm lamp over the door. Yassin arrives home with a grocery bag; Dona Graça, his elderly neighbour, stands in the doorway in her cardigan and greets him with a gentle smile and a small wave. Medium shot, cool blue night with warm lamp light, cosy neighbourly mood. Nobody is sleeping."
           },
           "priority": "essential"
@@ -78,11 +86,13 @@
           "tl": "Chamo-me Omar.",
           "eg": "اسمي عمر",
           "image": {
+            "kind": "scene",
             "ratio": "4:3",
             "characters": [
               "yassin",
               "ines"
             ],
+            "theme": "mint_blossom",
             "prompt": "At a desk on Yassin's first day: Yassin, slightly shy, places one hand on his chest as he introduces himself; Inês sits at the desk opposite, turned toward him, listening with a welcoming smile. A blank visitor badge clipped to his jacket. Close two-shot, waist-up, eye contact, warm morning office light."
           },
           "priority": "essential"
@@ -93,11 +103,13 @@
           "tl": "Como se chama?",
           "eg": "اسم حضرتك إيه؟",
           "image": {
+            "kind": "scene",
             "ratio": "4:3",
             "characters": [
               "yassin",
               "carlos"
             ],
+            "theme": "teal_sand",
             "prompt": "In Carlos's small glass-walled office, Carlos leans back in his chair with an open-palm questioning gesture and a curious, kind expression, asking the new employee something; Yassin stands holding his laptop bag, about to answer. Over-the-shoulder shot from behind Yassin, Carlos's face clearly visible, morning light."
           },
           "priority": "essential"
@@ -109,11 +121,13 @@
           "eg": "اتشرفنا",
           "role": "heard",
           "image": {
+            "kind": "scene",
             "ratio": "4:3",
             "characters": [
               "yassin",
               "tiago"
             ],
+            "theme": "terracotta_espresso",
             "prompt": "Yassin and Tiago shake hands firmly next to the office plants, both smiling broadly at their first introduction; Tiago's other hand pats Yassin's arm warmly. Close-up on the handshake in the foreground with both faces visible above it, warm light, happy first-meeting mood."
           },
           "priority": "essential"
@@ -126,11 +140,13 @@
           "role": "said",
           "replies_to": "phrase.nice_to_meet",
           "image": {
+            "kind": "scene",
             "ratio": "4:3",
             "characters": [
               "tiago",
               "ines"
             ],
+            "theme": "leaf_tomato",
             "prompt": "Right after a handshake, Inês laughs warmly and gives a small nod to Tiago, who grins back, both still turned toward each other by a window with soft city rooftops blurred behind them. Close two-shot, faces large, cheerful daytime light."
           },
           "priority": "essential"
@@ -207,11 +223,13 @@
           "tl": "Tudo bem?",
           "eg": "عامل إيه؟",
           "image": {
+            "kind": "scene",
             "ratio": "4:3",
             "characters": [
               "yassin",
               "tiago"
             ],
+            "theme": "sage_woolred",
             "prompt": "Morning at the office kitchenette: Tiago, leaning on the counter with a banana in his hand, casually asks Yassin something with raised eyebrows and a friendly grin while Yassin pours water into a glass. Medium shot, relaxed colleague-to-colleague mood, soft daylight."
           },
           "priority": "essential"
@@ -222,11 +240,13 @@
           "tl": "Tudo bem, obrigado.",
           "eg": "تمام، شكراً (اللي بيتكلم راجل: obrigado · ست: obrigada)",
           "image": {
+            "kind": "scene",
             "ratio": "4:3",
             "characters": [
               "yassin",
               "tiago"
             ],
+            "theme": "teal_sand",
             "prompt": "Yassin gives a thumbs-up with a relaxed smile in answer to Tiago, who nods back happily; both holding coffee cups by the office window. Close two-shot, waist-up, bright daylight, easy-going mood."
           },
           "tl_f": "Tudo bem, obrigada.",
@@ -238,11 +258,13 @@
           "tl": "Até amanhã!",
           "eg": "أشوفك بكرة",
           "image": {
+            "kind": "scene",
             "ratio": "4:3",
             "characters": [
               "yassin",
               "ines"
             ],
+            "theme": "coral_lilac",
             "prompt": "End of the workday, about 6 pm: Inês, putting on her jacket with her bag on her shoulder, points cheerfully forward with one finger raised as she says goodbye to Yassin, who is still at his desk closing his laptop. Medium shot, warm orange sunset light through the windows, cosy end-of-day mood."
           },
           "priority": "essential"
@@ -256,11 +278,13 @@
             "Tchau!"
           ],
           "image": {
+            "kind": "scene",
             "ratio": "4:3",
             "characters": [
               "yassin",
               "manuel"
             ],
+            "theme": "rust_mustard",
             "prompt": "Early evening at a small neighbourhood café: Manuel, in his apron, stands at the door flipping the sign to closed and waves goodbye with a big smile; Yassin walks away down the quiet street, turning back to wave. Wide street shot with plain shopfronts, golden hour light, friendly parting mood."
           },
           "priority": "essential"
@@ -271,11 +295,13 @@
           "tl": "Como está?",
           "eg": "إزي حضرتك؟ (بأدب)",
           "image": {
+            "kind": "scene",
             "ratio": "4:3",
             "characters": [
               "yassin",
               "graca"
             ],
+            "theme": "mint_blossom",
             "prompt": "On the worn stone stairs of an old apartment building, Yassin meets Dona Graça coming down with her woven shopping basket; he stops, steps aside respectfully and greets her politely with a slight bow of the head. Medium shot on the stairs, soft morning light from a small window, respectful neighbourly mood."
           },
           "priority": "essential"
@@ -286,11 +312,13 @@
           "tl": "Estou bem, obrigado.",
           "eg": "أنا كويس، شكراً (اللي بيتكلم راجل: obrigado · ست: obrigada)",
           "image": {
+            "kind": "scene",
             "ratio": "4:3",
             "characters": [
               "yassin",
               "graca"
             ],
+            "theme": "plum_ivory",
             "prompt": "Dona Graça answers Yassin with a warm, composed smile, one hand resting on her chest and the other holding the stair rail; Yassin listens attentively a step below her. Close shot on Dona Graça's face with Yassin in soft focus in the foreground, kind and polite mood."
           },
           "tl_f": "Estou bem, obrigada.",
@@ -305,6 +333,15 @@
             "volto",
             "volta"
           ],
+          "image": {
+            "kind": "action",
+            "ratio": "1:1",
+            "characters": [
+              "yassin"
+            ],
+            "theme": "rain_slate",
+            "prompt": "Yassin steps back in through the open glass door of a small café, shaking raindrops off a folded umbrella with one hand and holding his keys in the other, half-smiling as if to say he's back. His body is turned inward, one foot still on the doormat, a few wet footprints behind him. Medium shot, the doorway framing him."
+          },
           "priority": "essential"
         },
         {
@@ -312,6 +349,16 @@
           "kind": "phrase",
           "tl": "Já volto!",
           "eg": "راجع على طول",
+          "image": {
+            "kind": "scene",
+            "ratio": "4:3",
+            "characters": [
+              "ines",
+              "yassin"
+            ],
+            "theme": "leaf_tomato",
+            "prompt": "Inês has just stood up from her desk with her phone pressed to her ear; she raises one finger toward Yassin with an apologetic smile — one moment, back soon — while her chair still rolls back behind her. Yassin, at the next desk, nods understandingly with a pen in hand. Medium shot, both faces readable."
+          },
           "priority": "essential",
           "uses": [
             "verb.voltar"
@@ -378,6 +425,12 @@
           "tl": "o café",
           "eg": "القهوة (إسبريسو صغير)",
           "plural_tl": "os cafés",
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "A small thick-walled white espresso cup on its saucer, filled with dark espresso under a thin hazelnut-coloured crema, a tiny silver spoon resting on the saucer and a plain paper sugar sachet with no print beside it. A delicate curl of steam rises. Slight three-quarter view from above."
+          },
           "priority": "situational"
         },
         {
@@ -386,6 +439,12 @@
           "tl": "o galão",
           "eg": "قهوة بلبن في كوباية",
           "plural_tl": "os galões",
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "A tall clear glass of milky coffee showing soft layers — pale steamed milk, a band of light coffee and a cap of foam — standing on a small white saucer with a long thin spoon. A wisp of steam, a few drops of foam on the rim. Slight three-quarter view."
+          },
           "priority": "situational"
         },
         {
@@ -394,6 +453,12 @@
           "tl": "a água",
           "eg": "المية",
           "plural_tl": null,
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "A clear glass carafe full of cold water with ice cubes and beads of condensation on the outside, a thin slice of lemon floating near the top, a small wet ring on the paper beneath it and a few scattered droplets. Cool blue-white tones in the water."
+          },
           "priority": "situational"
         },
         {
@@ -402,6 +467,12 @@
           "tl": "o leite",
           "eg": "اللبن",
           "plural_tl": null,
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "An old-fashioned glass bottle of fresh white milk with a plain cardboard cap, beside a small white ceramic jug with a little milk splash at its lip and a couple of white drops on the paper. Creamy whites with soft blue-grey shadows."
+          },
           "priority": "situational"
         },
         {
@@ -410,6 +481,12 @@
           "tl": "o chá",
           "eg": "الشاي",
           "plural_tl": "os chás",
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "A round white teapot and a glass cup of amber tea with a tea bag string hanging over the rim (blank tag), a lemon wedge on the saucer and a few loose dark tea leaves scattered nearby. Gentle steam rises from the cup."
+          },
           "priority": "situational"
         },
         {
@@ -418,6 +495,12 @@
           "tl": "o pastel de nata",
           "eg": "تارت الكريمة البرتغالي",
           "plural_tl": "os pastéis de nata",
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "Two small custard tarts with blistered, caramelised dark-spotted tops and flaky golden pastry shells on a small white plate, a little glass shaker of cinnamon beside them and a light dusting of cinnamon on one tart. A few pastry flakes on the paper."
+          },
           "priority": "situational"
         },
         {
@@ -426,6 +509,16 @@
           "tl": "Queria um café, por favor.",
           "eg": "عايز قهوة لو سمحت",
           "role": "said",
+          "image": {
+            "kind": "scene",
+            "ratio": "4:3",
+            "characters": [
+              "yassin",
+              "manuel"
+            ],
+            "theme": "terracotta_espresso",
+            "prompt": "At a small neighbourhood café counter, Yassin leans in politely with one finger raised to order a single coffee; Manuel, behind the counter with a cloth over his shoulder, leans toward him and listens with a friendly nod, one hand already on the espresso machine. Close two-shot, waist-up, faces large."
+          },
           "priority": "essential"
         },
         {
@@ -434,6 +527,16 @@
           "tl": "Com leite?",
           "eg": "بلبن؟",
           "role": "heard",
+          "image": {
+            "kind": "scene",
+            "ratio": "4:3",
+            "characters": [
+              "nour",
+              "manuel"
+            ],
+            "theme": "ochre_sky",
+            "prompt": "Manuel holds a small steel milk jug tilted just above a coffee cup and looks at Nour with raised eyebrows, waiting for her answer; Nour, at the counter with her bag on her shoulder, is about to reply with a smile. Over-the-shoulder shot from behind Nour, Manuel's questioning face clear."
+          },
           "priority": "useful"
         },
         {
@@ -442,6 +545,16 @@
           "tl": "Mais alguma coisa?",
           "eg": "حاجة تانية؟",
           "role": "heard",
+          "image": {
+            "kind": "scene",
+            "ratio": "4:3",
+            "characters": [
+              "tiago",
+              "manuel"
+            ],
+            "theme": "mint_blossom",
+            "prompt": "Manuel sets a coffee on the counter and opens his other palm toward a glass display of pastries, inviting more; Tiago, earbuds around his neck, studies the pastries with a finger on his chin, tempted. Medium shot, the pastry display in the foreground."
+          },
           "priority": "useful"
         },
         {
@@ -452,6 +565,16 @@
           "role": "said",
           "replies_to": "phrase.anything_else",
           "tl_f": "Só isto, obrigada.",
+          "image": {
+            "kind": "scene",
+            "ratio": "4:3",
+            "characters": [
+              "nour",
+              "manuel"
+            ],
+            "theme": "rain_slate",
+            "prompt": "Nour, wallet already in one hand, gives Manuel a small polite palm-down gesture — that's enough — with a content smile, her coffee in front of her; Manuel nods and turns toward the till. Rain streaks the café window behind them. Waist-up two-shot."
+          },
           "priority": "essential"
         },
         {
@@ -554,6 +677,12 @@
           "tl": "a torrada",
           "eg": "التوست",
           "plural_tl": "as torradas",
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "A thick slice of golden toasted bread cut into two halves on a small white plate, a pat of butter melting into the hot crumb, a butter knife leaning on the plate rim and a few crumbs scattered around. Warm golden-brown tones with crisp darker edges."
+          },
           "priority": "situational"
         },
         {
@@ -562,6 +691,12 @@
           "tl": "o açúcar",
           "eg": "السكر",
           "plural_tl": null,
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "A white porcelain sugar bowl with a simple blue floral rim, its lid lifted off and resting beside it, a silver spoon standing in the white sugar, a few sugar cubes and plain unprinted paper sachets scattered around, a light dusting of spilled sugar. No writing on the bowl or sachets."
+          },
           "priority": "situational"
         },
         {
@@ -570,6 +705,12 @@
           "tl": "o sumo",
           "eg": "العصير",
           "plural_tl": "os sumos",
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "A tall glass bottle with a cork stopper and a little twine bow, full of fresh orange juice, beside a glass of orange juice with ice cubes and a sprig of mint; two orange halves, a small dish of orange slices and a few leaves around them, a few small orange watercolour splashes. The drinks are the hero, the fruit is smaller."
+          },
           "priority": "situational"
         },
         {
@@ -578,6 +719,12 @@
           "tl": "o bolo",
           "eg": "الكيكة",
           "plural_tl": "os bolos",
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "A generous slice of soft golden sponge cake on a small plate with a dessert fork, dusted with icing sugar, the rest of the round cake on a stand behind it with the missing slice visible, a few crumbs on the plate."
+          },
           "priority": "situational"
         },
         {
@@ -586,6 +733,12 @@
           "tl": "o copo",
           "eg": "الكوباية",
           "plural_tl": "os copos",
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "Two empty clear drinking glasses on a folded linen tea towel, one standing upright and one upside down, light catching their rims and bases with soft reflections. Completely empty, no drink inside."
+          },
           "priority": "situational"
         },
         {
@@ -594,6 +747,16 @@
           "tl": "Quanto é?",
           "eg": "حسابه كام؟",
           "role": "said",
+          "image": {
+            "kind": "scene",
+            "ratio": "4:3",
+            "characters": [
+              "yassin",
+              "manuel"
+            ],
+            "theme": "plum_ivory",
+            "prompt": "Yassin holds his wallet open and points at a small blank receipt on a saucer, asking with a curious look; Manuel, behind the till, glances at the blank screen and is about to tell him the price. Close two-shot across the counter."
+          },
           "priority": "essential"
         },
         {
@@ -602,6 +765,16 @@
           "tl": "Gosto de café.",
           "eg": "بحب القهوة (جملة جاهزة، القاعدة يوم 13)",
           "role": "said",
+          "image": {
+            "kind": "scene",
+            "ratio": "4:3",
+            "characters": [
+              "nour",
+              "ines"
+            ],
+            "theme": "coral_lilac",
+            "prompt": "At a small café table by the window, Nour holds a cup close to her face with eyes half-closed, smelling the coffee with obvious delight, and tells Inês about it; Inês laughs, holding her own cup of tea. Waist-up two-shot, warm cheerful mood."
+          },
           "priority": "useful"
         },
         {
@@ -609,6 +782,16 @@
           "kind": "phrase",
           "tl": "De nada.",
           "eg": "العفو",
+          "image": {
+            "kind": "scene",
+            "ratio": "4:3",
+            "characters": [
+              "manuel",
+              "graca"
+            ],
+            "theme": "sage_woolred",
+            "prompt": "Across the café counter, Manuel hands Dona Graça a small paper bag of pastries; she thanks him with a hand on her heart, and he answers with a modest smile and a little 'it's nothing' wave of his free hand. Over-the-shoulder from behind Graça."
+          },
           "priority": "essential"
         },
         {
@@ -616,6 +799,16 @@
           "kind": "phrase",
           "tl": "Com licença.",
           "eg": "لو سمحت (عايز أعدّي أو أقاطع)",
+          "image": {
+            "kind": "scene",
+            "ratio": "4:3",
+            "characters": [
+              "yassin",
+              "tiago"
+            ],
+            "theme": "teal_sand",
+            "prompt": "In a busy, narrow café, Yassin carries a coffee and a small plate and turns sideways with a polite, apologetic look to squeeze past Tiago, who steps back against the counter with a friendly smile to let him through. Medium shot, other customers simple in the background."
+          },
           "priority": "essential"
         },
         {
@@ -623,6 +816,16 @@
           "kind": "word",
           "tl": "então",
           "eg": "طيب / يبقى (عشان تكمّل الكلام)",
+          "image": {
+            "kind": "scene",
+            "ratio": "1:1",
+            "characters": [
+              "tiago",
+              "manuel"
+            ],
+            "theme": "cobalt_lemon",
+            "prompt": "Tiago, his coffee cup finished, lightly taps both hands on the café counter as if to wrap things up and looks at Manuel expectantly with an easy grin, wallet ready; Manuel smiles back and reaches for his order pad. Close two-shot, both faces large."
+          },
           "priority": "essential"
         },
         {
@@ -630,6 +833,16 @@
           "kind": "phrase",
           "tl": "Então, quanto é?",
           "eg": "طيب، الحساب كام؟",
+          "image": {
+            "kind": "scene",
+            "ratio": "4:3",
+            "characters": [
+              "nour",
+              "manuel"
+            ],
+            "theme": "indigo_lampgold",
+            "prompt": "Evening in the café: Nour, at a table with empty plates and cups, is pulling on her coat and raises her card toward Manuel to ask for the bill; Manuel walks over from the counter, nodding. Medium shot, lit windows behind."
+          },
           "priority": "useful",
           "uses": [
             "word.entao",
@@ -642,6 +855,16 @@
           "tl": "Pronto, obrigado.",
           "eg": "تمام كده، شكراً",
           "tl_f": "Pronto, obrigada.",
+          "image": {
+            "kind": "scene",
+            "ratio": "4:3",
+            "characters": [
+              "yassin",
+              "manuel"
+            ],
+            "theme": "rust_mustard",
+            "prompt": "Yassin takes his card and a blank receipt back from Manuel with a satisfied little nod, already half-turned toward the door with his backpack on; Manuel gives him a friendly two-finger salute from behind the counter. Waist-up two-shot."
+          },
           "priority": "essential"
         }
       ],
@@ -724,6 +947,12 @@
           "tl": "o supermercado",
           "eg": "السوبر ماركت",
           "plural_tl": "os supermercados",
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "A small neighbourhood supermarket front drawn as a vignette that fades into the white paper: glass sliding doors, crates of fruit and vegetables on a stand outside, a stack of shopping baskets by the door and a plain blank sign above. No readable letters anywhere."
+          },
           "priority": "situational"
         },
         {
@@ -732,6 +961,12 @@
           "tl": "o pão",
           "eg": "العيش",
           "plural_tl": "os pães",
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "A round crusty country loaf with one slice cut to show the soft airy crumb, two small crusty bread rolls beside it on a linen cloth, a wooden-handled bread knife and a few crumbs. Warm golden crust tones."
+          },
           "priority": "situational"
         },
         {
@@ -740,6 +975,12 @@
           "tl": "o queijo",
           "eg": "الجبنة",
           "plural_tl": "os queijos",
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "A wedge of pale yellow cheese and a small whole round cheese with a rind on a wooden board, a few thin slices fanned out, a small cheese knife and a couple of crumbs. Creamy yellows with soft brown wood."
+          },
           "priority": "situational"
         },
         {
@@ -748,6 +989,12 @@
           "tl": "a maçã",
           "eg": "التفاحة",
           "plural_tl": "as maçãs",
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "Two shiny apples, one red and one red-green with a small leaf on its stem, and an apple cut in half showing the white flesh and the star of seeds, a drop of juice on the cut face."
+          },
           "priority": "situational"
         },
         {
@@ -756,6 +1003,12 @@
           "tl": "o ovo",
           "eg": "البيضة",
           "plural_tl": "os ovos",
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "An open cardboard egg carton with brown eggs, one egg cracked into a small white bowl beside it showing a bright yellow yolk, the empty broken shell lying next to the bowl."
+          },
           "priority": "situational"
         },
         {
@@ -764,6 +1017,12 @@
           "tl": "o arroz",
           "eg": "الرز",
           "plural_tl": null,
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "A small cloth sack of uncooked long white rice with its top rolled down, a wooden scoop full of rice resting in it, and a little heap of loose rice grains spilled on the paper, each grain long and slim."
+          },
           "priority": "situational"
         },
         {
@@ -772,6 +1031,12 @@
           "tl": "o saco",
           "eg": "الكيس",
           "plural_tl": "os sacos",
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "An empty brown paper shopping bag with handles, standing open, beside a neatly folded reusable cloth shopping bag. Both completely empty and plain, with no print or logo."
+          },
           "priority": "situational"
         },
         {
@@ -779,6 +1044,16 @@
           "kind": "phrase",
           "tl": "Onde fica o leite?",
           "eg": "اللبن فين؟",
+          "image": {
+            "kind": "scene",
+            "ratio": "4:3",
+            "characters": [
+              "yassin",
+              "graca"
+            ],
+            "theme": "leaf_tomato",
+            "prompt": "In a supermarket aisle, Yassin, a basket on his arm, turns to Dona Graça with an open-hand questioning look; she pauses with her woven basket and looks up at him, ready to help. Shelves of plain unlabelled boxes behind them. Close two-shot, waist-up."
+          },
           "priority": "essential"
         },
         {
@@ -786,6 +1061,16 @@
           "kind": "phrase",
           "tl": "O que é isto?",
           "eg": "ده إيه؟",
+          "image": {
+            "kind": "scene",
+            "ratio": "4:3",
+            "characters": [
+              "nour",
+              "yassin"
+            ],
+            "theme": "teal_sand",
+            "prompt": "At the supermarket fruit stand, Nour holds up a strange knobbly green fruit with a puzzled, amused frown and shows it to Yassin, who shrugs and laughs. Crates of colourful fruit around them. Medium shot."
+          },
           "priority": "essential"
         },
         {
@@ -801,6 +1086,16 @@
           "kind": "phrase",
           "tl": "Está ali.",
           "eg": "هناك أهو (رد على Onde fica…?)",
+          "image": {
+            "kind": "scene",
+            "ratio": "4:3",
+            "characters": [
+              "graca",
+              "yassin"
+            ],
+            "theme": "plum_ivory",
+            "prompt": "Dona Graça points firmly down the aisle with her whole arm and a confident smile; Yassin, beside her, follows her finger with his eyes and his basket. Over-the-shoulder shot from behind Graça, looking along the aisle."
+          },
           "priority": "useful"
         },
         {
@@ -808,6 +1103,16 @@
           "kind": "phrase",
           "tl": "Está lá atrás.",
           "eg": "ورا خالص",
+          "image": {
+            "kind": "scene",
+            "ratio": "4:3",
+            "characters": [
+              "tiago",
+              "nour"
+            ],
+            "theme": "sage_woolred",
+            "prompt": "Tiago, carrying a box of milk cartons, points with his thumb far over his shoulder toward the very back of the long supermarket; Nour, pushing a trolley, turns to look where he points. Wide shot showing the depth of the store."
+          },
           "priority": "useful"
         }
       ],
@@ -888,6 +1193,12 @@
           "tl": "a banana",
           "eg": "الموز",
           "plural_tl": "as bananas",
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "A bunch of ripe yellow bananas with a few small brown freckles, and one banana lying in front, half-peeled with its peel curling open. Sunny yellow tones."
+          },
           "priority": "situational"
         },
         {
@@ -896,6 +1207,12 @@
           "tl": "a laranja",
           "eg": "البرتقانة",
           "plural_tl": "as laranjas",
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "Three whole oranges with glossy dimpled skin and two green leaves on one stem, and one orange cut in half showing the juicy segments, a drop of juice beside it. No glass, no juice."
+          },
           "priority": "situational"
         },
         {
@@ -904,6 +1221,12 @@
           "tl": "o tomate",
           "eg": "الطماطم",
           "plural_tl": "os tomates",
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "A cluster of ripe red tomatoes still on their green vine, and one tomato sliced into rounds showing seeds and juice, a small knife beside them."
+          },
           "priority": "situational"
         },
         {
@@ -912,6 +1235,12 @@
           "tl": "a batata",
           "eg": "البطاطس",
           "plural_tl": "as batatas",
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "A small heap of earthy brown potatoes with a little soil on them, one potato half-peeled with a vegetable peeler and a long peel curling off it."
+          },
           "priority": "situational"
         },
         {
@@ -920,6 +1249,12 @@
           "tl": "a fruta",
           "eg": "الفاكهة",
           "plural_tl": "as frutas",
+          "image": {
+            "kind": "object",
+            "ratio": "1:1",
+            "characters": [],
+            "prompt": "A wide woven basket overflowing with mixed fruit — green grapes, a pear, purple plums, a couple of figs, a bunch of cherries — with a few pieces tumbling out onto the paper."
+          },
           "priority": "situational"
         },
         {
@@ -927,6 +1262,16 @@
           "kind": "phrase",
           "tl": "Quanto custa isso?",
           "eg": "ده بكام؟",
+          "image": {
+            "kind": "scene",
+            "ratio": "4:3",
+            "characters": [
+              "carlos",
+              "manuel"
+            ],
+            "theme": "leaf_tomato",
+            "prompt": "At an outdoor market stall, Carlos holds up a big melon toward Manuel with raised eyebrows and a questioning tilt of the head; Manuel, behind crates of fruit, is about to answer with a grin. Close two-shot over the crates."
+          },
           "priority": "essential"
         },
         {
@@ -934,6 +1279,16 @@
           "kind": "phrase",
           "tl": "Precisa de saco?",
           "eg": "محتاج كيس؟ (هتسمعها عند الكاشير)",
+          "image": {
+            "kind": "scene",
+            "ratio": "4:3",
+            "characters": [
+              "manuel",
+              "sofia"
+            ],
+            "theme": "rust_mustard",
+            "prompt": "At the market stall, Manuel holds up an empty paper bag with a questioning look toward Sofia, whose arms are full of fruit and vegetables balanced against her chest. Waist-up two-shot."
+          },
           "priority": "useful"
         },
         {
@@ -945,6 +1300,13 @@
             "dá",
             "dê-me"
           ],
+          "image": {
+            "kind": "action",
+            "ratio": "1:1",
+            "characters": [],
+            "theme": "ochre_sky",
+            "prompt": "Close-up of two hands across a shop counter: one hand gives a paper bag of fruit, the other open hand reaches out to receive it, the moment just before the bag changes hands. Only the hands and forearms, no faces."
+          },
           "priority": "essential"
         },
         {
@@ -952,6 +1314,16 @@
           "kind": "phrase",
           "tl": "Pode dar-me um saco?",
           "eg": "ممكن تديني كيس؟",
+          "image": {
+            "kind": "scene",
+            "ratio": "4:3",
+            "characters": [
+              "yassin",
+              "rita"
+            ],
+            "theme": "plum_ivory",
+            "prompt": "At a supermarket checkout, groceries pile up at the end of the belt; Yassin, with apples and bread rolling toward him, gestures toward the bags and asks Rita with a slightly helpless smile; Rita, the cashier, is already reaching under the counter. Over-the-shoulder from behind Yassin."
+          },
           "priority": "useful",
           "uses": [
             "verb.dar"

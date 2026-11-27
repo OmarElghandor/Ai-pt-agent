@@ -386,7 +386,7 @@ function tryBuildCheck(opts: {
       cue: itemTl(target),
       options: deduped.slice(0, 3),
       correctIndex,
-      whyEg: itemAr(target),
+      whyEg: `${itemTl(target)} · ${itemAr(target)}`,
       skill: 'reading',
     };
   }
@@ -418,7 +418,7 @@ function tryBuildCheck(opts: {
       cue: itemAr(target),
       options: deduped.slice(0, 3),
       correctIndex,
-      whyEg: itemTl(target),
+      whyEg: `${itemTl(target)} · ${itemAr(target)}`,
       skill: 'reading',
     };
   }

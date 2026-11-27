@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "note": "Colour themes for images with people (kind scene or action). Each image picks one theme. Rules: no theme twice in the same lesson, never the same theme on two images next to each other in the flow, and the theme's times must fit the moment in the prompt (a night phrase only gets a theme that allows night). When an item has no theme, code picks one at random under these rules and saves it on the image spec so a regenerate keeps it. Object images get no theme: they keep their natural colours on white paper.",
+  "themes": [
+    {
+      "id": "ochre_sky",
+      "name_ar": "صباح أوكر وسما",
+      "colours": "warm ochre, clear sky blue and cream",
+      "light": "crisp clear morning sun with long soft shadows",
+      "times": ["morning"]
+    },
+    {
+      "id": "terracotta_espresso",
+      "name_ar": "تراكوتا وقهوة",
+      "colours": "terracotta, cream and espresso brown",
+      "light": "warm indoor lamp light with a cosy glow",
+      "times": ["morning", "day", "evening", "night"]
+    },
+    {
+      "id": "leaf_tomato",
+      "name_ar": "ورق شجر وطماطم",
+      "colours": "fresh leaf green, tomato red and straw yellow",
+      "light": "bright daylight softened by shade",
+      "times": ["morning", "day"]
+    },
+    {
+      "id": "rain_slate",
+      "name_ar": "مطر رمادي",
+      "colours": "slate blue and wet grey, with one yellow accent (a raincoat, an umbrella or a scarf)",
+      "light": "soft overcast light, wet reflections on the floor or street",
+      "times": ["morning", "day", "evening"]
+    },
+    {
+      "id": "coral_lilac",
+      "name_ar": "كورال وليلكي",
+      "colours": "coral, lilac and peach",
+      "light": "low golden-hour sun with warm rim light",
+      "times": ["day", "evening"]
+    },
+    {
+      "id": "indigo_lampgold",
+      "name_ar": "نيلي ودهبي",
+      "colours": "deep indigo and blue-grey with warm lamp gold",
+      "light": "night, warm lamps and lit windows against blue darkness",
+      "times": ["evening", "night"]
+    },
+    {
+      "id": "teal_sand",
+      "name_ar": "تيل ورملي",
+      "colours": "teal, sand and white",
+      "light": "breezy bright daylight, airy and clean",
+      "times": ["morning", "day"]
+    },
+    {
+      "id": "sage_woolred",
+      "name_ar": "شتوي أخضر رمادي",
+      "colours": "sage grey-green and oatmeal, with one wool-red accent",
+      "light": "soft cool winter daylight",
+      "times": ["morning", "day", "evening"]
+    },
+    {
+      "id": "mint_blossom",
+      "name_ar": "نعناعي وورد",
+      "colours": "mint green, blossom pink and butter yellow",
+      "light": "fresh soft spring daylight",
+      "times": ["morning", "day"]
+    },
+    {
+      "id": "rust_mustard",
+      "name_ar": "خريفي",
+      "colours": "rust orange, mustard and olive",
+      "light": "low warm autumn sun",
+      "times": ["day", "evening"]
+    },
+    {
+      "id": "plum_ivory",
+      "name_ar": "برقوقي وعاجي",
+      "colours": "plum, muted teal and ivory",
+      "light": "calm diffused indoor light",
+      "times": ["morning", "day", "evening", "night"]
+    },
+    {
+      "id": "cobalt_lemon",
+      "name_ar": "أزرق وليموني",
+      "colours": "cobalt blue, lemon yellow and white",
+      "light": "strong midday sun with crisp shadows",
+      "times": ["day"]
+    }
+  ]
+}

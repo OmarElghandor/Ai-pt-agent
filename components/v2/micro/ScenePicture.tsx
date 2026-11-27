@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { Icon } from '@/components/v2/Icon';
 import { toArDigits } from '@/lib/v2/formatAr';
 import {
@@ -10,6 +10,7 @@ import {
 
 export type SceneLineVisual = {
   box?: RegionBox | null;
+  /** Short region_label (2–3 words), never the full sentence. */
   label?: string;
   active?: boolean;
   revealed?: boolean;
@@ -17,25 +18,23 @@ export type SceneLineVisual = {
   index?: number;
 };
 
-function shortLabel(label?: string): string {
-  if (!label?.trim()) return '';
-  return label.trim().split(/\s+/).slice(0, 3).join(' ');
-}
-
 /**
- * 4:3 scene with circular numbered markers (Stitch 23).
- * Dim = full overlay; markers above. No SVG masks / clip-path.
+ * 4:3 scene (§3.2b): active ring + pointer + short label only;
+ * revealed = small numbered dots; future = nothing.
+ * RN-safe: absolute %, opacity/scale/rotate transforms only.
  */
 export function ScenePicture({
   src,
   alt,
   width: widthProp = 360,
   lines,
+  pointerFrom,
 }: {
   src?: string | null;
   alt: string;
   width?: number;
   lines: SceneLineVisual[];
+  pointerFrom?: { x: number; y: number } | null;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(widthProp);
@@ -54,6 +53,28 @@ export function ScenePicture({
     setWidth(el.clientWidth || widthProp);
     return () => ro.disconnect();
   }, [widthProp]);
+
+  let pointerStyle: CSSProperties | null = null;
+  if (hasActiveBox && active?.box && pointerFrom) {
+    const px = boxToPixels(active.box, width, height);
+    const x1 = pointerFrom.x * width;
+    const y1 = pointerFrom.y * height;
+    const x2 = px.left + px.width / 2;
+    const y2 = px.top + px.height / 2;
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
+    pointerStyle = {
+      position: 'absolute',
+      left: x1,
+      top: y1,
+      width: len,
+      height: 2,
+      transformOrigin: '0 50%',
+      transform: `rotate(${angle}deg)`,
+    };
+  }
 
   return (
     <div
@@ -89,31 +110,50 @@ export function ScenePicture({
         <div className="pointer-events-none absolute inset-0 bg-on-surface/20" aria-hidden />
       ) : null}
 
+      {pointerStyle ? (
+        <div
+          className="pointer-events-none absolute z-10 bg-primary"
+          style={pointerStyle}
+          data-testid="scene-pointer"
+          aria-hidden
+        />
+      ) : null}
+
       {lines.map((line, i) => {
         if (!line.box) return null;
+        const isActive = Boolean(line.active);
+        const isRevealed = Boolean(line.revealed);
+        // Future lines: draw nothing (§3.2b rule 5).
+        if (!isActive && !isRevealed) return null;
+
         const n = line.index ?? i + 1;
         const px = boxToPixels(line.box, width, height);
         const cxPct = ((px.left + px.width / 2) / width) * 100;
         const cyPct = ((px.top + px.height / 2) / height) * 100;
-        const isActive = Boolean(line.active);
-        const isRevealed = Boolean(line.revealed);
-        const label = shortLabel(line.label);
+        const label = line.label?.trim() ?? '';
+
+        if (isRevealed && !isActive) {
+          return (
+            <div
+              key={i}
+              className="pointer-events-none absolute z-10 flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-primary/85 text-[9px] font-bold text-on-primary shadow"
+              style={{ left: `${cxPct}%`, top: `${cyPct}%` }}
+              data-testid="scene-revealed-dot"
+            >
+              {toArDigits(n)}
+            </div>
+          );
+        }
 
         return (
           <div
             key={i}
             className="pointer-events-none absolute z-10 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center"
             style={{ left: `${cxPct}%`, top: `${cyPct}%` }}
-            data-testid={
-              isActive
-                ? 'scene-active-ring'
-                : isRevealed
-                  ? 'scene-ring'
-                  : 'scene-future-marker'
-            }
+            data-testid="scene-active-ring"
           >
-            {isActive && label ? (
-              <div className="mb-1 flex animate-bounce items-center gap-1 rounded-full bg-primary px-3 py-1 text-on-primary shadow-md">
+            {label ? (
+              <div className="mb-1 flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-on-primary shadow-md">
                 <span
                   className="font-[family-name:var(--font-v2-target)] text-[12px] font-bold"
                   dir="ltr"
@@ -125,40 +165,13 @@ export function ScenePicture({
             ) : null}
 
             <div className="relative flex items-center justify-center">
-              {isActive ? (
-                <div className="absolute h-16 w-16 animate-ping rounded-full bg-primary/25" />
-              ) : null}
-              <div
-                className={`relative flex items-center justify-center rounded-full shadow-md ${
-                  isActive
-                    ? 'h-14 w-14 bg-surface-container-lowest/90'
-                    : isRevealed
-                      ? 'h-9 w-9 bg-surface-container-lowest/90'
-                      : 'h-8 w-8 bg-surface-container-lowest/70'
-                }`}
-              >
-                <div
-                  className={`flex items-center justify-center rounded-full font-bold ${
-                    isActive
-                      ? 'h-10 w-10 bg-primary text-on-primary text-sm'
-                      : isRevealed
-                        ? 'h-7 w-7 bg-primary/80 text-on-primary text-xs'
-                        : 'h-6 w-6 text-outline text-[10px] font-semibold'
-                  }`}
-                >
+              <div className="absolute h-16 w-16 animate-ping rounded-full bg-primary/25" />
+              <div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-surface-container-lowest/90 shadow-md">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-bold text-on-primary">
                   {toArDigits(n)}
                 </div>
               </div>
             </div>
-
-            {isRevealed && !isActive && label ? (
-              <span
-                className="mt-1 max-w-[8rem] truncate rounded-full bg-on-surface/85 px-2 py-0.5 text-[10px] text-surface"
-                dir="ltr"
-              >
-                {label}
-              </span>
-            ) : null}
           </div>
         );
       })}

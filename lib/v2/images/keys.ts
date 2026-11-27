@@ -8,6 +8,9 @@ export type CharacterId = RegistryCharacterId;
 
 export const STYLE_ANCHOR_KEY = 'style_anchor';
 
+/** Object / word-card style anchor (juice sketchbook look; 19 §5). */
+export const STYLE_ANCHOR_OBJECT_KEY = 'style_anchor_object';
+
 export function characterImageKey(id: string): string {
   return `character.${id}`;
 }

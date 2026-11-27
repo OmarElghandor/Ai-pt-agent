@@ -27,6 +27,8 @@ const clipLineSchema = new Schema(
     pos: { type: String, required: true },
     concept_en: { type: String, required: false },
     region_hint: { type: String, required: false },
+    /** Short 2–3 word scene label (§3.2b). */
+    region_label: { type: String, required: false },
     box: { type: regionBoxSchema, required: false },
     box_flagged: { type: Boolean, required: false, default: false },
     /** For rule layout: start/end char offsets of the highlighted ending in tl. */
@@ -41,6 +43,20 @@ const clipLineSchema = new Schema(
       required: false,
     },
     verb_lemma: { type: String, required: false },
+  },
+  { _id: false },
+);
+
+const scenePlanObjectSchema = new Schema(
+  {
+    id: { type: String, required: true },
+    label_en: { type: String, required: true },
+    zone: {
+      type: String,
+      required: true,
+      enum: ['near', 'middle', 'far'],
+    },
+    default_box: { type: regionBoxSchema, required: true },
   },
   { _id: false },
 );
@@ -118,6 +134,27 @@ const v2MicroClipSchema = new Schema(
     rule_card: { type: ruleCardSchema, required: false },
     main_image_key: { type: String, required: false },
     main_image_aspect: { type: String, required: false, default: '4:3' },
+    /** Shared scene identity (§3.2b) — clips with the same key share one main picture. */
+    scene_key: { type: String, required: false, index: true },
+    scene_plan: {
+      type: new Schema(
+        {
+          objects: { type: [scenePlanObjectSchema], default: [] },
+        },
+        { _id: false },
+      ),
+      required: false,
+    },
+    pointer_from: {
+      type: new Schema(
+        {
+          x: { type: Number, required: true },
+          y: { type: Number, required: true },
+        },
+        { _id: false },
+      ),
+      required: false,
+    },
     lines: { type: [clipLineSchema], default: [] },
     legacy_ref: { type: String, required: false },
     status: {

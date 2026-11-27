@@ -1,3 +1,5 @@
+import { existsSync, readFileSync } from 'node:fs';
+import path from 'node:path';
 import { connectMongo, mongoConfigured } from '@/lib/mongo';
 import { descriptionForPrompt, isRegistryCharacter } from '@/lib/v2/characters/registry';
 import {
@@ -19,6 +21,7 @@ import { V2ImageModel, type V2ImageDoc } from '@/lib/v2/mongo/models';
 import {
   CHARACTER_IDS,
   STYLE_ANCHOR_KEY,
+  STYLE_ANCHOR_OBJECT_KEY,
   characterIdFromKey,
   characterImageKey,
   isCharacterKey,
@@ -234,6 +237,57 @@ async function getUsableStyleAnchor(): Promise<LeanImage | null> {
       url: { $exists: true, $ne: '' },
     })
     .lean();
+  return doc ? toLean(doc as V2ImageDoc) : null;
+}
+
+async function getUsableObjectStyleAnchor(): Promise<LeanImage | null> {
+  await connectMongo();
+  const existing = await V2ImageModel()
+    .findOne({
+      key: STYLE_ANCHOR_OBJECT_KEY,
+      url: { $exists: true, $ne: '' },
+    })
+    .lean();
+  if (existing) return toLean(existing as V2ImageDoc);
+
+  const localPath = path.join(
+    process.cwd(),
+    'content/v2/assets/style-anchor-object.png',
+  );
+  if (!existsSync(localPath)) return null;
+
+  const buffer = readFileSync(localPath);
+  const uploaded = await uploadImage({
+    key: STYLE_ANCHOR_OBJECT_KEY,
+    buffer,
+  });
+  const Model = V2ImageModel();
+  await Model.findOneAndUpdate(
+    { key: STYLE_ANCHOR_OBJECT_KEY },
+    {
+      $set: {
+        status: 'ready',
+        url: uploaded.url,
+        public_id: uploaded.public_id,
+        cloudinary_version: uploaded.version,
+        kind: 'style_anchor',
+        type: 'object',
+        prompt: 'object style anchor (local style-anchor-object.png)',
+        spec: {
+          type: 'object',
+          subject: 'orange juice bottle style anchor',
+        },
+      },
+      $setOnInsert: {
+        key: STYLE_ANCHOR_OBJECT_KEY,
+        cost_usd: 0,
+        version: 1,
+        used_by: [],
+      },
+    },
+    { upsert: true },
+  );
+  const doc = await Model.findOne({ key: STYLE_ANCHOR_OBJECT_KEY }).lean();
   return doc ? toLean(doc as V2ImageDoc) : null;
 }
 
@@ -632,7 +686,18 @@ export async function generateContentImage(opts: {
 
   try {
     const references: ImageRefInput[] = [];
-    if (uniqueChars.length) {
+
+    if (spec.type === 'object') {
+      const anchor = await getUsableObjectStyleAnchor();
+      if (!anchor?.url) {
+        const doc = await markStatus(key, 'blocked', {
+          reason: 'no object style anchor',
+        });
+        return { doc, skipped: false, reason: 'no object style anchor' };
+      }
+      const buf = await fetchRefBuffer(String(anchor.url), cache);
+      references.push({ buffer: buf, filename: 'style_anchor_object.png' });
+    } else if (uniqueChars.length) {
       for (const id of uniqueChars) {
         const sheet = await getReadyCharacterSheet(id);
         if (!sheet?.url) {
@@ -663,13 +728,24 @@ export async function generateContentImage(opts: {
 
     const prompt = opts.scenePrompt?.trim()
       ? buildAuthoredImagePrompt({
-          characters: uniqueChars.length ? uniqueChars : spec.characters,
+          characters:
+            spec.type === 'object'
+              ? []
+              : uniqueChars.length
+                ? uniqueChars
+                : spec.characters,
           prompt: opts.scenePrompt,
-          scene: true,
+          kind: spec.type,
+          theme: spec.theme,
         })
       : buildImagePrompt({
           ...spec,
-          characters: uniqueChars.length ? uniqueChars : spec.characters,
+          characters:
+            spec.type === 'object'
+              ? []
+              : uniqueChars.length
+                ? uniqueChars
+                : spec.characters,
         });
     const size = opts.scenePrompt
       ? sizeForRatio(opts.ratio ?? undefined)

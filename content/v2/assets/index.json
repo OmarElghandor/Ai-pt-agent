@@ -1,6 +1,7 @@
 {
   "keys": [],
   "style_anchor": "content/v2/assets/style-anchor.png",
+  "style_anchor_object": "content/v2/assets/style-anchor-object.png",
   "characters": {
     "yassin": "content/v2/assets/characters/yassin.png",
     "ines": "content/v2/assets/characters/ines.png",

@@ -3,6 +3,13 @@ import { z } from 'zod';
 export const MicroLayoutSchema = z.enum(['list', 'pairs', 'scene', 'rule']);
 export type MicroLayout = z.infer<typeof MicroLayoutSchema>;
 
+export const RegionBoxSchema = z.object({
+  x: z.number().min(0).max(1),
+  y: z.number().min(0).max(1),
+  w: z.number().min(0).max(1),
+  h: z.number().min(0).max(1),
+});
+
 export const OutlineAuthoredLineSchema = z.object({
   tl: z.string().min(1),
   ar: z.string().min(1),
@@ -10,15 +17,10 @@ export const OutlineAuthoredLineSchema = z.object({
   concept_en: z.string().optional(),
   icon_spec: z.string().optional(),
   region_hint: z.string().optional(),
+  /** Short 2–3 word scene label (§3.2b). */
+  region_label: z.string().optional(),
   verb_lemma: z.string().optional(),
-  box: z
-    .object({
-      x: z.number().min(0).max(1),
-      y: z.number().min(0).max(1),
-      w: z.number().min(0).max(1),
-      h: z.number().min(0).max(1),
-    })
-    .optional(),
+  box: RegionBoxSchema.optional(),
 });
 
 export const OutlineRuleCardSchema = z.object({
@@ -35,6 +37,17 @@ export const OutlineRuleCardSchema = z.object({
     .optional(),
 });
 
+export const ScenePlanObjectSchema = z.object({
+  id: z.string().min(1),
+  label_en: z.string().min(1),
+  zone: z.enum(['near', 'middle', 'far']),
+  default_box: RegionBoxSchema,
+});
+
+export const ScenePlanSchema = z.object({
+  objects: z.array(ScenePlanObjectSchema).min(1),
+});
+
 export const OutlineClipSchema = z.object({
   slug: z.string().min(1),
   order: z.number().int().positive(),
@@ -47,6 +60,17 @@ export const OutlineClipSchema = z.object({
   extra_brief: z.string().optional(),
   note: z.string().optional(),
   rule_card: OutlineRuleCardSchema.optional(),
+  /** Shared scene identity across clips (§3.2b). */
+  scene_key: z.string().optional(),
+  scene_plan: ScenePlanSchema.optional(),
+  pointer_from: z
+    .object({
+      x: z.number().min(0).max(1),
+      y: z.number().min(0).max(1),
+    })
+    .optional(),
+  /** Exact English subject for the main picture when authored. */
+  image_spec: z.string().optional(),
   /** When present, generation skips the model call (19 §5 authored override). */
   authored_lines: z.array(OutlineAuthoredLineSchema).optional(),
   ready: z.boolean().optional().default(false),
@@ -68,3 +92,4 @@ export const MicroOutlineSchema = z.object({
 export type OutlineClip = z.infer<typeof OutlineClipSchema>;
 export type OutlineSeries = z.infer<typeof OutlineSeriesSchema>;
 export type MicroOutline = z.infer<typeof MicroOutlineSchema>;
+export type ScenePlan = z.infer<typeof ScenePlanSchema>;

@@ -8,7 +8,7 @@ import {
   V2MicroClipModel,
   V2MicroSeriesModel,
 } from '@/lib/v2/mongo/microModels';
-import { microMainImageKey } from './images/main';
+import { resolveMicroMainImageKey } from './images/main';
 
 export async function ensureMicroSeries(
   series: OutlineSeries,
@@ -49,11 +49,12 @@ export async function persistGeneratedClip(opts: {
   if (!mongoConfigured()) throw new Error('MongoDB not configured');
   await connectMongo();
   const Model = V2MicroClipModel();
-  const mainKey = microMainImageKey(
-    opts.targetLang,
-    opts.seriesSlug,
-    opts.clip.slug,
-  );
+  const mainKey = resolveMicroMainImageKey({
+    targetLang: opts.targetLang,
+    seriesSlug: opts.seriesSlug,
+    clipSlug: opts.clip.slug,
+    sceneKey: opts.clip.scene_key,
+  });
   const payload = {
     series_id: opts.seriesId,
     series_slug: opts.seriesSlug,
@@ -68,24 +69,36 @@ export async function persistGeneratedClip(opts: {
     rule_card: opts.result.rule_card,
     main_image_key: mainKey,
     main_image_aspect: '4:3',
-    lines: opts.result.lines.map((l) => ({
-      item_id: l.item_id,
-      icon_key: l.icon_key,
-      tl: l.tl,
-      ar: l.ar,
-      pos: l.pos,
-      concept_en: l.concept_en,
-      region_hint: l.region_hint,
-      highlight: l.highlight,
-      verb_lemma: l.verb_lemma,
-      box_flagged: opts.clip.layout === 'scene' && !l.region_hint ? true : false,
-    })),
+    scene_key: opts.clip.scene_key,
+    scene_plan: opts.clip.scene_plan,
+    pointer_from: opts.clip.pointer_from,
+    lines: opts.result.lines.map((l) => {
+      const authored = opts.clip.authored_lines?.find((a) => a.tl === l.tl);
+      const box = authored?.box;
+      return {
+        item_id: l.item_id,
+        icon_key: l.icon_key,
+        tl: l.tl,
+        ar: l.ar,
+        pos: l.pos,
+        concept_en: l.concept_en,
+        region_hint: l.region_hint ?? authored?.region_hint,
+        region_label: authored?.region_label,
+        box: box ?? undefined,
+        highlight: l.highlight,
+        verb_lemma: l.verb_lemma,
+        box_flagged:
+          opts.clip.layout === 'scene' && !(l.region_hint || authored?.region_hint)
+            ? true
+            : false,
+      };
+    }),
     legacy_ref: opts.clip.legacy_ref,
     status: 'ready' as const,
     draft_reason: undefined,
     generation_cost: opts.result.cost_tokens,
     generation_tokens: opts.result.cost_tokens,
-    image_spec: opts.result.image_spec,
+    image_spec: opts.clip.image_spec ?? opts.result.image_spec,
   };
 
   const existing = await Model.findOne({
@@ -116,11 +129,12 @@ export async function persistDraftClip(opts: {
   if (!mongoConfigured()) throw new Error('MongoDB not configured');
   await connectMongo();
   const Model = V2MicroClipModel();
-  const mainKey = microMainImageKey(
-    opts.targetLang,
-    opts.seriesSlug,
-    opts.clip.slug,
-  );
+  const mainKey = resolveMicroMainImageKey({
+    targetLang: opts.targetLang,
+    seriesSlug: opts.seriesSlug,
+    clipSlug: opts.clip.slug,
+    sceneKey: opts.clip.scene_key,
+  });
   const payload = {
     series_id: opts.seriesId,
     series_slug: opts.seriesSlug,
@@ -133,6 +147,9 @@ export async function persistDraftClip(opts: {
     title_tl: opts.title_tl,
     main_image_key: mainKey,
     main_image_aspect: '4:3',
+    scene_key: opts.clip.scene_key,
+    scene_plan: opts.clip.scene_plan,
+    pointer_from: opts.clip.pointer_from,
     lines: opts.lines.map((l) => ({
       item_id: l.item_id,
       icon_key: l.icon_key,

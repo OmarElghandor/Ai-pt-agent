@@ -5,7 +5,10 @@ import {
   customDeckImageModelId,
   customDeckImageQuality,
 } from '@/lib/v2/decks/images';
-import { buildMicroMainImageSpec, microMainImageKey } from './main';
+import {
+  buildMicroMainImageSpec,
+  resolveMicroMainImageKey,
+} from './main';
 import { iconKeyForConcept, planIcon } from './icons';
 
 export type EnqueueMicroImagesResult = {
@@ -55,7 +58,12 @@ export async function enqueueMicroSeriesImages(opts: {
   for (const clip of clips) {
     const mainKey =
       clip.main_image_key ||
-      microMainImageKey(targetLang, opts.seriesSlug, clip.slug);
+      resolveMicroMainImageKey({
+        targetLang,
+        seriesSlug: opts.seriesSlug,
+        clipSlug: clip.slug,
+        sceneKey: (clip as { scene_key?: string }).scene_key,
+      });
     if (!clip.main_image_key) {
       await V2MicroClipModel().updateOne(
         { _id: clip._id },

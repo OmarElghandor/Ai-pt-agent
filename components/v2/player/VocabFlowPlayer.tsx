@@ -367,9 +367,7 @@ export function VocabFlowPlayer({
   if (!slides.length) return null;
 
   const showingHeroImage =
-    slide?.kind === 'item' ||
-    (slide?.kind === 'micro_check' && flashItemId) ||
-    slide?.kind === 'phrase_in_use';
+    slide?.kind === 'item' || slide?.kind === 'phrase_in_use';
 
   const progressFill =
     slides.length > 1 ? (index / (slides.length - 1)) * 100 : 100;
@@ -397,6 +395,7 @@ export function VocabFlowPlayer({
   const isRw = slide?.kind === 'item' && Boolean(slide.realWorldTag);
   const meaningHidden = coverMeaning;
   const isBreather = slide?.kind === 'breather';
+  const showHeroShell = !isBreather && slide?.kind !== 'micro_check';
 
   const breatherWords =
     isBreather && slide.kind === 'breather'
@@ -479,7 +478,7 @@ export function VocabFlowPlayer({
         </div>
       </div>
 
-      {!isBreather ? (
+      {showHeroShell ? (
         <div className="relative mx-4 mt-1 h-[36vh] min-h-[180px] overflow-hidden rounded-v2-card bg-v2-paper-deep shadow-[var(--shadow-v2-soft)]">
           {showingHeroImage ? (
             <ImageSlot
@@ -1008,7 +1007,7 @@ export function VocabFlowPlayer({
                         triggerNextPulse();
                       }
                     }}
-                    className={`rounded-v2-card border-2 px-4 py-3 text-start font-[family-name:var(--font-v2-arabic)] text-base ${tone}`}
+                    className={`flex w-full items-center justify-between gap-2 rounded-v2-card border-2 px-4 py-3 text-start font-[family-name:var(--font-v2-arabic)] text-base ${tone}`}
                     dir={
                       slide.checkType === 'pick_tl' ||
                       slide.checkType === 'complete_phrase'
@@ -1016,14 +1015,12 @@ export function VocabFlowPlayer({
                         : 'rtl'
                     }
                   >
-                    <span className="flex items-center justify-between gap-2">
-                      <span>{opt.label}</span>
-                      {badge ? (
-                        <span className="shrink-0 text-xs font-semibold">
-                          {badge}
-                        </span>
-                      ) : null}
-                    </span>
+                    <span className="min-w-0 flex-1">{opt.label}</span>
+                    {badge ? (
+                      <span className="shrink-0 text-xs font-semibold">
+                        {badge}
+                      </span>
+                    ) : null}
                   </button>
                 );
               })}

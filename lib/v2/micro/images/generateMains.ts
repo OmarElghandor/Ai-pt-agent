@@ -3,7 +3,10 @@ import { generateContentImage } from '@/lib/v2/images/generateOne';
 import { V2ImageModel } from '@/lib/v2/mongo/models';
 import { V2MicroClipModel } from '@/lib/v2/mongo/microModels';
 import type { ImageSpec } from '@/lib/v2/generation/images/templates';
-import { buildMicroMainImageSpec, microMainImageKey } from './main';
+import {
+  buildMicroMainImageSpec,
+  resolveMicroMainImageKey,
+} from './main';
 
 export type GenerateMicroMainsResult = {
   generated: number;
@@ -41,17 +44,28 @@ export async function generateMicroSeriesMainImages(opts: {
   const keys: string[] = [];
   const errors: Array<{ key: string; message: string }> = [];
   const usedBy = [`micro:${opts.seriesSlug}`];
+  const seenKeys = new Set<string>();
 
   for (const clip of clips) {
     const key =
       clip.main_image_key ||
-      microMainImageKey(targetLang, opts.seriesSlug, clip.slug);
+      resolveMicroMainImageKey({
+        targetLang,
+        seriesSlug: opts.seriesSlug,
+        clipSlug: clip.slug,
+        sceneKey: (clip as { scene_key?: string }).scene_key,
+      });
     if (!clip.main_image_key) {
       await V2MicroClipModel().updateOne(
         { _id: clip._id },
         { $set: { main_image_key: key } },
       );
     }
+    if (seenKeys.has(key)) {
+      // Shared scene_key — one generate per key.
+      continue;
+    }
+    seenKeys.add(key);
     keys.push(key);
 
     const existing = await V2ImageModel()

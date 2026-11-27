@@ -1,6 +1,7 @@
 export {
   CHARACTER_IDS,
   STYLE_ANCHOR_KEY,
+  STYLE_ANCHOR_OBJECT_KEY,
   characterImageKey,
   storySceneKey,
   safeImageFilename,
@@ -52,6 +53,16 @@ export {
   type ShotType,
   type TimeOfDay,
 } from './shotPlan';
+export {
+  assignThemesToSpecs,
+  getImageTheme,
+  inferThemeTime,
+  loadImageThemes,
+  pickImageTheme,
+  themePromptLine,
+  type ImageTheme,
+  type ThemeTime,
+} from './themes';
 export { ImageLinkSchema, type ImageLink, type V2ImageStatus } from './types';
 export {
   lookupAuthoredImage,

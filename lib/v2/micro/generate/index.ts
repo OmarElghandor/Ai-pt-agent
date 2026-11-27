@@ -155,11 +155,13 @@ function authoredToGenerated(clip: OutlineClip): GenerateClipOutput {
     title_tl: clip.title_tl,
     title_ar: clip.title_ar,
     note: clip.note,
-    image_spec: synthesizeMicroImageSpec({
-      title_tl: clip.title_tl,
-      layout: clip.layout,
-      prompt_guidance: clip.prompt_guidance,
-    }),
+    image_spec:
+      clip.image_spec?.trim() ||
+      synthesizeMicroImageSpec({
+        title_tl: clip.title_tl,
+        layout: clip.layout,
+        prompt_guidance: clip.prompt_guidance,
+      }),
     rule_card: clip.rule_card,
     lines: (clip.authored_lines ?? []).map((l) => ({
       tl: l.tl,
@@ -305,7 +307,10 @@ export async function generateMicroClip(opts: {
     memoryStore: opts.memoryStore,
   });
 
-  if (resolved.length < 6) {
+  // Authored scene plans (§3.2b) may have 3–5 lines tied to planned objects.
+  const minLines =
+    authored && opts.clip.scene_key ? 3 : authored ? 3 : 6;
+  if (resolved.length < minLines) {
     return {
       ok: false,
       reason: 'too_few_lines',

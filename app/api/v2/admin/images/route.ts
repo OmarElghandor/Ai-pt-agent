@@ -26,21 +26,28 @@ function previewFinalPrompt(opts: {
   characters: string[];
   storedPrompt?: string | null;
   spec?: ImageSpec | null;
+  kind?: ImageSpec['type'] | null;
+  theme?: string | null;
 }): string {
   if (opts.scenePrompt) {
+    const kind = opts.kind ?? opts.spec?.type ?? 'scene';
     return buildAuthoredImagePrompt({
-      characters: opts.characters,
+      characters: kind === 'object' ? [] : opts.characters,
       prompt: opts.scenePrompt,
-      scene: true,
+      kind,
+      theme: opts.theme ?? opts.spec?.theme,
     });
   }
   if (opts.storedPrompt?.trim()) return opts.storedPrompt;
   if (opts.spec) {
     return buildImagePrompt({
       ...opts.spec,
-      characters: opts.characters.length
-        ? opts.characters
-        : opts.spec.characters,
+      characters:
+        opts.spec.type === 'object'
+          ? []
+          : opts.characters.length
+            ? opts.characters
+            : opts.spec.characters,
     });
   }
   return '';
@@ -111,12 +118,15 @@ export async function GET(req: Request) {
         ? resolved.source
         : ((doc?.prompt_source as 'authored' | 'generated' | 'override' | null) ??
           'generated');
+    const storedSpec = (doc?.spec as ImageSpec | null | undefined) ?? null;
     const final_prompt = previewFinalPrompt({
       source,
       scenePrompt: resolved.scenePrompt,
       characters,
       storedPrompt: doc?.prompt,
-      spec: (doc?.spec as ImageSpec | null | undefined) ?? null,
+      spec: storedSpec,
+      kind: resolved.kind ?? storedSpec?.type ?? null,
+      theme: resolved.theme ?? storedSpec?.theme ?? null,
     });
 
     const status = doc?.status ?? 'missing';

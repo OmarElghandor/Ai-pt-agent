@@ -1,13 +1,34 @@
 import type { ImageSpec } from '@/lib/v2/generation/images/templates';
 import { mergeMustAvoid } from '@/lib/v2/images/forbidden';
 
-/** Main clip picture key. */
+/** Main clip picture key (per-clip). */
 export function microMainImageKey(
   targetLang: string,
   seriesSlug: string,
   clipSlug: string,
 ): string {
   return `micro.${targetLang}.${seriesSlug}.${clipSlug}.main`;
+}
+
+/** Shared scene picture key (§3.2b). */
+export function microSceneImageKey(
+  targetLang: string,
+  sceneKey: string,
+): string {
+  return `micro.${targetLang}.scene.${sceneKey}.main`;
+}
+
+/** Resolve the image key for a clip (shared scene wins). */
+export function resolveMicroMainImageKey(opts: {
+  targetLang: string;
+  seriesSlug: string;
+  clipSlug: string;
+  sceneKey?: string | null;
+}): string {
+  if (opts.sceneKey?.trim()) {
+    return microSceneImageKey(opts.targetLang, opts.sceneKey.trim());
+  }
+  return microMainImageKey(opts.targetLang, opts.seriesSlug, opts.clipSlug);
 }
 
 /** Fallback English subject when the model omits image_spec. */

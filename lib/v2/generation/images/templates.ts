@@ -3,11 +3,24 @@ import {
   descriptionForPrompt,
 } from '@/lib/v2/characters/registry';
 import { IMAGE_FORBIDDEN, mergeMustAvoid } from '@/lib/v2/images/forbidden';
+import { themePromptLine } from '@/lib/v2/images/themes';
 
-/** Fixed forever — no Lisbon/landmarks; palette + light/weather live outside this block (00 §10). */
-export const STYLE_CORE = `Hand-drawn editorial illustration in ink and soft watercolour: loose, confident pen linework with visible sketchy hatching, light watercolour washes that leave some paper showing, subtle paper grain. Detailed, lived-in but generic setting with no recognisable landmarks, no country-specific details and no readable signs, drawn slightly softer and less saturated than the people, so they stay the focus. Adult realistic proportions, expressive natural faces, candid storytelling moment, the two main people look at each other and interact. Like a modern sketchbook or graphic-novel panel. No text, no letters, no numbers, no logos, no flags, no speech bubbles, no watermark. Not cartoonish, not childish, not 3D, not photorealistic.`;
+/** Shared base for every kind (19 §3). No people interaction. */
+export const STYLE_BASE = `Hand-drawn editorial illustration in ink and soft watercolour: loose, confident pen linework with visible sketchy hatching, light watercolour washes that leave some paper showing, subtle paper grain. Adult realistic proportions where people appear. No text, no letters, no numbers, no logos, no flags, no speech bubbles, no watermark. Not cartoonish, not childish, not 3D, not photorealistic.`;
 
-/** @deprecated Prefer STYLE_CORE. */
+/** Object add-on — thing alone on white paper (19 §3). */
+export const STYLE_OBJECT = `A single subject (or a small group of the same thing with its natural props) in the centre, filling about 55–65% of the frame, on clean white watercolour paper with a soft wash shadow under it and generous white space around it. Loose watercolour splashes in the subject's own colours are welcome. No people, no hands, no table scene, no room or background. Like a page from an illustrated food or object sketchbook.`;
+
+/** Scene / action add-on — people in a lived-in setting (19 §3). */
+export const STYLE_PEOPLE = `Detailed, lived-in but generic setting with no recognisable landmarks, no country-specific details and no readable signs, drawn slightly softer and less saturated than the people, so they stay the focus. Expressive natural faces, candid storytelling moment; when two people appear they look at each other and interact. Like a modern sketchbook or graphic-novel panel.`;
+
+/**
+ * Full style block for people scenes (base + people add-on).
+ * Kept for call sites that still want one string; prefer STYLE_BASE + add-ons.
+ */
+export const STYLE_CORE = `${STYLE_BASE} ${STYLE_PEOPLE}`;
+
+/** @deprecated Prefer STYLE_CORE / STYLE_BASE. */
 export const STYLE_PROMPT = STYLE_CORE;
 
 /** @deprecated Prefer descriptionForPrompt — kept as a live map for call sites. */
@@ -27,6 +40,8 @@ export type ImageSpec = {
   must_avoid?: string | string[];
   /** One English line for vision meaning QA. */
   intent?: string;
+  /** Colour theme id from image-themes.json (scene/action); persisted on regenerate. */
+  theme?: string;
 };
 
 export type ImageSize = '1024x1024' | '1536x1024';
@@ -58,22 +73,44 @@ function referenceLine(characters: string[] | undefined): string {
     : `Use the attached image only as a style reference: same line weight, colors and shading. Do not copy its subject.`;
 }
 
+function styleBlockForKind(
+  kind: ImageSpec['type'] | 'object' | 'action' | 'scene',
+): string {
+  if (kind === 'object') return `${STYLE_BASE} ${STYLE_OBJECT}`;
+  return `${STYLE_BASE} ${STYLE_PEOPLE}`;
+}
+
 /** Final prompt for a hand-authored (or admin-overridden) scene description. */
 export function buildAuthoredImagePrompt(opts: {
   characters?: string[];
   prompt: string;
+  /** @deprecated Prefer `kind`. */
   scene?: boolean;
+  kind?: ImageSpec['type'] | 'object' | 'action' | 'scene';
+  theme?: string;
 }): string {
-  const avoid = mergeMustAvoid(undefined, { scene: opts.scene !== false });
+  const kind: ImageSpec['type'] =
+    opts.kind ??
+    (opts.scene === false
+      ? 'object'
+      : (opts.characters?.length ?? 0) === 0
+        ? 'object'
+        : 'scene');
+  const avoid = mergeMustAvoid(undefined, { kind });
+  const themeLine =
+    kind !== 'object' ? themePromptLine(opts.theme) : null;
   return [
     referenceLine(opts.characters),
     '',
-    STYLE_CORE,
+    styleBlockForKind(kind),
     '',
     opts.prompt.trim(),
+    themeLine,
     '',
     `Avoid: ${avoid.join(', ')}.`,
-  ].join('\n');
+  ]
+    .filter((line) => line != null && line !== '')
+    .join('\n');
 }
 
 export function sizeForRatio(
@@ -90,7 +127,7 @@ export function buildImagePrompt(spec: ImageSpec): string {
   let body = '';
   switch (spec.type) {
     case 'object':
-      body = `Subject: ${spec.subject} as the clear centre of the frame, in use in the lesson situation (${spec.setting ?? 'the place'}). A hand or person from the cast is allowed when it helps. Three-quarter view. Not an isolated sticker on empty cream.`;
+      body = `Subject: ${spec.subject} as the clear centre of the frame, filling about 55–65% of the frame on clean white watercolour paper with a soft wash shadow under it. Natural props for the same thing only. No people, no hands, no table scene, no room. Loose watercolour splashes in the subject's own colours are welcome.`;
       break;
     case 'action':
       body = `Subject: ${chars || 'a person'} ${spec.subject}, ${spec.pose ?? 'mid-movement'}, ${spec.framing ?? 'full body'}, ${spec.expression ?? ''}. Setting: ${spec.setting ?? 'the lesson place'}, kept recognizable. The action must be instantly clear without any words.`;
@@ -122,16 +159,26 @@ export function buildImagePrompt(spec: ImageSpec): string {
       break;
   }
 
-  const avoid = mergeMustAvoid(spec.must_avoid, {
-    scene: spec.type === 'scene' || spec.type === 'story_panel',
-  });
+  const avoid = mergeMustAvoid(spec.must_avoid, { kind: spec.type });
   const must = `Must show: ${list(spec.must_show) || 'the subject clearly'}. Avoid: ${avoid.join(', ')}.`;
   const intentLine = spec.intent
     ? `Meaning to convey (no text in image): ${spec.intent}`
     : '';
+  const themeLine =
+    spec.type === 'object' ? null : themePromptLine(spec.theme);
 
-  return [refLine, '', STYLE_CORE, '', body, intentLine, '', must]
-    .filter(Boolean)
+  return [
+    refLine,
+    '',
+    styleBlockForKind(spec.type),
+    '',
+    body,
+    intentLine,
+    themeLine,
+    '',
+    must,
+  ]
+    .filter((line) => line != null && line !== '')
     .join('\n');
 }
 

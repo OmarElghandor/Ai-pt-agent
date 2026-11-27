@@ -23,7 +23,8 @@ export async function publishMicroClip(clipId: string): Promise<PublishClipResul
   const Clip = V2MicroClipModel();
   const clip = await Clip.findById(clipId);
   if (!clip) return { ok: false, reason: 'not_found' };
-  if (!clip.lines?.length || clip.lines.length < 6) {
+  const minLines = clip.scene_key ? 3 : 6;
+  if (!clip.lines?.length || clip.lines.length < minLines) {
     return { ok: false, reason: 'too_few_lines' };
   }
   if (clip.layout === 'scene') {
@@ -33,7 +34,11 @@ export async function publishMicroClip(clipId: string): Promise<PublishClipResul
         : null,
       box_flagged: Boolean(l.box_flagged),
     }));
-    if (!canPublishSceneLines(lines)) {
+    if (clip.scene_key) {
+      // §3.2b: plan default boxes are enough before vision refine.
+      const allBoxed = lines.every((l) => l.box);
+      if (!allBoxed) return { ok: false, reason: 'scene_boxes_incomplete' };
+    } else if (!canPublishSceneLines(lines)) {
       return { ok: false, reason: 'scene_boxes_incomplete' };
     }
   }

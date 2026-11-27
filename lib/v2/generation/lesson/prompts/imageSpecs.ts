@@ -29,12 +29,15 @@ Each row: { key, moment, spot, shot, interaction, emotion, detail_prop, time_of_
 STEP 3 — specs (one per key), each MUST use its shot_plan row:
 - phrase → type "scene", 4:3; apply that row's spot/shot/interaction/emotion/detail/time for light
 - verb → "action"; emotion/adj → "emotion"; noun → "object"; story scene → "scene" 16:9
-- Characters: only lesson cast ids; learner = yassin
+- object (nouns): characters [], NO setting, NO people/hands — the thing alone on white paper, filling ~55–65% of the frame. Shot_plan row is ignored for objects.
+- Characters (scene/action only): only lesson cast ids; learner = yassin
 - intent: one English meaning line for QA
+- theme: optional colour theme id for scene/action only (code may assign); never on object
 
 NEVER:
 ${IMAGE_FORBIDDEN.map((f) => `- ${f}`).join('\n')}
 ${SCENE_POSE_AVOID.map((f) => `- ${f}`).join('\n')}
+- for object: people, hands, faces, background scenery, tabletop scenes, writing on packets/labels
 
 REQUIRED OUTPUT JSON:
 {
@@ -42,7 +45,7 @@ REQUIRED OUTPUT JSON:
     "place", "cast_outfits", "light_by_time", "theme_line",
     "shot_plan": [ { "key", "moment", "spot", "shot", "interaction", "emotion", "detail_prop", "time_of_day" } ]
   },
-  "specs": [ { "key", "type", "subject", "characters", "pose", "expression", "setting", "framing", "light", "must_show", "must_avoid", "intent" } ]
+  "specs": [ { "key", "type", "subject", "characters", "pose", "expression", "setting", "framing", "light", "must_show", "must_avoid", "intent", "theme?" } ]
 }
 `.trim();
 }

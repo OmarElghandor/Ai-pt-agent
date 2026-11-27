@@ -46,7 +46,8 @@ export async function GET(
     status: 200,
     headers: {
       'Content-Type': type,
-      'Cache-Control': 'public, max-age=3600',
+      // Short cache: overwrite regenerates reuse the same path (?v= busts).
+      'Cache-Control': 'public, max-age=60, must-revalidate',
     },
   });
 }

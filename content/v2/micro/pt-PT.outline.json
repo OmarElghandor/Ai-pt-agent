@@ -14,8 +14,143 @@
           "level": 1,
           "title_ar": "este / esta",
           "title_tl": "este · esta",
-          "prompt_guidance": "Teach este/esta at a pastry counter; near the speaker.",
-          "ready": false
+          "prompt_guidance": "Near band (speaker POV): este/esta for cake and water bottle under the learner's hand.",
+          "ready": true,
+          "note": "este للي جنبي (عندي) · esse للي جنبك إنت · aquele للي بعيد عننا إحنا الاتنين",
+          "scene_key": "demonstratives.pastelaria-pov",
+          "scene_plan": {
+            "objects": [
+              {
+                "id": "bolo",
+                "label_en": "whole chocolate cake on a white plate",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.1,
+                  "y": 0.66,
+                  "w": 0.24,
+                  "h": 0.24
+                }
+              },
+              {
+                "id": "garrafa",
+                "label_en": "plastic bottle of water",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.38,
+                  "y": 0.66,
+                  "w": 0.14,
+                  "h": 0.26
+                }
+              },
+              {
+                "id": "pao",
+                "label_en": "round loaf of bread",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.22,
+                  "y": 0.4,
+                  "w": 0.18,
+                  "h": 0.16
+                }
+              },
+              {
+                "id": "chavena",
+                "label_en": "white coffee cup on a saucer",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.48,
+                  "y": 0.4,
+                  "w": 0.14,
+                  "h": 0.14
+                }
+              },
+              {
+                "id": "caixa",
+                "label_en": "big closed cardboard box of custard tarts",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.16,
+                  "y": 0.06,
+                  "w": 0.24,
+                  "h": 0.18
+                }
+              },
+              {
+                "id": "frasco",
+                "label_en": "tall glass jar of biscuits",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.58,
+                  "y": 0.05,
+                  "w": 0.16,
+                  "h": 0.22
+                }
+              }
+            ]
+          },
+          "pointer_from": {
+            "x": 0.82,
+            "y": 0.78
+          },
+          "image_spec": "Hand-drawn ink and soft watercolour editorial illustration, warm natural light, 4:3 landscape. First-person point of view: we are a customer standing at the counter of a small traditional Lisbon pastry shop (azulejo tiles on the back wall). In the bottom-right foreground, the viewer's own right hand and forearm reach forward, index finger pointing at the counter.\n\nThree clear depth zones, each object large, simple, clearly separated, with plain space around it:\n- NEAR (bottom of the picture, on the counter right under the viewer's hand): one whole chocolate cake on a white plate (left of the hand), and one plastic bottle of water (right of the cake, a hand's width apart).\n- MIDDLE (centre of the picture): a friendly middle-aged shop assistant behind the counter, smiling at the viewer; right beside her hands on the counter, one round loaf of bread (to her left) and one white coffee cup on a saucer (to her right).\n- FAR (top of the picture, on a wooden shelf on the back wall, clearly behind and above the assistant): one big closed cardboard box of custard tarts, and one tall glass jar of biscuits, well apart from each other.\n\nKeep the rest of the counter and shelves almost empty. No other cakes, pastries or bottles anywhere, no display case full of sweets, no other customers. No text, no letters, no signs, no logos.",
+          "authored_lines": [
+            {
+              "tl": "Queria este bolo.",
+              "ar": "أريد هذه الكعكة.",
+              "pos": "phrase",
+              "concept_en": "cake",
+              "region_hint": "whole chocolate cake on a white plate",
+              "region_label": "este bolo",
+              "box": {
+                "x": 0.1,
+                "y": 0.66,
+                "w": 0.24,
+                "h": 0.24
+              }
+            },
+            {
+              "tl": "Este bolo é de chocolate?",
+              "ar": "هل هذه الكعكة بالشوكولاتة؟",
+              "pos": "phrase",
+              "concept_en": "chocolate_cake",
+              "region_hint": "whole chocolate cake on a white plate",
+              "region_label": "este bolo",
+              "box": {
+                "x": 0.1,
+                "y": 0.66,
+                "w": 0.24,
+                "h": 0.24
+              }
+            },
+            {
+              "tl": "Esta água é fresca?",
+              "ar": "هل هذا الماء بارد؟",
+              "pos": "phrase",
+              "concept_en": "water_bottle",
+              "region_hint": "plastic bottle of water",
+              "region_label": "esta garrafa",
+              "box": {
+                "x": 0.38,
+                "y": 0.66,
+                "w": 0.14,
+                "h": 0.26
+              }
+            },
+            {
+              "tl": "Quanto custa esta garrafa?",
+              "ar": "كم سعر هذه الزجاجة؟",
+              "pos": "phrase",
+              "concept_en": "bottle",
+              "region_hint": "plastic bottle of water",
+              "region_label": "esta garrafa",
+              "box": {
+                "x": 0.38,
+                "y": 0.66,
+                "w": 0.14,
+                "h": 0.26
+              }
+            }
+          ]
         },
         {
           "slug": "esse-essa",
@@ -24,8 +159,129 @@
           "level": 1,
           "title_ar": "esse / essa",
           "title_tl": "esse · essa",
-          "prompt_guidance": "Teach esse/essa near the listener.",
-          "ready": false
+          "prompt_guidance": "Middle band next to the shop assistant: esse/essa for bread and coffee cup.",
+          "ready": true,
+          "note": "este للي جنبي (عندي) · esse للي جنبك إنت · aquele للي بعيد عننا إحنا الاتنين",
+          "scene_key": "demonstratives.pastelaria-pov",
+          "scene_plan": {
+            "objects": [
+              {
+                "id": "bolo",
+                "label_en": "whole chocolate cake on a white plate",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.1,
+                  "y": 0.66,
+                  "w": 0.24,
+                  "h": 0.24
+                }
+              },
+              {
+                "id": "garrafa",
+                "label_en": "plastic bottle of water",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.38,
+                  "y": 0.66,
+                  "w": 0.14,
+                  "h": 0.26
+                }
+              },
+              {
+                "id": "pao",
+                "label_en": "round loaf of bread",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.22,
+                  "y": 0.4,
+                  "w": 0.18,
+                  "h": 0.16
+                }
+              },
+              {
+                "id": "chavena",
+                "label_en": "white coffee cup on a saucer",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.48,
+                  "y": 0.4,
+                  "w": 0.14,
+                  "h": 0.14
+                }
+              },
+              {
+                "id": "caixa",
+                "label_en": "big closed cardboard box of custard tarts",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.16,
+                  "y": 0.06,
+                  "w": 0.24,
+                  "h": 0.18
+                }
+              },
+              {
+                "id": "frasco",
+                "label_en": "tall glass jar of biscuits",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.58,
+                  "y": 0.05,
+                  "w": 0.16,
+                  "h": 0.22
+                }
+              }
+            ]
+          },
+          "pointer_from": {
+            "x": 0.82,
+            "y": 0.78
+          },
+          "image_spec": "Hand-drawn ink and soft watercolour editorial illustration, warm natural light, 4:3 landscape. First-person point of view: we are a customer standing at the counter of a small traditional Lisbon pastry shop (azulejo tiles on the back wall). In the bottom-right foreground, the viewer's own right hand and forearm reach forward, index finger pointing at the counter.\n\nThree clear depth zones, each object large, simple, clearly separated, with plain space around it:\n- NEAR (bottom of the picture, on the counter right under the viewer's hand): one whole chocolate cake on a white plate (left of the hand), and one plastic bottle of water (right of the cake, a hand's width apart).\n- MIDDLE (centre of the picture): a friendly middle-aged shop assistant behind the counter, smiling at the viewer; right beside her hands on the counter, one round loaf of bread (to her left) and one white coffee cup on a saucer (to her right).\n- FAR (top of the picture, on a wooden shelf on the back wall, clearly behind and above the assistant): one big closed cardboard box of custard tarts, and one tall glass jar of biscuits, well apart from each other.\n\nKeep the rest of the counter and shelves almost empty. No other cakes, pastries or bottles anywhere, no display case full of sweets, no other customers. No text, no letters, no signs, no logos.",
+          "authored_lines": [
+            {
+              "tl": "Esse pão é de hoje?",
+              "ar": "هل هذا الخبز من اليوم؟",
+              "pos": "phrase",
+              "concept_en": "bread",
+              "region_hint": "round loaf of bread",
+              "region_label": "esse pão",
+              "box": {
+                "x": 0.22,
+                "y": 0.4,
+                "w": 0.18,
+                "h": 0.16
+              }
+            },
+            {
+              "tl": "Pode dar-me esse pão?",
+              "ar": "هل يمكنك أن تعطيني هذا الخبز؟",
+              "pos": "phrase",
+              "concept_en": "bread_loaf",
+              "region_hint": "round loaf of bread",
+              "region_label": "esse pão",
+              "box": {
+                "x": 0.22,
+                "y": 0.4,
+                "w": 0.18,
+                "h": 0.16
+              }
+            },
+            {
+              "tl": "Essa chávena é para mim?",
+              "ar": "هل هذا الفنجان لي؟",
+              "pos": "phrase",
+              "concept_en": "coffee_cup",
+              "region_hint": "white coffee cup on a saucer",
+              "region_label": "essa chávena",
+              "box": {
+                "x": 0.48,
+                "y": 0.4,
+                "w": 0.14,
+                "h": 0.14
+              }
+            }
+          ]
         },
         {
           "slug": "aquele-aquela",
@@ -34,8 +290,129 @@
           "level": 1,
           "title_ar": "aquele / aquela",
           "title_tl": "aquele · aquela",
-          "prompt_guidance": "Teach aquele/aquela for things far from both.",
-          "ready": false
+          "prompt_guidance": "Far shelf: aquele/aquela for the tart box and biscuit jar.",
+          "ready": true,
+          "note": "este للي جنبي (عندي) · esse للي جنبك إنت · aquele للي بعيد عننا إحنا الاتنين",
+          "scene_key": "demonstratives.pastelaria-pov",
+          "scene_plan": {
+            "objects": [
+              {
+                "id": "bolo",
+                "label_en": "whole chocolate cake on a white plate",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.1,
+                  "y": 0.66,
+                  "w": 0.24,
+                  "h": 0.24
+                }
+              },
+              {
+                "id": "garrafa",
+                "label_en": "plastic bottle of water",
+                "zone": "near",
+                "default_box": {
+                  "x": 0.38,
+                  "y": 0.66,
+                  "w": 0.14,
+                  "h": 0.26
+                }
+              },
+              {
+                "id": "pao",
+                "label_en": "round loaf of bread",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.22,
+                  "y": 0.4,
+                  "w": 0.18,
+                  "h": 0.16
+                }
+              },
+              {
+                "id": "chavena",
+                "label_en": "white coffee cup on a saucer",
+                "zone": "middle",
+                "default_box": {
+                  "x": 0.48,
+                  "y": 0.4,
+                  "w": 0.14,
+                  "h": 0.14
+                }
+              },
+              {
+                "id": "caixa",
+                "label_en": "big closed cardboard box of custard tarts",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.16,
+                  "y": 0.06,
+                  "w": 0.24,
+                  "h": 0.18
+                }
+              },
+              {
+                "id": "frasco",
+                "label_en": "tall glass jar of biscuits",
+                "zone": "far",
+                "default_box": {
+                  "x": 0.58,
+                  "y": 0.05,
+                  "w": 0.16,
+                  "h": 0.22
+                }
+              }
+            ]
+          },
+          "pointer_from": {
+            "x": 0.82,
+            "y": 0.78
+          },
+          "image_spec": "Hand-drawn ink and soft watercolour editorial illustration, warm natural light, 4:3 landscape. First-person point of view: we are a customer standing at the counter of a small traditional Lisbon pastry shop (azulejo tiles on the back wall). In the bottom-right foreground, the viewer's own right hand and forearm reach forward, index finger pointing at the counter.\n\nThree clear depth zones, each object large, simple, clearly separated, with plain space around it:\n- NEAR (bottom of the picture, on the counter right under the viewer's hand): one whole chocolate cake on a white plate (left of the hand), and one plastic bottle of water (right of the cake, a hand's width apart).\n- MIDDLE (centre of the picture): a friendly middle-aged shop assistant behind the counter, smiling at the viewer; right beside her hands on the counter, one round loaf of bread (to her left) and one white coffee cup on a saucer (to her right).\n- FAR (top of the picture, on a wooden shelf on the back wall, clearly behind and above the assistant): one big closed cardboard box of custard tarts, and one tall glass jar of biscuits, well apart from each other.\n\nKeep the rest of the counter and shelves almost empty. No other cakes, pastries or bottles anywhere, no display case full of sweets, no other customers. No text, no letters, no signs, no logos.",
+          "authored_lines": [
+            {
+              "tl": "Aquela caixa é grande.",
+              "ar": "تلك العلبة كبيرة.",
+              "pos": "phrase",
+              "concept_en": "box",
+              "region_hint": "big closed cardboard box of custard tarts",
+              "region_label": "aquela caixa",
+              "box": {
+                "x": 0.16,
+                "y": 0.06,
+                "w": 0.24,
+                "h": 0.18
+              }
+            },
+            {
+              "tl": "Quanto custa aquela caixa?",
+              "ar": "كم سعر تلك العلبة؟",
+              "pos": "phrase",
+              "concept_en": "tart_box",
+              "region_hint": "big closed cardboard box of custard tarts",
+              "region_label": "aquela caixa",
+              "box": {
+                "x": 0.16,
+                "y": 0.06,
+                "w": 0.24,
+                "h": 0.18
+              }
+            },
+            {
+              "tl": "Aquele frasco tem bolachas?",
+              "ar": "هل في ذلك البرطمان بسكويت؟",
+              "pos": "phrase",
+              "concept_en": "jar",
+              "region_hint": "tall glass jar of biscuits",
+              "region_label": "aquele frasco",
+              "box": {
+                "x": 0.58,
+                "y": 0.05,
+                "w": 0.16,
+                "h": 0.22
+              }
+            }
+          ]
         },
         {
           "slug": "isto-isso-aquilo",

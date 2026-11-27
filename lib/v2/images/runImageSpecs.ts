@@ -40,6 +40,7 @@ import {
   type ShotPlanRow,
   type TimeOfDay,
 } from './shotPlan';
+import { assignThemesToSpecs, inferThemeTime } from './themes';
 
 const SpecOutSchema = z.object({
   key: z.string(),
@@ -54,6 +55,7 @@ const SpecOutSchema = z.object({
   must_show: z.union([z.string(), z.array(z.string())]).optional(),
   must_avoid: z.union([z.string(), z.array(z.string())]).optional(),
   intent: z.string().optional(),
+  theme: z.string().optional(),
 });
 
 const VisualBriefSchema = z.object({
@@ -217,16 +219,13 @@ function applyShotToSpec(
     setting,
     framing: framingForShot(row.shot),
     light,
-    must_show: mergeMustAvoid(
-      [
-        'eye contact between the two people',
-        'expressive readable faces',
-        row.detail_prop,
-        'bodies turned toward each other',
-      ],
-      { scene: true },
-    ).slice(0, 6),
-    must_avoid: mergeMustAvoid(base.must_avoid, { scene: true }),
+    must_show: [
+      'eye contact between the two people',
+      'expressive readable faces',
+      row.detail_prop,
+      'bodies turned toward each other',
+    ].slice(0, 6),
+    must_avoid: mergeMustAvoid(base.must_avoid, { kind: 'scene' }),
     intent:
       base.intent ||
       `${row.moment} — two colleagues ${row.interaction.replace(/_/g, ' ')} (${row.emotion}) at the ${spotLabel}`,
@@ -262,18 +261,28 @@ function defaultSpecForEntry(opts: {
           : framingForShot(shot?.shot ?? 'close_two_shot'),
       light: lightForTime(shot?.time_of_day ?? 'daytime', place),
       must_show: ['eye contact', 'readable faces', 'both people'],
-      must_avoid: mergeMustAvoid([], { scene: true }),
+      must_avoid: mergeMustAvoid([], { kind: 'scene' }),
       intent: `two colleagues interacting in ${place}`,
+    };
+  } else if (type === 'object') {
+    base = {
+      key: entry.key,
+      type: 'object',
+      subject: tl,
+      characters: [],
+      must_show: [tl],
+      must_avoid: mergeMustAvoid([], { kind: 'object' }),
+      intent: `the thing alone: ${tl}`,
     };
   } else {
     base = {
       key: entry.key,
       type,
       subject: tl,
-      characters: type === 'object' ? [] : pair.slice(0, 1),
+      characters: pair.slice(0, 1),
       setting: place,
       must_show: [tl],
-      must_avoid: mergeMustAvoid([]),
+      must_avoid: mergeMustAvoid([], { kind: type }),
       intent: `${tl} in use at ${place}`,
     };
   }
@@ -340,9 +349,17 @@ function enforceSpec(opts: {
     framing: opts.raw.framing || fallback.framing,
     light,
     must_show: opts.raw.must_show || fallback.must_show,
-    must_avoid: mergeMustAvoid(opts.raw.must_avoid, { scene: type === 'scene' }),
+    must_avoid: mergeMustAvoid(opts.raw.must_avoid, { kind: type }),
     intent,
+    ...(type !== 'object' && (opts.raw.theme || fallback.theme)
+      ? { theme: opts.raw.theme || fallback.theme }
+      : {}),
   };
+
+  if (type === 'object') {
+    spec.characters = [];
+    delete spec.setting;
+  }
 
   if (opts.shot && type === 'scene') {
     spec = applyShotToSpec(spec, opts.shot, opts.brief.place);
@@ -552,6 +569,8 @@ export async function runImageSpecs(opts: {
   story?: StoryDoc | null;
   keys?: string[];
   brief?: ReturnType<typeof buildLessonBrief>;
+  /** Force regenerate: authored core-items beats prompt_override. */
+  force?: boolean;
 }): Promise<RunImageSpecsResult> {
   const story = opts.story ?? null;
   const wantedAll = resolveWantedEntries({
@@ -568,6 +587,7 @@ export async function runImageSpecs(opts: {
       key: entry.key,
       itemId: entry.itemId,
       targetLang: story?.target_lang,
+      force: opts.force,
     });
     if (resolved.skipSpecs && resolved.scenePrompt) {
       authoredByKey.set(entry.key, resolved);
@@ -645,6 +665,8 @@ export async function runImageSpecs(opts: {
         scenePrompt: resolved.scenePrompt!,
         characters: resolved.characters,
         ratio: resolved.ratio,
+        kind: resolved.kind,
+        theme: resolved.theme,
       }),
     }),
   );
@@ -656,6 +678,17 @@ export async function runImageSpecs(opts: {
   let specs = [...authoredSpecs, ...buildSpecs(visual_brief, plan)];
 
   if (wanted.length === 0) {
+    specs = assignThemesToSpecs(specs, {
+      timeForSpec: (spec) => {
+        const authored = authoredByKey.get(spec.key);
+        return inferThemeTime({
+          prompt: authored?.scenePrompt ?? spec.subject,
+          light: spec.light,
+          itemId: spec.key,
+          tl: spec.intent,
+        });
+      },
+    });
     const byKey = new Map(specs.map((s) => [s.key, s]));
     return { visual_brief, specs, byKey, fromModel: false };
   }
@@ -792,6 +825,24 @@ export async function runImageSpecs(opts: {
     const chars = rotated.byKey.get(s.key);
     if (!chars?.length) return s;
     return { ...s, characters: chars };
+  });
+
+  // Colour themes for scene/action (19 §4); authored themes kept; objects none.
+  const shotByKey = new Map(plan.map((r) => [r.key, r]));
+  specs = assignThemesToSpecs(specs, {
+    timeForSpec: (spec) => {
+      const shot = shotByKey.get(spec.key);
+      if (shot?.time_of_day) {
+        return inferThemeTime({ timeOfDay: shot.time_of_day });
+      }
+      const authored = authoredByKey.get(spec.key);
+      return inferThemeTime({
+        prompt: authored?.scenePrompt ?? spec.subject,
+        light: spec.light,
+        itemId: spec.key,
+        tl: spec.intent,
+      });
+    },
   });
 
   const byKey = new Map(specs.map((s) => [s.key, s]));

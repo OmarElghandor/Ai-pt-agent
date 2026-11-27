@@ -39,7 +39,7 @@ function usedByFor(
 export async function processImageSpecsJob(job: JobView): Promise<void> {
   await markJobStarted(job.id);
   try {
-    const input = (job.input ?? {}) as { keys?: string[] };
+    const input = (job.input ?? {}) as { keys?: string[]; force?: boolean };
     const { lesson, story } = await loadLessonAndStoryForImages(job.day);
     if (!lesson && !story) {
       await finishJobSkipped({
@@ -56,6 +56,7 @@ export async function processImageSpecsJob(job: JobView): Promise<void> {
       pack,
       story,
       keys,
+      force: Boolean(input.force),
     });
 
     const Model = V2ImageModel();
@@ -231,6 +232,7 @@ export async function processImageJob(job: JobView): Promise<void> {
       key,
       itemId: input.item_id ?? undefined,
       targetLang: story?.target_lang ?? job.target_lang,
+      force,
     });
 
     let spec: ImageSpec | undefined;
@@ -243,6 +245,8 @@ export async function processImageJob(job: JobView): Promise<void> {
         scenePrompt: resolved.scenePrompt,
         characters: resolved.characters,
         ratio: resolved.ratio,
+        kind: resolved.kind,
+        theme: resolved.theme,
       });
       promptSource = resolved.source;
     } else {
@@ -251,7 +255,8 @@ export async function processImageJob(job: JobView): Promise<void> {
         spec = existing.spec as ImageSpec;
         promptSource =
           (existing.prompt_source as typeof promptSource) ?? 'generated';
-        if (existing.prompt_override?.trim()) {
+        // Force: never re-apply a stale override when specs are regenerated.
+        if (!force && existing.prompt_override?.trim()) {
           scenePrompt = existing.prompt_override;
           promptSource = 'override';
         }

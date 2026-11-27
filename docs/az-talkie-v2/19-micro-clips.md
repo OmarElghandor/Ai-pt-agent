@@ -1,8 +1,8 @@
 # 19 · لقطات (Micro clips): short daily "tools" in themed series
 
-Status: plan, 2026-11-26. **Revised the same day** after the first Stitch pass (`stitch_bilingual_grammar_notebook_app_18`) looked like a copy of the lesson vocab_flow: a clip is now **one connected sheet** (not a feed of separate beats), in three layouts: list, pairs and scene (§3.2); a fourth, `rule` (conjugation by induction), and series 13–16 were added later the same day. Design approved from `stitch_bilingual_grammar_notebook_app_19`, with two changes: Portuguese is always heard and seen first and a reveal shows only the translation (§3.3), and everything must be buildable in React Native (§3.3b). Author: Omar + Claude. Implementation: Cursor.
+Status: plan, 2026-11-26. **Revised the same day** after the first Stitch pass (`stitch_bilingual_grammar_notebook_app_18`) looked like a copy of the lesson vocab_flow: a clip is now **one connected sheet** (not a feed of separate beats), in three layouts: list, pairs and scene (§3.2); a fourth, `rule` (conjugation by induction), and series 13–16 were added later the same day. Scene rules tightened 2026-11-27 after the first real scene (§3.2b). Design approved from `stitch_bilingual_grammar_notebook_app_19`, with two changes: Portuguese is always heard and seen first and a reveal shows only the translation (§3.3), and everything must be buildable in React Native (§3.3b). Author: Omar + Claude. Implementation: Cursor.
 
-App: **az-talkie**. Source module: Langify **Micro Learn / Daily Word Check** (`docs/micro-learn-feature-report.md`, `docs/micro-learn-practice-generator.md`, `backend/src/data/dailyWordCheckReference.json` in the old repo, 153 topics).
+App: **az-talkie** (A-Z Talkie). Source module: Langify **Micro Learn / Daily Word Check** (`docs/micro-learn-feature-report.md`, `docs/micro-learn-practice-generator.md`, `backend/src/data/dailyWordCheckReference.json` in the old repo, 153 topics).
 
 Read first: `AGENTS.md`, `00-decisions.md` (§2, §5, §10), `12-custom-decks.md` (§2.1 item pool, §2.4 checks, §2.6 deck sessions, §6 official decks), `16-practice-engine.md` (§1, §2). Where this doc disagrees with `12` about where official themed decks come from, **this doc wins**, and task M0 writes the change into `12` and `00`.
 
@@ -45,14 +45,12 @@ Lessons teach **situations**, the library gives **real exposure**, and لقطا�
 
 ## 3. Decisions
 
-### 3.1 Where it lives (footer tab — changed 2026-11-26)
+### 3.1 Where it lives (no new footer tab)
 
-- **Footer tab «لقطات»:** topics list at `/micro` (series from the outline). Tap a series → **ensure** missing clips + images (shared once per language) with a loader, then open the player.
 - **Home:** a "لقطة النهارده" card under the lesson hero (one clip, one tap to open).
-- **Flashcards → "مواضيع" tab** still lists series with **"اتفرج"** / **"راجع"** (deck session, `12` §2.6).
+- **Flashcards → "مواضيع" tab** becomes the series list. Each series tile has **"اتفرج"** (open its clips) and **"راجع"** (its deck session, `12` §2.6).
 - **Inside a lesson:** when a lesson step uses a tool that has a clip, a small chip "شوف لقطة: este · esse · aquele" opens it and returns to the lesson.
 - Between clips of a series: swipe up for the next clip (one sheet per screen).
-- Player is full-screen (no footer) under the flow layout.
 
 ### 3.2 A clip = one connected sheet
 
@@ -69,6 +67,30 @@ Every clip has:
 2. **`pairs` (two columns).** Arabic chips on one side, Portuguese chips on the other, one pair per row, the rows stacked tightly so they read as one block (like the "I have / Tengo" reel). Best for short chunks: verb forms (eu tenho · eu quero · eu preciso…), question words, time words, numbers, connectors.
 3. **`scene` (one picture, lit-up parts).** The main picture is large and each line is tied to a **region** of it. When a line becomes active, that region gets a soft ring and the rest of the picture dims slightly; when the line is revealed, a small label appears on the region. Best for demonstratives (the woman points at the cake in the display), "فين الحاجة" (em cima da mesa, ao lado da janela), rooms, the body, a shop counter.
 4. **`rule` (a rule on top, examples from different verbs) — added 2026-11-26.** For learning conjugation **by induction**. A rule card is pinned under the header: the pattern in one short line plus a tiny ending table (e.g. «-ar ← eu ‎-o» with fal**ar** → fal**o**). Under it, 6–8 numbered sentences, **each with a different everyday verb** that follows the rule, and in every sentence the **ending is highlighted** (teal, bold) so the learner sees the same change repeat across verbs: «Eu fal**o** português.», «Eu trabalh**o** em Lisboa.», «Eu mor**o** perto do metro.». The last 1–2 lines may show a short contrast («ele fal**a**») only if the rule is about that contrast. Same interaction as the other layouts: the Portuguese plays first, the tap reveals the Arabic. The rule card has no long explanation; the learner works the rule out from the examples, and the one-line Egyptian note sums it up at the end.
+
+### 3.2b Scene clips: picture first, then the lines (decided 2026-11-27)
+
+The first real scene (este · esta, a bakery counter) looked good but **taught nothing**: the picture was a crowded display where bolo, tarte, pastel, fatia and sobremesa all look the same; the dots were piled in the middle; the labels showed half-sentences on top of each other; and nothing showed **who** is saying "este" and **where** they point. Rules from now on:
+
+1. **The picture is designed first, the lines are written for it.** A scene starts from a **scene plan**: 4–6 objects, each placed in a named **zone** of the picture, then the lines are written so that **one line = one object that is clearly visible**. Never the other way round (lines first, then "a bakery").
+2. **Objects must look different from each other** and be big and separate: a whole cake, a bottle of water, a loaf of bread, a box of pastéis de nata, a cup of coffee. Not five kinds of pastry. Mix masculine and feminine nouns so este / esta both appear.
+3. **The meaning must be visible in the picture.** For demonstratives the meaning is **distance from the speaker**, so:
+   - the picture is a **first-person view (POV)**: we see through the speaker's eyes, **the speaker's own hand in the foreground** pointing or touching; the speaker is "me", the learner;
+   - **three depth bands**: *near* (on the counter right under the speaker's hand) → este/esta; *middle* (next to the shop assistant, the person we're talking to) → esse/essa; *far* (a shelf at the back, away from both) → aquele/aquela;
+   - **one shared picture for the three clips** este / esse / aquele (`scene_key` on the clips), so the learner sees the same place and the contrast is obvious. The aqui / aí / ali / lá clip reuses it too.
+4. **A pointer shows who points where.** Each scene clip may have a `pointer_from` point (the speaker's fingertip, or a person). When a line is active, a thin line goes from that point to the active object's ring. RN-safe: a thin View rotated with a transform, same rule as §3.3b.
+5. **Only the active line is fully drawn on the picture:** its ring, its pointer and its **short label**. Revealed lines shrink to a small numbered dot; lines not yet reached show nothing. No piles of labels.
+6. **The label is a short phrase, never the sentence:** each scene line has `region_label` (2–3 words: «este bolo», «essa garrafa», «aquele pão»). The full sentence stays in the row under the picture.
+7. **Boxes come from the plan first:** each zone has a default box, so every object already has a rough position before any vision call. The vision pass (Haiku) only **refines** the boxes and checks that every planned object is really there. If an object is missing or two objects overlap, the picture is regenerated once automatically, then flagged. Admin can still drag and resize.
+8. **Spacing check (code):** box centres at least 12% of the width apart, and no box smaller than 8% of the width; otherwise the clip is flagged in admin.
+
+**Reference content for the shared demonstratives scene** (Omar reviews before generation):
+
+- *Picture plan* (4:3, POV over a Lisbon pastry-shop counter, watercolour style): the learner's right hand in the bottom-right foreground, index finger pointing; **near band** (bottom, on the counter under the hand): a whole cake on a plate (o bolo), a bottle of water (a garrafa de água); **middle band**: the shop assistant smiling behind the counter, with a loaf of bread (o pão) and a cup of coffee (a chávena) right next to her hands; **far band** (back wall, top of the picture): a shelf with one big box of pastéis de nata (a caixa) and a tall glass jar of biscuits (o frasco). Few other objects, plain background around each one, no text, no signs.
+- *este · esta* (near): «Queria este bolo.» · «Este bolo é de chocolate?» · «Esta água é fresca?» · «Quanto custa esta garrafa?» — labels «este bolo», «esta garrafa».
+- *esse · essa* (middle, next to the assistant): «Esse pão é de hoje?» · «Pode dar-me esse pão?» · «Essa chávena é para mim?» — labels «esse pão», «essa chávena».
+- *aquele · aquela* (far shelf): «Aquela caixa é grande.» · «Quanto custa aquela caixa?» · «Aquele frasco tem bolachas?» — labels «aquela caixa», «aquele frasco».
+- Note (Egyptian): «este للي جنبي (عندي) · esse للي جنبك إنت · aquele للي بعيد عننا إحنا الاتنين».
 
 ### 3.3 Interaction (all layouts) — Portuguese first, always (decided 2026-11-26)
 
@@ -105,7 +127,7 @@ The same player will be rebuilt in React Native, so the web version uses **only 
 
 - Every line resolves to an **item id** with the lookup of `12` §2.1: an official lesson item if it exists, otherwise a pool item with `status: official`. Sentences are items of `pos: phrase`; pairs and scene labels are usually words or short chunks.
 - Finishing a clip marks its items as **seen** (`اتعرّفت`) and adds them to the series deck. The series deck session shows due cards first, then **at most 10 new a day per series** (`12` §2.6).
-- **Not in the daily curriculum deck** and **not in the 3-lesson review window** of `16`. A clip item that's also a lesson item has the same id, so lesson review benefits anyway.
+- **Not in the daily curriculum deck** and **not in the 3-lesson review window** of `15`. A clip item that's also a lesson item has the same id, so lesson review benefits anyway.
 - Graduation: as `12` §2.6 for clip-only items (interval ≥ 21 days).
 - Streak: a finished series deck session (≥ 10 cards rated) counts. Clips alone don't count in v1.
 
@@ -145,12 +167,13 @@ About 65 clips for launch. Situational topics of the old list (café, pharmacy, 
 
 - **Outline** is authored data (a file per language: series, clip titles, layout, level, the old `TC_PT_xxx` ref, an optional extra brief). Nothing is generated for a line until Omar marks it ready.
 - **Per clip, one model call** (Claude Sonnet from env, one JSON call, server only) with the outline line, the old `promptGuidance`, the rules (pt-PT, MSA meanings, Egyptian note, 6–10 lines, each line ≤ 8 words, lines in a natural order, no conjugated forms from the model) and the list of lesson items it should reuse where they fit.
-- **Output:** title (pt + ar), note (optional), the main image spec, and the lines: tl, ar, pos, `concept_en`, `icon_spec` (one short object or action for the small row icon), and for `scene` clips `region_hint` (what in the picture the line points at, e.g. "the cake behind the glass, under the woman's finger").
-- **Checks (code):** the `12` §2.4 checks, plus: 6–10 lines; ≤ 8 words a line; `pairs` lines ≤ 4 words; for verb clips every form is replaced from the verified table (a verb missing from the table can't have a clip yet); every `scene` line has a region hint; for `rule` clips: every verb is different, every verb is regular and present in the verified table, every form is replaced from the table, and **code** marks the highlighted ending by comparing the form with the table's stem (the model never marks it); a line whose verb breaks the rule is dropped. A failing line is dropped; under 6 → one top-up call; still under 6 → the clip stays draft with the reason.
+- **Scene clips are planned first** (§3.2b): the model (or Omar) writes the scene plan (objects, zones, pointer) before the lines, and the lines are written for that plan; scenes that share a `scene_key` share one plan and one picture.
+- **Output:** title (pt + ar), note (optional), the main image spec, and the lines: tl, ar, pos, `concept_en`, `icon_spec` (one short object or action for the small row icon), and for `scene` clips `region_hint` (the planned object and its zone), `region_label` (2–3 words, e.g. «este bolo»), plus the clip's `pointer_from`.
+- **Checks (code):** the `12` §2.4 checks, plus: 6–10 lines; ≤ 8 words a line; `pairs` lines ≤ 4 words; for verb clips every form is replaced from the verified table (a verb missing from the table can't have a clip yet); every `scene` line has a region hint and a `region_label` of at most 3 words that appears in the line, and every planned object is used by at most one line; for `rule` clips: every verb is different, every verb is regular and present in the verified table, every form is replaced from the table, and **code** marks the highlighted ending by comparing the form with the table's stem (the model never marks it); a line whose verb breaks the rule is dropped. A failing line is dropped; under 6 → one top-up call; still under 6 → the clip stays draft with the reason.
 - **Pictures:**
-  - the main picture: the lesson image pipeline (watercolour style anchor, generic places, no text in the image); for `scene` clips the spec lists every object the lines need, in clear separate spots;
+  - the main picture: the lesson image pipeline (watercolour style anchor, generic places, no text in the image); for `scene` clips the spec is built by code from the scene plan: POV when the plan says so, each object named with its zone, "big, clearly separated, plain background around each", and "no other similar objects";
   - row icons: small flat icons from the `12` §2.10 cheap pipeline, keyed `icon.<concept_en>` and reused across clips;
-  - **scene regions:** after the main picture is ready, one vision call (Haiku) returns a box for each region hint, stored as fractions of the image (x, y, w, h). The admin sees the boxes drawn on the picture and can **drag or resize** any box. A line whose region isn't found is flagged, and the clip can't be published until the admin places it.
+  - **scene regions:** each zone gives a default box; after the picture is ready, one vision call (Haiku) refines the box of every planned object and confirms it's there (§3.2b rule 7), stored as fractions of the image (x, y, w, h). A missing or overlapping object triggers one automatic regeneration, then a flag. The admin sees the boxes and the pointer on the picture and can **drag or resize** any box or move the pointer. The spacing check of §3.2b rule 8 runs on save. A flagged clip can't be published.
 - **Admin screen:** series → clips, each clip shown as it will play (with audio and the scene boxes), "ولّد", "ولّد تاني", remove or edit a line, fix boxes, **publish**. Bulk "ولّد كل السلسلة". Cost and tokens logged.
 - **Authored override:** an outline line may carry the full lines (and boxes); then no model call.
 
@@ -170,7 +193,7 @@ No unlocks, no backlog, no "you missed yesterday's clip".
 
 ## 7. Marketing reels from the same data
 
-- The four layouts **are** the reel formats: `list` = the numbered poster (KOCHEN), `pairs` = the two-column chips (I have / Tengo), `scene` = one picture with parts lighting up, `rule` = the rule poster with highlighted endings. A "quiz" reel is the listening mode (the Portuguese plays, the meaning appears after a pause).
+- The three layouts **are** the reel formats: `list` = the numbered poster (KOCHEN), `pairs` = the two-column chips (I have / Tengo), `scene` = one picture with parts lighting up, `rule` = the rule poster with highlighted endings. A "quiz" reel is the listening mode (the Portuguese plays, the meaning appears after a pause).
 - Admin action **"صدّر كريل"** on a published clip exports its title, layout, lines (TL, Arabic, audio URLs, icon URLs, scene boxes) and timings from the audio lengths, in the shape the Remotion templates expect (one template per layout, 9:16, app name at the end).
 - No face, no character, no lip-sync. The Remotion project is outside this repo; this task only exports the data.
 
@@ -181,7 +204,7 @@ No unlocks, no backlog, no "you missed yesterday's clip".
 New collections (prefix `v2_`):
 
 - `v2_micro_series`: language, slug, `title_ar`, `title_tl`, order, `status` (draft | published), the linked official deck id.
-- `v2_micro_clips`: series id, order, layout (list | pairs | scene | rule), the rule card for `rule` clips (pattern line, ending table), level 1–5, `title_ar`, `title_tl`, note, main image key, ordered lines (item id, icon key, for scenes a box as fractions), `legacy_ref`, status (draft | ready | published), generation cost, timestamps.
+- `v2_micro_clips`: series id, order, layout (list | pairs | scene | rule), the rule card for `rule` clips (pattern line, ending table), level 1–5, `title_ar`, `title_tl`, note, main image key, ordered lines (item id, icon key, for scenes a box as fractions and `region_label`), for scenes `scene_key` (shared picture), the scene plan (objects, zones) and `pointer_from`, `legacy_ref`, status (draft | ready | published), generation cost, timestamps.
 - `v2_micro_progress`: one per user × clip: started_at, finished_at, replays, revealed count (to resume). **User-keyed** (A5 list).
 - Main pictures are stored with their aspect ratio (4:3 for scenes); scene boxes are fractions of that image (§3.3b).
 - `v2_micro_daily`: one per user × local date: the chosen clip id. **User-keyed** (A5 list).
@@ -191,7 +214,7 @@ New collections (prefix `v2_`):
 
 ## 9. Open points (decide later, not blocking)
 
-- Should clip items with misses in the series deck feed the practice engine's weak points (`16`)? Default no in v1.
+- Should clip items with misses in the series deck feed the practice engine's weak points (`15`)? Default no in v1.
 - Should 3 clips in a day count for the streak? Default no in v1.
 - A "follow series" switch that makes "لقطة النهارده" stick to one series.
 
@@ -204,7 +227,7 @@ Same rules as `12`: one task per session, in order, tests included, stop at "Don
 > Read docs/az-talkie-v2/19-micro-clips.md (whole), AGENTS.md, 00-decisions.md, 12-custom-decks.md §2.1, §2.4, §2.6, §2.10, §6 and 16-practice-engine.md §2. Implement task **M-x only**. Do not start the next task. The user id always comes from the session helper. Only `/api/v2/answers` writes item state. Never write Portuguese or Arabic content yourself; it comes from the model or from Omar. Write the tests the task asks for. Stop when "Done when" is met and list the files you changed.
 
 **M0 · Write the decisions**
-- Do: add "§5d لقطات" to `00-decisions.md` summarising §1–§3; in `12` §6 note that official themed decks now come from micro series; link this doc from the README.
+- Do: add "§5c لقطات" to `00-decisions.md` summarising §1–§3; in `12` §6 note that official themed decks now come from micro series; link this doc from the README.
 - Done when: docs updated, nothing else changed.
 
 **M1 · Collections and outline file**
@@ -219,17 +242,17 @@ Same rules as `12`: one task per session, in order, tests included, stop at "Don
 - Done when: tests pass and the 5 clips of «أدوات الإشارة» generate for Omar to review.
 
 **M3 · Pictures, icons and scene regions**
-- Where: `lib/v2/micro/images`.
+- Where: `lib/v2/micro/images`, reusing the lesson image pipeline and the `12` §2.10 icon pipeline.
 - Do: main picture per clip; `icon.<concept_en>` row icons with reuse; the vision pass that returns a box per region hint; flags for lines with no box.
-- Tests (stub models): an icon key already ready is reused at no cost; a missing box flags its line and blocks publish; boxes are stored as fractions between 0 and 1.
-- Done when: the «este / esta» scene shows its boxes in admin on the real picture.
+- Tests (stub models): an icon key already ready is reused at no cost; every planned object has a default box before the vision call; a missing object triggers exactly one regeneration then a flag; two boxes closer than the spacing rule flag the clip; boxes are stored as fractions between 0 and 1; three clips with one `scene_key` generate one picture.
+- Done when: the shared demonstratives scene (§3.2b reference) shows near, middle and far objects in clearly different places, with correct boxes, in admin.
 
 **M4 · Admin review and publish**
 - Do: series → clips screen with play-as-learner preview, generate / regenerate / bulk generate, remove or edit a line, **drag and resize scene boxes**, publish clip and series; publishing a series creates or updates its official deck (`source: micro`).
 - Done when: Omar publishes «أدوات الإشارة» and it appears as a deck in "مواضيع".
 
 **M5 · Clip sheet player**
-- Do: the sheet of §3.2–§3.3 for the four layouts (the `rule` highlight is nested text spans, which RN supports), following the React Native rule of §3.3b: active row plays its Portuguese, tap reveals the Arabic (+ region ring and label in scenes), auto-move to the next row, replay a row, listening mode, auto-play, the end sheet, ♡ / long press to save one line, resume from the revealed count, swipe up to the next clip. Progress events for start and finish; finishing marks items seen and adds them to the series deck.
+- Do: the sheet of §3.2–§3.3 for the four layouts (the `rule` highlight is nested text spans, which RN supports), following the React Native rule of §3.3b: active row plays its Portuguese, tap reveals the Arabic (+ in scenes: only the active line's ring, pointer and short label; revealed lines become small dots; §3.2b rules 4–6), auto-move to the next row, replay a row, listening mode, auto-play, the end sheet, ♡ / long press to save one line, resume from the revealed count, swipe up to the next clip. Progress events for start and finish; finishing marks items seen and adds them to the series deck.
 - Tests: finishing writes one finish event and marks items seen once; reopening resumes at the next unrevealed row; the Arabic of an unrevealed row is not in the rendered output; listening mode never shows Arabic before the Portuguese; saving one line adds only that item; a scene box at the same fractions lands on the same spot at 360px and 430px widths.
 - Also: a short `components/v2/micro/README` listing which web pieces map to which RN primitives, so the RN port is a translation, not a redesign.
 - Done when: Omar plays one clip of each layout on his phone.

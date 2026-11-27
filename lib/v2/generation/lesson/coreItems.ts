@@ -16,15 +16,36 @@ const CORE_ITEM_PRIORITIES = new Set<CoreItemPriority>([
 /** Hard cap per day (00 §1 — split lessons larger than this). */
 export const MAX_CORE_ITEMS_PER_DAY = 14;
 
+/** Image kind for prompts and QA (19-image-kinds-themes.md). */
+export type ImageKind = 'object' | 'action' | 'scene';
+
 /** Hand-authored image scene description on a core item or day story. */
 export type AuthoredImage = {
   ratio: '1:1' | '4:3' | '16:9';
   characters: string[];
   /** Scene description only — code adds STYLE + ref line + must_avoid. */
   prompt: string;
+  /** object | action | scene — defaults from characters / item kind when missing. */
+  kind?: ImageKind;
+  /** Colour theme id from content/v2/image-themes.json (scene/action only). */
+  theme?: string;
   /** Human-approved reference; keep when iterating style. */
   approved?: boolean;
 };
+
+const IMAGE_KINDS = new Set<ImageKind>(['object', 'action', 'scene']);
+
+/** Default kind when authored JSON omits it (19 §2). */
+export function defaultImageKind(opts: {
+  characters?: string[];
+  itemKind?: string;
+}): ImageKind {
+  const n = opts.characters?.length ?? 0;
+  if (n === 0) return 'object';
+  if (n >= 2) return 'scene';
+  if (opts.itemKind === 'verb') return 'action';
+  return 'action';
+}
 
 export type CoreItem = {
   id: string;
@@ -383,9 +404,12 @@ export function findCoreItemById(
   return null;
 }
 
-function asAuthoredImage(value: unknown): AuthoredImage | null {
+function asAuthoredImage(
+  value: unknown,
+  itemKind?: string,
+): AuthoredImage | null {
   if (!value || typeof value !== 'object') return null;
-  const v = value as Partial<AuthoredImage>;
+  const v = value as Partial<AuthoredImage> & { kind?: string; theme?: string };
   if (
     (v.ratio !== '1:1' && v.ratio !== '4:3' && v.ratio !== '16:9') ||
     typeof v.prompt !== 'string' ||
@@ -394,10 +418,20 @@ function asAuthoredImage(value: unknown): AuthoredImage | null {
   ) {
     return null;
   }
+  const characters = v.characters.map(String);
+  const kindRaw = typeof v.kind === 'string' ? v.kind : undefined;
+  const kind: ImageKind =
+    kindRaw && IMAGE_KINDS.has(kindRaw as ImageKind)
+      ? (kindRaw as ImageKind)
+      : defaultImageKind({ characters, itemKind });
+  const theme =
+    typeof v.theme === 'string' && v.theme.trim() ? v.theme.trim() : undefined;
   return {
     ratio: v.ratio,
-    characters: v.characters.map(String),
+    characters,
     prompt: v.prompt.trim(),
+    kind,
+    ...(theme && kind !== 'object' ? { theme } : {}),
     ...(v.approved === true ? { approved: true } : {}),
   };
 }
@@ -410,7 +444,7 @@ export function getAuthoredItemImage(
 ): AuthoredImage | null {
   const entry = getCoreItemsDay(day, filePath);
   const item = entry.core_items.find((c) => c.id === itemId);
-  return asAuthoredImage(item?.image);
+  return asAuthoredImage(item?.image, item?.kind);
 }
 
 /** Authored story scene image for this day. */

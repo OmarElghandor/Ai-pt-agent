@@ -204,7 +204,8 @@ export async function ensureMicroSeriesContent(
       })
         .select({ _id: 1, lines: 1 })
         .lean();
-      if (existing && (existing.lines?.length ?? 0) >= 6) {
+      const minExisting = clip.scene_key ? 3 : 6;
+      if (existing && (existing.lines?.length ?? 0) >= minExisting) {
         continue;
       }
 
@@ -257,14 +258,17 @@ export async function ensureMicroSeriesContent(
       }
     }
 
-    // Ready = ≥6 lines under this series (box_flagged OK for learner play).
+    // Ready = enough lines (scene_key plans may be 3–5; others ≥6).
     const readyClips = await Clip.find({
       series_id: seriesId,
       status: { $in: ['ready', 'published', 'draft'] },
     })
-      .select({ _id: 1, lines: 1, status: 1 })
+      .select({ _id: 1, lines: 1, status: 1, scene_key: 1 })
       .lean();
-    const withLines = readyClips.filter((c) => (c.lines?.length ?? 0) >= 6);
+    const withLines = readyClips.filter((c) => {
+      const min = c.scene_key ? 3 : 6;
+      return (c.lines?.length ?? 0) >= min;
+    });
     // Prefer ready|published; drafts with enough lines also count after we bump them.
     let ready_count = withLines.filter((c) =>
       c.status === 'ready' || c.status === 'published',

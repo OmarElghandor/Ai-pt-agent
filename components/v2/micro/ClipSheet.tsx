@@ -14,6 +14,7 @@ export type ClipLineView = {
   ar: string;
   icon_url?: string | null;
   box?: { x: number; y: number; w: number; h: number } | null;
+  region_label?: string | null;
   highlight?: { start: number; end: number } | null;
 };
 
@@ -25,6 +26,8 @@ export type ClipView = {
   note?: string | null;
   level: number;
   main_image_url?: string | null;
+  scene_key?: string | null;
+  pointer_from?: { x: number; y: number } | null;
   rule_card?: {
     pattern_tl: string;
     pattern_ar?: string;
@@ -326,9 +329,10 @@ export function ClipSheet({
           <ScenePicture
             src={clip.main_image_url}
             alt={clip.title_tl}
+            pointerFrom={clip.pointer_from}
             lines={clip.lines.map((l, i) => ({
               box: l.box,
-              label: l.tl,
+              label: l.region_label ?? undefined,
               active: i === active,
               revealed: i < revealed,
               index: i + 1,
@@ -447,6 +451,10 @@ export function ClipSheet({
                             className="!text-[18px] text-surface-variant opacity-80"
                           />
                         </>
+                      ) : isActive && !isRevealed ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-0.5 font-[family-name:var(--font-v2-arabic)] text-[10px] font-bold text-on-primary shadow-sm">
+                          اضغط للكشف
+                        </span>
                       ) : (
                         <PlaceholderBar widthCh={Math.min(14, line.ar.length)} />
                       )}
@@ -461,7 +469,7 @@ export function ClipSheet({
                       }`}
                       dir="ltr"
                     >
-                      {showTl(i) && !isFuture ? (
+                      {showTl(i) ? (
                         <span className="font-[family-name:var(--font-v2-target)] font-semibold tracking-wide">
                           {line.tl}
                         </span>
@@ -473,7 +481,7 @@ export function ClipSheet({
                           }
                         />
                       )}
-                      {isActive && !isRevealed ? (
+                      {listening && isActive && !isRevealed && !showTl(i) ? (
                         <span className="absolute inset-0 flex items-center justify-center bg-primary/90 font-[family-name:var(--font-v2-arabic)] text-[11px] font-bold text-on-primary">
                           اضغط للكشف
                         </span>
@@ -483,11 +491,17 @@ export function ClipSheet({
                           size={20}
                           className="text-primary-fixed"
                         />
-                      ) : (
+                      ) : isFuture ? (
                         <Icon
                           name="lock"
                           size={20}
                           className="!text-[18px] text-outline-variant"
+                        />
+                      ) : (
+                        <Icon
+                          name="volume_up"
+                          size={20}
+                          className="text-primary-fixed"
                         />
                       )}
                     </div>
@@ -543,7 +557,7 @@ export function ClipSheet({
                   )}
 
                   <div className="min-w-0 flex-1">
-                    {showTl(i) && !isFuture ? (
+                    {showTl(i) ? (
                       <TlWithHighlight
                         tl={line.tl}
                         highlight={
